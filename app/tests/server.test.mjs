@@ -124,3 +124,22 @@ describe('integrasi dengan database uji', { skip: process.env.BN_TANPA_MONGO ? '
     assert.equal((await tembak(`/api/profiles/${p.id}`, { method: 'DELETE', headers: asal })).status, 404)
   })
 })
+
+describe('penyajian dist', () => {
+  test('aset yang tidak ada: 404, bukan index.html', async () => {
+    const fs = await import('node:fs')
+    const path = await import('node:path')
+    const dist = path.resolve(path.dirname(new URL(import.meta.url).pathname), '../dist')
+    if (!fs.existsSync(dist)) return
+    const app = buatApp({ ports: [4000], sajikanDist: true })
+    const srv = await new Promise(r => { const s = app.listen(0, '127.0.0.1', () => r(s)) })
+    const port = srv.address().port
+    const minta = p => new Promise(ok => http.get({ host: '127.0.0.1', port, path: p, headers: { host: 'localhost:4000' } }, res => { res.resume(); ok(res) }))
+    try {
+      assert.equal((await minta('/assets/TidakAda-abc123.js')).statusCode, 404)
+      const r = await minta('/karier')
+      assert.equal(r.statusCode, 200)
+      assert.match(r.headers['content-type'], /text\/html/)
+    } finally { srv.close() }
+  })
+})

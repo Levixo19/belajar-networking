@@ -241,7 +241,7 @@ function DetailPanel({ p, progress, onSelect }: { p: Profesi; progress: Record<s
 
       <div className="p-6">
         {p.bacaan && (
-          <Link to={`/m/${encodeURI(p.bacaan)}`} className="btn btn-primary w-full">
+          <Link to={`/m/${encodeURI(p.bacaan)}`} className="btn btn-ink w-full">
             <IconBook size={16} /> Baca profil lengkap
           </Link>
         )}

@@ -136,7 +136,7 @@ export function DgIpv4Anatomy() {
         {Array.from({ length: 8 }, (_, i) => {
           const gi = o * 8 + i
           return <g key={i} className="dg-click" onClick={() => setCidr(gi + 1)}>
-            <rect x={65 + o * 190 + i * 22} y={60} width={19} height={30} rx={4} className={`dg-mbit ${bits[gi] ? 'net' : 'host'}`} />
+            <rect x={65 + o * 190 + i * 22} y={60} width={19} height={30} rx={4} className={`dg-mbit ${bits[gi] ? 'net' : ''}`} />
             <text x={65 + o * 190 + i * 22 + 9.5} y={80} className="dg-mbit-tx">{bits[gi] ? 1 : 0}</text>
           </g>
         })}

@@ -136,7 +136,7 @@ export default function ReviewPage() {
               Kartu latihan muncul setelah kamu membuka modul. Mulai dari modul pertama, atau latih semua materi sekaligus.
             </p>
             <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3">
-              <Link to={`/m/${encodeURI(modulPertama.id)}`} className="btn btn-primary">
+              <Link to={`/m/${encodeURI(modulPertama.id)}`} className="btn btn-ink">
                 Buka modul pertama
                 <span className="btn-bubble"><IconArrowRight size={15} /></span>
               </Link>

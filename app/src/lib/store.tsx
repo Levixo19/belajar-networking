@@ -155,8 +155,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     return touchStreak({ ...s, games: { ...s.games, [slug]: score }, xp: s.xp + Math.min(60, score - best) })
   }), [mutate])
 
+  // Konfirmasinya di ProfileMenu ("Hapus semua progres profil ini?"). Dulu di sini ada
+  // confirm() bawaan juga, jadi orang ditanya dua kali, sekali lewat dialog yang memblokir.
   const reset = useCallback(() => {
-    if (!confirm('Reset semua progres, XP, dan riwayat review profil ini?')) return
     dirty.current = false
     setState({ ...emptyState })
     if (profileId) { localStorage.setItem(cacheKey(profileId), JSON.stringify(emptyState)); api.reset(profileId).catch(() => setOffline(true)) }

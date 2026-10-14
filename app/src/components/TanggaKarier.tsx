@@ -101,7 +101,7 @@ export default function TanggaKarier({ pilihan, onPilih, saring, siap }: {
       {KOLOM_JUDUL.map((j, i) => (
         <text key={j} x={xSimpul(i) - 10} y={28} className="kr-kolom">{j}</text>
       ))}
-      <g className="kr-arah" aria-hidden="true">
+      <g aria-hidden="true">
         <text x={W - 16} y={28} textAnchor="end" className="kr-arah-teks">Makin ke kanan, makin senior</text>
       </g>
       {[1, 2].map(i => <line key={i} x1={KIRI + i * KOLOM} x2={KIRI + i * KOLOM} y1={40} y2={H - 8} className="kr-batas" />)}
@@ -116,9 +116,9 @@ export default function TanggaKarier({ pilihan, onPilih, saring, siap }: {
         )
       })}
 
-      <g className="kr-lapis-garis" aria-hidden="true">
+      <g aria-hidden="true">
         {garis.map(g => <path key={g.key + g.kind} d={g.d} pathLength={1} className={`kr-sisi kr-sisi-${g.kind}`} />)}
-        {garis.map(g => <circle key={'u' + g.key} cx={g.ujungX} cy={g.ujungY} r={2.6} className={`kr-ujung kr-ujung-${g.kind}`} />)}
+        {garis.map(g => <circle key={'u' + g.key} cx={g.ujungX} cy={g.ujungY} r={2.6} className={`kr-ujung-${g.kind}`} />)}
       </g>
 
       {PROFESI.map(p => {

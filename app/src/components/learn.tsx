@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { useStore } from '../lib/store'
 import { getModule } from '../lib/content'
+import { useDialogFokus } from '../lib/fokus'
 import { IconCheck, IconCards, IconTrophy, IconRetry, IconBrain, IconExpand, IconClose } from './icons'
 
 /* ---------------------------------------------------------------- Kuis sisipan */
@@ -73,7 +74,7 @@ export function InlineQuiz({ id, items }: { id: string; items: QuizItem[] }) {
         <div className={`lz-fb ${picked === it.a ? 'ok' : 'no'} fade-in`}>
           <strong>{picked === it.a ? 'Benar' : 'Belum tepat'}</strong>
           {it.why && <span dangerouslySetInnerHTML={{ __html: '. ' + it.why }} />}
-          <button onClick={next} className="btn btn-primary !h-8 ml-auto shrink-0">
+          <button onClick={next} className="btn btn-ink !h-8 ml-auto shrink-0">
             {idx + 1 >= items.length ? 'Lihat hasil' : 'Lanjut'}
           </button>
         </div>
@@ -117,7 +118,7 @@ export function CardCheckpoint({ moduleId, from, count = 2 }: { moduleId: string
       {!show ? (
         <>
           <p className="lz-hint">Jawab dulu di kepala, jangan langsung dibuka. Usaha mengingat itulah yang membangun ingatan.</p>
-          <button onClick={() => setShow(true)} className="btn btn-primary">Lihat jawaban</button>
+          <button onClick={() => setShow(true)} className="btn btn-ink">Lihat jawaban</button>
         </>
       ) : (
         <>
@@ -134,15 +135,22 @@ export function CardCheckpoint({ moduleId, from, count = 2 }: { moduleId: string
   )
 }
 
+/* ---------------------------------------------------------------- Lightbox */
+/** Lapisan perbesar untuk foto dan diagram: dialog sungguhan (fokus dijebak, Escape
+ *  menutup, fokus kembali ke tombol Perbesar), bukan div yang cuma bisa diklik. */
+export function Lightbox({ label, onTutup, children }: { label: string; onTutup: () => void; children: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null)
+  useDialogFokus(ref, true, onTutup)
+  return createPortal(
+    <div ref={ref} className="lb" role="dialog" aria-modal="true" aria-label={label} onClick={onTutup}>
+      {children}
+      <button type="button" className="lb-x" aria-label="Tutup" data-autofocus onClick={onTutup}><IconClose size={18} /></button>
+    </div>, document.body)
+}
+
 /* ------------------------------------------------------------------- Foto */
 export function PhotoFig({ src, caption, credit, href }: { src: string; caption?: string; credit?: string; href?: string }) {
   const [zoom, setZoom] = useState(false)
-  useEffect(() => {
-    if (!zoom) return
-    const h = (e: KeyboardEvent) => { if (e.key === 'Escape') setZoom(false) }
-    window.addEventListener('keydown', h)
-    return () => window.removeEventListener('keydown', h)
-  }, [zoom])
   return (
     <>
       <figure className="ph-fig">
@@ -153,16 +161,16 @@ export function PhotoFig({ src, caption, credit, href }: { src: string; caption?
         {(caption || credit) && (
           <figcaption className="ph-cap">
             {caption}
-            {credit && <span className="ph-credit">{href ? <a href={href} target="_blank" rel="noreferrer">{credit}</a> : credit}</span>}
+            {credit && <span className="ph-credit">{href ? <a href={href} target="_blank" rel="noopener noreferrer">{credit}</a> : credit}</span>}
           </figcaption>
         )}
       </figure>
-      {zoom && createPortal(
-        <div className="lb" onClick={() => setZoom(false)}>
-          <img src={src} alt={caption || ''} />
-          <button className="lb-x" aria-label="Tutup"><IconClose size={18} /></button>
+      {zoom && (
+        <Lightbox label={caption ? `Foto: ${caption}` : 'Foto diperbesar'} onTutup={() => setZoom(false)}>
+          <img src={src} alt={caption || ''} onClick={e => e.stopPropagation()} />
           {caption && <div className="lb-cap">{caption}{credit ? `. ${credit}` : ''}</div>}
-        </div>, document.body)}
+        </Lightbox>
+      )}
     </>
   )
 }

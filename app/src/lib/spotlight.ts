@@ -9,7 +9,7 @@ export function installSpotlight() {
     raf = 0
     const e = last
     if (!e) return
-    const el = (e.target as Element | null)?.closest?.('.tile, .spot') as HTMLElement | null
+    const el = (e.target as Element | null)?.closest?.('.tile') as HTMLElement | null
     if (!el) return
     const r = el.getBoundingClientRect()
     el.style.setProperty('--sx', `${e.clientX - r.left}px`)

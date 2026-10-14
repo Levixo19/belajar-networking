@@ -171,7 +171,10 @@ export function buatApp({ ports = PORT_LOKAL, sajikanDist = true } = {}) {
   const dist = path.resolve(__dirname, '..', 'dist')
   if (sajikanDist && fs.existsSync(dist)) {
     app.use(express.static(dist))
-    app.get(/^(?!\/api).*/, (_req, res) => res.sendFile(path.join(dist, 'index.html')))
+    // Fallback SPA hanya untuk path TANPA ekstensi. Dulu /assets/Lama-abc.js yang sudah
+    // tidak ada (tab yang dibuka sebelum build ulang) dijawab index.html, dan browser
+    // melapor "MIME type text/html" alih-alih 404 yang jelas.
+    app.get(/^(?!\/api)(?!.*\.[a-z0-9]+$).*/i, (_req, res) => res.sendFile(path.join(dist, 'index.html')))
   }
 
   // JSON rusak dari express.json(): 400, bukan halaman galat HTML berisi jejak tumpukan.

@@ -68,7 +68,7 @@ export default function ModulePage() {
 
   return (
     <>
-      <div className="read-progress" aria-hidden="true" />
+      {/* Garis progres baca kini di kaki pil atas (PilAtas, .pil-progres). */}
 
       <div className="mx-auto flex max-w-[1200px] gap-16 px-4 pb-24 pt-10 sm:px-6 md:pt-16 lg:px-8">
         <article className="min-w-0 flex-1">

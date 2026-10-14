@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useStore } from '../lib/store'
+import { useDialogFokus } from '../lib/fokus'
 import Avatar, { TONES, toneOf } from './Avatar'
 import { IconChevron, IconCheck, IconPlus } from './icons'
 
@@ -13,6 +14,8 @@ export default function ProfileMenu({ compact = false }: { compact?: boolean }) 
   const [error, setError] = useState('')
 
   const close = () => { setOpen(false); setCreating(false); setConfirmReset(false); setError('') }
+  const dialog = useRef<HTMLDivElement>(null)
+  useDialogFokus(dialog, open, close)
 
   const create = async () => {
     const n = name.trim()
@@ -32,6 +35,7 @@ export default function ProfileMenu({ compact = false }: { compact?: boolean }) 
       {open && <div className="fixed inset-0 z-10" onClick={close} aria-hidden="true" />}
       {open && (
         <div
+          ref={dialog}
           role="dialog"
           aria-label="Profil"
           className={`menu-panel fade-up z-30 w-72 p-1.5 ${
@@ -103,7 +107,7 @@ export default function ProfileMenu({ compact = false }: { compact?: boolean }) 
                 </div>
               </fieldset>
               <div className="flex gap-2">
-                <button type="submit" className="btn btn-primary flex-1 !h-8">Simpan</button>
+                <button type="submit" className="btn btn-ink flex-1 !h-8">Simpan</button>
                 <button type="button" className="btn flex-1 !h-8" onClick={() => { setCreating(false); setError('') }}>Batal</button>
               </div>
             </form>
@@ -120,7 +124,7 @@ export default function ProfileMenu({ compact = false }: { compact?: boolean }) 
                   <span className="text-[12.5px] text-[var(--no)]">Hapus semua progres profil ini?</span>
                   <span className="flex shrink-0 gap-1">
                     <button className="btn !h-7 !px-2 text-[12px]" onClick={() => setConfirmReset(false)}>Batal</button>
-                    <button className="btn !h-7 !border-[var(--no)] !bg-[var(--no)] !px-2 text-[12px] !text-white"
+                    <button className="btn !h-7 !border-[var(--no)] !bg-[var(--no)] !px-2 text-[12px] !text-[var(--fg-contrast)]"
                       onClick={() => { s.reset(); close() }}>Hapus</button>
                   </span>
                 </div>

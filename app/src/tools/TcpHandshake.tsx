@@ -67,7 +67,7 @@ export default function TcpHandshake() {
       <div className="flex items-center gap-2 mt-3">
         <button className="btn" onClick={() => { setI(0); setPlaying(false) }}>Reset</button>
         <button className="btn" disabled={i === 0} onClick={() => setI(x => Math.max(0, x - 1))}>◀</button>
-        <button className="btn btn-primary flex-1" onClick={() => { if (i >= STEPS.length - 1) setI(0); setPlaying(p => !p) }}>
+        <button className="btn btn-ink flex-1" onClick={() => { if (i >= STEPS.length - 1) setI(0); setPlaying(p => !p) }}>
           {playing ? 'Jeda' : i >= STEPS.length - 1 ? 'Ulangi' : 'Putar'}
         </button>
         <button className="btn" disabled={i >= STEPS.length - 1} onClick={() => setI(x => Math.min(STEPS.length - 1, x + 1))}>▶</button>

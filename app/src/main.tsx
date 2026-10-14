@@ -11,6 +11,8 @@ import '@fontsource-variable/literata/opsz.css'
 import '@fontsource-variable/literata/opsz-italic.css'
 import '@fontsource-variable/geist'
 import '@fontsource-variable/jetbrains-mono'
+// Judul dan antarmuka (Fase 4). Prosa tetap Atkinson.
+import '@fontsource-variable/space-grotesk'
 import './index.css'
 import { StoreProvider } from './lib/store'
 import App from './App'

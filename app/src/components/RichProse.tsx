@@ -1,9 +1,8 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { getDiagram } from '../diagrams'
-import { InlineQuiz, CardCheckpoint, PhotoFig, type QuizItem } from './learn'
+import { InlineQuiz, CardCheckpoint, PhotoFig, Lightbox, type QuizItem } from './learn'
 import { toolBySlug } from '../tools'
-import { IconClose } from './icons'
 import { gameBySlug } from '../games'
 import { linkModuleRefs } from '../lib/modRefs'
 
@@ -59,14 +58,6 @@ export default function RichProse({ html, moduleId }: { html: string; moduleId: 
     return () => offs.forEach(o => o())
   }, [html])
 
-  // Tutup lightbox dengan Escape
-  useEffect(() => {
-    if (zoomFig === null) return
-    const h = (e: KeyboardEvent) => { if (e.key === 'Escape') setZoomFig(null) }
-    window.addEventListener('keydown', h)
-    return () => window.removeEventListener('keydown', h)
-  }, [zoomFig])
-
   // Kumpulkan placeholder widget → portal
   useLayoutEffect(() => {
     const root = ref.current
@@ -105,11 +96,11 @@ export default function RichProse({ html, moduleId }: { html: string; moduleId: 
     <>
       <div ref={ref} className="prose" dangerouslySetInnerHTML={{ __html: html }} />
       {slots.map(s => createPortal(s.node, s.el, s.key))}
-      {zoomFig !== null && createPortal(
-        <div className="lb" onClick={() => setZoomFig(null)}>
+      {zoomFig !== null && (
+        <Lightbox label="Diagram diperbesar" onTutup={() => setZoomFig(null)}>
           <pre className="lb-ascii" onClick={e => e.stopPropagation()}>{zoomFig}</pre>
-          <button className="lb-x" aria-label="Tutup"><IconClose size={18} /></button>
-        </div>, document.body)}
+        </Lightbox>
+      )}
     </>
   )
 }

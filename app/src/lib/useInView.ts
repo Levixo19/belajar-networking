@@ -17,15 +17,3 @@ export function useInView<T extends HTMLElement = HTMLDivElement>(opts?: { once?
   }, []) // eslint-disable-line
   return { ref, inView }
 }
-
-/** Hitung mundur / ticker sederhana untuk mini-game berwaktu. */
-export function useTicker(active: boolean, ms = 100) {
-  const [t, setT] = useState(0)
-  useEffect(() => {
-    if (!active) return
-    const iv = setInterval(() => setT(x => x + ms), ms)
-    return () => clearInterval(iv)
-  }, [active, ms])
-  useEffect(() => { if (!active) setT(0) }, [active])
-  return t
-}

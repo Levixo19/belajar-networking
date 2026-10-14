@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react'
-import { Outlet } from 'react-router-dom'
-import Navbar from './components/Navbar'
+import { Outlet, useLocation } from 'react-router-dom'
+import PilAtas from './components/PilAtas'
 import CommandPalette from './components/CommandPalette'
 import Logo from './components/Logo'
-import MobileTabBar from './components/MobileTabBar'
 import { useStore } from './lib/store'
 import { installSpotlight } from './lib/spotlight'
 
 export default function App() {
   const [paletteOpen, setPaletteOpen] = useState(false)
   const store = useStore()
+  const loc = useLocation()
 
   useEffect(() => installSpotlight(), [])
 
@@ -31,14 +31,14 @@ export default function App() {
       <a href="#konten" className="skip-link">Lewati ke konten</a>
       <div className="ambient" aria-hidden="true" />
       <div className="grain" aria-hidden="true" />
-      <Navbar onSearch={() => setPaletteOpen(true)} />
-      <main id="konten" className="mx-auto w-full max-w-full overflow-x-clip">
+      <PilAtas onSearch={() => setPaletteOpen(true)} />
+      {/* Dasbor membentangkan hero sinematiknya di bawah pil; layar lain mulai di bawahnya. */}
+      <main id="konten" className={`mx-auto w-full max-w-full overflow-x-clip ${loc.pathname === '/' ? 'tanpa-jarak-atas' : ''}`}>
         <Outlet />
       </main>
-      <MobileTabBar />
       <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
       {store.offline && (
-        <div role="status" className="menu-panel fade-up fixed bottom-24 left-1/2 z-40 lg:bottom-5 flex -translate-x-1/2 items-center gap-2.5 px-4 py-2 text-[13px]">
+        <div role="status" className="menu-panel fade-up fixed bottom-5 left-1/2 z-40 flex -translate-x-1/2 items-center gap-2.5 px-4 py-2 text-[13px]">
           <span className="h-1.5 w-1.5 rounded-full bg-[var(--warn)]" aria-hidden="true" />
           <span className="text-muted">Mode offline. Perubahan disimpan di perangkat dan disinkron saat tersambung.</span>
         </div>

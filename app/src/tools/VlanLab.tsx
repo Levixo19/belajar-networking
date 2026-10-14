@@ -67,7 +67,7 @@ export default function VlanLab() {
         </div>
       </div>
 
-      <div className={`vl-out ${result ? (result.ok ? 'ok' : 'no') : 'idle'}`}>
+      <div className={`vl-out ${result ? (result.ok ? 'ok' : 'no') : ''}`}>
         {result ? <><b>{result.ok ? 'Ping berhasil' : 'Ping gagal: request timed out'}</b> {result.msg}</>
           : a !== null ? <>Sumber: <b>{HOSTS[a]}</b> (VLAN {vlan[a]}). Sekarang pilih tujuannya.</>
             : <>Klik satu PC sebagai sumber, lalu satu lagi sebagai tujuan.</>}

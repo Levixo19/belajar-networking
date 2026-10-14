@@ -312,8 +312,9 @@ export function DgDomain() {
     <Fig title="Domain tabrakan vs domain broadcast" sub="Hub, switch, dan router memecah domain yang berbeda" w={820} h={280}>
       <Device cx={430} cy={60} kind="router" label="Router" />
       <Arrow d="M430 92 V125" /><Arrow d="M430 92 V125" />
-      <path d="M400 40 H760 V250 H400 Z" className="dg-region r-b" />
-      <path d="M60 40 H395 V250 H60 Z" className="dg-region r-b" />
+      {/* Dua domain broadcast (VLAN 10 dan 20) wajib berbeda warna: itulah yang diajarkan diagram ini. */}
+      <path d="M400 40 H760 V250 H400 Z" className="dg-region r-a" />
+      <path d="M60 40 H395 V250 H60 Z" className="dg-region r-p" />
       <T x={228} y={32} cls="dg-region-lb">Domain broadcast 1 (VLAN 10)</T>
       <T x={580} y={32} cls="dg-region-lb">Domain broadcast 2 (VLAN 20)</T>
       <path d="M300 60 H180" /><Arrow d="M400 60 H300 V125" tone="a" /><Arrow d="M460 60 H560 V125" tone="a" />

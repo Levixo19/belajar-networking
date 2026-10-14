@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { search as doSearch } from '../lib/search'
 import { stageOfModule } from '../lib/content'
-import { IconSearch, IconHome, IconCards, IconTools, IconZap, IconArrowRight, IconUsers, StageIcon } from './icons'
+import { useDialogFokus } from '../lib/fokus'
+import { IconSearch, IconHome, IconCards, IconTools, IconZap, IconArrowRight, IconUsers, IconBook, StageIcon } from './icons'
 
 const ACTIONS = [
   { id: 'go-home', label: 'Buka dasbor', to: '/', icon: <IconHome size={16} /> },
@@ -10,21 +11,19 @@ const ACTIONS = [
   { id: 'go-tools', label: 'Buka alat interaktif', to: '/tools', icon: <IconTools size={16} /> },
   { id: 'go-arena', label: 'Buka arena latihan', to: '/arena', icon: <IconZap size={16} /> },
   { id: 'go-karier', label: 'Jelajahi peta profesi', to: '/karier', icon: <IconUsers size={16} /> },
+  { id: 'go-pustaka', label: 'Buka pustaka bacaan', to: '/pustaka', icon: <IconBook size={16} /> },
 ]
 
 export default function CommandPalette({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [q, setQ] = useState('')
   const [sel, setSel] = useState(0)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const dialog = useRef<HTMLDivElement>(null)
   const nav = useNavigate()
 
-  useEffect(() => {
-    if (open) {
-      setQ('')
-      setSel(0)
-      setTimeout(() => inputRef.current?.focus(), 30)
-    }
-  }, [open])
+  useEffect(() => { if (open) { setQ(''); setSel(0) } }, [open])
+  // Fokus ke kotak cari saat dibuka, Tab berputar di dalam, Escape menutup, dan fokus
+  // kembali ke tombol/tempat yang membukanya.
+  useDialogFokus(dialog, open, onClose)
 
   const hits = useMemo(() => (q.trim() ? doSearch(q, 24) : []), [q])
   const items = useMemo(() => {
@@ -49,6 +48,7 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
       onClick={onClose}
     >
       <div
+        ref={dialog}
         role="dialog"
         aria-modal="true"
         aria-label="Cari materi"
@@ -58,7 +58,7 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
         <div className="flex h-14 items-center gap-3 border-b border-app px-4">
           <IconSearch size={17} className="shrink-0 text-faint" />
           <input
-            ref={inputRef}
+            data-autofocus
             value={q}
             onChange={e => setQ(e.target.value)}
             placeholder="Cari modul, protokol, atau perintah"
@@ -72,7 +72,6 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
               if (e.key === 'ArrowDown') { e.preventDefault(); setSel(s => Math.min(items.length - 1, s + 1)) }
               if (e.key === 'ArrowUp') { e.preventDefault(); setSel(s => Math.max(0, s - 1)) }
               if (e.key === 'Enter') { e.preventDefault(); go(sel) }
-              if (e.key === 'Escape') onClose()
             }}
           />
           <kbd>Esc</kbd>

@@ -72,7 +72,7 @@ app/
 ├── src/
 │   ├── generated/              #   HASIL BUILD — curriculum.json, jangan diedit tangan
 │   ├── lib/                    #   content, store (API-backed), srs (SM-2), search, api, theme
-│   ├── components/             #   Navbar, CommandPalette, RichProse, ProfileMenu, ...
+│   ├── components/             #   PilAtas (navigasi pil), CommandPalette, RichProse, TanggaKarier, ...
 │   ├── pages/                  #   Dashboard, ModulePage, ReviewPage, ToolsPage, ArenaPage
 │   ├── diagrams/               #   diagram SVG interaktif
 │   ├── games/                  #   permainan latihan

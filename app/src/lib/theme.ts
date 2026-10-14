@@ -24,6 +24,8 @@ export function useTheme() {
       const t = resolve(pref)
       setTheme(t)
       document.documentElement.dataset.theme = t
+      // Bilah judul/tab browser ikut tema aplikasi; nilainya = --bg tema itu.
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', t === 'dark' ? '#0a0b0f' : '#f6f7f9')
     }
     apply()
     try { localStorage.setItem(KEY, pref) } catch {}

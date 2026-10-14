@@ -302,3 +302,63 @@ ukuran huruf, `KIRI`, `KOLOM`, atau label diubah.
 **Garis "naik" ditarik masuk lewat GSAP (`gsap.matchMedia` + `MOTION_OK`) dengan
 `clearProps`**, jadi keadaan akhirnya garis utuh tanpa dasharray. Jangan memberi
 `.kr-sisi` transition CSS apa pun: stroke-dashoffset-nya milik GSAP.
+
+### Desain laptop (Fase 4, 2026-10-15)
+
+Arah, riset, dan angka kontrasnya di `reports/rencana-desain-2026-10-15.md`.
+
+**Cangkang = satu pil kaca melayang** (`components/PilAtas.tsx`). Bilah atas, menu
+burger, dan tab bar bawah sudah dicabut (aplikasi dipakai hanya di laptop); jangan
+dikembalikan. Semua tujuan, cari, XP, tema, dan profil tinggal di pil. Butir aktif
+ditandai `is-on` DAN `aria-current`, keduanya dipasang dan dilepas; di halaman modul
+yang aktif pemicu Kurikulum. Penanda yang meluncur digerakkan transition CSS
+(transform + width) saja. Layar < 1024 px tidak dirancang, tapi tidak boleh meluber:
+pil bisa digulir mendatar dan label cari/XP disembunyikan di bawah 1100 px.
+
+**Satu layar, satu latar aksen.** `.btn-primary` (ultramarin, teks `--on-primary`)
+hanya untuk tindakan utama layar itu; yang lain `.btn-ink` atau `.btn`. Widget
+sisipan di modul (kuis, checkpoint, alat), tombol dialog, dan lencana jumlah memakai
+tinta. Teks di atas aksen selalu `--on-primary`, tidak pernah `#fff` yang ditulis
+tangan: di tema gelap aksennya terang dan teksnya harus gelap.
+
+**Hover menyala seketika, padam `--padam` (150 ms).** Polanya: `transition` dengan
+durasi `--padam` di keadaan biasa, `transition-duration: 0s` di `:hover`
+(`.btn`, `.pil-item`, `.hover-padam`, `.tile`). Tekan: scale .98 dalam 100 ms.
+
+**Huruf: Space Grotesk untuk judul dan antarmuka, Atkinson untuk prosa.** Preferensi
+baca (`data-ba-font`) hanya mengubah `--font-read`; dulu ia ikut mengganti font
+antarmuka, sehingga memilih Lexend untuk membaca mengubah tombol dan navigasi juga.
+
+**Token warna lolos AA di kedua tema, dan itu dites** (`tests/kontras.test.mjs`
+membaca `index.css` langsung, mengomposisikan rgba di atas latarnya). Saat menulis
+tes ini dua token terang ternyata meleset tipis (`--accent` 4,42, `--border-control`
+2,96 di surface-2). Mengubah token berarti tes ini harus tetap hijau.
+
+**Setiap kelas yang dipakai punya aturan, setiap aturan kustom dipakai**
+(`tests/kelas-css.test.mjs`, dua arah, terhadap CSS hasil `vite build`). Sapuan
+pertamanya menemukan 21 aturan yatim dan 7 kelas tanpa gaya, termasuk dua bug
+sungguhan: diagram domain broadcast memakai `r-b` yang tidak pernah didefinisikan
+(dua VLAN tampil sama warnanya, padahal itu inti diagramnya), dan animasi `.pop` yang
+dipakai kuis tidak pernah ada. Kelas yang cuma jadi kait selektor JS (`.pd-packet`,
+`.scrub-text`) sah tanpa aturan; kelas dari highlight.js dikecualikan.
+
+**Dialog = `useDialogFokus`** (`lib/fokus.ts`): fokus masuk, Tab berputar di dalam,
+Escape menutup, fokus kembali ke pemicunya. Dipakai palet, menu profil, mega-menu
+Kurikulum, dan `Lightbox` (learn.tsx, satu komponen untuk foto dan diagram). Lapisan
+baru yang menutupi halaman wajib memakainya.
+
+**Dasbor punya dua keadaan.** Profil baru (XP 0 dan nol modul tuntas) mendapat hero
+dengan satu saran + semua tahap sebagai ubin yang bisa dibandingkan, bukan katalog
+nol persen. Profil berjalan mendapat bento 12 kolom `grid-flow-dense` (7x2 + 5x1 +
+5x1, nol sel kosong). Angka di ubin dihitung dari kurikulum, desimal memakai koma
+(`toLocaleString('id')`).
+
+**Gerak gulir Dasbor** (`useGSAP` + `gsap.matchMedia(MOTION_OK)`): kalimat menyala per
+kata lewat SplitText, tumpukan kartu cara belajar. Tumpukannya `position: sticky`
+(CSS), GSAP hanya mengecilkan kartu yang tertimpa dan menaikkan `--redup` (lapisan
+`::after` berwarna `--bg`). Jangan menganimasikan `filter` dari `none`: hasilnya kartu
+abu kotor, sudah pernah terjadi.
+
+**Fallback SPA hanya untuk path tanpa ekstensi** (`server/app.mjs`). Aset yang tidak
+ada (tab lama sesudah build ulang) dijawab 404, bukan `index.html` yang membuat
+browser melapor galat MIME yang menyesatkan.
