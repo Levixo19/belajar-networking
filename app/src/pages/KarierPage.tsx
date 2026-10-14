@@ -7,6 +7,7 @@ import {
   QUIZ, scoreQuiz, celahJalur, KEAHLIAN_LABEL, JENJANG_LABEL, type Profesi, type Rumpun,
 } from '../lib/profesi'
 import TanggaKarier from '../components/TanggaKarier'
+import { Sampul, RONA_RUMPUN } from '../lib/sampul'
 import { useScramble } from '../lib/useScramble'
 import { scrollToId } from '../lib/scrollTo'
 import { IconArrowRight, IconCheck, IconRetry, IconBook } from '../components/icons'
@@ -123,7 +124,9 @@ function PetaKarier() {
 function PanelSapa({ onSelect }: { onSelect: (id: string) => void }) {
   const pintu = PROFESI.filter(p => p.jenjang === 'pemula').slice(0, 5)
   return (
-    <aside className="card p-6 lg:sticky lg:top-24" aria-label="Mulai menjelajah">
+    <aside className="card overflow-hidden lg:sticky lg:top-24" aria-label="Mulai menjelajah">
+      <div className="h-28 border-b border-app"><Sampul benih="profesi:sapa" ragam="mesh" rona={RONA_RUMPUN.inti} lebar={420} tinggi={140} /></div>
+      <div className="p-6">
       <h2 className="text-[1.25rem] font-semibold leading-snug tracking-[-0.02em]">Pilih satu profesi di tangga.</h2>
       <p className="mt-2 text-[14px] leading-relaxed text-muted">
         Rinciannya muncul di sini: pekerjaan sehari-hari, modul bekal, sertifikasi, dan ke mana ia bisa naik.
@@ -138,6 +141,7 @@ function PanelSapa({ onSelect }: { onSelect: (id: string) => void }) {
           </li>
         ))}
       </ul>
+      </div>
     </aside>
   )
 }
@@ -150,7 +154,8 @@ function DetailPanel({ p, progress, onSelect }: { p: Profesi; progress: Record<s
     .map(t => ({ t, list: p.sertifikasi.filter(c => (c.tingkat || 'menengah') === t) }))
     .filter(x => x.list.length)
   return (
-    <aside className="card lg:sticky lg:top-24 lg:max-h-[calc(100dvh-7rem)] lg:overflow-y-auto" aria-live="polite" aria-label={`Profil ${p.nama}`}>
+    <aside className="card overflow-hidden lg:sticky lg:top-24 lg:max-h-[calc(100dvh-7rem)] lg:overflow-y-auto" aria-live="polite" aria-label={`Profil ${p.nama}`}>
+      <div className="h-28 border-b border-app"><Sampul benih={'profesi:' + p.id} rona={RONA_RUMPUN[p.rumpun]} lebar={420} tinggi={140} /></div>
       <div className="border-b border-app p-6">
         <div className="text-[12.5px] text-faint">{rumpunMeta(p.rumpun).label}</div>
         <h2 ref={nameRef} className="mt-1.5 min-h-[2.4em] text-[1.45rem] font-semibold leading-[1.15] tracking-[-0.03em]">{p.nama}</h2>
@@ -170,7 +175,7 @@ function DetailPanel({ p, progress, onSelect }: { p: Profesi; progress: Record<s
             return (
               <li key={m}>
                 <Link to={`/m/${encodeURI(m)}`} className="group flex items-center gap-2.5 rounded-lg px-1.5 py-1.5 text-[13.5px] hover:bg-[var(--surface-2)]">
-                  <span className={`grid h-5 w-5 shrink-0 place-items-center rounded-full border ${ok ? 'border-[var(--primary)] bg-[var(--primary)] text-white' : 'border-[var(--border-strong)]'}`}>
+                  <span className={`grid h-5 w-5 shrink-0 place-items-center rounded-full border ${ok ? 'border-[var(--primary)] bg-[var(--primary)] text-[var(--on-primary)]' : 'border-[var(--border-control)]'}`}>
                     {ok && <IconCheck size={12} />}
                   </span>
                   <span className={`flex-1 truncate ${ok ? 'text-faint line-through decoration-[var(--border-strong)]' : ''}`}>{mod.title}</span>

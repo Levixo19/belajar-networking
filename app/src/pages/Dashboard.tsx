@@ -8,6 +8,7 @@ import { scrollToId } from '../lib/scrollTo'
 import { gsap, useGSAP, MOTION_OK, SplitText } from '../lib/motion'
 import { IconArrowRight, IconArrowLeft, IconCards, IconFlame, IconClock, IconBook, IconFlask, IconTools, StageIcon } from '../components/icons'
 import PustakaKartu from '../components/PustakaKartu'
+import { SampulTahap } from '../lib/sampul'
 
 const KarierTeaser = lazy(() => import('../components/KarierTeaser'))
 
@@ -40,11 +41,10 @@ export default function Dashboard() {
     return belajar.slice(i, i + 4)
   }, [lanjut.stage])
 
-  const fotoHero = photo('patch-panel')
+  const fotoHero = photo('dc-racks')
   const fotoRj = photo('rj45-plug')
   const fotoFiber = photo('fiber-connector')
-  const fotoAkordeon = [photo('router-soho'), photo('mikrotik'), photo('access-point'), photo('cable-tester')]
-  const kredit = [fotoHero, fotoRj, fotoFiber, ...fotoAkordeon]
+  const kredit = [fotoHero, fotoRj, fotoFiber]
 
   useGSAP(() => {
     const mm = gsap.matchMedia()
@@ -153,7 +153,7 @@ export default function Dashboard() {
             <p className="max-w-[40ch] text-[15px] text-muted">Arahkan kursor ke satu tahap untuk melihat isinya.</p>
           </div>
           <div className="hacc mt-12">
-            {sedang.map((st, i) => <IrisanTahap key={st.id} st={st} progress={s.progress} foto={fotoAkordeon[i % fotoAkordeon.length].url} />)}
+            {sedang.map(st => <IrisanTahap key={st.id} st={st} progress={s.progress} />)}
           </div>
         </div>
       </section>
@@ -235,7 +235,9 @@ function UbinTahap() {
           const kartu = st.modules.reduce((a, m) => a + m.cards.length, 0)
           return (
             <li key={st.id} className="min-w-0">
-              <Link to={tautan(st.modules[0])} className="tile group flex h-full flex-col gap-5 !p-5">
+              <Link to={tautan(st.modules[0])} className="tile group flex h-full flex-col gap-5 !p-0">
+                <span className="block h-20 overflow-hidden border-b border-app"><SampulTahap tahap={st.id} band={st.band} lebar={360} tinggi={110} /></span>
+                <span className="flex flex-1 flex-col gap-5 px-5 pb-5">
                 <span className="flex items-center justify-between text-faint">
                   <StageIcon id={st.id} size={19} />
                   <span className="text-[12px] tabular-nums">{String(i + 1).padStart(2, '0')}</span>
@@ -248,6 +250,7 @@ function UbinTahap() {
                   <span><b className="block text-[15px] font-semibold tabular-nums text-[var(--text)]">{st.modules.length}</b>modul</span>
                   <span><b className="block text-[15px] font-semibold tabular-nums text-[var(--text)]">{(menit / 60).toLocaleString('id', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}</b>jam baca</span>
                   <span><b className="block text-[15px] font-semibold tabular-nums text-[var(--text)]">{kartu}</b>kartu</span>
+                </span>
                 </span>
               </Link>
             </li>
@@ -287,41 +290,48 @@ function BentoProgres({ selesai, due, lanjut }: { selesai: number; due: number; 
           ))}
         </div>
       </div>
-      <Link to="/review" className="tile tile-ink group flex flex-col justify-between gap-6 md:col-span-5">
+      {/* Kartu Lanjutkan: pita sampul tahapnya mengisi ruang sisa kartu, tidak ada rongga. */}
+      <Link to={tautan(lanjut)} className="tile group grid grid-cols-[minmax(0,1fr)_40%] !p-0 md:col-span-5">
+        <span className="flex flex-col justify-between gap-5 p-6">
+          <span className="text-[13px] text-faint">Lanjutkan{lanjut.num ? `, modul ${lanjut.num}` : ''}</span>
+          <span>
+            <span className="block text-[20px] font-semibold leading-snug tracking-[-0.02em]">{lanjut.title}</span>
+            <span className="mt-2 flex items-center gap-1.5 text-[13px] text-faint"><IconClock size={14} /> {lanjut.readMin} menit baca</span>
+          </span>
+        </span>
+        <span className="relative border-l border-app"><SampulTahap tahap={lanjut.stage} band={stages.find(x => x.id === lanjut.stage)?.band} lebar={260} tinggi={240} /></span>
+      </Link>
+      <Link to="/review" className="tile tile-ink group flex flex-col justify-between gap-5 md:col-span-5">
         <span className="flex items-start justify-between gap-4"><IconCards size={22} /><span className="btn-bubble"><IconArrowRight size={18} /></span></span>
-        <span>
-          <span className="block text-[24px] font-semibold tracking-[-0.03em]">{due ? `${due} kartu siap diulang` : 'Antrean review kosong'}</span>
-          <span className="mt-1 block text-[14px] text-muted">{due ? 'Ulang sekarang, tepat sebelum lupa.' : `Kartu baru masuk setelah Anda menuntaskan modul, mulai dari ${lanjut.title}.`}</span>
+        <span className="flex items-end justify-between gap-6">
+          <span>
+            <span className="block text-[22px] font-semibold tracking-[-0.03em]">{due ? `${due} kartu siap diulang` : 'Antrean review kosong'}</span>
+            <span className="mt-1 block text-[13.5px] text-muted">{due ? 'Ulang sekarang, tepat sebelum lupa.' : 'Kartu baru masuk setelah Anda menuntaskan modul.'}</span>
+          </span>
+          <span className="shrink-0 text-right">
+            <span className="flex items-center justify-end gap-1.5 text-[12.5px] text-muted"><IconFlame size={14} /> {s.streak} hari</span>
+            <span className="mt-1 block text-[13px] font-semibold tabular-nums">Level {s.level}, {s.xp.toLocaleString('id')} XP</span>
+          </span>
         </span>
       </Link>
-      <div className="tile flex items-end justify-between gap-6 md:col-span-5">
-        <span>
-          <span className="flex items-center gap-1.5 text-[13px] text-faint"><IconFlame size={15} /> Beruntun</span>
-          <span className="stat-num mt-2 block !text-[2.75rem]">{s.streak}<span className="ml-2 align-middle text-[14px] font-medium tracking-normal text-faint">hari</span></span>
-        </span>
-        <span className="text-right">
-          <span className="block text-[13px] text-faint">Level {s.level}</span>
-          <span className="mt-1 block text-[15px] font-semibold tabular-nums">{s.xp.toLocaleString('id')} XP</span>
-        </span>
-      </div>
     </div>
   )
 }
 
 /* ---------------------------------------------------------- Akordeon tahap */
-function IrisanTahap({ st, progress, foto }: { st: Stage; progress: Record<string, string>; foto: string }) {
+function IrisanTahap({ st, progress }: { st: Stage; progress: Record<string, string> }) {
   const tuntas = st.modules.filter(m => progress[m.id] === 'done').length
   const tujuan = st.modules.find(m => progress[m.id] !== 'done') ?? st.modules[0]
   return (
     <Link to={tautan(tujuan)} className="hacc-item group" aria-label={`${st.title}: ${tuntas} dari ${st.modules.length} modul tuntas. Buka ${tujuan.title}`}>
-      <img src={foto} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover opacity-90 grayscale transition-transform duration-700 ease-out group-hover:scale-105" />
+      <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-105"><SampulTahap tahap={st.id} band={st.band} lebar={520} tinggi={520} /></div>
       <div className="hacc-tirai" aria-hidden="true" />
-      <span className="hacc-label absolute bottom-6 left-1/2 hidden -translate-x-1/2 whitespace-nowrap text-[15px] font-medium text-white lg:block">{st.title}</span>
-      <div className="hacc-body relative flex h-full min-h-[15rem] flex-col justify-end p-7 text-white lg:min-h-0">
+      <span className="hacc-label absolute bottom-6 left-1/2 hidden -translate-x-1/2 whitespace-nowrap text-[15px] font-semibold lg:block">{st.title}</span>
+      <div className="hacc-body relative flex h-full min-h-[15rem] flex-col justify-end p-7 lg:min-h-0">
         <StageIcon id={st.id} size={22} />
         <div className="mt-4 text-[24px] font-semibold tracking-[-0.03em]">{st.title}</div>
-        <p className="mt-2 text-[14px] text-white/75">{tuntas} dari {st.modules.length} modul tuntas</p>
-        <ul className="mt-4 space-y-1 text-[13.5px] text-white/85">
+        <p className="mt-2 text-[14px] text-muted">{tuntas} dari {st.modules.length} modul tuntas</p>
+        <ul className="mt-4 space-y-1 text-[13.5px] text-muted">
           {st.modules.slice(0, 4).map(m => <li key={m.id} className="truncate">{m.num} {m.title}</li>)}
         </ul>
         <span className="mt-5 inline-flex items-center gap-1.5 text-[13.5px] font-medium">

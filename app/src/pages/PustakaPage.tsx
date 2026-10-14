@@ -4,6 +4,8 @@ import { stages } from '../lib/content'
 import { muatPustaka, saring, hitungSegi, type DataPustaka, type ButirPustaka, type Saringan, type Segi } from '../lib/pustaka'
 import { JENIS, TOPIK } from '../lib/pustakaTopik'
 import { IconSearch, IconClose, IconArrowRight } from '../components/icons'
+import KepalaBersampul from '../components/KepalaBersampul'
+import { Sampul } from '../lib/sampul'
 
 const BAHASA: Record<string, string> = { id: 'Indonesia', en: 'Inggris' }
 const SEGI: Segi[] = ['jenis', 'bahasa', 'tahap', 'sumber']
@@ -46,7 +48,7 @@ export default function PustakaPage() {
 
   return (
     <div className="mx-auto max-w-[1280px] px-4 pb-24 pt-12 sm:px-6 md:pt-20 lg:px-8">
-      <header className="fade-up max-w-3xl">
+      <KepalaBersampul sampul={{ benih: 'pustaka', rona: 145, ragam: 'paket', tanda: 'RFC' }}>
         <h1 className="text-[clamp(2.2rem,4.5vw,3.5rem)] font-semibold leading-[1.04] tracking-[-0.045em]">
           Pustaka bacaan jaringan.
         </h1>
@@ -54,7 +56,7 @@ export default function PustakaPage() {
           {data ? `${data.entri.length.toLocaleString('id')} tautan` : 'Tautan'} buku terbuka, standar, kursus resmi, dokumentasi, dan lab,
           terhubung ke tahap kurikulum. Sumber berbahasa Indonesia tampil lebih dulu. Lisensi tiap sumber tercatat di bawah.
         </p>
-      </header>
+      </KepalaBersampul>
 
       {gagal && <p role="alert" className="mt-10 text-[15px] text-[var(--no)]">Data pustaka gagal dimuat. Muat ulang halaman ini.</p>}
       {!data && !gagal && (
@@ -113,6 +115,7 @@ export default function PustakaPage() {
 
             {hasil.length === 0 ? (
               <div className="rounded-[var(--radius)] border border-dashed border-app px-6 py-12 text-center">
+                <div className="mx-auto mb-5 h-16 w-28 overflow-hidden rounded-[var(--radius-md)]"><Sampul benih={'kosong:' + s.q} ragam="mesh" lebar={224} tinggi={128} /></div>
                 <p className="text-[15px] font-medium">Tidak ada tautan yang cocok.</p>
                 <p className="mt-1.5 text-[14px] text-muted">Coba kata lain, atau lepas salah satu saringan di kiri.</p>
               </div>

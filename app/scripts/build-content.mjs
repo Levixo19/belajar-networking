@@ -19,8 +19,16 @@ const EXTRA_DIR = path.join(APP_DIR, 'data')
 // tertentu di dalam materi tanpa mengotori berkas .md kurikulum.
 let ENRICH = {}
 try {
-  ENRICH = JSON.parse(fs.readFileSync(path.join(EXTRA_DIR, 'enrich.json'), 'utf8'))
+  // BN_ENRICH cuma untuk tes: menyuapkan enrich rusak dan menuntut build GAGAL.
+  ENRICH = JSON.parse(fs.readFileSync(process.env.BN_ENRICH || path.join(EXTRA_DIR, 'enrich.json'), 'utf8'))
 } catch { console.warn('  (data/enrich.json tidak ada — lewati pengayaan manual)') }
+
+// Registri diagram dibaca dari src/diagrams/index.tsx (kunci 'id': Komponen). Dulu ID
+// yang salah ketik di enrich.json dirender null tanpa satu pun pesan, dan modulnya
+// diam-diam kehilangan diagram. Sekarang build GAGAL (lihat ENRICH_GALAT di bawah).
+const DIAGRAM_ID = new Set([...fs.readFileSync(path.join(APP_DIR, 'src', 'diagrams', 'index.tsx'), 'utf8')
+  .matchAll(/^\s*'([a-z0-9-]+)':\s*[A-Za-z0-9_.]+,?\s*$/gm)].map(m => m[1]))
+const ENRICH_GALAT = []
 
 // --- Peta judul & ikon per tahap -------------------------------------------
 const STAGE_META = {
@@ -188,14 +196,23 @@ function injectWidgets(html, id, cards) {
   const ins = []
   const used = new Set()
 
-  // 1. Penempatan manual dari enrich.json
+  // 1. Penempatan manual dari enrich.json. Jangkar yang hilang, tipe asing, dan ID
+  //    diagram tak terdaftar dikumpulkan sebagai GALAT (build gagal di akhir).
+  const ganti = []
   for (const w of ENRICH[id] || []) {
     const anchor = w.after || w.end
     const h = byId.get(anchor)
-    if (!h) { console.warn(`  ! anchor "${anchor}" tidak ada di ${id}`); continue }
+    if (!h) { ENRICH_GALAT.push(`${id}: jangkar "${anchor}" tidak ada`); continue }
     const make = WIDGET[w.type]
-    if (!make) { console.warn(`  ! tipe widget "${w.type}" tidak dikenal`); continue }
-    ins.push({ pos: w.after ? h.headEnd : h.end, html: make(w) })
+    if (!make) { ENRICH_GALAT.push(`${id}: tipe widget "${w.type}" tidak dikenal`); continue }
+    if (w.type === 'diagram' && !DIAGRAM_ID.has(w.id)) { ENRICH_GALAT.push(`${id}: diagram "${w.id}" tidak terdaftar di src/diagrams/index.tsx`); continue }
+    // `ganti: true`: diagram SVG MENGGANTIKAN figur ASCII pertama di bagian itu,
+    // bukan ditambahkan di sampingnya. Berkas .md tidak disentuh.
+    if (w.ganti) {
+      const a = html.indexOf('<figure class="fig-ascii">', h.headEnd)
+      if (a < 0 || a >= h.end) { ENRICH_GALAT.push(`${id}: diagram "${w.id}" ganti=true, tapi bagian "${anchor}" tidak punya figur ASCII`); continue }
+      ganti.push({ a, b: html.indexOf('</figure>', a) + '</figure>'.length, html: make(w) })
+    } else ins.push({ pos: w.after ? h.headEnd : h.end, html: make(w) })
     used.add(h.id)
   }
 
@@ -213,9 +230,10 @@ function injectWidgets(html, id, cards) {
     }
   }
 
-  ins.sort((a, b) => b.pos - a.pos)
+  // Sisipan dan penggantian diterapkan dari belakang supaya posisi yang lebih awal tetap sah.
+  const semua = [...ins.map(x => ({ a: x.pos, b: x.pos, html: x.html })), ...ganti].sort((x, y) => y.a - x.a)
   let out = html
-  for (const x of ins) out = out.slice(0, x.pos) + x.html + out.slice(x.pos)
+  for (const x of semua) out = out.slice(0, x.a) + x.html + out.slice(x.b)
   return out
 }
 
@@ -310,6 +328,8 @@ function splitNumbered(text) {
 function oneLine(s) { return s.replace(/\s+/g, ' ').trim() }
 
 // --- Bangun -----------------------------------------------------------------
+for (const k of Object.keys(ENRICH)) if (!k.startsWith('_') && !fs.existsSync(path.join(CONTENT_ROOT, k + '.md')) && !fs.existsSync(path.join(REPO_ROOT, k + '.md')))
+  ENRICH_GALAT.push(`enrich.json: modul "${k}" tidak ada`)
 const stages = []
 for (const stageId of STAGE_ORDER) {
   const dir = path.join(CONTENT_ROOT, stageId)
@@ -351,6 +371,10 @@ const bundle = {
   meta: { totalModules, totalCards, totalStages: stages.length, generatedAt: new Date().toISOString() },
 }
 
+if (ENRICH_GALAT.length) {
+  console.error('GAGAL validasi enrich.json:\n  ' + ENRICH_GALAT.join('\n  '))
+  process.exit(1)
+}
 fs.mkdirSync(OUT_DIR, { recursive: true })
 fs.writeFileSync(path.join(OUT_DIR, 'curriculum.json'), JSON.stringify(bundle))
 

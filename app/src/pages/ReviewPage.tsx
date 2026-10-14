@@ -5,6 +5,7 @@ import { linearModules } from '../lib/content'
 import { isDue, GRADES } from '../lib/srs'
 import type { CSSProperties, ReactNode } from 'react'
 import { IconCards, IconCheck, IconArrowRight } from '../components/icons'
+import { Sampul } from '../lib/sampul'
 
 interface QCard {
   id: string
@@ -104,6 +105,7 @@ export default function ReviewPage() {
     const modulPertama = linearModules.find(m => m.cards.length > 0) ?? linearModules[0]
     return (
       <div className="fade-up mx-auto max-w-2xl px-4 py-16 sm:px-6 md:py-24">
+        <div className="kepala-sampul mb-10 !aspect-[16/5]"><Sampul benih="review-kartu" rona={232} ragam="gelombang" tanda="SRS" lebar={720} tinggi={225} /></div>
         <h1 className="text-[clamp(2.25rem,4.5vw,3.25rem)] font-semibold leading-[1.05] tracking-[-0.045em]">Review</h1>
         <p className="mt-4 max-w-[52ch] text-[16px] leading-relaxed text-muted">
           Coba jawab di kepala sebelum membuka kartu. Penilaianmu menentukan kapan kartu itu muncul lagi.
@@ -128,9 +130,7 @@ export default function ReviewPage() {
 
         {scope === 'studied' && studiedCount === 0 ? (
           <div className="mt-8 rounded-[var(--radius)] border border-app bg-surface p-8 sm:p-10">
-            <span className="grid h-11 w-11 place-items-center rounded-[var(--radius)] border border-app bg-[var(--surface-2)]">
-              <IconCards size={20} />
-            </span>
+            <span className="block h-14 w-24 overflow-hidden rounded-[var(--radius-md)]"><Sampul benih="review-kosong" ragam="kisi" lebar={192} tinggi={112} /></span>
             <h2 className="mt-6 text-[20px] font-semibold tracking-[-0.025em]">Belum ada kartu dari modul yang kamu buka</h2>
             <p className="mt-2 max-w-[48ch] text-[14.5px] leading-relaxed text-muted">
               Kartu latihan muncul setelah kamu membuka modul. Mulai dari modul pertama, atau latih semua materi sekaligus.

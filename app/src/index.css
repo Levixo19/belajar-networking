@@ -803,8 +803,9 @@ a.tile:hover, button.tile:hover { border-color: var(--border-strong); box-shadow
   .tumpuk-kartu::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: var(--bg); opacity: var(--redup, 0); pointer-events: none; }
   .tumpuk-nomor { position: absolute; top: 1.75rem; right: 2rem; font-size: 0.85rem; font-weight: 600; color: var(--text-faint); font-variant-numeric: tabular-nums; }
 
-  /* Akordeon: tirai gradien ke gelap supaya teks putih selalu di atas lapisan pekat. */
-  .hacc-tirai { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10, 11, 15, 0.2), rgba(10, 11, 15, 0.6) 45%, rgba(10, 11, 15, 0.92)); }
+  /* Akordeon: latar sampul tahap + tirai gradien ke --surface; teks memakai token teks
+     dan berdiri di bagian tirai yang pekat. */
+  .hacc-tirai { position: absolute; inset: 0; background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 10%, transparent), color-mix(in srgb, var(--surface) 72%, transparent) 42%, var(--surface) 82%); }
 
   /* Carousel kartu review */
   .carousel-jalur { display: flex; gap: 1rem; list-style: none; margin: 0; padding: 0; transition: transform 0.5s var(--ease-out); }
@@ -814,4 +815,18 @@ a.tile:hover, button.tile:hover { border-color: var(--border-strong); box-shadow
     transition: opacity 0.3s var(--ease-std);
   }
   .carousel-kartu[aria-hidden="true"] { opacity: 0.45; }
+}
+
+/* =========================================================================
+   Sampul generatif (lib/sampul.tsx). Rona dibaca dari --sampul-s/--sampul-l:
+   tema terang DIGELAPKAN, bukan dipucatkan, supaya tidak pudar jadi krem.
+   ========================================================================= */
+@layer components {
+  .sampul { display: block; width: 100%; height: 100%; --sampul-s: 46%; --sampul-l: 62%; }
+  :root:not([data-theme="dark"]) .sampul { --sampul-s: 50%; --sampul-l: 44%; }
+  .sampul-tanda { font-family: var(--font-mono); font-weight: 600; letter-spacing: -0.04em; fill: var(--text); opacity: 0.1; }
+  /* Kepala halaman bersampul: teks kiri, sampul kanan, sudut membulat. */
+  .kepala-bersampul { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 3rem; align-items: center; }
+  .kepala-sampul { position: relative; aspect-ratio: 7 / 5; overflow: hidden; border-radius: var(--radius-xl); border: 1px solid var(--border); }
+  @media (max-width: 1023px) { .kepala-bersampul { grid-template-columns: minmax(0, 1fr); } .kepala-sampul { aspect-ratio: 16 / 6; } }
 }

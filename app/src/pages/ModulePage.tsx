@@ -8,6 +8,7 @@ import ReadingSettings from '../components/ReadingSettings'
 import BacaanLanjutan from '../components/BacaanLanjutan'
 import { scrollToId } from '../lib/scrollTo'
 import { linkModuleRefs } from '../lib/modRefs'
+import { SampulTahap } from '../lib/sampul'
 import { toolForModule } from '../tools'
 import { IconCheck, IconArrowRight, IconArrowLeft, IconClock, IconBook, IconCards, IconFlask, StageIcon } from '../components/icons'
 
@@ -74,6 +75,8 @@ export default function ModulePage() {
         <article className="min-w-0 flex-1">
           <div className="mx-auto max-w-[44rem]">
             <header className="fade-up mb-12">
+              {/* Satu sampul per TAHAP: modul di tahap yang sama berbagi ruang, pindah tahap terasa pindah ruang. */}
+              {stage && <div className="kepala-sampul mb-9 !aspect-[16/4]"><SampulTahap tahap={stage.id} band={stage.band} lebar={880} tinggi={220} /></div>}
               {stage && (
                 <nav aria-label="Lokasi" className="mb-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-faint">
                   <Link to="/" className="hover:text-[var(--text)]">Dasbor</Link>

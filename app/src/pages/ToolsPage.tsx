@@ -3,6 +3,8 @@ import { TOOLS } from '../tools'
 import { photo } from '../lib/photos'
 import DetailShell from '../components/DetailShell'
 import { IconArrowRight, IconTerminal } from '../components/icons'
+import KepalaBersampul from '../components/KepalaBersampul'
+import { Sampul } from '../lib/sampul'
 
 export default function ToolsPage() {
   const { tool } = useParams()
@@ -25,14 +27,14 @@ export default function ToolsPage() {
 
   return (
     <div className="mx-auto max-w-[1280px] px-4 pb-24 pt-12 sm:px-6 md:pt-20 lg:px-8">
-      <header className="fade-up max-w-3xl">
+      <KepalaBersampul sampul={{ benih: 'alat-interaktif', rona: 196, ragam: 'kisi', tanda: '/24' }}>
         <h1 className="text-[clamp(2.2rem,4.5vw,3.5rem)] font-semibold leading-[1.04] tracking-[-0.045em]">
           Konsep abstrak, dibuat bisa disentuh.
         </h1>
         <p className="mt-5 max-w-[56ch] text-[17px] leading-relaxed text-muted">
           Simulator untuk subnetting, biner, model OSI, dan perjalanan paket. Semua berjalan di browser.
         </p>
-      </header>
+      </KepalaBersampul>
 
       {/* Bento: md 2 kolom (2+6=8 sel), lg 4 kolom (2+6=8 sel). Tidak ada sel kosong. */}
       <div className="bento stagger mt-14 md:!grid-cols-2 lg:!grid-cols-4">
@@ -48,7 +50,8 @@ export default function ToolsPage() {
           </Link>
         )}
         {lain.map(t => (
-          <Link key={t.slug} to={`/tools/${t.slug}`} className="tile group flex min-h-[13rem] flex-col justify-between gap-6">
+          <Link key={t.slug} to={`/tools/${t.slug}`} className="tile group flex min-h-[13rem] flex-col justify-between gap-6 !pt-0">
+            <span className="-mx-6 block h-20 overflow-hidden border-b border-app"><Sampul benih={'alat:' + t.slug} rona={196} lebar={420} tinggi={110} /></span>
             <div className="flex items-start justify-between">
               <span className="road-ico"><t.Icon size={17} /></span>
               <span className="btn-bubble text-faint group-hover:text-[var(--text)]"><IconArrowRight size={16} /></span>

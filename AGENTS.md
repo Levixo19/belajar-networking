@@ -362,3 +362,34 @@ abu kotor, sudah pernah terjadi.
 **Fallback SPA hanya untuk path tanpa ekstensi** (`server/app.mjs`). Aset yang tidak
 ada (tab lama sesudah build ulang) dijawab 404, bukan `index.html` yang membuat
 browser melapor galat MIME yang menyesatkan.
+
+### Gambar dan bentuk (Fase 5, 2026-10-15)
+
+**Sampul generatif** (`lib/sampul.tsx`): SVG yang dibangkitkan dari benih teks
+(FNV-1a + mulberry32), lima ragam bertema jaringan (topologi, kisi, gelombang, paket,
+mesh), rona per band/tahap (`ronaTahap`) atau per rumpun (`RONA_RUMPUN`), tanda per
+tahap ("L2", "/24", "BGP"). Benih sama = gambar sama, jadi JANGAN memakai benih yang
+berubah tiap render (tanggal, indeks acak). Warna lewat `var()` dan
+`--sampul-s/--sampul-l` (tema terang digelapkan, bukan dipucatkan). Sampul selalu
+`aria-hidden`, dan teks di atasnya berdiri di atas tirai pekat (akordeon: tirai ke
+`--surface`; hero: tirai gelap). Satu sampul per TAHAP di kepala halaman modul.
+
+**Diagram SVG menggantikan ASCII lewat `enrich.json`, bukan lewat `.md`.**
+`{ type: "diagram", id, after, ganti: true }` membuat build MENGGANTI figur ASCII
+pertama di bagian itu; berkas materi tidak disentuh. Build GAGAL kalau ID diagram
+tidak terdaftar di `src/diagrams/index.tsx`, kalau jangkar tidak ada, kalau modulnya
+tidak ada, atau kalau `ganti: true` menunjuk bagian tanpa figur ASCII. Aturan
+terakhir sudah menangkap satu klaim keliru dari agen penulis diagram (blok kode biasa
+dikira figur ASCII). Diagram baru wajib memuat SEMUA isi ASCII yang digantinya.
+
+**Diagram diperiksa di browser, bukan dipercaya dari perkiraan lebar huruf.**
+Pemeriksaan: setiap `<text>` di `svg.dg` dibandingkan kotaknya dengan teks lain dan
+dengan viewBox, dalam koordinat SVG (`getScreenCTM`). `getBBox()` polos memberi
+koordinat LOKAL di dalam `<g transform>`, dan pemeriksaan pertama tertipu karenanya
+(semua label perangkat tampak bertumpuk di (0,30)). Hasil 2026-10-15: 70 modul
+berdiagram baru, 1 tumpang-tindih nyata (ARP spoofing, sudah diperbaiki).
+
+**Foto asli tinggal di `app/public/img/` dengan kredit di `data/photos.json`**, diambil
+dari Wikimedia Commons lewat API (`extmetadata`: lisensi dan pembuat dibaca dari
+metadata, bukan diketik), diunduh pada lebar 1.920 px, dan hanya CC BY, CC BY-SA, CC0,
+atau domain publik. Foto yang tampil di halaman wajib menampilkan kreditnya.

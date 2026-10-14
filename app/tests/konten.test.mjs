@@ -47,3 +47,28 @@ test('kartu latihan selalu punya pertanyaan dan jawaban', () => {
   for (const m of bundel.stages.flatMap(s => s.modules))
     for (const c of m.cards) assert.ok(c.q.trim() && c.aHtml.trim(), c.id)
 })
+
+test('setiap ID diagram di enrich.json terdaftar di src/diagrams/index.tsx', () => {
+  const reg = new Set([...fs.readFileSync(path.join(APP, 'src/diagrams/index.tsx'), 'utf8').matchAll(/^\s*'([a-z0-9-]+)':\s*[A-Za-z0-9_.]+,?\s*$/gm)].map(m => m[1]))
+  const enrich = JSON.parse(fs.readFileSync(path.join(APP, 'data/enrich.json'), 'utf8'))
+  const asing = Object.entries(enrich).filter(([k]) => !k.startsWith('_')).flatMap(([m, l]) => l.filter(w => w.type === 'diagram' && !reg.has(w.id)).map(w => `${m}: ${w.id}`))
+  assert.deepEqual(asing, [])
+})
+
+test('build GAGAL untuk ID diagram asing, jangkar hilang, dan ganti tanpa ASCII', () => {
+  const os = { tmpdir: () => process.env.TMPDIR || '/tmp' }
+  const asli = JSON.parse(fs.readFileSync(path.join(APP, 'data/enrich.json'), 'utf8'))
+  for (const [nama, w, pesan] of [
+    ['ID asing', { type: 'diagram', id: 'tidak-ada-diagram-ini', after: '2-topologi-dasar' }, /tidak terdaftar/],
+    ['jangkar hilang', { type: 'diagram', id: 'topologi', after: 'bagian-yang-tidak-ada' }, /jangkar/],
+  ]) {
+    const f = path.join(os.tmpdir(), `enrich-uji-${process.pid}.json`)
+    fs.writeFileSync(f, JSON.stringify({ ...asli, '00-fondasi/05-topologi': [...asli['00-fondasi/05-topologi'], w] }))
+    const r = spawnSync(process.execPath, ['scripts/build-content.mjs'], { cwd: APP, encoding: 'utf8', env: { ...process.env, BN_ENRICH: f } })
+    fs.rmSync(f, { force: true })
+    assert.equal(r.status, 1, `${nama}: build seharusnya gagal`)
+    assert.match(r.stderr, pesan, nama)
+  }
+  // Pulihkan berkas hasil build yang mungkin tertimpa setengah jalan.
+  assert.equal(spawnSync(process.execPath, ['scripts/build-content.mjs'], { cwd: APP }).status, 0)
+})

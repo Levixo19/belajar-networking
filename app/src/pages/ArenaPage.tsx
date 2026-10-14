@@ -3,6 +3,8 @@ import { GAMES } from '../games'
 import { useStore } from '../lib/store'
 import DetailShell from '../components/DetailShell'
 import { IconArrowRight, IconTrophy } from '../components/icons'
+import KepalaBersampul from '../components/KepalaBersampul'
+import { Sampul } from '../lib/sampul'
 
 export default function ArenaPage() {
   const { game } = useParams()
@@ -24,7 +26,7 @@ export default function ArenaPage() {
 
   return (
     <div className="mx-auto max-w-[1100px] px-4 pb-24 pt-12 sm:px-6 md:pt-20 lg:px-8">
-      <header className="fade-up grid items-end gap-10 md:grid-cols-[minmax(0,1fr)_auto]">
+      <KepalaBersampul sampul={{ benih: 'arena-latihan', rona: 28, ragam: 'paket', tanda: '0x' }}>
         <div>
           <h1 className="max-w-[16ch] text-[clamp(2.2rem,4.5vw,3.5rem)] font-semibold leading-[1.04] tracking-[-0.045em]">
             Hitungan cepat, sampai jadi insting.
@@ -33,7 +35,7 @@ export default function ArenaPage() {
             Subnet, biner, port, dan urutan OSI. Hal yang harus terjawab dalam detik saat troubleshooting.
           </p>
         </div>
-        <div className="flex items-center gap-4 md:justify-end">
+        <div className="mt-8 flex items-center gap-4">
           <IconTrophy size={22} className="text-faint" />
           <div>
             <div className="stat-num !text-[2.4rem]">{total.toLocaleString('id')}</div>
@@ -42,15 +44,18 @@ export default function ArenaPage() {
             </div>
           </div>
         </div>
-      </header>
+      </KepalaBersampul>
 
       <ol className="road stagger mt-16 border-t border-app">
         {GAMES.map(g => {
           const best = store.games[g.slug] || 0
           return (
             <li key={g.slug}>
-              <Link to={`/arena/${g.slug}`} className="road-item group !grid-cols-[2.5rem_minmax(0,1fr)_auto] !py-6">
-                <span className="road-ico"><g.Icon size={17} /></span>
+              <Link to={`/arena/${g.slug}`} className="road-item group !grid-cols-[6rem_minmax(0,1fr)_auto] !gap-6 !py-6">
+                <span className="relative block h-16 w-24 overflow-hidden rounded-[var(--radius-md)] border border-app">
+                  <Sampul benih={'arena:' + g.slug} rona={28} lebar={192} tinggi={128} />
+                  <span className="absolute inset-0 grid place-items-center"><span className="grid h-8 w-8 place-items-center rounded-full bg-[var(--surface)] text-[var(--text)] shadow-[var(--shadow-sm)]"><g.Icon size={16} /></span></span>
+                </span>
                 <span className="min-w-0">
                   <span className="block text-[18px] font-medium tracking-[-0.02em]">{g.name}</span>
                   <span className="mt-1 block text-[14px] text-muted">{g.desc}</span>
