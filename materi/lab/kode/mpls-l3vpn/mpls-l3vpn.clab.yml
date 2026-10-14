@@ -1,0 +1,76 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Kontributor Belajar Networking
+#
+# Lab MPLS LDP dan L3VPN (modul 22-service-provider/01-mpls-ldp dan 02-mpls-l3vpn).
+#
+#   ce1a (AS65001) --eth2--+                                 +--eth2-- ce2a (AS65001)
+#   192.168.1.0/24         |                                 |         192.168.2.0/24
+#                         pe1 ==eth1== p1 ==eth2== pe2
+#   ce1b (static)  --eth3--+  10.255.0.1   10.255.0.2   10.255.0.3  +--eth3-- ce2b (static)
+#   192.168.1.0/24                                                     192.168.2.0/24
+#
+#   Core   : IS-IS L2 + LDP, AS 65000, MP-BGP VPNv4 pe1 <-> pe2 (p1 tanpa BGP)
+#   VRF    : CUST-A (RD <lo>:100, RT 65000:100), CUST-B (RD <lo>:200, RT 65000:200)
+#   Pelanggan A dan B memakai alamat yang IDENTIK, termasuk subnet link PE-CE.
+#
+# Prasyarat host (sekali per boot):  sudo modprobe mpls_router mpls_iptunnel
+# Jalankan : sudo containerlab deploy -t mpls-l3vpn.clab.yml
+# Uji      : ./uji.sh
+# CLI      : docker exec -it clab-mpls-l3vpn-pe1 vtysh
+# Bongkar  : sudo containerlab destroy -t mpls-l3vpn.clab.yml --cleanup
+name: mpls-l3vpn
+
+topology:
+  defaults:
+    kind: linux
+    image: quay.io/frrouting/frr:10.4.1
+    entrypoint: /mulai.sh
+    binds:
+      - configs/mulai.sh:/mulai.sh:ro
+      - configs/daemons:/etc/frr/daemons
+      - configs/vtysh.conf:/etc/frr/vtysh.conf
+  nodes:
+    pe1:
+      binds:
+        - configs/pe1/frr.conf:/etc/frr/frr.conf
+      env:
+        MPLS_IFACES: eth1
+        VRFS: "CUST-A:10:eth2 CUST-B:20:eth3"
+    p1:
+      binds:
+        - configs/p1/frr.conf:/etc/frr/frr.conf
+      env:
+        MPLS_IFACES: "eth1 eth2"
+    pe2:
+      binds:
+        - configs/pe2/frr.conf:/etc/frr/frr.conf
+      env:
+        MPLS_IFACES: eth1
+        VRFS: "CUST-A:10:eth2 CUST-B:20:eth3"
+    ce1a:
+      binds:
+        - configs/ce1a/frr.conf:/etc/frr/frr.conf
+      env:
+        LAN: "yes"
+    ce2a:
+      binds:
+        - configs/ce2a/frr.conf:/etc/frr/frr.conf
+      env:
+        LAN: "yes"
+    ce1b:
+      binds:
+        - configs/ce1b/frr.conf:/etc/frr/frr.conf
+      env:
+        LAN: "yes"
+    ce2b:
+      binds:
+        - configs/ce2b/frr.conf:/etc/frr/frr.conf
+      env:
+        LAN: "yes"
+  links:
+    - endpoints: ["pe1:eth1", "p1:eth1"]
+    - endpoints: ["p1:eth2", "pe2:eth1"]
+    - endpoints: ["pe1:eth2", "ce1a:eth1"]
+    - endpoints: ["pe1:eth3", "ce1b:eth1"]
+    - endpoints: ["pe2:eth2", "ce2a:eth1"]
+    - endpoints: ["pe2:eth3", "ce2b:eth1"]

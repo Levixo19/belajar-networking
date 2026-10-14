@@ -1,0 +1,43 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Kontributor Belajar Networking
+#
+# Lab 22.5: BFD, konvergensi cepat, Add-Path, dan graceful shutdown (FRRouting).
+#
+#   up1 (AS65001)                      up2 (AS65002)
+#        |  eBGP+BFD+GTSM+MD5               |
+#       pe1 -------- p1 (P + RR) -------- pe2        AS 65000: IS-IS L2 + BFD,
+#                     |                              iBGP ke RR p1 (Add-Path)
+#                    pe3
+#
+# Kedua upstream mengiklankan 203.0.113.0/24 dan 198.51.100.0/24.
+# pe3 menerima kedua jalur lewat RR berkat Add-Path dan memasang ECMP.
+name: sp-ha
+
+topology:
+  defaults:
+    kind: linux
+    image: quay.io/frrouting/frr:10.7.1
+    # Hapus default route jaringan manajemen agar next-hop BGP tidak "tertolong"
+    # oleh rute default lewat eth0 (membuat eksperimen konvergensi menyesatkan).
+    exec:
+      - ip route del default
+  nodes:
+    pe1:
+      binds: [daemons:/etc/frr/daemons, vtysh.conf:/etc/frr/vtysh.conf, pe1/frr.conf:/etc/frr/frr.conf]
+    pe2:
+      binds: [daemons:/etc/frr/daemons, vtysh.conf:/etc/frr/vtysh.conf, pe2/frr.conf:/etc/frr/frr.conf]
+    pe3:
+      binds: [daemons:/etc/frr/daemons, vtysh.conf:/etc/frr/vtysh.conf, pe3/frr.conf:/etc/frr/frr.conf]
+    p1:
+      binds: [daemons:/etc/frr/daemons, vtysh.conf:/etc/frr/vtysh.conf, p1/frr.conf:/etc/frr/frr.conf]
+    up1:
+      binds: [daemons:/etc/frr/daemons, vtysh.conf:/etc/frr/vtysh.conf, up1/frr.conf:/etc/frr/frr.conf]
+    up2:
+      binds: [daemons:/etc/frr/daemons, vtysh.conf:/etc/frr/vtysh.conf, up2/frr.conf:/etc/frr/frr.conf]
+
+  links:
+    - endpoints: ["pe1:eth1", "p1:eth1"]
+    - endpoints: ["pe2:eth1", "p1:eth2"]
+    - endpoints: ["pe3:eth1", "p1:eth3"]
+    - endpoints: ["pe1:eth2", "up1:eth1"]
+    - endpoints: ["pe2:eth2", "up2:eth1"]

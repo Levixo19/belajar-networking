@@ -1,0 +1,82 @@
+# Dihasilkan oleh scripts/render.py. JANGAN diedit manual.
+h1:
+  data:
+    config: null
+    container: clab-netdevops-h1
+    nos: linux
+    role: client
+  groups:
+  - linux_host
+  hostname: 172.30.30.31
+noc1:
+  data:
+    config: null
+    container: clab-netdevops-noc1
+    nos: linux
+    role: client
+  groups:
+  - linux_host
+  hostname: 172.30.30.32
+r1:
+  data:
+    config: build/configs/r1.frr.conf
+    container: clab-netdevops-r1
+    nos: frr
+    role: core-router
+  groups:
+  - frr
+  hostname: 172.30.30.11
+r2:
+  data:
+    config: build/configs/r2.frr.conf
+    container: clab-netdevops-r2
+    nos: frr
+    role: core-router
+  groups:
+  - frr
+  hostname: 172.30.30.12
+r3:
+  data:
+    config: build/configs/r3.frr.conf
+    container: clab-netdevops-r3
+    nos: frr
+    role: dist-router
+  groups:
+  - frr
+  hostname: 172.30.30.13
+r4:
+  data:
+    config: build/configs/r4.frr.conf
+    container: clab-netdevops-r4
+    nos: frr
+    role: dist-router
+  groups:
+  - frr
+  hostname: 172.30.30.14
+srv1:
+  data:
+    config: build/configs/srv1.iptables
+    container: clab-netdevops-srv1
+    nos: linux
+    role: server
+  groups:
+  - linux_host
+  hostname: 172.30.30.33
+sw1:
+  data:
+    config: build/configs/sw1.srl.cli
+    container: clab-netdevops-sw1
+    nos: srlinux
+    role: access-switch
+  groups:
+  - srlinux
+  hostname: 172.30.30.21
+sw2:
+  data:
+    config: build/configs/sw2.srl.cli
+    container: clab-netdevops-sw2
+    nos: srlinux
+    role: access-switch
+  groups:
+  - srlinux
+  hostname: 172.30.30.22

@@ -1,0 +1,74 @@
+{
+ "rj45-plug": {
+  "src": "/img/rj45-plug.jpg",
+  "credit": "David Monniaux · CC BY-SA 3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Ethernet_RJ45_connector_p1160054.jpg",
+  "title": "File:Ethernet RJ45 connector p1160054.jpg"
+ },
+ "fiber-connector": {
+  "src": "/img/fiber-connector.jpg",
+  "credit": "Adamantios · CC BY-SA 3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:LC-optical-fiber-connector-hdr-0a.jpg",
+  "title": "File:LC-optical-fiber-connector-hdr-0a.jpg"
+ },
+ "sfp-module": {
+  "src": "/img/sfp-module.jpg",
+  "credit": "Dmitry Nosachev · CC BY-SA 4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:LR-Link_10GBASE-SR_SFP%2B_transceiver.jpg",
+  "title": "File:LR-Link 10GBASE-SR SFP+ transceiver.jpg"
+ },
+ "patch-panel": {
+  "src": "/img/patch-panel.jpg",
+  "credit": "Dsimic · CC BY-SA 4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:19-inch_rackmount_Ethernet_switches_and_patch_panels.jpg",
+  "title": "File:19-inch rackmount Ethernet switches and patch panels.jpg"
+ },
+ "access-point": {
+  "src": "/img/access-point.jpg",
+  "credit": "Xosema · CC BY-SA 4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Cisco_Aironet_1131AG_-_Close.jpg",
+  "title": "File:Cisco Aironet 1131AG - Close.jpg"
+ },
+ "mikrotik": {
+  "src": "/img/mikrotik.jpg",
+  "credit": "Raimond Spekking · CC BY-SA 4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:MikroTik_RouterBoard_RB260GS-7378.jpg",
+  "title": "File:MikroTik RouterBoard RB260GS-7378.jpg"
+ },
+ "coaxial": {
+  "src": "/img/coaxial.jpg",
+  "credit": "FDominec · CC BY-SA 3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Coaxial_cable_cut.jpg",
+  "title": "File:Coaxial cable cut.jpg"
+ },
+ "router-soho": {
+  "src": "/img/router-soho.jpg",
+  "credit": "Deavmi · CC BY-SA 3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Mikrotik_RB951Ui-2HnD.jpg",
+  "title": "File:Wireless router.jpg"
+ },
+ "antenna": {
+  "src": "/img/antenna.jpg",
+  "credit": "MTI Wireless · CC BY-SA 4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Omni_antenna.jpg",
+  "title": "File:Omni antenna.jpg"
+ },
+ "cable-tester": {
+  "src": "/img/cable-tester.jpg",
+  "credit": "George Shuklin · Public domain",
+  "page": "https://commons.wikimedia.org/wiki/File:Network_cable_tester.jpg",
+  "title": "File:Network cable tester.jpg"
+ },
+ "utp-cable": {
+  "src": "/img/utp-cable.jpg",
+  "credit": "Baran Ivo · Public domain",
+  "page": "https://commons.wikimedia.org/wiki/File:UTP_cable.jpg",
+  "title": "File:UTP cable.jpg"
+ },
+ "fiber-strands": {
+  "src": "/img/fiber-strands.jpg",
+  "credit": "Srleffler · CC BY-SA 3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Optical_fiber_cable.jpg",
+  "title": "File:Optical fiber cable.jpg"
+ }
+}

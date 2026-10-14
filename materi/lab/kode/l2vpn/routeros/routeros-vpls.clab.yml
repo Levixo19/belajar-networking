@@ -1,0 +1,35 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Kontributor Belajar Networking
+#
+# Lab 22.4 (data plane nyata): VPLS berbasis LDP di MikroTik CHR (lisensi gratis CHR
+# membatasi kecepatan 1 Mbps per interface, cukup untuk lab).
+# Image dibangun sendiri dengan vrnetlab dari CHR resmi MikroTik:
+#   git clone https://github.com/srl-labs/vrnetlab && cd vrnetlab/mikrotik/routeros
+#   (unduh chr-7.24.5.vmdk dari mikrotik.com/download ke direktori itu, lalu) make docker-image
+# Berkas .rsc diuji dengan RouterOS 7.24.5 (CHR di QEMU); topologi ini sendiri belum
+# dijalankan lewat containerlab oleh penulis.
+#
+#   ce1 -- pe1 --- p1 --- pe2 -- ce2
+#                   |
+#                  pe3 -- ce3
+name: ros-vpls
+
+topology:
+  defaults:
+    kind: mikrotik_ros
+    image: vrnetlab/mikrotik_routeros:7.24.5
+  nodes:
+    pe1: { startup-config: pe1.rsc }
+    pe2: { startup-config: pe2.rsc }
+    pe3: { startup-config: pe3.rsc }
+    p1:  { startup-config: p1.rsc }
+    ce1: { startup-config: ce1.rsc }
+    ce2: { startup-config: ce2.rsc }
+    ce3: { startup-config: ce3.rsc }
+  links:
+    - endpoints: ["pe1:ether2", "p1:ether2"]
+    - endpoints: ["pe2:ether2", "p1:ether3"]
+    - endpoints: ["pe3:ether2", "p1:ether4"]
+    - endpoints: ["ce1:ether2", "pe1:ether3"]
+    - endpoints: ["ce2:ether2", "pe2:ether3"]
+    - endpoints: ["ce3:ether2", "pe3:ether3"]

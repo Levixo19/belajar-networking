@@ -1,0 +1,14 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Kontributor Belajar Networking
+#
+# Provisioning sumber data Grafana. uid tetap agar dashboard bisa merujuknya.
+---
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    uid: prometheus
+    type: prometheus
+    access: proxy
+    url: http://172.30.30.42:9090
+    isDefault: true

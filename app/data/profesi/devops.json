@@ -1,0 +1,470 @@
+[
+  {
+    "id": "devops-engineer",
+    "nama": "DevOps Engineer",
+    "rumpun": "devops",
+    "ringkas": "Membangun dan merawat pipeline, container, dan infrastruktur sebagai kode agar perubahan aplikasi sampai ke produksi dengan cepat dan aman.",
+    "jenjang": "menengah",
+    "harian": [
+      "Memperbaiki dan mempercepat pipeline CI/CD yang gagal atau lambat",
+      "Meninjau pull request Terraform untuk kesalahan keamanan dan biaya",
+      "Menyiapkan rilis canary atau blue-green di Kubernetes",
+      "Memindahkan secret dari variabel CI ke secret manager",
+      "Menulis runbook deploy dan rollback untuk tim aplikasi"
+    ],
+    "keahlian": [
+      "linux",
+      "ci-cd",
+      "otomasi-iac",
+      "container-kubernetes",
+      "cloud",
+      "scripting-python",
+      "monitoring-observability",
+      "komunikasi-dokumentasi"
+    ],
+    "alat": [
+      "GitLab CI",
+      "GitHub Actions",
+      "Jenkins",
+      "Argo CD",
+      "Docker",
+      "Kubernetes",
+      "Helm",
+      "Terraform/OpenTofu",
+      "Ansible",
+      "HashiCorp Vault"
+    ],
+    "sertifikasi": [
+      {
+        "nama": "HashiCorp Certified: Terraform Associate (004)",
+        "penerbit": "HashiCorp",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "Certified Kubernetes Administrator (CKA)",
+        "penerbit": "Linux Foundation / CNCF",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "Certified Kubernetes Application Developer (CKAD)",
+        "penerbit": "Linux Foundation / CNCF",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "AWS Certified Solutions Architect Associate (SAA-C03)",
+        "penerbit": "Amazon Web Services",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "AWS Certified DevOps Engineer Professional (DOP-C02)",
+        "penerbit": "Amazon Web Services",
+        "tingkat": "senior"
+      },
+      {
+        "nama": "Microsoft Certified: DevOps Engineer Expert (AZ-400)",
+        "penerbit": "Microsoft",
+        "tingkat": "senior"
+      }
+    ],
+    "masuk": "Paling sering dari system administrator Linux atau backend developer berpengalaman sekitar satu tahun. Network engineer bisa masuk dengan menambah Git, container, dan satu cloud serta portofolio pipeline.",
+    "naik": [
+      "site-reliability-engineer",
+      "solution-architect"
+    ],
+    "dekat": [
+      "cloud-infrastructure-engineer",
+      "automation-engineer",
+      "system-engineer"
+    ],
+    "modul": [
+      "13-linux-networking/01-iproute2",
+      "06-aplikasi/01-dns",
+      "06-aplikasi/03-http",
+      "06-aplikasi/04-tls-pki",
+      "15-otomasi/02-data-dan-api",
+      "15-otomasi/04-ansible-cicd",
+      "16-datacenter-cloud-sdn/04-cloud-networking",
+      "16-datacenter-cloud-sdn/05-container-kubernetes",
+      "14-monitoring-troubleshooting/03-observability",
+      "20-proyek-akhir/08-babak-7-kode-yang-menjaga"
+    ],
+    "proyek": [
+      "Pipeline GitHub Actions: test, build image, pindai kerentanan, deploy ke cluster k3s, lengkap dengan prosedur rollback",
+      "Lingkungan cloud (VPC, subnet, NAT, load balancer) sepenuhnya dari Terraform dengan plan otomatis di setiap pull request",
+      "Prometheus dan Grafana untuk aplikasi tersebut dengan satu dashboard dan dua aturan alert yang masuk akal"
+    ],
+    "gaji": {
+      "rentang": "Rp 7,06 juta - Rp 8,88 juta per bulan",
+      "konteks": "Rentang tipikal nasional dari iklan lowongan yang mencantumkan gaji; Jakarta Raya sekitar Rp 8,5-11,5 juta. Perusahaan teknologi besar jarang mencantumkan gaji di iklan.",
+      "sumber": "Jobstreet Indonesia, Wawasan Gaji DevOps Engineer (diakses Oktober 2026)",
+      "url": "https://id.jobstreet.com/id/career-advice/role/devops-engineer/salary"
+    },
+    "sumber": [
+      {
+        "judul": "DORA: Software delivery performance metrics",
+        "url": "https://dora.dev/guides/dora-metrics/"
+      },
+      {
+        "judul": "HashiCorp: Terraform Associate (004)",
+        "url": "https://developer.hashicorp.com/certifications/terraform-associate"
+      },
+      {
+        "judul": "AWS Certified DevOps Engineer Professional (DOP-C02)",
+        "url": "https://aws.amazon.com/certification/certified-devops-engineer-professional/"
+      },
+      {
+        "judul": "Microsoft Certified: DevOps Engineer Expert",
+        "url": "https://learn.microsoft.com/en-us/credentials/certifications/devops-engineer/"
+      },
+      {
+        "judul": "Linux Foundation: Certified Kubernetes Administrator (CKA)",
+        "url": "https://training.linuxfoundation.org/certification/certified-kubernetes-administrator-cka/"
+      },
+      {
+        "judul": "Jobstreet Indonesia: Gaji DevOps Engineer",
+        "url": "https://id.jobstreet.com/id/career-advice/role/devops-engineer/salary"
+      }
+    ]
+  },
+  {
+    "id": "site-reliability-engineer",
+    "nama": "Site Reliability Engineer (SRE)",
+    "rumpun": "devops",
+    "ringkas": "Menjaga keandalan layanan produksi dengan SLO, error budget, alerting, on-call, postmortem tanpa menyalahkan, dan otomasi untuk mengurangi toil.",
+    "jenjang": "menengah",
+    "harian": [
+      "Meninjau konsumsi error budget tiap layanan terhadap SLO",
+      "Menangani alert on-call dan memimpin pemulihan insiden",
+      "Memfasilitasi postmortem tanpa menyalahkan dan memantau tindak lanjutnya",
+      "Menjalankan uji beban menjelang puncak trafik seperti 12.12",
+      "Menulis alat otomasi untuk menghapus pekerjaan operasional berulang"
+    ],
+    "keahlian": [
+      "monitoring-observability",
+      "respons-insiden",
+      "troubleshooting",
+      "linux",
+      "container-kubernetes",
+      "scripting-python",
+      "otomasi-iac",
+      "komunikasi-dokumentasi"
+    ],
+    "alat": [
+      "Prometheus",
+      "Alertmanager",
+      "Grafana",
+      "OpenTelemetry",
+      "Loki",
+      "Jaeger atau Tempo",
+      "PagerDuty atau Opsgenie",
+      "k6",
+      "Kubernetes",
+      "Terraform"
+    ],
+    "sertifikasi": [
+      {
+        "nama": "Prometheus Certified Associate (PCA)",
+        "penerbit": "Linux Foundation / CNCF",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "OpenTelemetry Certified Associate (OTCA)",
+        "penerbit": "Linux Foundation / CNCF",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "Certified Kubernetes Administrator (CKA)",
+        "penerbit": "Linux Foundation / CNCF",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "Google Cloud Professional Cloud DevOps Engineer",
+        "penerbit": "Google Cloud",
+        "tingkat": "senior"
+      },
+      {
+        "nama": "Certified Kubernetes Security Specialist (CKS)",
+        "penerbit": "Linux Foundation / CNCF",
+        "tingkat": "senior"
+      }
+    ],
+    "masuk": "Jarang menjadi pekerjaan pertama; umumnya dari DevOps, sysadmin, backend engineer, atau NOC/network engineer yang terbiasa on-call. Di Indonesia judul SRE paling banyak ada di perusahaan teknologi besar, bank digital, dan fintech.",
+    "naik": [
+      "solution-architect",
+      "it-operations-manager"
+    ],
+    "dekat": [
+      "devops-engineer",
+      "cloud-infrastructure-engineer",
+      "system-engineer"
+    ],
+    "modul": [
+      "00-fondasi/03-sinyal-bandwidth-latency",
+      "05-transport/02-tcp",
+      "05-transport/04-congestion-control",
+      "06-aplikasi/01-dns",
+      "14-monitoring-troubleshooting/01-metodologi",
+      "14-monitoring-troubleshooting/03-observability",
+      "14-monitoring-troubleshooting/04-studi-kasus",
+      "16-datacenter-cloud-sdn/05-container-kubernetes",
+      "20-proyek-akhir/09-babak-8-malam-panjang",
+      "lab/08-lab-netdevops"
+    ],
+    "proyek": [
+      "Aplikasi kecil berinstrumen OpenTelemetry dengan dashboard SLO, perhitungan error budget, dan alert burn rate di Grafana",
+      "Chaos experiment di lab (matikan replika, sisipkan latensi dengan tc netem) lalu tulis postmortem lengkap",
+      "Skrip pengurangan toil, misalnya pengecek masa berlaku sertifikat TLS, beserta perkiraan jam kerja yang dihemat"
+    ],
+    "sumber": [
+      {
+        "judul": "Google SRE Book: Service Level Objectives",
+        "url": "https://sre.google/sre-book/service-level-objectives/"
+      },
+      {
+        "judul": "Google SRE Book: Eliminating Toil",
+        "url": "https://sre.google/sre-book/eliminating-toil/"
+      },
+      {
+        "judul": "Google SRE Book: Postmortem Culture",
+        "url": "https://sre.google/sre-book/postmortem-culture/"
+      },
+      {
+        "judul": "Google Cloud: Professional Cloud DevOps Engineer",
+        "url": "https://cloud.google.com/learn/certification/cloud-devops-engineer"
+      },
+      {
+        "judul": "Linux Foundation: Prometheus Certified Associate",
+        "url": "https://training.linuxfoundation.org/certification/prometheus-certified-associate/"
+      }
+    ]
+  },
+  {
+    "id": "cloud-infrastructure-engineer",
+    "nama": "Cloud Infrastructure Engineer",
+    "rumpun": "devops",
+    "ringkas": "Membangun fondasi cloud yang aman dan hemat: struktur akun, jaringan virtual, konektivitas hybrid, IAM, dan kontrol biaya, semuanya lewat kode.",
+    "jenjang": "pemula",
+    "harian": [
+      "Menulis modul Terraform untuk VPC, subnet, NAT, dan flow log",
+      "Merencanakan blok CIDR agar tidak bertabrakan dengan jaringan on-premise",
+      "Mengatur VPN atau koneksi dedicated dengan BGP ke data center",
+      "Menyusun kebijakan IAM least privilege untuk tim aplikasi",
+      "Menganalisis tagihan cloud dan mematikan resource yang terlupakan"
+    ],
+    "keahlian": [
+      "cloud",
+      "otomasi-iac",
+      "fundamental-jaringan",
+      "identitas-akses",
+      "keamanan-jaringan",
+      "linux",
+      "arsitektur-desain"
+    ],
+    "alat": [
+      "Amazon Web Services",
+      "Microsoft Azure",
+      "Google Cloud",
+      "Terraform/OpenTofu",
+      "Pulumi",
+      "Ansible",
+      "AWS CLI",
+      "Azure CLI",
+      "Checkov"
+    ],
+    "sertifikasi": [
+      {
+        "nama": "Google Cloud Associate Cloud Engineer",
+        "penerbit": "Google Cloud",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "HashiCorp Certified: Terraform Associate (004)",
+        "penerbit": "HashiCorp",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "AWS Certified Solutions Architect Associate (SAA-C03)",
+        "penerbit": "Amazon Web Services",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "AWS Certified CloudOps Engineer Associate (SOA-C03)",
+        "penerbit": "Amazon Web Services",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "Microsoft Certified: Azure Administrator Associate (AZ-104)",
+        "penerbit": "Microsoft",
+        "tingkat": "menengah"
+      }
+    ],
+    "masuk": "Pintu masuk terbanyak adalah posisi Cloud Engineer di system integrator atau mitra AWS/Microsoft/Google, terbuka bagi lulusan dengan fondasi jaringan dan satu sertifikasi associate. Rujukan kompetensi nasional: SKKNI Bidang Cloud Computing (Kepmenaker 102/2023).",
+    "naik": [
+      "solution-architect",
+      "network-architect"
+    ],
+    "dekat": [
+      "cloud-network-engineer",
+      "devops-engineer",
+      "system-engineer"
+    ],
+    "modul": [
+      "04-network-layer/02-subnetting",
+      "04-network-layer/03-vlsm-cidr",
+      "09-nat-acl-firewall/01-nat",
+      "09-nat-acl-firewall/03-firewall",
+      "11-wan-vpn/02-tunneling-vpn",
+      "07-routing-lanjutan/06-bgp",
+      "16-datacenter-cloud-sdn/03-storage-virtualisasi",
+      "16-datacenter-cloud-sdn/04-cloud-networking",
+      "15-otomasi/04-ansible-cicd",
+      "17-desain-arsitektur/03-perencanaan-dokumentasi"
+    ],
+    "proyek": [
+      "Landing zone mini dengan Terraform: dua VPC dengan rencana CIDR terdokumentasi, peering, NAT, dan flow log",
+      "VPN site-to-site dari router lab (MikroTik CHR atau VyOS) ke cloud dengan BGP dan uji failover",
+      "Laporan penghematan biaya akun lab beserta skrip jadwal mati otomatis dan pembersihan snapshot"
+    ],
+    "sumber": [
+      {
+        "judul": "Kepmenaker Nomor 102 Tahun 2023: SKKNI Bidang Cloud Computing",
+        "url": "https://jdih.kemnaker.go.id/asset/data_puu/SKKNI%202023-102.pdf"
+      },
+      {
+        "judul": "AWS Certified Solutions Architect Associate",
+        "url": "https://aws.amazon.com/certification/certified-solutions-architect-associate/"
+      },
+      {
+        "judul": "AWS Certified CloudOps Engineer Associate",
+        "url": "https://aws.amazon.com/certification/certified-cloudops-engineer-associate/"
+      },
+      {
+        "judul": "Microsoft Certified: Azure Administrator Associate",
+        "url": "https://learn.microsoft.com/en-us/credentials/certifications/azure-administrator/"
+      },
+      {
+        "judul": "Google Cloud: Associate Cloud Engineer",
+        "url": "https://cloud.google.com/learn/certification/cloud-engineer"
+      }
+    ]
+  },
+  {
+    "id": "automation-engineer",
+    "nama": "Automation Engineer (Network Automation / NetDevOps)",
+    "rumpun": "devops",
+    "ringkas": "Mengubah pekerjaan manual di jaringan menjadi kode: source of truth, templat, playbook, pipeline pengujian, dan audit kepatuhan otomatis.",
+    "jenjang": "menengah",
+    "harian": [
+      "Menulis skrip Python atau playbook Ansible untuk provisioning perangkat",
+      "Merawat data perangkat, IP, dan VLAN di NetBox",
+      "Menguji perubahan templat di lab Containerlab lewat pipeline CI",
+      "Memeriksa drift konfigurasi dan membuka tiket bila menyimpang",
+      "Mengajari rekan network engineer alur kerja Git dan pull request"
+    ],
+    "keahlian": [
+      "scripting-python",
+      "otomasi-iac",
+      "routing-switching",
+      "fundamental-jaringan",
+      "ci-cd",
+      "linux",
+      "monitoring-observability"
+    ],
+    "alat": [
+      "Python",
+      "Ansible",
+      "Netmiko",
+      "NAPALM",
+      "Nornir",
+      "NetBox",
+      "Containerlab",
+      "Batfish",
+      "GitLab CI",
+      "Jinja2"
+    ],
+    "sertifikasi": [
+      {
+        "nama": "CCNA Automation (200-901 CCNAAUTO), sebelumnya DevNet Associate",
+        "penerbit": "Cisco",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "HashiCorp Certified: Terraform Associate (004)",
+        "penerbit": "HashiCorp",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "CCNP Automation (350-901 AUTOCOR + ujian konsentrasi)",
+        "penerbit": "Cisco",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "Red Hat Certified Engineer (RHCE) in Ansible (EX200 + EX294)",
+        "penerbit": "Red Hat",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "Red Hat Certified Specialist in Developing Automation with Ansible Automation Platform (EX374)",
+        "penerbit": "Red Hat",
+        "tingkat": "senior"
+      },
+      {
+        "nama": "CCIE Automation",
+        "penerbit": "Cisco",
+        "tingkat": "senior"
+      }
+    ],
+    "masuk": "Jalur paling realistis adalah network engineer yang mulai mengotomasi pekerjaannya sendiri lalu dipindah atau dipromosikan. Lowongan khusus banyak di ISP, operator seluler, bank, dan system integrator.",
+    "naik": [
+      "network-architect",
+      "site-reliability-engineer"
+    ],
+    "dekat": [
+      "network-engineer",
+      "devops-engineer",
+      "cloud-network-engineer"
+    ],
+    "modul": [
+      "15-otomasi/01-mengapa-otomasi",
+      "15-otomasi/02-data-dan-api",
+      "15-otomasi/03-python-jaringan",
+      "15-otomasi/04-ansible-cicd",
+      "16-datacenter-cloud-sdn/06-sdn",
+      "19-mikrotik/07-monitoring-scripting",
+      "lab/05-lab-linux-otomasi",
+      "20-proyek-akhir/08-babak-7-kode-yang-menjaga",
+      "lab/08-lab-netdevops"
+    ],
+    "proyek": [
+      "NetBox sebagai source of truth dan Ansible yang membangkitkan konfigurasi OSPF/BGP untuk topologi Containerlab",
+      "Pipeline CI jaringan: lint, render templat, deploy ke lab, uji adjacency dan ping otomatis sebelum merge",
+      "Skrip audit kepatuhan ratusan konfigurasi RouterOS atau Cisco dengan laporan HTML"
+    ],
+    "sumber": [
+      {
+        "judul": "Cisco: CCNA Automation",
+        "url": "https://www.cisco.com/site/us/en/learn/training-certifications/certifications/automation/ccna-automation/index.html"
+      },
+      {
+        "judul": "Cisco: CCNP Automation",
+        "url": "https://www.cisco.com/site/us/en/learn/training-certifications/certifications/automation/ccnp-automation/index.html"
+      },
+      {
+        "judul": "Cisco: 350-901 AUTOCOR",
+        "url": "https://www.cisco.com/site/us/en/learn/training-certifications/exams/autocor.html"
+      },
+      {
+        "judul": "Red Hat: Red Hat Certified Engineer (RHCE)",
+        "url": "https://www.redhat.com/en/services/certification/rhce"
+      },
+      {
+        "judul": "Red Hat: EX294 Advanced System Administrator in Ansible",
+        "url": "https://www.redhat.com/en/services/training/ex294-red-hat-certified-engineer-rhce-exam-red-hat-enterprise-linux-9"
+      },
+      {
+        "judul": "Red Hat: Specialist in Developing Automation with Ansible Automation Platform (EX374)",
+        "url": "https://www.redhat.com/en/services/certification/rhcs-developing-automation-ansible"
+      }
+    ]
+  }
+]

@@ -1,0 +1,50 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Kontributor Belajar Networking
+#
+# Lab 22.3b: L3VPN IPv4 di atas inti SRv6 (uSID F3216) dengan FRRouting.
+#
+#   ce1 ---- pe1 ---- p ---- pe2 ---- ce2
+#  .1.2   (VRF CUST)  IPv6-only  (VRF CUST)  .2.2
+#
+# Locator: pe1 fcbb:bbbb:1::/48, p fcbb:bbbb:2::/48, pe2 fcbb:bbbb:3::/48
+# Jalankan: sudo containerlab deploy -t srv6.clab.yml
+name: srv6
+
+topology:
+  defaults:
+    kind: linux
+    image: quay.io/frrouting/frr:10.4.1
+    cmd: sh /start-frr.sh
+    binds:
+      - ../start-frr.sh:/start-frr.sh:ro
+      - daemons:/etc/frr/daemons
+      - ../vtysh.conf:/etc/frr/vtysh.conf:ro
+  nodes:
+    pe1:
+      env:
+        SRV6: "yes"
+        VRFS: "CUST:10:eth2"
+      binds:
+        - pe1/frr.conf:/etc/frr/frr.conf
+    p:
+      env:
+        SRV6: "yes"
+      binds:
+        - p/frr.conf:/etc/frr/frr.conf
+    pe2:
+      env:
+        SRV6: "yes"
+        VRFS: "CUST:10:eth2"
+      binds:
+        - pe2/frr.conf:/etc/frr/frr.conf
+    ce1:
+      binds:
+        - ce1/frr.conf:/etc/frr/frr.conf
+    ce2:
+      binds:
+        - ce2/frr.conf:/etc/frr/frr.conf
+  links:
+    - endpoints: ["pe1:eth1", "p:eth1"]
+    - endpoints: ["p:eth2", "pe2:eth1"]
+    - endpoints: ["ce1:eth1", "pe1:eth2"]
+    - endpoints: ["ce2:eth1", "pe2:eth2"]

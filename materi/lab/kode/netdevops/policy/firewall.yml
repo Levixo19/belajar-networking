@@ -1,0 +1,21 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Kontributor Belajar Networking
+#
+# Kebijakan firewall host sebagai kode (policy-as-code).
+#
+# NetBox menyimpan DATA (perangkat, alamat, prefix). Kebijakan seperti
+# "siapa boleh SSH ke server" disimpan di Git agar setiap perubahan lewat
+# pull request dan diuji Batfish. Kolom "from" merujuk ke peran prefix
+# di NetBox (users, noc, servers, ...), bukan alamat mentah, sehingga
+# kebijakan ikut benar bila rencana alamat berubah.
+#
+# Batasan model: Batfish hanya memahami -p, -s, -d, --dport tunggal, --sport,
+# dan aksi ACCEPT/DROP pada model host. Jangan memakai -i/-o (diabaikan oleh
+# model host Batfish), multiport, atau conntrack di sini.
+---
+srv1:
+  default: drop
+  rules:
+    - {name: icmp, proto: icmp, from: any}
+    - {name: web, proto: tcp, ports: [80, 443], from: [users, noc, servers]}
+    - {name: ssh-noc, proto: tcp, ports: [22], from: [noc]}

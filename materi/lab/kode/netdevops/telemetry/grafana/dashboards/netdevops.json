@@ -1,0 +1,276 @@
+{
+  "uid": "netdevops-lab08",
+  "title": "Lab 08 - gNMI vs SNMP",
+  "description": "SPDX-License-Identifier: MIT. Copyright (c) 2026 Kontributor Belajar Networking. Dashboard Lab 08: data interface yang sama dari gNMI (push 5 detik) dan SNMP (poll 30 detik).",
+  "tags": [
+    "lab08",
+    "netdevops"
+  ],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "5s",
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "templating": {
+    "list": [
+      {
+        "name": "sw",
+        "label": "Switch",
+        "type": "custom",
+        "query": "sw2,sw1",
+        "current": {
+          "text": "sw2",
+          "value": "sw2"
+        },
+        "options": [
+          {
+            "text": "sw2",
+            "value": "sw2",
+            "selected": true
+          },
+          {
+            "text": "sw1",
+            "value": "sw1",
+            "selected": false
+          }
+        ],
+        "multi": false,
+        "includeAll": false,
+        "hide": 0
+      },
+      {
+        "name": "port",
+        "label": "Port",
+        "type": "custom",
+        "query": "ethernet-1/2,ethernet-1/1",
+        "current": {
+          "text": "ethernet-1/2",
+          "value": "ethernet-1/2"
+        },
+        "options": [
+          {
+            "text": "ethernet-1/2",
+            "value": "ethernet-1/2",
+            "selected": true
+          },
+          {
+            "text": "ethernet-1/1",
+            "value": "ethernet-1/1",
+            "selected": false
+          }
+        ],
+        "multi": false,
+        "includeAll": false,
+        "hide": 0
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "Perbandingan: $port masuk (bit/s)",
+      "description": "irate() memakai dua sampel terakhir, jadi resolusi tiap garis sama dengan interval datanya: 5 detik untuk gNMI, 30 detik untuk SNMP. rate() dengan jendela panjang akan meratakan burst di KEDUA sumber.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 9
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bps"
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "expr": "irate(interface_statistics_in_octets{source=\"$sw\", interface_name=\"$port\"}[30s]) * 8",
+          "legendFormat": "gNMI (sample 5s)",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "refId": "A"
+        },
+        {
+          "expr": "irate(ifHCInOctets{source=\"$sw\", ifName=\"$port\"}[2m]) * 8",
+          "legendFormat": "SNMP (poll 30s)",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "gNMI: semua port $sw (bit/s)",
+      "description": "",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 9,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bps"
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "expr": "irate(interface_statistics_in_octets{source=\"$sw\"}[30s]) * 8",
+          "legendFormat": "{{interface_name}} masuk",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "refId": "A"
+        },
+        {
+          "expr": "irate(interface_statistics_out_octets{source=\"$sw\"}[30s]) * 8",
+          "legendFormat": "{{interface_name}} keluar",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "SNMP IF-MIB: semua port $sw (bit/s)",
+      "description": "",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 9,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bps"
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "expr": "irate(ifHCInOctets{source=\"$sw\"}[2m]) * 8",
+          "legendFormat": "{{ifName}} masuk",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "refId": "A"
+        },
+        {
+          "expr": "irate(ifHCOutOctets{source=\"$sw\"}[2m]) * 8",
+          "legendFormat": "{{ifName}} keluar",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "Status operasional port $sw (1 = up, 0 = down)",
+      "description": "",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 17,
+        "w": 24,
+        "h": 7
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "expr": "interface_oper_state{source=\"$sw\"}",
+          "legendFormat": "{{interface_name}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "refId": "A"
+        }
+      ]
+    }
+  ]
+}

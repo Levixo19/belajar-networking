@@ -1,0 +1,20 @@
+{#- SPDX-License-Identifier: MIT -#}
+{#- Copyright (c) 2026 Kontributor Belajar Networking -#}
+{#- Format iptables-save. Berkas yang sama dipakai di dua tempat:
+    iptables-restore di srv1 (deploy) dan direktori iptables/ snapshot Batfish.
+    Hanya tabel filter, rantai INPUT yang berisi aturan; FORWARD harus kosong
+    agar Batfish menganggap konfigurasi host "sederhana" dan memasang filter.
+    Urutan opsi mengikuti keluaran iptables-save (-s, -p, --dport) supaya
+    perbandingan dengan aturan yang berjalan tidak menghasilkan diff palsu.
+    iptables-save menambahkan "-m tcp"/"-m udp"; tasks.py membuangnya sebelum
+    membandingkan. Kita tidak menulisnya karena parser Batfish hanya mengenal
+    "-m tcp", sehingga aturan UDP dengan "-m udp" akan gagal di-parse. -#}
+# Dihasilkan oleh scripts/render.py dari policy/firewall.yml. JANGAN diedit manual.
+*filter
+:INPUT {{ "DROP" if fw.default == "drop" else "ACCEPT" }} [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+{% for r in rules %}
+-A INPUT{% if r.src %} -s {{ r.src }}{% endif %} -p {{ r.proto }}{% if r.port %} --dport {{ r.port }}{% endif %} -j ACCEPT
+{% endfor %}
+COMMIT

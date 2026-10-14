@@ -1,0 +1,366 @@
+{
+  "devices": {
+    "h1": {
+      "device_type": "linux-container",
+      "interfaces": [
+        {
+          "description": "ke sw1 ethernet-1/2",
+          "enabled": true,
+          "gateway": "10.10.10.1",
+          "ip": "10.10.10.10/24",
+          "kind": "host",
+          "name": "eth1",
+          "ospf_cost": null,
+          "peer": "sw1:ethernet-1/2"
+        }
+      ],
+      "mgmt_interface": "eth0",
+      "mgmt_ip": "172.30.30.31",
+      "name": "h1",
+      "platform": "linux",
+      "role": "client"
+    },
+    "noc1": {
+      "device_type": "linux-container",
+      "interfaces": [
+        {
+          "description": "ke r3 eth4",
+          "enabled": true,
+          "gateway": "10.99.0.1",
+          "ip": "10.99.0.10/24",
+          "kind": "host",
+          "name": "eth1",
+          "ospf_cost": null,
+          "peer": "r3:eth4"
+        }
+      ],
+      "mgmt_interface": "eth0",
+      "mgmt_ip": "172.30.30.32",
+      "name": "noc1",
+      "platform": "linux",
+      "role": "client"
+    },
+    "r1": {
+      "device_type": "frr-container",
+      "interfaces": [
+        {
+          "description": "",
+          "enabled": true,
+          "ip": "10.255.0.1/32",
+          "kind": "loopback",
+          "name": "lo",
+          "ospf_cost": null,
+          "peer": null
+        },
+        {
+          "description": "ke r2 eth1",
+          "enabled": true,
+          "ip": "10.0.0.0/31",
+          "kind": "p2p",
+          "name": "eth1",
+          "ospf_cost": 10,
+          "peer": "r2:eth1"
+        },
+        {
+          "description": "ke r3 eth1",
+          "enabled": true,
+          "ip": "10.0.0.2/31",
+          "kind": "p2p",
+          "name": "eth2",
+          "ospf_cost": 10,
+          "peer": "r3:eth1"
+        },
+        {
+          "description": "ke r4 eth1",
+          "enabled": true,
+          "ip": "10.0.0.4/31",
+          "kind": "p2p",
+          "name": "eth3",
+          "ospf_cost": 10,
+          "peer": "r4:eth1"
+        }
+      ],
+      "lan_prefixes": [],
+      "mgmt_interface": "eth0",
+      "mgmt_ip": "172.30.30.11",
+      "name": "r1",
+      "platform": "frr",
+      "role": "core-router",
+      "router_id": "10.255.0.1"
+    },
+    "r2": {
+      "device_type": "frr-container",
+      "interfaces": [
+        {
+          "description": "",
+          "enabled": true,
+          "ip": "10.255.0.2/32",
+          "kind": "loopback",
+          "name": "lo",
+          "ospf_cost": null,
+          "peer": null
+        },
+        {
+          "description": "ke r1 eth1",
+          "enabled": true,
+          "ip": "10.0.0.1/31",
+          "kind": "p2p",
+          "name": "eth1",
+          "ospf_cost": 10,
+          "peer": "r1:eth1"
+        },
+        {
+          "description": "ke r3 eth2",
+          "enabled": true,
+          "ip": "10.0.0.6/31",
+          "kind": "p2p",
+          "name": "eth2",
+          "ospf_cost": 20,
+          "peer": "r3:eth2"
+        },
+        {
+          "description": "ke r4 eth2",
+          "enabled": true,
+          "ip": "10.0.0.8/31",
+          "kind": "p2p",
+          "name": "eth3",
+          "ospf_cost": 20,
+          "peer": "r4:eth2"
+        }
+      ],
+      "lan_prefixes": [],
+      "mgmt_interface": "eth0",
+      "mgmt_ip": "172.30.30.12",
+      "name": "r2",
+      "platform": "frr",
+      "role": "core-router",
+      "router_id": "10.255.0.2"
+    },
+    "r3": {
+      "device_type": "frr-container",
+      "interfaces": [
+        {
+          "description": "",
+          "enabled": true,
+          "ip": "10.255.0.3/32",
+          "kind": "loopback",
+          "name": "lo",
+          "ospf_cost": null,
+          "peer": null
+        },
+        {
+          "description": "ke r1 eth2",
+          "enabled": true,
+          "ip": "10.0.0.3/31",
+          "kind": "p2p",
+          "name": "eth1",
+          "ospf_cost": 10,
+          "peer": "r1:eth2"
+        },
+        {
+          "description": "ke r2 eth2",
+          "enabled": true,
+          "ip": "10.0.0.7/31",
+          "kind": "p2p",
+          "name": "eth2",
+          "ospf_cost": 20,
+          "peer": "r2:eth2"
+        },
+        {
+          "description": "ke sw1 ethernet-1/1",
+          "enabled": true,
+          "ip": "10.10.10.1/24",
+          "kind": "lan",
+          "name": "eth3",
+          "ospf_cost": null,
+          "peer": "sw1:ethernet-1/1"
+        },
+        {
+          "description": "ke noc1 eth1",
+          "enabled": true,
+          "ip": "10.99.0.1/24",
+          "kind": "lan",
+          "name": "eth4",
+          "ospf_cost": null,
+          "peer": "noc1:eth1"
+        }
+      ],
+      "lan_prefixes": [
+        "10.10.10.0/24",
+        "10.99.0.0/24"
+      ],
+      "mgmt_interface": "eth0",
+      "mgmt_ip": "172.30.30.13",
+      "name": "r3",
+      "platform": "frr",
+      "role": "dist-router",
+      "router_id": "10.255.0.3"
+    },
+    "r4": {
+      "device_type": "frr-container",
+      "interfaces": [
+        {
+          "description": "",
+          "enabled": true,
+          "ip": "10.255.0.4/32",
+          "kind": "loopback",
+          "name": "lo",
+          "ospf_cost": null,
+          "peer": null
+        },
+        {
+          "description": "ke r1 eth3",
+          "enabled": true,
+          "ip": "10.0.0.5/31",
+          "kind": "p2p",
+          "name": "eth1",
+          "ospf_cost": 10,
+          "peer": "r1:eth3"
+        },
+        {
+          "description": "ke r2 eth3",
+          "enabled": true,
+          "ip": "10.0.0.9/31",
+          "kind": "p2p",
+          "name": "eth2",
+          "ospf_cost": 20,
+          "peer": "r2:eth3"
+        },
+        {
+          "description": "ke sw2 ethernet-1/1",
+          "enabled": true,
+          "ip": "10.20.20.1/24",
+          "kind": "lan",
+          "name": "eth3",
+          "ospf_cost": null,
+          "peer": "sw2:ethernet-1/1"
+        }
+      ],
+      "lan_prefixes": [
+        "10.20.20.0/24"
+      ],
+      "mgmt_interface": "eth0",
+      "mgmt_ip": "172.30.30.14",
+      "name": "r4",
+      "platform": "frr",
+      "role": "dist-router",
+      "router_id": "10.255.0.4"
+    },
+    "srv1": {
+      "device_type": "linux-container",
+      "interfaces": [
+        {
+          "description": "ke sw2 ethernet-1/2",
+          "enabled": true,
+          "gateway": "10.20.20.1",
+          "ip": "10.20.20.10/24",
+          "kind": "host",
+          "name": "eth1",
+          "ospf_cost": null,
+          "peer": "sw2:ethernet-1/2"
+        }
+      ],
+      "mgmt_interface": "eth0",
+      "mgmt_ip": "172.30.30.33",
+      "name": "srv1",
+      "platform": "linux",
+      "role": "server"
+    },
+    "sw1": {
+      "device_type": "srlinux-ixr-d2l",
+      "interfaces": [
+        {
+          "description": "ke r3 eth3",
+          "enabled": true,
+          "ip": null,
+          "kind": "bridged",
+          "name": "ethernet-1/1",
+          "ospf_cost": null,
+          "peer": "r3:eth3"
+        },
+        {
+          "description": "ke h1 eth1",
+          "enabled": true,
+          "ip": null,
+          "kind": "bridged",
+          "name": "ethernet-1/2",
+          "ospf_cost": null,
+          "peer": "h1:eth1"
+        }
+      ],
+      "mgmt_interface": "mgmt0",
+      "mgmt_ip": "172.30.30.21",
+      "name": "sw1",
+      "platform": "srlinux",
+      "role": "access-switch"
+    },
+    "sw2": {
+      "device_type": "srlinux-ixr-d2l",
+      "interfaces": [
+        {
+          "description": "ke r4 eth3",
+          "enabled": true,
+          "ip": null,
+          "kind": "bridged",
+          "name": "ethernet-1/1",
+          "ospf_cost": null,
+          "peer": "r4:eth3"
+        },
+        {
+          "description": "ke srv1 eth1",
+          "enabled": true,
+          "ip": null,
+          "kind": "bridged",
+          "name": "ethernet-1/2",
+          "ospf_cost": null,
+          "peer": "srv1:eth1"
+        }
+      ],
+      "mgmt_interface": "mgmt0",
+      "mgmt_ip": "172.30.30.22",
+      "name": "sw2",
+      "platform": "srlinux",
+      "role": "access-switch"
+    }
+  },
+  "ospf": {
+    "area": 0,
+    "default_cost": 10
+  },
+  "prefixes": [
+    {
+      "description": "Link antar-router /31",
+      "prefix": "10.0.0.0/24",
+      "role": "p2p"
+    },
+    {
+      "description": "LAN pengguna",
+      "prefix": "10.10.10.0/24",
+      "role": "users"
+    },
+    {
+      "description": "LAN server",
+      "prefix": "10.20.20.0/24",
+      "role": "servers"
+    },
+    {
+      "description": "LAN NOC",
+      "prefix": "10.99.0.0/24",
+      "role": "noc"
+    },
+    {
+      "description": "Loopback router",
+      "prefix": "10.255.0.0/24",
+      "role": "loopback"
+    },
+    {
+      "description": "Jaringan manajemen containerlab",
+      "prefix": "172.30.30.0/24",
+      "role": "mgmt"
+    }
+  ],
+  "site": {
+    "name": "DC Jakarta",
+    "slug": "dc-jkt"
+  }
+}

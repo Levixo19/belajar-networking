@@ -1,0 +1,10 @@
+{
+  "hostInterfaces": {
+    "eth1": {
+      "gateway": "10.99.0.1",
+      "name": "eth1",
+      "prefix": "10.99.0.10/24"
+    }
+  },
+  "hostname": "noc1"
+}

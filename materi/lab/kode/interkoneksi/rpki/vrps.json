@@ -1,0 +1,12 @@
+{
+  "metadata": {
+    "buildmachine": "lab-interkoneksi",
+    "buildtime": "2026-10-13T00:00:00Z",
+    "generated": 1791849600,
+    "roas": 2
+  },
+  "roas": [
+    { "prefix": "198.18.0.0/22", "maxLength": 22, "asn": 64500, "ta": "lab" },
+    { "prefix": "203.0.113.0/24", "maxLength": 24, "asn": 64501, "ta": "lab" }
+  ]
+}

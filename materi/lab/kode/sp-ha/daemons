@@ -1,0 +1,19 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Kontributor Belajar Networking
+# Daemon FRR untuk lab 22.5: zebra + IS-IS + BGP + BFD.
+zebra=yes
+mgmtd=yes
+staticd=yes
+isisd=yes
+bgpd=yes
+bfdd=yes
+ldpd=no
+ospfd=no
+ospf6d=no
+vtysh_enable=yes
+zebra_options="  -A 127.0.0.1 -s 90000000"
+mgmtd_options="  -A 127.0.0.1"
+staticd_options="-A 127.0.0.1"
+isisd_options="  -A 127.0.0.1"
+bgpd_options="   -A 127.0.0.1"
+bfdd_options="   -A 127.0.0.1"

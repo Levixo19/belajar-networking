@@ -1,0 +1,576 @@
+[
+  {
+    "id": "network-security-engineer",
+    "nama": "Network Security Engineer",
+    "rumpun": "keamanan",
+    "ringkas": "Merancang, memasang, dan merawat kontrol keamanan jaringan seperti firewall, VPN, IPS, NAC, dan segmentasi agar setiap perubahan tetap aman.",
+    "jenjang": "menengah",
+    "harian": [
+      "Meninjau dan menerapkan permintaan aturan firewall sesuai tiket perubahan",
+      "Merencanakan pemutakhiran firmware firewall HA beserta langkah rollback",
+      "Membantu SOC menarik log sesi dan memblokir alamat berbahaya",
+      "Membersihkan aturan firewall usang, duplikat, dan tanpa pemilik",
+      "Mengelola VPN akses jarak jauh dengan MFA dan pemeriksaan postur"
+    ],
+    "keahlian": [
+      "keamanan-jaringan",
+      "routing-switching",
+      "identitas-akses",
+      "kriptografi-pki",
+      "linux",
+      "troubleshooting",
+      "otomasi-iac",
+      "komunikasi-dokumentasi"
+    ],
+    "alat": [
+      "Fortinet FortiGate",
+      "Palo Alto Networks NGFW dan Panorama",
+      "Cisco Secure Firewall",
+      "Cisco ISE",
+      "MikroTik RouterOS",
+      "nftables",
+      "Suricata",
+      "Wireshark",
+      "Tenable Nessus",
+      "Ansible"
+    ],
+    "sertifikasi": [
+      {
+        "nama": "CompTIA Security+ (SY0-701)",
+        "penerbit": "CompTIA",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "Fortinet NSE 4 (FortiOS)",
+        "penerbit": "Fortinet",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "Cisco CCNP Security (SCOR 350-701 v2.0 + ujian konsentrasi)",
+        "penerbit": "Cisco",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "Palo Alto Networks Next-Generation Firewall Engineer (pengganti PCNSE)",
+        "penerbit": "Palo Alto Networks",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "CISSP",
+        "penerbit": "ISC2",
+        "tingkat": "senior"
+      }
+    ],
+    "masuk": "Biasanya dari network administrator atau network engineer 1-3 tahun yang mulai diserahi firewall dan VPN, atau dari NOC/SOC L1. System integrator mitra vendor juga merekrut lalu melatih engineer baru.",
+    "naik": [
+      "security-architect",
+      "network-architect"
+    ],
+    "dekat": [
+      "network-engineer",
+      "cybersecurity-analyst",
+      "cloud-network-engineer"
+    ],
+    "modul": [
+      "03-data-link/03-vlan",
+      "09-nat-acl-firewall/02-acl",
+      "09-nat-acl-firewall/03-firewall",
+      "11-wan-vpn/02-tunneling-vpn",
+      "12-keamanan/02-serangan-l2",
+      "12-keamanan/04-aaa-identitas",
+      "12-keamanan/05-hardening-zero-trust",
+      "13-linux-networking/03-nftables-firewall",
+      "lab/04-lab-keamanan-wireless",
+      "20-proyek-akhir/07-babak-6-tim-merah-tim-biru",
+      "22-service-provider/05-sp-ketersediaan-keamanan"
+    ],
+    "proyek": [
+      "Lab segmentasi bergaya zero trust di EVE-NG dengan firewall virtual, justifikasi tiap aturan, dan log ke Wazuh",
+      "Skrip Python yang mengaudit ekspor kebijakan firewall dan melaporkan aturan any, duplikat, atau tanpa komentar",
+      "Runbook pemutakhiran firmware pasangan firewall HA lengkap dengan rencana uji dan rollback"
+    ],
+    "sumber": [
+      {
+        "judul": "Cisco Security Certification Updates: Your Questions Answered (SCOR v2.0)",
+        "url": "https://blogs.cisco.com/learning/cisco-security-certification-updates-your-questions-answered"
+      },
+      {
+        "judul": "Fortinet NSE Certification Program",
+        "url": "https://www.fortinet.com/training-certification"
+      },
+      {
+        "judul": "Palo Alto Networks Certification",
+        "url": "https://www.paloaltonetworks.com/services/education/certification"
+      },
+      {
+        "judul": "CompTIA Security+",
+        "url": "https://www.comptia.org/en/certifications/security/"
+      },
+      {
+        "judul": "O*NET OnLine: Information Security Engineers (15-1299.05)",
+        "url": "https://www.onetonline.org/link/summary/15-1299.05"
+      }
+    ]
+  },
+  {
+    "id": "cybersecurity-analyst",
+    "nama": "Cybersecurity Analyst (SOC Analyst)",
+    "rumpun": "keamanan",
+    "ringkas": "Memantau alert keamanan di SOC, memilah serangan sungguhan dari alarm palsu, menginvestigasi, lalu mengeskalasi dengan catatan yang rapi.",
+    "jenjang": "pemula",
+    "harian": [
+      "Men-triase alert SIEM dan EDR sesuai SLA tingkat keparahan",
+      "Mengorelasikan log VPN, Active Directory, DNS, dan firewall untuk investigasi",
+      "Mengeskalasi insiden ke L2 atau incident responder dengan ringkasan jelas",
+      "Mengusulkan penyetelan aturan deteksi untuk mengurangi false positive",
+      "Menulis catatan serah terima shift untuk kasus yang masih terbuka"
+    ],
+    "keahlian": [
+      "analisis-log-siem",
+      "keamanan-jaringan",
+      "respons-insiden",
+      "fundamental-jaringan",
+      "windows-server",
+      "linux",
+      "scripting-python",
+      "komunikasi-dokumentasi"
+    ],
+    "alat": [
+      "Splunk",
+      "Microsoft Sentinel",
+      "IBM QRadar",
+      "Elastic Security",
+      "Wazuh",
+      "Microsoft Defender for Endpoint",
+      "Suricata",
+      "Zeek",
+      "MISP",
+      "TheHive"
+    ],
+    "sertifikasi": [
+      {
+        "nama": "CompTIA Security+ (SY0-701)",
+        "penerbit": "CompTIA",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "Cisco CCNA Cybersecurity (200-201 CCNACBR v1.2)",
+        "penerbit": "Cisco",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "ISC2 Certified in Cybersecurity (CC)",
+        "penerbit": "ISC2",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "Level 1 / Level 2 SOC Analyst (skema BNSP)",
+        "penerbit": "LSP BSSN",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "CompTIA CySA+ (CS0-004)",
+        "penerbit": "CompTIA",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "GIAC Certified Intrusion Analyst (GCIA)",
+        "penerbit": "GIAC",
+        "tingkat": "menengah"
+      }
+    ],
+    "masuk": "Pintu masuk paling realistis ke keamanan: SOC L1 di MSSP, bank, atau BUMN, sering lewat magang atau graduate program, atau pindah dari helpdesk, NOC, dan network administrator.",
+    "naik": [
+      "incident-responder",
+      "security-architect"
+    ],
+    "dekat": [
+      "network-security-engineer",
+      "penetration-tester",
+      "noc-technician"
+    ],
+    "modul": [
+      "01-model-referensi/03-enkapsulasi",
+      "05-transport/02-tcp",
+      "06-aplikasi/01-dns",
+      "06-aplikasi/05-layanan-lain",
+      "12-keamanan/01-konsep-keamanan",
+      "12-keamanan/03-serangan-l3-l7",
+      "12-keamanan/06-tools-keamanan",
+      "14-monitoring-troubleshooting/03-observability",
+      "20-proyek-akhir/07-babak-6-tim-merah-tim-biru"
+    ],
+    "proyek": [
+      "Home SOC dengan Wazuh atau Elastic plus Suricata dan Zeek, lima aturan deteksi dipetakan ke MITRE ATT&CK",
+      "Laporan triase satu halaman dari analisis PCAP latihan publik, lengkap dengan indikator dan rekomendasi",
+      "Playbook triase L1 untuk phishing, login mencurigakan, dan malware di endpoint"
+    ],
+    "sumber": [
+      {
+        "judul": "CompTIA CySA+ V4 (CS0-004)",
+        "url": "https://www.comptia.org/en/certifications/cybersecurity-analyst/v4/"
+      },
+      {
+        "judul": "Cisco 200-201 CCNACBR (CCNA Cybersecurity)",
+        "url": "https://www.cisco.com/site/us/en/learn/training-certifications/exams/cbrops.html"
+      },
+      {
+        "judul": "Kepmenaker 391/2020: SKKNI Bidang Security Operations Center",
+        "url": "https://jdih.kemnaker.go.id/peraturan/detail/1991/keputusan-menteri-ketenagakerjaan-nomor-391-tahun-2020"
+      },
+      {
+        "judul": "MITRE ATT&CK: Versions",
+        "url": "https://attack.mitre.org/resources/versions/"
+      },
+      {
+        "judul": "GIAC Certified Intrusion Analyst (GCIA)",
+        "url": "https://www.giac.org/certifications/certified-intrusion-analyst-gcia/"
+      }
+    ]
+  },
+  {
+    "id": "penetration-tester",
+    "nama": "Penetration Tester",
+    "rumpun": "keamanan",
+    "ringkas": "Menguji keamanan sistem atas izin tertulis pemiliknya, membuktikan dampak celah secara terkendali, lalu menulis laporan dan rekomendasi perbaikan.",
+    "jenjang": "menengah",
+    "harian": [
+      "Menyusun Rules of Engagement dan cakupan bersama klien sebelum pengujian",
+      "Memetakan layanan dan aplikasi yang tercantum dalam cakupan izin",
+      "Memvalidasi temuan secara terkendali dengan bukti seminimal mungkin",
+      "Melaporkan temuan kritis segera ke kontak darurat klien",
+      "Menulis laporan eksekutif dan teknis, lalu melakukan retest perbaikan"
+    ],
+    "keahlian": [
+      "keamanan-ofensif",
+      "fundamental-jaringan",
+      "linux",
+      "windows-server",
+      "identitas-akses",
+      "scripting-python",
+      "komunikasi-dokumentasi"
+    ],
+    "alat": [
+      "Kali Linux",
+      "Nmap",
+      "Burp Suite",
+      "ZAP",
+      "Tenable Nessus",
+      "Metasploit Framework",
+      "BloodHound",
+      "Wireshark",
+      "SysReptor"
+    ],
+    "sertifikasi": [
+      {
+        "nama": "EC-Council Certified Ethical Hacker (CEH v13)",
+        "penerbit": "EC-Council",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "Junior Penetration Tester (skema BNSP)",
+        "penerbit": "LSP BSSN",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "CompTIA PenTest+ (PT0-003)",
+        "penerbit": "CompTIA",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "OffSec Certified Professional+ (OSCP+, kursus PEN-200)",
+        "penerbit": "OffSec",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "Practical Network Penetration Tester (PNPT)",
+        "penerbit": "TCM Security",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "GIAC Penetration Tester (GPEN)",
+        "penerbit": "GIAC",
+        "tingkat": "menengah"
+      }
+    ],
+    "masuk": "Umumnya setelah 1-3 tahun sebagai administrator jaringan/sistem atau SOC analyst. Konsultan keamanan dan Big Four membuka posisi junior, tetapi portofolio laporan dan sertifikasi praktik sangat menentukan.",
+    "naik": [
+      "security-architect",
+      "it-consultant"
+    ],
+    "dekat": [
+      "cybersecurity-analyst",
+      "network-security-engineer",
+      "it-auditor"
+    ],
+    "modul": [
+      "04-network-layer/02-subnetting",
+      "05-transport/01-port-socket",
+      "06-aplikasi/03-http",
+      "06-aplikasi/04-tls-pki",
+      "12-keamanan/02-serangan-l2",
+      "12-keamanan/03-serangan-l3-l7",
+      "12-keamanan/06-tools-keamanan",
+      "13-linux-networking/01-iproute2",
+      "15-otomasi/03-python-jaringan",
+      "20-proyek-akhir/07-babak-6-tim-merah-tim-biru"
+    ],
+    "proyek": [
+      "Laporan pentest format konsultan terhadap lab sengaja rentan milik sendiri, lengkap dengan RoE tiruan",
+      "Kumpulan write-up mesin latihan yang sudah pensiun di platform legal, berfokus pada kontrol pencegahnya",
+      "Skrip Python yang merapikan hasil pemindaian menjadi tabel temuan siap laporan"
+    ],
+    "sumber": [
+      {
+        "judul": "CompTIA PenTest+ (PT0-003)",
+        "url": "https://www.comptia.org/en/certifications/pentest/"
+      },
+      {
+        "judul": "OffSec: Everything you need to know about the OSCP+",
+        "url": "https://www.offsec.com/blog/everything-you-need-to-know-about-the-oscp-plus/"
+      },
+      {
+        "judul": "TCM Security: PNPT",
+        "url": "https://certifications.tcm-sec.com/pnpt/"
+      },
+      {
+        "judul": "Kepmenaker 23/2022: SKKNI Bidang Uji Keamanan Siber",
+        "url": "https://jdih.kemnaker.go.id/peraturan/detail/2231/keputusan-menteri-ketenagakerjaan-nomor-23-tahun-2022"
+      },
+      {
+        "judul": "O*NET OnLine: Penetration Testers (15-1299.04)",
+        "url": "https://www.onetonline.org/link/summary/15-1299.04"
+      },
+      {
+        "judul": "Hukumonline: jerat hukum akses ilegal (Pasal 332 KUHP baru)",
+        "url": "https://www.hukumonline.com/klinik/a/hack-akun-instagram-orang-lain-ini-jerat-hukumnya-lt50c51cada600a/"
+      }
+    ]
+  },
+  {
+    "id": "security-architect",
+    "nama": "Security Architect",
+    "rumpun": "keamanan",
+    "ringkas": "Menentukan arsitektur dan standar keamanan sebelum sistem dibangun, menimbang risiko, biaya, dan regulasi, lalu memastikan desain diadopsi tim lain.",
+    "jenjang": "senior",
+    "harian": [
+      "Memfasilitasi threat modeling untuk desain aplikasi dan infrastruktur baru",
+      "Menulis Architecture Decision Record beserta alternatif yang ditolak",
+      "Meninjau desain proyek terhadap arsitektur referensi dan standar keamanan",
+      "Memetakan kontrol ke NIST CSF 2.0, ISO/IEC 27001, dan regulasi Indonesia",
+      "Mempresentasikan risiko arsitektur dan opsi mitigasi kepada komite risiko"
+    ],
+    "keahlian": [
+      "arsitektur-desain",
+      "keamanan-jaringan",
+      "identitas-akses",
+      "kriptografi-pki",
+      "cloud",
+      "tata-kelola-kepatuhan",
+      "konsultasi-bisnis",
+      "komunikasi-dokumentasi"
+    ],
+    "alat": [
+      "draw.io",
+      "Archi (ArchiMate)",
+      "OWASP Threat Dragon",
+      "Microsoft Threat Modeling Tool",
+      "CIS Benchmarks",
+      "Microsoft Entra ID",
+      "Okta",
+      "HashiCorp Vault",
+      "Microsoft Defender for Cloud"
+    ],
+    "sertifikasi": [
+      {
+        "nama": "TOGAF Enterprise Architecture Foundation",
+        "penerbit": "The Open Group",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "SABSA Chartered Foundation (SCF)",
+        "penerbit": "The SABSA Institute",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "CISSP",
+        "penerbit": "ISC2",
+        "tingkat": "senior"
+      },
+      {
+        "nama": "CompTIA SecurityX (CAS-005, dahulu CASP+)",
+        "penerbit": "CompTIA",
+        "tingkat": "senior"
+      },
+      {
+        "nama": "Certified Cloud Security Professional (CCSP)",
+        "penerbit": "ISC2",
+        "tingkat": "senior"
+      }
+    ],
+    "masuk": "Bukan posisi masuk: biasanya dicapai setelah 5-10 tahun sebagai network security engineer, security engineer, atau pentester yang terbiasa ikut tinjauan desain dan menulis dokumen keputusan.",
+    "naik": [
+      "it-consultant",
+      "solution-architect"
+    ],
+    "dekat": [
+      "network-architect",
+      "solution-architect",
+      "it-auditor",
+      "cloud-infrastructure-engineer"
+    ],
+    "modul": [
+      "06-aplikasi/04-tls-pki",
+      "12-keamanan/01-konsep-keamanan",
+      "12-keamanan/04-aaa-identitas",
+      "12-keamanan/05-hardening-zero-trust",
+      "16-datacenter-cloud-sdn/04-cloud-networking",
+      "16-datacenter-cloud-sdn/05-container-kubernetes",
+      "17-desain-arsitektur/01-prinsip-desain",
+      "17-desain-arsitektur/02-desain-per-domain",
+      "17-desain-arsitektur/04-studi-kasus-desain",
+      "20-proyek-akhir/03-babak-2-sidang-arsitektur"
+    ],
+    "proyek": [
+      "Arsitektur referensi zero trust untuk bank fiktif dengan pemetaan kontrol ke NIST CSF 2.0 dan ISO/IEC 27001:2022",
+      "Tiga Architecture Decision Record untuk inspeksi TLS, akses vendor jarak jauh, dan penyimpanan kunci enkripsi",
+      "Threat model STRIDE untuk aplikasi web sederhana beserta kontrol terpilih dan risiko residual"
+    ],
+    "sumber": [
+      {
+        "judul": "CompTIA SecurityX (CAS-005)",
+        "url": "https://www.comptia.org/en/certifications/securityx/"
+      },
+      {
+        "judul": "ISC2 CISSP Experience Requirements",
+        "url": "https://www.isc2.org/certifications/cissp/cissp-experience-requirements"
+      },
+      {
+        "judul": "The SABSA Institute: Certification",
+        "url": "https://sabsa.org/certification/"
+      },
+      {
+        "judul": "The Open Group: TOGAF Certification Portfolio",
+        "url": "https://www.opengroup.org/certifications/togaf"
+      },
+      {
+        "judul": "NIST Cybersecurity Framework 2.0",
+        "url": "https://www.nist.gov/cyberframework"
+      }
+    ]
+  },
+  {
+    "id": "incident-responder",
+    "nama": "Incident Responder",
+    "rumpun": "keamanan",
+    "ringkas": "Menangani insiden siber yang sudah terkonfirmasi: menentukan cakupan, mengendalikan penyebaran, menjaga bukti, memulihkan layanan, dan memenuhi kewajiban pelaporan.",
+    "jenjang": "menengah",
+    "harian": [
+      "Memimpin kontainmen awal insiden bersama tim jaringan dan sistem",
+      "Mengakuisisi memori dan disk sambil menjaga chain of custody bukti",
+      "Menyusun timeline serangan dari log endpoint, jaringan, dan cloud",
+      "Menyiapkan bahan pelaporan insiden ke OJK, BSSN, atau sesuai UU PDP",
+      "Menulis laporan pascainsiden dan menguji playbook lewat latihan tabletop"
+    ],
+    "keahlian": [
+      "respons-insiden",
+      "analisis-log-siem",
+      "keamanan-jaringan",
+      "windows-server",
+      "linux",
+      "kelangsungan-bisnis",
+      "tata-kelola-kepatuhan",
+      "komunikasi-dokumentasi"
+    ],
+    "alat": [
+      "Velociraptor",
+      "KAPE",
+      "Volatility 3",
+      "FTK Imager",
+      "Timesketch",
+      "Wireshark",
+      "Zeek",
+      "Splunk",
+      "TheHive",
+      "YARA"
+    ],
+    "sertifikasi": [
+      {
+        "nama": "CompTIA CySA+ (CS0-004)",
+        "penerbit": "CompTIA",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "GIAC Certified Incident Handler (GCIH)",
+        "penerbit": "GIAC",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "Associate Digital Evidence First Responder (skema BNSP)",
+        "penerbit": "LSP BSSN",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "GIAC Certified Forensic Analyst (GCFA)",
+        "penerbit": "GIAC",
+        "tingkat": "senior"
+      },
+      {
+        "nama": "CISSP",
+        "penerbit": "ISC2",
+        "tingkat": "senior"
+      }
+    ],
+    "masuk": "Jalur khas adalah SOC L1 ke L2 lalu incident responder, atau administrator sistem/jaringan berpengalaman yang sering terlibat saat insiden dan memperdalam forensik digital.",
+    "naik": [
+      "security-architect"
+    ],
+    "dekat": [
+      "cybersecurity-analyst",
+      "disaster-recovery-specialist",
+      "it-auditor"
+    ],
+    "modul": [
+      "06-aplikasi/01-dns",
+      "06-aplikasi/05-layanan-lain",
+      "12-keamanan/03-serangan-l3-l7",
+      "12-keamanan/06-tools-keamanan",
+      "14-monitoring-troubleshooting/01-metodologi",
+      "14-monitoring-troubleshooting/02-tools",
+      "14-monitoring-troubleshooting/03-observability",
+      "20-proyek-akhir/02-babak-1-audit-warisan",
+      "20-proyek-akhir/09-babak-8-malam-panjang"
+    ],
+    "proyek": [
+      "Rencana tanggap insiden plus playbook ransomware dan phishing mengacu NIST SP 800-61r3 dan Peraturan BSSN 1/2024",
+      "Investigasi lab: artefak dikumpulkan dengan Velociraptor, timeline di Timesketch, dan laporan pascainsiden",
+      "Skenario latihan tabletop 90 menit dengan suntikan kejadian dan tabel tenggat pelaporan regulasi"
+    ],
+    "sumber": [
+      {
+        "judul": "NIST SP 800-61 Rev. 3: Incident Response Recommendations and Considerations for Cybersecurity Risk Management",
+        "url": "https://csrc.nist.gov/pubs/sp/800/61/r3/final"
+      },
+      {
+        "judul": "Peraturan BSSN Nomor 1 Tahun 2024 tentang Pengelolaan Insiden Siber",
+        "url": "https://peraturan.go.id/files/peraturan-bssn-no-1-tahun-2024.pdf"
+      },
+      {
+        "judul": "Ringkasan SEOJK 29/SEOJK.03/2022 tentang Ketahanan dan Keamanan Siber bagi Bank Umum",
+        "url": "https://www.ojk.go.id/id/regulasi/Documents/Pages/Ketahanan-dan-Keamanan-Siber-Bagi-Bank-Umum/RINGKASAN%20SEOJK%2029%20-%2003%20-%202022-1.pdf"
+      },
+      {
+        "judul": "UU 27/2022 Pelindungan Data Pribadi, Pasal 46",
+        "url": "https://pasal.id/peraturan/uu/uu-no-27-tahun-2022/pasal-46"
+      },
+      {
+        "judul": "GIAC Certified Incident Handler (GCIH)",
+        "url": "https://www.giac.org/certifications/certified-incident-handler-gcih/"
+      },
+      {
+        "judul": "GIAC Certified Forensic Analyst (GCFA)",
+        "url": "https://www.giac.org/certifications/certified-forensic-analyst-gcfa/"
+      }
+    ]
+  }
+]

@@ -1,0 +1,11 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: bn-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - bn-mongo-data:/data/db
+volumes:
+  bn-mongo-data:

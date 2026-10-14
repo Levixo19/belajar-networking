@@ -1,0 +1,17 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Kontributor Belajar Networking
+#
+# Versi dikunci agar lab dapat diulang. Diperiksa terhadap PyPI pada Oktober 2026.
+Jinja2==3.1.6
+PyYAML==6.0.3
+pynetbox==7.9.0
+nornir==3.6.0
+nornir-utils==0.3.0
+nornir-netmiko==1.0.1
+nornir-napalm==0.6.0
+netmiko==4.8.0
+napalm-srlinux==0.3.1
+pybatfish==2026.9.17.3748
+pytest==9.1.1
+yamllint==1.38.0
+ruff==0.17.0

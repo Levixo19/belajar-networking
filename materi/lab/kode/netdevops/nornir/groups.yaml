@@ -1,0 +1,33 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Kontributor Belajar Networking
+#
+# Cara menjangkau tiap jenis perangkat. Kata sandi TIDAK disimpan di sini:
+# deploy.py mengisinya dari variabel lingkungan (SRL_PASSWORD), yang di CI
+# berasal dari secret repositori.
+---
+frr:
+  # Image quay.io/frrouting/frr:containerlab-* menyalin kunci publik SSH host
+  # Anda ke /root/.ssh/authorized_keys saat deploy containerlab. root mendapat
+  # shell Linux, sehingga kita bisa menjalankan vtysh dan frr-reload.py.
+  username: root
+  connection_options:
+    netmiko:
+      platform: linux
+      extras:
+        use_keys: true
+        allow_agent: true
+        conn_timeout: 15
+srlinux:
+  username: admin
+  connection_options:
+    napalm:
+      platform: srlinux
+      extras:
+        timeout: 60
+        optional_args:
+          # JSON-RPC lewat HTTP polos: hanya untuk lab containerlab.
+          insecure: true
+linux_host:
+  # Host lab dikelola lewat "docker exec" (lihat scripts/tasks.py).
+  data:
+    managed_via: docker-exec

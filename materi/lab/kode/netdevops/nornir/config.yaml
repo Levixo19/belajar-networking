@@ -1,0 +1,21 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Kontributor Belajar Networking
+#
+# Konfigurasi Nornir. Jalur relatif terhadap akar proyek (scripts/ melakukan
+# chdir ke sana). hosts.yaml DIHASILKAN render.py dari NetBox; groups.yaml dan
+# defaults.yaml ditulis tangan karena berisi cara koneksi, bukan data jaringan.
+---
+inventory:
+  plugin: SimpleInventory
+  options:
+    host_file: build/inventory/hosts.yaml
+    group_file: nornir/groups.yaml
+    defaults_file: nornir/defaults.yaml
+runner:
+  plugin: threaded
+  options:
+    num_workers: 5
+logging:
+  enabled: true
+  level: INFO
+  log_file: build/nornir.log

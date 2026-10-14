@@ -1,0 +1,281 @@
+[
+  {
+    "id": "network-engineer",
+    "nama": "Network Engineer",
+    "rumpun": "inti",
+    "ringkas": "Merancang, membangun, dan mengembangkan jaringan: dari desain routing dan keamanan sampai migrasi, otomasi, dan penanganan masalah tingkat lanjut.",
+    "jenjang": "menengah",
+    "harian": [
+      "Menyusun desain dan rencana perubahan untuk proyek cabang, data center, atau cloud",
+      "Mengeksekusi perubahan terjadwal di jendela malam lengkap dengan rencana rollback",
+      "Menangani eskalasi gangguan kompleks: BGP, OSPF, link flapping, latensi antarsitus",
+      "Menulis dan merawat skrip serta playbook otomasi konfigurasi",
+      "Meninjau kapasitas link dan merekomendasikan upgrade atau perubahan arsitektur"
+    ],
+    "keahlian": [
+      "routing-switching",
+      "fundamental-jaringan",
+      "arsitektur-desain",
+      "keamanan-jaringan",
+      "troubleshooting",
+      "otomasi-iac",
+      "scripting-python",
+      "cloud"
+    ],
+    "alat": [
+      "Cisco IOS XE dan NX-OS",
+      "Juniper Junos",
+      "MikroTik RouterOS",
+      "FortiGate",
+      "Wireshark",
+      "Cisco Modeling Labs (CML) / EVE-NG",
+      "Containerlab",
+      "Ansible",
+      "Python (Netmiko, Nornir)",
+      "NetBox"
+    ],
+    "sertifikasi": [
+      {
+        "nama": "Cisco CCNA (200-301 v1.1)",
+        "penerbit": "Cisco",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "Juniper JNCIA-Junos (JN0-106)",
+        "penerbit": "Juniper Networks",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "Cisco CCNP Enterprise (350-401 ENCOR + satu ujian konsentrasi, mis. 300-410 ENARSI)",
+        "penerbit": "Cisco",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "MikroTik Certified Routing Engineer (MTCRE)",
+        "penerbit": "MikroTik",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "Cisco CCNA Automation (200-901 CCNAAUTO)",
+        "penerbit": "Cisco",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "Microsoft Certified: Azure Network Engineer Associate (AZ-700)",
+        "penerbit": "Microsoft",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "Cisco CCIE Enterprise Infrastructure (350-401 ENCOR + ujian lab 8 jam)",
+        "penerbit": "Cisco",
+        "tingkat": "senior"
+      }
+    ],
+    "masuk": "Jarang langsung dari kampus; umumnya naik dari network administrator, NOC, atau teknisi ISP setelah beberapa tahun dengan CCNA dan pengalaman proyek, atau lewat program graduate di system integrator dan operator.",
+    "naik": [
+      "network-architect",
+      "solution-architect",
+      "site-reliability-engineer"
+    ],
+    "dekat": [
+      "network-administrator",
+      "cloud-network-engineer",
+      "network-security-engineer",
+      "automation-engineer",
+      "data-center-engineer",
+      "wireless-network-engineer"
+    ],
+    "modul": [
+      "04-network-layer/03-vlsm-cidr",
+      "07-routing-lanjutan/04-ospf",
+      "07-routing-lanjutan/06-bgp",
+      "09-nat-acl-firewall/03-firewall",
+      "11-wan-vpn/02-tunneling-vpn",
+      "14-monitoring-troubleshooting/04-studi-kasus",
+      "15-otomasi/03-python-jaringan",
+      "16-datacenter-cloud-sdn/02-overlay-vxlan-evpn",
+      "17-desain-arsitektur/01-prinsip-desain",
+      "17-desain-arsitektur/04-studi-kasus-desain",
+      "07-routing-lanjutan/10-isis",
+      "22-service-provider/02-mpls-l3vpn"
+    ],
+    "proyek": [
+      "Lab multi-situs: OSPF internal, BGP ke dua ISP simulasi, failover terukur, plus dokumen HLD dan LLD",
+      "Pipeline otomasi: NetBox sebagai sumber kebenaran, Ansible menghasilkan konfigurasi, diuji di Containerlab",
+      "Desain ulang jaringan perusahaan fiktif 20 cabang dengan rencana migrasi dan rollback bertahap"
+    ],
+    "gaji": {
+      "rentang": "Rp 6 juta - Rp 9 juta per bulan",
+      "konteks": "Rentang rata-rata nasional dari gaji yang dicantumkan di iklan lowongan (cenderung posisi junior-menengah); rata-rata Jakarta Barat sekitar Rp 20 juta",
+      "sumber": "Jobstreet, Gaji Insinyur Jaringan di Indonesia (di-refresh 1 Oktober 2026)",
+      "url": "https://id.jobstreet.com/id/career-advice/role/network-engineer/salary"
+    },
+    "sumber": [
+      {
+        "judul": "O*NET OnLine: 15-1244.00 Network and Computer Systems Administrators (contoh judul termasuk Network Engineer)",
+        "url": "https://www.onetonline.org/link/summary/15-1244.00"
+      },
+      {
+        "judul": "O*NET OnLine: 15-1241.01 Telecommunications Engineering Specialists",
+        "url": "https://www.onetonline.org/link/summary/15-1241.01"
+      },
+      {
+        "judul": "SFIA 9: Network design (NTDS)",
+        "url": "https://sfia-online.org/en/skillcode/9/NTDS"
+      },
+      {
+        "judul": "NICE Framework: Network Operations (IO-WRL-004)",
+        "url": "https://niccs.cisa.gov/tools/nice-framework/work-role/network-operations"
+      },
+      {
+        "judul": "Kepmenaker No. 321 Tahun 2016: SKKNI Bidang Jaringan Komputer",
+        "url": "https://jdih.kemnaker.go.id/peraturan/detail/1464/keputusan-menteri-ketenagakerjaan-nomor-321-tahun-2016"
+      },
+      {
+        "judul": "Cisco CCNP Enterprise",
+        "url": "https://www.cisco.com/site/us/en/learn/training-certifications/certifications/enterprise/ccnp-enterprise/index.html"
+      },
+      {
+        "judul": "Jobstreet: Gaji Insinyur Jaringan di Indonesia",
+        "url": "https://id.jobstreet.com/id/career-advice/role/network-engineer/salary"
+      }
+    ]
+  },
+  {
+    "id": "network-administrator",
+    "nama": "Network Administrator",
+    "rumpun": "inti",
+    "ringkas": "Menjaga jaringan organisasi tetap berjalan setiap hari: memantau, menjalankan perubahan rutin, menangani gangguan, dan merawat dokumentasi.",
+    "jenjang": "pemula",
+    "harian": [
+      "Memeriksa dashboard monitoring dan alarm semalam, lalu menindaklanjuti yang kritis",
+      "Menangani tiket pengguna: Wi-Fi lambat, port mati, VPN gagal tersambung",
+      "Menambah VLAN, port akses, atau aturan firewall sesuai permintaan perubahan",
+      "Memastikan backup konfigurasi perangkat berjalan dan benar-benar bisa dipulihkan",
+      "Memperbarui diagram, daftar IP, dan inventaris setelah setiap perubahan"
+    ],
+    "keahlian": [
+      "fundamental-jaringan",
+      "routing-switching",
+      "troubleshooting",
+      "monitoring-observability",
+      "keamanan-jaringan",
+      "wireless-rf",
+      "itsm-itil",
+      "komunikasi-dokumentasi"
+    ],
+    "alat": [
+      "Cisco IOS / IOS XE",
+      "MikroTik RouterOS (Winbox)",
+      "FortiGate",
+      "Zabbix",
+      "LibreNMS",
+      "Wireshark",
+      "Oxidized",
+      "NetBox atau phpIPAM",
+      "Jira Service Management atau GLPI"
+    ],
+    "sertifikasi": [
+      {
+        "nama": "Cisco CCST Networking (100-150)",
+        "penerbit": "Cisco",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "CompTIA Network+ (N10-009)",
+        "penerbit": "CompTIA",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "MikroTik Certified Network Associate (MTCNA)",
+        "penerbit": "MikroTik",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "Juniper JNCIA-Junos (JN0-106)",
+        "penerbit": "Juniper Networks",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "Cisco CCNA (200-301 v1.1)",
+        "penerbit": "Cisco",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "CompTIA Security+ (SY0-701; SY0-801 rilis 17 November 2026)",
+        "penerbit": "CompTIA",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "Sertifikasi Okupasi Network Administrator (acuan SKKNI No. 321 Tahun 2016)",
+        "penerbit": "BNSP melalui LSP berlisensi",
+        "tingkat": "menengah"
+      }
+    ],
+    "masuk": "Paling umum dari helpdesk/IT support, teknisi ISP, atau staf NOC; lulusan SMK TKJ, D3, atau S1 bisa masuk langsung dengan MTCNA atau CCNA plus portofolio lab.",
+    "naik": [
+      "network-engineer",
+      "network-security-engineer",
+      "it-operations-manager"
+    ],
+    "dekat": [
+      "system-administrator",
+      "noc-technician",
+      "it-support-technician",
+      "wireless-network-engineer"
+    ],
+    "modul": [
+      "03-data-link/03-vlan",
+      "04-network-layer/02-subnetting",
+      "06-aplikasi/02-dhcp",
+      "06-aplikasi/05-layanan-lain",
+      "09-nat-acl-firewall/02-acl",
+      "10-wireless/02-802-11",
+      "14-monitoring-troubleshooting/01-metodologi",
+      "14-monitoring-troubleshooting/03-observability",
+      "17-desain-arsitektur/03-perencanaan-dokumentasi",
+      "19-mikrotik/03-firewall-nat"
+    ],
+    "proyek": [
+      "Jaringan kantor tiga lantai di lab: VLAN, DHCP, ACL, Wi-Fi tamu, lengkap dengan diagram dan runbook",
+      "Monitoring Zabbix atau LibreNMS untuk lima perangkat lab plus backup otomatis Oxidized dan bukti uji restore",
+      "Tiga laporan insiden simulasi (VLAN salah, loop STP, DHCP habis) dengan timeline dan akar masalah"
+    ],
+    "gaji": {
+      "rentang": "Rp 4,92 juta - Rp 6,325 juta per bulan",
+      "konteks": "Rentang rata-rata nasional dari gaji yang dicantumkan di iklan lowongan; rata-rata Jakarta Selatan sekitar Rp 11 juta",
+      "sumber": "Jobstreet, Gaji Administrator Jaringan di Indonesia (di-refresh 1 Oktober 2026)",
+      "url": "https://id.jobstreet.com/id/career-advice/role/network-administrator/salary"
+    },
+    "sumber": [
+      {
+        "judul": "O*NET OnLine: 15-1244.00 Network and Computer Systems Administrators",
+        "url": "https://www.onetonline.org/link/summary/15-1244.00"
+      },
+      {
+        "judul": "SFIA 9: Network support (NTAS)",
+        "url": "https://sfia-online.org/en/skillcode/9/NTAS"
+      },
+      {
+        "judul": "NICE Framework: Network Operations (IO-WRL-004)",
+        "url": "https://niccs.cisa.gov/tools/nice-framework/work-role/network-operations"
+      },
+      {
+        "judul": "Kepmenaker No. 321 Tahun 2016: SKKNI Bidang Jaringan Komputer",
+        "url": "https://jdih.kemnaker.go.id/peraturan/detail/1464/keputusan-menteri-ketenagakerjaan-nomor-321-tahun-2016"
+      },
+      {
+        "judul": "LSP Universitas Gunadarma: Skema Sertifikasi Okupasi Network Administrator",
+        "url": "https://lsp.gunadarma.ac.id/media/skema/Skema_Network_Administrator.pdf"
+      },
+      {
+        "judul": "CompTIA Network+ (N10-009)",
+        "url": "https://www.comptia.org/en-us/certifications/network/"
+      },
+      {
+        "judul": "Jobstreet: Gaji Administrator Jaringan di Indonesia",
+        "url": "https://id.jobstreet.com/id/career-advice/role/network-administrator/salary"
+      }
+    ]
+  }
+]

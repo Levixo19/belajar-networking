@@ -1,0 +1,18 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Kontributor Belajar Networking
+# Daemon FRR untuk lab L2VPN: zebra + IS-IS (IGP) + LDP (label dan pseudowire).
+zebra=yes
+mgmtd=yes
+staticd=yes
+isisd=yes
+ldpd=yes
+bgpd=no
+ospfd=no
+ospf6d=no
+bfdd=no
+vtysh_enable=yes
+zebra_options="  -A 127.0.0.1 -s 90000000"
+mgmtd_options="  -A 127.0.0.1"
+staticd_options="-A 127.0.0.1"
+isisd_options="  -A 127.0.0.1"
+ldpd_options="   -A 127.0.0.1"

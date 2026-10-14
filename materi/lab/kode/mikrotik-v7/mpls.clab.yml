@@ -1,0 +1,77 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Kontributor Belajar Networking
+#
+# Lab modul 19.9 (MPLS di RouterOS): backbone ISP lokal AS 65000 dengan
+# PE1 - P1 - PE2, OSPF + LDP, L3VPN (VRF pelanggan-a dan pelanggan-b),
+# VPLS LDP (pelanggan C) dan VPLS BGP (pelanggan D).
+#
+# Image CHR dibangun sendiri dengan vrnetlab (srl-labs/vrnetlab, folder
+# mikrotik/routeros) dari chr-7.24.5.vmdk yang diunduh dari mikrotik.com.
+# Image CHR tunduk pada lisensi MikroTik dan tidak didistribusikan di sini.
+#
+# Jalankan:  sudo containerlab deploy -t mpls.clab.yml
+# Hapus:     sudo containerlab destroy -t mpls.clab.yml
+
+name: mt7-mpls
+
+topology:
+  kinds:
+    mikrotik_ros:
+      image: vrnetlab/mikrotik_routeros:7.24.5
+    linux:
+      image: ghcr.io/hellt/network-multitool
+
+  nodes:
+    pe1:
+      kind: mikrotik_ros
+      startup-config: mpls/pe1.rsc
+    p1:
+      kind: mikrotik_ros
+      startup-config: mpls/p1.rsc
+    pe2:
+      kind: mikrotik_ros
+      startup-config: mpls/pe2.rsc
+    ce-a1:
+      kind: mikrotik_ros
+      startup-config: mpls/ce-a1.rsc
+    ce-a2:
+      kind: mikrotik_ros
+      startup-config: mpls/ce-a2.rsc
+    h-a1:
+      kind: linux
+      exec:
+        - ip addr add 192.168.1.10/24 dev eth1
+        - ip route replace default via 192.168.1.1 dev eth1
+    h-a2:
+      kind: linux
+      exec:
+        - ip addr add 192.168.2.10/24 dev eth1
+        - ip route replace default via 192.168.2.1 dev eth1
+    h-c1:
+      kind: linux
+      exec:
+        - ip addr add 10.10.30.1/24 dev eth1
+    h-c2:
+      kind: linux
+      exec:
+        - ip addr add 10.10.30.2/24 dev eth1
+    h-d1:
+      kind: linux
+      exec:
+        - ip addr add 10.10.40.1/24 dev eth1
+    h-d2:
+      kind: linux
+      exec:
+        - ip addr add 10.10.40.2/24 dev eth1
+
+  links:
+    - endpoints: ["pe1:ether2", "p1:ether2"]     # 10.1.12.0/30 inti
+    - endpoints: ["p1:ether3", "pe2:ether2"]     # 10.1.23.0/30 inti
+    - endpoints: ["pe1:ether3", "ce-a1:ether2"]  # 172.16.11.0/30 PE-CE (VRF pelanggan-a)
+    - endpoints: ["pe2:ether3", "ce-a2:ether2"]  # 172.16.12.0/30 PE-CE (VRF pelanggan-a)
+    - endpoints: ["ce-a1:ether3", "h-a1:eth1"]   # LAN 192.168.1.0/24
+    - endpoints: ["ce-a2:ether3", "h-a2:eth1"]   # LAN 192.168.2.0/24
+    - endpoints: ["pe1:ether4", "h-c1:eth1"]     # VPLS LDP pelanggan C
+    - endpoints: ["pe2:ether4", "h-c2:eth1"]     # VPLS LDP pelanggan C
+    - endpoints: ["pe1:ether5", "h-d1:eth1"]     # VPLS BGP pelanggan D
+    - endpoints: ["pe2:ether5", "h-d2:eth1"]     # VPLS BGP pelanggan D

@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Kontributor Belajar Networking
+#
+# Nilai bawaan untuk semua host. Sengaja kosong: semua yang spesifik ada di
+# groups.yaml (cara koneksi) dan build/inventory/hosts.yaml (data dari NetBox).
+---
+data: {}

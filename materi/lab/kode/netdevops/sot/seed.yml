@@ -1,0 +1,147 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Kontributor Belajar Networking
+#
+# Data awal "source of truth" Lab 08 (NetDevOps dari Nol).
+#
+# Berkas ini dipakai dua kali:
+#   1. scripts/seed_netbox.py memuatnya ke NetBox lewat API (sekali, di awal lab).
+#   2. scripts/render.py --source seed membacanya langsung, untuk uji offline
+#      dan untuk CI yang tidak bisa menjangkau NetBox Anda.
+# Setelah NetBox terisi, NetBox-lah sumber kebenarannya. Ubah data di NetBox,
+# bukan di sini, lalu jalankan render.py --source netbox.
+---
+site:
+  name: DC Jakarta
+  slug: dc-jkt
+
+ospf:
+  area: 0
+  default_cost: 10
+
+# Peran prefix di IPAM NetBox. render.py memakai peran ini untuk menebak
+# fungsi sebuah interface: loopback, link antar-router, atau LAN.
+prefix_roles:
+  - {name: Loopback, slug: loopback}
+  - {name: P2P, slug: p2p}
+  - {name: Pengguna, slug: users}
+  - {name: NOC, slug: noc}
+  - {name: Server, slug: servers}
+  - {name: Manajemen, slug: mgmt}
+
+prefixes:
+  - {prefix: 10.255.0.0/24, role: loopback, description: Loopback router}
+  - {prefix: 10.0.0.0/24, role: p2p, description: Link antar-router /31}
+  - {prefix: 10.10.10.0/24, role: users, description: LAN pengguna}
+  - {prefix: 10.99.0.0/24, role: noc, description: LAN NOC}
+  - {prefix: 10.20.20.0/24, role: servers, description: LAN server}
+  - {prefix: 172.30.30.0/24, role: mgmt, description: Jaringan manajemen containerlab}
+
+device_types:
+  - {manufacturer: FRRouting, model: FRR container, slug: frr-container}
+  - {manufacturer: Nokia, model: SR Linux 7220 IXR-D2L, slug: srlinux-ixr-d2l}
+  - {manufacturer: Generic, model: Linux container, slug: linux-container}
+
+device_roles:
+  - {name: Core Router, slug: core-router, color: 2196f3}
+  - {name: Distribution Router, slug: dist-router, color: 4caf50}
+  - {name: Access Switch, slug: access-switch, color: ff9800}
+  - {name: Client, slug: client, color: 9e9e9e}
+  - {name: Server, slug: server, color: 795548}
+
+platforms:
+  - {name: FRRouting, slug: frr}
+  - {name: Nokia SR Linux, slug: srlinux}
+  - {name: Linux, slug: linux}
+
+devices:
+  r1:
+    role: core-router
+    platform: frr
+    device_type: frr-container
+    mgmt: {interface: eth0, ip: 172.30.30.11/24}
+    interfaces:
+      lo: {ip: 10.255.0.1/32}
+      eth1: {ip: 10.0.0.0/31, ospf_cost: 10}
+      eth2: {ip: 10.0.0.2/31, ospf_cost: 10}
+      eth3: {ip: 10.0.0.4/31, ospf_cost: 10}
+  r2:
+    role: core-router
+    platform: frr
+    device_type: frr-container
+    mgmt: {interface: eth0, ip: 172.30.30.12/24}
+    interfaces:
+      lo: {ip: 10.255.0.2/32}
+      eth1: {ip: 10.0.0.1/31, ospf_cost: 10}
+      eth2: {ip: 10.0.0.6/31, ospf_cost: 20}
+      eth3: {ip: 10.0.0.8/31, ospf_cost: 20}
+  r3:
+    role: dist-router
+    platform: frr
+    device_type: frr-container
+    mgmt: {interface: eth0, ip: 172.30.30.13/24}
+    interfaces:
+      lo: {ip: 10.255.0.3/32}
+      eth1: {ip: 10.0.0.3/31, ospf_cost: 10}
+      eth2: {ip: 10.0.0.7/31, ospf_cost: 20}
+      eth3: {ip: 10.10.10.1/24}
+      eth4: {ip: 10.99.0.1/24}
+  r4:
+    role: dist-router
+    platform: frr
+    device_type: frr-container
+    mgmt: {interface: eth0, ip: 172.30.30.14/24}
+    interfaces:
+      lo: {ip: 10.255.0.4/32}
+      eth1: {ip: 10.0.0.5/31, ospf_cost: 10}
+      eth2: {ip: 10.0.0.9/31, ospf_cost: 20}
+      eth3: {ip: 10.20.20.1/24}
+  sw1:
+    role: access-switch
+    platform: srlinux
+    device_type: srlinux-ixr-d2l
+    mgmt: {interface: mgmt0, ip: 172.30.30.21/24}
+    interfaces:
+      ethernet-1/1: {mode: bridged}
+      ethernet-1/2: {mode: bridged}
+  sw2:
+    role: access-switch
+    platform: srlinux
+    device_type: srlinux-ixr-d2l
+    mgmt: {interface: mgmt0, ip: 172.30.30.22/24}
+    interfaces:
+      ethernet-1/1: {mode: bridged}
+      ethernet-1/2: {mode: bridged}
+  h1:
+    role: client
+    platform: linux
+    device_type: linux-container
+    mgmt: {interface: eth0, ip: 172.30.30.31/24}
+    interfaces:
+      eth1: {ip: 10.10.10.10/24}
+  noc1:
+    role: client
+    platform: linux
+    device_type: linux-container
+    mgmt: {interface: eth0, ip: 172.30.30.32/24}
+    interfaces:
+      eth1: {ip: 10.99.0.10/24}
+  srv1:
+    role: server
+    platform: linux
+    device_type: linux-container
+    mgmt: {interface: eth0, ip: 172.30.30.33/24}
+    interfaces:
+      eth1: {ip: 10.20.20.10/24}
+
+# Kabel. Harus sama persis dengan bagian "links" di topology/netdevops.clab.yml.
+links:
+  - [r1:eth1, r2:eth1]
+  - [r1:eth2, r3:eth1]
+  - [r1:eth3, r4:eth1]
+  - [r2:eth2, r3:eth2]
+  - [r2:eth3, r4:eth2]
+  - [r3:eth3, sw1:ethernet-1/1]
+  - [sw1:ethernet-1/2, h1:eth1]
+  - [r3:eth4, noc1:eth1]
+  - [r4:eth3, sw2:ethernet-1/1]
+  - [sw2:ethernet-1/2, srv1:eth1]

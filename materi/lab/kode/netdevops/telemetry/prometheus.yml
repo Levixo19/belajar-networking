@@ -1,0 +1,40 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Kontributor Belajar Networking
+#
+# Dua cara mengambil data interface yang SAMA dari switch yang SAMA:
+#   job gnmic : perangkat mendorong (push) tiap 5 detik lewat gNMI -> gnmic
+#   job snmp  : Prometheus menarik (poll) tiap 30 detik lewat snmp_exporter (IF-MIB)
+# Pola relabel job snmp mengikuti contoh di README prometheus/snmp_exporter.
+---
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: gnmic
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["172.30.30.41:9273"]
+
+  - job_name: snmp
+    scrape_interval: 30s
+    scrape_timeout: 20s
+    metrics_path: /snmp
+    params:
+      auth: [public_v2]
+      module: [if_mib]
+    static_configs:
+      - targets: ["172.30.30.21"]
+        labels: {source: sw1}
+      - targets: ["172.30.30.22"]
+        labels: {source: sw2}
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 172.30.30.44:9116
+
+  - job_name: snmp_exporter
+    static_configs:
+      - targets: ["172.30.30.44:9116"]

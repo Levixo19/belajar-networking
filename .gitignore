@@ -1,0 +1,27 @@
+# Dependensi
+node_modules/
+
+# Hasil build (diregenerasi dengan `npm run build` di app/)
+app/dist/
+app/src/generated/
+*.tsbuildinfo
+
+# Lingkungan & log
+.env
+.env.local
+*.log
+
+# Sampah OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Artefak uji lab Python
+__pycache__/
+.pytest_cache/
+
+# Artefak alat/sesi (bukan bagian proyek)
+.playwright-mcp/
+.remember/
+*.tar.gz

@@ -1,0 +1,20 @@
+{#- SPDX-License-Identifier: MIT -#}
+{#- Copyright (c) 2026 Kontributor Belajar Networking -#}
+{#- Konfigurasi SR Linux (flat CLI) untuk switch akses L2.
+    Dimuat oleh napalm-srlinux sebagai kandidat MERGE: hanya menambah atau
+    mengubah. Hasil render tidak boleh berisi komentar karena setiap baris
+    dikirim apa adanya sebagai perintah CLI. -#}
+set / system information location "{{ site.name }}"
+{% for i in dev.interfaces if i.kind == "bridged" %}
+set / interface {{ i.name }} admin-state {{ "enable" if i.enabled else "disable" }}
+{% if i.description %}
+set / interface {{ i.name }} description "{{ i.description }}"
+{% endif %}
+set / interface {{ i.name }} subinterface 0 type bridged
+set / interface {{ i.name }} subinterface 0 admin-state enable
+{% endfor %}
+set / network-instance {{ macvrf }} type mac-vrf
+set / network-instance {{ macvrf }} admin-state enable
+{% for i in dev.interfaces if i.kind == "bridged" %}
+set / network-instance {{ macvrf }} interface {{ i.name }}.0
+{% endfor %}

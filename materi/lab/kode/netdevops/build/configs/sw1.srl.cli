@@ -1,0 +1,13 @@
+set / system information location "DC Jakarta"
+set / interface ethernet-1/1 admin-state enable
+set / interface ethernet-1/1 description "ke r3 eth3"
+set / interface ethernet-1/1 subinterface 0 type bridged
+set / interface ethernet-1/1 subinterface 0 admin-state enable
+set / interface ethernet-1/2 admin-state enable
+set / interface ethernet-1/2 description "ke h1 eth1"
+set / interface ethernet-1/2 subinterface 0 type bridged
+set / interface ethernet-1/2 subinterface 0 admin-state enable
+set / network-instance lan type mac-vrf
+set / network-instance lan admin-state enable
+set / network-instance lan interface ethernet-1/1.0
+set / network-instance lan interface ethernet-1/2.0

@@ -1,0 +1,59 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Kontributor Belajar Networking
+#
+# Lab modul 19.8 (Routing RouterOS v7): ISP lokal AS 64500 multihoming ke dua
+# upstream (UPA AS 64501, UPB AS 64502), OSPF + iBGP route reflector di dalam,
+# ECMP dua jalur BR1-CORE, dan policy routing pelanggan korporat.
+#
+# Image CHR dibangun sendiri dengan vrnetlab (srl-labs/vrnetlab, folder
+# mikrotik/routeros) dari chr-7.24.5.vmdk yang diunduh dari mikrotik.com.
+# Image CHR tunduk pada lisensi MikroTik dan tidak didistribusikan di sini.
+#
+# Jalankan:  sudo containerlab deploy -t routing-v7.clab.yml
+# Hapus:     sudo containerlab destroy -t routing-v7.clab.yml
+
+name: mt7-routing
+
+topology:
+  kinds:
+    mikrotik_ros:
+      image: vrnetlab/mikrotik_routeros:7.24.5
+    linux:
+      image: ghcr.io/hellt/network-multitool
+
+  nodes:
+    upa:
+      kind: mikrotik_ros
+      startup-config: routing-v7/upa.rsc
+    upb:
+      kind: mikrotik_ros
+      startup-config: routing-v7/upb.rsc
+    br1:
+      kind: mikrotik_ros
+      startup-config: routing-v7/br1.rsc
+    br2:
+      kind: mikrotik_ros
+      startup-config: routing-v7/br2.rsc
+    core:
+      kind: mikrotik_ros
+      startup-config: routing-v7/core.rsc
+    h-rumah:
+      kind: linux
+      exec:
+        - ip addr add 203.0.113.10/26 dev eth1
+        - ip route replace default via 203.0.113.1 dev eth1
+    h-korp:
+      kind: linux
+      exec:
+        - ip addr add 203.0.113.70/26 dev eth1
+        - ip route replace default via 203.0.113.65 dev eth1
+
+  links:
+    - endpoints: ["upa:ether2", "br1:ether2"]     # 198.18.0.0/30 eBGP
+    - endpoints: ["upb:ether2", "br2:ether2"]     # 198.18.0.4/30 eBGP
+    - endpoints: ["upa:ether3", "upb:ether3"]     # 198.18.0.8/30 peering antar-upstream
+    - endpoints: ["br1:ether3", "core:ether2"]    # 10.0.13.0/30 OSPF
+    - endpoints: ["br1:ether4", "core:ether3"]    # 10.0.31.0/30 OSPF (ECMP)
+    - endpoints: ["br2:ether3", "core:ether4"]    # 10.0.23.0/30 OSPF
+    - endpoints: ["core:ether5", "h-rumah:eth1"]  # 203.0.113.0/26
+    - endpoints: ["core:ether6", "h-korp:eth1"]   # 203.0.113.64/26

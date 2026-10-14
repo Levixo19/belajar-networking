@@ -1,0 +1,14 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Kontributor Belajar Networking
+#
+# Provisioning dashboard dari berkas: dashboard ikut versi di Git (observability sebagai kode).
+---
+apiVersion: 1
+
+providers:
+  - name: netdevops
+    type: file
+    updateIntervalSeconds: 30
+    allowUiUpdates: false
+    options:
+      path: /var/lib/grafana/dashboards

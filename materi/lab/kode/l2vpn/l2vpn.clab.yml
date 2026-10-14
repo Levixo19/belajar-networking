@@ -1,0 +1,82 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Kontributor Belajar Networking
+#
+# Lab 22.4: VPLS berbasis LDP (RFC 4447/4762) dengan FRRouting.
+#
+#            ce1                 ce2
+#             |                   |
+#            pe1 ---- p1 ---- pe2
+#                      |
+#                     pe3
+#                      |
+#                     ce3
+#
+# Core: IS-IS L2 + LDP. Layanan: satu VPLS "PELANGGAN-B" full mesh antar-PE (pw-id 100).
+# PENTING: FRR di Linux hanya menjalankan CONTROL PLANE pseudowire (sinyal LDP FEC 128).
+# Kernel Linux tidak punya data plane pseudowire, jadi ping antar-CE TIDAK akan berhasil.
+# Lihat materi 22-service-provider/04 bagian lab untuk penjelasan dan alternatif data plane.
+#
+# Prasyarat host: modul kernel mpls_router (sudo modprobe mpls_router).
+name: l2vpn
+
+topology:
+  defaults:
+    kind: linux
+  kinds:
+    linux:
+      image: quay.io/frrouting/frr:10.7.1
+  nodes:
+    pe1:
+      binds:
+        - daemons:/etc/frr/daemons
+        - vtysh.conf:/etc/frr/vtysh.conf
+        - pe1/frr.conf:/etc/frr/frr.conf
+      exec:
+        - sysctl -w net.mpls.platform_labels=100000
+        - sysctl -w net.mpls.conf.eth1.input=1
+    pe2:
+      binds:
+        - daemons:/etc/frr/daemons
+        - vtysh.conf:/etc/frr/vtysh.conf
+        - pe2/frr.conf:/etc/frr/frr.conf
+      exec:
+        - sysctl -w net.mpls.platform_labels=100000
+        - sysctl -w net.mpls.conf.eth1.input=1
+    pe3:
+      binds:
+        - daemons:/etc/frr/daemons
+        - vtysh.conf:/etc/frr/vtysh.conf
+        - pe3/frr.conf:/etc/frr/frr.conf
+      exec:
+        - sysctl -w net.mpls.platform_labels=100000
+        - sysctl -w net.mpls.conf.eth1.input=1
+    p1:
+      binds:
+        - daemons:/etc/frr/daemons
+        - vtysh.conf:/etc/frr/vtysh.conf
+        - p1/frr.conf:/etc/frr/frr.conf
+      exec:
+        - sysctl -w net.mpls.platform_labels=100000
+        - sysctl -w net.mpls.conf.eth1.input=1
+        - sysctl -w net.mpls.conf.eth2.input=1
+        - sysctl -w net.mpls.conf.eth3.input=1
+    ce1:
+      image: alpine:3.22
+      exec:
+        - ip addr add 192.168.100.1/24 dev eth1
+    ce2:
+      image: alpine:3.22
+      exec:
+        - ip addr add 192.168.100.2/24 dev eth1
+    ce3:
+      image: alpine:3.22
+      exec:
+        - ip addr add 192.168.100.3/24 dev eth1
+
+  links:
+    - endpoints: ["pe1:eth1", "p1:eth1"]
+    - endpoints: ["pe2:eth1", "p1:eth2"]
+    - endpoints: ["pe3:eth1", "p1:eth3"]
+    - endpoints: ["ce1:eth1", "pe1:eth2"]
+    - endpoints: ["ce2:eth1", "pe2:eth2"]
+    - endpoints: ["ce3:eth1", "pe3:eth2"]

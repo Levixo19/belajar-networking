@@ -1,0 +1,753 @@
+[
+  {
+    "id": "network-architect",
+    "nama": "Network Architect",
+    "rumpun": "infrastruktur",
+    "ringkas": "Merancang arsitektur jaringan menyeluruh, menetapkan standar, dan memastikan desain memenuhi kebutuhan bisnis, keamanan, serta ketersediaan.",
+    "jenjang": "senior",
+    "harian": [
+      "Menyusun High-Level Design dan Low-Level Design untuk proyek kampus, WAN, DC, cloud",
+      "Meninjau desain dari system integrator dan menandai risiko serta titik gagal tunggal",
+      "Menulis Architecture Decision Record beserta alternatif yang ditolak",
+      "Menerjemahkan RTO, RPO, dan SLA bisnis menjadi keputusan teknis",
+      "Mempresentasikan rencana, anggaran, dan risiko kepada komite TI"
+    ],
+    "keahlian": [
+      "arsitektur-desain",
+      "routing-switching",
+      "cloud",
+      "keamanan-jaringan",
+      "kelangsungan-bisnis",
+      "komunikasi-dokumentasi",
+      "konsultasi-bisnis"
+    ],
+    "alat": [
+      "draw.io",
+      "Microsoft Visio",
+      "NetBox",
+      "Cisco Modeling Labs",
+      "Containerlab",
+      "Batfish",
+      "Terraform",
+      "Cisco Catalyst Center",
+      "Arista CloudVision"
+    ],
+    "sertifikasi": [
+      {
+        "nama": "CCNP Enterprise (350-401 ENCOR + 300-420 ENSLD)",
+        "penerbit": "Cisco",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "AWS Certified Solutions Architect – Associate (SAA-C03)",
+        "penerbit": "Amazon Web Services",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "CCDE (400-007 + Practical v3.1)",
+        "penerbit": "Cisco",
+        "tingkat": "senior"
+      },
+      {
+        "nama": "CCIE Enterprise Infrastructure (350-401 ENCOR + Lab v1.1)",
+        "penerbit": "Cisco",
+        "tingkat": "senior"
+      }
+    ],
+    "masuk": "Hampir selalu lewat promosi: network engineer, lalu senior engineer yang mulai menulis desain di bank, BUMN, operator, atau system integrator besar.",
+    "naik": [
+      "solution-architect",
+      "security-architect",
+      "it-consultant"
+    ],
+    "dekat": [
+      "solution-architect",
+      "cloud-network-engineer",
+      "network-engineer",
+      "security-architect"
+    ],
+    "modul": [
+      "07-routing-lanjutan/06-bgp",
+      "11-wan-vpn/01-teknologi-wan",
+      "12-keamanan/05-hardening-zero-trust",
+      "16-datacenter-cloud-sdn/01-desain-dc",
+      "16-datacenter-cloud-sdn/04-cloud-networking",
+      "17-desain-arsitektur/01-prinsip-desain",
+      "17-desain-arsitektur/02-desain-per-domain",
+      "17-desain-arsitektur/03-perencanaan-dokumentasi",
+      "17-desain-arsitektur/04-studi-kasus-desain",
+      "20-proyek-akhir/03-babak-2-sidang-arsitektur",
+      "22-service-provider/03-te-segment-routing",
+      "07-routing-lanjutan/11-interkoneksi-internet"
+    ],
+    "proyek": [
+      "Desain lengkap perusahaan fiktif 3 kantor, 1 DC, 1 region cloud: HLD, LLD, rencana IP, ADR",
+      "Validasi desain di Containerlab dengan simulasi kegagalan link dan pengukuran waktu konvergensi",
+      "Analisis perbandingan SD-WAN vs MPLS untuk 200 cabang ritel lengkap dengan biaya dan risiko"
+    ],
+    "sumber": [
+      {
+        "judul": "O*NET OnLine: Computer Network Architects (15-1241.00)",
+        "url": "https://www.onetonline.org/link/summary/15-1241.00"
+      },
+      {
+        "judul": "Cisco Learning Network: CCDE v3.1 Unified Exam Topics",
+        "url": "https://learningnetwork.cisco.com/s/ccde-v3-1-unified-exam-topics"
+      },
+      {
+        "judul": "Cisco: CCNP Enterprise",
+        "url": "https://www.cisco.com/site/us/en/learn/training-certifications/certifications/enterprise/ccnp-enterprise/index.html"
+      },
+      {
+        "judul": "Cisco: CCIE Enterprise Infrastructure",
+        "url": "https://www.cisco.com/site/us/en/learn/training-certifications/certifications/enterprise/ccie-enterprise-infrastructure/index.html"
+      }
+    ]
+  },
+  {
+    "id": "cloud-network-engineer",
+    "nama": "Cloud Network Engineer",
+    "rumpun": "infrastruktur",
+    "ringkas": "Membangun dan mengamankan jaringan di AWS, Azure, atau Google Cloud, termasuk konektivitas hybrid ke data center, memakai infrastruktur sebagai kode.",
+    "jenjang": "menengah",
+    "harian": [
+      "Memperbaiki tabel rute, security group, atau DNS privat lewat pull request Terraform",
+      "Merencanakan ruang alamat lintas akun cloud tanpa bentrok dengan jaringan kantor",
+      "Mengelola VPN IPsec dan Direct Connect/ExpressRoute dengan BGP",
+      "Menganalisis flow log untuk mencari trafik yang ditolak atau tidak wajar",
+      "Meninjau biaya transfer data dan NAT gateway setiap bulan"
+    ],
+    "keahlian": [
+      "cloud",
+      "routing-switching",
+      "otomasi-iac",
+      "keamanan-jaringan",
+      "linux",
+      "scripting-python",
+      "monitoring-observability"
+    ],
+    "alat": [
+      "AWS VPC",
+      "AWS Transit Gateway",
+      "AWS Direct Connect",
+      "Azure Virtual WAN",
+      "Azure ExpressRoute",
+      "Google Cloud VPC",
+      "Terraform",
+      "Ansible",
+      "GitHub Actions",
+      "VPC Flow Logs"
+    ],
+    "sertifikasi": [
+      {
+        "nama": "AWS Certified Solutions Architect – Associate (SAA-C03)",
+        "penerbit": "Amazon Web Services",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "Microsoft Certified: Azure Network Engineer Associate (AZ-700)",
+        "penerbit": "Microsoft",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "Google Cloud Professional Cloud Network Engineer",
+        "penerbit": "Google Cloud",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "CCNP Enterprise (350-401 ENCOR + 300-440 ENCC)",
+        "penerbit": "Cisco",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "AWS Certified Advanced Networking – Specialty (ANS-C01), ujian terakhir 31 Desember 2026",
+        "penerbit": "Amazon Web Services",
+        "tingkat": "senior"
+      }
+    ],
+    "masuk": "Paling mulus dari network engineer yang kuat di BGP dan VPN lalu belajar Terraform; perekrutnya startup, bank digital, dan partner AWS/Azure/Google Cloud.",
+    "naik": [
+      "network-architect",
+      "solution-architect"
+    ],
+    "dekat": [
+      "cloud-infrastructure-engineer",
+      "devops-engineer",
+      "network-engineer",
+      "automation-engineer"
+    ],
+    "modul": [
+      "04-network-layer/03-vlsm-cidr",
+      "06-aplikasi/01-dns",
+      "07-routing-lanjutan/06-bgp",
+      "09-nat-acl-firewall/03-firewall",
+      "11-wan-vpn/02-tunneling-vpn",
+      "15-otomasi/04-ansible-cicd",
+      "16-datacenter-cloud-sdn/04-cloud-networking",
+      "16-datacenter-cloud-sdn/05-container-kubernetes"
+    ],
+    "proyek": [
+      "Landing zone Terraform: VPC hub, dua spoke, Transit Gateway, pipeline CI yang menjalankan terraform plan",
+      "VPN IPsec dengan BGP dari router lab (MikroTik CHR atau VyOS) ke cloud, plus uji failover dua tunnel",
+      "Rencana alamat IP multi-akun untuk tiga lingkungan di dua cloud tanpa tumpang tindih"
+    ],
+    "sumber": [
+      {
+        "judul": "AWS Certified Advanced Networking – Specialty",
+        "url": "https://aws.amazon.com/certification/certified-advanced-networking-specialty/"
+      },
+      {
+        "judul": "Microsoft Learn: Azure Network Engineer Associate",
+        "url": "https://learn.microsoft.com/en-us/credentials/certifications/azure-network-engineer-associate/"
+      },
+      {
+        "judul": "Google Cloud: Professional Cloud Network Engineer",
+        "url": "https://cloud.google.com/learn/certification/cloud-network-engineer"
+      },
+      {
+        "judul": "Microsoft News Center Indonesia: General Availability of Indonesia Central Cloud Region",
+        "url": "https://news.microsoft.com/id-id/2025/04/15/general-availability-of-indonesia-central-cloud-region/"
+      }
+    ]
+  },
+  {
+    "id": "wireless-network-engineer",
+    "nama": "Wireless Network Engineer",
+    "rumpun": "infrastruktur",
+    "ringkas": "Menyurvei, merancang, mengamankan, dan mengoperasikan jaringan Wi-Fi serta link radio agar cakupan dan kapasitasnya sesuai kebutuhan pengguna.",
+    "jenjang": "menengah",
+    "harian": [
+      "Melakukan survei prediktif dan validasi lapangan dengan Ekahau",
+      "Menentukan penempatan AP, kanal, lebar kanal, dan daya pancar",
+      "Mengonfigurasi WPA3-Enterprise, 802.1X, dan VLAN dinamis lewat RADIUS",
+      "Menganalisis keluhan Wi-Fi lambat dengan data airtime, interferensi, dan capture 802.11",
+      "Memastikan EIRP dan kanal mematuhi regulasi Komdigi"
+    ],
+    "keahlian": [
+      "wireless-rf",
+      "fundamental-jaringan",
+      "routing-switching",
+      "identitas-akses",
+      "keamanan-jaringan",
+      "troubleshooting",
+      "komunikasi-dokumentasi"
+    ],
+    "alat": [
+      "Ekahau AI Pro",
+      "Ekahau Sidekick 2",
+      "Cisco Catalyst 9800",
+      "HPE Aruba Networking Central",
+      "Juniper Mist",
+      "Ubiquiti UniFi",
+      "MikroTik CAPsMAN",
+      "Wireshark",
+      "FreeRADIUS",
+      "Cisco ISE"
+    ],
+    "sertifikasi": [
+      {
+        "nama": "MikroTik MTCNA lalu MTCWE atau MTCEWE",
+        "penerbit": "MikroTik",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "CWNA (CWNA-110)",
+        "penerbit": "CWNP",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "CCNP Wireless (350-101 WLCOR + 300-110 WLSD atau 300-120 WLSI)",
+        "penerbit": "Cisco",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "CWDP (CWDP-305)",
+        "penerbit": "CWNP",
+        "tingkat": "senior"
+      },
+      {
+        "nama": "CWSP (CWSP-208)",
+        "penerbit": "CWNP",
+        "tingkat": "senior"
+      }
+    ],
+    "masuk": "Biasanya dari teknisi lapangan atau network administrator yang sering menangani AP, lalu bergabung dengan system integrator, WISP, atau penyedia Wi-Fi terkelola.",
+    "naik": [
+      "network-architect",
+      "solution-architect"
+    ],
+    "dekat": [
+      "network-engineer",
+      "field-network-technician",
+      "network-security-engineer"
+    ],
+    "modul": [
+      "02-layer-fisik/01-media-transmisi",
+      "10-wireless/01-rf-dasar",
+      "10-wireless/02-802-11",
+      "10-wireless/03-keamanan-wireless",
+      "12-keamanan/04-aaa-identitas",
+      "10-wireless/04-desain-wlan",
+      "19-mikrotik/05-wireless-mikrotik",
+      "lab/04-lab-keamanan-wireless",
+      "20-proyek-akhir/06-babak-5-udara-dan-gudang-beku"
+    ],
+    "proyek": [
+      "Survei Wi-Fi rumah atau kos dengan heatmap sebelum dan sesudah perbaikan kanal, ditulis seperti laporan klien",
+      "Lab WPA3-Enterprise dengan FreeRADIUS dan VLAN dinamis per grup pengguna",
+      "Perhitungan link budget point-to-point 5 km lengkap dengan Fresnel zone dan batas EIRP"
+    ],
+    "sumber": [
+      {
+        "judul": "CWNP: CWNA",
+        "url": "https://www.cwnp.com/certifications/cwna"
+      },
+      {
+        "judul": "CWNP: CWDP",
+        "url": "https://www.cwnp.com/certifications/cwdp"
+      },
+      {
+        "judul": "Cisco Blogs: A Dedicated Wireless Certification Track Is on the Horizon",
+        "url": "https://blogs.cisco.com/learning/a-dedicated-wireless-certification-track-is-on-the-horizon"
+      },
+      {
+        "judul": "MikroTik: Training and Certification",
+        "url": "https://mikrotik.com/training/about"
+      }
+    ]
+  },
+  {
+    "id": "telecom-engineer",
+    "nama": "Telecommunication Engineer",
+    "rumpun": "infrastruktur",
+    "ringkas": "Merencanakan, membangun, dan mengoptimalkan jaringan operator: akses radio 4G/5G, transport microwave dan fiber, serta core IP/MPLS.",
+    "jenjang": "pemula",
+    "harian": [
+      "Menganalisis KPI jaringan: drop rate, throughput per sel, dan site availability",
+      "Mengikuti drive test dan site survey bersama tim lapangan",
+      "Mengajukan change request untuk tilt antena atau parameter handover",
+      "Memantau utilisasi link transport dan merencanakan upgrade kapasitas",
+      "Menganalisis hasil OTDR saat gangguan fiber dan mengoordinasikan perbaikan"
+    ],
+    "keahlian": [
+      "telekomunikasi",
+      "wireless-rf",
+      "kabel-fisik",
+      "routing-switching",
+      "monitoring-observability",
+      "troubleshooting",
+      "komunikasi-dokumentasi"
+    ],
+    "alat": [
+      "OTDR",
+      "Fusion splicer",
+      "Optical power meter",
+      "Perangkat lunak drive test",
+      "OSS dan manajemen elemen vendor (Huawei, Ericsson, Nokia, ZTE)",
+      "Cisco IOS XR",
+      "Juniper Junos",
+      "Huawei VRP",
+      "Wireshark",
+      "QGIS"
+    ],
+    "sertifikasi": [
+      {
+        "nama": "HCIA-Datacom",
+        "penerbit": "Huawei",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "ETA Fiber Optics Installer (FOI)",
+        "penerbit": "ETA International",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "BICSI Installer 2, Optical Fiber (INSTF)",
+        "penerbit": "BICSI",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "HCIP-Datacom",
+        "penerbit": "Huawei",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "CCNP Service Provider (350-501 SPCOR + satu konsentrasi)",
+        "penerbit": "Cisco",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "MikroTik MTCINE",
+        "penerbit": "MikroTik",
+        "tingkat": "menengah"
+      }
+    ],
+    "masuk": "Lulusan Teknik Telekomunikasi atau Elektro masuk lewat program graduate operator/vendor atau subkontraktor rollout dan managed service, sering dimulai dengan kerja lapangan.",
+    "naik": [
+      "network-architect",
+      "solution-architect"
+    ],
+    "dekat": [
+      "network-engineer",
+      "wireless-network-engineer",
+      "field-network-technician",
+      "noc-technician"
+    ],
+    "modul": [
+      "00-fondasi/03-sinyal-bandwidth-latency",
+      "02-layer-fisik/01-media-transmisi",
+      "02-layer-fisik/03-fiber",
+      "02-layer-fisik/04-encoding-modulasi",
+      "10-wireless/01-rf-dasar",
+      "11-wan-vpn/01-teknologi-wan",
+      "07-routing-lanjutan/06-bgp",
+      "11-wan-vpn/03-qos",
+      "14-monitoring-troubleshooting/03-observability",
+      "22-service-provider/01-mpls-ldp",
+      "22-service-provider/04-l2vpn-carrier-ethernet"
+    ],
+    "proyek": [
+      "Lab IP/MPLS di Containerlab dengan L3VPN untuk dua pelanggan beralamat IP sama",
+      "Perhitungan link budget fiber 40 km dibandingkan spesifikasi transceiver",
+      "Dashboard KPI throughput dan utilisasi per sel dari dataset simulasi, menandai sel yang perlu kapasitas"
+    ],
+    "sumber": [
+      {
+        "judul": "O*NET OnLine: Telecommunications Engineering Specialists (15-1241.01)",
+        "url": "https://www.onetonline.org/link/summary/15-1241.01"
+      },
+      {
+        "judul": "Cisco: 350-501 SPCOR",
+        "url": "https://www.cisco.com/site/us/en/learn/training-certifications/exams/spcor.html"
+      },
+      {
+        "judul": "ETA International: Fiber Optics and Data Cabling Certifications",
+        "url": "https://www.etai.org/fiber_cabling.html"
+      },
+      {
+        "judul": "Selular.id: Komdigi Umumkan Hasil Seleksi Frekuensi 700 MHz dan 2,6 GHz",
+        "url": "https://selular.id/2026/07/komdigi-umumkan-hasil-seleksi-frekuensi-700-mhz-dan-26-ghz/"
+      },
+      {
+        "judul": "detikInet: Panjang Kabel Jaringan Internet Palapa Ring",
+        "url": "https://inet.detik.com/telecommunication/d-7033747/dari-barat-timur-segini-panjang-kabel-jaringan-internet-palapa-ring"
+      }
+    ]
+  },
+  {
+    "id": "voip-engineer",
+    "nama": "VoIP / Unified Communications Engineer",
+    "rumpun": "infrastruktur",
+    "ringkas": "Merancang dan mengoperasikan telepon IP, SIP trunk, contact center, dan konferensi agar suara serta video jernih melintasi jaringan data.",
+    "jenjang": "menengah",
+    "harian": [
+      "Menangani tiket one-way audio dengan menelusuri SIP, SDP, dan RTP di capture",
+      "Mengonfigurasi extension, dial plan, IVR, dan antrean contact center",
+      "Memeriksa QoS: VLAN suara, penandaan DSCP EF, dan antrean prioritas WAN",
+      "Berkoordinasi dengan penyedia SIP trunk untuk porting nomor dan gangguan",
+      "Memantau MOS, jitter, dan packet loss di laporan kualitas panggilan"
+    ],
+    "keahlian": [
+      "voip-uc",
+      "routing-switching",
+      "troubleshooting",
+      "keamanan-jaringan",
+      "linux",
+      "layanan-pelanggan"
+    ],
+    "alat": [
+      "Asterisk",
+      "FreePBX",
+      "Kamailio",
+      "Cisco Unified Communications Manager",
+      "Webex Calling",
+      "Microsoft Teams Phone",
+      "Wireshark",
+      "sngrep",
+      "Yealink",
+      "Grandstream"
+    ],
+    "sertifikasi": [
+      {
+        "nama": "CCNA (200-301 v1.1)",
+        "penerbit": "Cisco",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "CCNP Collaboration (350-801 CLCOR + 300-815 CLACC, 300-820 CLHCT, atau 300-830 CLCCE)",
+        "penerbit": "Cisco",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "Microsoft 365 Certified: Collaboration Communications Systems Engineer Associate (MS-721)",
+        "penerbit": "Microsoft",
+        "tingkat": "menengah"
+      }
+    ],
+    "masuk": "Sering dari network administrator atau IT support yang ditugasi mengurus PBX kantor, atau teknisi distributor telepon IP, lalu bergabung dengan system integrator atau BPO.",
+    "naik": [
+      "solution-architect",
+      "network-architect"
+    ],
+    "dekat": [
+      "network-engineer",
+      "system-administrator",
+      "network-administrator"
+    ],
+    "modul": [
+      "02-layer-fisik/02-kabel-copper",
+      "03-data-link/03-vlan",
+      "05-transport/03-udp-quic",
+      "06-aplikasi/02-dhcp",
+      "09-nat-acl-firewall/01-nat",
+      "11-wan-vpn/03-qos",
+      "13-linux-networking/04-layanan-jaringan-linux",
+      "14-monitoring-troubleshooting/02-tools"
+    ],
+    "proyek": [
+      "Asterisk/FreePBX di VM dengan dua softphone, IVR sederhana, dan rekaman alur SIP via sngrep",
+      "Lab QoS yang membandingkan jitter dan loss panggilan sebelum dan sesudah antrean prioritas",
+      "Dokumentasi pemecahan one-way audio dengan capture Wireshark yang menunjukkan akar masalah NAT"
+    ],
+    "sumber": [
+      {
+        "judul": "Cisco: CCNP Collaboration",
+        "url": "https://www.cisco.com/site/us/en/learn/training-certifications/certifications/collaboration/ccnp-collaboration/index.html"
+      },
+      {
+        "judul": "Microsoft Learn: Collaboration Communications Systems Engineer Associate",
+        "url": "https://learn.microsoft.com/en-us/credentials/certifications/m365-collaboration-communications-systems-engineer/"
+      },
+      {
+        "judul": "RFC 3261: SIP: Session Initiation Protocol",
+        "url": "https://www.rfc-editor.org/rfc/rfc3261"
+      }
+    ]
+  },
+  {
+    "id": "data-center-engineer",
+    "nama": "Data Center Engineer",
+    "rumpun": "infrastruktur",
+    "ringkas": "Menjaga fasilitas dan jaringan data center: rak, kabel terstruktur, daya, pendingin, serta fabric spine-leaf, dengan disiplin prosedur yang ketat.",
+    "jenjang": "menengah",
+    "harian": [
+      "Mengerjakan remote hands: pasang server, rapikan kabel, label, kirim bukti foto",
+      "Memasang dan menguji cross-connect fiber di meet-me room",
+      "Patroli suhu, kelembapan, status UPS dan baterai lewat DCIM",
+      "Menyusun dan menjalankan MOP untuk perubahan tanpa downtime",
+      "Memperbarui inventaris rak, port, kabel, dan anggaran daya"
+    ],
+    "keahlian": [
+      "data-center-fasilitas",
+      "kabel-fisik",
+      "routing-switching",
+      "virtualisasi",
+      "storage-backup",
+      "monitoring-observability",
+      "kelangsungan-bisnis"
+    ],
+    "alat": [
+      "Schneider Electric EcoStruxure IT",
+      "Sunbird dcTrack",
+      "NetBox",
+      "Fluke Networks DSX CableAnalyzer",
+      "OTDR",
+      "Cisco Nexus (NX-OS)",
+      "Arista EOS",
+      "VMware vSphere",
+      "Proxmox VE",
+      "Ansible"
+    ],
+    "sertifikasi": [
+      {
+        "nama": "BICSI Installer 2, Optical Fiber (INSTF) / Copper (INSTC)",
+        "penerbit": "BICSI",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "Certified Data Centre Professional (CDCP)",
+        "penerbit": "EPI (diakreditasi EXIN)",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "Accredited Tier Specialist (ATS)",
+        "penerbit": "Uptime Institute",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "CCNP Data Center (350-601 DCCOR + satu konsentrasi)",
+        "penerbit": "Cisco",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "Accredited Tier Designer (ATD)",
+        "penerbit": "Uptime Institute",
+        "tingkat": "senior"
+      },
+      {
+        "nama": "Data Center Design Consultant (DCDC)",
+        "penerbit": "BICSI",
+        "tingkat": "senior"
+      }
+    ],
+    "masuk": "Paling realistis sebagai teknisi DC atau remote hands bershift di penyedia colocation, atau teknisi kabel di kontraktor ICT, lalu naik setelah beberapa tahun.",
+    "naik": [
+      "network-architect",
+      "it-operations-manager",
+      "solution-architect"
+    ],
+    "dekat": [
+      "network-engineer",
+      "system-engineer",
+      "storage-administrator",
+      "cloud-infrastructure-engineer"
+    ],
+    "modul": [
+      "02-layer-fisik/02-kabel-copper",
+      "02-layer-fisik/03-fiber",
+      "03-data-link/05-etherchannel",
+      "16-datacenter-cloud-sdn/01-desain-dc",
+      "16-datacenter-cloud-sdn/02-overlay-vxlan-evpn",
+      "16-datacenter-cloud-sdn/03-storage-virtualisasi",
+      "16-datacenter-cloud-sdn/06-sdn",
+      "15-otomasi/04-ansible-cicd",
+      "14-monitoring-troubleshooting/03-observability"
+    ],
+    "proyek": [
+      "Fabric spine-leaf 2x4 dengan EVPN-VXLAN di Containerlab beserta skema penamaan dan alamat",
+      "Model NetBox satu hall DC fiktif: rak, perangkat, port, kabel, dan anggaran daya",
+      "MOP lengkap penggantian switch ToR redundan tanpa downtime, termasuk rencana rollback"
+    ],
+    "sumber": [
+      {
+        "judul": "Uptime Institute: Tier Classification System",
+        "url": "https://uptimeinstitute.com/tiers"
+      },
+      {
+        "judul": "TIA: TIA-942",
+        "url": "https://tiaonline.org/products/tia-942/"
+      },
+      {
+        "judul": "BICSI: Certification",
+        "url": "https://www.bicsi.org/education-certification/certification"
+      },
+      {
+        "judul": "EPI: Certified Data Centre Professional (CDCP)",
+        "url": "https://epi-ap.com/cdcp"
+      },
+      {
+        "judul": "Cisco: CCNP Data Center Exams and Training",
+        "url": "https://www.cisco.com/site/us/en/learn/training-certifications/certifications/datacenter/ccnp-data-center/exams-and-training.html"
+      },
+      {
+        "judul": "Kontan: Kapasitas Data Center Indonesia Berpotensi Dekati 600 MW pada Akhir 2026",
+        "url": "https://industri.kontan.co.id/news/kapasitas-data-center-indonesia-berpotensi-dekati-600-mw-pada-akhir-2026"
+      }
+    ]
+  },
+  {
+    "id": "noc-technician",
+    "nama": "Network Operations Center (NOC) Technician",
+    "rumpun": "infrastruktur",
+    "ringkas": "Memantau jaringan 24/7, mendeteksi gangguan lebih dulu dari pelanggan, melakukan triase awal, dan mengeskalasi sesuai prosedur.",
+    "jenjang": "pemula",
+    "harian": [
+      "Memantau dashboard dan alarm, memisahkan alarm palsu dari gangguan nyata",
+      "Triase awal: cek status port, log, dan sinyal optik perangkat",
+      "Membuka, memperbarui, dan menutup tiket sesuai SLA",
+      "Mengeskalasi ke engineer level 2/3 atau tim lapangan sesuai matriks",
+      "Menulis catatan serah terima shift dan kronologi insiden"
+    ],
+    "keahlian": [
+      "monitoring-observability",
+      "troubleshooting",
+      "fundamental-jaringan",
+      "routing-switching",
+      "itsm-itil",
+      "layanan-pelanggan",
+      "komunikasi-dokumentasi"
+    ],
+    "alat": [
+      "Zabbix",
+      "PRTG",
+      "LibreNMS",
+      "Grafana",
+      "The Dude",
+      "Winbox",
+      "Wireshark",
+      "ServiceNow",
+      "Jira Service Management",
+      "PuTTY"
+    ],
+    "sertifikasi": [
+      {
+        "nama": "CompTIA Network+ (N10-009)",
+        "penerbit": "CompTIA",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "CCNA (200-301 v1.1)",
+        "penerbit": "Cisco",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "MikroTik MTCNA",
+        "penerbit": "MikroTik",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "ITIL 4 Foundation atau ITIL Foundation (Version 5)",
+        "penerbit": "PeopleCert",
+        "tingkat": "pemula"
+      }
+    ],
+    "masuk": "Pintu masuk paling realistis bagi lulusan SMK TKJ, D3, atau S1 tanpa pengalaman; ISP, operator, data center, bank, dan managed service provider rutin merekrut.",
+    "naik": [
+      "network-engineer",
+      "network-administrator",
+      "it-operations-manager"
+    ],
+    "dekat": [
+      "it-support-technician",
+      "field-network-technician",
+      "cybersecurity-analyst",
+      "network-administrator"
+    ],
+    "modul": [
+      "00-fondasi/03-sinyal-bandwidth-latency",
+      "01-model-referensi/01-osi",
+      "04-network-layer/04-arp-icmp",
+      "06-aplikasi/05-layanan-lain",
+      "14-monitoring-troubleshooting/01-metodologi",
+      "14-monitoring-troubleshooting/02-tools",
+      "14-monitoring-troubleshooting/03-observability",
+      "14-monitoring-troubleshooting/04-studi-kasus",
+      "19-mikrotik/07-monitoring-scripting",
+      "20-proyek-akhir/09-babak-8-malam-panjang",
+      "07-routing-lanjutan/11-interkoneksi-internet"
+    ],
+    "proyek": [
+      "Zabbix atau LibreNMS memantau perangkat lab via SNMP, dengan dashboard Grafana dan aturan alarm",
+      "Tiga runbook NOC lengkap dengan langkah cek, kriteria eskalasi, dan template pesan pelanggan",
+      "Laporan insiden fiktif: kronologi per menit, dampak, akar masalah, dan tindakan pencegahan"
+    ],
+    "sumber": [
+      {
+        "judul": "O*NET OnLine: Computer Network Support Specialists (15-1231.00)",
+        "url": "https://www.onetonline.org/link/summary/15-1231.00"
+      },
+      {
+        "judul": "CompTIA Network+",
+        "url": "https://www.comptia.org/en-us/certifications/network/"
+      },
+      {
+        "judul": "PeopleCert: ITIL Foundation (Version 5)",
+        "url": "https://www.peoplecert.org/browse-certifications/it-governance-and-service-management/ITIL-1/itil-5-foundation-version-50-4154"
+      },
+      {
+        "judul": "SKKNI Kepmenaker No. 321 Tahun 2016 Bidang Jaringan Komputer",
+        "url": "https://lsp.gunadarma.ac.id/media/skema/skkni/SKKNI_No._321-2016_NetworkAdministrator.pdf"
+      }
+    ]
+  }
+]

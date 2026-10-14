@@ -1,0 +1,49 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Kontributor Belajar Networking
+#
+# Lab 22.3a: IS-IS + SR-MPLS + TI-LFA + SR-TE (pathd) di atas FRRouting.
+# Cincin lima router, semua metrik 10:
+#
+#        r1 ---- r2
+#       /          \
+#     r5            r3
+#       \          /
+#        r4 ------
+#
+# Prasyarat host: sudo modprobe mpls_router mpls_iptunnel
+# Jalankan:       sudo containerlab deploy -t sr-mpls.clab.yml
+name: sr-mpls
+
+topology:
+  defaults:
+    kind: linux
+    image: quay.io/frrouting/frr:10.4.1
+    cmd: sh /start-frr.sh
+    binds:
+      - ../start-frr.sh:/start-frr.sh:ro
+      - daemons:/etc/frr/daemons
+      - ../vtysh.conf:/etc/frr/vtysh.conf:ro
+  nodes:
+    r1:
+      binds:
+        - r1/frr.conf:/etc/frr/frr.conf
+    r2:
+      binds:
+        - r2/frr.conf:/etc/frr/frr.conf
+    r3:
+      env:
+        DUMMIES: cust0
+      binds:
+        - r3/frr.conf:/etc/frr/frr.conf
+    r4:
+      binds:
+        - r4/frr.conf:/etc/frr/frr.conf
+    r5:
+      binds:
+        - r5/frr.conf:/etc/frr/frr.conf
+  links:
+    - endpoints: ["r1:eth1", "r2:eth1"]
+    - endpoints: ["r2:eth2", "r3:eth1"]
+    - endpoints: ["r3:eth2", "r4:eth1"]
+    - endpoints: ["r4:eth2", "r5:eth1"]
+    - endpoints: ["r5:eth2", "r1:eth2"]

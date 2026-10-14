@@ -1,0 +1,2393 @@
+{
+ "00-fondasi/01-apa-itu-jaringan": [
+  {
+   "after": "1-analogi-jaringan-itu-sistem-pos",
+   "type": "diagram",
+   "id": "jaringan-dasar"
+  },
+  {
+   "end": "6-skala-jaringan",
+   "type": "quiz",
+   "id": "skala",
+   "items": [
+    {
+     "q": "Jaringan di satu gedung kantor yang seluruh perangkat dan kabelnya milik perusahaan itu sendiri disebut?",
+     "opts": [
+      "WAN",
+      "LAN",
+      "MAN",
+      "PAN"
+     ],
+     "a": 1,
+     "why": "LAN = jangkauan terbatas satu lokasi, infrastruktur milik sendiri. WAN menyeberang wilayah dan biasanya menyewa jalur operator."
+    },
+    {
+     "q": "Apa pembeda paling mendasar antara LAN dan WAN?",
+     "opts": [
+      "Kecepatannya",
+      "Jumlah perangkatnya",
+      "Jangkauan geografis dan kepemilikan jalur",
+      "Merek perangkatnya"
+     ],
+     "a": 2,
+     "why": "Bukan kecepatan — WAN modern bisa sangat cepat. Yang membedakan adalah luas wilayah dan siapa yang memiliki jalurnya."
+    },
+    {
+     "q": "Dalam model klien–server, siapa yang memulai permintaan?",
+     "opts": [
+      "Server",
+      "Klien",
+      "Router di tengah",
+      "Keduanya bersamaan"
+     ],
+     "a": 1,
+     "why": "Klien selalu memulai; server menunggu dan menjawab. Inilah kenapa server butuh alamat yang tetap dan bisa dihubungi."
+    }
+   ]
+  },
+  {
+   "after": "8-peran-perangkat-jaringan",
+   "type": "photo",
+   "src": "/img/router-soho.jpg",
+   "caption": "Router rumahan: satu kotak yang sekaligus jadi router, switch, access point, dan server DHCP.",
+   "credit": "Deavmi · CC BY-SA 3.0",
+   "href": "https://commons.wikimedia.org/wiki/File:Mikrotik_RB951Ui-2HnD.jpg"
+  },
+  {
+   "after": "10-kategori-lingkungan-jaringan",
+   "type": "photo",
+   "src": "/img/patch-panel.jpg",
+   "caption": "Rak jaringan sungguhan — switch dan patch panel bertumpuk di rak 19 inci.",
+   "credit": "Dsimic · CC BY-SA 4.0",
+   "href": "https://commons.wikimedia.org/wiki/File:19-inch_rackmount_Ethernet_switches_and_patch_panels.jpg"
+  }
+ ],
+ "00-fondasi/02-bit-byte-biner": [
+  {
+   "after": "1-kenapa-harus-biner",
+   "type": "diagram",
+   "id": "byte-bit"
+  },
+  {
+   "end": "5-pangkat-dua-tabel-wajib",
+   "type": "game",
+   "slug": "biner-blitz"
+  },
+  {
+   "end": "6-operasi-bitwise-inti-subnetting",
+   "type": "quiz",
+   "id": "biner",
+   "items": [
+    {
+     "q": "Berapa nilai desimal dari biner <code>11000000</code>?",
+     "opts": [
+      "192",
+      "224",
+      "128",
+      "240"
+     ],
+     "a": 0,
+     "why": "128 + 64 = 192. Dua bit tertinggi menyala, sisanya nol."
+    },
+    {
+     "q": "Hasil operasi AND antara <code>10101100</code> dan <code>11110000</code> adalah?",
+     "opts": [
+      "10100000",
+      "11111100",
+      "10101100",
+      "00001100"
+     ],
+     "a": 0,
+     "why": "AND hanya menghasilkan 1 bila kedua bit 1. Empat bit kiri dipertahankan, empat bit kanan dipaksa nol — persis cara netmask bekerja."
+    },
+    {
+     "q": "Satu byte terdiri dari berapa bit, dan berapa nilai maksimumnya?",
+     "opts": [
+      "4 bit, maks 15",
+      "8 bit, maks 255",
+      "8 bit, maks 256",
+      "16 bit, maks 65535"
+     ],
+     "a": 1,
+     "why": "8 bit menghasilkan 256 kombinasi berbeda, tapi nilai tertingginya 255 karena mulai dari 0."
+    }
+   ]
+  }
+ ],
+ "00-fondasi/03-sinyal-bandwidth-latency": [
+  {
+   "after": "2-bandwidth-throughput-goodput",
+   "type": "diagram",
+   "id": "bandwidth-latency"
+  },
+  {
+   "end": "4-rtt-jitter-packet-loss",
+   "type": "quiz",
+   "id": "bwlat",
+   "items": [
+    {
+     "q": "Koneksi Anda 100 Mbps tapi ping ke server game 300 ms. Menaikkan paket ke 500 Mbps akan?",
+     "opts": [
+      "Menurunkan ping jadi sekitar 60 ms",
+      "Tidak menurunkan ping secara berarti",
+      "Menurunkan ping jadi setengahnya",
+      "Menghilangkan jitter"
+     ],
+     "a": 1,
+     "why": "Latency ditentukan jarak, jumlah hop, dan antrean — bukan lebar pipa. Bandwidth besar hanya membuat data banyak mengalir lebih cepat, bukan membuat paket pertama tiba lebih awal."
+    },
+    {
+     "q": "Jitter paling tepat didefinisikan sebagai?",
+     "opts": [
+      "Waktu pulang-pergi paket",
+      "Persentase paket hilang",
+      "Variasi selisih waktu tiba antar-paket",
+      "Kecepatan maksimum jalur"
+     ],
+     "a": 2,
+     "why": "Jitter adalah ketidakteraturan waktu tiba. VoIP dan video call jauh lebih sensitif ke jitter daripada ke latency yang tinggi tapi stabil."
+    },
+    {
+     "q": "Throughput selalu?",
+     "opts": [
+      "Sama dengan bandwidth",
+      "Lebih besar dari bandwidth",
+      "Lebih kecil atau sama dengan bandwidth",
+      "Tidak berhubungan dengan bandwidth"
+     ],
+     "a": 2,
+     "why": "Bandwidth adalah batas atas teoretis. Throughput adalah kenyataannya, selalu terpotong overhead protokol, retransmisi, dan kemacetan."
+    }
+   ]
+  }
+ ],
+ "00-fondasi/05-topologi": [
+  {
+   "after": "2-topologi-dasar",
+   "type": "diagram",
+   "id": "topologi"
+  },
+  {
+   "end": "4-redundansi-dan-failure-domain",
+   "type": "quiz",
+   "id": "topologi",
+   "items": [
+    {
+     "q": "Topologi mana yang punya titik gagal tunggal paling jelas?",
+     "opts": [
+      "Mesh penuh",
+      "Star",
+      "Ring ganda",
+      "Hybrid"
+     ],
+     "a": 1,
+     "why": "Pada star, matinya perangkat pusat mematikan semua. Kelebihannya: satu kabel putus hanya memutus satu host."
+    },
+    {
+     "q": "Berapa jalur dibutuhkan untuk full mesh dengan 6 perangkat?",
+     "opts": [
+      "12",
+      "15",
+      "30",
+      "36"
+     ],
+     "a": 1,
+     "why": "Rumusnya n(n−1)/2 = 6×5/2 = 15. Inilah kenapa full mesh tidak realistis untuk jaringan besar."
+    },
+    {
+     "q": "Topologi fisik star dengan switch di tengah membentuk topologi logis apa?",
+     "opts": [
+      "Ring",
+      "Bus",
+      "Mesh",
+      "Point-to-point per port"
+     ],
+     "a": 3,
+     "why": "Switch modern membuat setiap port menjadi jalur khusus full-duplex, jadi logisnya point-to-point — bukan bus seperti zaman hub."
+    }
+   ]
+  }
+ ],
+ "01-model-referensi/01-osi": [
+  {
+   "after": "2-tujuh-layer-osi",
+   "type": "diagram",
+   "id": "osi-stack"
+  },
+  {
+   "end": "9-layer-7-application",
+   "type": "game",
+   "slug": "osi-sorter"
+  },
+  {
+   "end": "10-perangkat-beroperasi-di-layer-berapa",
+   "type": "quiz",
+   "id": "osi",
+   "items": [
+    {
+     "q": "Switch tanpa fitur routing bekerja terutama di layer berapa?",
+     "opts": [
+      "Layer 1",
+      "Layer 2",
+      "Layer 3",
+      "Layer 4"
+     ],
+     "a": 1,
+     "why": "Switch mengambil keputusan berdasarkan MAC address, dan MAC adalah alamat layer 2."
+    },
+    {
+     "q": "PDU pada layer Transport disebut?",
+     "opts": [
+      "Frame",
+      "Packet",
+      "Segment (TCP) atau datagram (UDP)",
+      "Bit"
+     ],
+     "a": 2,
+     "why": "Urutannya dari atas: data → segment/datagram → packet → frame → bit."
+    },
+    {
+     "q": "Kabel putus, lampu link mati. Ini masalah layer berapa?",
+     "opts": [
+      "Layer 1",
+      "Layer 2",
+      "Layer 3",
+      "Layer 7"
+     ],
+     "a": 0,
+     "why": "Media fisik dan sinyal ada di layer 1. Aturan emasnya: periksa dari bawah dulu sebelum menuduh aplikasi."
+    },
+    {
+     "q": "Enkripsi dan kompresi secara klasik ditempatkan di layer?",
+     "opts": [
+      "Layer 4",
+      "Layer 5",
+      "Layer 6",
+      "Layer 7"
+     ],
+     "a": 2,
+     "why": "Presentation layer. Di praktik TCP/IP, TLS sering dianggap 'di antara' layer 4 dan 7 — model OSI di sini memang tidak persis."
+    }
+   ]
+  },
+  {
+   "end": "11-osi-sebagai-alat-troubleshooting",
+   "type": "tool",
+   "slug": "osi"
+  }
+ ],
+ "01-model-referensi/02-tcp-ip": [
+  {
+   "after": "2-model-tcpip-versi-4-layer",
+   "type": "diagram",
+   "id": "osi-tcpip"
+  },
+  {
+   "end": "5-kenapa-tcpip-menang",
+   "type": "quiz",
+   "id": "tcpip",
+   "items": [
+    {
+     "q": "Tiga layer teratas OSI dipadatkan menjadi layer apa di TCP/IP?",
+     "opts": [
+      "Transport",
+      "Internet",
+      "Application",
+      "Network Access"
+     ],
+     "a": 2,
+     "why": "Application, Presentation, dan Session OSI dilebur jadi satu layer Application di TCP/IP."
+    },
+    {
+     "q": "Kenapa model TCP/IP yang akhirnya dipakai dunia nyata?",
+     "opts": [
+      "Lebih dulu diterbitkan ISO",
+      "Sudah punya implementasi yang jalan dan gratis lebih dulu",
+      "Lebih banyak layernya",
+      "Diwajibkan pemerintah"
+     ],
+     "a": 1,
+     "why": "OSI unggul di atas kertas, tapi TCP/IP sudah berjalan di jaringan nyata dan dibagikan bebas. Implementasi mengalahkan spesifikasi."
+    }
+   ]
+  }
+ ],
+ "01-model-referensi/03-enkapsulasi": [
+  {
+   "after": "1-enkapsulasi-amplop-di-dalam-amplop",
+   "type": "diagram",
+   "id": "enkapsulasi"
+  },
+  {
+   "end": "4-yang-berubah-dan-tidak-berubah-di-setiap-hop",
+   "type": "quiz",
+   "id": "enkap",
+   "items": [
+    {
+     "q": "Saat paket melewati router, apa yang berubah?",
+     "opts": [
+      "IP sumber dan tujuan",
+      "MAC sumber dan tujuan",
+      "Nomor port",
+      "Isi payload"
+     ],
+     "a": 1,
+     "why": "Header layer 2 dibongkar dan dibuat ulang tiap hop. IP tujuan tetap sama sepanjang jalur — kecuali kena NAT."
+    },
+    {
+     "q": "Urutan enkapsulasi yang benar saat data turun dari aplikasi?",
+     "opts": [
+      "Data → Frame → Packet → Segment",
+      "Data → Segment → Packet → Frame",
+      "Data → Packet → Frame → Segment",
+      "Data → Bit → Frame → Packet"
+     ],
+     "a": 1,
+     "why": "Turun berarti membungkus: TCP dulu (segment), lalu IP (packet), lalu Ethernet (frame), baru jadi bit di kabel."
+    },
+    {
+     "q": "FCS di ujung frame Ethernet berguna untuk?",
+     "opts": [
+      "Mengurutkan frame",
+      "Mendeteksi frame yang rusak di perjalanan",
+      "Menyimpan alamat tujuan",
+      "Enkripsi"
+     ],
+     "a": 1,
+     "why": "FCS adalah CRC-32. Kalau tidak cocok, frame dibuang diam-diam — tidak ada permintaan kirim ulang di layer 2 Ethernet."
+    }
+   ]
+  },
+  {
+   "end": "5-perjalanan-lengkap-mengetik-httpsexamplecom",
+   "type": "tool",
+   "slug": "packet-inspector"
+  }
+ ],
+ "02-layer-fisik/01-media-transmisi": [
+  {
+   "after": "1-tiga-jenis-media",
+   "type": "diagram",
+   "id": "media-kabel"
+  },
+  {
+   "after": "1-tiga-jenis-media",
+   "type": "photo",
+   "src": "/img/coaxial.jpg",
+   "caption": "Penampang kabel coaxial: inti tembaga, dielektrik, anyaman pelindung, jaket luar.",
+   "credit": "FDominec · CC BY-SA 3.0",
+   "href": "https://commons.wikimedia.org/wiki/File:Coaxial_cable_cut.jpg"
+  },
+  {
+   "end": "5-simplex-half-duplex-full-duplex",
+   "type": "quiz",
+   "id": "media",
+   "items": [
+    {
+     "q": "Kenapa pasangan kawat di kabel UTP dipilin?",
+     "opts": [
+      "Agar lebih kuat ditarik",
+      "Agar meredam interferensi dan crosstalk",
+      "Agar lebih murah",
+      "Agar muat lebih banyak kawat"
+     ],
+     "a": 1,
+     "why": "Pilinan membuat gangguan mengenai kedua kawat sama besar sehingga saling meniadakan di penerima. Makin rapat pilinan, makin tinggi kategori kabelnya."
+    },
+    {
+     "q": "Kenaikan 3 dB berarti daya sinyal menjadi?",
+     "opts": [
+      "Setengahnya",
+      "Dua kali lipat",
+      "Sepuluh kali lipat",
+      "Tiga kali lipat"
+     ],
+     "a": 1,
+     "why": "+3 dB ≈ ×2, +10 dB = ×10, −3 dB ≈ setengah. Skala desibel itu logaritmik, bukan linear."
+    },
+    {
+     "q": "Full duplex berarti?",
+     "opts": [
+      "Kirim dan terima bergantian",
+      "Kirim dan terima bersamaan",
+      "Hanya bisa mengirim",
+      "Kecepatan dua kali lipat"
+     ],
+     "a": 1,
+     "why": "Bergantian itu half duplex. Full duplex menghapus tabrakan sepenuhnya — itulah kenapa CSMA/CD tidak relevan lagi di switch modern."
+    }
+   ]
+  }
+ ],
+ "02-layer-fisik/02-kabel-copper": [
+  {
+   "after": "1-anatomi-kabel-twisted-pair",
+   "type": "photo",
+   "src": "/img/utp-cable.jpg",
+   "caption": "Empat pasang kawat berpilin di dalam satu jaket — inilah isi sebenarnya kabel UTP.",
+   "credit": "Baran Ivo · Public domain",
+   "href": "https://commons.wikimedia.org/wiki/File:UTP_cable.jpg"
+  },
+  {
+   "end": "3-kategori-kabel",
+   "type": "quiz",
+   "id": "kategori",
+   "items": [
+    {
+     "q": "Panjang maksimum satu segmen kabel UTP menurut standar?",
+     "opts": [
+      "50 m",
+      "100 m",
+      "185 m",
+      "305 m"
+     ],
+     "a": 1,
+     "why": "100 m total: 90 m kabel permanen + 10 m patch cord di kedua ujung."
+    },
+    {
+     "q": "Kabel minimal apa yang dibutuhkan untuk 10 Gbps sejauh 100 m?",
+     "opts": [
+      "Cat5e",
+      "Cat6",
+      "Cat6a",
+      "Cat3"
+     ],
+     "a": 2,
+     "why": "Cat6 bisa 10 Gbps tapi hanya sampai ±55 m. Untuk 100 m penuh butuh Cat6a."
+    }
+   ]
+  },
+  {
+   "after": "4-pinout-t568a-dan-t568b",
+   "type": "diagram",
+   "id": "pinout-rj45"
+  },
+  {
+   "after": "5-membuat-dan-menguji-kabel",
+   "type": "photo",
+   "src": "/img/rj45-plug.jpg",
+   "caption": "Konektor 8P8C (RJ45) — delapan konduktor emas terlihat jelas, warna kabel tampak dari samping.",
+   "credit": "David Monniaux · CC BY-SA 3.0",
+   "href": "https://commons.wikimedia.org/wiki/File:Ethernet_RJ45_connector_p1160054.jpg"
+  },
+  {
+   "after": "9-praktik-diagnosis",
+   "type": "photo",
+   "src": "/img/cable-tester.jpg",
+   "caption": "Cable tester: memastikan kedelapan pin tersambung pada urutan yang benar di kedua ujung.",
+   "credit": "George Shuklin · Public domain",
+   "href": "https://commons.wikimedia.org/wiki/File:Network_cable_tester.jpg"
+  }
+ ],
+ "02-layer-fisik/03-fiber": [
+  {
+   "after": "1-cara-serat-optik-bekerja",
+   "type": "photo",
+   "src": "/img/fiber-strands.jpg",
+   "caption": "Penampang kabel fiber: serat kaca terbungkus buffer berwarna, lapisan penguat, dan jaket luar.",
+   "credit": "Srleffler · CC BY-SA 3.0",
+   "href": "https://commons.wikimedia.org/wiki/File:Optical_fiber_cable.jpg"
+  },
+  {
+   "after": "2-single-mode-vs-multimode",
+   "type": "diagram",
+   "id": "fiber-mode"
+  },
+  {
+   "after": "3-konektor",
+   "type": "photo",
+   "src": "/img/fiber-connector.jpg",
+   "caption": "Konektor LC — kecil, berpasangan, paling umum di perangkat jaringan modern.",
+   "credit": "Adamantios · CC BY-SA 3.0",
+   "href": "https://commons.wikimedia.org/wiki/File:LC-optical-fiber-connector-hdr-0a.jpg"
+  },
+  {
+   "after": "4-transceiver-optik-yang-dapat-dilepas",
+   "type": "photo",
+   "src": "/img/sfp-module.jpg",
+   "caption": "Modul SFP+ 10 Gbps: transceiver yang bisa dicabut-pasang sesuai jenis serat dan jarak.",
+   "credit": "Dmitry Nosachev · CC BY-SA 4.0",
+   "href": "https://commons.wikimedia.org/wiki/File:LR-Link_10GBASE-SR_SFP%2B_transceiver.jpg"
+  },
+  {
+   "end": "5-power-budget-optik-perhitungan-wajib",
+   "type": "quiz",
+   "id": "fiber",
+   "items": [
+    {
+     "q": "Single-mode dipilih daripada multimode terutama karena?",
+     "opts": [
+      "Lebih murah",
+      "Jarak jauh tanpa dispersi modal",
+      "Lebih mudah disambung",
+      "Core-nya lebih besar"
+     ],
+     "a": 1,
+     "why": "Core 9 µm hanya meloloskan satu jalur cahaya, jadi sinyal tidak melar. Harganya justru lebih mahal di sisi transceiver."
+    },
+    {
+     "q": "Penyebab gangguan link fiber yang paling sering dan paling sering diabaikan?",
+     "opts": [
+      "Kabel terlalu panjang",
+      "Ujung konektor kotor",
+      "Suhu ruangan",
+      "Jenis SFP berbeda merek"
+     ],
+     "a": 1,
+     "why": "Satu partikel debu di permukaan core bisa memblokir sebagian besar cahaya. Bersihkan sebelum menuduh perangkatnya rusak."
+    },
+    {
+     "q": "Fiber kebal terhadap?",
+     "opts": [
+      "Tekukan tajam",
+      "Interferensi elektromagnetik",
+      "Debu",
+      "Putus karena tarikan"
+     ],
+     "a": 1,
+     "why": "Karena membawa cahaya, bukan listrik. Ini alasan fiber dipakai di dekat mesin industri atau antar-gedung yang rawan petir."
+    }
+   ]
+  }
+ ],
+ "02-layer-fisik/04-encoding-modulasi": [
+  {
+   "after": "2-skema-encoding-dasar",
+   "type": "diagram",
+   "id": "encoding-sinyal"
+  },
+  {
+   "end": "4-multi-level-signaling-lebih-banyak-bit-per-simbol",
+   "type": "quiz",
+   "id": "encoding",
+   "items": [
+    {
+     "q": "Keunggulan Manchester encoding dibanding NRZ adalah?",
+     "opts": [
+      "Lebih hemat bandwidth",
+      "Selalu ada transisi sehingga clock ikut terkirim",
+      "Lebih tahan interferensi",
+      "Bisa mengirim lebih banyak bit per simbol"
+     ],
+     "a": 1,
+     "why": "Justru Manchester boros bandwidth (butuh dua kali laju sinyal). Bayarannya: penerima tidak pernah kehilangan sinkronisasi."
+    },
+    {
+     "q": "PAM4 mengirim berapa bit per simbol?",
+     "opts": [
+      "1 bit",
+      "2 bit",
+      "4 bit",
+      "8 bit"
+     ],
+     "a": 1,
+     "why": "Empat level tegangan = 4 kombinasi = 2 bit per simbol. Konsekuensinya jarak antar-level menyempit sehingga lebih rentan derau."
+    }
+   ]
+  }
+ ],
+ "03-data-link/01-ethernet-frame-mac": [
+  {
+   "after": "2-struktur-frame-ethernet",
+   "type": "diagram",
+   "id": "ethernet-frame"
+  },
+  {
+   "end": "3-mac-address",
+   "type": "quiz",
+   "id": "mac",
+   "items": [
+    {
+     "q": "MAC address panjangnya berapa bit dan bagaimana pembagiannya?",
+     "opts": [
+      "32 bit: 16 vendor + 16 unik",
+      "48 bit: 24 bit OUI + 24 bit unik",
+      "64 bit: 32 + 32",
+      "48 bit: seluruhnya acak"
+     ],
+     "a": 1,
+     "why": "24 bit pertama (OUI) dialokasikan IEEE ke vendor, 24 bit sisanya ditentukan vendor. Itu sebabnya MAC bisa dipakai menebak merek perangkat."
+    },
+    {
+     "q": "MAC broadcast ditulis sebagai?",
+     "opts": [
+      "00:00:00:00:00:00",
+      "FF:FF:FF:FF:FF:FF",
+      "01:00:5E:00:00:01",
+      "AA:AA:AA:AA:AA:AA"
+     ],
+     "a": 1,
+     "why": "Semua bit 1. Frame dengan tujuan ini diteruskan switch ke semua port dalam VLAN yang sama."
+    },
+    {
+     "q": "MTU standar Ethernet adalah 1500 byte. Angka itu mengukur?",
+     "opts": [
+      "Seluruh frame termasuk header",
+      "Payload saja, di luar header dan FCS",
+      "Hanya header",
+      "Ukuran maksimum file"
+     ],
+     "a": 1,
+     "why": "1500 byte adalah payload. Ditambah header 14 byte dan FCS 4 byte, frame di kabel jadi 1518 byte."
+    }
+   ]
+  },
+  {
+   "after": "5-csmacd-dan-collision-domain",
+   "type": "diagram",
+   "id": "domain-tabrakan"
+  }
+ ],
+ "03-data-link/02-switching": [
+  {
+   "after": "3-proses-forwarding-langkah-demi-langkah",
+   "type": "diagram",
+   "id": "mac-table"
+  },
+  {
+   "end": "5-mac-move-dan-mac-flapping",
+   "type": "quiz",
+   "id": "switching",
+   "items": [
+    {
+     "q": "Switch mengisi tabel MAC-nya dengan cara?",
+     "opts": [
+      "Membaca MAC tujuan frame masuk",
+      "Membaca MAC sumber frame masuk",
+      "Bertanya ke router",
+      "Dikonfigurasi manual"
+     ],
+     "a": 1,
+     "why": "Belajar dari MAC sumber di port mana frame itu tiba. MAC tujuan hanya dipakai untuk memutuskan mau diteruskan ke port mana."
+    },
+    {
+     "q": "Apa yang dilakukan switch bila MAC tujuan belum ada di tabelnya?",
+     "opts": [
+      "Membuang frame",
+      "Mengirim ke semua port kecuali port asal (flooding)",
+      "Mengirim ke gateway",
+      "Menyimpan sampai tahu"
+     ],
+     "a": 1,
+     "why": "Unknown unicast flooding. Ini normal dan sementara — begitu tujuan membalas, switch belajar dan berhenti mem-flood."
+    },
+    {
+     "q": "MAC flapping (satu MAC muncul berpindah-pindah port) biasanya menandakan?",
+     "opts": [
+      "Kabel rusak",
+      "Loop layer 2 atau perangkat berpindah",
+      "Switch kepanasan",
+      "VLAN salah"
+     ],
+     "a": 1,
+     "why": "Kalau bukan karena perangkat benar-benar dipindah, ini gejala klasik loop — periksa STP sebelum jaringan lumpuh."
+    }
+   ]
+  }
+ ],
+ "03-data-link/03-vlan": [
+  {
+   "after": "3-8021q-tagging",
+   "type": "diagram",
+   "id": "vlan-trunk"
+  },
+  {
+   "end": "4-default-vlan-native-vlan-management-vlan",
+   "type": "quiz",
+   "id": "vlan",
+   "items": [
+    {
+     "q": "Berapa byte tag 802.1Q menambah panjang frame?",
+     "opts": [
+      "2 byte",
+      "4 byte",
+      "8 byte",
+      "12 byte"
+     ],
+     "a": 1,
+     "why": "4 byte: TPID 2 byte + TCI 2 byte (berisi PCP, DEI, dan VID 12 bit)."
+    },
+    {
+     "q": "VID 12 bit berarti jumlah VLAN yang bisa dipakai?",
+     "opts": [
+      "256",
+      "1024",
+      "4094 (1–4094)",
+      "65535"
+     ],
+     "a": 2,
+     "why": "2¹² = 4096, tapi 0 dan 4095 dipesan, jadi tersisa 1–4094."
+    },
+    {
+     "q": "Frame di VLAN native dikirim melalui trunk dalam keadaan?",
+     "opts": [
+      "Selalu ber-tag",
+      "Tanpa tag",
+      "Ber-tag ganda",
+      "Tidak dikirim"
+     ],
+     "a": 1,
+     "why": "Tanpa tag. Kalau native VLAN berbeda di dua ujung trunk, lalu lintas bisa bocor antar-VLAN — sumber bug dan celah keamanan klasik."
+    }
+   ]
+  },
+  {
+   "end": "6-inter-vlan-routing",
+   "type": "tool",
+   "slug": "vlan-lab"
+  },
+  {
+   "end": "9-perintah-verifikasi-troubleshooting",
+   "type": "tool",
+   "slug": "cli-vlan"
+  }
+ ],
+ "03-data-link/04-stp": [
+  {
+   "after": "2-ide-dasar-stp",
+   "type": "diagram",
+   "id": "stp"
+  },
+  {
+   "end": "5-port-state-dan-timer-8021d-klasik",
+   "type": "quiz",
+   "id": "stp",
+   "items": [
+    {
+     "q": "Kenapa loop di layer 2 jauh lebih berbahaya daripada loop di layer 3?",
+     "opts": [
+      "Frame lebih besar",
+      "Header layer 2 tidak punya TTL",
+      "Switch lebih lambat",
+      "MAC address terbatas"
+     ],
+     "a": 1,
+     "why": "Paket IP punya TTL yang habis dan membuat paket dibuang. Frame Ethernet tidak punya penghitung apa pun, jadi berputar selamanya sampai jaringan lumpuh."
+    },
+    {
+     "q": "Root bridge dipilih berdasarkan?",
+     "opts": [
+      "MAC address tertinggi",
+      "Bridge ID terendah (priority lalu MAC)",
+      "Jumlah port terbanyak",
+      "Yang pertama menyala"
+     ],
+     "a": 1,
+     "why": "Bridge ID = priority + MAC. Priority terendah menang; kalau seri, MAC terkecil yang menang. Karena default priority sama, sering yang menang justru switch paling tua."
+    },
+    {
+     "q": "Port yang berstatus blocking sebenarnya?",
+     "opts": [
+      "Mati total",
+      "Tetap menerima BPDU dan siap mengambil alih",
+      "Hanya mengirim data",
+      "Dinonaktifkan permanen"
+     ],
+     "a": 1,
+     "why": "Blocking berarti tidak meneruskan data pengguna, tapi tetap mendengarkan BPDU supaya bisa langsung aktif saat jalur utama putus."
+    }
+   ]
+  }
+ ],
+ "04-network-layer/01-ipv4": [
+  {
+   "after": "2-struktur-alamat-ipv4",
+   "type": "diagram",
+   "id": "ipv4-anatomi"
+  },
+  {
+   "end": "3-tiga-alamat-khusus-dalam-setiap-jaringan",
+   "type": "quiz",
+   "id": "ipv4",
+   "items": [
+    {
+     "q": "Dalam subnet 192.168.10.0/24, alamat mana yang TIDAK boleh dipasang ke host?",
+     "opts": [
+      "192.168.10.1",
+      "192.168.10.254",
+      "192.168.10.255",
+      "192.168.10.100"
+     ],
+     "a": 2,
+     "why": ".255 adalah alamat broadcast subnet ini (semua bit host bernilai 1). Bersama alamat network .0, keduanya selalu dipesan."
+    },
+    {
+     "q": "Mana yang termasuk alamat privat menurut RFC 1918?",
+     "opts": [
+      "172.32.0.5",
+      "172.16.0.5",
+      "11.0.0.5",
+      "192.169.1.5"
+     ],
+     "a": 1,
+     "why": "Rentang privat: 10.0.0.0/8, 172.16.0.0/12 (172.16–172.31), dan 192.168.0.0/16. 172.32 sudah di luar rentang."
+    },
+    {
+     "q": "Alamat 169.254.x.x pada komputer biasanya menandakan?",
+     "opts": [
+      "Koneksi normal",
+      "Gagal mendapat IP dari DHCP",
+      "Alamat publik",
+      "Alamat loopback"
+     ],
+     "a": 1,
+     "why": "Itu APIPA — alamat yang diberikan sistem operasi sendiri saat DHCP tidak menjawab. Sinyal jelas untuk memeriksa server DHCP atau kabelnya."
+    }
+   ]
+  },
+  {
+   "end": "7-header-ipv4-field-demi-field",
+   "type": "tool",
+   "slug": "packet-inspector"
+  },
+  {
+   "end": "8-praktik",
+   "type": "tool",
+   "slug": "cli-ip"
+  }
+ ],
+ "04-network-layer/02-subnetting": [
+  {
+   "after": "2-cara-kerja-meminjam-bit-host",
+   "type": "diagram",
+   "id": "subnet-split"
+  },
+  {
+   "end": "3-metode-magic-number-cara-cepat",
+   "type": "quiz",
+   "id": "subnet",
+   "items": [
+    {
+     "q": "Berapa host yang bisa dipakai dalam /26?",
+     "opts": [
+      "64",
+      "62",
+      "30",
+      "126"
+     ],
+     "a": 1,
+     "why": "2^(32−26) = 64 alamat, dikurangi network dan broadcast = 62 host."
+    },
+    {
+     "q": "Host 192.168.1.100/26 berada di subnet mana?",
+     "opts": [
+      "192.168.1.0/26",
+      "192.168.1.64/26",
+      "192.168.1.96/26",
+      "192.168.1.128/26"
+     ],
+     "a": 1,
+     "why": "Blok /26 meloncat tiap 64: 0, 64, 128, 192. Angka 100 jatuh di antara 64 dan 127."
+    },
+    {
+     "q": "Netmask 255.255.255.240 setara dengan prefix?",
+     "opts": [
+      "/26",
+      "/27",
+      "/28",
+      "/29"
+     ],
+     "a": 2,
+     "why": "240 = 11110000 → 4 bit menyala di oktet terakhir → 24 + 4 = /28. Sisa 4 bit host = 16 alamat, 14 host."
+    }
+   ]
+  },
+  {
+   "end": "4-tabel-referensi-yang-wajib-hafal",
+   "type": "game",
+   "slug": "subnet-drill"
+  },
+  {
+   "end": "7-menentukan-prefix-dari-kebutuhan-host",
+   "type": "tool",
+   "slug": "subnet"
+  }
+ ],
+ "04-network-layer/03-vlsm-cidr": [
+  {
+   "end": "2-aturan-emas-vlsm-alokasikan-dari-besar-ke-kecil",
+   "type": "quiz",
+   "id": "vlsm",
+   "items": [
+    {
+     "q": "Kenapa alokasi VLSM harus dimulai dari kebutuhan terbesar?",
+     "opts": [
+      "Supaya lebih cepat dihitung",
+      "Agar blok besar masih menemukan ruang yang selaras batasnya",
+      "Karena aturan RFC",
+      "Agar netmask lebih pendek"
+     ],
+     "a": 1,
+     "why": "Kalau blok kecil dialokasikan lebih dulu, ia bisa mencaplok posisi yang dibutuhkan blok besar dan memaksa alamat terbuang."
+    },
+    {
+     "q": "Wildcard mask untuk /27 adalah?",
+     "opts": [
+      "0.0.0.31",
+      "0.0.0.15",
+      "255.255.255.224",
+      "0.0.0.63"
+     ],
+     "a": 0,
+     "why": "Wildcard adalah kebalikan bit netmask. /27 → 255.255.255.224 → wildcard 0.0.0.31."
+    },
+    {
+     "q": "Kenapa /31 boleh dipakai untuk link point-to-point?",
+     "opts": [
+      "Karena hanya butuh 1 alamat",
+      "Karena RFC 3021 menghapus kebutuhan network dan broadcast di link 2 titik",
+      "Karena lebih cepat",
+      "Karena router menolak /30"
+     ],
+     "a": 1,
+     "why": "Di link dua titik, alamat network dan broadcast tidak ada gunanya — RFC 3021 mengizinkan keduanya dipakai host, menghemat setengah alamat."
+    }
+   ]
+  },
+  {
+   "end": "5-wildcard-mask",
+   "type": "game",
+   "slug": "cidr-flash"
+  }
+ ],
+ "04-network-layer/04-arp-icmp": [
+  {
+   "after": "1-arp-address-resolution-protocol",
+   "type": "diagram",
+   "id": "arp"
+  },
+  {
+   "end": "3-ping-cara-kerja-sesungguhnya",
+   "type": "quiz",
+   "id": "arpicmp",
+   "items": [
+    {
+     "q": "ARP request dikirim sebagai?",
+     "opts": [
+      "Unicast ke gateway",
+      "Broadcast ke seluruh domain broadcast",
+      "Multicast ke router",
+      "Paket TCP"
+     ],
+     "a": 1,
+     "why": "Karena pengirim belum tahu MAC tujuan, ia harus bertanya ke semua orang. Balasannya barulah unicast."
+    },
+    {
+     "q": "Ping yang gagal membuktikan bahwa?",
+     "opts": [
+      "Host tujuan pasti mati",
+      "Belum tentu apa-apa — ICMP bisa saja diblokir firewall",
+      "Jalur pasti putus",
+      "DNS bermasalah"
+     ],
+     "a": 1,
+     "why": "Banyak server dan firewall sengaja membuang ICMP echo. Ping gagal adalah petunjuk, bukan bukti."
+    },
+    {
+     "q": "ARP bekerja di layer berapa?",
+     "opts": [
+      "Layer 1",
+      "Antara layer 2 dan 3",
+      "Layer 4",
+      "Layer 7"
+     ],
+     "a": 1,
+     "why": "ARP menjembatani alamat layer 3 (IP) ke alamat layer 2 (MAC), jadi posisinya memang di antara keduanya."
+    }
+   ]
+  },
+  {
+   "after": "4-traceroute-cara-kerja-sesungguhnya",
+   "type": "diagram",
+   "id": "ttl-traceroute"
+  }
+ ],
+ "04-network-layer/05-routing-dasar": [
+  {
+   "after": "3-longest-prefix-match-aturan-nomor-satu",
+   "type": "diagram",
+   "id": "routing-lookup"
+  },
+  {
+   "after": "4-administrative-distance-ad",
+   "type": "diagram",
+   "id": "administrative-distance"
+  },
+  {
+   "end": "6-jenis-jenis-rute",
+   "type": "quiz",
+   "id": "routing",
+   "items": [
+    {
+     "q": "Tabel routing punya 10.0.0.0/8, 10.20.0.0/16, dan 10.20.30.0/24. Paket ke 10.20.30.5 lewat mana?",
+     "opts": [
+      "10.0.0.0/8",
+      "10.20.0.0/16",
+      "10.20.30.0/24",
+      "Dibagi rata ketiganya"
+     ],
+     "a": 2,
+     "why": "Longest prefix match: yang paling spesifik selalu menang, tanpa peduli metric atau administrative distance."
+    },
+    {
+     "q": "Administrative distance dipakai untuk memilih?",
+     "opts": [
+      "Jalur terpendek dalam satu protokol",
+      "Protokol mana yang lebih dipercaya saat prefix-nya sama",
+      "Interface keluar",
+      "Ukuran paket"
+     ],
+     "a": 1,
+     "why": "AD membandingkan antar-sumber rute (static vs OSPF vs BGP). Metric membandingkan jalur di dalam satu protokol."
+    },
+    {
+     "q": "Default AD untuk static route di Cisco adalah?",
+     "opts": [
+      "0",
+      "1",
+      "110",
+      "120"
+     ],
+     "a": 1,
+     "why": "Connected = 0, static = 1, eBGP = 20, OSPF = 110, RIP = 120."
+    }
+   ]
+  }
+ ],
+ "05-transport/01-port-socket": [
+  {
+   "after": "3-socket-dan-5-tuple",
+   "type": "diagram",
+   "id": "socket-port"
+  },
+  {
+   "end": "4-bagaimana-klien-memilih-port-sumber",
+   "type": "quiz",
+   "id": "port",
+   "items": [
+    {
+     "q": "Apa yang membuat satu koneksi TCP unik dan berbeda dari koneksi lain?",
+     "opts": [
+      "IP tujuan saja",
+      "Port tujuan saja",
+      "Kombinasi IP sumber, port sumber, IP tujuan, port tujuan, protokol",
+      "MAC address"
+     ],
+     "a": 2,
+     "why": "Lima elemen inilah yang disebut 5-tuple. Itu sebabnya satu klien bisa membuka banyak tab ke server yang sama tanpa tertukar."
+    },
+    {
+     "q": "Rentang port 0–1023 disebut?",
+     "opts": [
+      "Ephemeral",
+      "Registered",
+      "Well-known",
+      "Dynamic"
+     ],
+     "a": 2,
+     "why": "Well-known port, biasanya butuh hak akses root/administrator untuk dipakai mendengarkan."
+    },
+    {
+     "q": "Port sumber pada klien biasanya?",
+     "opts": [
+      "Selalu sama dengan port tujuan",
+      "Dipilih acak dari rentang ephemeral",
+      "Selalu 80",
+      "Ditentukan pengguna"
+     ],
+     "a": 1,
+     "why": "Sistem operasi memilih port bebas dari rentang tinggi (umumnya 49152+ atau 32768+ di Linux)."
+    }
+   ]
+  },
+  {
+   "end": "5-daftar-port-yang-wajib-hafal",
+   "type": "game",
+   "slug": "port-match"
+  }
+ ],
+ "05-transport/02-tcp": [
+  {
+   "after": "2-header-tcp",
+   "type": "diagram",
+   "id": "tcp-udp-header"
+  },
+  {
+   "after": "3-three-way-handshake",
+   "type": "diagram",
+   "id": "tcp-handshake"
+  },
+  {
+   "end": "5-flow-control-sliding-window",
+   "type": "quiz",
+   "id": "tcp",
+   "items": [
+    {
+     "q": "Urutan tiga pesan pembuka koneksi TCP adalah?",
+     "opts": [
+      "SYN, ACK, SYN-ACK",
+      "SYN, SYN-ACK, ACK",
+      "ACK, SYN, SYN-ACK",
+      "SYN, FIN, ACK"
+     ],
+     "a": 1,
+     "why": "Klien SYN → server SYN-ACK → klien ACK. Setelah itu koneksi ESTABLISHED dan data boleh mengalir."
+    },
+    {
+     "q": "Window size di header TCP mengendalikan?",
+     "opts": [
+      "Kecepatan maksimum jalur",
+      "Berapa byte yang boleh dikirim sebelum menunggu ACK",
+      "Ukuran paket",
+      "Jumlah koneksi"
+     ],
+     "a": 1,
+     "why": "Ini flow control: penerima memberi tahu berapa banyak yang sanggup ia tampung, supaya pengirim tidak membanjiri buffer-nya."
+    },
+    {
+     "q": "Kenapa ada state TIME_WAIT setelah koneksi ditutup?",
+     "opts": [
+      "Untuk menghemat memori",
+      "Agar paket nyasar dari koneksi lama tidak mengacau koneksi baru",
+      "Karena bug protokol",
+      "Untuk mencatat log"
+     ],
+     "a": 1,
+     "why": "Sisi yang menutup lebih dulu menunggu ±2×MSL supaya segmen terlambat sudah pasti mati sebelum port dipakai ulang."
+    }
+   ]
+  },
+  {
+   "end": "7-menutup-koneksi",
+   "type": "tool",
+   "slug": "tcp"
+  }
+ ],
+ "05-transport/03-udp-quic": [
+  {
+   "end": "2-bahaya-udp-amplification-attack",
+   "type": "quiz",
+   "id": "udp",
+   "items": [
+    {
+     "q": "Header UDP berukuran berapa byte?",
+     "opts": [
+      "4",
+      "8",
+      "20",
+      "40"
+     ],
+     "a": 1,
+     "why": "Hanya 8 byte: port sumber, port tujuan, panjang, checksum. Bandingkan dengan TCP yang minimal 20 byte."
+    },
+    {
+     "q": "QUIC berjalan di atas protokol transport apa?",
+     "opts": [
+      "TCP",
+      "UDP",
+      "ICMP",
+      "IP langsung"
+     ],
+     "a": 1,
+     "why": "QUIC dibangun di atas UDP supaya bisa diterapkan di ruang pengguna tanpa menunggu kernel dan perangkat jaringan diperbarui."
+    },
+    {
+     "q": "Kenapa DNS lebih cocok memakai UDP untuk kueri biasa?",
+     "opts": [
+      "Lebih aman",
+      "Tanpa handshake sehingga satu tanya-jawab selesai dalam satu putaran",
+      "Bisa mengirim data lebih besar",
+      "Menjamin urutan"
+     ],
+     "a": 1,
+     "why": "Untuk pertukaran sekecil itu, biaya three-way handshake TCP jauh lebih mahal daripada sekadar mengulang kueri bila hilang."
+    }
+   ]
+  }
+ ],
+ "05-transport/04-congestion-control": [
+  {
+   "after": "3-algoritma-klasik-slow-start-dan-congestion-avoidance",
+   "type": "diagram",
+   "id": "congestion"
+  },
+  {
+   "end": "6-bufferbloat",
+   "type": "quiz",
+   "id": "congestion",
+   "items": [
+    {
+     "q": "Apa beda flow control dan congestion control?",
+     "opts": [
+      "Sama saja",
+      "Flow control melindungi penerima, congestion control melindungi jaringan",
+      "Flow control untuk UDP",
+      "Congestion control hanya di router"
+     ],
+     "a": 1,
+     "why": "Flow control menjawab 'penerima sanggup berapa'. Congestion control menjawab 'jalur di tengah sanggup berapa'."
+    },
+    {
+     "q": "Bufferbloat terjadi ketika?",
+     "opts": [
+      "Buffer terlalu kecil",
+      "Buffer terlalu besar sehingga paket antre lama alih-alih dibuang",
+      "Paket terlalu besar",
+      "Router kehabisan CPU"
+     ],
+     "a": 1,
+     "why": "Buffer raksasa menyembunyikan kemacetan dari TCP. Akibatnya latency melonjak walau tidak ada paket hilang — ping ratusan milidetik saat unduhan berjalan."
+    }
+   ]
+  }
+ ],
+ "06-aplikasi/01-dns": [
+  {
+   "after": "4-alur-resolusi-lengkap",
+   "type": "diagram",
+   "id": "dns-rekursif"
+  },
+  {
+   "end": "5-resource-record-rr",
+   "type": "quiz",
+   "id": "dns",
+   "items": [
+    {
+     "q": "Record apa yang memetakan nama domain ke alamat IPv4?",
+     "opts": [
+      "AAAA",
+      "CNAME",
+      "A",
+      "MX"
+     ],
+     "a": 2,
+     "why": "A = IPv4, AAAA = IPv6, CNAME = alias ke nama lain, MX = server penerima email."
+    },
+    {
+     "q": "DNS memakai port berapa?",
+     "opts": [
+      "53",
+      "67",
+      "80",
+      "123"
+     ],
+     "a": 0,
+     "why": "UDP 53 untuk kueri biasa, TCP 53 bila jawaban terlalu besar atau untuk zone transfer."
+    },
+    {
+     "q": "TTL pada record DNS menentukan?",
+     "opts": [
+      "Berapa lama jawaban boleh disimpan di cache",
+      "Jumlah hop maksimum",
+      "Prioritas server",
+      "Ukuran jawaban"
+     ],
+     "a": 0,
+     "why": "Ini alasan perubahan DNS tidak langsung terasa di semua tempat — turunkan TTL beberapa jam sebelum migrasi."
+    }
+   ]
+  }
+ ],
+ "06-aplikasi/02-dhcp": [
+  {
+   "after": "2-dora-empat-langkah",
+   "type": "diagram",
+   "id": "dhcp-dora"
+  },
+  {
+   "end": "5-dhcp-relay",
+   "type": "quiz",
+   "id": "dhcp",
+   "items": [
+    {
+     "q": "Urutan empat langkah DHCP adalah?",
+     "opts": [
+      "Discover, Offer, Request, Acknowledge",
+      "Discover, Request, Offer, Ack",
+      "Offer, Discover, Ack, Request",
+      "Request, Offer, Discover, Ack"
+     ],
+     "a": 0,
+     "why": "DORA. Discover dan Request dikirim broadcast karena klien belum punya alamat sendiri."
+    },
+    {
+     "q": "Kenapa DHCP butuh relay saat server berada di subnet berbeda?",
+     "opts": [
+      "Karena DHCP lambat",
+      "Karena router tidak meneruskan broadcast",
+      "Karena port-nya diblokir",
+      "Karena butuh enkripsi"
+     ],
+     "a": 1,
+     "why": "Broadcast berhenti di router. DHCP relay (ip helper-address) mengubahnya jadi unicast ke server dan meneruskan balasannya."
+    },
+    {
+     "q": "Port yang dipakai DHCP?",
+     "opts": [
+      "TCP 67 dan 68",
+      "UDP 67 (server) dan UDP 68 (klien)",
+      "UDP 53",
+      "TCP 546"
+     ],
+     "a": 1,
+     "why": "Server mendengar di UDP 67, klien di UDP 68. Untuk DHCPv6 nomornya 547 dan 546."
+    }
+   ]
+  }
+ ],
+ "06-aplikasi/03-http": [
+  {
+   "after": "1-anatomi-http",
+   "type": "diagram",
+   "id": "http-flow"
+  },
+  {
+   "end": "2-evolusi-http",
+   "type": "quiz",
+   "id": "http",
+   "items": [
+    {
+     "q": "Kode status 301 berarti?",
+     "opts": [
+      "Berhasil",
+      "Dipindahkan permanen",
+      "Tidak ditemukan",
+      "Kesalahan server"
+     ],
+     "a": 1,
+     "why": "3xx = pengalihan. 301 permanen (browser menyimpannya), 302 sementara."
+    },
+    {
+     "q": "Header Host pada HTTP/1.1 dibutuhkan karena?",
+     "opts": [
+      "Untuk enkripsi",
+      "Agar satu IP bisa melayani banyak nama domain",
+      "Untuk kompresi",
+      "Untuk cookie"
+     ],
+     "a": 1,
+     "why": "Inilah yang memungkinkan virtual hosting — ratusan situs berbagi satu alamat IP."
+    },
+    {
+     "q": "HTTP/3 berjalan di atas?",
+     "opts": [
+      "TCP",
+      "QUIC (di atas UDP)",
+      "SCTP",
+      "ICMP"
+     ],
+     "a": 1,
+     "why": "Pindah ke QUIC menghapus head-of-line blocking di level TCP dan mempercepat pembentukan koneksi."
+    }
+   ]
+  }
+ ],
+ "06-aplikasi/04-tls-pki": [
+  {
+   "after": "2-tls-handshake",
+   "type": "diagram",
+   "id": "tls-handshake"
+  },
+  {
+   "end": "3-sertifikat-x509",
+   "type": "quiz",
+   "id": "tls",
+   "items": [
+    {
+     "q": "Gembok hijau di browser membuktikan bahwa?",
+     "opts": [
+      "Situs itu jujur dan aman",
+      "Jalur terenkripsi dan sertifikatnya sah untuk nama domain itu",
+      "Situs bebas malware",
+      "Data disimpan terenkripsi di server"
+     ],
+     "a": 1,
+     "why": "TLS menjamin kerahasiaan jalur dan identitas domain — bukan kualitas atau kejujuran pemilik situs. Situs phishing pun bisa punya sertifikat sah."
+    },
+    {
+     "q": "Fungsi sertifikat dalam TLS adalah?",
+     "opts": [
+      "Mengenkripsi data",
+      "Membuktikan bahwa kunci publik itu benar milik domain tersebut",
+      "Mempercepat koneksi",
+      "Menyimpan kata sandi"
+     ],
+     "a": 1,
+     "why": "Enkripsi memakai kunci sesi hasil pertukaran kunci. Sertifikat hanya soal pembuktian identitas oleh CA tepercaya."
+    },
+    {
+     "q": "Error 'certificate expired' paling sering disebabkan oleh?",
+     "opts": [
+      "Serangan man-in-the-middle",
+      "Sertifikat tidak diperbarui atau jam perangkat salah",
+      "Kabel rusak",
+      "DNS salah"
+     ],
+     "a": 1,
+     "why": "Periksa dua hal: masa berlaku sertifikat dan jam sistem klien. Jam yang meleset jauh membuat sertifikat sah pun ditolak."
+    }
+   ]
+  }
+ ],
+ "06-aplikasi/05-layanan-lain": [
+  {
+   "after": "1-email",
+   "type": "diagram",
+   "id": "email-flow"
+  },
+  {
+   "end": "4-snmp-monitoring-klasik",
+   "type": "quiz",
+   "id": "layanan",
+   "items": [
+    {
+     "q": "SPF, DKIM, dan DMARC dipakai untuk?",
+     "opts": [
+      "Mengenkripsi isi email",
+      "Membuktikan email tidak dipalsukan atas nama domain Anda",
+      "Mempercepat pengiriman",
+      "Menyaring spam berdasarkan kata"
+     ],
+     "a": 1,
+     "why": "Ketiganya adalah lapisan autentikasi pengirim. Tanpa mereka, siapa pun bisa mengirim email yang mengaku dari domain Anda."
+    },
+    {
+     "q": "SSH memakai port default?",
+     "opts": [
+      "21",
+      "22",
+      "23",
+      "25"
+     ],
+     "a": 1,
+     "why": "22. Port 23 adalah Telnet yang mengirim kata sandi dalam teks polos — jangan dipakai lagi."
+    },
+    {
+     "q": "NTP penting bagi jaringan karena?",
+     "opts": [
+      "Mempercepat routing",
+      "Log dan sertifikat butuh waktu yang seragam agar bisa dipercaya",
+      "Menghemat bandwidth",
+      "Mengatur QoS"
+     ],
+     "a": 1,
+     "why": "Tanpa waktu yang sinkron, korelasi log antar-perangkat mustahil dan validasi sertifikat bisa gagal."
+    }
+   ]
+  }
+ ],
+ "07-routing-lanjutan/04-ospf": [
+  {
+   "end": "5-dr-dan-bdr",
+   "type": "quiz",
+   "id": "ospf",
+   "items": [
+    {
+     "q": "Metric OSPF dihitung berdasarkan?",
+     "opts": [
+      "Jumlah hop",
+      "Cost yang berbanding terbalik dengan bandwidth interface",
+      "Delay",
+      "Beban CPU"
+     ],
+     "a": 1,
+     "why": "Cost = bandwidth referensi ÷ bandwidth interface. Bandwidth referensi default 100 Mbps harus dinaikkan di jaringan gigabit agar link cepat tidak dianggap sama."
+    },
+    {
+     "q": "Semua area OSPF harus terhubung ke?",
+     "opts": [
+      "Area 1",
+      "Area 0 (backbone)",
+      "Router dengan ID tertinggi",
+      "Internet"
+     ],
+     "a": 1,
+     "why": "Kalau tidak bisa menempel langsung, jalan darurat terakhirnya adalah virtual link — dan itu tanda desainnya perlu diperbaiki."
+    },
+    {
+     "q": "DR dan BDR dipilih pada jenis jaringan?",
+     "opts": [
+      "Point-to-point",
+      "Multi-access broadcast seperti Ethernet",
+      "Semua jenis",
+      "Hanya di WAN"
+     ],
+     "a": 1,
+     "why": "Tujuannya menekan jumlah adjacency: semua router cukup beradjacency ke DR/BDR, bukan ke satu sama lain."
+    }
+   ]
+  },
+  {
+   "after": "8-area-kunci-skalabilitas",
+   "type": "diagram",
+   "id": "ospf-area"
+  }
+ ],
+ "07-routing-lanjutan/06-bgp": [
+  {
+   "after": "2-ebgp-vs-ibgp",
+   "type": "diagram",
+   "id": "bgp-as"
+  },
+  {
+   "end": "5-best-path-selection-algorithm",
+   "type": "quiz",
+   "id": "bgp",
+   "items": [
+    {
+     "q": "BGP mencegah routing loop antar-AS dengan cara?",
+     "opts": [
+      "Menghitung hop",
+      "Memeriksa AS-PATH — menolak rute yang sudah memuat AS-nya sendiri",
+      "Memakai TTL",
+      "Split horizon"
+     ],
+     "a": 1,
+     "why": "AS-PATH sekaligus jadi catatan jalur dan pencegah loop."
+    },
+    {
+     "q": "Atribut mana yang dipertimbangkan lebih dulu dalam pemilihan best path?",
+     "opts": [
+      "AS-PATH terpendek",
+      "Local Preference",
+      "MED",
+      "Origin"
+     ],
+     "a": 1,
+     "why": "Urutannya: Weight (khas Cisco) → Local Preference → rute lokal → AS-PATH terpendek → Origin → MED."
+    },
+    {
+     "q": "eBGP menghubungkan?",
+     "opts": [
+      "Router dalam satu AS",
+      "Router di AS yang berbeda",
+      "Switch dalam satu VLAN",
+      "Host ke gateway"
+     ],
+     "a": 1,
+     "why": "eBGP antar-AS, iBGP di dalam satu AS. Keduanya protokol yang sama dengan aturan penyebaran rute yang berbeda."
+    }
+   ]
+  }
+ ],
+ "08-ipv6/01-dasar-ipv6": [
+  {
+   "after": "2-format-alamat",
+   "type": "diagram",
+   "id": "ipv6-anatomi"
+  },
+  {
+   "end": "3-tipe-alamat",
+   "type": "quiz",
+   "id": "ipv6",
+   "items": [
+    {
+     "q": "Bentuk singkat dari 2001:0db8:0000:0000:0000:0000:0000:0001 adalah?",
+     "opts": [
+      "2001:db8:0:1",
+      "2001:db8::1",
+      "2001:db8:::1",
+      "2001::db8:1"
+     ],
+     "a": 1,
+     "why": "Nol di depan tiap grup dibuang, satu deret grup nol diganti :: — dan :: hanya boleh muncul sekali dalam satu alamat."
+    },
+    {
+     "q": "Alamat yang diawali fe80:: adalah?",
+     "opts": [
+      "Global unicast",
+      "Link-local",
+      "Multicast",
+      "Loopback"
+     ],
+     "a": 1,
+     "why": "Link-local selalu ada di setiap interface IPv6 dan dipakai NDP, tapi tidak bisa dirutekan keluar segmen."
+    },
+    {
+     "q": "IPv6 tidak mengenal broadcast. Penggantinya adalah?",
+     "opts": [
+      "Anycast",
+      "Multicast",
+      "Unicast",
+      "Flooding"
+     ],
+     "a": 1,
+     "why": "Fungsi broadcast digantikan multicast ke grup tertentu, misalnya ff02::1 untuk semua node di segmen."
+    }
+   ]
+  }
+ ],
+ "09-nat-acl-firewall/01-nat": [
+  {
+   "after": "3-jenis-nat",
+   "type": "diagram",
+   "id": "nat-pat"
+  },
+  {
+   "end": "5-nat-traversal",
+   "type": "quiz",
+   "id": "nat",
+   "items": [
+    {
+     "q": "Yang membedakan sesi berbeda pada NAT overload (PAT) adalah?",
+     "opts": [
+      "IP privat masing-masing",
+      "Nomor port sumber yang ditulis ulang",
+      "MAC address",
+      "TTL"
+     ],
+     "a": 1,
+     "why": "Satu IP publik bisa melayani ratusan host karena router menyimpan pasangan (IP privat:port ↔ IP publik:port unik)."
+    },
+    {
+     "q": "Efek samping NAT yang paling terasa adalah?",
+     "opts": [
+      "Kecepatan turun drastis",
+      "Koneksi dari luar tidak bisa memulai sendiri ke host di dalam",
+      "IP privat jadi publik",
+      "Enkripsi hilang"
+     ],
+     "a": 1,
+     "why": "Karena tidak ada entri tabel yang cocok untuk paket masuk yang tak diminta. Itu sebabnya butuh port forwarding atau teknik NAT traversal."
+    }
+   ]
+  }
+ ],
+ "09-nat-acl-firewall/02-acl": [
+  {
+   "after": "2-cara-kerja-top-down-dengan-implicit-deny",
+   "type": "diagram",
+   "id": "acl-urutan"
+  },
+  {
+   "end": "4-penempatan-acl",
+   "type": "quiz",
+   "id": "acl",
+   "items": [
+    {
+     "q": "ACL dievaluasi dengan cara?",
+     "opts": [
+      "Semua baris dicek lalu yang paling spesifik menang",
+      "Dari atas ke bawah, berhenti di kecocokan pertama",
+      "Dari bawah ke atas",
+      "Acak"
+     ],
+     "a": 1,
+     "why": "Karena itu urutan baris menentukan segalanya — aturan permit luas di atas membuat deny di bawahnya tidak pernah tercapai."
+    },
+    {
+     "q": "Di akhir setiap ACL selalu ada?",
+     "opts": [
+      "permit any any",
+      "deny any any yang tersirat",
+      "log",
+      "Tidak ada apa-apa"
+     ],
+     "a": 1,
+     "why": "Implicit deny. Kalau ACL hanya berisi permit untuk satu hal, semua lalu lintas lain otomatis diblokir."
+    },
+    {
+     "q": "ACL standar sebaiknya ditempatkan?",
+     "opts": [
+      "Sedekat mungkin ke sumber",
+      "Sedekat mungkin ke tujuan",
+      "Di semua interface",
+      "Di router pusat"
+     ],
+     "a": 1,
+     "why": "ACL standar hanya memeriksa IP sumber, jadi menaruhnya dekat sumber bisa memblokir lebih banyak dari yang dimaksud. ACL extended justru sebaliknya — taruh dekat sumber."
+    }
+   ]
+  }
+ ],
+ "09-nat-acl-firewall/03-firewall": [
+  {
+   "after": "2-stateful-inspection-konsep-inti",
+   "type": "diagram",
+   "id": "firewall-stateful"
+  },
+  {
+   "end": "3-struktur-kebijakan-firewall",
+   "type": "quiz",
+   "id": "firewall",
+   "items": [
+    {
+     "q": "Keunggulan utama firewall stateful dibanding ACL stateless?",
+     "opts": [
+      "Lebih cepat",
+      "Balasan koneksi keluar otomatis diizinkan tanpa aturan tambahan",
+      "Bisa membaca isi paket",
+      "Tidak butuh konfigurasi"
+     ],
+     "a": 1,
+     "why": "Firewall mengingat koneksi yang sudah dibuat, jadi aturan jadi jauh lebih pendek dan lebih sulit dibuat longgar tanpa sengaja."
+    },
+    {
+     "q": "Aturan pertama yang paling berguna di hampir semua firewall adalah?",
+     "opts": [
+      "drop all",
+      "accept established,related",
+      "accept all",
+      "log all"
+     ],
+     "a": 1,
+     "why": "Menerima lalu lintas yang sudah punya entri conntrack lebih dulu membuat sisa aturan hanya perlu mengurus koneksi baru."
+    }
+   ]
+  }
+ ],
+ "10-wireless/01-rf-dasar": [
+  {
+   "end": "2-desibel-wajib-dikuasai",
+   "type": "quiz",
+   "id": "rf",
+   "items": [
+    {
+     "q": "Sinyal Wi-Fi −65 dBm dibanding −75 dBm berarti?",
+     "opts": [
+      "−75 lebih kuat",
+      "−65 lebih kuat, sekitar 10× dayanya",
+      "Sama saja",
+      "−75 lebih stabil"
+     ],
+     "a": 1,
+     "why": "Makin dekat ke nol makin kuat. Selisih 10 dB = sepuluh kali lipat daya."
+    },
+    {
+     "q": "Yang paling menentukan kecepatan koneksi Wi-Fi adalah?",
+     "opts": [
+      "Kekuatan sinyal saja",
+      "SNR — selisih sinyal terhadap derau",
+      "Jumlah antena",
+      "Merek router"
+     ],
+     "a": 1,
+     "why": "Sinyal kuat di lingkungan yang juga berisik tetap lambat. Yang dipakai memilih laju modulasi adalah SNR."
+    }
+   ]
+  },
+  {
+   "after": "4-band-frekuensi",
+   "type": "diagram",
+   "id": "wifi-kanal"
+  },
+  {
+   "after": "6-antena",
+   "type": "photo",
+   "src": "/img/antenna.jpg",
+   "caption": "Antena sektoral/omni untuk luar ruangan — bentuk fisik menentukan pola pancaran dan gain.",
+   "credit": "MTI Wireless · CC BY-SA 4.0",
+   "href": "https://commons.wikimedia.org/wiki/File:Omni_antenna.jpg"
+  }
+ ],
+ "10-wireless/02-802-11": [
+  {
+   "after": "1-generasi-wi-fi",
+   "type": "photo",
+   "src": "/img/access-point.jpg",
+   "caption": "Access point kelas enterprise yang dipasang di plafon — antena internal, catu daya lewat PoE.",
+   "credit": "Xosema · CC BY-SA 4.0",
+   "href": "https://commons.wikimedia.org/wiki/File:Cisco_Aironet_1131AG_-_Close.jpg"
+  },
+  {
+   "after": "2-csmaca-akses-media-nirkabel",
+   "type": "diagram",
+   "id": "csma-ca"
+  },
+  {
+   "end": "3-kenapa-throughput-nyata-jauh-lebih-rendah",
+   "type": "quiz",
+   "id": "wifi",
+   "items": [
+    {
+     "q": "Kenapa Wi-Fi memakai CSMA/CA, bukan CSMA/CD seperti Ethernet lama?",
+     "opts": [
+      "Karena lebih cepat",
+      "Karena perangkat nirkabel tidak bisa mendengar tabrakan saat memancar",
+      "Karena aturan regulator",
+      "Karena hemat daya"
+     ],
+     "a": 1,
+     "why": "Radio tidak bisa mengirim dan mendengar bersamaan di kanal yang sama, jadi tabrakan harus dihindari, bukan dideteksi."
+    },
+    {
+     "q": "Throughput nyata Wi-Fi biasanya hanya sekitar berapa persen dari angka di kemasan?",
+     "opts": [
+      "90–95%",
+      "70–80%",
+      "40–60%",
+      "Sama persis"
+     ],
+     "a": 2,
+     "why": "Overhead CSMA/CA, ACK tiap frame, dan pembagian giliran antar-klien memakan lebih dari separuh kapasitas teoretis."
+    },
+    {
+     "q": "Di band 2,4 GHz, kanal yang tidak saling tumpang tindih adalah?",
+     "opts": [
+      "1, 5, 9",
+      "1, 6, 11",
+      "1, 4, 8",
+      "Semua kanal bebas"
+     ],
+     "a": 1,
+     "why": "Tiap kanal selebar 22 MHz tapi jarak antar-nomor hanya 5 MHz — hanya 1, 6, dan 11 yang benar-benar terpisah."
+    }
+   ]
+  }
+ ],
+ "10-wireless/03-keamanan-wireless": [
+  {
+   "end": "3-wpa3-standar-saat-ini",
+   "type": "quiz",
+   "id": "wifisec",
+   "items": [
+    {
+     "q": "Kelemahan utama WEP yang membuatnya ditinggalkan?",
+     "opts": [
+      "Kata sandinya pendek",
+      "IV terlalu pendek dan berulang sehingga kunci bisa dipecahkan dalam menit",
+      "Tidak ada enkripsi",
+      "Terlalu lambat"
+     ],
+     "a": 1,
+     "why": "Bukan soal panjang kata sandi — algoritmanya sendiri cacat. WEP bisa dipecahkan tanpa menebak kata sandi sama sekali."
+    },
+    {
+     "q": "WPA3-Personal menggantikan PSK dengan?",
+     "opts": [
+      "Kunci lebih panjang",
+      "SAE (Simultaneous Authentication of Equals)",
+      "Sertifikat",
+      "MAC filtering"
+     ],
+     "a": 1,
+     "why": "SAE membuat serangan menebak kata sandi dari rekaman handshake tidak lagi mungkin dilakukan secara offline."
+    },
+    {
+     "q": "MAC filtering sebagai pengamanan Wi-Fi?",
+     "opts": [
+      "Sangat aman",
+      "Hampir tidak berguna karena MAC mudah dipalsukan",
+      "Wajib dipakai",
+      "Menggantikan enkripsi"
+     ],
+     "a": 1,
+     "why": "MAC terkirim dalam teks polos di udara dan bisa disalin dalam hitungan detik. Anggap ini kenyamanan administratif, bukan keamanan."
+    }
+   ]
+  }
+ ],
+ "11-wan-vpn/02-tunneling-vpn": [
+  {
+   "after": "3-ipsec",
+   "type": "diagram",
+   "id": "vpn-tunnel"
+  },
+  {
+   "end": "4-wireguard-vpn-modern",
+   "type": "quiz",
+   "id": "vpn",
+   "items": [
+    {
+     "q": "Perbedaan mode transport dan mode tunnel pada IPsec?",
+     "opts": [
+      "Kecepatannya",
+      "Mode tunnel membungkus seluruh paket IP asli dengan header IP baru",
+      "Mode transport lebih aman",
+      "Tidak ada beda"
+     ],
+     "a": 1,
+     "why": "Transport hanya mengenkripsi payload dan memakai header IP asli — cocok host-ke-host. Tunnel dipakai untuk site-to-site."
+    },
+    {
+     "q": "GRE sendirian tidak memberi?",
+     "opts": [
+      "Enkapsulasi",
+      "Enkripsi",
+      "Dukungan multicast",
+      "Titik terminasi"
+     ],
+     "a": 1,
+     "why": "GRE hanya membungkus. Karena itu di praktik sering dipasangkan dengan IPsec: GRE untuk fleksibilitas, IPsec untuk keamanan."
+    }
+   ]
+  }
+ ],
+ "12-keamanan/02-serangan-l2": [
+  {
+   "end": "2-arp-spoofing-arp-poisoning",
+   "type": "quiz",
+   "id": "l2sec",
+   "items": [
+    {
+     "q": "MAC flooding bertujuan?",
+     "opts": [
+      "Mematikan switch",
+      "Memenuhi tabel CAM agar switch mem-flood semua frame sehingga bisa disadap",
+      "Mencuri IP",
+      "Memutus kabel"
+     ],
+     "a": 1,
+     "why": "Saat tabel penuh, switch berperilaku seperti hub. Mitigasinya: port security dengan batas jumlah MAC per port."
+    },
+    {
+     "q": "ARP spoofing berhasil karena?",
+     "opts": [
+      "ARP tidak punya mekanisme autentikasi",
+      "Kabel tidak terlindungi",
+      "Switch terlalu lambat",
+      "IP mudah ditebak"
+     ],
+     "a": 0,
+     "why": "Siapa pun bisa menjawab ARP request atas nama IP mana pun. Mitigasi: Dynamic ARP Inspection dan DHCP snooping."
+    },
+    {
+     "q": "VLAN hopping lewat double tagging bisa dicegah dengan?",
+     "opts": [
+      "Mematikan STP",
+      "Tidak memakai VLAN 1 sebagai native VLAN dan mematikan DTP",
+      "Menambah bandwidth",
+      "Memakai kabel fiber"
+     ],
+     "a": 1,
+     "why": "Serangan ini memanfaatkan native VLAN yang tidak ber-tag. Setel native VLAN ke VLAN kosong dan matikan negosiasi trunk otomatis."
+    }
+   ]
+  }
+ ],
+ "13-linux-networking/01-iproute2": [
+  {
+   "end": "2-ip-link-interface-layer-12",
+   "type": "quiz",
+   "id": "linux",
+   "items": [
+    {
+     "q": "Perintah pengganti modern untuk <code>ifconfig</code> adalah?",
+     "opts": [
+      "netstat",
+      "ip addr",
+      "route",
+      "arp"
+     ],
+     "a": 1,
+     "why": "Paket net-tools sudah usang. iproute2 (<code>ip</code>) menampilkan semua alamat, termasuk yang tidak terlihat oleh ifconfig."
+    },
+    {
+     "q": "Melihat tabel routing di Linux modern memakai?",
+     "opts": [
+      "route -n",
+      "ip route",
+      "netstat -rn",
+      "traceroute"
+     ],
+     "a": 1,
+     "why": "<code>ip route</code> — ketiganya bisa jalan, tapi hanya iproute2 yang menampilkan tabel dan policy routing secara lengkap."
+    },
+    {
+     "q": "Pengganti modern untuk <code>netstat -tulpn</code> adalah?",
+     "opts": [
+      "ss -tulpn",
+      "ps aux",
+      "lsof",
+      "dig"
+     ],
+     "a": 0,
+     "why": "<code>ss</code> membaca langsung dari kernel dan jauh lebih cepat pada sistem dengan ribuan socket."
+    }
+   ]
+  },
+  {
+   "end": "4-ip-route-routing",
+   "type": "tool",
+   "slug": "cli-ip"
+  }
+ ],
+ "14-monitoring-troubleshooting/01-metodologi": [
+  {
+   "end": "3-tiga-pendekatan-osi",
+   "type": "tool",
+   "slug": "cli-diagnosa"
+  },
+  {
+   "end": "5-membedakan-gejala-vs-penyebab",
+   "type": "quiz",
+   "id": "metodologi",
+   "items": [
+    {
+     "q": "Langkah pertama yang benar saat menerima laporan 'internet mati'?",
+     "opts": [
+      "Restart router",
+      "Tentukan lingkup: siapa saja yang terdampak dan sejak kapan",
+      "Ganti kabel",
+      "Telepon ISP"
+     ],
+     "a": 1,
+     "why": "Menyempitkan lingkup lebih dulu menghemat sebagian besar waktu. Satu orang, satu ruangan, atau seluruh kantor mengarah ke penyebab yang sangat berbeda."
+    },
+    {
+     "q": "Baseline berguna karena?",
+     "opts": [
+      "Mempercepat jaringan",
+      "Anda jadi tahu apa yang normal sehingga bisa mengenali yang tidak normal",
+      "Wajib untuk audit",
+      "Mengurangi biaya"
+     ],
+     "a": 1,
+     "why": "Tanpa baseline, angka seperti 'latency 40 ms' tidak bermakna — Anda tidak tahu apakah itu biasa atau sudah dua kali lipat."
+    },
+    {
+     "q": "Setelah masalah selesai, langkah terakhir metodologi adalah?",
+     "opts": [
+      "Langsung tutup tiket",
+      "Dokumentasikan temuan, penyebab, dan solusinya",
+      "Restart semua perangkat",
+      "Ganti perangkat"
+     ],
+     "a": 1,
+     "why": "Dokumentasi mengubah satu kejadian jadi pengetahuan tim, dan jadi bahan mencegah kejadian berulang."
+    }
+   ]
+  }
+ ],
+ "14-monitoring-troubleshooting/02-tools": [
+  {
+   "end": "2-traceroute-mtr-dan-salah-tafsir-yang-fatal",
+   "type": "quiz",
+   "id": "tools",
+   "items": [
+    {
+     "q": "Hop di tengah traceroute menampilkan tiga bintang. Ini berarti?",
+     "opts": [
+      "Jalur pasti putus di situ",
+      "Router itu hanya tidak membalas ICMP — belum tentu bermasalah",
+      "Paket hilang total",
+      "DNS gagal"
+     ],
+     "a": 1,
+     "why": "Banyak router sengaja tidak membalas atau memberi prioritas rendah untuk ICMP. Yang penting adalah apakah hop-hop SETELAHNYA tetap terjawab."
+    },
+    {
+     "q": "Latency tinggi di satu hop tengah tapi hop terakhir normal berarti?",
+     "opts": [
+      "Ada masalah di hop tengah",
+      "Normal — router itu sekadar lambat membalas ICMP, bukan lambat meneruskan",
+      "Paket diputar-putar",
+      "Kabel rusak"
+     ],
+     "a": 1,
+     "why": "Membalas ICMP dikerjakan CPU (control plane), sedangkan meneruskan paket dikerjakan hardware. Keduanya tidak sebanding."
+    },
+    {
+     "q": "Alat yang tepat untuk mengukur throughput sebenarnya antara dua titik?",
+     "opts": [
+      "ping",
+      "traceroute",
+      "iperf3",
+      "dig"
+     ],
+     "a": 2,
+     "why": "iperf3 membangkitkan lalu lintas nyata dan mengukur hasilnya. Ping hanya mengukur waktu pulang-pergi paket kecil."
+    }
+   ]
+  },
+  {
+   "end": "7-wireshark-analisis-mendalam",
+   "type": "tool",
+   "slug": "packet-inspector"
+  }
+ ],
+ "14-monitoring-troubleshooting/03-observability": [
+  {
+   "after": "1-tiga-pilar-observability",
+   "type": "diagram",
+   "id": "monitoring-tingkat"
+  },
+  {
+   "end": "4-flow-based-monitoring-netflow-ipfix-sflow",
+   "type": "quiz",
+   "id": "observability",
+   "items": [
+    {
+     "q": "Untuk menjawab 'bandwidth saya habis dipakai siapa', alat yang tepat adalah?",
+     "opts": [
+      "SNMP",
+      "NetFlow / IPFIX",
+      "Ping",
+      "Syslog"
+     ],
+     "a": 1,
+     "why": "SNMP hanya memberi angka total per interface. Flow menunjukkan pasangan IP, port, dan volumenya."
+    },
+    {
+     "q": "Kelemahan SNMP polling dibanding streaming telemetry?",
+     "opts": [
+      "Tidak akurat",
+      "Interval polling kasar dan membebani CPU perangkat",
+      "Tidak bisa dipakai",
+      "Butuh lisensi"
+     ],
+     "a": 1,
+     "why": "Polling tiap 5 menit menyembunyikan lonjakan singkat. Telemetry mendorong data dari perangkat secara terus-menerus."
+    }
+   ]
+  }
+ ],
+ "16-datacenter-cloud-sdn/01-desain-dc": [
+  {
+   "end": "2-masalah-stp-di-data-center",
+   "type": "quiz",
+   "id": "dc",
+   "items": [
+    {
+     "q": "Kenapa STP menjadi masalah di data center modern?",
+     "opts": [
+      "Terlalu rumit",
+      "Memblokir jalur sehingga separuh kapasitas menganggur",
+      "Tidak aman",
+      "Terlalu lambat konvergen saja"
+     ],
+     "a": 1,
+     "why": "STP hanya menyisakan satu jalur aktif. Di fabric yang butuh semua uplink terpakai, itu pemborosan besar."
+    },
+    {
+     "q": "Keunggulan spine-leaf dibanding tiga tingkat klasik?",
+     "opts": [
+      "Lebih murah",
+      "Jumlah hop antar-server selalu sama dan semua jalur terpakai",
+      "Butuh lebih sedikit kabel",
+      "Lebih mudah dikonfigurasi"
+     ],
+     "a": 1,
+     "why": "Trafik data center kini didominasi arah timur-barat (server ke server); spine-leaf memberi latency yang seragam dan prediktabel."
+    }
+   ]
+  },
+  {
+   "after": "3-arsitektur-spine-leaf-ccna-12c",
+   "type": "diagram",
+   "id": "arsitektur-dc"
+  }
+ ],
+ "19-mikrotik/01-pengenalan-routeros": [
+  {
+   "after": "2-lini-produk",
+   "type": "photo",
+   "src": "/img/mikrotik.jpg",
+   "caption": "Perangkat MikroTik RouterBOARD — kecil, murah, tapi menjalankan RouterOS penuh.",
+   "credit": "Raimond Spekking · CC BY-SA 4.0",
+   "href": "https://commons.wikimedia.org/wiki/File:MikroTik_RouterBoard_RB260GS-7378.jpg"
+  },
+  {
+   "end": "4-struktur-cli-routeros",
+   "type": "quiz",
+   "id": "mikrotik",
+   "items": [
+    {
+     "q": "Fitur RouterOS yang menyelamatkan Anda saat salah konfigurasi dari jarak jauh?",
+     "opts": [
+      "Backup otomatis",
+      "Safe Mode",
+      "Reset button",
+      "Winbox"
+     ],
+     "a": 1,
+     "why": "Safe Mode (Ctrl-X) membatalkan seluruh perubahan secara otomatis bila sesi Anda terputus."
+    },
+    {
+     "q": "Padanan 'interface bridge' MikroTik di dunia Cisco kira-kira adalah?",
+     "opts": [
+      "Router",
+      "Switch / VLAN interface",
+      "Firewall",
+      "Access point"
+     ],
+     "a": 1,
+     "why": "Bridge di RouterOS berperan seperti switch internal; dengan VLAN filtering ia menjadi switch ber-VLAN penuh."
+    }
+   ]
+  },
+  {
+   "end": "7-ip-address-dan-routing-dasar",
+   "type": "tool",
+   "slug": "cli-ip"
+  }
+ ],
+ "19-mikrotik/02-bridge-vlan-switching": [
+  {
+   "end": "3-vlan-di-routeros-bridge-vlan-filtering",
+   "type": "tool",
+   "slug": "vlan-lab"
+  }
+ ],
+ "19-mikrotik/03-firewall-nat": [
+  {
+   "after": "2-connection-tracking-stateful-firewall",
+   "type": "diagram",
+   "id": "firewall-stateful"
+  },
+  {
+   "end": "3-nat-di-routeros",
+   "type": "quiz",
+   "id": "mtfw",
+   "items": [
+    {
+     "q": "Chain firewall RouterOS untuk lalu lintas yang ditujukan ke router itu sendiri adalah?",
+     "opts": [
+      "forward",
+      "input",
+      "output",
+      "srcnat"
+     ],
+     "a": 1,
+     "why": "input = menuju router, output = dari router, forward = melewati router menuju jaringan lain."
+    },
+    {
+     "q": "Masquerade di RouterOS setara dengan?",
+     "opts": [
+      "Static NAT",
+      "PAT / NAT overload dengan IP yang mengikuti interface",
+      "Port forwarding",
+      "Bridging"
+     ],
+     "a": 1,
+     "why": "Masquerade otomatis memakai IP interface keluar — cocok untuk koneksi dengan IP publik dinamis."
+    }
+   ]
+  }
+ ],
+ "referensi/daftar-port": [
+  {
+   "end": "port-paling-penting-hafalkan",
+   "type": "game",
+   "slug": "port-match"
+  }
+ ],
+ "referensi/tabel-subnetting": [
+  {
+   "end": "3-tabel-subnet-mask-ipv4",
+   "type": "game",
+   "slug": "cidr-flash"
+  },
+  {
+   "end": "6-metode-cepat-subnetting",
+   "type": "game",
+   "slug": "subnet-drill"
+  }
+ ],
+ "referensi/cheatsheet-cisco-ios": [
+  {
+   "end": "interface-ip",
+   "type": "tool",
+   "slug": "cli-ip"
+  }
+ ],
+ "referensi/cheatsheet-mikrotik": [
+  {
+   "end": "interface-ip",
+   "type": "tool",
+   "slug": "cli-ip"
+  }
+ ],
+ "referensi/cheatsheet-linux-network": [
+  {
+   "end": "diagnostik",
+   "type": "tool",
+   "slug": "cli-diagnosa"
+  }
+ ],
+ "referensi/padanan-cisco-mikrotik-linux": [
+  {
+   "end": "alamat-interface",
+   "type": "tool",
+   "slug": "cli-ip"
+  }
+ ],
+ "lab/01-lab-fondasi-switching": [
+  {
+   "end": "lab-12-vlan-access-port",
+   "type": "tool",
+   "slug": "vlan-lab"
+  }
+ ],
+ "20-proyek-akhir/02-babak-1-audit-warisan": [
+  {
+   "after": "3-bukti-b-keluaran-perintah-pemeriksaan",
+   "type": "diagram",
+   "id": "mac-table"
+  },
+  {
+   "after": "3-bukti-b-keluaran-perintah-pemeriksaan",
+   "type": "diagram",
+   "id": "stp"
+  }
+ ],
+ "20-proyek-akhir/03-babak-2-sidang-arsitektur": [
+  {
+   "end": "3-proposal-b-enterprise-fabric",
+   "type": "diagram",
+   "id": "arsitektur-dc"
+  }
+ ],
+ "20-proyek-akhir/04-babak-3-teka-teki-alamat": [
+  {
+   "end": "4-aturan-teka-teki",
+   "type": "diagram",
+   "id": "subnet-split"
+  },
+  {
+   "end": "4-aturan-teka-teki",
+   "type": "tool",
+   "slug": "subnet"
+  },
+  {
+   "after": "5-yang-harus-dikeluarkan",
+   "type": "diagram",
+   "id": "ipv6-anatomi"
+  }
+ ],
+ "20-proyek-akhir/05-babak-4-bangun-di-lab": [
+  {
+   "end": "2-topologi-minimum-yang-mewakili",
+   "type": "diagram",
+   "id": "vpn-tunnel"
+  },
+  {
+   "after": "4-matriks-uji-terima",
+   "type": "tool",
+   "slug": "vlan-lab"
+  }
+ ],
+ "20-proyek-akhir/06-babak-5-udara-dan-gudang-beku": [
+  {
+   "after": "5-keputusan-desain-yang-harus-diambil",
+   "type": "diagram",
+   "id": "wifi-kanal"
+  }
+ ],
+ "20-proyek-akhir/07-babak-6-tim-merah-tim-biru": [
+  {
+   "end": "3-yang-harus-dikeluarkan",
+   "type": "diagram",
+   "id": "firewall-stateful"
+  },
+  {
+   "end": "3-yang-harus-dikeluarkan",
+   "type": "diagram",
+   "id": "acl-urutan"
+  }
+ ],
+ "20-proyek-akhir/08-babak-7-kode-yang-menjaga": [
+  {
+   "after": "7-bagian-f-observability-sebagai-kode",
+   "type": "diagram",
+   "id": "monitoring-tingkat"
+  }
+ ],
+ "20-proyek-akhir/09-babak-8-malam-panjang": [
+  {
+   "end": "1-bentuk-kerja-babak-ini",
+   "type": "tool",
+   "slug": "cli-diagnosa"
+  }
+ ]
+}

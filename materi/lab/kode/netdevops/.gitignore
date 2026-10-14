@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Kontributor Belajar Networking
+#
+# build/ SENGAJA di-commit (GitOps: konfigurasi yang dimaksud tersimpan di Git),
+# kecuali cadangan, laporan, dan log yang khusus untuk satu kali jalan.
+build/backups/
+build/reports/
+build/nornir.log
+.venv/
+__pycache__/
+.pytest_cache/

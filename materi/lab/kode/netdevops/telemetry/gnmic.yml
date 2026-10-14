@@ -1,0 +1,67 @@
+# Copyright 2020 Nokia
+# Licensed under the BSD 3-Clause License.
+# SPDX-License-Identifier: BSD-3-Clause
+#
+# Diadaptasi dari srl-labs/srl-telemetry-lab, berkas configs/gnmic/gnmic-config.yml
+# (https://github.com/srl-labs/srl-telemetry-lab), oleh Kontributor Belajar
+# Networking, 2026. Perubahan: target dan alamat Lab 08, langganan dipangkas
+# menjadi statistik dan status interface, processor rename-srl-interface dan
+# trim-prefixes dihapus, komentar Bahasa Indonesia.
+# Teks lisensi lengkap: LICENSES/BSD-3-Clause-Nokia.txt
+#
+# gnmic berlangganan (Subscribe) ke switch SR Linux lewat gNMI, lalu
+# menyajikan hasilnya sebagai endpoint Prometheus di :9273/metrics.
+# Kredensial bawaan SR Linux di containerlab: admin / NokiaSrl1! (hanya lab).
+---
+username: admin
+password: NokiaSrl1!
+timeout: 10s
+skip-verify: true
+
+targets:
+  sw1:
+    address: 172.30.30.21:57400
+    subscriptions: [srl-if-stats, srl-if-state]
+  sw2:
+    address: 172.30.30.22:57400
+    subscriptions: [srl-if-stats, srl-if-state]
+
+subscriptions:
+  # Penghitung byte/paket: dikirim perangkat setiap 5 detik (push, bukan poll).
+  srl-if-stats:
+    mode: stream
+    stream-mode: sample
+    sample-interval: 5s
+    paths:
+      - /interface[name=ethernet-1/*]/statistics
+  # Status port. Untuk melihat perilaku on-change, pakai gnmic dari CLI
+  # (lihat bagian telemetri di lab); di sini sample agar metrik selalu segar.
+  srl-if-state:
+    mode: stream
+    stream-mode: sample
+    sample-interval: 5s
+    paths:
+      - /interface[name=ethernet-1/*]/oper-state
+
+outputs:
+  prom-output:
+    type: prometheus
+    listen: :9273
+    event-processors:
+      - oper-state-to-int
+
+processors:
+  # Prometheus hanya menyimpan angka: ubah "up"/"down" menjadi 1/0.
+  oper-state-to-int:
+    event-strings:
+      value-names:
+        - ".*"
+      transforms:
+        - replace:
+            apply-on: "value"
+            old: "up"
+            new: "1"
+        - replace:
+            apply-on: "value"
+            old: "down"
+            new: "0"

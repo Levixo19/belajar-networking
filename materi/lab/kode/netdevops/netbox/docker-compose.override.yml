@@ -1,0 +1,23 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Kontributor Belajar Networking
+#
+# Override untuk netbox-docker (https://github.com/netbox-community/netbox-docker),
+# rilis 5.1.x yang menjalankan NetBox v4.7.x. Salin berkas ini ke direktori
+# netbox-docker hasil clone, lalu: docker compose pull && docker compose up -d
+#
+# NILAI DI BAWAH HANYA UNTUK LAB. Jangan pakai sandi atau token ini di jaringan nyata.
+# Token API v2 yang dihasilkan: nbt_lab08netdev0.0123456789abcdefghijABCDEFGHIJ0123456789
+#   SUPERUSER_API_KEY   : tepat 12 karakter alfanumerik
+#   SUPERUSER_API_TOKEN : tepat 40 karakter alfanumerik
+---
+services:
+  netbox:
+    ports:
+      - "8000:8080"
+    environment:
+      SKIP_SUPERUSER: "false"
+      SUPERUSER_NAME: admin
+      SUPERUSER_EMAIL: admin@lab.local
+      SUPERUSER_PASSWORD: Lab08-GantiSaya!
+      SUPERUSER_API_KEY: lab08netdev0
+      SUPERUSER_API_TOKEN: "0123456789abcdefghijABCDEFGHIJ0123456789"

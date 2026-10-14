@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="Belajar jaringan komputer dari nol sampai profesional. Kurikulum berurutan, latihan interaktif, untuk Cisco, MikroTik, dan Linux." />
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
+    <meta property="og:title" content="Belajar Networking" />
+    <meta property="og:description" content="Kurikulum jaringan komputer berurutan dari nol sampai profesional." />
+    <meta property="og:type" content="website" />
+    <title>Belajar Networking</title>
+    <script>
+      // Terapkan tema sebelum render (cegah flicker — pola Josh Comeau)
+      (function () {
+        try {
+          var t = localStorage.getItem('bn-theme');
+          if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          document.documentElement.dataset.theme = t;
+
+        } catch (e) { document.documentElement.dataset.theme = 'light'; }
+        // Preferensi baca (font, ukuran, jarak baris): blok sendiri agar tidak mengganggu tema
+        var d = document.documentElement.dataset;
+        d.baFont = 'atkinson'; d.baUkuran = 'm'; d.baSpasi = 'normal';
+        try {
+          var b = JSON.parse(localStorage.getItem('bn-baca') || 'null');
+          if (b) { d.baFont = b.font || d.baFont; d.baUkuran = b.ukuran || d.baUkuran; d.baSpasi = b.spasi || d.baSpasi; }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,157 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Kontributor Belajar Networking
+#
+# Pipeline GitOps Lab 08. Isi Git (cabang main) = keadaan jaringan yang dimaksud.
+#
+#   pull request  -> lint -> render-check (runner lab) -> uji Batfish (runner GitHub)
+#   merge ke main -> uji Batfish -> [persetujuan environment "lab"] -> deploy (runner lab)
+#   terjadwal     -> deteksi drift: perangkat vs main (runner lab)
+#
+# Prasyarat: self-hosted runner berlabel "netdevops-lab" di mesin yang menjalankan
+# containerlab, environment "lab" dengan required reviewers, secret NETBOX_TOKEN
+# dan SRL_PASSWORD. Lihat Lab 08 bagian CI untuk langkah lengkapnya.
+name: netdevops
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 1 * * *"  # 08.00 WIB
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  lint:
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Lint YAML
+        run: yamllint -c .yamllint.yml .
+      - name: Lint Python
+        run: |
+          ruff check scripts tests
+          python -m compileall -q scripts tests
+      - name: Template dapat dirender (data seed)
+        run: python scripts/render.py --source seed --out /tmp/render-seed
+      - name: Uji offline (tanpa Batfish/NetBox)
+        run: pytest -q tests/test_offline.py
+
+  render-check:
+    # build/ harus PERSIS hasil render dari NetBox. Mencegah orang mengedit
+    # build/ dengan tangan dan melewati source of truth.
+    # Hanya untuk PR dari repositori sendiri: kode dari fork TIDAK boleh berjalan
+    # di runner yang memegang akses ke lab dan NetBox.
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    needs: lint
+    runs-on: [self-hosted, netdevops-lab]
+    steps:
+      - uses: actions/checkout@v7
+      - name: Siapkan venv
+        run: python3 -m venv .venv && .venv/bin/pip install -q -r requirements.txt
+      - name: Bandingkan build/ dengan NetBox
+        env:
+          NETBOX_URL: http://localhost:8000
+          NETBOX_TOKEN: ${{ secrets.NETBOX_TOKEN }}
+        run: .venv/bin/python scripts/render.py --check
+
+  batfish:
+    if: github.event_name != 'schedule'
+    needs: lint
+    runs-on: ubuntu-latest
+    services:
+      batfish:
+        # Untuk produksi, sematkan digest (batfish/batfish@sha256:...) agar hasil dapat diulang.
+        image: batfish/batfish:latest
+        ports:
+          - 9996:9996
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Siapkan snapshot baseline dari cabang tujuan
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          mkdir -p /tmp/baseline
+          if git archive "origin/${BASE_REF}" build/batfish | tar -x -C /tmp/baseline; then
+            echo "BF_BASELINE=/tmp/baseline/build/batfish" >> "$GITHUB_ENV"
+          else
+            echo "Baseline belum ada di ${BASE_REF}; uji differential dilewati."
+          fi
+      - name: Tunggu Batfish siap
+        run: python scripts/wait_batfish.py --timeout 300
+      - name: Uji Batfish
+        env:
+          IZINKAN_REACHABILITY_HILANG: >-
+            ${{ contains(github.event.pull_request.labels.*.name, 'izinkan-reachability-hilang') && '1' || '0' }}
+        run: |
+          mkdir -p build/reports
+          pytest -v tests/ --junitxml=build/reports/batfish.xml
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: laporan-batfish
+          path: build/reports/
+
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: batfish
+    runs-on: [self-hosted, netdevops-lab]
+    # Aturan proteksi environment "lab" (required reviewers) = gerbang persetujuan manusia.
+    environment: lab
+    concurrency:
+      group: deploy-lab
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v7
+      - name: Siapkan venv
+        run: python3 -m venv .venv && .venv/bin/pip install -q -r requirements.txt
+      - name: Rencana perubahan (dry-run)
+        env:
+          SRL_PASSWORD: ${{ secrets.SRL_PASSWORD }}
+        run: .venv/bin/python scripts/deploy.py --dry-run
+      - name: Deploy (canary, post-check, rollback otomatis)
+        env:
+          SRL_PASSWORD: ${{ secrets.SRL_PASSWORD }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: .venv/bin/python scripts/deploy.py --message "$COMMIT_SHA"
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: laporan-deploy
+          path: build/reports/
+
+  drift:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: [self-hosted, netdevops-lab]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+      - name: Siapkan venv
+        run: python3 -m venv .venv && .venv/bin/pip install -q -r requirements.txt
+      - name: Bandingkan perangkat dengan main
+        env:
+          SRL_PASSWORD: ${{ secrets.SRL_PASSWORD }}
+        run: .venv/bin/python scripts/deploy.py --dry-run --fail-on-diff

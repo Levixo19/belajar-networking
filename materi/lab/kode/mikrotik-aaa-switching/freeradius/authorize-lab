@@ -1,0 +1,15 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Kontributor Belajar Networking
+#
+# Taruh di AWAL /etc/raddb/mods-config/files/authorize (modul "files").
+# Baris pertama: check item. Baris berindentasi tab: reply item ke NAS.
+# Atribut Mikrotik-* sudah dikenal karena dictionary.mikrotik bawaan FreeRADIUS.
+budi	Cleartext-Password := "BudiRumah-01"
+	Mikrotik-Rate-Limit = "3M/10M",
+	Framed-Pool = "pool-pppoe",
+	Acct-Interim-Interval = 300
+
+# Simultaneous-Use baru ditegakkan bila bagian "session" (radutmp/sql) aktif.
+v002	Cleartext-Password := "teh456", Simultaneous-Use := 1
+	Mikrotik-Group = "hsup-kafe",
+	Session-Timeout = 7200

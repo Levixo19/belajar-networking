@@ -1,0 +1,27 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Kontributor Belajar Networking
+#
+# Topologi containerlab untuk lab 19.10 (User Manager + PPPoE + Hotspot).
+# Image CHR dibangun sendiri dengan vrnetlab (lihat modul 19.10 bagian Lab):
+#   vrnetlab/mikrotik_routeros:<versi>   (kind: mikrotik_ros, ether1 = manajemen)
+# Paket user-manager TIDAK ada di image CHR; unggah ke node "um" lalu reboot.
+name: aaa
+
+topology:
+  kinds:
+    mikrotik_ros:
+      image: vrnetlab/mikrotik_routeros:7.24.5
+  nodes:
+    um:
+      kind: mikrotik_ros
+      startup-config: um.rsc
+    nas:
+      kind: mikrotik_ros
+      startup-config: nas.rsc
+    pel:
+      kind: mikrotik_ros
+      startup-config: pel.rsc
+  links:
+    - endpoints: ["nas:ether2", "um:ether2"]    # jalur RADIUS 10.99.0.0/30
+    - endpoints: ["nas:ether3", "pel:ether2"]   # akses PPPoE
+    - endpoints: ["nas:ether4", "pel:ether3"]   # LAN hotspot

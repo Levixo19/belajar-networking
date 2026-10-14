@@ -1,0 +1,220 @@
+[
+  {
+    "id": "it-support-technician",
+    "nama": "IT Support Technician (Helpdesk / Desktop Support)",
+    "rumpun": "dukungan",
+    "ringkas": "Menangani tiket pengguna, dari akun dan perangkat sampai gangguan jaringan dasar, sesuai SLA dan prioritas ITIL.",
+    "jenjang": "pemula",
+    "harian": [
+      "Memilah tiket baru berdasarkan dampak dan urgensi, lalu menangani atau mengeskalasi",
+      "Membuat akun, reset kata sandi, dan mengatur MFA di Active Directory atau Entra ID",
+      "Menyiapkan laptop karyawan baru dengan image standar dan mendaftarkannya ke Intune",
+      "Mendiagnosis masalah IP, DHCP, DNS, Wi-Fi, dan printer jaringan",
+      "Menulis artikel knowledge base dari kasus yang baru diselesaikan"
+    ],
+    "keahlian": ["troubleshooting", "layanan-pelanggan", "itsm-itil", "windows-server", "fundamental-jaringan", "identitas-akses", "komunikasi-dokumentasi"],
+    "alat": ["ServiceNow", "Jira Service Management", "GLPI", "Active Directory / Microsoft Entra ID", "Microsoft Intune", "AnyDesk", "PowerShell", "Wireshark"],
+    "sertifikasi": [
+      { "nama": "CompTIA Tech+ (FC0-U71)", "penerbit": "CompTIA", "tingkat": "pemula" },
+      { "nama": "CompTIA A+ (220-1201 dan 220-1202)", "penerbit": "CompTIA", "tingkat": "pemula" },
+      { "nama": "Google IT Support Professional Certificate", "penerbit": "Google (via Coursera)", "tingkat": "pemula" },
+      { "nama": "HDI Support Center Analyst", "penerbit": "HDI", "tingkat": "pemula" },
+      { "nama": "ITIL Foundation (Version 5) atau ITIL 4 Foundation", "penerbit": "PeopleCert", "tingkat": "pemula" },
+      { "nama": "Microsoft 365 Certified: Endpoint Administrator Associate (MD-102)", "penerbit": "Microsoft", "tingkat": "menengah" },
+      { "nama": "CompTIA Network+ (N10-009)", "penerbit": "CompTIA", "tingkat": "menengah" },
+      { "nama": "Sertifikat kompetensi skema mengacu SKKNI Computer Technical Support (Kepmenaker 285/2016)", "penerbit": "BNSP melalui LSP berlisensi", "tingkat": "pemula" }
+    ],
+    "masuk": "Lulusan SMK TKJ, D3, atau S1 informatika, maupun peralih karier, biasanya masuk lewat outsourcing TI (penempatan di bank atau pabrik), managed service provider, sekolah, atau startup.",
+    "naik": ["network-administrator", "system-administrator", "cybersecurity-analyst"],
+    "dekat": ["noc-technician", "field-network-technician", "it-asset-manager"],
+    "modul": [
+      "00-fondasi/01-apa-itu-jaringan",
+      "01-model-referensi/01-osi",
+      "02-layer-fisik/02-kabel-copper",
+      "04-network-layer/01-ipv4",
+      "06-aplikasi/01-dns",
+      "06-aplikasi/02-dhcp",
+      "10-wireless/02-802-11",
+      "12-keamanan/04-aaa-identitas",
+      "14-monitoring-troubleshooting/01-metodologi",
+      "14-monitoring-troubleshooting/02-tools"
+    ],
+    "proyek": [
+      "Helpdesk mini dengan GLPI atau osTicket: matriks prioritas, SLA, dan 10 artikel knowledge base",
+      "Lab domain Windows Server (AD, DHCP, DNS, GPO) dengan skenario gagal login terdokumentasi",
+      "Skrip PowerShell pengumpul inventaris laptop (nomor seri, RAM, disk, versi OS) ke CSV"
+    ],
+    "gaji": {
+      "rentang": "Rp3 juta - Rp5 juta per bulan",
+      "konteks": "Lulusan baru; pengalaman lebih dari 5 tahun sekitar Rp8-12 juta, level masuk di Jakarta bisa di atas Rp6 juta (data iklan lowongan)",
+      "sumber": "Jobstreet Indonesia, Kisaran Gaji IT Support Terbaru (diperbarui Agustus 2026)",
+      "url": "https://id.jobstreet.com/id/career-advice/article/kisaran-gaji-it-support-terbaru"
+    },
+    "sumber": [
+      { "judul": "CompTIA A+ Core 1 (V15), 220-1201", "url": "https://www.comptia.org/en-us/certifications/a/core-1-v15/" },
+      { "judul": "CompTIA A+ Core 2 (V15), 220-1202", "url": "https://www.comptia.org/en-us/certifications/a/core-2-v15/" },
+      { "judul": "Google IT Support Professional Certificate", "url": "https://grow.google/certificates/it-support/" },
+      { "judul": "HDI, katalog kursus sertifikasi berbasis peran", "url": "https://www.thinkhdi.com/education/courses" },
+      { "judul": "PeopleCert, ITIL FAQ (ITIL Version 5 dan akhir ITIL 4)", "url": "https://www.peoplecert.org/help-and-support/faq-itil" },
+      { "judul": "JDIH Kemnaker, Kepmenaker 285 Tahun 2016 (SKKNI Computer Technical Support)", "url": "https://jdih.kemnaker.go.id/peraturan/detail/1384/keputusan-menteri-ketenagakerjaan-nomor-285-tahun-2016" },
+      { "judul": "O*NET, Computer User Support Specialists (15-1232.00)", "url": "https://www.onetonline.org/link/summary/15-1232.00" }
+    ]
+  },
+  {
+    "id": "field-network-technician",
+    "nama": "Field Network Technician (Teknisi Jaringan Lapangan / FTTH)",
+    "rumpun": "dukungan",
+    "ringkas": "Memasang, menyambung, menguji, dan memperbaiki jaringan fisik tembaga dan fiber di lapangan, termasuk FTTH pelanggan, dengan disiplin K3.",
+    "jenjang": "pemula",
+    "harian": [
+      "Memasang drop cable dan ONT pelanggan, lalu mengukur daya optik",
+      "Menyambung fiber dengan fusion splicer dan menguji hasilnya memakai OTDR",
+      "Menelusuri gangguan massal dari ODP sampai kabel distribusi yang putus",
+      "Menarik dan menerminasi kabel UTP sesuai TIA-568, lalu mengujinya",
+      "Memperbarui work order, foto bukti, dan pemakaian material di aplikasi"
+    ],
+    "keahlian": ["kabel-fisik", "telekomunikasi", "troubleshooting", "fundamental-jaringan", "wireless-rf", "layanan-pelanggan", "komunikasi-dokumentasi"],
+    "alat": ["Fusion splicer dan cleaver", "OTDR", "Optical power meter dan light source", "Visual fault locator", "Fiber inspection scope", "Cable certifier (mis. Fluke Networks DSX)", "Crimping dan punch-down tool", "MikroTik Winbox"],
+    "sertifikasi": [
+      { "nama": "Sertifikat kompetensi skema instalasi fiber optik (SKKNI Kepmenaker 101/2018)", "penerbit": "BNSP melalui LSP berlisensi", "tingkat": "pemula" },
+      { "nama": "Lisensi K3 Bekerja pada Ketinggian (Permenaker 9/2016)", "penerbit": "Kementerian Ketenagakerjaan", "tingkat": "pemula" },
+      { "nama": "Teknisi Muda Jaringan Komputer (SKKNI Kepmenaker 321/2016)", "penerbit": "BNSP melalui LSP berlisensi", "tingkat": "pemula" },
+      { "nama": "Certified Fiber Optic Technician (CFOT)", "penerbit": "The Fiber Optic Association (FOA)", "tingkat": "pemula" },
+      { "nama": "BICSI Installer 1 (INST1)", "penerbit": "BICSI", "tingkat": "pemula" },
+      { "nama": "FOA CFOS/S (Splicing) dan CFOS/H (FTTx)", "penerbit": "The Fiber Optic Association (FOA)", "tingkat": "menengah" },
+      { "nama": "BICSI Installer 2, Optical Fiber (INSTF) atau Copper (INSTC)", "penerbit": "BICSI", "tingkat": "menengah" },
+      { "nama": "MikroTik Certified Network Associate (MTCNA)", "penerbit": "MikroTik", "tingkat": "menengah" },
+      { "nama": "BICSI Technician (TECH)", "penerbit": "BICSI", "tingkat": "senior" }
+    ],
+    "masuk": "Lulusan SMK TKJ, Elektronika, atau Listrik dan D3 Telekomunikasi umumnya masuk sebagai helper atau teknisi pasang baru di mitra operator, ISP regional, atau system integrator.",
+    "naik": ["telecom-engineer", "network-administrator", "noc-technician"],
+    "dekat": ["it-support-technician", "wireless-network-engineer", "data-center-engineer"],
+    "modul": [
+      "02-layer-fisik/01-media-transmisi",
+      "02-layer-fisik/02-kabel-copper",
+      "02-layer-fisik/03-fiber",
+      "03-data-link/01-ethernet-frame-mac",
+      "03-data-link/03-vlan",
+      "10-wireless/01-rf-dasar",
+      "11-wan-vpn/01-teknologi-wan",
+      "19-mikrotik/01-pengenalan-routeros",
+      "14-monitoring-troubleshooting/01-metodologi"
+    ],
+    "proyek": [
+      "Dokumentasi structured cabling satu lantai: denah, label port, foto rak, dan hasil uji kabel",
+      "Lembar perhitungan loss budget FTTH untuk klaster 64 pelanggan dengan splitter dua tingkat",
+      "Lab MikroTik PPPoE dan VLAN per layanan yang mensimulasikan pelanggan ISP"
+    ],
+    "gaji": {
+      "rentang": "Rp2,85 juta - Rp3,9 juta per bulan",
+      "konteks": "Rata-rata nasional peran Teknisi Jaringan dari iklan lowongan; beberapa wilayah Jakarta rata-rata sekitar Rp5,7 juta; belum termasuk lembur atau insentif",
+      "sumber": "Jobstreet Indonesia, Gaji Teknisi Jaringan (Oktober 2026)",
+      "url": "https://id.jobstreet.com/id/career-advice/role/network-technician/salary"
+    },
+    "sumber": [
+      { "judul": "JDIH Kemnaker, Kepmenaker 101 Tahun 2018 (SKKNI Instalasi Fiber Optik)", "url": "https://jdih.kemnaker.go.id/peraturan/detail/1751/keputusan-menteri-ketenagakerjaan-nomor-101-tahun-2018" },
+      { "judul": "Permenaker 9 Tahun 2016, K3 dalam Pekerjaan pada Ketinggian", "url": "https://peraturan.go.id/files/bn386-2016.pdf" },
+      { "judul": "FOA, Certified Fiber Optic Technician (CFOT)", "url": "https://thefoa.org/cfot.htm" },
+      { "judul": "FOA, sertifikasi spesialis CFOS", "url": "https://thefoa.org/adv-cert.htm" },
+      { "judul": "FOA, loss budget dan nilai TIA-568", "url": "https://www.thefoa.org/tech/lossbudg.htm" },
+      { "judul": "TIA, rilis ANSI/TIA-568.2-E", "url": "https://tiaonline.org/?p=36976" },
+      { "judul": "O*NET, Telecommunications Equipment Installers and Repairers (49-2022.00)", "url": "https://www.onetonline.org/link/summary/49-2022.00" }
+    ]
+  },
+  {
+    "id": "hardware-engineer",
+    "nama": "Hardware Engineer (Perangkat Keras & Elektronika)",
+    "rumpun": "dukungan",
+    "ringkas": "Merancang, membuat prototipe, menguji, dan memperbaiki perangkat elektronik seperti board IoT, perangkat jaringan, dan server.",
+    "jenjang": "pemula",
+    "harian": [
+      "Merevisi skematik dan layout PCB setelah temuan uji prototipe",
+      "Mengukur tegangan, arus, dan sinyal dengan osiloskop dan logic analyzer",
+      "Menjalankan uji fungsi dan termal, lalu menulis laporan uji",
+      "Berdiskusi dengan tim firmware dan produksi soal komponen dan biaya BOM",
+      "Mendiagnosis perangkat rusak dan memutuskan perbaikan atau klaim RMA"
+    ],
+    "keahlian": ["hardware-elektronika", "troubleshooting", "scripting-python", "fundamental-jaringan", "komunikasi-dokumentasi", "linux"],
+    "alat": ["KiCad", "Altium Designer", "LTspice", "Osiloskop", "Logic analyzer", "Multimeter dan catu daya laboratorium", "Solder station dan hot air rework", "Debugger JTAG/SWD", "Git"],
+    "sertifikasi": [
+      { "nama": "IPC J-STD-001 Certified IPC Application Specialist (CIS)", "penerbit": "IPC / Global Electronics Association", "tingkat": "pemula" },
+      { "nama": "IPC-A-610 Certified IPC Application Specialist (CIS)", "penerbit": "IPC / Global Electronics Association", "tingkat": "pemula" },
+      { "nama": "CompTIA A+ (220-1201 dan 220-1202), untuk jalur servis", "penerbit": "CompTIA", "tingkat": "pemula" },
+      { "nama": "IPC Certified Interconnect Designer (CID)", "penerbit": "IPC / Global Electronics Association", "tingkat": "menengah" },
+      { "nama": "IPC Certified Interconnect Designer Advanced (CID+)", "penerbit": "IPC / Global Electronics Association", "tingkat": "senior" }
+    ],
+    "masuk": "Umumnya lulusan S1 atau D3 Teknik Elektro/Elektronika sebagai junior hardware engineer, teknisi di pabrik EMS, atau teknisi servis perangkat; lulusan SMK Elektronika lewat jalur teknisi produksi.",
+    "naik": ["system-engineer", "data-center-engineer", "solution-architect"],
+    "dekat": ["field-network-technician", "telecom-engineer", "it-support-technician"],
+    "modul": [
+      "00-fondasi/02-bit-byte-biner",
+      "00-fondasi/03-sinyal-bandwidth-latency",
+      "02-layer-fisik/01-media-transmisi",
+      "02-layer-fisik/02-kabel-copper",
+      "02-layer-fisik/04-encoding-modulasi",
+      "03-data-link/01-ethernet-frame-mac",
+      "10-wireless/01-rf-dasar",
+      "15-otomasi/03-python-jaringan",
+      "16-datacenter-cloud-sdn/01-desain-dc"
+    ],
+    "proyek": [
+      "Desain PCB sensor suhu dengan mikrokontroler dan Ethernet/Wi-Fi di KiCad, lengkap skematik, layout, dan BOM",
+      "Laporan diagnosis dan perbaikan switch atau router bekas yang mati, dengan foto dan pengukuran",
+      "Rig uji otomatis Python yang membaca serial console perangkat dan mencatat hasil ke CSV"
+    ],
+    "sumber": [
+      { "judul": "O*NET, Computer Hardware Engineers (17-2061.00)", "url": "https://www.onetonline.org/link/summary/17-2061.00" },
+      { "judul": "Global Electronics Association (dulu IPC), sejarah dan perubahan nama 2025", "url": "https://www.electronics.org/history" },
+      { "judul": "Selular.id, TKDN perangkat 4G dan 5G menjadi 35% (Permenkominfo 13/2021)", "url": "https://selular.id/2021/10/kominfo-tetapkan-tkdn-perangkat-4g-dan-5g-naik-35-persen/" },
+      { "judul": "Jobstreet Indonesia, Gaji Teknisi Elektronika (pembanding posisi masuk)", "url": "https://id.jobstreet.com/id/career-advice/role/electronics-technician/salary" }
+    ]
+  },
+  {
+    "id": "it-asset-manager",
+    "nama": "IT Asset Manager (ITAM / SAM / HAM)",
+    "rumpun": "dukungan",
+    "ringkas": "Mengelola siklus hidup aset TI dan lisensi, dari pengadaan sampai pemusnahan, agar biaya, kepatuhan, dan risiko terkendali.",
+    "jenjang": "menengah",
+    "harian": [
+      "Merekonsiliasi data CMDB dengan hasil discovery endpoint dan jaringan",
+      "Memantau garansi, kontrak support, dan status end-of-support perangkat",
+      "Mencocokkan instalasi perangkat lunak dengan hak lisensi menjelang audit vendor",
+      "Mengawasi sanitasi data dan berita acara pemusnahan aset lama",
+      "Menyusun laporan nilai aset, utilisasi lisensi, dan temuan risiko"
+    ],
+    "keahlian": ["manajemen-aset", "itsm-itil", "tata-kelola-kepatuhan", "komunikasi-dokumentasi", "konsultasi-bisnis", "database"],
+    "alat": ["ServiceNow (HAM/SAM)", "Snipe-IT", "GLPI", "Lansweeper", "Flexera One", "Microsoft Intune", "NetBox", "Power BI / Excel", "Pemindai barcode/RFID"],
+    "sertifikasi": [
+      { "nama": "ITIL Foundation (Version 5) atau ITIL 4 Foundation", "penerbit": "PeopleCert", "tingkat": "pemula" },
+      { "nama": "Certified Asset Management Professional (CAMP)", "penerbit": "IAITAM", "tingkat": "pemula" },
+      { "nama": "Certified Hardware Asset Management Professional (CHAMP)", "penerbit": "IAITAM", "tingkat": "menengah" },
+      { "nama": "Certified Software Asset Manager (CSAM)", "penerbit": "IAITAM", "tingkat": "menengah" },
+      { "nama": "Certified IT Asset Disposal (CITAD)", "penerbit": "IAITAM", "tingkat": "menengah" },
+      { "nama": "Certified IT Asset Manager (CITAM)", "penerbit": "IAITAM", "tingkat": "senior" }
+    ],
+    "masuk": "Jarang untuk lulusan baru; biasanya dari IT support, procurement TI, atau administrasi aset, mulai sebagai IT asset administrator atau analyst di bank, BUMN, operator, atau perusahaan multinasional.",
+    "naik": ["it-operations-manager", "it-auditor", "it-consultant"],
+    "dekat": ["it-support-technician", "system-administrator"],
+    "modul": [
+      "03-data-link/06-discovery-dan-l2-lain",
+      "06-aplikasi/05-layanan-lain",
+      "12-keamanan/01-konsep-keamanan",
+      "14-monitoring-troubleshooting/03-observability",
+      "15-otomasi/02-data-dan-api",
+      "15-otomasi/03-python-jaringan",
+      "17-desain-arsitektur/03-perencanaan-dokumentasi"
+    ],
+    "proyek": [
+      "Snipe-IT atau GLPI berisi 50 aset fiktif, alur check-out/check-in, dan laporan garansi 90 hari",
+      "Skrip Python yang membandingkan hasil LLDP/SNMP lab dengan inventaris NetBox dan menandai selisih",
+      "Prosedur pemusnahan aset satu halaman mengacu ISO/IEC 27001 A.7.14 dan NIST SP 800-88 Rev. 2"
+    ],
+    "sumber": [
+      { "judul": "ISO/IEC 19770-1:2017, IT asset management systems", "url": "https://www.iso.org/standard/68531.html" },
+      { "judul": "APMG International, sertifikasi IAITAM", "url": "https://apmg-international.com/product/iaitam-certifications" },
+      { "judul": "NIST SP 800-88 Rev. 2, Guidelines for Media Sanitization", "url": "https://csrc.nist.gov/pubs/sp/800/88/r2/final" },
+      { "judul": "OJK, POJK Penyelenggaraan Teknologi Informasi oleh Bank Umum", "url": "https://ojk.go.id/id/regulasi/Pages/Penyelenggaraan-Teknologi-Informasi-oleh-Bank-Umum.aspx" },
+      { "judul": "PeopleCert, ITIL FAQ", "url": "https://www.peoplecert.org/help-and-support/faq-itil" }
+    ]
+  }
+]

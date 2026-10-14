@@ -1,0 +1,602 @@
+[
+  {
+    "id": "system-administrator",
+    "nama": "System Administrator",
+    "rumpun": "operasi",
+    "ringkas": "Menjaga server Linux dan Windows, akun pengguna, layanan dasar seperti DNS dan DHCP, serta backup agar tetap hidup, aman, dan terdokumentasi.",
+    "jenjang": "pemula",
+    "harian": [
+      "Memeriksa laporan backup semalam dan menjalankan ulang job yang gagal",
+      "Membuat dan mencabut akun pengguna di Active Directory",
+      "Menguji patch keamanan di staging sebelum diterapkan ke produksi",
+      "Menelusuri tiket DHCP, DNS, atau file share yang bermasalah",
+      "Memantau kapasitas disk, memori, dan layanan server"
+    ],
+    "keahlian": [
+      "linux",
+      "windows-server",
+      "fundamental-jaringan",
+      "identitas-akses",
+      "storage-backup",
+      "troubleshooting",
+      "scripting-python",
+      "komunikasi-dokumentasi"
+    ],
+    "alat": [
+      "Red Hat Enterprise Linux",
+      "Ubuntu Server",
+      "Windows Server dan Active Directory",
+      "PowerShell",
+      "Ansible",
+      "Zabbix",
+      "Veeam Backup & Replication",
+      "Proxmox VE",
+      "GLPI"
+    ],
+    "sertifikasi": [
+      {
+        "nama": "LPIC-1 (101-500 dan 102-500)",
+        "penerbit": "Linux Professional Institute",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "CompTIA Linux+ (XK0-006)",
+        "penerbit": "CompTIA",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "Linux Foundation Certified System Administrator (LFCS)",
+        "penerbit": "Linux Foundation",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "Red Hat Certified System Administrator (RHCSA, EX200)",
+        "penerbit": "Red Hat",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "Microsoft Certified: Windows Server Administrator Associate (AZ-802)",
+        "penerbit": "Microsoft",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "Skema System Administrator (SKKNI Kepmenaker 82/2017)",
+        "penerbit": "BNSP melalui LSP berlisensi",
+        "tingkat": "menengah"
+      }
+    ],
+    "masuk": "Paling umum dari IT support atau helpdesk yang dipercaya memegang server setelah satu sampai dua tahun. Network administrator bisa langsung pindah dengan menambah Linux tingkat RHCSA, Active Directory, dan backup.",
+    "naik": [
+      "system-engineer",
+      "database-administrator",
+      "storage-administrator",
+      "it-operations-manager"
+    ],
+    "dekat": [
+      "network-administrator",
+      "devops-engineer",
+      "it-support-technician"
+    ],
+    "modul": [
+      "04-network-layer/02-subnetting",
+      "06-aplikasi/01-dns",
+      "06-aplikasi/02-dhcp",
+      "06-aplikasi/05-layanan-lain",
+      "13-linux-networking/01-iproute2",
+      "13-linux-networking/03-nftables-firewall",
+      "13-linux-networking/04-layanan-jaringan-linux",
+      "12-keamanan/04-aaa-identitas",
+      "14-monitoring-troubleshooting/02-tools",
+      "lab/05-lab-linux-otomasi"
+    ],
+    "proyek": [
+      "Home lab domain Active Directory dengan DNS internal, DHCP berreservasi, dan file share berizin per grup",
+      "Skrip backup ke dua tujuan berbeda plus uji restore otomatis yang mengirim laporan",
+      "Playbook Ansible untuk hardening server baru: pengguna, kunci SSH, nftables, NTP, dan syslog pusat"
+    ],
+    "gaji": {
+      "rentang": "Rp 3,63 juta - Rp 4,94 juta per bulan",
+      "konteks": "Rentang tipikal nasional dari iklan yang mencantumkan gaji untuk Admin Sistem, didominasi posisi junior; rata-rata Jakarta Pusat sekitar Rp 13 juta, Jakarta Selatan dan Timur sekitar Rp 7 juta.",
+      "sumber": "Jobstreet Indonesia, Gaji Admin Sistem (diperbarui 1 Oktober 2026)",
+      "url": "https://id.jobstreet.com/id/career-advice/role/systems-administrator/salary"
+    },
+    "sumber": [
+      {
+        "judul": "O*NET OnLine: 15-1244.00 Network and Computer Systems Administrators",
+        "url": "https://www.onetonline.org/link/summary/15-1244.00"
+      },
+      {
+        "judul": "Red Hat: EX200 Red Hat Certified System Administrator (RHCSA) exam",
+        "url": "https://www.redhat.com/en/services/training/ex200-red-hat-certified-system-administrator-rhcsa-exam"
+      },
+      {
+        "judul": "Linux Foundation: LFCS",
+        "url": "https://training.linuxfoundation.org/certification/linux-foundation-certified-sysadmin-lfcs/"
+      },
+      {
+        "judul": "Microsoft Learn: Exam AZ-802 Administering Windows Server",
+        "url": "https://learn.microsoft.com/en-us/credentials/certifications/exams/az-802/"
+      },
+      {
+        "judul": "CompTIA Linux+",
+        "url": "https://www.comptia.org/en-us/certifications/linux/"
+      },
+      {
+        "judul": "Kepmenaker Nomor 82 Tahun 2017 tentang SKKNI Bidang Administrasi Sistem",
+        "url": "https://jdih.kemnaker.go.id/peraturan/detail/1489/keputusan-menaker-nomor-82-tahun-2017"
+      }
+    ]
+  },
+  {
+    "id": "database-administrator",
+    "nama": "Database Administrator (DBA)",
+    "rumpun": "operasi",
+    "ringkas": "Memastikan database tersedia, cepat, aman, dan bisa dipulihkan, mulai dari backup, replikasi, tuning query, sampai pengaturan hak akses.",
+    "jenjang": "menengah",
+    "harian": [
+      "Memeriksa status replikasi, lag, dan hasil backup semalam",
+      "Membaca rencana eksekusi query lambat lalu mengusulkan indeks",
+      "Meninjau dan memberikan hak akses data sesuai prinsip minimum",
+      "Menguji point-in-time recovery di server uji",
+      "Berdiskusi dengan tim jaringan tentang latensi aplikasi ke database"
+    ],
+    "keahlian": [
+      "database",
+      "linux",
+      "storage-backup",
+      "kelangsungan-bisnis",
+      "monitoring-observability",
+      "identitas-akses",
+      "troubleshooting"
+    ],
+    "alat": [
+      "Oracle Database dan RMAN",
+      "Microsoft SQL Server",
+      "PostgreSQL",
+      "pgBackRest",
+      "Patroni",
+      "MySQL dan Percona XtraBackup",
+      "MongoDB",
+      "DBeaver",
+      "Grafana"
+    ],
+    "sertifikasi": [
+      {
+        "nama": "Oracle AI Database Administration Associate (1Z0-182)",
+        "penerbit": "Oracle",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "EDB Essentials for PostgreSQL",
+        "penerbit": "EDB",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "MongoDB Associate Database Administrator",
+        "penerbit": "MongoDB",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "Microsoft Certified: Azure Database Administrator Associate (DP-300)",
+        "penerbit": "Microsoft",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "Oracle AI Database Administration Professional (1Z0-183)",
+        "penerbit": "Oracle",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "EDB Advanced for PostgreSQL",
+        "penerbit": "EDB",
+        "tingkat": "menengah"
+      }
+    ],
+    "masuk": "Jarang dari lulusan baru; biasanya dari sysadmin, developer, atau application support yang banyak menulis SQL lalu pindah ke tim database. Mitra Oracle atau Microsoft dan system integrator juga membuka posisi konsultan database junior.",
+    "naik": [
+      "it-operations-manager",
+      "solution-architect",
+      "site-reliability-engineer"
+    ],
+    "dekat": [
+      "system-administrator",
+      "storage-administrator",
+      "disaster-recovery-specialist"
+    ],
+    "modul": [
+      "00-fondasi/03-sinyal-bandwidth-latency",
+      "05-transport/01-port-socket",
+      "05-transport/02-tcp",
+      "06-aplikasi/01-dns",
+      "06-aplikasi/04-tls-pki",
+      "09-nat-acl-firewall/03-firewall",
+      "16-datacenter-cloud-sdn/03-storage-virtualisasi",
+      "14-monitoring-troubleshooting/03-observability"
+    ],
+    "proyek": [
+      "Klaster PostgreSQL tiga node dengan Patroni dan uji failover yang mengukur durasi putus koneksi",
+      "Simulasi penghapusan data tak sengaja lalu point-in-time recovery dengan laporan RPO dan RTO",
+      "Eksperimen latensi buatan dengan tc netem antara aplikasi dan database, lengkap dengan grafik dampaknya"
+    ],
+    "sumber": [
+      {
+        "judul": "O*NET OnLine: 15-1242.00 Database Administrators",
+        "url": "https://www.onetonline.org/link/summary/15-1242.00"
+      },
+      {
+        "judul": "Oracle University: Exam 1Z0-182 Oracle AI Database Administration Associate",
+        "url": "https://mylearn.oracle.com/ou/exam/oracle-database-23ai-administration-associate-1z0-182/38560/138639/219333"
+      },
+      {
+        "judul": "Oracle University: Exam 1Z0-183 Oracle AI Database Administration Professional",
+        "url": "https://mylearn.oracle.com/ou/exam/oracle-database-23ai-administration-professional-1z0-183/105037/149508/246090"
+      },
+      {
+        "judul": "Microsoft Learn: Azure Database Administrator Associate (DP-300)",
+        "url": "https://learn.microsoft.com/certifications/exams/dp-300"
+      },
+      {
+        "judul": "EDB Certification Exams Catalog",
+        "url": "https://www.enterprisedb.com/training/certification-exams"
+      },
+      {
+        "judul": "MongoDB University: Certification Program",
+        "url": "https://learn.mongodb.com/pages/certification-program"
+      },
+      {
+        "judul": "SKKNI Bidang Data Management (Kepmenaker Nomor 268 Tahun 2020)",
+        "url": "https://lsp.gunadarma.ac.id/media/skema/skkni/SKKNI_2020-268_Insinyur_Data_removed.pdf"
+      }
+    ]
+  },
+  {
+    "id": "storage-administrator",
+    "nama": "Storage Administrator",
+    "rumpun": "operasi",
+    "ringkas": "Mengelola SAN, NAS, dan object storage beserta kapasitas, kinerja, replikasi antar-DC, dan backup agar data selalu tersedia dan bisa dipulihkan.",
+    "jenjang": "menengah",
+    "harian": [
+      "Memantau kapasitas dan memperkirakan kapan storage akan penuh",
+      "Menyediakan LUN atau share NFS/SMB dan mengatur zoning atau iSCSI",
+      "Menelusuri lonjakan latensi bersama tim jaringan dan virtualisasi",
+      "Memeriksa lag replikasi ke DRC dan hasil job backup",
+      "Menguji restore dari backup immutable di jaringan terisolasi"
+    ],
+    "keahlian": [
+      "storage-backup",
+      "data-center-fasilitas",
+      "virtualisasi",
+      "routing-switching",
+      "kelangsungan-bisnis",
+      "monitoring-observability",
+      "troubleshooting"
+    ],
+    "alat": [
+      "NetApp ONTAP",
+      "Dell PowerStore",
+      "Dell PowerMax",
+      "HPE Alletra",
+      "Pure Storage",
+      "Brocade atau Cisco MDS (Fibre Channel)",
+      "Veeam Backup & Replication",
+      "Ceph",
+      "MinIO"
+    ],
+    "sertifikasi": [
+      {
+        "nama": "Dell Information Storage and Management Foundations (D-ISM-FN-02)",
+        "penerbit": "Dell Technologies",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "NetApp Certified Data Administrator, ONTAP (NCDA)",
+        "penerbit": "NetApp",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "Dell PowerMax Operate (D-PVM-OE-01)",
+        "penerbit": "Dell Technologies",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "VCAP-VCF Storage (3V0-23.25)",
+        "penerbit": "Broadcom (VMware)",
+        "tingkat": "senior"
+      }
+    ],
+    "masuk": "Hampir tidak ada yang masuk langsung; biasanya dari sysadmin atau engineer virtualisasi yang sering mengurus datastore dan backup, atau engineer implementasi di distributor dan system integrator perangkat storage.",
+    "naik": [
+      "disaster-recovery-specialist",
+      "system-engineer",
+      "solution-architect"
+    ],
+    "dekat": [
+      "data-center-engineer",
+      "database-administrator",
+      "system-administrator"
+    ],
+    "modul": [
+      "02-layer-fisik/03-fiber",
+      "03-data-link/03-vlan",
+      "03-data-link/05-etherchannel",
+      "05-transport/04-congestion-control",
+      "11-wan-vpn/01-teknologi-wan",
+      "16-datacenter-cloud-sdn/01-desain-dc",
+      "16-datacenter-cloud-sdn/03-storage-virtualisasi",
+      "14-monitoring-troubleshooting/03-observability"
+    ],
+    "proyek": [
+      "Lab iSCSI dengan targetcli dan dua initiator multipath di dua VLAN storage, termasuk uji putus jalur",
+      "Pengukuran throughput dan latensi NFS atau iSCSI pada MTU 1500 versus 9000",
+      "Rancangan backup 3-2-1 untuk 50 VM: retensi, salinan immutable, salinan luar lokasi, dan jadwal uji restore"
+    ],
+    "sumber": [
+      {
+        "judul": "Dell Technologies: Information Storage and Management Foundations",
+        "url": "https://learning.dell.com/content/dell/en-us/home/certification-overview/available-exams/information-storage-and-management-foundations0.html"
+      },
+      {
+        "judul": "NetApp Certified Data Administrator, ONTAP",
+        "url": "https://www.netapp.com/support-and-training/netapp-learning-services/certifications/ontap-data-administration/"
+      },
+      {
+        "judul": "Broadcom: VMware Cloud Foundation Certification FAQ",
+        "url": "https://docs.broadcom.com/doc/vmw-certification-faqs"
+      },
+      {
+        "judul": "IETF RFC 7143: iSCSI Protocol (Consolidated)",
+        "url": "https://www.rfc-editor.org/rfc/rfc7143"
+      },
+      {
+        "judul": "CISA: Data Backup Options (aturan 3-2-1)",
+        "url": "https://www.cisa.gov/sites/default/files/publications/data_backup_options.pdf"
+      },
+      {
+        "judul": "SNIA Educational Library",
+        "url": "https://www.snia.org/educational-library"
+      }
+    ]
+  },
+  {
+    "id": "system-engineer",
+    "nama": "System Engineer",
+    "rumpun": "operasi",
+    "ringkas": "Merancang dan membangun platform server dan virtualisasi, menyusun standar build, mengotomasi penyediaan, dan memimpin migrasi infrastruktur.",
+    "jenjang": "menengah",
+    "harian": [
+      "Memetakan VM, ketergantungan aplikasi, VLAN, dan alamat IP lingkungan lama",
+      "Menulis low-level design klaster virtualisasi dan jaringannya",
+      "Membangun template VM yang sudah di-hardening dengan Packer dan Ansible",
+      "Menguji failover host, live migration, dan akses storage bersama tim jaringan",
+      "Memimpin migrasi dalam jendela perubahan dengan rencana rollback"
+    ],
+    "keahlian": [
+      "virtualisasi",
+      "linux",
+      "windows-server",
+      "otomasi-iac",
+      "storage-backup",
+      "arsitektur-desain",
+      "fundamental-jaringan",
+      "komunikasi-dokumentasi"
+    ],
+    "alat": [
+      "VMware vCenter",
+      "VMware NSX",
+      "Microsoft Hyper-V",
+      "Proxmox VE",
+      "Nutanix Prism",
+      "Ansible",
+      "Terraform",
+      "Packer",
+      "NetBox",
+      "draw.io"
+    ],
+    "sertifikasi": [
+      {
+        "nama": "VCP-VVF Administrator (2V0-16.25)",
+        "penerbit": "Broadcom (VMware)",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "VCP-VCF Administrator (2V0-17.25)",
+        "penerbit": "Broadcom (VMware)",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "Microsoft Certified: Azure Administrator Associate (AZ-104)",
+        "penerbit": "Microsoft",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "Red Hat Certified Engineer in Enterprise Linux (EX200 + EX342)",
+        "penerbit": "Red Hat",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "Red Hat Certified Engineer in Ansible (EX200 + EX294)",
+        "penerbit": "Red Hat",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "VCP-VCF Architect (2V0-13.25)",
+        "penerbit": "Broadcom (VMware)",
+        "tingkat": "senior"
+      }
+    ],
+    "masuk": "Umumnya sysadmin dua sampai empat tahun yang mulai memegang proyek, atau engineer system integrator yang naik setelah beberapa implementasi. Network engineer dari data center bisa masuk dengan menambah virtualisasi, Linux, dan Ansible.",
+    "naik": [
+      "solution-architect",
+      "cloud-infrastructure-engineer",
+      "it-operations-manager"
+    ],
+    "dekat": [
+      "system-administrator",
+      "data-center-engineer",
+      "devops-engineer",
+      "cloud-infrastructure-engineer"
+    ],
+    "modul": [
+      "03-data-link/05-etherchannel",
+      "07-routing-lanjutan/08-fhrp",
+      "13-linux-networking/02-virtual-networking",
+      "16-datacenter-cloud-sdn/01-desain-dc",
+      "16-datacenter-cloud-sdn/03-storage-virtualisasi",
+      "16-datacenter-cloud-sdn/04-cloud-networking",
+      "12-keamanan/05-hardening-zero-trust",
+      "15-otomasi/04-ansible-cicd",
+      "17-desain-arsitektur/03-perencanaan-dokumentasi"
+    ],
+    "proyek": [
+      "Klaster Proxmox VE tiga node dengan Ceph dan VLAN terpisah, termasuk uji kegagalan satu node",
+      "Template VM dengan Packer dan Ansible yang menghasilkan server siap pakai dalam satu perintah",
+      "Rencana migrasi 50 VM antar-platform: gelombang, uji per aplikasi, rollback, dan perkiraan downtime"
+    ],
+    "sumber": [
+      {
+        "judul": "O*NET OnLine: 15-1299.08 Computer Systems Engineers/Architects",
+        "url": "https://www.onetonline.org/link/summary/15-1299.08"
+      },
+      {
+        "judul": "Broadcom: 2026 VMware Cloud Foundation Certification Paths",
+        "url": "https://docs.broadcom.com/doc/vmw-certification-paths"
+      },
+      {
+        "judul": "Broadcom: VMware Cloud Foundation Certification FAQ",
+        "url": "https://docs.broadcom.com/doc/vmw-certification-faqs"
+      },
+      {
+        "judul": "Red Hat: Red Hat Certified Engineer (RHCE)",
+        "url": "https://www.redhat.com/en/services/certification/rhce"
+      },
+      {
+        "judul": "Microsoft Learn: Azure Administrator Associate",
+        "url": "https://learn.microsoft.com/en-us/credentials/certifications/azure-administrator/"
+      }
+    ]
+  },
+  {
+    "id": "it-operations-manager",
+    "nama": "IT Operations Manager",
+    "rumpun": "operasi",
+    "ringkas": "Memimpin tim, proses, vendor, dan anggaran agar layanan TI berjalan sesuai SLA, insiden cepat pulih, dan perubahan tidak merusak produksi.",
+    "jenjang": "senior",
+    "harian": [
+      "Memimpin rapat harian tentang insiden, perubahan, dan tiket mendekati batas SLA",
+      "Menjadi incident manager saat gangguan prioritas satu",
+      "Memimpin rapat CAB dan menolak perubahan tanpa rencana rollback",
+      "Meninjau laporan SLA vendor dan menyiapkan klaim kompensasi",
+      "Menjadwalkan uji DRP dan menyiapkan bukti untuk auditor"
+    ],
+    "keahlian": [
+      "itsm-itil",
+      "manajemen-tim",
+      "kelangsungan-bisnis",
+      "tata-kelola-kepatuhan",
+      "monitoring-observability",
+      "komunikasi-dokumentasi",
+      "respons-insiden"
+    ],
+    "alat": [
+      "ServiceNow",
+      "Jira Service Management",
+      "ManageEngine ServiceDesk Plus",
+      "GLPI",
+      "Zabbix",
+      "Grafana",
+      "PagerDuty",
+      "Opsgenie",
+      "Confluence"
+    ],
+    "sertifikasi": [
+      {
+        "nama": "ITIL Foundation (Version 5)",
+        "penerbit": "PeopleCert",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "ITIL Foundation Bridge (Version 5)",
+        "penerbit": "PeopleCert",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "ITIL Practice Manager (Version 5)",
+        "penerbit": "PeopleCert",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "ITIL Strategic Leader (Version 5)",
+        "penerbit": "PeopleCert",
+        "tingkat": "senior"
+      },
+      {
+        "nama": "Skema berbasis SKKNI Manajemen Layanan TI (Kepmenaker 30/2025)",
+        "penerbit": "BNSP melalui LSP berlisensi",
+        "tingkat": "menengah"
+      }
+    ],
+    "masuk": "Bukan posisi lulusan baru: biasanya dari sysadmin, network engineer, DBA, atau system engineer berpengalaman yang menjadi team lead lalu terbukti memimpin insiden besar dan mengelola vendor. Pengalaman memimpin NOC sangat membantu.",
+    "naik": [
+      "solution-architect",
+      "it-consultant",
+      "it-auditor"
+    ],
+    "dekat": [
+      "disaster-recovery-specialist",
+      "site-reliability-engineer",
+      "scrum-master-infrastruktur",
+      "noc-technician"
+    ],
+    "modul": [
+      "12-keamanan/01-konsep-keamanan",
+      "14-monitoring-troubleshooting/01-metodologi",
+      "14-monitoring-troubleshooting/03-observability",
+      "14-monitoring-troubleshooting/04-studi-kasus",
+      "17-desain-arsitektur/03-perencanaan-dokumentasi",
+      "20-proyek-akhir/09-babak-8-malam-panjang",
+      "20-proyek-akhir/10-babak-9-ruang-rapat",
+      "18-karier-sertifikasi/04-portofolio-interview"
+    ],
+    "proyek": [
+      "Katalog layanan dan SLA perusahaan fiktif: prioritas P1-P4, matriks eskalasi, serta SLO dan SLI tiga layanan kritis",
+      "Post-incident review dari gangguan nyata yang disamarkan, lengkap dengan tindakan perbaikan, pemilik, dan tenggat",
+      "Rencana uji DRP satu hari dengan skenario, peran, kriteria lulus, dan lembar bukti untuk auditor"
+    ],
+    "gaji": {
+      "rentang": "Rp 25 juta - Rp 45 juta per bulan",
+      "konteks": "Rata-rata gaji pokok tanpa bonus: IT Infrastructure Manager sekitar Rp 25 juta dan IT Manager sekitar Rp 45 juta (Indonesia, 2026).",
+      "sumber": "Michael Page Indonesia, Salary Comparison Tool: IT Infrastructure Manager dan IT Manager (diakses Oktober 2026)",
+      "url": "https://www.michaelpage.co.id/salary-comparison-tool/it-infrastructure-manager-salaries"
+    },
+    "sumber": [
+      {
+        "judul": "O*NET OnLine: 11-3021.00 Computer and Information Systems Managers",
+        "url": "https://www.onetonline.org/link/summary/11-3021.00"
+      },
+      {
+        "judul": "PeopleCert: ITIL Foundation (Version 5)",
+        "url": "https://www.peoplecert.org/browse-certifications/it-governance-and-service-management/ITIL-1/itil-5-foundation-version-50-4154"
+      },
+      {
+        "judul": "PeopleCert: ITIL FAQ",
+        "url": "https://www.peoplecert.org/help-and-support/faq-itil"
+      },
+      {
+        "judul": "Google SRE Book: Service Level Objectives",
+        "url": "https://sre.google/sre-book/service-level-objectives/"
+      },
+      {
+        "judul": "POJK Nomor 11/POJK.03/2022 tentang Penyelenggaraan Teknologi Informasi oleh Bank Umum",
+        "url": "https://peraturan.go.id/files/pojk11-2022.pdf"
+      },
+      {
+        "judul": "Kepmenaker Nomor 30 Tahun 2025 tentang SKKNI Bidang Manajemen Layanan Teknologi Informasi",
+        "url": "https://jdih.kemnaker.go.id/peraturan/detail/2634/keputusan-menteri-ketenagakerjaan-nomor-30-tahun-2025"
+      },
+      {
+        "judul": "Michael Page Indonesia: Salary Comparison Tool IT Manager",
+        "url": "https://www.michaelpage.co.id/salary-comparison-tool/it-manager-salaries"
+      }
+    ]
+  }
+]

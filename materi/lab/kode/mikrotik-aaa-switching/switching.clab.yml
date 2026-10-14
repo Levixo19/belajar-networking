@@ -1,0 +1,24 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Kontributor Belajar Networking
+#
+# Topologi containerlab untuk lab 19.11 (bridge VLAN filtering, LACP, MSTP).
+# CHR tidak punya switch chip: semua forwarding dilakukan CPU. Lab ini melatih
+# logika konfigurasi, bukan hardware offload.
+name: sw
+
+topology:
+  kinds:
+    mikrotik_ros:
+      image: vrnetlab/mikrotik_routeros:7.24.5
+  nodes:
+    sw1:   {kind: mikrotik_ros, startup-config: sw1.rsc}
+    sw2:   {kind: mikrotik_ros, startup-config: sw2.rsc}
+    host1: {kind: mikrotik_ros, startup-config: host1.rsc}
+    host2: {kind: mikrotik_ros, startup-config: host2.rsc}
+  links:
+    - endpoints: ["sw1:ether2", "sw2:ether2"]     # anggota LACP 1
+    - endpoints: ["sw1:ether3", "sw2:ether3"]     # anggota LACP 2
+    - endpoints: ["sw1:ether4", "host1:ether2"]   # access VLAN 10
+    - endpoints: ["sw1:ether5", "host1:ether3"]   # access VLAN 20
+    - endpoints: ["sw2:ether4", "host2:ether2"]
+    - endpoints: ["sw2:ether5", "host2:ether3"]

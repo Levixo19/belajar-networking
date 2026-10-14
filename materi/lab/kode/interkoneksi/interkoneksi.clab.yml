@@ -1,0 +1,95 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Kontributor Belajar Networking
+#
+# Lab interkoneksi: dua ISP, satu IXP dengan route server BIRD, dan validator
+# RPKI StayRTR berisi data uji (modul 07-routing-lanjutan/11).
+#
+#                      peering LAN IXP 10.10.0.0/24
+#        +-----------------------[ ix-sw (br0) ]-----------------------+
+#        |                            |                                |
+#   isp-a eth1 .11              rs eth1 .10                      isp-b eth1 .12
+#   AS64500 (FRR)               AS64510 (BIRD 2)                 AS64501 (FRR)
+#   198.18.0.0/22               route server                     203.0.113.0/24
+#        |                            |                          192.0.2.0/24
+#   eth2 10.20.1.2/29           eth2 10.20.0.2/29                198.18.1.0/24 (!)
+#        |                            |
+#        +--------- eth2 [ rpki ] eth1 ----------+
+#                  StayRTR, RTR port 8282
+#                  10.20.1.3/29 dan 10.20.0.3/29
+#
+# Persiapan (sekali): docker build -t lab-bird:2 rs/
+# Jalankan:  sudo containerlab deploy -t interkoneksi.clab.yml
+# CLI FRR:   docker exec -it clab-ixp-isp-a vtysh
+# CLI BIRD:  docker exec -it clab-ixp-rs birdc -s /run/bird.ctl
+# Bongkar:   sudo containerlab destroy -t interkoneksi.clab.yml --cleanup
+name: ixp
+
+topology:
+  nodes:
+    # Fabric L2 IXP: satu bridge Linux di dalam container.
+    ix-sw:
+      kind: linux
+      image: alpine:3.22
+      cmd: tail -f /dev/null
+      exec:
+        - ip link add br0 type bridge
+        - ip link set br0 up
+        - ip link set eth1 master br0
+        - ip link set eth2 master br0
+        - ip link set eth3 master br0
+
+    rs:
+      kind: linux
+      image: lab-bird:2
+      binds:
+        - rs/bird.conf:/etc/bird/bird.conf
+      exec:
+        - ip addr add 10.10.0.10/24 dev eth1
+        - ip addr add 10.20.0.2/29 dev eth2
+
+    isp-a:
+      kind: linux
+      image: quay.io/frrouting/frr:10.4.1
+      sysctls:
+        net.ipv4.ip_forward: 1
+      binds:
+        - daemons:/etc/frr/daemons
+        - vtysh.conf:/etc/frr/vtysh.conf
+        - isp-a/frr.conf:/etc/frr/frr.conf
+      exec:
+        - ip addr add 10.10.0.11/24 dev eth1
+        - ip addr add 10.20.1.2/29 dev eth2
+
+    isp-b:
+      kind: linux
+      image: quay.io/frrouting/frr:10.4.1
+      sysctls:
+        net.ipv4.ip_forward: 1
+      binds:
+        - daemons:/etc/frr/daemons
+        - vtysh.conf:/etc/frr/vtysh.conf
+        - isp-b/frr.conf:/etc/frr/frr.conf
+      exec:
+        - ip addr add 10.10.0.12/24 dev eth1
+
+    # Validator RPKI. StayRTR membaca berkas VRP lokal (format JSON
+    # rpki-client) dan menyajikannya lewat RTR. -checktime=false karena data
+    # uji tidak punya masa berlaku; -refresh 10 agar suntingan cepat terlihat.
+    rpki:
+      kind: linux
+      image: rpki/stayrtr:v0.6.4
+      binds:
+        # Seluruh direktori di-bind (bukan satu berkas) agar suntingan vrps.json
+        # yang mengganti inode (sed -i, banyak editor) tetap terlihat container.
+        - rpki:/data
+      cmd: -cache /data/vrps.json -checktime=false -refresh 10 -bind :8282
+      exec:
+        - ip addr add 10.20.0.3/29 dev eth1
+        - ip addr add 10.20.1.3/29 dev eth2
+
+  links:
+    - endpoints: ["rs:eth1", "ix-sw:eth1"]
+    - endpoints: ["isp-a:eth1", "ix-sw:eth2"]
+    - endpoints: ["isp-b:eth1", "ix-sw:eth3"]
+    - endpoints: ["rs:eth2", "rpki:eth1"]
+    - endpoints: ["isp-a:eth2", "rpki:eth2"]

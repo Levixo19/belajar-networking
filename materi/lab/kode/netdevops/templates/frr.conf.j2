@@ -1,0 +1,49 @@
+{#- SPDX-License-Identifier: MIT -#}
+{#- Copyright (c) 2026 Kontributor Belajar Networking -#}
+{#- Template konfigurasi FRR untuk router Lab 08.
+    Baris pertama WAJIB "frr version": Batfish (format cumulus_concatenated)
+    memakainya sebagai penanda awal bagian frr.conf. Jangan memakai "exit"
+    di akhir blok; FRR tidak membutuhkannya dan parser Batfish tidak mengenalnya. -#}
+frr version {{ frr_version }}
+frr defaults traditional
+hostname {{ dev.name }}
+log stdout
+service integrated-vtysh-config
+!
+! Dihasilkan oleh scripts/render.py dari source of truth. JANGAN diedit manual:
+! perubahan manual akan terdeteksi sebagai drift dan ditimpa pada deploy berikutnya.
+!
+{% for i in dev.interfaces if i.kind in ("loopback", "p2p", "lan") %}
+interface {{ i.name }}
+{% if i.description %}
+ description {{ i.description }}
+{% endif %}
+ ip address {{ i.ip }}
+{% if i.kind in ("loopback", "p2p") %}
+ ip ospf area {{ ospf.area }}
+{% endif %}
+{% if i.kind == "p2p" %}
+ ip ospf network point-to-point
+ ip ospf cost {{ i.ospf_cost }}
+{% endif %}
+{% if not i.enabled %}
+ shutdown
+{% endif %}
+!
+{% endfor %}
+router ospf
+ ospf router-id {{ dev.router_id }}
+ log-adjacency-changes
+{% if dev.lan_prefixes %}
+ redistribute connected route-map RM-CONNECTED-KE-OSPF
+{% endif %}
+!
+{% if dev.lan_prefixes %}
+{% for p in dev.lan_prefixes %}
+ip prefix-list PL-LAN seq {{ loop.index * 10 }} permit {{ p }}
+{% endfor %}
+!
+route-map RM-CONNECTED-KE-OSPF permit 10
+ match ip address prefix-list PL-LAN
+!
+{% endif %}
