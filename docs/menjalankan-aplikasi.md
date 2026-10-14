@@ -4,7 +4,7 @@ Panduan singkat menyalakan, mematikan, dan merawat aplikasi di `app/`.
 Semua perintah dijalankan dari folder `app/`:
 
 ```bash
-cd /home/vi/networking/app
+cd /home/vi/Projects/networking/app
 ```
 
 ---
@@ -19,7 +19,7 @@ npm run db:up            # nyalakan MongoDB (hanya bila container mati)
 node server/index.mjs
 ```
 
-Buka **http://localhost:4000**.
+Buka **http://127.0.0.1:4000**.
 
 ## Mode pengembangan (hot-reload)
 
@@ -29,7 +29,48 @@ Dipakai saat mengoprek kode. Otomatis membangun konten dan menyalakan Mongo.
 npm run dev
 ```
 
-Buka **http://localhost:5173** (Vite mem-proxy `/api` ke Express di `:4000`).
+Buka **http://127.0.0.1:5173** (Vite mem-proxy `/api` ke Express di `127.0.0.1:4000`).
+
+---
+
+## Hanya laptop ini (loopback)
+
+Server API, Vite dev, Vite preview, dan MongoDB **sengaja hanya mendengar di
+`127.0.0.1`**. API ini tidak punya kata sandi: kalau ia terbuka ke Wi-Fi, siapa pun
+di jaringan yang sama bisa membaca, menimpa, atau menghapus profil belajar.
+Penjagaannya tiga lapis (bind loopback, pemeriksaan `Host`, pemeriksaan `Origin`
+untuk semua permintaan yang mengubah data); alasannya ditulis di kepala
+`app/server/app.mjs`. Akibatnya aplikasi ini **tidak bisa dibuka dari HP** lewat
+alamat IP laptop, dan itu disengaja.
+
+Kalau kontainer Mongo dibuat sebelum aturan ini, buat ulang sekali supaya pemetaan
+port barunya berlaku (datanya aman di volume):
+
+```bash
+docker compose up -d     # "Recreate" bn-mongo; cek: docker ps → 127.0.0.1:27017
+```
+
+---
+
+## Menguji tanpa menyentuh progres
+
+Progres di database `belajar_networking` adalah catatan belajar sungguhan, bukan data
+uji. Untuk mencoba apa pun, pakai database terpisah dan port terpisah:
+
+```bash
+MONGODB_URI="mongodb://127.0.0.1:27017/bn_uji_$(date +%F)" PORT=4100 node server/index.mjs
+```
+
+Tes otomatis:
+
+```bash
+npm test                 # node:test bawaan Node, tanpa dependensi tambahan
+```
+
+Tes integrasi server membuat database `bn_uji_tes_<pid>` lalu menghapusnya lagi, dan
+menolak berjalan pada database yang namanya tidak diawali `bn_uji_`. Tanpa MongoDB
+bagian itu dilewati (skip), bukan lulus palsu. `BN_TANPA_MONGO=1 npm test` melewatinya
+dengan sengaja.
 
 ---
 
@@ -70,8 +111,13 @@ Materi ada di `materi/`. Setiap kali diubah, konten aplikasi perlu dibangun ulan
 
 ```bash
 npm run content          # materi/**/*.md → src/generated/curriculum.json
-npm run build            # bundel ulang ke dist/ (hanya untuk mode satu proses)
+npm run build            # WAJIB untuk mode satu proses: bundel ulang ke dist/
 ```
+
+**`dist/` tidak ikut berubah karena `npm run content`.** Konten dibundel ke dalam
+JavaScript saat `vite build`, jadi mode satu proses (`node server/index.mjs`) tetap
+menyajikan materi LAMA sampai `npm run build` dijalankan lagi. `npm run build`
+sudah menjalankan `npm run content` sendiri lewat `prebuild`, jadi cukup itu saja.
 
 Mode `npm run dev` sudah menjalankan `npm run content` otomatis di awal.
 

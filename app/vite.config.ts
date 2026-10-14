@@ -6,6 +6,10 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   base: './',
   plugins: [react(), tailwindcss()],
-  server: { host: true, port: 5173, proxy: { '/api': 'http://localhost:4000' } },
+  // Hanya loopback: server API tanpa autentikasi, dan proxy ini meneruskan mutasi ke sana.
+  // Target 127.0.0.1, bukan localhost: Node 17+ bisa menerjemahkan localhost ke ::1
+  // sementara API cuma mendengar di 127.0.0.1, dan hasilnya ECONNREFUSED.
+  server: { host: '127.0.0.1', port: 5173, strictPort: true, proxy: { '/api': 'http://127.0.0.1:4000' } },
+  preview: { host: '127.0.0.1', port: 4173, strictPort: true, proxy: { '/api': 'http://127.0.0.1:4000' } },
   build: { outDir: 'dist', chunkSizeWarningLimit: 1500 },
 })

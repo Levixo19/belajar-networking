@@ -1,10 +1,17 @@
 // Spaced repetition ringan (varian SM-2). Grade: 0=lagi, 1=sulit, 2=bagus, 3=mudah.
 export interface SrsState { ease: number; interval: number; reps: number; due: string; lapses: number }
 
-const DAY = 86400000
+/**
+ * Tanggal KALENDER LOKAL (YYYY-MM-DD) hari ini + offset hari. Dulu memakai
+ * toISOString(), yaitu tanggal UTC: di WITA (+08) "hari ini" baru berganti pukul
+ * 08.00 pagi, sehingga belajar pukul 07.00 tercatat untuk kemarin dan streak putus.
+ * setDate() juga benar melintasi akhir bulan dan pergantian jam musim panas.
+ */
 export function todayStr(offset = 0): string {
-  const d = new Date(Date.now() + offset * DAY)
-  return d.toISOString().slice(0, 10)
+  const d = new Date()
+  d.setDate(d.getDate() + offset)
+  const p = (n: number) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`
 }
 export function isDue(s: SrsState | undefined, today = todayStr()): boolean {
   if (!s) return true

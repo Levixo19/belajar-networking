@@ -4,7 +4,8 @@ services:
     container_name: bn-mongo
     restart: unless-stopped
     ports:
-      - "27017:27017"
+      # Hanya loopback. "27017:27017" membuka MongoDB tanpa sandi ke seluruh LAN.
+      - "127.0.0.1:27017:27017"
     volumes:
       - bn-mongo-data:/data/db
 volumes:

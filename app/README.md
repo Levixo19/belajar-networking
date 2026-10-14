@@ -16,7 +16,7 @@ berbasis kurikulum di `../materi/`. Stack **MERN**: MongoDB · Express · React 
 
 ## Prasyarat
 
-- **Node.js 18+** (teruji di Node 22)
+- **Node.js 22.18+** (teruji di Node 24; `npm test` butuh Node yang bisa menjalankan `.ts` langsung)
 - **MongoDB** — cara termudah lewat **Docker** (skrip sudah disediakan). Alternatif: MongoDB lokal/Atlas via `MONGODB_URI`.
 
 ## Menjalankan (development)
@@ -25,7 +25,7 @@ berbasis kurikulum di `../materi/`. Stack **MERN**: MongoDB · Express · React 
 npm install
 npm run dev          # otomatis: build konten + start MongoDB (Docker) + server + client
 ```
-Buka **http://localhost:5173** (Vite mem-proxy `/api` ke Express di :4000).
+Buka **http://127.0.0.1:5173** (Vite mem-proxy `/api` ke Express di 127.0.0.1:4000).
 
 Jika tak memakai Docker, jalankan MongoDB sendiri lalu set:
 ```bash
@@ -36,7 +36,7 @@ MONGODB_URI="mongodb://127.0.0.1:27017/belajar_networking" npm run dev
 
 ```bash
 npm run build            # build konten + client → dist/
-node server/index.mjs    # Express menyajikan dist/ + API di http://localhost:4000
+node server/index.mjs    # Express menyajikan dist/ + API di http://127.0.0.1:4000
 ```
 
 ## Skrip
@@ -45,7 +45,8 @@ node server/index.mjs    # Express menyajikan dist/ + API di http://localhost:40
 |---|---|
 | `npm run dev` | Build konten, nyalakan Mongo (Docker), server + client (HMR) |
 | `npm run build` | Build konten + bundel produksi ke `dist/` |
-| `npm run content` | Regenerasi `src/generated/curriculum.json` dari `../materi/**/*.md` |
+| `npm run content` | Regenerasi `src/generated/curriculum.json` dari `../materi/**/*.md` (dist/ TIDAK ikut; jalankan `npm run build`) |
+| `npm test` | Tes `node:test`: logika src/lib, skrip build, penjagaan server |
 | `npm run db:up` / `db:down` | Start/stop MongoDB via Docker |
 | `npm run server` | Server Express saja (watch) |
 | `npm run client` | Vite saja |
@@ -61,19 +62,21 @@ app/
 │   ├── profesi/*.json          #   32 profil profesi per rumpun (bersumber, divalidasi saat build)
 │   └── photos.json             #   katalog foto + kredit
 ├── server/                     # Express + Mongoose
-│   ├── index.mjs               #   REST API (/api/profiles, /state, ...)
+│   ├── index.mjs               #   listen di 127.0.0.1 saja
+│   ├── app.mjs                 #   REST API + tiga lapis penjagaan (Host, Origin, ObjectId)
 │   ├── db.mjs                  #   koneksi MongoDB
 │   └── models/Profile.mjs      #   skema profil (progress, srs, xp, streak)
 ├── public/                     # aset statis (favicon, img/ — disajikan di /img/...)
 ├── src/
 │   ├── generated/              #   HASIL BUILD — curriculum.json, jangan diedit tangan
 │   ├── lib/                    #   content, store (API-backed), srs (SM-2), search, api, theme
-│   ├── components/             #   Sidebar, TopBar, CommandPalette, ProseView, ProfileMenu, ...
+│   ├── components/             #   Navbar, CommandPalette, RichProse, ProfileMenu, ...
 │   ├── pages/                  #   Dashboard, ModulePage, ReviewPage, ToolsPage, ArenaPage
 │   ├── diagrams/               #   diagram SVG interaktif
 │   ├── games/                  #   permainan latihan
 │   ├── tools/                  #   SubnetCalculator, OSIExplorer, PacketJourney, TcpHandshake, ...
 │   └── styles/                 #   CSS pendamping (diagrams, learn)
+├── tests/                      # node:test (npm test)
 ├── dist/                       # HASIL BUILD — bundel produksi
 ├── docker-compose.yml          # layanan MongoDB (volume persisten)
 └── vite.config.ts              # React + Tailwind v4 + proxy /api

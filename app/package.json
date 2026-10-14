@@ -13,7 +13,8 @@
     "dev": "concurrently -n server,client -c cyan,magenta \"node server/index.mjs\" \"vite\"",
     "prebuild": "node scripts/build-content.mjs",
     "build": "tsc -b && vite build",
-    "preview": "vite preview --host"
+    "preview": "vite preview",
+    "test": "node --import ./tests/_muat.mjs --test \"tests/**/*.test.mjs\""
   },
   "dependencies": {
     "@fontsource-variable/atkinson-hyperlegible-next": "^5.3.0",
