@@ -1,39 +1,15 @@
-import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
+import { useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useStore } from '../lib/store'
 import { getModule } from '../lib/content'
 import {
-  PROFESI, byId, RUMPUN, rumpunMeta, edges, neighbors, readiness, shortestPath, gapModules,
-  QUIZ, scoreQuiz, celahJalur, KEAHLIAN_LABEL, JENJANG_LABEL, LABEL_GRAF, type Profesi, type Rumpun,
+  PROFESI, byId, RUMPUN, rumpunMeta, readiness, shortestPath, gapModules,
+  QUIZ, scoreQuiz, celahJalur, KEAHLIAN_LABEL, JENJANG_LABEL, type Profesi, type Rumpun,
 } from '../lib/profesi'
-import { gsap, useGSAP, MOTION_OK } from '../lib/motion'
+import TanggaKarier from '../components/TanggaKarier'
 import { useScramble } from '../lib/useScramble'
 import { scrollToId } from '../lib/scrollTo'
 import { IconArrowRight, IconCheck, IconRetry, IconBook } from '../components/icons'
-
-/* ------------------------------------------------------------- Tata letak graf */
-const W = 1000, H = 730, CX = 500, CY = 368
-const CLUSTER_ORDER: Rumpun[] = ['infrastruktur', 'keamanan', 'devops', 'operasi', 'tatakelola', 'dukungan']
-
-function layout() {
-  const pos = new Map<string, { x: number; y: number; dx: number; dy: number }>()
-  const clusters: { id: Rumpun; x: number; y: number }[] = []
-  const inti = PROFESI.filter(p => p.rumpun === 'inti')
-  inti.forEach((p, i) => pos.set(p.id, { x: CX - 18, y: CY + (i - (inti.length - 1) / 2) * 64, dx: 1, dy: 0 }))
-  clusters.push({ id: 'inti', x: CX - 18, y: CY + 70 })
-  CLUSTER_ORDER.forEach((r, ci) => {
-    const a = -Math.PI / 2 + (ci / CLUSTER_ORDER.length) * Math.PI * 2
-    const cx = CX + Math.cos(a) * 345, cy = CY + Math.sin(a) * 236
-    clusters.push({ id: r, x: cx, y: cy })
-    const members = PROFESI.filter(p => p.rumpun === r)
-    const rad = members.length > 5 ? 74 : 62
-    members.forEach((p, i) => {
-      const b = a + Math.PI + ((i + 0.5) / members.length) * Math.PI * 2
-      pos.set(p.id, { x: cx + Math.cos(b) * rad, y: cy + Math.sin(b) * rad, dx: Math.cos(b), dy: Math.sin(b) })
-    })
-  })
-  return { pos, clusters }
-}
 
 const pendek = (nama: string) => nama.replace(/\s*\(.*?\)\s*/g, ' ').trim()
 const keAtas = () => document.getElementById('judul-karier')?.scrollIntoView({
@@ -66,36 +42,15 @@ function PetaKarier() {
   const { id } = useParams()
   const nav = useNavigate()
   const s = useStore()
-  const root = useRef<HTMLDivElement>(null)
-  const canvas = useRef<HTMLDivElement>(null)
-  const [hover, setHover] = useState<string | null>(null)
   const [filter, setFilter] = useState<Rumpun | 'semua'>('semua')
-
-  const { pos, clusters } = useMemo(layout, [])
-  const allEdges = useMemo(edges, [])
   const ready = useMemo(() => new Map(PROFESI.map(p => [p.id, readiness(p, s.progress)])), [s.progress])
+  const siap = useMemo(() => new Map([...ready].map(([k, r]) => [k, r.pct])), [ready])
 
-  const selected = (id && byId.get(id)) || byId.get('network-engineer') || PROFESI[0]
-  const focusId = hover ?? selected?.id
-  const near = useMemo(() => (focusId ? neighbors(focusId) : new Set<string>()), [focusId])
-
-  useEffect(() => {
-    const el = canvas.current
-    if (el && el.scrollWidth > el.clientWidth) el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2
-  }, [])
-
+  // Tanpa id = keadaan diam: tidak ada profesi terpilih, jadi tidak ada garis.
+  const selected = id ? byId.get(id)! : null
   const select = (pid: string) => nav(`/karier/${pid}`, { replace: true, preventScrollReset: true })
 
-  useGSAP(() => {
-    const mm = gsap.matchMedia()
-    mm.add(MOTION_OK, () => {
-      gsap.fromTo('.kg-edge', { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 1.1, ease: 'power2.out', stagger: 0.012, delay: 0.15 })
-      gsap.fromTo('.kg-node', { scale: 0, transformOrigin: '50% 50%' }, { scale: 1, duration: 0.6, ease: 'back.out(1.7)', stagger: 0.018 })
-    })
-    return () => mm.revert()
-  }, { scope: root, dependencies: [] })
-
-  if (!PROFESI.length || !selected) {
+  if (!PROFESI.length) {
     return (
       <div className="mx-auto max-w-xl px-4 py-24">
         <h1 className="text-[2rem] font-semibold">Peta profesi sedang disiapkan.</h1>
@@ -105,22 +60,16 @@ function PetaKarier() {
   }
 
   const paling = [...PROFESI].sort((a, b) => ready.get(b.id)!.pct - ready.get(a.id)!.pct)[0]
-  const dim = (pid: string, r: Rumpun) =>
-    (filter !== 'semua' && r !== filter) || (focusId && pid !== focusId && !near.has(pid))
-
-  const onNodeKey = (e: KeyboardEvent, pid: string) => {
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(pid) }
-  }
 
   return (
-    <div ref={root} className="overflow-x-hidden">
-      {/* Hero: konstelasi adalah kanvasnya */}
-      <section className="mx-auto max-w-[1280px] px-4 pt-12 sm:px-6 md:pt-16 lg:px-8" aria-labelledby="judul-karier">
+    <div className="overflow-x-hidden">
+      <section className="mx-auto max-w-[1440px] px-4 pt-12 sm:px-6 md:pt-16 lg:px-8" aria-labelledby="judul-karier">
         <div className="fade-up max-w-3xl">
           <span className="eyebrow mb-5">Ekosistem profesi jaringan</span>
           <h1 id="judul-karier" className="hero-title max-w-[16ch] scroll-mt-24">{PROFESI.length} profesi, satu fondasi.</h1>
-          <p className="mt-6 max-w-[54ch] text-[17px] leading-relaxed text-muted">
-            Kesiapan tiap profesi dihitung dari modul yang sudah Anda tuntaskan. Arahkan kursor untuk melihat keterkaitannya.
+          <p className="mt-6 max-w-[56ch] text-[17px] leading-relaxed text-muted">
+            Tiap baris satu rumpun, tiap kolom satu jenjang. Arahkan kursor ke sebuah profesi untuk melihat ke mana ia naik
+            dan dengan siapa keahliannya beririsan. Kesiapan dihitung dari modul yang sudah Anda tuntaskan.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
             <a href="#cocok" onClick={scrollToId('cocok')} className="btn btn-primary btn-lg group">
@@ -144,84 +93,52 @@ function PetaKarier() {
           ))}
         </div>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start">
-          <figure className="dot-grid relative m-0 overflow-hidden rounded-[var(--radius-xl)] border border-app bg-surface">
-            <div ref={canvas} className="overflow-x-auto overscroll-x-contain">
-            <svg viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full min-w-[760px] md:min-w-0" role="group" aria-label="Konstelasi profesi">
-              {allEdges.map(e => {
-                const a = pos.get(e.a), b = pos.get(e.b)
-                if (!a || !b) return null
-                const on = !!focusId && (e.a === focusId || e.b === focusId)
-                const mx = (a.x + b.x) / 2 + (CY - (a.y + b.y) / 2) * 0.12
-                const my = (a.y + b.y) / 2 + ((a.x + b.x) / 2 - CX) * 0.12
-                return (
-                  <path key={e.a + '|' + e.b} pathLength={1} d={`M${a.x},${a.y} Q${mx},${my} ${b.x},${b.y}`}
-                    className="kg-edge" fill="none" strokeDasharray={e.kind === 'dekat' && !on ? '0.025 0.018' : '1 1'}
-                    stroke={on ? 'var(--primary)' : 'var(--border-strong)'} strokeWidth={on ? 1.8 : 1}
-                    opacity={focusId && !on ? 0.45 : 0.95} style={{ transition: 'opacity .3s, stroke .3s' }} />
-                )
-              })}
-              {clusters.map(c => (
-                <text key={c.id} x={c.x} y={c.id === 'inti' ? c.y + 6 : c.y + 4} textAnchor="middle"
-                  className="select-none fill-[var(--text-faint)] text-[13px] font-medium"
-                  opacity={filter !== 'semua' && filter !== c.id ? 0.3 : 1}>
-                  {rumpunMeta(c.id).pendek}
-                </text>
-              ))}
-              {PROFESI.map(p => {
-                const pt = pos.get(p.id)
-                if (!pt) return null
-                const r = ready.get(p.id)!
-                const isSel = p.id === selected.id
-                const showLabel = isSel || p.id === hover || (!!focusId && near.has(p.id)) || p.rumpun === 'inti'
-                const R = p.rumpun === 'inti' ? 15 : 10
-                const C = 2 * Math.PI * (R + 4)
-                return (
-                  <g key={p.id} transform={`translate(${pt.x},${pt.y})`} opacity={dim(p.id, p.rumpun) ? 0.28 : 1}
-                    style={{ transition: 'opacity .3s' }}>
-                    <g className="kg-node cursor-pointer outline-none" tabIndex={0} role="button"
-                      aria-label={`${p.nama}, kesiapan ${Math.round(r.pct * 100)} persen`} aria-pressed={isSel}
-                      onMouseEnter={() => setHover(p.id)} onMouseLeave={() => setHover(null)}
-                      onFocus={() => setHover(p.id)} onBlur={() => setHover(null)}
-                      onClick={() => select(p.id)} onKeyDown={e => onNodeKey(e, p.id)}>
-                      <circle r={R + 12} fill="transparent" />
-                      <circle r={R + 4} fill="none" stroke="var(--border)" strokeWidth={2} />
-                      {r.pct > 0 && (
-                        <circle r={R + 4} fill="none" stroke="var(--primary)" strokeWidth={2} strokeLinecap="round"
-                          strokeDasharray={`${C * r.pct} ${C}`} transform="rotate(-90)" />
-                      )}
-                      <circle r={R} fill={isSel ? 'var(--fg)' : 'var(--surface)'} stroke={isSel ? 'var(--fg)' : 'var(--text-faint)'} strokeWidth={1.2} />
-                    </g>
-                    {showLabel && (
-                      <text x={pt.dx * (R + 9)} y={pt.dy * (R + 9)} dy="0.35em"
-                        textAnchor={pt.dx > 0.35 ? 'start' : pt.dx < -0.35 ? 'end' : 'middle'}
-                        transform={Math.abs(pt.dx) <= 0.35 ? `translate(0,${pt.dy > 0 ? 9 : -9})` : undefined}
-                        pointerEvents="none" className="fill-[var(--text)] text-[13px] font-medium" paintOrder="stroke"
-                        stroke="var(--surface)" strokeWidth={4} strokeLinejoin="round">
-                        {LABEL_GRAF[p.id] ?? pendek(p.nama)}
-                      </text>
-                    )}
-                  </g>
-                )
-              })}
-            </svg>
+        <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start">
+          <figure className="relative m-0 min-w-0 overflow-hidden rounded-[var(--radius-xl)] border border-app bg-surface">
+            <div className="overflow-x-auto overscroll-x-contain">
+              <TanggaKarier pilihan={selected?.id ?? null} onPilih={select} saring={filter} siap={siap} />
             </div>
             <figcaption className="flex flex-wrap items-center gap-x-5 gap-y-1 border-t border-app px-5 py-3 text-[12.5px] text-faint">
-              <span className="inline-flex items-center gap-2"><i className="inline-block h-px w-6 bg-[var(--text-faint)]" /> Jalur naik</span>
+              <span className="inline-flex items-center gap-2"><i className="inline-block h-0.5 w-6 rounded bg-[var(--primary)]" /> Jalur naik</span>
               <span className="inline-flex items-center gap-2"><i className="inline-block w-6 border-t border-dashed border-[var(--text-faint)]" /> Keahlian beririsan</span>
+              <span className="inline-flex items-center gap-2"><i className="inline-block h-3 w-3 rounded-full border border-dashed border-[var(--text-faint)]" /> Sejenjang dan beririsan</span>
               <span className="inline-flex items-center gap-2"><i className="inline-block h-2.5 w-2.5 rounded-full border-2 border-[var(--primary)]" /> Kesiapan Anda</span>
-              <span className="md:hidden">Geser peta ke samping untuk melihat semuanya.</span>
             </figcaption>
           </figure>
 
-          <DetailPanel p={selected} progress={s.progress} onSelect={select} />
+          {selected
+            ? <DetailPanel p={selected} progress={s.progress} onSelect={select} />
+            : <PanelSapa onSelect={select} />}
         </div>
       </section>
 
       <QuizSection pemula={!Object.values(s.progress).includes('done')} onSelect={pid => { select(pid); keAtas() }} />
-      <TransisiSection progress={s.progress} target={selected} onSelect={select} />
+      <TransisiSection progress={s.progress} target={selected ?? byId.get('network-engineer')!} onSelect={select} />
       <RumpunIndex onSelect={pid => { select(pid); keAtas() }} />
     </div>
+  )
+}
+
+/** Panel saat belum ada profesi terpilih: pintu masuk, bukan profil kosong. */
+function PanelSapa({ onSelect }: { onSelect: (id: string) => void }) {
+  const pintu = PROFESI.filter(p => p.jenjang === 'pemula').slice(0, 5)
+  return (
+    <aside className="card p-6 lg:sticky lg:top-24" aria-label="Mulai menjelajah">
+      <h2 className="text-[1.25rem] font-semibold leading-snug tracking-[-0.02em]">Pilih satu profesi di tangga.</h2>
+      <p className="mt-2 text-[14px] leading-relaxed text-muted">
+        Rinciannya muncul di sini: pekerjaan sehari-hari, modul bekal, sertifikasi, dan ke mana ia bisa naik.
+        Kalau belum tahu harus mulai dari mana, ini peran yang bisa dimasuki dari nol:
+      </p>
+      <ul className="mt-4 space-y-1">
+        {pintu.map(p => (
+          <li key={p.id}>
+            <button onClick={() => onSelect(p.id)} className="group flex w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left text-[14px] hover:bg-[var(--surface-2)]">
+              {p.nama} <IconArrowRight size={14} className="shrink-0 text-faint group-hover:text-[var(--text)]" />
+            </button>
+          </li>
+        ))}
+      </ul>
+    </aside>
   )
 }
 

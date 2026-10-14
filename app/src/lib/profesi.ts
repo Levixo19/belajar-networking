@@ -26,19 +26,20 @@ export const RUMPUN: { id: Rumpun; label: string; pendek: string; desc: string }
 ]
 export const rumpunMeta = (r: Rumpun) => RUMPUN.find(x => x.id === r)!
 
-/** Label ringkas untuk graf, agar tidak bertabrakan di kanvas. */
+/** Label tangga karier: paling panjang 24 huruf supaya muat di kolomnya tanpa menyentuh
+ *  talang tempat batang garis lewat (dijaga tests/tangga.test.mjs). */
 export const LABEL_GRAF: Record<string, string> = {
-  'network-engineer': 'Network Engineer', 'network-administrator': 'Network Admin',
-  'network-architect': 'Network Architect', 'cloud-network-engineer': 'Cloud Network', 'wireless-network-engineer': 'Wireless',
-  'telecom-engineer': 'Telekomunikasi', 'voip-engineer': 'VoIP', 'data-center-engineer': 'Data Center', 'noc-technician': 'NOC',
-  'network-security-engineer': 'Network Security', 'cybersecurity-analyst': 'Cyber Analyst', 'penetration-tester': 'Pentester',
-  'security-architect': 'Security Architect', 'incident-responder': 'Incident Response',
-  'system-administrator': 'SysAdmin', 'database-administrator': 'DBA', 'storage-administrator': 'Storage Admin',
-  'system-engineer': 'System Engineer', 'it-operations-manager': 'IT Ops Manager',
-  'devops-engineer': 'DevOps', 'site-reliability-engineer': 'SRE', 'cloud-infrastructure-engineer': 'Cloud Infra',
-  'automation-engineer': 'Automation', 'it-support-technician': 'IT Support', 'field-network-technician': 'Teknisi Lapangan',
-  'hardware-engineer': 'Hardware', 'it-asset-manager': 'IT Asset', 'it-consultant': 'Konsultan TI', 'it-auditor': 'Auditor TI',
-  'disaster-recovery-specialist': 'DR Specialist', 'solution-architect': 'Solution Architect', 'scrum-master-infrastruktur': 'Scrum Master',
+  'network-engineer': 'Network Engineer', 'network-administrator': 'Network Administrator',
+  'network-architect': 'Network Architect', 'cloud-network-engineer': 'Cloud Network Engineer', 'wireless-network-engineer': 'Wireless Engineer',
+  'telecom-engineer': 'Telecom Engineer', 'voip-engineer': 'VoIP Engineer', 'data-center-engineer': 'Data Center Engineer', 'noc-technician': 'NOC Technician',
+  'network-security-engineer': 'Network Security Eng.', 'cybersecurity-analyst': 'Cybersecurity Analyst', 'penetration-tester': 'Penetration Tester',
+  'security-architect': 'Security Architect', 'incident-responder': 'Incident Responder',
+  'system-administrator': 'System Administrator', 'database-administrator': 'Database Administrator', 'storage-administrator': 'Storage Administrator',
+  'system-engineer': 'System Engineer', 'it-operations-manager': 'IT Operations Manager',
+  'devops-engineer': 'DevOps Engineer', 'site-reliability-engineer': 'Site Reliability Eng.', 'cloud-infrastructure-engineer': 'Cloud Infra Engineer',
+  'automation-engineer': 'Automation Engineer', 'it-support-technician': 'IT Support Technician', 'field-network-technician': 'Field Network Technician',
+  'hardware-engineer': 'Hardware Engineer', 'it-asset-manager': 'IT Asset Manager', 'it-consultant': 'IT Consultant', 'it-auditor': 'IT Auditor',
+  'disaster-recovery-specialist': 'Disaster Recovery Spec.', 'solution-architect': 'Solution Architect', 'scrum-master-infrastruktur': 'Scrum Master Infra',
 }
 
 export const JENJANG_LABEL = { pemula: 'Bisa dimulai dari nol', menengah: 'Butuh pengalaman 2-4 tahun', senior: 'Peran senior' } as const

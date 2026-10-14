@@ -741,3 +741,43 @@ a.tile:hover, button.tile:hover { border-color: var(--border-strong); box-shadow
 .stage-steps a.is-now { background: var(--fg); }
 
 } /* @layer components */
+
+/* =========================================================================
+   Tangga Peta Karier (components/TanggaKarier.tsx). Aturan bentuknya di kepala
+   lib/tanggaKarier.ts. "Satu properti, satu mesin": opacity simpul digerakkan
+   transition CSS di sini; stroke-dashoffset garis HANYA oleh GSAP, jadi garis
+   tidak boleh diberi transition apa pun.
+   ========================================================================= */
+@layer components {
+  .kr-graf { font-family: var(--font-ui); }
+  .kr-pita { fill: transparent; transition: opacity .2s; }
+  .kr-pita-genap { fill: color-mix(in srgb, var(--text) 2.5%, transparent); }
+  .kr-pita.redup, .kr-rumpun.redup { opacity: .3; }
+  .kr-kolom { fill: var(--text-faint); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+  .kr-arah-teks { fill: var(--text-faint); font-size: 12px; }
+  .kr-batas { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 4; }
+  .kr-rumpun { fill: var(--text-muted); font-size: 13px; font-weight: 600; }
+
+  .kr-sisi { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .kr-sisi-naik { stroke: var(--primary); stroke-width: 2; }
+  .kr-sisi-dekat { stroke: var(--text-faint); stroke-width: 1.3; stroke-dasharray: 4 4; }
+  .kr-ujung-naik { fill: var(--primary); }
+  .kr-ujung-dekat { fill: var(--text-faint); }
+
+  .kr-simpul { cursor: pointer; outline: none; transition: opacity .2s; }
+  .kr-simpul.redup { opacity: .32; }
+  .kr-sasaran { fill: transparent; }
+  .kr-simpul:hover .kr-sasaran { fill: color-mix(in srgb, var(--text) 6%, transparent); }
+  .kr-simpul:focus-visible .kr-sasaran { fill: color-mix(in srgb, var(--primary) 10%, transparent); stroke: var(--primary); stroke-width: 1.5; }
+  .kr-halo { fill: none; stroke: none; }
+  /* Tetangga sejenjang: lingkar putus-putus DI LUAR cincin kesiapan, bukan di
+     cincin itu sendiri (yang membuatnya tampak bergerigi). */
+  .kr-simpul.sejajar .kr-halo { stroke: var(--text-faint); stroke-width: 1.2; stroke-dasharray: 2.5 3; }
+  .kr-cincin-alas { fill: none; stroke: var(--border-strong); stroke-width: 2.5; }
+  .kr-cincin-isi { fill: none; stroke: var(--primary); stroke-width: 2.5; stroke-linecap: round; }
+  .kr-inti { fill: var(--surface); stroke: var(--text-faint); stroke-width: 1.2; }
+  .kr-simpul:hover .kr-inti { stroke: var(--text); }
+  .kr-simpul.dipilih .kr-inti { fill: var(--fg); stroke: var(--fg); }
+  .kr-label { fill: var(--text-muted); font-weight: 500; }
+  .kr-simpul.tampak .kr-label, .kr-simpul.dipilih .kr-label { fill: var(--text); font-weight: 600; }
+}

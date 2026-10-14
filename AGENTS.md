@@ -262,3 +262,43 @@ belakang (`pemula: true`), dengan keterangan "tujuan jangka panjang".
 membuat tautan yang salah ketik terlihat berhasil.
 
 **Hitungan rumpun: dua profesi inti + enam rumpun**, sama di materi 21 dan di UI.
+
+### Peta Karier: gambar
+
+**Tangga, bukan konstelasi** (`lib/tanggaKarier.ts` + `components/TanggaKarier.tsx`):
+baris = rumpun, kolom = jenjang, tinggi baris dari sel terpadatnya. Pemilik sudah
+melihat versi kusut di dua proyek dan menolaknya (184 sisi kurva-Q sekaligus).
+Jangan kembali ke tata letak melingkar atau menggambar semua sisi.
+
+**Dalam keadaan diam tidak ada garis.** `/karier` tanpa id = tanpa profesi terpilih
+= kisi nama yang tenang plus panel sapa. Garis cuma untuk profesi yang dipilih atau
+disorot, dan cuma garisnya sendiri; saringan rumpun ikut menyaring garis.
+
+**Garis berangkat dari UJUNG LABEL yang diukur, bukan diperkirakan.**
+`getComputedTextLength()` dijalankan di `useLayoutEffect` SESUDAH SVG menempel, dan
+sekali lagi sesudah `document.fonts.ready` (font variabel bisa selesai dimuat
+belakangan). Perkiraan per huruf dipakai untuk render pertama saja dan tidak
+disimpan.
+
+**Garis yang melompat dua kolom menyeberang lewat LAJUR di bantalan atas baris
+tujuan**, bukan mendatar setinggi simpul tujuan. Pola rujukan Belajar Ngoding
+mendatar setinggi simpul tujuan; di data ini kolom tengah sering punya simpul pada
+ketinggian yang sama, jadi garisnya akan menembus label. `BANTALAN` menjamin lajur
+itu kosong. Semua garis dari satu simpul berbagi batang di talang; garis "dekat"
+memakai batang kedua yang digeser dan putus-putus.
+
+**Label paling panjang 24 huruf dan berawal di R+13.** Lebih panjang menyentuh
+talang tempat batang lewat; lebih rapat dari R+13 membuat lingkar sejajar
+(putus-putus, R+9) menyentuh huruf pertamanya. Lingkar sejajar ada di LUAR cincin
+kesiapan, tidak pernah di cincin itu sendiri.
+
+**Nol garis menembus huruf, diukur, bukan dilihat.** `tests/tangga.test.mjs`
+memeriksa ke-32 profesi sebagai fokus dengan kotak label perkiraan. Pemeriksaan di
+browser (2026-10-15, 1440 px) mengulangnya dengan `getBBox()` dan
+`getPointAtLength()`: 0 titik menembus label atau simpul untuk ke-32 profesi, jarak
+awal garis ke ujung label paling sedikit 6,6 unit. Ulangi pengukuran itu setiap kali
+ukuran huruf, `KIRI`, `KOLOM`, atau label diubah.
+
+**Garis "naik" ditarik masuk lewat GSAP (`gsap.matchMedia` + `MOTION_OK`) dengan
+`clearProps`**, jadi keadaan akhirnya garis utuh tanpa dasharray. Jangan memberi
+`.kr-sisi` transition CSS apa pun: stroke-dashoffset-nya milik GSAP.
