@@ -1,0 +1,139 @@
+{
+ "sumber": {
+  "kunci": "peta",
+  "nama": "roadmap.sh",
+  "pemilik": "roadmap.sh",
+  "repo": "https://roadmap.sh",
+  "lisensi": "tautan saja",
+  "boleh_salin": false,
+  "atribusi": "Tautan ke peta belajar di roadmap.sh. Isinya hak cipta roadmap.sh dan tidak disalin; lisensinya hanya mengizinkan membagikan tautan.",
+  "commit": "63364ae"
+ },
+ "entri": [
+  {
+   "id": "peta-6d8a498c",
+   "judul": "Peta belajar Network Engineer",
+   "url": "https://roadmap.sh/network-engineer",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "fondasi",
+    "karier"
+   ],
+   "catatan": "Peta topik interaktif di roadmap.sh, berbahasa Inggris. Isinya tidak disalin ke sini."
+  },
+  {
+   "id": "peta-5c969b2a",
+   "judul": "Peta belajar Cyber Security",
+   "url": "https://roadmap.sh/cyber-security",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "keamanan",
+    "karier"
+   ],
+   "catatan": "Peta topik interaktif di roadmap.sh, berbahasa Inggris. Isinya tidak disalin ke sini."
+  },
+  {
+   "id": "peta-53cd021e",
+   "judul": "Peta belajar Linux",
+   "url": "https://roadmap.sh/linux",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Peta topik interaktif di roadmap.sh, berbahasa Inggris. Isinya tidak disalin ke sini."
+  },
+  {
+   "id": "peta-8ce85259",
+   "judul": "Peta belajar DevOps",
+   "url": "https://roadmap.sh/devops",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "otomasi",
+    "karier"
+   ],
+   "catatan": "Peta topik interaktif di roadmap.sh, berbahasa Inggris. Isinya tidak disalin ke sini."
+  },
+  {
+   "id": "peta-25e9964c",
+   "judul": "Peta belajar Docker",
+   "url": "https://roadmap.sh/docker",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Peta topik interaktif di roadmap.sh, berbahasa Inggris. Isinya tidak disalin ke sini."
+  },
+  {
+   "id": "peta-dde8c28c",
+   "judul": "Peta belajar Kubernetes",
+   "url": "https://roadmap.sh/kubernetes",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Peta topik interaktif di roadmap.sh, berbahasa Inggris. Isinya tidak disalin ke sini."
+  },
+  {
+   "id": "peta-07ee02b5",
+   "judul": "Peta belajar AWS",
+   "url": "https://roadmap.sh/aws",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Peta topik interaktif di roadmap.sh, berbahasa Inggris. Isinya tidak disalin ke sini."
+  },
+  {
+   "id": "peta-fbcc4f0b",
+   "judul": "Peta belajar Cloudflare",
+   "url": "https://roadmap.sh/cloudflare",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "aplikasi",
+    "cloud"
+   ],
+   "catatan": "Peta topik interaktif di roadmap.sh, berbahasa Inggris. Isinya tidak disalin ke sini."
+  },
+  {
+   "id": "peta-4ffc82e0",
+   "judul": "Peta belajar Terraform",
+   "url": "https://roadmap.sh/terraform",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "Peta topik interaktif di roadmap.sh, berbahasa Inggris. Isinya tidak disalin ke sini."
+  },
+  {
+   "id": "peta-002b4a1f",
+   "judul": "Peta belajar Shell / Bash",
+   "url": "https://roadmap.sh/shell-bash",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Peta topik interaktif di roadmap.sh, berbahasa Inggris. Isinya tidak disalin ke sini."
+  },
+  {
+   "id": "peta-94fdff52",
+   "judul": "Peta belajar System Design",
+   "url": "https://roadmap.sh/system-design",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "desain"
+   ],
+   "catatan": "Peta topik interaktif di roadmap.sh, berbahasa Inggris. Isinya tidak disalin ke sini."
+  }
+ ]
+}

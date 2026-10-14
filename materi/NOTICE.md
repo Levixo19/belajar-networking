@@ -22,6 +22,15 @@ Bagian berikut mengadaptasi atau mengutip karya pihak lain. Semua adaptasi telah
 - srl-labs/srl-telemetry-lab, berkas `configs/gnmic/gnmic-config.yml`, © Nokia, BSD-3-Clause, https://github.com/srl-labs/srl-telemetry-lab → `materi/lab/kode/netdevops/telemetry/gnmic.yml` (struktur subscription dan processor `oper-state-to-int`). Header asli dipertahankan, perubahan dicatat di berkas, teks lisensi di `materi/lab/kode/netdevops/LICENSES/BSD-3-Clause-Nokia.txt`.
 - prometheus/snmp_exporter, contoh konfigurasi Prometheus di README, Apache-2.0, https://github.com/prometheus/snmp_exporter → pola relabel di job `snmp` pada `telemetry/prometheus.yml` (disebutkan di berkas).
 
+## Pustaka aplikasi (app/data/pustaka, app/data/pustaka-kurasi)
+Pustaka hanya menyimpan judul, alamat, dan keterangan singkat; isi sumbernya tidak disalin. Daftar dari repo berlisensi terbuka diambil dengan atribusi:
+- free-programming-books, EbookFoundation dan kontributornya, CC BY 4.0, https://github.com/EbookFoundation/free-programming-books → `app/data/pustaka/fpb.json` (bagian jaringan, Linux, keamanan, cloud; dikelompokkan ulang).
+- awesome, Sindre Sorhus, CC0 1.0, https://github.com/sindresorhus/awesome → `awesome.json`.
+- The System Design Primer, Donne Martin, CC BY 4.0, https://github.com/donnemartin/system-design-primer → `desain.json` (bagian DNS, CDN, load balancer, reverse proxy, komunikasi, ketersediaan, keamanan).
+- Coding Interview University, John Washam dan kontributornya, CC BY-SA 4.0, https://github.com/jwasham/coding-interview-university → `ciu.json`, yang sebagai turunannya ikut berlisensi CC BY-SA 4.0 dan sengaja dipisah dari berkas lain.
+- roadmap.sh, freeCodeCamp, getting-a-gig, dan build-your-own-x hanya ditautkan (proprietary, berhak cipta, atau tanpa lisensi).
+- Data kurasi (`pustaka-kurasi/*.json`) ditulis sendiri dari hasil memeriksa tiap halaman; lisensi tiap tautan dicatat persis seperti di sumbernya beserta tanggal diperiksa.
+
 ## Rujukan tanpa adaptasi
 Dokumentasi vendor (Cisco, Juniper, MikroTik, Nokia), dokumentasi FRRouting, buku mikro Systems Approach (CC BY-NC-ND), materi kursus Stanford CS144, Berkeley CS168, dan Princeton COS461, serta repo tanpa lisensi terbuka hanya dirujuk dan ditulis ulang dengan kata-kata sendiri; tidak ada teks atau kode yang disalin.
 

@@ -1,0 +1,413 @@
+{
+ "sumber": {
+  "kunci": "awesome",
+  "nama": "awesome",
+  "pemilik": "Sindre Sorhus",
+  "repo": "https://github.com/sindresorhus/awesome",
+  "lisensi": "CC0 1.0",
+  "boleh_salin": true,
+  "atribusi": "Daftar dari awesome oleh Sindre Sorhus, CC0 1.0. Disaring ke daftar yang menyangkut jaringan, keamanan, dan infrastruktur.",
+  "commit": "bc98e51"
+ },
+ "entri": [
+  {
+   "id": "awesome-9591cd44",
+   "judul": "Awesome PCAPTools",
+   "url": "https://github.com/caesar0301/awesome-pcaptools#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "fondasi",
+    "analisis-paket"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "awesome-69e3a0d4",
+   "judul": "Awesome Real-Time Communications",
+   "url": "https://github.com/rtckit/awesome-rtc#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "fondasi"
+   ],
+   "catatan": "Network protocols for near simultaneous exchange of media and data."
+  },
+  {
+   "id": "awesome-087b781f",
+   "judul": "Awesome SNMP",
+   "url": "https://github.com/eozer/awesome-snmp#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "fondasi"
+   ],
+   "catatan": "A protocol for collecting, modifying, and organizing information about managed devices on IP networks."
+  },
+  {
+   "id": "awesome-3e55e81c",
+   "judul": "Awesome Scapy",
+   "url": "https://github.com/secdev/awesome-scapy#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "fondasi"
+   ],
+   "catatan": "Python-based interactive packet manipulation."
+  },
+  {
+   "id": "awesome-31c5f974",
+   "judul": "Awesome Cilium",
+   "url": "https://github.com/seifrajhi/awesome-cilium#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "fondasi"
+   ],
+   "catatan": "Provides networking and security capabilities for containerized apps, microservices, and virtual machines."
+  },
+  {
+   "id": "awesome-815f02d8",
+   "judul": "Awesome Application Security",
+   "url": "https://github.com/paragonie/awesome-appsec#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "awesome-0ae20c65",
+   "judul": "Awesome Security",
+   "url": "https://github.com/sbilly/awesome-security#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "awesome-a0725787",
+   "judul": "Awesome CTF",
+   "url": "https://github.com/apsdehal/awesome-ctf#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Capture The Flag."
+  },
+  {
+   "id": "awesome-acd6638a",
+   "judul": "Awesome Cyber Security University",
+   "url": "https://github.com/brootware/awesome-cyber-security-university#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Free educational resources that focus on learning by doing."
+  },
+  {
+   "id": "awesome-f9d3e0c6",
+   "judul": "Awesome Malware Analysis",
+   "url": "https://github.com/rshipp/awesome-malware-analysis#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "awesome-94a05c5b",
+   "judul": "Awesome Hacking",
+   "url": "https://github.com/carpedm20/awesome-hacking#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "awesome-438abc44",
+   "judul": "Awesome Honeypots",
+   "url": "https://github.com/paralax/awesome-honeypots#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Deception trap, designed to entice an attacker into attempting to compromise the information systems in an organization."
+  },
+  {
+   "id": "awesome-c19a29c5",
+   "judul": "Awesome Incident Response",
+   "url": "https://github.com/meirwah/awesome-incident-response#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "awesome-50ed0099",
+   "judul": "Awesome Web Security",
+   "url": "https://github.com/qazbnm456/awesome-web-security#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Security of web apps & services."
+  },
+  {
+   "id": "awesome-9fe81a91",
+   "judul": "Awesome Cybersecurity Blue Team",
+   "url": "https://github.com/fabacab/awesome-cybersecurity-blueteam#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Groups of individuals who identify security flaws in information technology systems."
+  },
+  {
+   "id": "awesome-2af5f65c",
+   "judul": "Awesome Fuzzing",
+   "url": "https://github.com/cpuu/awesome-fuzzing#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Automated software testing technique that involves feeding pseudo-randomly generated input data."
+  },
+  {
+   "id": "awesome-2a2d369e",
+   "judul": "Awesome Embedded and IoT Security",
+   "url": "https://github.com/fkie-cad/awesome-embedded-and-iot-security#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "awesome-7c78decf",
+   "judul": "Awesome DevSecOps",
+   "url": "https://github.com/TaptuIT/awesome-devsecops#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Integration of security practices into DevOps."
+  },
+  {
+   "id": "awesome-7a4bb79b",
+   "judul": "Awesome Malware Persistence",
+   "url": "https://github.com/Karneades/awesome-malware-persistence#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Techniques that adversaries use to keep access to systems across restarts."
+  },
+  {
+   "id": "awesome-1b733c87",
+   "judul": "Awesome Password Cracking",
+   "url": "https://github.com/n0kovo/awesome-password-cracking#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "The process of recovering passwords from data that has been stored in or transmitted by a system in scrambled form."
+  },
+  {
+   "id": "awesome-755c1777",
+   "judul": "Awesome Suricata",
+   "url": "https://github.com/satta/awesome-suricata#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Intrusion detection/prevention system and network security monitoring engine."
+  },
+  {
+   "id": "awesome-17e325a6",
+   "judul": "Awesome Detection Engineering",
+   "url": "https://github.com/infosecB/awesome-detection-engineering#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Design, build, and operate detective cybersecurity controls."
+  },
+  {
+   "id": "awesome-c363296b",
+   "judul": "Awesome Annual Security Reports",
+   "url": "https://github.com/jacobdjwilson/awesome-annual-security-reports#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Exploring cybersecurity trends, insights, and challenges."
+  },
+  {
+   "id": "awesome-05f51ced",
+   "judul": "Awesome CI/CD Attacks",
+   "url": "https://github.com/TupleType/awesome-cicd-attacks#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Offensive research of systems and processes related to developing and deploying code."
+  },
+  {
+   "id": "awesome-3d62f6f7",
+   "judul": "Awesome OpenID Connect",
+   "url": "https://github.com/cerberauth/awesome-openid-connect#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Identity standard and authentication protocol built on OAuth 2.0 for user identity assertion."
+  },
+  {
+   "id": "awesome-ebee947f",
+   "judul": "Awesome eBPF",
+   "url": "https://github.com/zoidbergwill/awesome-ebpf#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "linux",
+    "monitoring"
+   ],
+   "catatan": "Virtual machine that allows you to write more efficient and powerful tracing and monitoring for Linux systems."
+  },
+  {
+   "id": "awesome-24eafab7",
+   "judul": "Awesome Raspberry Pi",
+   "url": "https://github.com/thibmaek/awesome-raspberry-pi#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "lab"
+   ],
+   "catatan": "Credit card-sized computer aimed at teaching kids programming, but capable of a lot more."
+  },
+  {
+   "id": "awesome-795caa6d",
+   "judul": "Awesome Cloudflare",
+   "url": "https://github.com/irazasyed/awesome-cloudflare#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "aplikasi",
+    "keamanan"
+   ],
+   "catatan": "CDN, DNS, DDoS protection, and security for your site."
+  },
+  {
+   "id": "awesome-dec1ca10",
+   "judul": "Awesome Docker",
+   "url": "https://github.com/veggiemonk/awesome-docker#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "awesome-8ab1f613",
+   "judul": "Awesome Vagrant",
+   "url": "https://github.com/iJackUA/awesome-vagrant#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "lab"
+   ],
+   "catatan": "Automation virtual machine environment."
+  },
+  {
+   "id": "awesome-5b758ca3",
+   "judul": "Awesome Kubernetes",
+   "url": "https://github.com/ramitsurana/awesome-kubernetes#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Open-source platform that automates Linux container operations."
+  },
+  {
+   "id": "awesome-694e5feb",
+   "judul": "Awesome Terraform",
+   "url": "https://github.com/shuaibiyy/awesome-terraform#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "Tool for building, changing, and versioning infrastructure."
+  },
+  {
+   "id": "awesome-3d8c023c",
+   "judul": "Awesome Network Analysis",
+   "url": "https://github.com/briatte/awesome-network-analysis#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "analisis-paket"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "awesome-48fbadef",
+   "judul": "Awesome Shell",
+   "url": "https://github.com/alebcay/awesome-shell#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "awesome-471b1304",
+   "judul": "Awesome Prometheus",
+   "url": "https://github.com/roaldnefs/awesome-prometheus#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "monitoring"
+   ],
+   "catatan": "Open-source monitoring system."
+  },
+  {
+   "id": "awesome-293ccc0c",
+   "judul": "Awesome Ansible",
+   "url": "https://github.com/ansible-community/awesome-ansible#readme",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "A Python-based, open-source IT configuration management and automation platform."
+  }
+ ]
+}

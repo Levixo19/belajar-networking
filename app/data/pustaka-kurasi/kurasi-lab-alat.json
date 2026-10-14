@@ -1,0 +1,628 @@
+{
+ "sumber": {
+  "kunci": "kurasi-lab-alat",
+  "nama": "Kurasi: lab, alat, dan daftar",
+  "atribusi": "Emulator lab, alat analisis dan otomasi, serta daftar kurasi GitHub. Lisensi daftar dibaca dari berkas LICENSE repositorinya."
+ },
+ "entri": [
+  {
+   "judul": "awesome-networking (facyber)",
+   "url": "https://github.com/facyber/awesome-networking",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "lisensi": "Creative Commons Zero v1.0 Universal (CC0-1.0)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "fondasi",
+    "otomasi",
+    "monitoring"
+   ],
+   "tahap": [],
+   "catatan": "Daftar kurasi sumber, alat, dan bacaan jaringan yang berguna sebagai pintu masuk mencari referensi tambahan.",
+   "bukti_lisensi": "Berkas LICENCE di repo dan sidebar GitHub: CC0 1.0"
+  },
+  {
+   "judul": "awesome-network-automation (Network to Code)",
+   "url": "https://github.com/networktocode/awesome-network-automation",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "lisensi": "Creative Commons Attribution 4.0 International (CC BY 4.0), tertulis di berkas LICENSE; GitHub menampilkannya sebagai 'Other'",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "otomasi",
+    "pemrograman-jaringan",
+    "lab"
+   ],
+   "tahap": [],
+   "catatan": "Daftar kurasi alat, pustaka, dan sumber belajar otomasi jaringan (Ansible, Netmiko, NAPALM, dll).",
+   "bukti_lisensi": "Berkas LICENSE (112 byte) berisi hanya pernyataan 'Creative Commons Attribution 4.0 International License (CC BY 4.0)' dan tautan creativecommons.org/licenses/by/4.0/; tanpa teks hukum lengkap"
+  },
+  {
+   "judul": "awesome-sysadmin",
+   "url": "https://github.com/awesome-foss/awesome-sysadmin",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "lisensi": "Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "linux",
+    "monitoring",
+    "keamanan"
+   ],
+   "tahap": [],
+   "catatan": "Daftar perangkat lunak sumber terbuka untuk administrasi sistem dan jaringan, termasuk monitoring dan DNS.",
+   "bukti_lisensi": "Berkas LICENSE.txt berisi teks lengkap CC BY-SA 4.0 (GitHub menampilkannya sebagai 'Other')"
+  },
+  {
+   "judul": "awesome-security (sbilly)",
+   "url": "https://github.com/sbilly/awesome-security",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "lisensi": "MIT License",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "keamanan",
+    "firewall-nat",
+    "analisis-paket"
+   ],
+   "tahap": [],
+   "catatan": "Daftar kurasi alat dan sumber keamanan jaringan: IDS, penganalisis paket, firewall, dan lainnya.",
+   "bukti_lisensi": "Berkas LICENSE dan sidebar GitHub: MIT"
+  },
+  {
+   "judul": "awesome-pcaptools",
+   "url": "https://github.com/caesar0301/awesome-pcaptools",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "lisensi": "Creative Commons Zero v1.0 Universal (CC0-1.0)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "analisis-paket",
+    "monitoring",
+    "keamanan"
+   ],
+   "tahap": [],
+   "catatan": "Daftar alat pemrosesan dan analisis berkas pcap beserta sumber sampel capture.",
+   "bukti_lisensi": "Berkas LICENSE dan sidebar GitHub: CC0 1.0"
+  },
+  {
+   "judul": "CCNA Course Notes (vanhoangkha)",
+   "url": "https://github.com/vanhoangkha/CCNA_Course_Notes",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "lisensi": "MIT License (Copyright (c) 2025 vanhoangkha)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "sertifikasi",
+    "cisco",
+    "fondasi"
+   ],
+   "tahap": [],
+   "catatan": "Catatan kuliah CCNA yang bisa dipakai sebagai ringkasan belajar sertifikasi; perlu diverifikasi isinya terhadap sumber resmi.",
+   "bukti_lisensi": "Berkas LICENSE di repo dan sidebar GitHub: MIT"
+  },
+  {
+   "judul": "free-networking-resources (getvmio)",
+   "url": "https://github.com/getvmio/free-networking-resources",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "lisensi": "tidak disebutkan (repo hanya berisi README.md, tanpa berkas LICENSE)",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "fondasi",
+    "sertifikasi",
+    "lab"
+   ],
+   "tahap": [],
+   "catatan": "Daftar sumber belajar jaringan gratis; hanya untuk ditautkan, bukan disalin.",
+   "bukti_lisensi": "Isi repo hanya README.md; GitHub tidak menampilkan lisensi"
+  },
+  {
+   "judul": "Containerlab",
+   "url": "https://containerlab.dev/",
+   "jenis": "lab",
+   "bahasa": "en",
+   "lisensi": "BSD-3-Clause (berkas LICENSE repositori sumber situsnya)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "lab",
+    "container",
+    "otomasi"
+   ],
+   "tahap": [],
+   "catatan": "Dokumentasi alat untuk membangun lab jaringan berbasis container dari satu berkas topologi YAML.",
+   "bukti_lisensi": "LICENSE repositori srl-labs; komentar MIT di HTML adalah lisensi tema mkdocs-material, bukan lisensi isi"
+  },
+  {
+   "judul": "Containerlab Lab Examples",
+   "url": "https://containerlab.dev/lab-examples/lab-examples/",
+   "jenis": "lab",
+   "bahasa": "en",
+   "lisensi": "BSD-3-Clause (berkas LICENSE repositori sumber situsnya)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "lab",
+    "container",
+    "routing"
+   ],
+   "tahap": [],
+   "catatan": "Kumpulan contoh topologi lab siap pakai (FRR, SR Linux, Arista, dsb.) untuk latihan routing dan datacenter.",
+   "bukti_lisensi": "LICENSE repositori srl-labs; komentar MIT di HTML adalah lisensi tema mkdocs-material, bukan lisensi isi"
+  },
+  {
+   "judul": "Learn SR Linux",
+   "url": "https://learn.srlinux.dev/",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "lisensi": "BSD-3-Clause (berkas LICENSE repositori sumber situsnya)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "datacenter",
+    "lab",
+    "otomasi"
+   ],
+   "tahap": [],
+   "catatan": "Portal tutorial gratis Nokia SR Linux dengan lab berbasis Containerlab untuk belajar jaringan datacenter dan EVPN.",
+   "bukti_lisensi": "LICENSE repositori srl-labs; komentar MIT di HTML adalah lisensi tema mkdocs-material, bukan lisensi isi"
+  },
+  {
+   "judul": "netlab (netsim-tools) Documentation",
+   "url": "https://netlab.tools/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "MIT (berkas LICENSE.md repo ipspace/netlab); halaman hanya menulis hak cipta 2020-2025 Ivan Pepelnjak dkk.",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "lab",
+    "otomasi",
+    "routing"
+   ],
+   "tahap": [],
+   "catatan": "Dokumentasi alat yang membuat lab jaringan multivendor dari topologi deklaratif untuk belajar protokol routing.",
+   "bukti_lisensi": "LICENSE.md repo berisi izin gaya MIT atas 'software and associated documentation files'; footer halaman: Copyright 2020-2025 Ivan Pepelnjak, Jeroen van Bemmel, dkk."
+  },
+  {
+   "judul": "GNS3 Documentation",
+   "url": "https://docs.gns3.com/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "tidak disebutkan (Copyright 2026 GNS3 Technologies Inc.)",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "lab",
+    "cisco",
+    "juniper"
+   ],
+   "tahap": [],
+   "catatan": "Panduan resmi emulator jaringan GNS3 untuk membangun topologi virtual.",
+   "bukti_lisensi": "Footer halaman hanya 'Copyright 2026 GNS3 Technologies Inc.'; perangkat lunaknya GPL-3.0"
+  },
+  {
+   "judul": "EVE-NG",
+   "url": "https://www.eve-ng.net/",
+   "jenis": "lab",
+   "bahasa": "en",
+   "lisensi": "tidak disebutkan (© EVE-NG Ltd 2026)",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "lab",
+    "cisco",
+    "juniper"
+   ],
+   "tahap": [],
+   "catatan": "Situs resmi EVE-NG Community Edition, emulator lab jaringan berbasis web.",
+   "bukti_lisensi": "Footer halaman hanya '© EVE-NG Ltd 2026'"
+  },
+  {
+   "judul": "Cisco Packet Tracer (Cisco Networking Academy)",
+   "url": "https://www.netacad.com/cisco-packet-tracer",
+   "jenis": "alat",
+   "bahasa": "en",
+   "lisensi": "tidak disebutkan (perangkat lunak proprietari gratis lewat akun NetAcad)",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "lab",
+    "cisco",
+    "sertifikasi"
+   ],
+   "tahap": [],
+   "catatan": "Halaman resmi Packet Tracer, simulator jaringan untuk latihan CCNA; hanya ditautkan.",
+   "bukti_lisensi": "Halaman dibuka dan tidak memuat pernyataan lisensi terbuka"
+  },
+  {
+   "judul": "Kathara",
+   "url": "https://www.kathara.org/",
+   "jenis": "lab",
+   "bahasa": "en",
+   "lisensi": "tidak disebutkan (© 2017); repo KatharaFramework/Kathara: GPL-3.0",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "lab",
+    "container",
+    "routing"
+   ],
+   "tahap": [],
+   "catatan": "Kerangka lab jaringan berbasis container untuk eksperimen protokol di perkuliahan.",
+   "bukti_lisensi": "Footer halaman: '2017 - Copyright. All rights reserved'; sidebar GitHub repo GPL-3.0"
+  },
+  {
+   "judul": "FRRouting User Guide",
+   "url": "https://docs.frrouting.org/en/latest/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "Izin salin verbatim/termodifikasi gaya GNU manual (Copyright (c) 1996-2018 Kunihiro Ishiguro, et al.); perangkat lunak GPLv2",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "routing",
+    "linux",
+    "lab"
+   ],
+   "tahap": [],
+   "catatan": "Manual daemon routing FRR (BGP, OSPF, IS-IS) untuk lab routing di Linux.",
+   "bukti_lisensi": "Bagian 'Copyright notice' di halaman: izin menyalin dengan syarat pemberitahuan identik; bukan lisensi permisif standar"
+  },
+  {
+   "judul": "BIRD Internet Routing Daemon Documentation",
+   "url": "https://bird.network.cz/?doc",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "tidak disebutkan di halaman",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "routing",
+    "provider",
+    "linux"
+   ],
+   "tahap": [],
+   "catatan": "Dokumentasi daemon routing BIRD yang banyak dipakai di IXP dan jaringan penyedia.",
+   "bukti_lisensi": "Halaman dibuka; tidak ada pernyataan lisensi dokumentasi"
+  },
+  {
+   "judul": "Mininet",
+   "url": "https://mininet.org/",
+   "jenis": "lab",
+   "bahasa": "en",
+   "lisensi": "tidak disebutkan untuk dokumentasi (halaman: perangkat lunak dirilis dengan lisensi BSD; Copyright 2022 Mininet Project Contributors)",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "lab",
+    "l2",
+    "pemrograman-jaringan"
+   ],
+   "tahap": [],
+   "catatan": "Emulator jaringan SDN/OpenFlow ringan untuk eksperimen topologi di satu mesin.",
+   "bukti_lisensi": "Halaman menyebut 'released under a permissive BSD Open Source license' untuk perangkat lunak; lisensi dokumentasi tidak dipisahkan"
+  },
+  {
+   "judul": "VyOS Documentation",
+   "url": "https://docs.vyos.io/en/latest/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "tidak disebutkan (Copyright 2026 VyOS maintainers and contributors)",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "routing",
+    "firewall-nat",
+    "wan-vpn"
+   ],
+   "tahap": [],
+   "catatan": "Dokumentasi router/firewall VyOS berbasis Linux yang cocok untuk lab NAT, VPN, dan routing.",
+   "bukti_lisensi": "Footer halaman hanya hak cipta"
+  },
+  {
+   "judul": "Open vSwitch Documentation",
+   "url": "https://docs.openvswitch.org/en/latest/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "tidak disebutkan (Project © 2016-2023 A Linux Foundation Collaborative Project)",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "l2",
+    "datacenter",
+    "container"
+   ],
+   "tahap": [],
+   "catatan": "Dokumentasi switch virtual Open vSwitch untuk virtualisasi jaringan dan SDN.",
+   "bukti_lisensi": "Footer halaman hanya hak cipta"
+  },
+  {
+   "judul": "Wireshark User's Guide",
+   "url": "https://www.wireshark.org/docs/wsug_html_chunked/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "tidak disebutkan terpisah untuk panduan; halaman pengantar menyebut Wireshark dirilis di bawah GNU GPL",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "analisis-paket",
+    "lab"
+   ],
+   "tahap": [],
+   "catatan": "Panduan resmi memakai Wireshark untuk menangkap dan membedah paket.",
+   "bukti_lisensi": "Bab Introduction: 'released under the GNU General Public License (GPL)'; tidak ada lisensi permisif untuk teks panduan"
+  },
+  {
+   "judul": "Wireshark Wiki: Sample Captures",
+   "url": "https://wiki.wireshark.org/SampleCaptures",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "lisensi": "tidak disebutkan di halaman",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "analisis-paket",
+    "lab"
+   ],
+   "tahap": [],
+   "catatan": "Kumpulan berkas pcap contoh per protokol untuk berlatih analisis paket.",
+   "bukti_lisensi": "Halaman dibuka; tidak ada pernyataan lisensi"
+  },
+  {
+   "judul": "tcpdump Man Page",
+   "url": "https://www.tcpdump.org/manpages/tcpdump.1.html",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "3-clause BSD (tcpdump dan libpcap, menurut tcpdump.org)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "analisis-paket",
+    "linux"
+   ],
+   "tahap": [],
+   "catatan": "Rujukan lengkap opsi dan sintaks filter tcpdump untuk menangkap paket dari terminal.",
+   "bukti_lisensi": "Beranda tcpdump.org: 'tcpdump and libpcap are under a 3-clause BSD license'; halaman man itu sendiri tidak memuat pernyataan terpisah"
+  },
+  {
+   "judul": "Nmap Reference Guide",
+   "url": "https://nmap.org/book/man.html",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "Creative Commons Attribution 3.0 (CC BY 3.0)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "keamanan",
+    "analisis-paket",
+    "fondasi"
+   ],
+   "tahap": [],
+   "catatan": "Panduan referensi resmi Nmap untuk pemindaian port dan penemuan host.",
+   "bukti_lisensi": "nmap.org/book/man-legal.html: 'This Nmap Reference Guide is (C) 2005-2022 Nmap Software LLC. It is hereby placed under version 3.0 of the Creative Commons Attribution License'"
+  },
+  {
+   "judul": "Batfish Documentation",
+   "url": "https://batfish.readthedocs.io/en/latest/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "tidak disebutkan di halaman (Copyright 2016-2024 The Batfish Open Source Project); perangkat lunak Apache-2.0",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "otomasi",
+    "desain",
+    "lab"
+   ],
+   "tahap": [],
+   "catatan": "Dokumentasi alat analisis konfigurasi jaringan untuk memeriksa konfigurasi sebelum diterapkan.",
+   "bukti_lisensi": "Footer halaman hanya hak cipta"
+  },
+  {
+   "judul": "NetBox Documentation",
+   "url": "https://netboxlabs.com/docs/netbox/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "Apache License 2.0 (halaman: 'open source application licensed under Apache 2')",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "otomasi",
+    "datacenter",
+    "desain"
+   ],
+   "tahap": [],
+   "catatan": "Dokumentasi NetBox, sumber kebenaran untuk IPAM dan inventaris infrastruktur.",
+   "bukti_lisensi": "Halaman beranda dokumentasi menyatakan lisensi Apache 2; pernyataan menyebut aplikasi, dokumentasi berada dalam repo yang sama"
+  },
+  {
+   "judul": "Nautobot Documentation",
+   "url": "https://docs.nautobot.com/projects/core/en/stable/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "Apache-2.0",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "otomasi",
+    "datacenter",
+    "pemrograman-jaringan"
+   ],
+   "tahap": [],
+   "catatan": "Dokumentasi platform sumber kebenaran jaringan Nautobot dengan fokus otomasi.",
+   "bukti_lisensi": "Footer halaman: 'Copyright The Authors Apache-2.0 LICENSE'"
+  },
+  {
+   "judul": "Ansible Network Automation Guide",
+   "url": "https://docs.ansible.com/projects/ansible/latest/network/getting_started/index.html",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "tidak disebutkan (Copyright Ansible project contributors)",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "otomasi",
+    "lab"
+   ],
+   "tahap": [],
+   "catatan": "Panduan memulai otomasi perangkat jaringan dengan Ansible.",
+   "bukti_lisensi": "Footer halaman hanya hak cipta"
+  },
+  {
+   "judul": "Netmiko Documentation",
+   "url": "https://ktbyers.github.io/netmiko/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "tidak disebutkan di halaman; perangkat lunak MIT",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "otomasi",
+    "pemrograman-jaringan",
+    "cisco"
+   ],
+   "tahap": [],
+   "catatan": "Dokumentasi pustaka Python Netmiko untuk SSH ke perangkat jaringan multivendor.",
+   "bukti_lisensi": "Halaman dibuka; tidak ada pernyataan lisensi"
+  },
+  {
+   "judul": "NAPALM Documentation",
+   "url": "https://napalm.readthedocs.io/en/latest/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "tidak disebutkan (Copyright 2021 Barroso/Ulinic/Byers); perangkat lunak Apache-2.0",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "otomasi",
+    "pemrograman-jaringan"
+   ],
+   "tahap": [],
+   "catatan": "Dokumentasi pustaka NAPALM, API seragam untuk mengelola perangkat multivendor.",
+   "bukti_lisensi": "Footer halaman hanya hak cipta"
+  },
+  {
+   "judul": "Scapy Documentation",
+   "url": "https://scapy.readthedocs.io/en/latest/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "Creative Commons Attribution-NonCommercial-ShareAlike 2.5",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "pemrograman-jaringan",
+    "analisis-paket",
+    "keamanan"
+   ],
+   "tahap": [],
+   "catatan": "Dokumentasi pustaka Python Scapy untuk membuat dan memanipulasi paket.",
+   "bukti_lisensi": "Halaman: 'Scapy's documentation is under a Creative Commons Attribution - Non-Commercial - Share Alike 2.5 license' (NC, tidak diizinkan)"
+  },
+  {
+   "judul": "Suricata User Guide",
+   "url": "https://docs.suricata.io/en/latest/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "keamanan",
+    "monitoring",
+    "analisis-paket"
+   ],
+   "tahap": [],
+   "catatan": "Panduan resmi IDS/IPS Suricata untuk deteksi ancaman jaringan.",
+   "bukti_lisensi": "docs.suricata.io/en/latest/licenses/index.html: dokumentasi berlisensi CC BY-NC 4.0"
+  },
+  {
+   "judul": "Zeek Documentation",
+   "url": "https://docs.zeek.org/en/master/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "tidak disebutkan (Copyright by the Zeek Project)",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "keamanan",
+    "monitoring",
+    "analisis-paket"
+   ],
+   "tahap": [],
+   "catatan": "Dokumentasi platform analisis lalu lintas Zeek untuk log jaringan.",
+   "bukti_lisensi": "Footer halaman hanya hak cipta"
+  },
+  {
+   "judul": "Prometheus Documentation",
+   "url": "https://prometheus.io/docs/introduction/overview/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "Apache License 2.0 ('All components are available under the Apache 2 License on GitHub')",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "monitoring",
+    "otomasi"
+   ],
+   "tahap": [],
+   "catatan": "Pengantar sistem monitoring Prometheus untuk metrik jaringan dan infrastruktur.",
+   "bukti_lisensi": "Footer halaman: '© Prometheus Authors 2014-2026 | All components are available under the Apache 2 License'"
+  },
+  {
+   "judul": "Prometheus snmp_exporter",
+   "url": "https://github.com/prometheus/snmp_exporter",
+   "jenis": "alat",
+   "bahasa": "en",
+   "lisensi": "Apache-2.0",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "monitoring",
+    "otomasi"
+   ],
+   "tahap": [],
+   "catatan": "Eksporter SNMP untuk Prometheus yang mengambil metrik dari router dan switch.",
+   "bukti_lisensi": "Sidebar GitHub dan README: Apache-2.0 license"
+  },
+  {
+   "judul": "Grafana Documentation",
+   "url": "https://grafana.com/docs/grafana/latest/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "tidak disebutkan (Copyright 2026 Grafana Labs); perangkat lunak AGPL-3.0",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "monitoring"
+   ],
+   "tahap": [],
+   "catatan": "Dokumentasi Grafana untuk membuat dasbor visualisasi metrik jaringan.",
+   "bukti_lisensi": "Footer halaman hanya hak cipta"
+  },
+  {
+   "judul": "ntopng User's Guide",
+   "url": "https://www.ntop.org/guides/ntopng/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "tidak disebutkan (Copyright 2026, ntop)",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "monitoring",
+    "analisis-paket"
+   ],
+   "tahap": [],
+   "catatan": "Panduan ntopng untuk memantau lalu lintas dan flow jaringan secara real time.",
+   "bukti_lisensi": "Footer halaman hanya hak cipta"
+  }
+ ]
+}

@@ -1,0 +1,499 @@
+{
+ "sumber": {
+  "kunci": "desain",
+  "nama": "system-design-primer",
+  "pemilik": "Donne Martin",
+  "repo": "https://github.com/donnemartin/system-design-primer",
+  "lisensi": "CC BY 4.0",
+  "boleh_salin": true,
+  "atribusi": "Bacaan dari The System Design Primer oleh Donne Martin, CC BY 4.0. Hanya bagian DNS, CDN, load balancer, reverse proxy, komunikasi, ketersediaan, dan keamanan.",
+  "commit": "ae9bbd7"
+ },
+ "entri": [
+  {
+   "id": "desain-a9bbc1b5",
+   "judul": "Understanding latency vs throughput",
+   "url": "https://community.cadence.com/cadence_blogs_8/b/fv/posts/understanding-latency-vs-throughput",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "desain",
+    "fondasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-4f23b77b",
+   "judul": "Weighted round robin",
+   "url": "https://www.jscape.com/blog/load-balancing-algorithms",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "aplikasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-429ea570",
+   "judul": "Latency-based",
+   "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy-latency.html",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "aplikasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-bd07dfe1",
+   "judul": "Geolocation-based",
+   "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy-geo.html",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "aplikasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-7a588759",
+   "judul": "DNS architecture",
+   "url": "https://technet.microsoft.com/en-us/library/dd197427(v=ws.10).aspx",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "aplikasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-721657c8",
+   "judul": "Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/Domain_Name_System",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "aplikasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-1b3f6e1f",
+   "judul": "DNS articles",
+   "url": "https://support.dnsimple.com/categories/dns/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "aplikasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-f4a1b9c4",
+   "judul": "Globally distributed content delivery",
+   "url": "https://figshare.com/articles/Globally_distributed_content_delivery/6605972",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "aplikasi",
+    "provider"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-9fde1224",
+   "judul": "The differences between push and pull CDNs",
+   "url": "https://www.geeksforgeeks.org/system-design/pull-cdn-vs-push-cdn/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "aplikasi",
+    "provider"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-1a99364d",
+   "judul": "Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/Content_delivery_network",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "aplikasi",
+    "provider"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-c4b542f8",
+   "judul": "Round robin or weighted round robin",
+   "url": "https://www.g33kinfo.com/info/round-robin-vs-weighted-round-robin-lb",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "desain",
+    "datacenter"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-d7a4caff",
+   "judul": "NGINX architecture",
+   "url": "https://www.nginx.com/blog/inside-nginx-how-we-designed-for-performance-scale/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "desain",
+    "datacenter",
+    "aplikasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-f5c43779",
+   "judul": "HAProxy architecture guide",
+   "url": "http://www.haproxy.org/download/1.2/doc/architecture.txt",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "desain",
+    "datacenter",
+    "aplikasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-985a5170",
+   "judul": "Scalability",
+   "url": "https://web.archive.org/web/20220530193911/https://www.lecloud.net/post/7295452622/scalability-for-dummies-part-1-clones",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "desain",
+    "datacenter"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-d8c776cc",
+   "judul": "Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/Load_balancing_(computing)",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "desain",
+    "datacenter"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-e3d74195",
+   "judul": "Layer 4 load balancing",
+   "url": "https://www.nginx.com/resources/glossary/layer-4-load-balancing/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "desain",
+    "datacenter"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-5c019a56",
+   "judul": "Layer 7 load balancing",
+   "url": "https://www.nginx.com/resources/glossary/layer-7-load-balancing/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "desain",
+    "datacenter"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-d4035cb9",
+   "judul": "ELB listener config",
+   "url": "http://docs.aws.amazon.com/elasticloadbalancing/latest/classic/elb-listener-config.html",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "desain",
+    "datacenter"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-24c38909",
+   "judul": "Reverse proxy vs load balancer",
+   "url": "https://www.nginx.com/resources/glossary/reverse-proxy-vs-load-balancer/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "aplikasi",
+    "desain"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-866c04fb",
+   "judul": "Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/Reverse_proxy",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "aplikasi",
+    "desain"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-16cee5fc",
+   "judul": "What is HTTP?",
+   "url": "https://www.nginx.com/resources/glossary/http/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "transport",
+    "aplikasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-0f686e7a",
+   "judul": "Difference between HTTP and TCP",
+   "url": "https://www.quora.com/What-is-the-difference-between-HTTP-protocol-and-TCP-protocol",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "transport",
+    "aplikasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-2b740bae",
+   "judul": "Difference between PUT and PATCH",
+   "url": "https://laracasts.com/discuss/channels/general-discussion/whats-the-differences-between-put-and-patch?page=1",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "transport",
+    "aplikasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-e2a6ccf0",
+   "judul": "Acknowledgement",
+   "url": "https://en.wikipedia.org/wiki/Acknowledgement_(data_networks)",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "transport",
+    "aplikasi"
+   ],
+   "catatan": "packets and automatic retransmission"
+  },
+  {
+   "id": "desain-1329190b",
+   "judul": "Networking for game programming",
+   "url": "https://gafferongames.com/post/udp_vs_tcp/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "transport",
+    "aplikasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-f366bb7e",
+   "judul": "Key differences between TCP and UDP protocols",
+   "url": "http://www.cyberciti.biz/faq/key-differences-between-tcp-and-udp-protocols/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "transport",
+    "aplikasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-51178d59",
+   "judul": "Difference between TCP and UDP",
+   "url": "http://stackoverflow.com/questions/5970383/difference-between-tcp-and-udp",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "transport",
+    "aplikasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-4118ec91",
+   "judul": "Transmission control protocol",
+   "url": "https://en.wikipedia.org/wiki/Transmission_Control_Protocol",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "transport",
+    "aplikasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-24830c5e",
+   "judul": "User datagram protocol",
+   "url": "https://en.wikipedia.org/wiki/User_Datagram_Protocol",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "transport",
+    "aplikasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-b370a3b3",
+   "judul": "Scaling memcache at Facebook",
+   "url": "http://www.cs.bu.edu/~jappavoo/jappavoo.github.com/451/papers/memcache-fb.pdf",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "transport",
+    "aplikasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-e6f22110",
+   "judul": "Do you really know why you prefer REST over RPC",
+   "url": "https://apihandyman.io/do-you-really-know-why-you-prefer-rest-over-rpc/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "transport",
+    "aplikasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-bfcaa5d4",
+   "judul": "When are RPC-ish approaches more appropriate than REST?",
+   "url": "http://programmers.stackexchange.com/a/181186",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "transport",
+    "aplikasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-f67d90ed",
+   "judul": "REST vs JSON-RPC",
+   "url": "http://stackoverflow.com/questions/15056878/rest-vs-json-rpc",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "transport",
+    "aplikasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-36b7d2a7",
+   "judul": "Debunking the myths of RPC and REST",
+   "url": "https://web.archive.org/web/20170608193645/http://etherealbits.com/2012/12/debunking-the-myths-of-rpc-rest/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "transport",
+    "aplikasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-8cdb3f70",
+   "judul": "What are the drawbacks of using REST",
+   "url": "https://www.quora.com/What-are-the-drawbacks-of-using-RESTful-APIs",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "transport",
+    "aplikasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-0eccfea9",
+   "judul": "Crack the system design interview",
+   "url": "http://www.puncsky.com/blog/2016-02-13-crack-the-system-design-interview",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "transport",
+    "aplikasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-6c46bd3c",
+   "judul": "Thrift",
+   "url": "https://code.facebook.com/posts/1468950976659943/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "transport",
+    "aplikasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-c1bd8aab",
+   "judul": "Why REST for internal use and not RPC",
+   "url": "http://arstechnica.com/civis/viewtopic.php?t=1190508",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "transport",
+    "aplikasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-cd93af48",
+   "judul": "API security checklist",
+   "url": "https://github.com/shieldfy/API-Security-Checklist",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-2429f8e6",
+   "judul": "Security guide for developers",
+   "url": "https://github.com/FallibleInc/security-guide-for-developers",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "desain-5890d311",
+   "judul": "OWASP top ten",
+   "url": "https://www.owasp.org/index.php/OWASP_Top_Ten_Cheat_Sheet",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": ""
+  }
+ ]
+}

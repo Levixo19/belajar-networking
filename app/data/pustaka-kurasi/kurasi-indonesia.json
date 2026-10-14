@@ -1,0 +1,463 @@
+{
+ "sumber": {
+  "kunci": "kurasi-indonesia",
+  "nama": "Kurasi: sumber berbahasa Indonesia",
+  "atribusi": "Sumber berbahasa Indonesia dari lembaga resmi, kampus, dan komunitas. Diprioritaskan karena langka; yang legalitasnya meragukan ditolak."
+ },
+ "entri": [
+  {
+   "judul": "Pengantar Jaringan Komputer (Wicaksono, Seribu Bintang, 2026)",
+   "url": "https://zenodo.org/records/18781481",
+   "jenis": "buku",
+   "bahasa": "id",
+   "lisensi": "Creative Commons Attribution 4.0 International (CC-BY-4.0)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "fondasi",
+    "aplikasi"
+   ],
+   "tahap": [],
+   "catatan": "Buku ajar jaringan komputer berbahasa Indonesia untuk mahasiswa sistem informasi, terbit Februari 2026 dengan lisensi CC BY 4.0.",
+   "bukti_lisensi": "Kolom lisensi pada halaman rekaman Zenodo (DOI 10.5281/zenodo.18781481)"
+  },
+  {
+   "judul": "Wikipedia ID: Jaringan komputer",
+   "url": "https://id.wikipedia.org/wiki/Jaringan_komputer",
+   "jenis": "artikel",
+   "bahasa": "id",
+   "lisensi": "Teks tersedia di bawah Lisensi Atribusi-BerbagiSerupa Creative Commons 4.0 (CC BY-SA 4.0)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "fondasi"
+   ],
+   "tahap": [],
+   "catatan": "Artikel pengantar jenis, topologi, dan sejarah jaringan komputer.",
+   "bukti_lisensi": "Footer halaman Wikipedia bahasa Indonesia (tautan ke creativecommons.org/licenses/by-sa/4.0/deed.id)"
+  },
+  {
+   "judul": "Wikipedia ID: Model OSI",
+   "url": "https://id.wikipedia.org/wiki/Model_OSI",
+   "jenis": "artikel",
+   "bahasa": "id",
+   "lisensi": "Teks tersedia di bawah Lisensi Atribusi-BerbagiSerupa Creative Commons 4.0 (CC BY-SA 4.0)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "fondasi"
+   ],
+   "tahap": [],
+   "catatan": "Penjelasan tujuh lapisan model OSI dalam bahasa Indonesia.",
+   "bukti_lisensi": "Footer halaman Wikipedia bahasa Indonesia (tautan ke creativecommons.org/licenses/by-sa/4.0/deed.id)"
+  },
+  {
+   "judul": "Wikipedia ID: Protokol Kendali Transmisi (TCP)",
+   "url": "https://id.wikipedia.org/wiki/Protokol_Kendali_Transmisi",
+   "jenis": "artikel",
+   "bahasa": "id",
+   "lisensi": "Teks tersedia di bawah Lisensi Atribusi-BerbagiSerupa Creative Commons 4.0 (CC BY-SA 4.0)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "transport"
+   ],
+   "tahap": [],
+   "catatan": "Penjelasan TCP: handshake, kontrol aliran, dan keandalan.",
+   "bukti_lisensi": "Footer halaman Wikipedia bahasa Indonesia (tautan ke creativecommons.org/licenses/by-sa/4.0/deed.id)"
+  },
+  {
+   "judul": "Wikipedia ID: Alamat IP",
+   "url": "https://id.wikipedia.org/wiki/Alamat_IP",
+   "jenis": "artikel",
+   "bahasa": "id",
+   "lisensi": "Teks tersedia di bawah Lisensi Atribusi-BerbagiSerupa Creative Commons 4.0 (CC BY-SA 4.0)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "fondasi",
+    "l2"
+   ],
+   "tahap": [],
+   "catatan": "Artikel dasar tentang alamat IP, kelas, dan penggunaannya.",
+   "bukti_lisensi": "Footer halaman Wikipedia bahasa Indonesia (tautan ke creativecommons.org/licenses/by-sa/4.0/deed.id)"
+  },
+  {
+   "judul": "Wikipedia ID: IPv6",
+   "url": "https://id.wikipedia.org/wiki/IPv6",
+   "jenis": "artikel",
+   "bahasa": "id",
+   "lisensi": "Teks tersedia di bawah Lisensi Atribusi-BerbagiSerupa Creative Commons 4.0 (CC BY-SA 4.0)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "ipv6"
+   ],
+   "tahap": [],
+   "catatan": "Artikel IPv6: format alamat, fitur, dan transisi dari IPv4.",
+   "bukti_lisensi": "Footer halaman Wikipedia bahasa Indonesia (tautan ke creativecommons.org/licenses/by-sa/4.0/deed.id)"
+  },
+  {
+   "judul": "Wikipedia ID: Sistem Penamaan Domain (DNS)",
+   "url": "https://id.wikipedia.org/wiki/Sistem_Penamaan_Domain",
+   "jenis": "artikel",
+   "bahasa": "id",
+   "lisensi": "Teks tersedia di bawah Lisensi Atribusi-BerbagiSerupa Creative Commons 4.0 (CC BY-SA 4.0)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "aplikasi"
+   ],
+   "tahap": [],
+   "catatan": "Artikel DNS: hierarki, jenis rekaman, dan cara kerja resolusi nama.",
+   "bukti_lisensi": "Footer halaman Wikipedia bahasa Indonesia (tautan ke creativecommons.org/licenses/by-sa/4.0/deed.id)"
+  },
+  {
+   "judul": "Wikipedia ID: Protokol Konfigurasi Hos Dinamik (DHCP)",
+   "url": "https://id.wikipedia.org/wiki/Protokol_Konfigurasi_Hos_Dinamik",
+   "jenis": "artikel",
+   "bahasa": "id",
+   "lisensi": "Teks tersedia di bawah Lisensi Atribusi-BerbagiSerupa Creative Commons 4.0 (CC BY-SA 4.0)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "aplikasi"
+   ],
+   "tahap": [],
+   "catatan": "Artikel DHCP tentang pemberian alamat IP otomatis dan proses DORA.",
+   "bukti_lisensi": "Footer halaman Wikipedia bahasa Indonesia (tautan ke creativecommons.org/licenses/by-sa/4.0/deed.id)"
+  },
+  {
+   "judul": "Wikipedia ID: Keamanan komputer",
+   "url": "https://id.wikipedia.org/wiki/Keamanan_komputer",
+   "jenis": "artikel",
+   "bahasa": "id",
+   "lisensi": "Teks tersedia di bawah Lisensi Atribusi-BerbagiSerupa Creative Commons 4.0 (CC BY-SA 4.0)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "keamanan"
+   ],
+   "tahap": [],
+   "catatan": "Artikel panjang tentang ancaman, kerentanan, dan pertahanan keamanan komputer.",
+   "bukti_lisensi": "Footer halaman Wikipedia bahasa Indonesia (tautan ke creativecommons.org/licenses/by-sa/4.0/deed.id)"
+  },
+  {
+   "judul": "Wikipedia ID: Nmap",
+   "url": "https://id.wikipedia.org/wiki/Nmap",
+   "jenis": "artikel",
+   "bahasa": "id",
+   "lisensi": "Teks tersedia di bawah Lisensi Atribusi-BerbagiSerupa Creative Commons 4.0 (CC BY-SA 4.0)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "keamanan",
+    "analisis-paket"
+   ],
+   "tahap": [],
+   "catatan": "Artikel alat pemindai jaringan Nmap beserta fungsinya.",
+   "bukti_lisensi": "Footer halaman Wikipedia bahasa Indonesia (tautan ke creativecommons.org/licenses/by-sa/4.0/deed.id)"
+  },
+  {
+   "judul": "Wikipedia ID: Wi-Fi",
+   "url": "https://id.wikipedia.org/wiki/Wi-Fi",
+   "jenis": "artikel",
+   "bahasa": "id",
+   "lisensi": "Teks tersedia di bawah Lisensi Atribusi-BerbagiSerupa Creative Commons 4.0 (CC BY-SA 4.0)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "wireless"
+   ],
+   "tahap": [],
+   "catatan": "Artikel lengkap standar IEEE 802.11 dan teknologi jaringan nirkabel.",
+   "bukti_lisensi": "Footer halaman Wikipedia bahasa Indonesia (tautan ke creativecommons.org/licenses/by-sa/4.0/deed.id)"
+  },
+  {
+   "judul": "Wikipedia ID: Jaringan pribadi virtual (VPN)",
+   "url": "https://id.wikipedia.org/wiki/Jaringan_pribadi_virtual",
+   "jenis": "artikel",
+   "bahasa": "id",
+   "lisensi": "Teks tersedia di bawah Lisensi Atribusi-BerbagiSerupa Creative Commons 4.0 (CC BY-SA 4.0)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "wan-vpn",
+    "keamanan"
+   ],
+   "tahap": [],
+   "catatan": "Artikel VPN: jenis, protokol, dan kegunaannya.",
+   "bukti_lisensi": "Footer halaman Wikipedia bahasa Indonesia (tautan ke creativecommons.org/licenses/by-sa/4.0/deed.id)"
+  },
+  {
+   "judul": "Wikipedia ID: Internet di Indonesia",
+   "url": "https://id.wikipedia.org/wiki/Internet_di_Indonesia",
+   "jenis": "artikel",
+   "bahasa": "id",
+   "lisensi": "Teks tersedia di bawah Lisensi Atribusi-BerbagiSerupa Creative Commons 4.0 (CC BY-SA 4.0)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "provider"
+   ],
+   "tahap": [],
+   "catatan": "Ringkasan sejarah dan keadaan internet di Indonesia.",
+   "bukti_lisensi": "Footer halaman Wikipedia bahasa Indonesia (tautan ke creativecommons.org/licenses/by-sa/4.0/deed.id)"
+  },
+  {
+   "judul": "Citraweb: Konfigurasi Site-to-Site IPsec IKEv2 MikroTik metode PSK dengan Satu IP Publik",
+   "url": "https://citraweb.com/artikel/588/",
+   "jenis": "artikel",
+   "bahasa": "id",
+   "lisensi": "Copyrights ©2005-2026 PT. Citraweb Solusi Teknologi. All Rights Reserved.",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "wan-vpn",
+    "mikrotik",
+    "keamanan"
+   ],
+   "tahap": [],
+   "catatan": "Tutorial IPsec IKEv2 site-to-site di MikroTik dari distributor resmi; periksa versi RouterOS sebelum mengikuti.",
+   "bukti_lisensi": "Footer situs citraweb.com"
+  },
+  {
+   "judul": "Citraweb: File sharing MikroTik",
+   "url": "https://citraweb.com/artikel/587/",
+   "jenis": "artikel",
+   "bahasa": "id",
+   "lisensi": "Copyrights ©2005-2026 PT. Citraweb Solusi Teknologi. All Rights Reserved.",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "mikrotik",
+    "aplikasi"
+   ],
+   "tahap": [],
+   "catatan": "Artikel Citraweb tentang berbagi berkas lewat router MikroTik; hanya tautan.",
+   "bukti_lisensi": "Footer situs citraweb.com"
+  },
+  {
+   "judul": "Citraweb: MAC Authentication Wireless pada Access Point Unifi",
+   "url": "https://citraweb.com/artikel/583/",
+   "jenis": "artikel",
+   "bahasa": "id",
+   "lisensi": "Copyrights ©2005-2026 PT. Citraweb Solusi Teknologi. All Rights Reserved.",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "wireless",
+    "keamanan"
+   ],
+   "tahap": [],
+   "catatan": "Panduan MAC authentication pada AP Unifi dari Citraweb; hanya tautan.",
+   "bukti_lisensi": "Footer situs citraweb.com"
+  },
+  {
+   "judul": "Citraweb: Pasang IP Publik Di Perangkat Ruijie RG-EG Series, lalu bagaimana untuk keamanan routernya?",
+   "url": "https://citraweb.com/artikel/589/",
+   "jenis": "artikel",
+   "bahasa": "id",
+   "lisensi": "Copyrights ©2005-2026 PT. Citraweb Solusi Teknologi. All Rights Reserved.",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "firewall-nat",
+    "keamanan"
+   ],
+   "tahap": [],
+   "catatan": "Artikel pemasangan IP publik dan pengamanan router Ruijie; hanya tautan.",
+   "bukti_lisensi": "Footer situs citraweb.com"
+  },
+  {
+   "judul": "Citraweb: Pelatihan Jaringan (kelas training MikroTik)",
+   "url": "https://citraweb.com/training/",
+   "jenis": "daftar",
+   "bahasa": "id",
+   "lisensi": "Copyrights ©2005-2026 PT. Citraweb Solusi Teknologi. All Rights Reserved.",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "mikrotik",
+    "sertifikasi"
+   ],
+   "tahap": [],
+   "catatan": "Jadwal pelatihan jaringan Citraweb (distributor resmi MikroTik); tautan saja, kelas kemungkinan berbayar.",
+   "bukti_lisensi": "Footer situs citraweb.com"
+  },
+  {
+   "judul": "IDNIC: Cara Mendapatkan IP Address",
+   "url": "https://idnic.id/membership/how-to-get-ip",
+   "jenis": "dokumentasi",
+   "bahasa": "id",
+   "lisensi": "© 2022 IDNIC - APJII (tanpa lisensi terbuka)",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "provider",
+    "fondasi"
+   ],
+   "tahap": [],
+   "catatan": "Syarat dan alur menjadi anggota IDNIC lalu mengajukan blok IP dan ASN di Indonesia.",
+   "bukti_lisensi": "Footer halaman idnic.id menulis '© 2022' tanpa lisensi terbuka"
+  },
+  {
+   "judul": "IDNIC: Panduan IP & ASN",
+   "url": "https://idnic.id/manage-resource/internet-resource-guide",
+   "jenis": "dokumentasi",
+   "bahasa": "id",
+   "lisensi": "© 2022 IDNIC - APJII (tanpa lisensi terbuka)",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "provider",
+    "routing"
+   ],
+   "tahap": [],
+   "catatan": "Panduan resmi pengelolaan sumber daya IP dan ASN dari registri internet nasional.",
+   "bukti_lisensi": "Footer halaman idnic.id menulis '© 2022' tanpa lisensi terbuka"
+  },
+  {
+   "judul": "IDNIC: FAQ (Tanya Jawab) IDNIC",
+   "url": "https://idnic.id/membership/faq",
+   "jenis": "dokumentasi",
+   "bahasa": "id",
+   "lisensi": "© 2022 IDNIC - APJII (tanpa lisensi terbuka)",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "provider"
+   ],
+   "tahap": [],
+   "catatan": "Tanya jawab resmi IDNIC tentang keanggotaan, IP, dan ASN.",
+   "bukti_lisensi": "Footer halaman idnic.id menulis '© 2022' tanpa lisensi terbuka"
+  },
+  {
+   "judul": "IDNIC: Reverse DNS",
+   "url": "https://idnic.id/manage-resource/reverse-dns",
+   "jenis": "dokumentasi",
+   "bahasa": "id",
+   "lisensi": "© 2022 IDNIC - APJII (tanpa lisensi terbuka)",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "aplikasi",
+    "provider"
+   ],
+   "tahap": [],
+   "catatan": "Cara mengatur reverse DNS untuk blok IP dari IDNIC.",
+   "bukti_lisensi": "Footer halaman idnic.id menulis '© 2022' tanpa lisensi terbuka"
+  },
+  {
+   "judul": "APJII: Portal Survei Internet Indonesia",
+   "url": "https://survei.apjii.or.id/",
+   "jenis": "dokumentasi",
+   "bahasa": "id",
+   "lisensi": "© 2026 Asosiasi Penyelenggara Jasa Internet Indonesia (APJII). All rights reserved.",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "provider",
+    "karier"
+   ],
+   "tahap": [],
+   "catatan": "Arsip laporan survei penetrasi dan profil pengguna internet Indonesia dari APJII.",
+   "bukti_lisensi": "Footer survei.apjii.or.id"
+  },
+  {
+   "judul": "IIX (Indonesia Internet Exchange) - APJII",
+   "url": "https://iix.net.id/",
+   "jenis": "dokumentasi",
+   "bahasa": "id",
+   "lisensi": "Tanpa lisensi terbuka tertulis (milik APJII)",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "provider",
+    "routing"
+   ],
+   "tahap": [],
+   "catatan": "Informasi IIX: sejarah, topologi, dan prosedur interkoneksi ke IXP nasional.",
+   "bukti_lisensi": "Tidak ada pernyataan lisensi pada halaman iix.net.id"
+  },
+  {
+   "judul": "Gov-CSIRT Indonesia (BSSN)",
+   "url": "https://www.bssn.go.id/gov-csirt/",
+   "jenis": "dokumentasi",
+   "bahasa": "id",
+   "lisensi": "Tanpa lisensi terbuka tertulis (situs pemerintah BSSN)",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "keamanan",
+    "standar"
+   ],
+   "tahap": [],
+   "catatan": "Penjelasan layanan tim tanggap insiden siber pemerintah di bawah BSSN.",
+   "bukti_lisensi": "Tidak ada pernyataan lisensi terbuka pada halaman"
+  },
+  {
+   "judul": "BSSN: Edukasi Masyarakat",
+   "url": "https://www.bssn.go.id/edukasi-masyarakat/",
+   "jenis": "daftar",
+   "bahasa": "id",
+   "lisensi": "Tanpa lisensi terbuka tertulis (situs pemerintah BSSN)",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "keamanan"
+   ],
+   "tahap": [],
+   "catatan": "Pintu masuk materi literasi keamanan siber BSSN (bacaan ringan, majalah Sanapati, panduan).",
+   "bukti_lisensi": "Tidak ada pernyataan lisensi terbuka pada halaman"
+  },
+  {
+   "judul": "PANDI: Literasi Domain .ID",
+   "url": "https://pandi.id/literasi",
+   "jenis": "artikel",
+   "bahasa": "id",
+   "lisensi": "© 2026 PANDI - Pengelola Nama Domain Internet Indonesia. All rights reserved",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "aplikasi",
+    "provider"
+   ],
+   "tahap": [],
+   "catatan": "Materi literasi PANDI tentang domain .id dan DNS tingkat atas Indonesia.",
+   "bukti_lisensi": "Footer pandi.id"
+  },
+  {
+   "judul": "PANDI: Regulasi Domain .ID",
+   "url": "https://pandi.id/regulasi",
+   "jenis": "dokumentasi",
+   "bahasa": "id",
+   "lisensi": "© 2026 PANDI - Pengelola Nama Domain Internet Indonesia. All rights reserved",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "aplikasi",
+    "standar"
+   ],
+   "tahap": [],
+   "catatan": "Kumpulan regulasi pengelolaan nama domain .id dari PANDI.",
+   "bukti_lisensi": "Footer pandi.id"
+  },
+  {
+   "judul": "SPADA Indonesia (Sistem Pembelajaran Daring)",
+   "url": "https://spada.kemdiktisaintek.go.id",
+   "jenis": "kursus",
+   "bahasa": "id",
+   "lisensi": "Tanpa lisensi terbuka tertulis; perlu login",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "fondasi",
+    "keamanan"
+   ],
+   "tahap": [],
+   "catatan": "Katalog kuliah daring termasuk Pengantar Jaringan Komputer dan Kriptografi dan Keamanan Jaringan, tetapi butuh akun.",
+   "bukti_lisensi": "Beranda menampilkan Login/Register; tidak ada lisensi terbuka"
+  }
+ ]
+}

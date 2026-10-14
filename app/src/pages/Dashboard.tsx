@@ -10,6 +10,7 @@ import { IconArrowRight, IconCards, IconFlame, IconCheck, IconClock, StageIcon }
 import { TOOLS } from '../tools'
 import { GAMES } from '../games'
 
+import PustakaKartu from '../components/PustakaKartu'
 const KarierTeaser = lazy(() => import('../components/KarierTeaser'))
 
 const MANIFESTO =
@@ -293,6 +294,9 @@ export default function Dashboard() {
 
       {/* Arah karier: data profesi dimuat terpisah */}
       <Suspense fallback={null}><KarierTeaser /></Suspense>
+
+      {/* Pustaka: datanya dimuat malas oleh kartunya sendiri */}
+      <PustakaKartu />
 
       {/* Praktik: akordeon horizontal */}
       <section className="border-t border-app" aria-labelledby="judul-praktik">

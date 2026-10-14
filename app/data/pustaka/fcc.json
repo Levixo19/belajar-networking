@@ -1,0 +1,25 @@
+{
+ "sumber": {
+  "kunci": "fcc",
+  "nama": "freeCodeCamp",
+  "pemilik": "freeCodeCamp.org",
+  "repo": "https://www.freecodecamp.org/learn",
+  "lisensi": "tautan saja",
+  "boleh_salin": false,
+  "atribusi": "Tautan ke sertifikasi gratis freeCodeCamp.org. Isi kurikulumnya berhak cipta freeCodeCamp.org dan tidak disalin. Tidak ada dukungan resmi dari freeCodeCamp.",
+  "commit": "34b1acde"
+ },
+ "entri": [
+  {
+   "id": "fcc-26cf767d",
+   "judul": "freeCodeCamp: Relational Databases",
+   "url": "https://www.freecodecamp.org/learn/relational-databases-v9/",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Kursus interaktif gratis bersertifikat; separuh awalnya latihan Bash dan terminal Linux. Isinya tidak disalin ke sini."
+  }
+ ]
+}

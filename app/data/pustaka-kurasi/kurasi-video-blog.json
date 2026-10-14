@@ -1,0 +1,585 @@
+{
+ "sumber": {
+  "kunci": "kurasi-video-blog",
+  "nama": "Kurasi: video dan blog praktisi",
+  "atribusi": "Kanal video dan blog teknis yang kredibel. Video selalu hanya ditautkan."
+ },
+ "entri": [
+  {
+   "judul": "Jeremy's IT Lab - Free CCNA v1.1 200-301 Complete Course 2026",
+   "url": "https://www.youtube.com/playlist?list=PLxbwE86jKRgMpuZuLBivzlM8s2Dk5lXBQ",
+   "jenis": "video",
+   "bahasa": "en",
+   "lisensi": "hak cipta pembuat",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "sertifikasi",
+    "cisco",
+    "fondasi",
+    "routing",
+    "l2",
+    "lab"
+   ],
+   "tahap": [],
+   "catatan": "Kursus CCNA 200-301 v1.1 gratis dan lengkap dengan lab Packet Tracer, paling cocok sebagai tulang punggung belajar jaringan dari nol sampai level CCNA.",
+   "bukti_lisensi": "Judul playlist resmi di kanal @JeremysITLab terbaca langsung (CCNA v1.1 200-301, 2026); feed kanal aktif (unggahan terbaru 2026-03-30); situs resmi jeremysitlab.com menautkan kanal YouTube. Video: hak cipta pembuat, tautan saja."
+  },
+  {
+   "judul": "Jeremy's IT Lab - CCNP ENCOR v1.1 350-401 Complete Course 2026",
+   "url": "https://www.youtube.com/playlist?list=PLxbwE86jKRgOb2uny1CYEzyRy_mc-lE39",
+   "jenis": "video",
+   "bahasa": "en",
+   "lisensi": "hak cipta pembuat",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "sertifikasi",
+    "cisco",
+    "routing",
+    "desain",
+    "wan-vpn"
+   ],
+   "tahap": [],
+   "catatan": "Lanjutan setelah CCNA: OSPF, BGP, VXLAN, SD-Access dan topik enterprise untuk pembelajar tingkat menengah.",
+   "bukti_lisensi": "Judul playlist terbaca di kanal resmi @JeremysITLab; feed menunjukkan video ENCOR terbit 2026-03-30. Hak cipta pembuat."
+  },
+  {
+   "judul": "Professor Messer - CompTIA Network+ N10-009 Training Course (YouTube)",
+   "url": "https://www.youtube.com/playlist?list=PLG49S3nxzAnl_tQe3kvnmeMid0mjF8Le8",
+   "jenis": "video",
+   "bahasa": "en",
+   "lisensi": "hak cipta pembuat",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "sertifikasi",
+    "fondasi",
+    "routing",
+    "l2",
+    "keamanan"
+   ],
+   "tahap": [],
+   "catatan": "Seluruh video kursus Network+ N10-009 gratis yang memetakan tepat ke objektif ujian, cocok untuk fase fondasi dan persiapan sertifikasi.",
+   "bukti_lisensi": "Judul playlist terbaca di kanal @professormesser; halaman resmi professormesser.com menautkan youtube.com/professormesser; feed kanal aktif (unggahan 2026-10-08). Hak cipta Messer Studios."
+  },
+  {
+   "judul": "Professor Messer - CompTIA Network+ N10-009 Training Course (situs resmi)",
+   "url": "https://www.professormesser.com/network-plus/n10-009/n10-009-video/n10-009-training-course/",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "lisensi": "Copyright © 2026 Messer Studios LLC. All rights reserved.",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "sertifikasi",
+    "fondasi",
+    "routing",
+    "l2",
+    "keamanan"
+   ],
+   "tahap": [],
+   "catatan": "Halaman indeks 87 video (sekitar 12 jam 55 menit) untuk N10-009 dengan struktur lima domain ujian, berguna sebagai peta kurikulum belajar.",
+   "bukti_lisensi": "Halaman dibuka dengan WebFetch; footer memuat teks hak cipta di atas; video gratis untuk tujuan edukasi tetapi tidak berlisensi terbuka."
+  },
+  {
+   "judul": "Professor Messer - CompTIA Security+ SY0-701 Course (situs resmi)",
+   "url": "https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/sy0-701-comptia-security-plus-course/",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "lisensi": "Copyright © 2026 Messer Studios LLC. All rights reserved.",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "sertifikasi",
+    "keamanan"
+   ],
+   "tahap": [],
+   "catatan": "Indeks 121 video (sekitar 15 jam) kursus Security+ SY0-701 gratis untuk pembelajar yang masuk ke keamanan jaringan.",
+   "bukti_lisensi": "Halaman dibuka dengan WebFetch; footer memuat hak cipta di atas; tidak ada lisensi terbuka."
+  },
+  {
+   "judul": "Practical Networking - Networking Fundamentals",
+   "url": "https://www.youtube.com/playlist?list=PLIFyRwBY_4bRLmKfP1KnZA6rZbRHtxmXi",
+   "jenis": "video",
+   "bahasa": "en",
+   "lisensi": "hak cipta pembuat",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "fondasi",
+    "l2",
+    "routing",
+    "transport"
+   ],
+   "tahap": [],
+   "catatan": "Seri dasar IP, MAC, switch, router, ARP dan DNS dengan animasi yang jelas, ideal untuk tahap awal.",
+   "bukti_lisensi": "Judul playlist terbaca di kanal @PracticalNetworking; situs resmi practicalnetworking.net menautkan seri video gratis; kanal aktif (unggahan 2026-10-05). Hak cipta pembuat."
+  },
+  {
+   "judul": "Practical Networking - Subnetting Mastery",
+   "url": "https://www.youtube.com/playlist?list=PLIFyRwBY_4bQUE4IB5c4VPRyDoLgOdExE",
+   "jenis": "video",
+   "bahasa": "en",
+   "lisensi": "hak cipta pembuat",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "fondasi",
+    "routing"
+   ],
+   "tahap": [],
+   "catatan": "Playlist subnetting gratis yang menjelaskan konsep biner dan CIDR secara bertahap, cocok sebelum latihan soal subnet.",
+   "bukti_lisensi": "Judul playlist terbaca di kanal resmi @PracticalNetworking. Hak cipta pembuat."
+  },
+  {
+   "judul": "Practical Networking - TCP & UDP Masterclass",
+   "url": "https://www.youtube.com/playlist?list=PLIFyRwBY_4bS-PQZoF0UySdG0sH9VA0bn",
+   "jenis": "video",
+   "bahasa": "en",
+   "lisensi": "hak cipta pembuat",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "transport",
+    "fondasi"
+   ],
+   "tahap": [],
+   "catatan": "Penjelasan mendalam handshake, window, retransmisi dan UDP untuk tahap menengah lapisan transport.",
+   "bukti_lisensi": "Judul playlist terbaca di kanal resmi @PracticalNetworking. Hak cipta pembuat."
+  },
+  {
+   "judul": "Practical Networking - Network Address Translation",
+   "url": "https://www.youtube.com/playlist?list=PLIFyRwBY_4bQ7tJvbLA9A0v8Fq9l-H923",
+   "jenis": "video",
+   "bahasa": "en",
+   "lisensi": "hak cipta pembuat",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "firewall-nat",
+    "routing"
+   ],
+   "tahap": [],
+   "catatan": "Seri NAT/PAT visual yang membantu memahami tabel translasi sebelum praktik di router.",
+   "bukti_lisensi": "Judul playlist terbaca di kanal resmi @PracticalNetworking. Hak cipta pembuat."
+  },
+  {
+   "judul": "Practical Networking - Access Control Lists (ACLs)",
+   "url": "https://www.youtube.com/playlist?list=PLIFyRwBY_4bRkAk_BkWL3ea6lRvOn8AKs",
+   "jenis": "video",
+   "bahasa": "en",
+   "lisensi": "hak cipta pembuat",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "firewall-nat",
+    "keamanan",
+    "cisco"
+   ],
+   "tahap": [],
+   "catatan": "Menjelaskan logika ACL standar dan extended serta penempatannya, berguna untuk tahap menengah CCNA.",
+   "bukti_lisensi": "Judul playlist terbaca di kanal resmi @PracticalNetworking. Hak cipta pembuat."
+  },
+  {
+   "judul": "Chris Greer - How DNS Works, The Series",
+   "url": "https://www.youtube.com/playlist?list=PLW8bTPfXNGdDHoN6G0-HYMsrnzmmlFvAs",
+   "jenis": "video",
+   "bahasa": "en",
+   "lisensi": "hak cipta pembuat",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "aplikasi",
+    "analisis-paket"
+   ],
+   "tahap": [],
+   "catatan": "Seri DNS yang diperlihatkan langsung di Wireshark, membantu memahami query, resolver dan pemecahan masalah DNS.",
+   "bukti_lisensi": "Judul playlist terbaca di kanal resmi @ChrisGreer; kanal aktif (unggahan 2026-07-28). Hak cipta pembuat."
+  },
+  {
+   "judul": "Chris Greer - Packet School: Wireshark Certified Analyst",
+   "url": "https://www.youtube.com/playlist?list=PLW8bTPfXNGdA9neVRdtToP1T2L7morOOz",
+   "jenis": "video",
+   "bahasa": "en",
+   "lisensi": "hak cipta pembuat",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "analisis-paket",
+    "monitoring"
+   ],
+   "tahap": [],
+   "catatan": "Kursus analisis paket Wireshark berbasis kasus, untuk tahap menengah yang ingin troubleshooting dengan capture.",
+   "bukti_lisensi": "Judul playlist terbaca di kanal resmi @ChrisGreer. Hak cipta pembuat."
+  },
+  {
+   "judul": "Ben Eater - Networking tutorial",
+   "url": "https://www.youtube.com/playlist?list=PLowKtXNTBypH19whXTVoG3oKSuOcw_XeW",
+   "jenis": "video",
+   "bahasa": "en",
+   "lisensi": "hak cipta pembuat",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "fondasi",
+    "fisik",
+    "l2",
+    "transport"
+   ],
+   "tahap": [],
+   "catatan": "Menjelaskan jaringan dari lapisan fisik sampai TCP dengan demo perangkat keras; konsepnya abadi dan bagus untuk tahap awal yang ingin paham cara kerja bit sampai paket.",
+   "bukti_lisensi": "Judul playlist terbaca di kanal resmi @BenEater (aktif, unggahan 2026-10-03); eater.net (situs resmi) memuat seksi 'Learn how the Internet works' yang menautkan seri ini. Seri dibuat bertahun lalu, ditandai konsep abadi. Hak cipta pembuat."
+  },
+  {
+   "judul": "Network Direction - Cisco CCNA Training Series",
+   "url": "https://www.youtube.com/playlist?list=PLDQaRcbiSnqEDtULk0YIO-Lo2x5Yb_0yv",
+   "jenis": "video",
+   "bahasa": "en",
+   "lisensi": "hak cipta pembuat",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "cisco",
+    "sertifikasi",
+    "routing",
+    "l2"
+   ],
+   "tahap": [],
+   "catatan": "Seri CCNA sebagai penjelasan alternatif untuk STP, EtherChannel dan routing; blueprint tidak diverifikasi per video sehingga dipakai sebagai pelengkap konsep.",
+   "bukti_lisensi": "Judul playlist terbaca di kanal @NetworkDirection; kanal aktif (unggahan 2026-07-03). Versi blueprint tidak terkonfirmasi, ditandai pelengkap. Hak cipta pembuat."
+  },
+  {
+   "judul": "Hussein Nasser - TCP",
+   "url": "https://www.youtube.com/playlist?list=PLQnljOFTspQX_Zkt_8teMRsdY4sNt4BX6",
+   "jenis": "video",
+   "bahasa": "en",
+   "lisensi": "hak cipta pembuat",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "transport",
+    "aplikasi"
+   ],
+   "tahap": [],
+   "catatan": "Dari sudut pandang backend: koneksi TCP, backlog, dan perilaku di dunia nyata, untuk tahap menengah.",
+   "bukti_lisensi": "Judul playlist terbaca di kanal @hnasr; kanal aktif (unggahan 2026-09-03). Hak cipta pembuat."
+  },
+  {
+   "judul": "Hussein Nasser - TLS",
+   "url": "https://www.youtube.com/playlist?list=PLQnljOFTspQW4yHuqp_Opv853-G_wAiH-",
+   "jenis": "video",
+   "bahasa": "en",
+   "lisensi": "hak cipta pembuat",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "keamanan",
+    "aplikasi"
+   ],
+   "tahap": [],
+   "catatan": "Menjelaskan handshake TLS dan implikasi performa bagi aplikasi, melengkapi materi keamanan.",
+   "bukti_lisensi": "Judul playlist terbaca di kanal @hnasr. Hak cipta pembuat."
+  },
+  {
+   "judul": "MikroTik - VLAN",
+   "url": "https://www.youtube.com/playlist?list=PLXr-HoBo2VtUti3ML90I6J5hPTbF0_gDB",
+   "jenis": "video",
+   "bahasa": "en",
+   "lisensi": "hak cipta pembuat",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "mikrotik",
+    "l2"
+   ],
+   "tahap": [],
+   "catatan": "Video resmi MikroTik tentang konfigurasi VLAN di RouterOS 7, relevan untuk praktik di perangkat yang umum dipakai di Indonesia.",
+   "bukti_lisensi": "Judul playlist terbaca di kanal resmi @mikrotik; kanal aktif (RouterOS 7.24 changelog, 2026-10-09). Hak cipta pembuat."
+  },
+  {
+   "judul": "MikroTik - Network Address Translation",
+   "url": "https://www.youtube.com/playlist?list=PLXr-HoBo2VtVQX3UgIvXiAn0U287YDHEG",
+   "jenis": "video",
+   "bahasa": "en",
+   "lisensi": "hak cipta pembuat",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "mikrotik",
+    "firewall-nat"
+   ],
+   "tahap": [],
+   "catatan": "Penjelasan NAT di RouterOS dari produsennya langsung, untuk tahap praktik firewall dan NAT.",
+   "bukti_lisensi": "Judul playlist terbaca di kanal resmi @mikrotik. Hak cipta pembuat."
+  },
+  {
+   "judul": "Cloudflare Blog - ASPA: making Internet routing more secure",
+   "url": "https://blog.cloudflare.com/aspa-secure-internet/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "lisensi": "Cloudflare Blog: footer '© 2026 Cloudflare, Inc.' dengan Terms of use; tidak ada lisensi terbuka",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "routing",
+    "keamanan",
+    "provider"
+   ],
+   "tahap": [],
+   "catatan": "Menjelaskan ASPA sebagai pelengkap RPKI untuk mencegah route leak, untuk tahap lanjut keamanan BGP.",
+   "bukti_lisensi": "Halaman dibuka dengan HTTP (status 200) dan judul terbaca; footer memuat '© 2026 Cloudflare, Inc.', tanpa lisensi terbuka."
+  },
+  {
+   "judul": "Cloudflare Blog - BGP ORIGIN attribute manipulation and its impact on the Internet",
+   "url": "https://blog.cloudflare.com/bgp-origin-attribute/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "lisensi": "Cloudflare Blog: footer '© 2026 Cloudflare, Inc.' dengan Terms of use; tidak ada lisensi terbuka",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "routing",
+    "provider"
+   ],
+   "tahap": [],
+   "catatan": "Studi pengukuran bagaimana transit provider menulis ulang atribut ORIGIN, contoh baik tentang BGP di dunia nyata.",
+   "bukti_lisensi": "Halaman dibuka dengan HTTP (status 200) dan judul terbaca; footer memuat '© 2026 Cloudflare, Inc.', tanpa lisensi terbuka."
+  },
+  {
+   "judul": "Cloudflare Blog - Enforcing the First AS in BGP AS_PATHs",
+   "url": "https://blog.cloudflare.com/enforce-first-as-bgp/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "lisensi": "Cloudflare Blog: footer '© 2026 Cloudflare, Inc.' dengan Terms of use; tidak ada lisensi terbuka",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "routing",
+    "keamanan",
+    "provider"
+   ],
+   "tahap": [],
+   "catatan": "Tentang pemeriksaan First AS untuk menahan jalur BGP palsu, tahap lanjut.",
+   "bukti_lisensi": "Halaman dibuka dengan HTTP (status 200) dan judul terbaca; footer memuat '© 2026 Cloudflare, Inc.', tanpa lisensi terbuka."
+  },
+  {
+   "judul": "Cloudflare Blog - What came first: the CNAME or the A record",
+   "url": "https://blog.cloudflare.com/cname-a-record-order-dns-standards/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "lisensi": "Cloudflare Blog: footer '© 2026 Cloudflare, Inc.' dengan Terms of use; tidak ada lisensi terbuka",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "aplikasi"
+   ],
+   "tahap": [],
+   "catatan": "Insiden DNS nyata yang menunjukkan pentingnya mengikuti RFC pada urutan record, bagus untuk tahap menengah DNS.",
+   "bukti_lisensi": "Halaman dibuka dengan HTTP (status 200) dan judul terbaca; footer memuat '© 2026 Cloudflare, Inc.', tanpa lisensi terbuka."
+  },
+  {
+   "judul": "APNIC Blog - Seven years of IPv6 in production: Lessons from one million broadband subscribers",
+   "url": "https://blog.apnic.net/2026/10/12/seven-years-of-ipv6-in-production-lessons-from-one-million-broadband-subscribers/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "lisensi": "APNIC Blog: footer '© 2026 APNIC ABN 42 081 528 010'; tidak ada lisensi Creative Commons yang terlihat di halaman, hak cipta APNIC/penulis",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "ipv6",
+    "provider"
+   ],
+   "tahap": [],
+   "catatan": "Pengalaman ISP menjalankan IPv6 di skala besar, relevan untuk pembelajar yang ingin tahu praktik provider.",
+   "bukti_lisensi": "Halaman dibuka dengan HTTP (200), judul terbaca; footer blog.apnic.net memuat hak cipta APNIC, tidak ada pernyataan lisensi terbuka pada halaman yang dibuka (halaman /about/ 404)."
+  },
+  {
+   "judul": "APNIC Blog - Is RPKI becoming harmful to BGP stability?",
+   "url": "https://blog.apnic.net/2026/10/02/is-rpki-becoming-harmful-to-bgp-stability/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "lisensi": "APNIC Blog: footer '© 2026 APNIC ABN 42 081 528 010'; tidak ada lisensi Creative Commons yang terlihat di halaman, hak cipta APNIC/penulis",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "routing",
+    "keamanan",
+    "provider"
+   ],
+   "tahap": [],
+   "catatan": "Diskusi kritis RPKI dan stabilitas BGP, untuk tahap lanjut.",
+   "bukti_lisensi": "Halaman dibuka dengan HTTP (200), judul terbaca; footer blog.apnic.net memuat hak cipta APNIC, tidak ada pernyataan lisensi terbuka pada halaman yang dibuka (halaman /about/ 404)."
+  },
+  {
+   "judul": "APNIC Blog - Rolling the root key",
+   "url": "https://blog.apnic.net/2026/10/09/rolling-the-root-key-2/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "lisensi": "APNIC Blog: footer '© 2026 APNIC ABN 42 081 528 010'; tidak ada lisensi Creative Commons yang terlihat di halaman, hak cipta APNIC/penulis",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "aplikasi",
+    "keamanan"
+   ],
+   "tahap": [],
+   "catatan": "Penjelasan pergantian root KSK DNSSEC Oktober 2026, contoh operasi DNS dan DNSSEC nyata.",
+   "bukti_lisensi": "Halaman dibuka dengan HTTP (200), judul terbaca; footer blog.apnic.net memuat hak cipta APNIC, tidak ada pernyataan lisensi terbuka pada halaman yang dibuka (halaman /about/ 404)."
+  },
+  {
+   "judul": "RIPE Labs - The IRR Landscape: Where Do ASes Keep Their Routes?",
+   "url": "https://labs.ripe.net/author/stavros-konstantaras/the-irr-landscape-where-do-ases-keep-their-routes/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "lisensi": "RIPE Labs: situs tidak menampilkan pernyataan lisensi pada halaman yang bisa dibuka; hak cipta penulis/RIPE NCC",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "routing",
+    "keamanan",
+    "provider"
+   ],
+   "tahap": [],
+   "catatan": "Analisis database IRR yang dipakai untuk filter rute BGP, tahap lanjut operasi provider.",
+   "bukti_lisensi": "Halaman dibuka dengan HTTP (200), judul terbaca; tidak ada lisensi terbuka yang ditemukan di halaman beranda atau artikel (halaman /about/ 404), jadi diasumsikan hak cipta."
+  },
+  {
+   "judul": "Julia Evans - Why you should understand (a little) about TCP",
+   "url": "https://jvns.ca/blog/2015/11/21/why-you-should-understand-a-little-about-tcp/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "lisensi": "\"© Julia Evans.\" Tanpa lisensi terbuka",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "transport",
+    "linux"
+   ],
+   "tahap": [],
+   "catatan": "Alasan praktis memahami TCP untuk debugging, tulisan pendek yang ramah pemula.",
+   "bukti_lisensi": "Halaman jvns.ca/about/ menampilkan hanya '© Julia Evans' tanpa lisensi terbuka; artikel dibuka dengan HTTP (200)."
+  },
+  {
+   "judul": "Julia Evans - Examples for the tcpdump and dig man pages",
+   "url": "https://jvns.ca/blog/2026/03/10/examples-for-the-tcpdump-and-dig-man-pages/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "lisensi": "\"© Julia Evans.\" Tanpa lisensi terbuka",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "analisis-paket",
+    "aplikasi",
+    "linux"
+   ],
+   "tahap": [],
+   "catatan": "Contoh praktis tcpdump dan dig, berguna untuk tahap awal troubleshooting dari command line.",
+   "bukti_lisensi": "jvns.ca menampilkan hanya '© Julia Evans' tanpa lisensi terbuka; artikel dibuka (200)."
+  },
+  {
+   "judul": "Wizard Zines - Networking! ACK! (zine gratis)",
+   "url": "https://wizardzines.com/zines/networking/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "lisensi": "hak cipta pembuat; tidak ada lisensi terbuka yang dinyatakan di situs",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "fondasi",
+    "transport",
+    "aplikasi"
+   ],
+   "tahap": [],
+   "catatan": "Zine bergambar gratis tentang dasar jaringan (DNS, TCP, HTTP), pas untuk pemula.",
+   "bukti_lisensi": "Halaman depan wizardzines.com menyebut zine bersampul hitam-putih gratis tetapi tidak menyatakan lisensi pakai ulang; halaman zine dibuka (200)."
+  },
+  {
+   "judul": "Practical Networking - The Truth about the OSI Model",
+   "url": "https://www.practicalnetworking.net/stand-alone/the-truth-about-the-osi-model/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "lisensi": "Copyright © Practical Networking .net 2015 - 2024",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "fondasi"
+   ],
+   "tahap": [],
+   "catatan": "Meluruskan kesalahpahaman model OSI vs TCP/IP, bagus di tahap awal.",
+   "bukti_lisensi": "Footer situs memuat teks hak cipta di atas; halaman dibuka (200); situs aktif dengan video terbaru 2026-10-05."
+  },
+  {
+   "judul": "ipSpace.net Blog (Ivan Pepelnjak)",
+   "url": "https://blog.ipspace.net/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "lisensi": "Copyright 2006 - 2026 ipSpace.net AG",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "desain",
+    "otomasi",
+    "datacenter",
+    "routing"
+   ],
+   "tahap": [],
+   "catatan": "Blog praktisi dengan artikel terbaru (Oktober 2026) tentang SRv6, otomasi dan desain data center, untuk tahap lanjut.",
+   "bukti_lisensi": "Halaman dibuka; footer memuat 'Copyright 2006 - 2026 ipSpace.net AG', tidak ada lisensi terbuka. Kanal YouTube ipSpace ditolak karena tidak terverifikasi."
+  },
+  {
+   "judul": "ipSpace.net - Technology Series (kumpulan seri artikel)",
+   "url": "https://blog.ipspace.net/series/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "lisensi": "Copyright 2006 - 2026 ipSpace.net AG",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "desain",
+    "otomasi",
+    "datacenter",
+    "routing",
+    "cloud"
+   ],
+   "tahap": [],
+   "catatan": "Seri artikel tematik (BGP, otomasi, cloud, data center) yang tersusun sebagai jalur belajar mandiri.",
+   "bukti_lisensi": "Halaman dibuka dari tautan 'technology resources' pada blog.ipspace.net; footer hak cipta ipSpace.net AG."
+  },
+  {
+   "judul": "Packet Pushers - Heavy Networking (podcast)",
+   "url": "https://packetpushers.net/podcasts/heavy-networking/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "lisensi": "hak cipta pembuat",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "karier",
+    "desain",
+    "provider"
+   ],
+   "tahap": [],
+   "catatan": "Podcast praktisi tentang topik jaringan terkini, cocok untuk wawasan karier dan tren di tahap lanjut.",
+   "bukti_lisensi": "Halaman dibuka (200); situs packetpushers.net menyatakan konten gratis tanpa pendaftaran, tetapi tanpa lisensi terbuka."
+  },
+  {
+   "judul": "NANOG - kanal resmi (rekaman presentasi konferensi)",
+   "url": "https://www.youtube.com/@TeamNANOG",
+   "jenis": "video",
+   "bahasa": "en",
+   "lisensi": "hak cipta pembuat",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "provider",
+    "routing",
+    "desain",
+    "standar"
+   ],
+   "tahap": [],
+   "catatan": "Rekaman presentasi konferensi operator jaringan (unggahan terbaru Juni 2026) untuk tahap lanjut tentang praktik operasi internet.",
+   "bukti_lisensi": "Kanal 'NANOG - YouTube' dibuka; deskripsi resminya menyebut 'North American Network Operators' Group' dan menautkan nanog.org; feed aktif (2026-06-12). nanog.org sendiri tidak bisa dibuka (HTTP 402). Hak cipta pembuat."
+  }
+ ]
+}

@@ -1,0 +1,3166 @@
+{
+ "sumber": {
+  "kunci": "fpb",
+  "nama": "free-programming-books",
+  "pemilik": "EbookFoundation",
+  "repo": "https://github.com/EbookFoundation/free-programming-books",
+  "lisensi": "CC BY 4.0",
+  "boleh_salin": true,
+  "atribusi": "Daftar dari free-programming-books oleh EbookFoundation dan kontributornya, CC BY 4.0. Disaring ke bagian jaringan, Linux, keamanan, dan cloud; dikelompokkan ulang.",
+  "commit": "07fdc1d"
+ },
+ "entri": [
+  {
+   "id": "fpb-cbd4c529",
+   "judul": "An Introduction to Computer Networks",
+   "url": "https://intronetworks.cs.luc.edu",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "fondasi"
+   ],
+   "catatan": "(HTML, PDF, Kindle)"
+  },
+  {
+   "id": "fpb-ec8db8ac",
+   "judul": "Beej's Guide to Network Programming - Using Internet Sockets",
+   "url": "https://beej.us/guide/bgnet/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "fondasi",
+    "pemrograman-jaringan"
+   ],
+   "catatan": "Brian \"Beej Jorgensen\" Hall (HTML, PDF)"
+  },
+  {
+   "id": "fpb-6bc23c3e",
+   "judul": "Bits, Signals, and Packets: An Introduction to Digital Communications and Networks",
+   "url": "https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-02-introduction-to-eecs-ii-digital-communication-systems-fall-2012/readings/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "fondasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-c81b2ef2",
+   "judul": "Code Connected vol.1",
+   "url": "https://hintjens.wdfiles.com/local--files/main%3Afiles/cc1pe.pdf",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "fondasi"
+   ],
+   "catatan": "(PDF) (book on ZeroMQ)"
+  },
+  {
+   "id": "fpb-01d5de8d",
+   "judul": "Computer Networking : Principles, Protocols and Practice",
+   "url": "https://www.computer-networking.info",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "fondasi"
+   ],
+   "catatan": "(HTML, ePub, PDF, Kindle)"
+  },
+  {
+   "id": "fpb-f35f34df",
+   "judul": "Computer Networks: A Systems Approach",
+   "url": "https://book.systemsapproach.org",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "fondasi"
+   ],
+   "catatan": "Larry Peterson, Bruce Davie (HTML, epub, mobi, PDF)"
+  },
+  {
+   "id": "fpb-ed9113ba",
+   "judul": "High-Performance Browser Networking",
+   "url": "https://hpbn.co",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "fondasi"
+   ],
+   "catatan": "Ilya Grigorik"
+  },
+  {
+   "id": "fpb-b10a4a49",
+   "judul": "How HTTPS Works",
+   "url": "https://howhttps.works",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "fondasi",
+    "aplikasi",
+    "keamanan"
+   ],
+   "catatan": "DNSimple"
+  },
+  {
+   "id": "fpb-bd62e431",
+   "judul": "HTTP Succinctly, Syncfusion",
+   "url": "https://www.syncfusion.com/resources/techportal/ebooks/http",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "fondasi",
+    "aplikasi"
+   ],
+   "catatan": "(PDF, Kindle) (email address requested, not required)"
+  },
+  {
+   "id": "fpb-6bd927fd",
+   "judul": "HTTP2 Explained",
+   "url": "https://daniel.haxx.se/http2/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "fondasi"
+   ],
+   "catatan": "Daniel Stenberg"
+  },
+  {
+   "id": "fpb-ed5cd084",
+   "judul": "Introduction to HTTP",
+   "url": "https://launchschool.com/books/http",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "fondasi",
+    "aplikasi"
+   ],
+   "catatan": "Launch School"
+  },
+  {
+   "id": "fpb-251d82a8",
+   "judul": "IPv6 for IPv4 Experts",
+   "url": "https://sites.google.com/site/yartikhiy/home/ipv6book",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "fondasi",
+    "ipv6"
+   ],
+   "catatan": "Yar Tikhiy (PDF)"
+  },
+  {
+   "id": "fpb-44c9d417",
+   "judul": "Linux IP Stacks Commentary",
+   "url": "https://www.satchell.net/ipstacks/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "fondasi",
+    "linux"
+   ],
+   "catatan": "Stephen Satchell, H. B. J. Clifford (HTML) (in process)"
+  },
+  {
+   "id": "fpb-ddce5a44",
+   "judul": "Linux Networking",
+   "url": "https://linux-training.be/linuxnet.pdf",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "fondasi",
+    "linux"
+   ],
+   "catatan": "Paul Cobbaut (PDF)"
+  },
+  {
+   "id": "fpb-39fc95ad",
+   "judul": "Mininet Walkthrough",
+   "url": "https://mininet.org/walkthrough/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "fondasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-50d9b332",
+   "judul": "Networking! ACK!",
+   "url": "https://wizardzines.com/zines/networking/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "fondasi"
+   ],
+   "catatan": "Julia Evans (PDF)"
+  },
+  {
+   "id": "fpb-4434e6e0",
+   "judul": "Securing Wireless Networks for the Home User Guide",
+   "url": "https://mohamedation.com/securing-wifi/en/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "fondasi",
+    "wireless"
+   ],
+   "catatan": "Mohamed Adel (HTML)"
+  },
+  {
+   "id": "fpb-c25bf367",
+   "judul": "The TCP/IP Guide",
+   "url": "http://www.tcpipguide.com/free/t_toc.htm",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "fondasi",
+    "transport"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-c1547fd5",
+   "judul": "Understanding IP Addressing: Everything you ever wanted to know",
+   "url": "http://pages.di.unipi.it/ricci/501302.pdf",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "fondasi"
+   ],
+   "catatan": "(PDF)"
+  },
+  {
+   "id": "fpb-fa226e70",
+   "judul": "A Graduate Course in Applied Cryptography",
+   "url": "https://toc.cryptobook.us",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-255ce8aa",
+   "judul": "Crypto 101 - Crypto for everyone",
+   "url": "https://www.crypto101.io",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-f8a9dad1",
+   "judul": "Cryptography",
+   "url": "https://en.wikibooks.org/wiki/Cryptography",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Wikibooks (HTML) (in process)"
+  },
+  {
+   "id": "fpb-5a1eb6aa",
+   "judul": "CryptoParty Handbook",
+   "url": "https://unglue.it/work/141611/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-879fdd95",
+   "judul": "Fuzzing Book",
+   "url": "https://www.fuzzingbook.org",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Andreas Zeller, Rahul Gopinath, Marcel Böhme, Gordon Fraser, Christian Holler (HTML)"
+  },
+  {
+   "id": "fpb-1d8625b9",
+   "judul": "Gray Hat Hacking: The Ethical Hacker's Handbook",
+   "url": "https://pages.cs.wisc.edu/~ace/media/gray-hat-hacking.pdf",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Allen Harper, Jonathan Ness, Chris Eagle, Shon Harris, Gideon Lenkey, Terron Williams (PDF)"
+  },
+  {
+   "id": "fpb-2b982a40",
+   "judul": "Handbook of Applied Cryptography",
+   "url": "https://cacr.uwaterloo.ca/hac/index.html",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-276c7440",
+   "judul": "How to deal with Passwords",
+   "url": "https://github.com/MHM5000/pass",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-bc996b35",
+   "judul": "Information Security Management",
+   "url": "https://www.infosecuritybook.com",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Marcos Sêmola (PDF)"
+  },
+  {
+   "id": "fpb-6b658770",
+   "judul": "Intrusion Detection Systems with Snort",
+   "url": "https://ptgmedia.pearsoncmg.com/images/0131407333/downloads/0131407333.pdf",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "(PDF)"
+  },
+  {
+   "id": "fpb-ae8830be",
+   "judul": "Modern Cryptography Volume 1: A Classical Introduction",
+   "url": "https://link.springer.com/book/10.1007/978-981-19-0920-7",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Zhiyong Zheng, Kun Tian, Fengxia Liu"
+  },
+  {
+   "id": "fpb-e0d29c74",
+   "judul": "Modern Cryptography Volume 2: A Classical Introduction",
+   "url": "https://link.springer.com/book/10.1007/978-981-19-7644-5",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Zhiyong Zheng, Kun Tian, Fengxia Liu"
+  },
+  {
+   "id": "fpb-ee3fbad9",
+   "judul": "Network Security",
+   "url": "https://www.open.edu/openlearn/digital-computing/network-security/altformat-printable",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "OpenLearn (PDF)"
+  },
+  {
+   "id": "fpb-36a4f34a",
+   "judul": "OpenSSL Cookbook",
+   "url": "https://www.feistyduck.com/library/openssl-cookbook/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-c97e80a4",
+   "judul": "OWASP Mobile Security Testing Guide",
+   "url": "https://mobile-security.gitbook.io/mobile-security-testing-guide/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Bernhard Mueller et al."
+  },
+  {
+   "id": "fpb-f28cff3b",
+   "judul": "OWASP Testing Guide 4.2",
+   "url": "https://owasp.org/www-project-web-security-testing-guide/v42/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "The OWASP® Foundation (HTML, PDF)"
+  },
+  {
+   "id": "fpb-70300fac",
+   "judul": "OWASP Top 10 for .NET Developers",
+   "url": "https://www.troyhunt.com/2011/12/free-ebook-owasp-top-10-for-net.html",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-817ebd48",
+   "judul": "Practical Cryptography for Developer",
+   "url": "https://cryptobook.nakov.com",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Svetlin Nakov (GitBook) (in process)"
+  },
+  {
+   "id": "fpb-79a64d61",
+   "judul": "Programming Differential Privacy",
+   "url": "https://programming-dp.com",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Joseph Near, Chiké Abuah (HTML, PDF)"
+  },
+  {
+   "id": "fpb-ddcb43c6",
+   "judul": "SecOps Bit By Bit: Roadmap for First-Time CTOs and Startup Founders",
+   "url": "https://leanpub.com/secops-bit-by-bit",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Alex Yarotsky (PDF) (Leanpub account or valid email requested)"
+  },
+  {
+   "id": "fpb-dc30713f",
+   "judul": "Security Engineering",
+   "url": "https://www.cl.cam.ac.uk/~rja14/book.html",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-a8b2b684",
+   "judul": "Security Essentials",
+   "url": "https://learning.lpi.org/en/learning-materials/020-100/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "by Linux Professional Institute (PDF)"
+  },
+  {
+   "id": "fpb-db5034cb",
+   "judul": "The Joy of Cryptography (2021)",
+   "url": "https://joyofcryptography.com/pdf/book.pdf",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Mike Rosulek (PDF)"
+  },
+  {
+   "id": "fpb-3778b8fd",
+   "judul": "The MoonMath Manual to zk-SNARKs",
+   "url": "https://leastauthority.com/community-matters/moonmath-manual/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Least Authority"
+  },
+  {
+   "id": "fpb-f934e074",
+   "judul": "The SELINUX Coloring Book",
+   "url": "https://github.com/mairin/selinux-coloring-book",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Daniel J Walsh, Máirín Duffy (PDF) (CC BY-SA)"
+  },
+  {
+   "id": "fpb-ff105d59",
+   "judul": "The SELinux Notebook",
+   "url": "https://github.com/SELinuxProject/selinux-notebook",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Richard Haines, Paul Moore, SELinux Community (HTML, PDF, EPUB, azw3) (GFDL)"
+  },
+  {
+   "id": "fpb-9733e1c3",
+   "judul": "AWS Well-Architected Framework",
+   "url": "https://docs.aws.amazon.com/wellarchitected/latest/framework",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "(PDF, HTML)"
+  },
+  {
+   "id": "fpb-e855b4c8",
+   "judul": "Azure for Architects, Third Edition",
+   "url": "https://azure.microsoft.com/en-us/resources/azure-for-architects/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "(PDF) (email address or account required)"
+  },
+  {
+   "id": "fpb-8e7a93a9",
+   "judul": "Azure Functions Succinctly, Syncfusion",
+   "url": "https://www.syncfusion.com/ebooks/azure-functions-succinctly",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "(PDF, Kindle) (email address requested, not required)"
+  },
+  {
+   "id": "fpb-38867c93",
+   "judul": "Building Serverless Applications with Google Cloud Run",
+   "url": "https://www.cockroachlabs.com/guides/oreilly-building-serverless-applications-with-google-cloud-run/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Wietse Venema (PDF) (email address requested, not required)"
+  },
+  {
+   "id": "fpb-9d245a2d",
+   "judul": "Cloud Computing for Science and Engineering",
+   "url": "https://cloud4scieng.org/chapters/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Ian Foster, Dennis B. Gannon (in process)"
+  },
+  {
+   "id": "fpb-a292f139",
+   "judul": "Cloud Design Patterns",
+   "url": "https://docs.microsoft.com/en-us/azure/architecture/patterns/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-194c35dd",
+   "judul": "Designing Distributed Systems",
+   "url": "https://azure.microsoft.com/en-us/resources/designing-distributed-systems/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "(account required)"
+  },
+  {
+   "id": "fpb-f676b0ab",
+   "judul": "Distributed Systems 4th edition",
+   "url": "https://www.distributed-systems.net/index.php/books/ds4/ds4-ebook/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Maarten van Steen, Andrew S. Tanenbaum (email address required)"
+  },
+  {
+   "id": "fpb-fa409cae",
+   "judul": "How to optimize storage costs using Amazon S3",
+   "url": "https://aws.amazon.com/s3/cloud-storage-cost-optimization-ebook/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "AWS (PDF)"
+  },
+  {
+   "id": "fpb-771e75fa",
+   "judul": "Kubernetes Hardening Guidance",
+   "url": "https://media.defense.gov/2022/Aug/29/2003066362/-1/-1/0/CTR_KUBERNETES_HARDENING_GUIDANCE_1.2_20220829.PDF",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "cloud",
+    "container"
+   ],
+   "catatan": "NSA, CISA (PDF)"
+  },
+  {
+   "id": "fpb-30896287",
+   "judul": "Learn Azure in a Month of Lunches",
+   "url": "https://clouddamcdnprodep.azureedge.net/gdc/2014519/original",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Iain Foulds (PDF)"
+  },
+  {
+   "id": "fpb-55d9fe17",
+   "judul": "Monitoring Modern Infrastructure",
+   "url": "https://www.datadoghq.com/ebook/monitoring-modern-infrastructure/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "(account required)"
+  },
+  {
+   "id": "fpb-37c6c096",
+   "judul": "Multi-tenant Applications for the Cloud, 3rd Edition",
+   "url": "https://www.microsoft.com/en-us/download/details.aspx?id=29263",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-250de97b",
+   "judul": "Openstack CERN Admin guide",
+   "url": "https://clouddocs.web.cern.ch/index.html",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-32197fc9",
+   "judul": "OpenStack Operations Guide",
+   "url": "https://docs.openstack.org/ops-guide/index.html",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-5bf87d54",
+   "judul": "Streamline microservice management with Istio Service Mesh",
+   "url": "https://developers.redhat.com/books/introducing-istio-service-mesh-microservices/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "(account required)"
+  },
+  {
+   "id": "fpb-fa33b5e1",
+   "judul": "The Developer’s Guide to Azure",
+   "url": "https://azure.microsoft.com/en-us/campaigns/developer-guide/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-acf1126d",
+   "judul": "CI/CD for Monorepos: Effectively building, testing, and deploying code with monorepos",
+   "url": "https://github.com/semaphoreci/book-monorepo-cicd",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Pablo Tomas Fernandez Zavalia, Marko Anastasov, SemaphoreCI (PDF, EPUB, Kindle)"
+  },
+  {
+   "id": "fpb-d7693555",
+   "judul": "CI/CD with Docker and Kubernetes Book",
+   "url": "https://github.com/semaphoreci/book-cicd-docker-kubernetes",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Marko Anastasov, Jérôme Petazzoni, Pablo Tom F. Zavalia, SemaphoreCI (PDF, EPUB, Kindle)"
+  },
+  {
+   "id": "fpb-9c6f8a09",
+   "judul": "Docker Jumpstart",
+   "url": "https://odewahn.github.io/docker-jumpstart/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Andrew Odewahn"
+  },
+  {
+   "id": "fpb-21d93c9a",
+   "judul": "Docker Tutorial",
+   "url": "https://people.irisa.fr/Anthony.Baire/docker-tutorial.pdf",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Anthony Baire (PDF) (CC BY-NC-ND)"
+  },
+  {
+   "id": "fpb-6e8d9c8e",
+   "judul": "Docker Tutorial",
+   "url": "https://www.tutorialspoint.com/docker/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Tutorials Point (HTML, PDF)"
+  },
+  {
+   "id": "fpb-05a1d5c8",
+   "judul": "Dotnet Microservices Architecture for Containerized NET Applications",
+   "url": "https://aka.ms/microservicesebook",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Cesar de la Torre, Bill Wagner, Mike Rousos (PDF)"
+  },
+  {
+   "id": "fpb-716ca24b",
+   "judul": "Kubernetes Deployment & Security Patterns",
+   "url": "https://resources.linuxfoundation.org/LF+Projects/CNCF/TheNewStack_Book2_KubernetesDeploymentAndSecurityPatterns.pdf",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Alex Williams (PDF)"
+  },
+  {
+   "id": "fpb-29e41d03",
+   "judul": "Kubernetes for Full-Stack Developers",
+   "url": "https://www.digitalocean.com/community/books/digitalocean-ebook-kubernetes-for-full-stack-developers",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Jamon Camisso, Hanif Jetha, Katherine Juell (PDF, EPUB)"
+  },
+  {
+   "id": "fpb-a10afca4",
+   "judul": "Uncomplicating Kubernetes",
+   "url": "https://livro.descomplicandokubernetes.com.br/en/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Jeferson Fernando"
+  },
+  {
+   "id": "fpb-7f0c36d4",
+   "judul": "A short introduction to operating systems (2001)",
+   "url": "https://markburgess.org/os/os.pdf",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Mark Burgess (PDF)"
+  },
+  {
+   "id": "fpb-d1ee4e6a",
+   "judul": "Computer Science from the Bottom Up",
+   "url": "https://www.bottomupcs.com",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Ian Wienand (PDF)"
+  },
+  {
+   "id": "fpb-5b674a55",
+   "judul": "Flexible Operating System Internals: The Design and Implementation of the Anykernel and Rump Kernels",
+   "url": "https://aaltodoc.aalto.fi/handle/123456789/6318",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Antti Kantee (PDF)"
+  },
+  {
+   "id": "fpb-1193d699",
+   "judul": "How to Make a Computer Operating System",
+   "url": "https://github.com/SamyPesse/How-to-Make-a-Computer-Operating-System",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Samy Pesse (in process)"
+  },
+  {
+   "id": "fpb-126b5e0a",
+   "judul": "How to write a simple operating system in assembly language",
+   "url": "https://mikeos.sourceforge.net/write-your-own-os.html",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Mike Saunders (HTML)"
+  },
+  {
+   "id": "fpb-b94c2526",
+   "judul": "Linux Kernel in a Nutshell",
+   "url": "http://www.linuxtopia.org/online_books/linux_kernel/kernel_configuration",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Greg Kroah-Hartman (HTML)"
+  },
+  {
+   "id": "fpb-be07a728",
+   "judul": "Making Servers Work: A Practical Guide to Linux System Administration",
+   "url": "https://www.digitalocean.com/community/books/sysadmin-ebook-making-servers-work",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Jamon Camisso (PDF, EPUB)"
+  },
+  {
+   "id": "fpb-3d4373a1",
+   "judul": "Operating Systems: From 0 to 1",
+   "url": "https://github.com/tuhdo/os01/releases/tag/0.0.1",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Tu, Ho Doang (PDF) (in process)"
+  },
+  {
+   "id": "fpb-6ad8db52",
+   "judul": "Operating Systems: Three Easy Pieces",
+   "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Remzi H. Arpaci-Dusseau, Andrea C. Arpaci-Dusseau (PDF)"
+  },
+  {
+   "id": "fpb-1a1498f1",
+   "judul": "Practical File System Design: The Be File System",
+   "url": "https://www.nobius.org/~dbg/practical-file-system-design.pdf",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Dominic Giampaolo (PDF)"
+  },
+  {
+   "id": "fpb-5b81f180",
+   "judul": "Project Oberon: The Design of an Operating System, a Compiler, and a Computer",
+   "url": "https://people.inf.ethz.ch/wirth/ProjectOberon/index.html",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Niklaus Wirth, Jürg Gutknecht (PDF)"
+  },
+  {
+   "id": "fpb-3c21936e",
+   "judul": "The Art of Unix Programming",
+   "url": "http://catb.org/esr/writings/taoup/html/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Eric S. Raymond (HTML)"
+  },
+  {
+   "id": "fpb-ca6da340",
+   "judul": "The Little Book About OS Development",
+   "url": "https://littleosbook.github.io",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Erik Helin, Adam Renberg - (PDF, HTML)"
+  },
+  {
+   "id": "fpb-cbeea65b",
+   "judul": "The Little Book of Semaphores",
+   "url": "https://greenteapress.com/semaphores/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Allen B. Downey (PDF) (CC BY-NC-SA)"
+  },
+  {
+   "id": "fpb-c3df425b",
+   "judul": "Think OS: A Brief Introduction to Operating Systems",
+   "url": "https://www.greenteapress.com/thinkos/index.html",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Allen B. Downey (PDF)"
+  },
+  {
+   "id": "fpb-722469e3",
+   "judul": "UNIX Application and System Programming, lecture notes",
+   "url": "http://www.compsci.hunter.cuny.edu/~sweiss/course_materials/unix_lecture_notes.php",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Stewart Weiss (PDF) (CC BY-SA)"
+  },
+  {
+   "id": "fpb-51b5f08c",
+   "judul": "Writing a Simple Operating System from Scratch",
+   "url": "https://www.cs.bham.ac.uk/~exr/lectures/opsys/10_11/lectures/os-dev.pdf",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Nick Blundell (PDF)"
+  },
+  {
+   "id": "fpb-24bea642",
+   "judul": "Xv6, a simple Unix-like teaching operating system",
+   "url": "https://pdos.csail.mit.edu/6.828/2022/xv6.html",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Russ Cox, Frans Kaashoek and Robert Morris (PDF, HTML)"
+  },
+  {
+   "id": "fpb-34cc90e0",
+   "judul": "Ad Hoc Data Analysis From The Unix Command Line",
+   "url": "https://en.wikibooks.org/wiki/Ad_Hoc_Data_Analysis_From_The_Unix_Command_Line",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Wikibooks"
+  },
+  {
+   "id": "fpb-e7828510",
+   "judul": "Advanced Linux Programming",
+   "url": "https://sourcerytools.github.io/advancedlinuxprogramming/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "(PDF)"
+  },
+  {
+   "id": "fpb-fea58783",
+   "judul": "Advanced Linux :The Linux Shell And Toolkit",
+   "url": "https://www.tuxcademy.org/download/en/grd2/grd2-en-manual.pdf",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Tobias Elsner, Anselm Lingnau (PDF) (CC BY-SA)"
+  },
+  {
+   "id": "fpb-4d867811",
+   "judul": "Adventures with the Linux Command Line",
+   "url": "http://linuxcommand.org/lc3_adventures.php",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "William E. Shotts Jr."
+  },
+  {
+   "id": "fpb-c1805647",
+   "judul": "Automated Linux From Scratch",
+   "url": "http://www.linuxfromscratch.org/alfs/download.html",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-c9cbc621",
+   "judul": "Getting Started with Ubuntu",
+   "url": "http://ubuntu-manual.org",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-66ca640f",
+   "judul": "GNU Autoconf, Automake and Libtool",
+   "url": "http://www.sourceware.org/autobook/download.html",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-23524d76",
+   "judul": "Hardened Linux From Scratch",
+   "url": "http://www.linuxfromscratch.org/hlfs/download.html",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-6ac88c39",
+   "judul": "Introduction to Linux - A Hands on Guide",
+   "url": "https://tldp.org/LDP/intro-linux/intro-linux.pdf",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Machtelt Garrels (PDF)"
+  },
+  {
+   "id": "fpb-f7ed0ec7",
+   "judul": "Kali Linux 2018: Assuring Security by Penetration Testing, Fourth Edition",
+   "url": "https://www.packtpub.com/free-ebooks/kali-linux-2018-assuring-security-penetration-testing-fourth-edition",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Shiva V. N Parasram, Alex Samm, Damian Boodoo, Gerard Johansen, Lee Allen, Tedi Heriyanto, Shakeel Ali (Packt account required)"
+  },
+  {
+   "id": "fpb-90944d81",
+   "judul": "Kali Linux: Professional Penetration-Testing Distribution",
+   "url": "http://docs.kali.org",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-f60fa3cb",
+   "judul": "Learning Debian GNU/Linux",
+   "url": "http://www.oreilly.com/openbook/debian/book/index.html",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-b522c2fe",
+   "judul": "Linux 101 Hacks",
+   "url": "http://thegeekstuff.s3.amazonaws.com/files/linux-101-hacks.zip",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Ramesh Natarajan (PDF)"
+  },
+  {
+   "id": "fpb-3e495ae1",
+   "judul": "Linux Administration II : Linux as a Network Client",
+   "url": "https://www.tuxcademy.org/download/en/adm2/adm2-en-manual.pdf",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Anselm Lingnau, Tobias Elsner (PDF) (CC BY-SA)"
+  },
+  {
+   "id": "fpb-2ba60fb3",
+   "judul": "Linux Advanced Routing & Traffic Control HOWTO",
+   "url": "http://lartc.org",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux",
+    "routing"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-cb663a8c",
+   "judul": "Linux Appliance Design: A Hands-On Guide to Building Linux Appliances",
+   "url": "http://librta.org/book.html",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Bob Smith, John Hardin, Graham Phillips, Bill Pierce (PDF, EPUB, MOBI)"
+  },
+  {
+   "id": "fpb-c98c1887",
+   "judul": "Linux commands Notes for Professionals",
+   "url": "https://goalkicker.com/LinuxBook/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Compiled from StackOverflow documentation (PDF)"
+  },
+  {
+   "id": "fpb-9216e115",
+   "judul": "Linux Device Drivers, Third Edition",
+   "url": "http://lwn.net/Kernel/LDD3/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Jonathan Corbet, Alessandro Rubini, Greg Kroah-Hartman"
+  },
+  {
+   "id": "fpb-82a7e239",
+   "judul": "Linux Essentials",
+   "url": "https://learning.lpi.org/en/learning-materials/010-160/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Linux Professional Institute (PDF)"
+  },
+  {
+   "id": "fpb-1cc9e697",
+   "judul": "Linux From Scratch",
+   "url": "https://www.linuxfromscratch.org/lfs/view/stable/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Gerard Beekmans, Bruce Dubbs, Ken Moffat, Pierre Labastie, et al."
+  },
+  {
+   "id": "fpb-4d7a0a6f",
+   "judul": "Linux Fundamentals",
+   "url": "http://linux-training.be/linuxfun.pdf",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Paul Cobbaut (PDF)"
+  },
+  {
+   "id": "fpb-4974e53c",
+   "judul": "Linux Inside",
+   "url": "https://0xax.gitbooks.io/linux-insides/content/index.html",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-e7369ec2",
+   "judul": "Linux Kernel in a Nutshell",
+   "url": "http://www.kroah.com/lkn/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-8cf2e662",
+   "judul": "Linux Newbie Administrator Guide",
+   "url": "http://lnag.sourceforge.net",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-79dd278b",
+   "judul": "Linux Notes for Professionals",
+   "url": "https://books.goalkicker.com/LinuxBook",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Compiled from StackOverflow Documentation (PDF)"
+  },
+  {
+   "id": "fpb-3d26c72e",
+   "judul": "Linux Security",
+   "url": "https://linux-training.be/linuxsec.pdf",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Paul Cobbaut (PDF)"
+  },
+  {
+   "id": "fpb-fcfe7d5e",
+   "judul": "Linux Servers",
+   "url": "https://linux-training.be/linuxsrv.pdf",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Paul Cobbaut (PDF)"
+  },
+  {
+   "id": "fpb-fe5ce397",
+   "judul": "Linux Storage",
+   "url": "https://linux-training.be/linuxsto.pdf",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Paul Cobbaut (PDF)"
+  },
+  {
+   "id": "fpb-7def1849",
+   "judul": "Linux Succinctly, Syncfusion",
+   "url": "https://www.syncfusion.com/resources/techportal/ebooks/linux",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "(PDF, Kindle) (email address requested, not required)"
+  },
+  {
+   "id": "fpb-3bf1b6d2",
+   "judul": "Linux System Administration",
+   "url": "https://linux-training.be/linuxsys.pdf",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Paul Cobbaut (PDF)"
+  },
+  {
+   "id": "fpb-03f24729",
+   "judul": "Secure Programming HOWTO - Creating Secure Software",
+   "url": "http://www.dwheeler.com/secure-programs/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "D. A. Wheeler (HTML, PDF)"
+  },
+  {
+   "id": "fpb-a92ff196",
+   "judul": "Ten Steps to Linux Survival: Bash for Windows People",
+   "url": "http://dullroar.com/book/TenStepsToLinuxSurvival.html",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Jim Lehmer"
+  },
+  {
+   "id": "fpb-6583c42c",
+   "judul": "The Debian Administrator's Handbook",
+   "url": "https://debian-handbook.info",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-8e1687b4",
+   "judul": "The Linux Command Line",
+   "url": "http://linuxcommand.org/tlcl.php",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "(PDF)"
+  },
+  {
+   "id": "fpb-9756dfab",
+   "judul": "The Linux Commands Handbook",
+   "url": "https://flaviocopes.com/page/linux-commands-handbook/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Flavio Copes (PDF, EPUB, Kindle) (email address requested)"
+  },
+  {
+   "id": "fpb-49c36f7c",
+   "judul": "The Linux Development Platform",
+   "url": "http://ptgmedia.pearsoncmg.com/imprint_downloads/informit/perens/0130091154.pdf",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "(PDF)"
+  },
+  {
+   "id": "fpb-b95c9a4d",
+   "judul": "The Linux Kernel Module Programming Guide",
+   "url": "https://sysprog21.github.io/lkmpg/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-d56eb537",
+   "judul": "The Linux System Administrator's Guide",
+   "url": "http://www.tldp.org/LDP/sag/html/index.html",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-26165444",
+   "judul": "Ubuntu Pocket Guide and Reference",
+   "url": "http://www.ubuntupocketguide.com/index_main.html",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-06e00512",
+   "judul": "Ubuntu Server Guide",
+   "url": "https://help.ubuntu.com/20.04/serverguide/serverguide.pdf",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "(PDF)"
+  },
+  {
+   "id": "fpb-a846fbc6",
+   "judul": "Understanding the Linux Virtual Memory Manager",
+   "url": "https://www.kernel.org/doc/gorman/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Mel Gorman (HTML, PDF)"
+  },
+  {
+   "id": "fpb-fe9a911a",
+   "judul": "UNIX Systems Programming for SVR4",
+   "url": "http://www.bitsinthewind.com/about-dac/publications/unix-systems-programming",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "David A. Curry"
+  },
+  {
+   "id": "fpb-27c67290",
+   "judul": "Upstart Intro, Cookbook and Best Practises",
+   "url": "http://upstart.ubuntu.com/cookbook/",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-97fd7761",
+   "judul": "What Every Programmer Should Know About Memory",
+   "url": "http://www.akkadia.org/drepper/cpumemory.pdf",
+   "jenis": "buku",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "(PDF)"
+  },
+  {
+   "id": "fpb-54fa03cb",
+   "judul": "CompTIA N10-008 Network+ Training Course",
+   "url": "https://www.youtube.com/playlist?list=PLG49S3nxzAnlCJiCrOYuRYb6cne864a7G",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "fondasi"
+   ],
+   "catatan": "Professor Messer"
+  },
+  {
+   "id": "fpb-ae2cca27",
+   "judul": "Computer Networking: A Top-Down Approach 8th edition",
+   "url": "http://gaia.cs.umass.edu/kurose_ross/online_lectures.htm",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "fondasi"
+   ],
+   "catatan": "Jim Kurose, Keith Ross"
+  },
+  {
+   "id": "fpb-84b24e38",
+   "judul": "Computer Networking Course",
+   "url": "https://www.youtube.com/watch?v=qiQR5rTSshw",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "fondasi"
+   ],
+   "catatan": "Brian Farrell (FreeCodeCamp.org)"
+  },
+  {
+   "id": "fpb-f18b02fe",
+   "judul": "Computer Networking Full Course - OSI Model Deep Dive with Real Life Examples",
+   "url": "https://www.youtube.com/watch?v=IPvYjXCsTg8",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "fondasi"
+   ],
+   "catatan": "Kunal Kushwaha"
+  },
+  {
+   "id": "fpb-0eb03717",
+   "judul": "Computer Networks 5e",
+   "url": "https://media.pearsoncmg.com/ph/streaming/esm/tanenbaum5e_videonotes/tanenbaum_videoNotes.html",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "fondasi"
+   ],
+   "catatan": "Andrew Tanenbaum, David Wetherall (Pearson)"
+  },
+  {
+   "id": "fpb-2c53c274",
+   "judul": "Free CCNA 200-301 // Complete Course // NetworkChuck 2023",
+   "url": "https://www.youtube.com/playlist?list=PLIhvC56v63IJVXv0GJcl9vO5Z6znCVb1P",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "fondasi",
+    "cisco"
+   ],
+   "catatan": "NetworkChuck"
+  },
+  {
+   "id": "fpb-67a2baba",
+   "judul": "Networking from Scratch",
+   "url": "https://networkingfromscratch.vercel.app",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "fondasi"
+   ],
+   "catatan": "Tanay Kumar"
+  },
+  {
+   "id": "fpb-ffffe9f5",
+   "judul": "@TJ_Null’s OSCP Prep",
+   "url": "https://youtube.com/playlist?list=PLidcsTyj9JXK-fnabFLVEvHinQ14Jy5tf",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "IppSec"
+  },
+  {
+   "id": "fpb-5ccb1c01",
+   "judul": "Computer Systems Security",
+   "url": "https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-858-computer-systems-security-fall-2014",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Nickolai Zeldovich (MIT OpenCourseWare)"
+  },
+  {
+   "id": "fpb-578b6361",
+   "judul": "CS50's Introduction to Cybersecurity",
+   "url": "https://cs50.harvard.edu/cybersecurity/",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "David J. Malan (OpenCourseWare)"
+  },
+  {
+   "id": "fpb-93f249c3",
+   "judul": "Ethical Hacking",
+   "url": "https://www.hacker101.com/videos",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Hacker101"
+  },
+  {
+   "id": "fpb-7052f10e",
+   "judul": "Ethical Hacking - Basics (Kali 2021)",
+   "url": "https://www.udemy.com/course/ethical-hacking-basics-kali-20211",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Arthur Salmon (Udemy)"
+  },
+  {
+   "id": "fpb-509e31c7",
+   "judul": "Ethical Hacking for beginners: Beginner to Advance",
+   "url": "https://www.udemy.com/course/ethical-hacking-for-beginners-beginner-to-advance",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "PaceIT Academy (Udemy)"
+  },
+  {
+   "id": "fpb-7e10c3ce",
+   "judul": "Ethical hacking with Hak5 devices",
+   "url": "https://www.udemy.com/course/ethical-hacking-with-hak5-devices",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "David Bombal (Udemy)"
+  },
+  {
+   "id": "fpb-72192a86",
+   "judul": "Foundations of Hacking and Pentesting Android Apps",
+   "url": "https://www.udemy.com/course/foundations-of-hacking-and-pentesting-android-apps",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Scott Cosentino (Udemy)"
+  },
+  {
+   "id": "fpb-853ddaeb",
+   "judul": "Free Security Awareness Training For Everyone",
+   "url": "https://ransomleak.com/learning/",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "RansomLeak"
+  },
+  {
+   "id": "fpb-713c4a89",
+   "judul": "Full Length Hacking Courses",
+   "url": "https://youtube.com/playlist?list=PLLKT__MCUeixqHJ1TRqrHsEd6_EdEvo47",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "The Cyber Mentor"
+  },
+  {
+   "id": "fpb-7fdf3b1e",
+   "judul": "Hacker Skills // OSINT (Information Gathering)",
+   "url": "https://www.youtube.com/playlist?list=PLIhvC56v63IJ9SYBtdDsNnORfTNFCXR8_",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "NetworkChuck"
+  },
+  {
+   "id": "fpb-464cadad",
+   "judul": "Introduction to Dark Web, Anonymity and Cryptocurrency",
+   "url": "https://www.udemy.com/course/introduction-to-dark-web-anonymity-and-cryptocurrency",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Rajneesh Gupta (Udemy)"
+  },
+  {
+   "id": "fpb-30e8507d",
+   "judul": "Introduction to Information Security",
+   "url": "https://www.udacity.com/course/intro-to-information-security--ud459",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Wenke Lee, Mustaque Ahamad, Catherine Gamboa (Udacity)"
+  },
+  {
+   "id": "fpb-1bce79e1",
+   "judul": "Learn Ethical Haacking From Scratch",
+   "url": "https://www.udemy.com/course/learn-ethical-haacking-from-scratch",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Uzma Aslam (Udemy)"
+  },
+  {
+   "id": "fpb-8f742ef6",
+   "judul": "Learn Ethical Hacking (CEH Journey)",
+   "url": "https://www.youtube.com/playlist?list=PLIhvC56v63IIJZRa3lzK6IeBQOH_VFjUQ",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "NetworkChuck"
+  },
+  {
+   "id": "fpb-949718e3",
+   "judul": "Linux for Hackers and Pentesters",
+   "url": "https://www.udemy.com/course/linux-for-hackers-and-pentesters",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "keamanan",
+    "linux"
+   ],
+   "catatan": "Rajneesh Gupta (Udemy)"
+  },
+  {
+   "id": "fpb-ee0937c8",
+   "judul": "Modern Binary Exploitation",
+   "url": "https://github.com/RPISEC/MBE",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "RPISEC"
+  },
+  {
+   "id": "fpb-460625db",
+   "judul": "MOOC Introduction to Cyber Security 2023",
+   "url": "https://cybersecuritybase.mooc.fi",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "University of Helsinki"
+  },
+  {
+   "id": "fpb-a87c5239",
+   "judul": "Nightmare",
+   "url": "https://guyinatuxedo.github.io/index.html",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "guyinatuxedo"
+  },
+  {
+   "id": "fpb-953b47fb",
+   "judul": "Professor Messer’s SY0-601 CompTIA Security+ Course",
+   "url": "https://www.professormesser.com/security-plus/sy0-601/sy0-601-video/sy0-601-comptia-security-plus-course/",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Professor Messer"
+  },
+  {
+   "id": "fpb-3254c4b8",
+   "judul": "Reverse Engineering For Everyone!",
+   "url": "https://0xinfection.github.io/reversing",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "mytechnotalent"
+  },
+  {
+   "id": "fpb-83cfb699",
+   "judul": "Reverse Engineering Lessons",
+   "url": "https://reverseengineering.vercel.app",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Reverse Engineering Academy"
+  },
+  {
+   "id": "fpb-4357c045",
+   "judul": "Stanford Cryptography I",
+   "url": "https://www.coursera.org/course/crypto",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Dan Boneh"
+  },
+  {
+   "id": "fpb-632ee799",
+   "judul": "Start Ethical Hacking with Parrot Security OS (Alt. to Kali)",
+   "url": "https://www.udemy.com/course/ethical-hacking-with-parrot-security-os",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "Seyed Farshid Miri (Udemy)"
+  },
+  {
+   "id": "fpb-55960796",
+   "judul": "The Complete Cyber Security & Hacking Course",
+   "url": "https://academy.ehacking.net/p/cyber-security-training-hacking-course",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "INSEC-TECHS (EH Academy)"
+  },
+  {
+   "id": "fpb-ed4a0444",
+   "judul": "Zero to Hero: A Practical Network Penetration Testing Course",
+   "url": "https://www.youtube.com/playlist?list=PLLKT__MCUeiwBa7d7F_vN1GUwz_2TmVQj",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "The Cyber Mentor"
+  },
+  {
+   "id": "fpb-d480bc7a",
+   "judul": "Fundamentals of Red Hat Enterprise Linux",
+   "url": "https://www.edx.org/course/fundamentals-of-red-hat-enterprise-linux",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Chris Caillouet (edX)"
+  },
+  {
+   "id": "fpb-42be5527",
+   "judul": "IIEC RISE 1.0 RHCSA8 and Python3",
+   "url": "https://www.youtube.com/playlist?list=PLAi9X1uG6jZ2b1mUmrUcc_aEoc8tfss8e",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Vimal Daga"
+  },
+  {
+   "id": "fpb-93286a52",
+   "judul": "Introduction To Linux",
+   "url": "https://www.edx.org/course/introduction-to-linux/",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "The Linux Foundation (edx)"
+  },
+  {
+   "id": "fpb-9316e80d",
+   "judul": "Introduction to Linux – Full Course for Beginners",
+   "url": "https://www.youtube.com/watch?v=sWbUDq4S6Y8",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Beau (freeCodeCamp.org)"
+  },
+  {
+   "id": "fpb-b045258a",
+   "judul": "Linux Administration Tutorial Videos",
+   "url": "https://www.youtube.com/playlist?list=PL9ooVrP1hQOH3SvcgkC4Qv2cyCebvs0Ik",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "edureka!"
+  },
+  {
+   "id": "fpb-8fb763f5",
+   "judul": "Linux Command Line",
+   "url": "https://www.udemy.com/course/command-line/",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Adam Eubankas (Udemy)"
+  },
+  {
+   "id": "fpb-e75a452e",
+   "judul": "Linux Command Line Tutorial For Beginners",
+   "url": "https://www.youtube.com/playlist?list=PLS1QulWo1RIb9WVQGJ_vh-RQusbZgO_As",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Programming Knowledge"
+  },
+  {
+   "id": "fpb-a017375a",
+   "judul": "Linux for Hackers (and everyone) // FREE Course for Beginners",
+   "url": "https://www.youtube.com/playlist?list=PLIhvC56v63IJIujb5cyE13oLuyORZpdkL",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "NetworkChuck"
+  },
+  {
+   "id": "fpb-6d587922",
+   "judul": "Linux Tutorial for Beginners - Learn Linux and the Bash Command Line",
+   "url": "https://ryanstutorials.net/linuxtutorial",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Ryan Chadwick"
+  },
+  {
+   "id": "fpb-aaa9010d",
+   "judul": "Linux Tutorials and Projects",
+   "url": "https://www.udemy.com/course/linux-tutorials/",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Jason Cannon (Udemy)"
+  },
+  {
+   "id": "fpb-a437eca3",
+   "judul": "LPIC 1 exam guide: Linux Professional Institute Certification Study Guide",
+   "url": "https://linux1st.com",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Jadi Mirmirani (HTML)"
+  },
+  {
+   "id": "fpb-41ef510f",
+   "judul": "LPIC 2 exam guide: Linux Professional Institute Certification Study Guide",
+   "url": "https://borosan.gitbook.io/lpic2-exam-guide",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Payam Borosan (HTML)"
+  },
+  {
+   "id": "fpb-3c198fa1",
+   "judul": "Red Hat Enterprise Linux Technical Overview",
+   "url": "https://www.udemy.com/course/red-hat-enterprise-linux-technical-overview/",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Red Hat Inc. (Udemy)"
+  },
+  {
+   "id": "fpb-e1a1c32a",
+   "judul": "The Linux Basics: Beginner to Sysadmin, Step by Step",
+   "url": "https://www.youtube.com/playlist?list=PLtK75qxsQaMLZSo7KL-PmiRarU7hrpnwK",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-88e4aab8",
+   "judul": "A Practical Introduction to Cloud Computing",
+   "url": "https://www.udemy.com/course/introduction-cloud-computing/",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Neil Anderson"
+  },
+  {
+   "id": "fpb-b3b33d45",
+   "judul": "Building AI-Powered Material Generation for Omniverse With DGX Cloud",
+   "url": "https://learn.nvidia.com/courses/course-detail?course_id=course-v1:DLI+S-OV-53+V1",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "NVIDIA Deep Learning Institute"
+  },
+  {
+   "id": "fpb-72d16f9d",
+   "judul": "Cloud Computing (CC)",
+   "url": "https://www.youtube.com/playlist?list=PLROvODCYkEM8xUk8R2T79KbZ7YfCXMbZS",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "OU Education"
+  },
+  {
+   "id": "fpb-bec2df0a",
+   "judul": "Cloud Computing and Development",
+   "url": "https://uaceit.com/courses/cloud-computing-and-development",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Ashwin Kumar Ramaswamy (UAceIt) (email address required)"
+  },
+  {
+   "id": "fpb-1876ca15",
+   "judul": "Cloud Computing Full Course In 11 Hours | Cloud Computing Tutorial For Beginners",
+   "url": "https://www.youtube.com/watch?v=2LaAJq1lB1Q",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Edureka!"
+  },
+  {
+   "id": "fpb-e6220117",
+   "judul": "Cloud Computing Tutorial For Beginners - 2023 Updated",
+   "url": "https://www.youtube.com/playlist?list=PLEiEAq2VkUUIJ3o1tehvtux0_Ynf42CBN",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Simplilearn"
+  },
+  {
+   "id": "fpb-38616bde",
+   "judul": "Introduction to Cloud",
+   "url": "https://cognitiveclass.ai/courses/introduction-to-cloud",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "CognitiveClass.ai"
+  },
+  {
+   "id": "fpb-ca1fde4b",
+   "judul": "NPTEL-CloudComputing",
+   "url": "https://www.youtube.com/playlist?list=PLShJJCRzJWxhz7SfG4hpaBD5bKOloWx9J",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Manish Narula"
+  },
+  {
+   "id": "fpb-9c0bd252",
+   "judul": "AWS Certification Training Videos",
+   "url": "https://www.youtube.com/playlist?list=PL9ooVrP1hQOFWxRJcGdCot7AgJu29SVV3",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Edureka!"
+  },
+  {
+   "id": "fpb-cd347c03",
+   "judul": "AWS Certified Cloud Practitioner Course (2020-2023)",
+   "url": "https://www.youtube.com/playlist?list=PLt1SIbA8guuvfvUDVLpJepmbnYpOfYCIB",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Stephane Maarek"
+  },
+  {
+   "id": "fpb-96b64b4a",
+   "judul": "AWS Certified Cloud Practitioner Course (CLF-C02)(2024)",
+   "url": "https://www.youtube.com/watch?v=NhDYbskXRgc",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Andrew Brown (FreeCodeCamp)"
+  },
+  {
+   "id": "fpb-d0c5105d",
+   "judul": "AWS Cloud Complete Bootcamp Course",
+   "url": "https://www.youtube.com/watch?v=zA8guDqfv40",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Andrew Brown (FreeCodeCamp)"
+  },
+  {
+   "id": "fpb-c707e8d4",
+   "judul": "AWS CloudOps Engineer Associate Certification Course",
+   "url": "https://www.youtube.com/watch?v=5JTBS09e7ew",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Andrew Brown (FreeCodeCamp)"
+  },
+  {
+   "id": "fpb-27177473",
+   "judul": "AWS Power Hour: Architecting",
+   "url": "https://pages.awscloud.com/traincert-twitch-power-hour-architecting.html?saa=sec&sec=prep",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "AWS"
+  },
+  {
+   "id": "fpb-c1529889",
+   "judul": "AWS Tutorial For Beginners",
+   "url": "https://www.youtube.com/playlist?list=PLEiEAq2VkUULlNtIFhEQHo8gacvme35rz",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Simplilearn"
+  },
+  {
+   "id": "fpb-60e60bdf",
+   "judul": "AWS Zero to Hero",
+   "url": "https://www.youtube.com/playlist?list=PLdpzxOOAlwvLNOxX0RfndiYSt1Le9azze",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Abhishek Veeramalla"
+  },
+  {
+   "id": "fpb-267b1fe9",
+   "judul": "Cloud Computing Basics with AWS",
+   "url": "https://trailhead.salesforce.com/content/learn/modules/aws-cloud",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Trailhead (Salesforce) (email address required)"
+  },
+  {
+   "id": "fpb-ee665e15",
+   "judul": "Deploying Spring Boot Applications With AWS ECS Fargate (Free Course)",
+   "url": "https://javatodev.com/deploying-spring-boot-applications-with-aws-ecs/",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Chinthaka Dinadasa (javatodev)"
+  },
+  {
+   "id": "fpb-714b1f25",
+   "judul": "How to Build AWS VPC Using Terraform – Step By Step",
+   "url": "https://javatodev.com/how-to-build-aws-vpc-using-terraform-step-by-step/",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "cloud",
+    "otomasi"
+   ],
+   "catatan": "Chinthaka Dinadasa (javatodev)"
+  },
+  {
+   "id": "fpb-74196a2b",
+   "judul": "Azure Administrator Certification",
+   "url": "https://www.youtube.com/watch?v=10PbGbTUSAg",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "freeCodeCamp"
+  },
+  {
+   "id": "fpb-b354efab",
+   "judul": "Azure Full Course",
+   "url": "https://www.youtube.com/live/Pb25WCwFHGQ",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Intellipaat"
+  },
+  {
+   "id": "fpb-2f2b5980",
+   "judul": "Azure Fundamentals",
+   "url": "https://www.youtube.com/watch?v=-pX5PjIYTJs",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Tech Tutorial with Piyush"
+  },
+  {
+   "id": "fpb-b6c1e301",
+   "judul": "Microsoft Azure Fundamentals",
+   "url": "https://www.youtube.com/playlist?list=PLGjZwEtPN7j-Q59JYso3L4_yoCjj2syrM",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Adam Marczak"
+  },
+  {
+   "id": "fpb-cac962c9",
+   "judul": "Microsoft Certified: Azure Fundamentals",
+   "url": "https://docs.microsoft.com/en-us/learn/certifications/azure-fundamentals/",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Microsoft"
+  },
+  {
+   "id": "fpb-6a169647",
+   "judul": "Google Cloud Essentials",
+   "url": "https://www.youtube.com/playlist?list=PLIivdWyY5sqKh1gDR0WpP9iIOY00IE0xL",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Google Cloud Tech"
+  },
+  {
+   "id": "fpb-c47a75a8",
+   "judul": "Google Cloud Platform Full Course",
+   "url": "https://www.youtube.com/watch?v=fZOz13joN0o",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Scalar"
+  },
+  {
+   "id": "fpb-f5bcaec0",
+   "judul": "Learn Google Cloud",
+   "url": "https://www.youtube.com/playlist?list=PLBRBRV08tHh1e9oqTsONC5AuhFd-SUXWq",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Cloud Advocate"
+  },
+  {
+   "id": "fpb-d150e669",
+   "judul": "An Introduction to IBM Cloud Satellite",
+   "url": "https://cognitiveclass.ai/courses/cloud-satellite",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "IBM"
+  },
+  {
+   "id": "fpb-066ce9f8",
+   "judul": "Getting started with IBM Cloud",
+   "url": "https://cognitiveclass.ai/courses/ibm-cloud-essentials",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Horea Porutiu, Steve Martinelli"
+  },
+  {
+   "id": "fpb-0f4ae439",
+   "judul": "AWS DevOps Engineer Learning Plan",
+   "url": "https://explore.skillbuilder.aws/learn/public/learning_plan/view/85/devops-engineering-learning-plan?la=sec&sec=lp",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "AWS"
+  },
+  {
+   "id": "fpb-afcbe776",
+   "judul": "Complete DevOps Zero to Hero Course",
+   "url": "https://www.youtube.com/playlist?list=PLdpzxOOAlwvIKMhk8WhzN1pYoJ1YU8Csa",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "Abhishek Veeramalla"
+  },
+  {
+   "id": "fpb-1d703deb",
+   "judul": "DevOps Bootcamp",
+   "url": "https://www.youtube.com/playlist?list=PL9gnSGHSqcnoqBXdMwUTRod4Gi3eac2Ak",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "Kunal Kushwaha"
+  },
+  {
+   "id": "fpb-1e90cf44",
+   "judul": "DevOps Courses",
+   "url": "https://www.youtube.com/playlist?list=PLWKjhJtqVAbkFiqHnNaxpOPhh9tSWMXIF",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "FreeCodeCamp"
+  },
+  {
+   "id": "fpb-68eab247",
+   "judul": "DevOps from Zero to Hero: Build and Deploy a Production API",
+   "url": "https://www.youtube.com/watch?v=H5FAxTBuNM8",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "Adrian Hajdin (JavaScript Mastery)"
+  },
+  {
+   "id": "fpb-570cc706",
+   "judul": "DevOps Full Course",
+   "url": "https://www.youtube.com/watch?v=lpk7VpGqkKw",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "Simplilearn"
+  },
+  {
+   "id": "fpb-15070a6d",
+   "judul": "DevOps Tutorial for Beginners",
+   "url": "https://www.youtube.com/playlist?list=PLVHgQku8Z934suC9LSE6vaAKjOH_MfRbE",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "Intellipaat"
+  },
+  {
+   "id": "fpb-94312b7a",
+   "judul": "DevOps Tutorial for Beginners | Learn DevOps in 7 Hours - Full Course | DevOps Training | Edureka",
+   "url": "https://www.youtube.com/watch?v=hQcFE0RD0cQ",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "Edureka"
+  },
+  {
+   "id": "fpb-96ef7081",
+   "judul": "TheCodeForge DevOps Tutorials",
+   "url": "https://thecodeforge.io/devops/",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "TheCodeForge"
+  },
+  {
+   "id": "fpb-f7f10572",
+   "judul": "Ansible + GCP",
+   "url": "https://www.udemy.com/course/ansible-gcp",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "Rohit Abraham (Udemy)"
+  },
+  {
+   "id": "fpb-e74b4d0f",
+   "judul": "Ansible Basics: An Automation Technical Overview",
+   "url": "https://www.udemy.com/course/ansible-basics-an-automation-technical-overview",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "Red Hat, Inc. (Udemy)"
+  },
+  {
+   "id": "fpb-38a572ac",
+   "judul": "Ansible for the Absolute Beginner - DevOps",
+   "url": "https://www.udemy.com/course/ansible-for-the-absolute-beginner-devops",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "Vijay Patel (Udemy)"
+  },
+  {
+   "id": "fpb-c3f368ca",
+   "judul": "AWS Provisioning using Ansible with real-time examples",
+   "url": "https://www.udemy.com/course/aws-provisioning-using-ansible-with-real-time-examples",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "Narendra P (Udemy)"
+  },
+  {
+   "id": "fpb-7e91137b",
+   "judul": "DevOps: Beginner's Guide To Automation With Ansible",
+   "url": "https://www.udemy.com/course/devops-beginners-guide-to-automation-with-ansible",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "TetraNoodle Team, Manuj Aggarwal (Udemy)"
+  },
+  {
+   "id": "fpb-b8e1ad11",
+   "judul": "Getting Started with Ansible",
+   "url": "https://www.youtube.com/playlist?list=PLT98CRl2KxKEUHie1m24-wkyHpEsa4Y70",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "Learn Linux TV"
+  },
+  {
+   "id": "fpb-0f1e3746",
+   "judul": "Red Hat Ansible Automation for SAP (RH045)",
+   "url": "https://www.udemy.com/course/red-hat-ansible-automation-for-sap",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "Red Hat, Inc. (Udemy)"
+  },
+  {
+   "id": "fpb-c7e4f3c9",
+   "judul": "Use Ansible with Amazon Web Services",
+   "url": "https://www.udemy.com/course/ansible-aws",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "Rohit Abraham (Udemy)"
+  },
+  {
+   "id": "fpb-8e21439b",
+   "judul": "CHEF Tutorial",
+   "url": "https://www.youtube.com/playlist?list=PLsgnv1SN76ILtD3TnVtXpX1hmwjyY9OuT",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "Online Tutorials"
+  },
+  {
+   "id": "fpb-f4574b88",
+   "judul": "Learning Chef",
+   "url": "https://www.youtube.com/playlist?list=PLKK5zTDXqzFM53J6-rikDrqbbY0Pu-9SP",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "Nathen Harvey"
+  },
+  {
+   "id": "fpb-49988bd2",
+   "judul": "FREE Advanced Jenkins in K8s (Docker in Docker)",
+   "url": "https://www.udemy.com/course/free-advanced-jenkins-in-k8s-docker-in-docker",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "otomasi",
+    "container"
+   ],
+   "catatan": "CS Career Kaizen (Udemy)"
+  },
+  {
+   "id": "fpb-321277a0",
+   "judul": "Jenkins",
+   "url": "https://www.youtube.com/playlist?list=PLhW3qG5bs-L_ZCOA4zNPSoGbnVQ-rp_dG",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "Automation Step by Step"
+  },
+  {
+   "id": "fpb-3297e589",
+   "judul": "Jenkins | Step-by-Step for Complete Beginners",
+   "url": "https://www.udemy.com/course/jenkins-step-by-step-for-complete-beginners/",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "Raghav Pal (Udemy)"
+  },
+  {
+   "id": "fpb-74430b4d",
+   "judul": "Jenkins Tutorial",
+   "url": "https://www.mygreatlearning.com/academy/learn-for-free/courses/jenkins-tutorial",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "(Great Learning)"
+  },
+  {
+   "id": "fpb-d520374d",
+   "judul": "Jenkins Tutorial Step by Step",
+   "url": "https://www.youtube.com/playlist?list=PL8VbCbavWfeGt_Hyq0h9Pymi9DTGowd5X",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "The Testing Academy"
+  },
+  {
+   "id": "fpb-190eb20d",
+   "judul": "Jenkins Tutorial Video [2022 updated]",
+   "url": "https://www.youtube.com/playlist?list=PLEiEAq2VkUUKGrfcoNYRgqam5YBERN8xa",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "Simplilearn"
+  },
+  {
+   "id": "fpb-9431b926",
+   "judul": "Jenkins Zero to Hero",
+   "url": "https://www.youtube.com/playlist?list=PLdpzxOOAlwvJDIAQZtMjUUbiVUDfGaCIX",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "Abhishek Veeramalla"
+  },
+  {
+   "id": "fpb-3c11ab48",
+   "judul": "Complete Docker Course - From BEGINNER to PRO!",
+   "url": "https://www.youtube.com/watch?v=RqTEHSBrYFw",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "DevOps Directive"
+  },
+  {
+   "id": "fpb-a90ede76",
+   "judul": "Deploying Containerized Applications Technical Overview",
+   "url": "https://www.udemy.com/course/deploying-containerized-applications-technical-overview",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Red Hat"
+  },
+  {
+   "id": "fpb-f4e25ef5",
+   "judul": "Docker",
+   "url": "https://www.youtube.com/playlist?list=PLhW3qG5bs-L99pQsZ74f-LC-tOEsBp2rK",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Raghav Pal"
+  },
+  {
+   "id": "fpb-47c3c436",
+   "judul": "Docker and Kubernetes Complete Tutorial",
+   "url": "https://www.youtube.com/playlist?list=PL0hSJrxggIQoKLETBSmgbbvE4FO_eEgoB",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Analytics Excellence"
+  },
+  {
+   "id": "fpb-f128c33a",
+   "judul": "Docker Crash Course Tutorial",
+   "url": "https://www.youtube.com/playlist?list=PL4cUxeGkcC9hxjeEtdHFNYMtCpjNBm3h7",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Net Ninja"
+  },
+  {
+   "id": "fpb-bb50eaf2",
+   "judul": "Docker Essentials",
+   "url": "https://cognitiveclass.ai/courses/docker-essentials",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "CognitiveClass.ai"
+  },
+  {
+   "id": "fpb-906df26f",
+   "judul": "Docker Tutorial for Beginners",
+   "url": "https://www.youtube.com/watch?v=pTFZFxd4hOI",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Programming with Mosh!"
+  },
+  {
+   "id": "fpb-98529130",
+   "judul": "Docker Tutorial for Beginners",
+   "url": "https://www.youtube.com/playlist?list=PL6gx4Cwl9DGBkvpSIgwchk0glHLz7CQ-7",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Thenewboston"
+  },
+  {
+   "id": "fpb-bd6611b2",
+   "judul": "Docker Tutorial for Beginners",
+   "url": "https://www.youtube.com/watch?v=fqMOX6JJhGo",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Mumshad Mannambeth (freeCodeCamp)"
+  },
+  {
+   "id": "fpb-ecc91e66",
+   "judul": "Docker Tutorial for Beginners - What is Docker? Introduction to Containers",
+   "url": "https://www.youtube.com/watch?v=17Bl31rlnRM",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Kunal Kushwaha"
+  },
+  {
+   "id": "fpb-f7ced194",
+   "judul": "Docker Tutorial for Beginners [FULL COURSE in 3 Hours]",
+   "url": "https://www.youtube.com/watch?v=3c-iBn73dDE",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "TechWorld with Nana"
+  },
+  {
+   "id": "fpb-cca5206e",
+   "judul": "Docker Tutorial for Beginners | Full Course [2021]",
+   "url": "https://www.youtube.com/watch?v=p28piYY_wv8",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Amigoscode"
+  },
+  {
+   "id": "fpb-52f88e15",
+   "judul": "Docker Tutorial Videos | DevOps Tool",
+   "url": "https://www.youtube.com/playlist?list=PL9ooVrP1hQOHUKuqGuiWLQoJ-LD25KxI5",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "edureka!"
+  },
+  {
+   "id": "fpb-01a6bc9e",
+   "judul": "IIEC RISE 1.0 Docker",
+   "url": "https://www.youtube.com/playlist?list=PLAi9X1uG6jZ30QGz7FZ55A27jPeY8EwkE",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "fpb-0a8e17e3",
+   "judul": "Learn Docker [Full Course]",
+   "url": "https://www.boot.dev/courses/learn-docker",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Lane Wagner"
+  },
+  {
+   "id": "fpb-e0c11e49",
+   "judul": "Fundamentals of Containers, Kubernetes, and Red Hat OpenShift",
+   "url": "https://www.edx.org/course/fundamentals-of-containers-kubernetes-and-red-hat",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Zach Gutterman, Richard Allred (edX)"
+  },
+  {
+   "id": "fpb-4194ce30",
+   "judul": "Kubernetes 101 workshop - complete hands-on",
+   "url": "https://www.youtube.com/live/PN3VqbZqmD8?feature=shared",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Kubesimplify"
+  },
+  {
+   "id": "fpb-a020814b",
+   "judul": "Kubernetes Core Concepts",
+   "url": "https://kube.academy/paths/kubernetes-core-concepts",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "KubeAcademy (VMware)"
+  },
+  {
+   "id": "fpb-40a75841",
+   "judul": "Kubernetes Course",
+   "url": "https://www.youtube.com/watch?v=d6WC5n9G_sM",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Bogdan Stashchuk (FreeCoodeCamp)"
+  },
+  {
+   "id": "fpb-088e0aa5",
+   "judul": "Kubernetes Full Course in 7 Hours",
+   "url": "https://www.youtube.com/watch?v=0j-iIW3_sbg",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Edureka"
+  },
+  {
+   "id": "fpb-0412456a",
+   "judul": "Kubernetes Tutorial for Beginners",
+   "url": "https://www.youtube.com/playlist?list=PLy7NrYWoggjziYQIDorlXjTvvwweTYoNC",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "TechWorld with Nana"
+  },
+  {
+   "id": "fpb-45910764",
+   "judul": "Kubernetes Tutorial for Beginners",
+   "url": "https://www.youtube.com/playlist?list=PL9ooVrP1hQOF907pPru97cKY9nKwOrDTP",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "container"
+   ],
+   "catatan": "edureka!"
+  },
+  {
+   "id": "fpb-7f4c3e14",
+   "judul": "Belajar linux fundamentals",
+   "url": "https://youtube.com/playlist?list=PLbLqbqNn7VYpnd7FggSeq18AgE4gdsy2F",
+   "jenis": "kursus",
+   "bahasa": "id",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "ID-Networkers"
+  },
+  {
+   "id": "fpb-d4d588de",
+   "judul": "Instalasi & Review Linux",
+   "url": "https://www.youtube.com/playlist?list=PL2O3HdJI4voEclcVMPqHoS6GSgcVNGIjy",
+   "jenis": "kursus",
+   "bahasa": "id",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Indonesia Belajar"
+  },
+  {
+   "id": "fpb-071bcf2d",
+   "judul": "Linux Pemula",
+   "url": "https://www.youtube.com/playlist?list=PLACzo3mGgHK_D2wkGu4AvUAQiqLC30PTz",
+   "jenis": "kursus",
+   "bahasa": "id",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "LINUXcare"
+  },
+  {
+   "id": "fpb-8edf5f45",
+   "judul": "Tutorial Terminal Linux Bahasa Indonesia",
+   "url": "https://www.youtube.com/playlist?list=PLy1BHEa_Wr-cpjWY5uOqsMxQwiQrRnC8B",
+   "jenis": "kursus",
+   "bahasa": "id",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "ArtAway"
+  },
+  {
+   "id": "fpb-45ce7e28",
+   "judul": "Belajar Docker untuk Pemula",
+   "url": "https://www.youtube.com/playlist?list=PL4SGTPmSY0qkxCTe3Gd0wA-bQZChXhsNI",
+   "jenis": "kursus",
+   "bahasa": "id",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Giri Kuncoro"
+  },
+  {
+   "id": "fpb-ad29f413",
+   "judul": "Mengenal Container dan Docker Sampai Jago Dalam 2 Jam",
+   "url": "https://www.youtube.com/watch?v=26O6Ke03j3Y",
+   "jenis": "kursus",
+   "bahasa": "id",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Imre Nagi"
+  },
+  {
+   "id": "fpb-9a19506e",
+   "judul": "Pengembangan Microservice Dengan Docker Compose",
+   "url": "https://www.youtube.com/watch?v=ALGVV5cGUtc",
+   "jenis": "kursus",
+   "bahasa": "id",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Imre Nagi"
+  },
+  {
+   "id": "fpb-f0b11500",
+   "judul": "Tutorial Docker",
+   "url": "https://www.youtube.com/playlist?list=PLZS-MHyEIRo6A7ODX8EWghd0r4HgKjJvy",
+   "jenis": "kursus",
+   "bahasa": "id",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Kelas Terbuka"
+  },
+  {
+   "id": "fpb-d97103dd",
+   "judul": "Tutorial Docker untuk Pemula",
+   "url": "https://www.youtube.com/playlist?list=PL-CtdCApEFH-A7jBmdertzbeACuQWvQao",
+   "jenis": "kursus",
+   "bahasa": "id",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Eko Kurniawan Khannedy, Programmer Zaman Now"
+  },
+  {
+   "id": "fpb-7ec6b173",
+   "judul": "Belajar Kubernetes untuk Pemula",
+   "url": "https://www.youtube.com/playlist?list=PL-CtdCApEFH8XrWyQAyRd6d_CKwxD8Ime",
+   "jenis": "kursus",
+   "bahasa": "id",
+   "topik": [
+    "container"
+   ],
+   "catatan": "Eko Kurniawan Khannedy, Programmer Zaman Now"
+  },
+  {
+   "id": "fpb-5161c0b4",
+   "judul": "CloudSkills.fm",
+   "url": "https://cloudskills.fm",
+   "jenis": "video",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Mike Pfeiffer (podcast)"
+  },
+  {
+   "id": "fpb-530b1f64",
+   "judul": "Google Cloud Platform Podcast",
+   "url": "https://www.gcppodcast.com",
+   "jenis": "video",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Google Cloud Platform team (podcast)"
+  },
+  {
+   "id": "fpb-7b4b924a",
+   "judul": "Microsoft Cloud Show",
+   "url": "https://www.microsoftcloudshow.com",
+   "jenis": "video",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Andrew Connell and Chris Johnson (podcast)"
+  },
+  {
+   "id": "fpb-57cc7f3c",
+   "judul": "On Cloud",
+   "url": "https://www2.deloitte.com/us/en/pages/consulting/topics/cloud-podcast.html",
+   "jenis": "video",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Deloitte US (podcast)"
+  },
+  {
+   "id": "fpb-21d93329",
+   "judul": "The Cloud Pod",
+   "url": "https://www.thecloudpod.net",
+   "jenis": "video",
+   "bahasa": "en",
+   "topik": [
+    "cloud"
+   ],
+   "catatan": "Justin Brodley, Jonathan Baker, Ryan Lucas and Peter Roosakos (podcast)"
+  },
+  {
+   "id": "fpb-38aa02eb",
+   "judul": "Adventures in DevOps",
+   "url": "https://topenddevs.com/podcasts/adventures-in-devops",
+   "jenis": "video",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "Jillian Rowe, Jonathan Hall, Will Button (podcast)"
+  },
+  {
+   "id": "fpb-5cbf81a7",
+   "judul": "Arrested DevOps",
+   "url": "https://www.arresteddevops.com",
+   "jenis": "video",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "Joe Laha, Bridget Kromhout, Matty Stratton, Trevor Hess, Jessica Kerr (podcast)"
+  },
+  {
+   "id": "fpb-3a079ce7",
+   "judul": "DevOps Cafe",
+   "url": "http://devopscafe.org",
+   "jenis": "video",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "John Willis, Damon Edwards (podcast)"
+  },
+  {
+   "id": "fpb-1c3a0ab2",
+   "judul": "Linux Commands Cheat Sheet",
+   "url": "https://zerotomastery.io/cheatsheets/linux-commands-cheat-sheet/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "keamanan",
+    "linux"
+   ],
+   "catatan": "ZeroToMastery (HTML)"
+  },
+  {
+   "id": "fpb-97b074f9",
+   "judul": "Nmap Cheat Sheet)",
+   "url": "https://zerotomastery.io/cheatsheets/nmap-cheat-sheet/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "keamanan"
+   ],
+   "catatan": "ZeroToMastery.io (HTML)"
+  },
+  {
+   "id": "fpb-fc7f9461",
+   "judul": "Bash Cheatsheet - CheatSheet.Wtf",
+   "url": "https://www.cheatsheet.wtf/bash",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "smokingcuke (HTML)"
+  },
+  {
+   "id": "fpb-7f6b14f8",
+   "judul": "Bash Scripting cheatsheet",
+   "url": "https://devhints.io/bash",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "Devhints (HTML)"
+  },
+  {
+   "id": "fpb-60fa88c9",
+   "judul": "Bash Scripting Cheatsheet",
+   "url": "https://github.com/mixseomin/dev-cheatsheets/blob/main/13-bash.md",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "mixseomin (Markdown)"
+  },
+  {
+   "id": "fpb-4abd65ce",
+   "judul": "Cron Cheatsheet",
+   "url": "https://devhints.io/cron",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "DevHints, Rico Santa Cruz (HTML)"
+  },
+  {
+   "id": "fpb-693f2dff",
+   "judul": "Fish Shell cheatsheet",
+   "url": "https://devhints.io/fish-shell",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "DevHints, Rico Santa Cruz (HTML)"
+  },
+  {
+   "id": "fpb-04781b9a",
+   "judul": "Bash Tutorial",
+   "url": "https://www.w3schools.com/bash/",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "W3Schools"
+  },
+  {
+   "id": "fpb-18e66b8e",
+   "judul": "Help messages will explain everything",
+   "url": "https://explainshell.com",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "explainshell"
+  },
+  {
+   "id": "fpb-b384b7bc",
+   "judul": "Learn Shell Programming",
+   "url": "http://www.learnshell.org",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "learnshell"
+  }
+ ]
+}

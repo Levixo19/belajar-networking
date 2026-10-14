@@ -22,6 +22,8 @@ import ArenaPage from './pages/ArenaPage'
 
 // Peta profesi memuat data profesi sendiri; dipisah agar bundle utama tetap ramping
 const KarierPage = lazy(() => import('./pages/KarierPage'))
+// Pustaka memuat ±1.100 tautan; dipisah dengan alasan yang sama
+const PustakaPage = lazy(() => import('./pages/PustakaPage'))
 const Memuat = () => (
   <div className="mx-auto max-w-[1280px] px-4 pt-16 sm:px-6 lg:px-8" aria-busy="true" aria-label="Memuat">
     <div className="h-14 w-2/3 max-w-xl animate-pulse rounded-xl bg-[var(--surface-3)]" />
@@ -44,6 +46,7 @@ createRoot(document.getElementById('root')!).render(
             <Route path="arena/:game" element={<ArenaPage />} />
             <Route path="karier" element={<Suspense fallback={<Memuat />}><KarierPage /></Suspense>} />
             <Route path="karier/:id" element={<Suspense fallback={<Memuat />}><KarierPage /></Suspense>} />
+            <Route path="pustaka" element={<Suspense fallback={<Memuat />}><PustakaPage /></Suspense>} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>

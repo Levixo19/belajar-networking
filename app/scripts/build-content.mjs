@@ -6,6 +6,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import MarkdownIt from 'markdown-it'
 import hljs from 'highlight.js'
+import { TOPIK, TOPIK_TAHAP, JENIS } from '../src/lib/pustakaTopik.ts'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const APP_DIR = path.resolve(__dirname, '..')                  // <repo>/app
@@ -420,3 +421,118 @@ const RUMPUN_MODUL = {
   console.log(`OK  ${profesi.length} profesi → src/generated/profesi.json`)
 }
 console.log(`OK  ${totalModules} modul, ${totalCards} kartu latihan, ${stages.length} tahap → src/generated/curriculum.json`)
+
+// --- Pustaka: data/pustaka/*.json (hasil panen) + data/pustaka-kurasi/*.json (riset) ---
+// → src/generated/pustaka.json. Data yang rusak MENGGAGALKAN build. Tahap terkait tiap
+// butir DIHITUNG di sini dari TOPIK_TAHAP (src/lib/pustakaTopik.ts), satu-satunya
+// tempat pemetaan itu ditulis; butir sendiri cuma membawa topik.
+{
+  const stageIds = new Set(stages.map(s => s.id))
+  const moduleIds = new Set(stages.flatMap(s => s.modules.map(m => m.id)))
+  const errors = []
+  // Pola yang DILARANG apa pun lisensinya: penyingkat tautan menyembunyikan tujuan,
+  // dan situs-situs ini dikenal sebagai cermin buku berhak cipta.
+  const DILARANG = /(^|\.)(bit\.ly|tinyurl\.com|t\.co|goo\.gl|s\.id|ow\.ly|is\.gd|cutt\.ly|scribd\.com|pdfdrive\.com|libgen\.[a-z]+|z-lib\.[a-z]+|dokumen\.pub|vdoc\.pub|epdf\.pub|studylib\.net|pdfcoffee\.com|dokumen\.tips|idoc\.pub)$/i
+  // "hak cipta" sengaja TIDAK ada di TIDAK_BEBAS: setiap lisensi CC diberikan oleh
+  // pemegang hak cipta, jadi "CC BY-SA 3.0 (hak cipta 2014 Bonaventure)" itu sah.
+  const BISA_DISALIN = /\b(CC BY(?:-SA)?(?: \d\.\d)?|CC0|Creative Commons (?:Attribution|Zero)|MIT|BSD|Apache|domain publik|public domain)\b/i
+  const TIDAK_BEBAS = /\b(NC|ND)\b|NonCommercial|Non-Commercial|NoDerivatives|NoDerivs|tanpa lisensi|tautan saja|tidak disebutkan|proprietary/i
+  const tanggalSah = t => /^\d{4}-\d{2}-\d{2}$/.test(t) && !Number.isNaN(Date.parse(t)) && t <= new Date().toISOString().slice(0, 10) + 'Z'
+
+  const kunciUrl = u => { const p = new URL(u); return `${p.protocol}//${p.host.toLowerCase()}${p.pathname === '/' ? '' : p.pathname.replace(/\/$/, '')}${p.search}` }
+  const fnv = s => { let h = 0x811c9dc5; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0 } return h.toString(16).padStart(8, '0') }
+
+  function bacaFolder(dir) {
+    if (!fs.existsSync(dir)) return []
+    return fs.readdirSync(dir).filter(f => f.endsWith('.json')).sort().map(f => {
+      try { return { f, isi: JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')) } }
+      catch (e) { errors.push(`${f} bukan JSON valid: ${e.message}`); return null }
+    }).filter(Boolean)
+  }
+
+  const sumberList = [], semua = []
+  // Kurasi dulu, lalu materi sendiri, lalu hasil panen: kalau satu URL ada di beberapa
+  // sumber, yang menang yang paling banyak membawa keterangan (lisensi per butir).
+  const urutan = [
+    ...bacaFolder(path.join(EXTRA_DIR, 'pustaka-kurasi')).map(x => ({ ...x, kurasi: true })),
+    ...bacaFolder(path.join(EXTRA_DIR, 'pustaka')).sort((a, b) => (a.f === 'materi.json' ? -1 : b.f === 'materi.json' ? 1 : 0)),
+  ]
+  for (const { f, isi, kurasi } of urutan) {
+    const s = isi?.sumber
+    if (!s || typeof s.kunci !== 'string' || !Array.isArray(isi.entri)) { errors.push(`${f}: harus {sumber:{kunci,...}, entri:[...]}`); continue }
+    if (s.kunci + '.json' !== f) errors.push(`${f}: sumber.kunci "${s.kunci}" tidak sama dengan nama berkas`)
+    for (const k of ['nama', 'atribusi']) if (typeof s[k] !== 'string' || !s[k].trim()) errors.push(`${f}: sumber.${k} wajib`)
+    if (!kurasi && typeof s.boleh_salin !== 'boolean') errors.push(`${f}: sumber.boleh_salin wajib boolean`)
+    const urlTerlihat = new Set()
+    let n = 0
+    for (const e of isi.entri) {
+      const at = `${f}:${e?.url}`
+      if (typeof e?.judul !== 'string' || !e.judul.trim()) { errors.push(`${at} judul wajib`); continue }
+      let u
+      try { u = new URL(e.url) } catch { errors.push(`${at} URL tidak sah`); continue }
+      if (!/^https?:$/.test(u.protocol)) errors.push(`${at} skema URL harus http(s)`)
+      if (kurasi && u.protocol !== 'https:') errors.push(`${at} data kurasi wajib https`)
+      if (DILARANG.test(u.hostname)) errors.push(`${at} domain dilarang (penyingkat tautan atau cermin bajakan)`)
+      const ku = kunciUrl(e.url)
+      if (urlTerlihat.has(ku)) errors.push(`${at} URL ganda dalam satu sumber`)
+      urlTerlihat.add(ku)
+      if (!JENIS[e.jenis]) errors.push(`${at} jenis "${e.jenis}" tidak dikenal`)
+      if (!['id', 'en'].includes(e.bahasa)) errors.push(`${at} bahasa harus id|en`)
+      if (!Array.isArray(e.topik) || !e.topik.length) errors.push(`${at} topik wajib array tidak kosong`)
+      for (const t of e.topik || []) if (!TOPIK[t]) errors.push(`${at} topik "${t}" tidak ada di kosakata`)
+      for (const t of e.tahap || []) if (!stageIds.has(t)) errors.push(`${at} tahap "${t}" tidak ada`)
+      for (const m of e.modul || []) if (!moduleIds.has(m)) errors.push(`${at} modul "${m}" tidak ada`)
+      let lisensi = s.lisensi, bolehSalin = s.boleh_salin
+      if (kurasi) {
+        lisensi = e.lisensi; bolehSalin = e.boleh_salin
+        if (typeof lisensi !== 'string' || !lisensi.trim()) errors.push(`${at} lisensi wajib (persis dari sumber)`)
+        if (typeof bolehSalin !== 'boolean') errors.push(`${at} boleh_salin wajib boolean`)
+        if (bolehSalin && (!BISA_DISALIN.test(lisensi) || TIDAK_BEBAS.test(lisensi))) errors.push(`${at} boleh_salin=true tapi lisensinya "${lisensi}"`)
+        if (!tanggalSah(e.tanggal_diperiksa || '')) errors.push(`${at} tanggal_diperiksa harus YYYY-MM-DD dan tidak di masa depan`)
+      } else if (!new RegExp(`^${s.kunci}-[0-9a-f]{8}$`).test(e.id || '')) errors.push(`${at} id "${e.id}" bukan bentuk <kunci>-<hash>`)
+      const tahap = new Set([...(e.tahap || [])])
+      for (const t of e.topik || []) for (const st of TOPIK_TAHAP[t] || []) tahap.add(st)
+      for (const m of e.modul || []) tahap.add(m.split('/')[0])
+      semua.push({
+        id: kurasi ? `${s.kunci}-${fnv(ku)}` : e.id, ku, judul: e.judul.trim(), url: e.url, jenis: e.jenis, bahasa: e.bahasa,
+        sumber: s.kunci, lisensi, boleh_salin: bolehSalin, topik: e.topik || [],
+        tahap: [...tahap].filter(t => stageIds.has(t)), modul: e.modul || [], catatan: e.catatan || '',
+        ...(e.tanggal_diperiksa ? { tanggal_diperiksa: e.tanggal_diperiksa } : {}),
+      })
+      n++
+    }
+    sumberList.push({ kunci: s.kunci, nama: s.nama, pemilik: s.pemilik || '', repo: s.repo || '', lisensi: s.lisensi || 'per butir',
+      boleh_salin: s.boleh_salin ?? null, atribusi: s.atribusi, commit: s.commit || '', kurasi: !!kurasi, jumlah: n })
+  }
+  for (const [t, st] of Object.entries(TOPIK_TAHAP)) {
+    if (!TOPIK[t]) errors.push(`TOPIK_TAHAP: topik "${t}" tidak ada di TOPIK`)
+    for (const x of st) if (!stageIds.has(x)) errors.push(`TOPIK_TAHAP.${t}: tahap "${x}" tidak ada di kurikulum`)
+  }
+  for (const t of Object.keys(TOPIK)) if (!TOPIK_TAHAP[t]) errors.push(`topik "${t}" tidak punya baris di TOPIK_TAHAP`)
+
+  // Satu URL satu butir di seluruh Pustaka: yang pertama (urutan prioritas di atas) menang,
+  // sumber lain tercatat di `juga_di` supaya atribusinya tidak hilang.
+  const perUrl = new Map(), entri = []
+  for (const e of semua) {
+    const ada = perUrl.get(e.ku)
+    if (ada) {
+      if (!ada.juga_di.includes(e.sumber)) ada.juga_di.push(e.sumber)
+      for (const t of e.topik) if (!ada.topik.includes(t)) ada.topik.push(t)
+      for (const t of e.tahap) if (!ada.tahap.includes(t)) ada.tahap.push(t)
+      for (const m of e.modul) if (!ada.modul.includes(m)) ada.modul.push(m)
+      continue
+    }
+    const { ku, ...rest } = e
+    const b = { ...rest, juga_di: [] }
+    perUrl.set(ku, b); entri.push(b)
+  }
+  const ids = new Set()
+  for (const e of entri) { if (ids.has(e.id)) errors.push(`id pustaka ganda: ${e.id}`); ids.add(e.id) }
+
+  if (errors.length) {
+    console.error('GAGAL validasi pustaka:\n  ' + errors.slice(0, 60).join('\n  ') + (errors.length > 60 ? `\n  ... dan ${errors.length - 60} lagi` : ''))
+    process.exit(1)
+  }
+  fs.writeFileSync(path.join(OUT_DIR, 'pustaka.json'), JSON.stringify({ sumber: sumberList, entri }))
+  console.log(`OK  ${entri.length} tautan pustaka dari ${sumberList.length} sumber → src/generated/pustaka.json`)
+}

@@ -90,6 +90,7 @@ export default function Navbar({ onSearch }: { onSearch: () => void }) {
           <NavLink to="/tools" className="nav-link">Alat</NavLink>
           <NavLink to="/arena" className="nav-link">Arena</NavLink>
           <NavLink to="/karier" className="nav-link">Karier</NavLink>
+          <NavLink to="/pustaka" className="nav-link">Pustaka</NavLink>
         </nav>
 
         <div className="ml-auto flex items-center gap-2">

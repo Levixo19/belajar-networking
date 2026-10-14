@@ -1,0 +1,156 @@
+{
+ "sumber": {
+  "kunci": "ciu",
+  "nama": "coding-interview-university",
+  "pemilik": "John Washam",
+  "repo": "https://github.com/jwasham/coding-interview-university",
+  "lisensi": "CC BY-SA 4.0",
+  "boleh_salin": true,
+  "lisensi_berkas": "CC BY-SA 4.0",
+  "atribusi": "Daftar dari bagian Networking di Coding Interview University oleh John Washam dan kontributornya, CC BY-SA 4.0. Berkas data ini (ciu.json), sebagai turunannya, juga berlisensi CC BY-SA 4.0.",
+  "commit": "717298b"
+ },
+ "entri": [
+  {
+   "id": "ciu-fc9b57de",
+   "judul": "Khan Academy",
+   "url": "https://www.khanacademy.org/computing/code-org/computers-and-the-internet",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "fondasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "ciu-84d8b08d",
+   "judul": "UDP and TCP: Comparison of Transport Protocols (video)",
+   "url": "https://www.youtube.com/watch?v=Vdc8TCESIg8",
+   "jenis": "video",
+   "bahasa": "en",
+   "topik": [
+    "fondasi",
+    "transport"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "ciu-6c4b7d90",
+   "judul": "TCP/IP and the OSI Model Explained! (video)",
+   "url": "https://www.youtube.com/watch?v=e5DEVa9eSN0",
+   "jenis": "video",
+   "bahasa": "en",
+   "topik": [
+    "fondasi",
+    "transport"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "ciu-549294cc",
+   "judul": "Packet Transmission across the Internet. Networking & TCP/IP tutorial. (video)",
+   "url": "https://www.youtube.com/watch?v=nomyRJehhnM",
+   "jenis": "video",
+   "bahasa": "en",
+   "topik": [
+    "fondasi",
+    "transport"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "ciu-014218ab",
+   "judul": "HTTP (video)",
+   "url": "https://www.youtube.com/watch?v=WGJrLqtX7As",
+   "jenis": "video",
+   "bahasa": "en",
+   "topik": [
+    "fondasi",
+    "aplikasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "ciu-bc7592f1",
+   "judul": "SSL and HTTPS (video)",
+   "url": "https://www.youtube.com/watch?v=S2iBR2ZlZf0",
+   "jenis": "video",
+   "bahasa": "en",
+   "topik": [
+    "fondasi",
+    "aplikasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "ciu-e554fc7c",
+   "judul": "SSL/TLS (video)",
+   "url": "https://www.youtube.com/watch?v=Rp3iZUvXWlM",
+   "jenis": "video",
+   "bahasa": "en",
+   "topik": [
+    "fondasi",
+    "aplikasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "ciu-8fcde6dc",
+   "judul": "HTTP 2.0 (video)",
+   "url": "https://www.youtube.com/watch?v=E9FxNzv1Tr8",
+   "jenis": "video",
+   "bahasa": "en",
+   "topik": [
+    "fondasi",
+    "aplikasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "ciu-8c10494c",
+   "judul": "Video Series (21 videos) (video)",
+   "url": "https://www.youtube.com/playlist?list=PLEbnTDJUr_IegfoqO4iPnPYQui46QqT0j",
+   "jenis": "video",
+   "bahasa": "en",
+   "topik": [
+    "fondasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "ciu-fb03839d",
+   "judul": "Subnetting Demystified - Part 5 CIDR Notation (video)",
+   "url": "https://www.youtube.com/watch?v=t5xYI0jzOf4",
+   "jenis": "video",
+   "bahasa": "en",
+   "topik": [
+    "fondasi"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "ciu-7c732c4e",
+   "judul": "Java - Sockets - Introduction (video)",
+   "url": "https://www.youtube.com/watch?v=6G_W54zuadg&t=6s",
+   "jenis": "video",
+   "bahasa": "en",
+   "topik": [
+    "fondasi",
+    "pemrograman-jaringan"
+   ],
+   "catatan": ""
+  },
+  {
+   "id": "ciu-dd0f8747",
+   "judul": "Socket Programming (video)",
+   "url": "https://www.youtube.com/watch?v=G75vN2mnJeQ",
+   "jenis": "video",
+   "bahasa": "en",
+   "topik": [
+    "fondasi",
+    "pemrograman-jaringan"
+   ],
+   "catatan": ""
+  }
+ ]
+}

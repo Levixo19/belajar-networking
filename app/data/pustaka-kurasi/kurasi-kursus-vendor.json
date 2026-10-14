@@ -1,0 +1,759 @@
+{
+ "sumber": {
+  "kunci": "kurasi-kursus-vendor",
+  "nama": "Kurasi: kursus dan dokumentasi vendor",
+  "atribusi": "Kursus resmi gratis dan dokumentasi vendor (Cisco, Juniper, MikroTik, Fortinet, Palo Alto, AWS, Google Cloud, Microsoft, Linux Foundation, Kubernetes, CompTIA). Hampir semuanya hak cipta vendor dan hanya ditautkan."
+ },
+ "entri": [
+  {
+   "judul": "Cisco NetAcad: Networking Basics",
+   "url": "https://www.netacad.com/courses/networking-basics",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "lisensi": "Cisco Networking Academy: hak cipta Cisco, gratis dengan akun NetAcad (tidak ada lisensi terbuka)",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "fondasi",
+    "cisco"
+   ],
+   "tahap": [],
+   "catatan": "Kursus daring gratis Cisco tentang dasar jaringan untuk pemula; perlu akun NetAcad.",
+   "bukti_lisensi": "Meta halaman: 'Free online course to learn about Networking Basics - from Cisco Networking Academy'; tidak ada lisensi terbuka"
+  },
+  {
+   "judul": "Cisco NetAcad: Networking Devices and Initial Configuration",
+   "url": "https://www.netacad.com/courses/networking-devices-and-initial-configuration",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "lisensi": "Cisco Networking Academy: hak cipta Cisco, gratis dengan akun NetAcad (tidak ada lisensi terbuka)",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "fondasi",
+    "l2",
+    "cisco"
+   ],
+   "tahap": [],
+   "catatan": "Kursus gratis tentang perangkat jaringan dan konfigurasi awal router/switch Cisco; perlu akun NetAcad.",
+   "bukti_lisensi": "Judul halaman 'Networking Devices and Initial Configuration | Free Course'; Tidak ada lisensi terbuka tertera di halaman; materi hak cipta Cisco, akses gratis dengan akun NetAcad"
+  },
+  {
+   "judul": "Cisco NetAcad: Network Addressing and Basic Troubleshooting",
+   "url": "https://www.netacad.com/courses/network-addressing-and-basic-troubleshooting",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "lisensi": "Cisco Networking Academy: hak cipta Cisco, gratis dengan akun NetAcad (tidak ada lisensi terbuka)",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "fondasi",
+    "routing",
+    "cisco"
+   ],
+   "tahap": [],
+   "catatan": "Kursus gratis tentang pengalamatan IP dan pemecahan masalah dasar; perlu akun NetAcad (halaman hanya memuat judul saat diperiksa).",
+   "bukti_lisensi": "Halaman kursus dibuka dan judul terkonfirmasi; Tidak ada lisensi terbuka tertera di halaman; materi hak cipta Cisco, akses gratis dengan akun NetAcad"
+  },
+  {
+   "judul": "Cisco NetAcad: Introduction to Cybersecurity",
+   "url": "https://www.netacad.com/courses/cybersecurity/introduction-cybersecurity",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "lisensi": "Cisco Networking Academy: hak cipta Cisco, gratis dengan akun NetAcad (tidak ada lisensi terbuka)",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "keamanan",
+    "karier"
+   ],
+   "tahap": [],
+   "catatan": "Kursus gratis pengantar keamanan siber Cisco untuk pemula; perlu akun NetAcad.",
+   "bukti_lisensi": "Halaman menyebut 'Free Online Course'; Tidak ada lisensi terbuka tertera di halaman; materi hak cipta Cisco, akses gratis dengan akun NetAcad"
+  },
+  {
+   "judul": "Cisco Packet Tracer: pelatihan dan unduhan gratis",
+   "url": "https://www.netacad.com/cisco-packet-tracer",
+   "jenis": "alat",
+   "bahasa": "en",
+   "lisensi": "Perangkat lunak hak cipta Cisco; gratis dengan akun NetAcad dan EULA Cisco",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "lab",
+    "cisco",
+    "fondasi"
+   ],
+   "tahap": [],
+   "catatan": "Halaman resmi unduh simulator Packet Tracer dan pelatihan pengantarnya; perlu akun NetAcad gratis.",
+   "bukti_lisensi": "Halaman: 'free NetAcad account and enrollment in the relevant introductory Packet Tracer learning content'; tidak ada lisensi terbuka"
+  },
+  {
+   "judul": "Cisco Skills for All",
+   "url": "https://www.netacad.com/cisco-skills-for-all",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "lisensi": "Cisco Networking Academy: hak cipta Cisco, gratis dengan akun NetAcad (tidak ada lisensi terbuka)",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "fondasi",
+    "karier",
+    "cisco"
+   ],
+   "tahap": [],
+   "catatan": "Portal Cisco untuk kursus gratis jaringan dan keamanan; perlu akun.",
+   "bukti_lisensi": "Halaman dibuka (judul Cisco Networking Academy); tidak ada lisensi terbuka"
+  },
+  {
+   "judul": "Cisco Modeling Labs Free (CML-Free)",
+   "url": "https://developer.cisco.com/docs/modeling-labs/cml-free/",
+   "jenis": "lab",
+   "bahasa": "en",
+   "lisensi": "Perangkat lunak Cisco; CML-Free tanpa biaya, tanpa lisensi berbayar, telemetri wajib",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "lab",
+    "cisco",
+    "routing"
+   ],
+   "tahap": [],
+   "catatan": "Simulator jaringan Cisco gratis, maksimal 5 node berjalan; dukungan komunitas, tanpa akun Smart Licensing.",
+   "bukti_lisensi": "Dokumentasi: 'This offering does not require a license subscription'; batas 5 node"
+  },
+  {
+   "judul": "Cisco DevNet Sandbox",
+   "url": "https://developer.cisco.com/site/sandbox/",
+   "jenis": "lab",
+   "bahasa": "en",
+   "lisensi": "Layanan Cisco gratis; ketentuan penggunaan Cisco, bukan lisensi terbuka",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "lab",
+    "otomasi",
+    "cisco",
+    "pemrograman-jaringan"
+   ],
+   "tahap": [],
+   "catatan": "Lingkungan lab daring gratis (virtual dan perangkat nyata) untuk menguji API dan otomasi Cisco; perlu akun Cisco untuk meluncurkan.",
+   "bukti_lisensi": "Halaman: 'Develop and test Cisco APIs, SDKs, and more for free'; tidak ada lisensi terbuka"
+  },
+  {
+   "judul": "Cisco DevNet Learning Labs",
+   "url": "https://developer.cisco.com/learning/",
+   "jenis": "lab",
+   "bahasa": "en",
+   "lisensi": "Hak cipta Cisco; gratis dengan akun, tanpa lisensi terbuka",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "otomasi",
+    "pemrograman-jaringan",
+    "cisco",
+    "lab"
+   ],
+   "tahap": [],
+   "catatan": "Tutorial dan lab terpandu gratis tentang API, Python, dan otomasi jaringan Cisco.",
+   "bukti_lisensi": "Halaman Learning Labs Center dibuka; tidak ada lisensi terbuka tertera"
+  },
+  {
+   "judul": "Cisco DevNet Documentation",
+   "url": "https://developer.cisco.com/docs/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "Hak cipta Cisco; tidak ada lisensi terbuka tertera",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "otomasi",
+    "pemrograman-jaringan",
+    "cisco"
+   ],
+   "tahap": [],
+   "catatan": "Kumpulan dokumentasi API dan SDK Cisco untuk pengembang jaringan; akses terbuka tanpa akun.",
+   "bukti_lisensi": "Halaman dibuka; tidak ada pernyataan lisensi terbuka"
+  },
+  {
+   "judul": "Juniper Open Learning",
+   "url": "https://learningportal.juniper.net/juniper/user_activity_info.aspx?id=11478",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "lisensi": "Hak cipta Juniper; gratis dengan akun, akses 6 bulan",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "juniper",
+    "sertifikasi",
+    "routing"
+   ],
+   "tahap": [],
+   "catatan": "Kursus mandiri gratis Junos untuk jenjang Associate hingga Professional; perlu akun Juniper Learning Portal, akses terbatas 6 bulan.",
+   "bukti_lisensi": "Halaman: 'You will have six (6) months access'; akun diperlukan; tidak ada lisensi terbuka"
+  },
+  {
+   "judul": "Dokumentasi Junos OS Juniper",
+   "url": "https://www.juniper.net/documentation/product/us/en/junos-os/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "Hak cipta Juniper Networks; tidak ada lisensi terbuka tertera",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "juniper",
+    "routing"
+   ],
+   "tahap": [],
+   "catatan": "Dokumentasi resmi Junos OS, terbuka tanpa akun, untuk referensi konfigurasi.",
+   "bukti_lisensi": "Halaman dibuka; tidak ada pernyataan lisensi terbuka"
+  },
+  {
+   "judul": "MikroTik RouterOS Manual (v7)",
+   "url": "https://manual.mikrotik.com/docs/introduction/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "Copyright © 2026 MikroTik (tanpa lisensi terbuka)",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "mikrotik",
+    "routing",
+    "firewall-nat",
+    "wireless",
+    "wan-vpn"
+   ],
+   "tahap": [],
+   "catatan": "Manual resmi RouterOS versi 7.26 terbaru; terbuka tanpa akun.",
+   "bukti_lisensi": "Footer: 'Copyright © 2026 MikroTik. Built with Docusaurus.'; situs lama help.mikrotik.com dibekukan dan mengarah ke sini"
+  },
+  {
+   "judul": "MikroTik Training: info kursus dan outline MTCNA",
+   "url": "https://mikrotik.com/training/about",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "lisensi": "Hak cipta MikroTik; ketentuan pelatihan, bukan lisensi terbuka",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "mikrotik",
+    "sertifikasi"
+   ],
+   "tahap": [],
+   "catatan": "Halaman resmi pelatihan MikroTik berisi outline MTCNA yang bisa diunduh; pelatihan sendiri berbayar lewat mitra.",
+   "bukti_lisensi": "Halaman: 'MikroTik certified trainer sets the training costs'; outline tersedia untuk diunduh"
+  },
+  {
+   "judul": "Kanal YouTube resmi MikroTik",
+   "url": "https://www.youtube.com/@MikroTik",
+   "jenis": "video",
+   "bahasa": "en",
+   "lisensi": "Konten hak cipta MikroTik; Ketentuan Layanan YouTube",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "mikrotik"
+   ],
+   "tahap": [],
+   "catatan": "Kanal video resmi MikroTik berisi tutorial dan peluncuran produk; terbuka tanpa akun.",
+   "bukti_lisensi": "Halaman kanal dibuka (judul MikroTik - YouTube); tidak ada lisensi CC tertera pada halaman utama"
+  },
+  {
+   "judul": "Fortinet Training Institute (NSE)",
+   "url": "https://www.fortinet.com/nse-training",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "lisensi": "Hak cipta Fortinet; kursus mandiri gratis dengan akun",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "keamanan",
+    "sertifikasi",
+    "firewall-nat"
+   ],
+   "tahap": [],
+   "catatan": "Program NSE dengan kursus mandiri gratis (Fortinet Certified Fundamentals NSE 1-2) hingga topik lanjut; perlu akun portal.",
+   "bukti_lisensi": "Halaman: 'No-cost, self-paced online courses'; Copyright 2026 Fortinet, tidak ada lisensi terbuka. Status program 2026 masih aktif"
+  },
+  {
+   "judul": "Fortinet Training Institute (portal kursus)",
+   "url": "https://training.fortinet.com/",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "lisensi": "Hak cipta Fortinet; akses dengan akun",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "keamanan",
+    "firewall-nat"
+   ],
+   "tahap": [],
+   "catatan": "Portal tempat kursus gratis Fortinet diambil; login diperlukan untuk isi kursus.",
+   "bukti_lisensi": "Halaman beranda dibuka; tidak ada lisensi terbuka"
+  },
+  {
+   "judul": "Palo Alto Networks Cybersecurity Academy",
+   "url": "https://paloaltonetworks.com/academy",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "lisensi": "Hak cipta Palo Alto Networks; gratis dengan akun Beacon",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "keamanan",
+    "firewall-nat",
+    "fondasi"
+   ],
+   "tahap": [],
+   "catatan": "Kurikulum keamanan jaringan gratis (mis. Fundamentals of Network Security) untuk pelajar; perlu akun.",
+   "bukti_lisensi": "Halaman: 'Free, online cybersecurity courses'; tidak ada lisensi terbuka"
+  },
+  {
+   "judul": "Palo Alto Networks Beacon (platform belajar)",
+   "url": "https://learn.paloaltonetworks.com/learn",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "lisensi": "Hak cipta Palo Alto Networks; perlu akun",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "keamanan",
+    "firewall-nat"
+   ],
+   "tahap": [],
+   "catatan": "Platform Beacon tempat kursus gratis Palo Alto diakses; halaman memuat via JavaScript dan meminta login.",
+   "bukti_lisensi": "URL dibuka dan dialihkan ke halaman learn; isi perlu login"
+  },
+  {
+   "judul": "AWS Skill Builder",
+   "url": "https://skillbuilder.aws/",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "lisensi": "Hak cipta Amazon Web Services; kursus gratis dengan akun",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "cloud",
+    "sertifikasi"
+   ],
+   "tahap": [],
+   "catatan": "Platform belajar AWS dengan kursus jaringan gratis seperti AWS Networking Basics dan Networking Core; perlu akun AWS Builder ID. URL kursus spesifik tidak terbuka saat dicek.",
+   "bukti_lisensi": "Beranda dibuka; tautan langsung kursus mengalihkan ke pencarian, jadi hanya portal yang dicantumkan"
+  },
+  {
+   "judul": "Panduan Pengguna Amazon VPC",
+   "url": "https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "Hak cipta Amazon Web Services; tidak ada lisensi terbuka tertera",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "cloud",
+    "routing",
+    "firewall-nat"
+   ],
+   "tahap": [],
+   "catatan": "Dokumentasi resmi VPC: subnet, tabel rute, gateway, peering, flow logs; terbuka tanpa akun.",
+   "bukti_lisensi": "Halaman dibuka dan tidak memuat lisensi terbuka"
+  },
+  {
+   "judul": "Microsoft Learn: Study guide AZ-700 Azure Networking",
+   "url": "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-700",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "Ketentuan Penggunaan Microsoft Learn: hanya penggunaan pribadi non-komersial",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "cloud",
+    "sertifikasi",
+    "wan-vpn"
+   ],
+   "tahap": [],
+   "catatan": "Daftar keterampilan ujian AZ-700 (diperbarui 27 Juli 2026) dengan tautan jalur belajar gratis; terbuka tanpa akun.",
+   "bukti_lisensi": "learn.microsoft.com/en-us/legal/termsofuse: 'personal and non-commercial use'; tidak boleh disalin tanpa izin tertulis"
+  },
+  {
+   "judul": "Microsoft Learn: Apa itu Azure Virtual Network",
+   "url": "https://learn.microsoft.com/en-us/azure/virtual-network/virtual-networks-overview",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "Ketentuan Penggunaan Microsoft Learn: hanya penggunaan pribadi non-komersial",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "cloud",
+    "fondasi",
+    "routing"
+   ],
+   "tahap": [],
+   "catatan": "Pengantar resmi VNet Azure; terbuka tanpa akun.",
+   "bukti_lisensi": "learn.microsoft.com/en-us/legal/termsofuse melarang penyalinan tanpa izin"
+  },
+  {
+   "judul": "Dokumentasi jaringan Windows Server",
+   "url": "https://learn.microsoft.com/en-us/windows-server/networking/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "Ketentuan Penggunaan Microsoft Learn: hanya penggunaan pribadi non-komersial",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "fondasi",
+    "aplikasi"
+   ],
+   "tahap": [],
+   "catatan": "Pusat dokumentasi jaringan Windows Server (DNS, DHCP, remote access); terbuka tanpa akun.",
+   "bukti_lisensi": "learn.microsoft.com/en-us/legal/termsofuse"
+  },
+  {
+   "judul": "Google Skills (Cloud Skills Boost): jalur belajar",
+   "url": "https://www.skills.google/paths",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "lisensi": "Hak cipta Google; sebagian gratis, laboratorium berkredit",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "cloud",
+    "keamanan"
+   ],
+   "tahap": [],
+   "catatan": "Jalur belajar Google Cloud termasuk Network Security; perlu akun, sebagian lab memakai kredit.",
+   "bukti_lisensi": "Halaman jalur dibuka; tidak ada lisensi terbuka"
+  },
+  {
+   "judul": "Google Cloud: ikhtisar Virtual Private Cloud (VPC)",
+   "url": "https://docs.cloud.google.com/vpc/docs/overview",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "CC BY 4.0 (konten), Apache 2.0 (contoh kode)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "cloud",
+    "fondasi",
+    "routing"
+   ],
+   "tahap": [],
+   "catatan": "Konsep VPC Google Cloud untuk pembelajar jaringan cloud; terbuka tanpa akun.",
+   "bukti_lisensi": "Footer halaman: 'Except as otherwise noted, the content of this page is licensed under the Creative Commons Attribution 4.0 License, and code samples are licensed under the Apache 2.0 License.'"
+  },
+  {
+   "judul": "Google Cloud: ikhtisar Cloud NAT",
+   "url": "https://docs.cloud.google.com/nat/docs/overview",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "CC BY 4.0 (konten), Apache 2.0 (contoh kode)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "cloud",
+    "firewall-nat"
+   ],
+   "tahap": [],
+   "catatan": "Penjelasan NAT di Google Cloud; terbuka tanpa akun.",
+   "bukti_lisensi": "Footer halaman: 'Except as otherwise noted, the content of this page is licensed under the Creative Commons Attribution 4.0 License, and code samples are licensed under the Apache 2.0 License.'"
+  },
+  {
+   "judul": "Google Cloud: ikhtisar Cloud DNS",
+   "url": "https://docs.cloud.google.com/dns/docs/overview",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "CC BY 4.0 (konten), Apache 2.0 (contoh kode)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "cloud",
+    "aplikasi"
+   ],
+   "tahap": [],
+   "catatan": "Penjelasan layanan DNS terkelola Google; terbuka tanpa akun.",
+   "bukti_lisensi": "Footer halaman: 'Except as otherwise noted, the content of this page is licensed under the Creative Commons Attribution 4.0 License, and code samples are licensed under the Apache 2.0 License.'"
+  },
+  {
+   "judul": "Google Cloud: ikhtisar Cloud Load Balancing",
+   "url": "https://docs.cloud.google.com/load-balancing/docs/load-balancing-overview",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "CC BY 4.0 (konten), Apache 2.0 (contoh kode)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "cloud",
+    "aplikasi",
+    "datacenter"
+   ],
+   "tahap": [],
+   "catatan": "Jenis dan cara kerja load balancer Google Cloud; terbuka tanpa akun.",
+   "bukti_lisensi": "Footer halaman: 'Except as otherwise noted, the content of this page is licensed under the Creative Commons Attribution 4.0 License, and code samples are licensed under the Apache 2.0 License.'"
+  },
+  {
+   "judul": "Google Cloud: ikhtisar Cloud VPN",
+   "url": "https://docs.cloud.google.com/network-connectivity/docs/vpn/concepts/overview",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "CC BY 4.0 (konten), Apache 2.0 (contoh kode)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "cloud",
+    "wan-vpn"
+   ],
+   "tahap": [],
+   "catatan": "Konsep VPN situs-ke-situs di Google Cloud; terbuka tanpa akun.",
+   "bukti_lisensi": "Footer halaman: 'Except as otherwise noted, the content of this page is licensed under the Creative Commons Attribution 4.0 License, and code samples are licensed under the Apache 2.0 License.'"
+  },
+  {
+   "judul": "Google Cloud: aturan firewall VPC",
+   "url": "https://docs.cloud.google.com/firewall/docs/firewalls",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "CC BY 4.0 (konten), Apache 2.0 (contoh kode)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "cloud",
+    "firewall-nat",
+    "keamanan"
+   ],
+   "tahap": [],
+   "catatan": "Cara kerja aturan firewall VPC; terbuka tanpa akun.",
+   "bukti_lisensi": "Footer halaman: 'Except as otherwise noted, the content of this page is licensed under the Creative Commons Attribution 4.0 License, and code samples are licensed under the Apache 2.0 License.'"
+  },
+  {
+   "judul": "Linux Foundation LFS101: Introduction to Linux",
+   "url": "https://training.linuxfoundation.org/training/introduction-to-linux/",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "lisensi": "Hak cipta Linux Foundation; gratis ($0) dengan login",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "linux",
+    "fondasi"
+   ],
+   "tahap": [],
+   "catatan": "Kursus mandiri gratis dasar Linux (sekitar 60 jam, akses 90 hari); perlu login akun Linux Foundation.",
+   "bukti_lisensi": "Halaman: harga $0, 'login through The Linux Foundation's portal'; tidak ada lisensi terbuka"
+  },
+  {
+   "judul": "Linux Foundation LFS158: Introduction to Kubernetes",
+   "url": "https://training.linuxfoundation.org/training/introduction-to-kubernetes/",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "lisensi": "Hak cipta Linux Foundation; gratis ($0) dengan login",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "container",
+    "cloud"
+   ],
+   "tahap": [],
+   "catatan": "Kursus gratis pengantar Kubernetes (15-20 jam); perlu akun.",
+   "bukti_lisensi": "Halaman: harga $0; lisensi materi tidak dinyatakan"
+  },
+  {
+   "judul": "CompTIA Network+ (N10-009)",
+   "url": "https://www.comptia.org/en-us/certifications/network/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "Copyright © 2026 CompTIA, Inc. All rights reserved.",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "sertifikasi",
+    "fondasi",
+    "karier"
+   ],
+   "tahap": [],
+   "catatan": "Halaman resmi sertifikasi Network+ N10-009 beserta domain ujian; tautan objectives resmi ada di halaman, terbuka tanpa akun.",
+   "bukti_lisensi": "Footer: 'Copyright © 2026 CompTIA, Inc. All rights reserved.'; kode ujian N10-009 (pensiun perkiraan 2027)"
+  },
+  {
+   "judul": "CompTIA Security+ (SY0-701)",
+   "url": "https://www.comptia.org/en-us/certifications/security/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "Copyright © 2026 CompTIA, Inc. All rights reserved.",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "sertifikasi",
+    "keamanan",
+    "karier"
+   ],
+   "tahap": [],
+   "catatan": "Halaman resmi Security+ SY0-701; versi V8 diperkirakan rilis sekitar 17 November 2026, jadi tandai agar dipantau.",
+   "bukti_lisensi": "Footer hak cipta CompTIA; halaman menyebut V8 diharapkan sekitar 17 Nov 2026"
+  },
+  {
+   "judul": "Learn SR Linux (Nokia)",
+   "url": "https://learn.srlinux.dev/",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "lisensi": "BSD-3-Clause (repositori srl-labs/learn-srlinux)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "datacenter",
+    "otomasi",
+    "lab",
+    "routing"
+   ],
+   "tahap": [],
+   "catatan": "Tutorial dan lab gratis NOS Nokia SR Linux berbasis kontainer, tanpa registrasi atau lisensi.",
+   "bukti_lisensi": "LICENSE di github.com/srl-labs/learn-srlinux: BSD-3-Clause, 'Copyright (c) 2021 Nokia'; situs menyebut image tersedia tanpa registrasi"
+  },
+  {
+   "judul": "Nokia SR Linux Documentation",
+   "url": "https://documentation.nokia.com/srlinux/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "Hak cipta Nokia; tidak ada lisensi terbuka tertera",
+   "boleh_salin": false,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "datacenter",
+    "routing",
+    "otomasi"
+   ],
+   "tahap": [],
+   "catatan": "Dokumentasi resmi SR Linux untuk referensi konfigurasi dan model YANG; terbuka tanpa akun.",
+   "bukti_lisensi": "Halaman dibuka; hanya memuat catatan merek dagang, tanpa lisensi terbuka"
+  },
+  {
+   "judul": "Containerlab",
+   "url": "https://containerlab.dev/",
+   "jenis": "alat",
+   "bahasa": "en",
+   "lisensi": "BSD-3-Clause (repositori srl-labs/containerlab)",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "lab",
+    "otomasi",
+    "container"
+   ],
+   "tahap": [],
+   "catatan": "Alat dan dokumentasi untuk membangun topologi lab jaringan berbasis Docker, multi-vendor; terbuka.",
+   "bukti_lisensi": "LICENSE di repositori srl-labs/containerlab: teks BSD, 'Copyright (c) 2021 Nokia'"
+  },
+  {
+   "judul": "Arista Validated Designs (AVD)",
+   "url": "https://avd.arista.com/6.4/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "Apache License 2.0",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "otomasi",
+    "datacenter",
+    "desain"
+   ],
+   "tahap": [],
+   "catatan": "Dokumentasi koleksi Ansible untuk desain data center EVPN-VXLAN Arista; terbuka tanpa akun.",
+   "bukti_lisensi": "Halaman AVD bagian License: 'governed by the Apache License 2.0'; LICENSE repositori aristanetworks/avd adalah Apache 2.0"
+  },
+  {
+   "judul": "Cilium Documentation",
+   "url": "https://docs.cilium.io/en/stable/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "Apache License 2.0 (repositori cilium/cilium); © Cilium Authors",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "container",
+    "linux",
+    "keamanan"
+   ],
+   "tahap": [],
+   "catatan": "Dokumentasi jaringan Kubernetes berbasis eBPF; terbuka tanpa akun.",
+   "bukti_lisensi": "Footer: 'Copyright Cilium Authors'; LICENSE repositori cilium/cilium: Apache 2.0"
+  },
+  {
+   "judul": "Kubernetes: Services, Load Balancing, and Networking",
+   "url": "https://kubernetes.io/docs/concepts/services-networking/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "CC BY 4.0",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "container",
+    "aplikasi"
+   ],
+   "tahap": [],
+   "catatan": "Pintu masuk konsep jaringan Kubernetes. Terbuka tanpa akun.",
+   "bukti_lisensi": "Footer: 'Documentation Distributed under CC BY 4.0'; LICENSE repositori kubernetes/website: Attribution 4.0 International"
+  },
+  {
+   "judul": "Kubernetes: Service",
+   "url": "https://kubernetes.io/docs/concepts/services-networking/service/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "CC BY 4.0",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "container",
+    "aplikasi"
+   ],
+   "tahap": [],
+   "catatan": "Cara Service mengekspos aplikasi di klaster. Terbuka tanpa akun.",
+   "bukti_lisensi": "Footer: 'Documentation Distributed under CC BY 4.0'; LICENSE repositori kubernetes/website: Attribution 4.0 International"
+  },
+  {
+   "judul": "Kubernetes: Network Policies",
+   "url": "https://kubernetes.io/docs/concepts/services-networking/network-policies/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "CC BY 4.0",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "container",
+    "firewall-nat",
+    "keamanan"
+   ],
+   "tahap": [],
+   "catatan": "Aturan lalu lintas antar-pod. Terbuka tanpa akun.",
+   "bukti_lisensi": "Footer: 'Documentation Distributed under CC BY 4.0'; LICENSE repositori kubernetes/website: Attribution 4.0 International"
+  },
+  {
+   "judul": "Kubernetes: DNS for Services and Pods",
+   "url": "https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "CC BY 4.0",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "container",
+    "aplikasi"
+   ],
+   "tahap": [],
+   "catatan": "Resolusi nama di dalam klaster. Terbuka tanpa akun.",
+   "bukti_lisensi": "Footer: 'Documentation Distributed under CC BY 4.0'; LICENSE repositori kubernetes/website: Attribution 4.0 International"
+  },
+  {
+   "judul": "Kubernetes: Cluster Networking",
+   "url": "https://kubernetes.io/docs/concepts/cluster-administration/networking/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "lisensi": "CC BY 4.0",
+   "boleh_salin": true,
+   "tanggal_diperiksa": "2026-10-14",
+   "topik": [
+    "container",
+    "fondasi"
+   ],
+   "tahap": [],
+   "catatan": "Model jaringan klaster Kubernetes. Terbuka tanpa akun.",
+   "bukti_lisensi": "Footer: 'Documentation Distributed under CC BY 4.0'; LICENSE repositori kubernetes/website: Attribution 4.0 International"
+  }
+ ]
+}

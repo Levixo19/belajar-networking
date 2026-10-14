@@ -169,3 +169,50 @@ harus sah.
 **Tahap tanpa modul tidak boleh sampai ke UI.** `stage.modules[0]` dipakai di
 banyak tempat; build melewati folder tahap yang kosong. Dijaga
 `tests/konten.test.mjs`.
+
+### Pustaka
+
+**`app/data/pustaka/*.json` DIHASILKAN `npm run panen` (`scripts/panen-pustaka.mjs`).**
+Jangan menyuntingnya dengan tangan: `tests/pustaka.test.mjs` memanen ulang dari
+`/home/vi/folder_materi/materi-belajar` dan dari `materi/` lalu menuntut hasil yang
+identik byte demi byte. Mengubah satu tautan di `materi/` berarti menjalankan
+`npm run panen` lagi, atau tes itu merah. Kalau sebuah butir salah, perbaiki
+pengurainya, bukan JSON-nya.
+
+**Lisensi menentukan apa yang boleh disalin; tabelnya `SUMBER` di kepala pemanen.**
+Repo tanpa lisensi (getting-a-gig, build-your-own-x) dan proprietary
+(developer-roadmap, kurikulum freeCodeCamp) cuma boleh ditautkan, jadi yang masuk
+hanya tautan ke situs/repo itu sendiri dengan keterangan yang kita tulis. Daftar
+coding-interview-university (CC BY-SA 4.0) tinggal di `ciu.json` SENDIRI supaya
+ShareAlike-nya tidak menular ke berkas lain. Dijaga tes "CC BY-SA ... tinggal di
+berkasnya sendiri".
+
+**`app/data/pustaka-kurasi/*.json` ditulis tangan dari hasil memeriksa halamannya
+sendiri.** Setiap butir membawa `lisensi` (persis seperti di sumber), `boleh_salin`,
+dan `tanggal_diperiksa`. Build GAGAL kalau `boleh_salin: true` bersanding dengan
+NC/ND/tanpa lisensi, kalau URL-nya bukan https, kalau tanggalnya di masa depan,
+atau kalau domainnya penyingkat tautan atau cermin PDF bajakan (`DILARANG` di
+`build-content.mjs`). Hati-hati dengan bukti lisensi yang terlihat meyakinkan:
+komentar MIT di HTML situs mkdocs adalah lisensi TEMA, bukan lisensi isinya (sudah
+pernah salah dibaca begitu saat riset).
+
+**`bahasa` adalah bahasa HALAMANNYA, bukan bahasa judulnya.** Judul di materi
+ditulis pengarang dalam bahasa Indonesia ("FRRouting, RPKI dan BMP") walau
+halamannya berbahasa Inggris. Pemanen memakai domain (`.id`, `id.`), dengan daftar
+pengecualian situs `.id` yang berbahasa Inggris. Menebak dari judul pernah
+menandai 83 halaman berbahasa Inggris sebagai Indonesia.
+
+**Tahap terkait sebuah butir DIHITUNG dari `TOPIK_TAHAP`** (`src/lib/pustakaTopik.ts`),
+satu-satunya tempat pemetaan itu ditulis. Butir cuma membawa topik. Tahap baru
+cukup menambah satu baris di sana; tes menuntut setiap tahap belajar mendapat 4-6
+bacaan lanjutan, jadi tahap yang terlupa langsung ketahuan (Layer Fisik dan Proyek
+Akhir pernah kosong).
+
+**Jumlah di samping setiap nilai segi = banyaknya hasil kalau nilai itu yang
+dipilih.** `hitungSegi()` menghitung dari butir yang lolos kueri dan SEMUA saringan
+lain kecuali segi itu sendiri. Angka global ("39 video di seluruh pustaka") sementara
+hasilnya 6 adalah angka yang berbohong. Dijaga tes "jumlah segi jujur".
+
+**Pustaka dimuat malas (`muatPustaka()`), tidak pernah diimpor statis.** Datanya
+±480 KB; mengimpornya dari komponen yang ada di bundel utama membuat setiap halaman
+memuatnya.

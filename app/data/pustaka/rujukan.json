@@ -1,0 +1,37 @@
+{
+ "sumber": {
+  "kunci": "rujukan",
+  "nama": "Repo tanpa lisensi terbuka",
+  "pemilik": "-",
+  "repo": "",
+  "lisensi": "tautan saja",
+  "boleh_salin": false,
+  "atribusi": "Dua repo yang tidak mencantumkan lisensi, sehingga isinya hak cipta penuh penulisnya. Hanya tautan ke repo itu sendiri yang dicantumkan.",
+  "commit": ""
+ },
+ "entri": [
+  {
+   "id": "rujukan-644a4cc4",
+   "judul": "Build Your Own X",
+   "url": "https://github.com/codecrafters-io/build-your-own-x",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "pemrograman-jaringan",
+    "lab"
+   ],
+   "catatan": "Tutorial membangun ulang teknologi dari nol; bagian \"Network Stack\" relevan untuk tahap transport. Repo tanpa lisensi, jadi dibuka langsung di GitHub."
+  },
+  {
+   "id": "rujukan-155972df",
+   "judul": "Getting a Gig",
+   "url": "https://github.com/cassidoo/getting-a-gig",
+   "jenis": "daftar",
+   "bahasa": "en",
+   "topik": [
+    "karier"
+   ],
+   "catatan": "Kumpulan tautan tentang CV, portofolio, dan wawancara oleh Cassidy Williams. Repo tanpa lisensi, jadi dibuka langsung di GitHub."
+  }
+ ]
+}

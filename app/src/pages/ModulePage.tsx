@@ -5,6 +5,7 @@ import { useStore } from '../lib/store'
 import RichProse from '../components/RichProse'
 import PacketDelivered from '../components/PacketDelivered'
 import ReadingSettings from '../components/ReadingSettings'
+import BacaanLanjutan from '../components/BacaanLanjutan'
 import { scrollToId } from '../lib/scrollTo'
 import { linkModuleRefs } from '../lib/modRefs'
 import { toolForModule } from '../tools'
@@ -143,6 +144,8 @@ export default function ModulePage() {
                 <div className="p-5 sm:p-6"><EmbeddedTool /></div>
               </section>
             )}
+
+            {stage && <BacaanLanjutan tahap={stage.id} judulTahap={stage.title} />}
 
             <section className="mt-20 border-t border-app pt-10" aria-label="Selesaikan modul">
               <h2 className="text-[22px] font-semibold tracking-[-0.03em]">

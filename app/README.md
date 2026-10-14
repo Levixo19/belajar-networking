@@ -10,6 +10,7 @@ berbasis kurikulum di `../materi/`. Stack **MERN**: MongoDB · Express · React 
 - **Spaced repetition** (SM-2): ~883 kartu latihan untuk active recall dengan interval bertambah.
 - **Lab yang bisa dijalankan**: kode lab di `../materi/lab/kode/` (containerlab/FRR, MikroTik CHR, Python dengan pytest). Teks materi CC BY-SA 4.0, kode lab MIT; atribusi di `../materi/NOTICE.md`.
 - **Peta profesi** (`/karier`): konstelasi 32 profesi di ekosistem jaringan, kesiapan pribadi dari modul yang tuntas, kuis kecocokan, dan perencana perpindahan karier. Data di `data/profesi/*.json`, divalidasi ketat saat build.
+- **Pustaka** (`/pustaka`): ±1.200 tautan belajar beratribusi (buku terbuka, standar, kursus resmi, dokumentasi, lab), bisa dicari dan disaring per jenis, bahasa, sumber, dan tahap; tiap modul punya "Bacaan lanjutan". Data panen di `data/pustaka/` (dihasilkan `npm run panen`), riset tangan di `data/pustaka-kurasi/`.
 - **Alat interaktif**: kalkulator subnet (visualisasi biner), konverter biner/hex, penjelajah OSI, animasi TCP handshake, simulator perjalanan paket.
 - **Pencarian global** + **command palette** (Ctrl-K).
 - **Multi-profil**, tema terang/gelap, responsif, jalan offline (cache lokal).
@@ -46,6 +47,7 @@ node server/index.mjs    # Express menyajikan dist/ + API di http://127.0.0.1:40
 | `npm run dev` | Build konten, nyalakan Mongo (Docker), server + client (HMR) |
 | `npm run build` | Build konten + bundel produksi ke `dist/` |
 | `npm run content` | Regenerasi `src/generated/curriculum.json` dari `../materi/**/*.md` (dist/ TIDAK ikut; jalankan `npm run build`) |
+| `npm run panen` | Panen ulang `data/pustaka/*.json` dari repo kurasi lokal dan dari `../materi/` |
 | `npm test` | Tes `node:test`: logika src/lib, skrip build, penjagaan server |
 | `npm run db:up` / `db:down` | Start/stop MongoDB via Docker |
 | `npm run server` | Server Express saja (watch) |
