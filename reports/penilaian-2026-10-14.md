@@ -120,3 +120,9 @@ yang dicatat dengan benar di `materi/NOTICE.md`.
 - **D2 (dua tab saling menimpa)**: perbaikan yang benar mengubah kontrak API (penggabungan per kunci atau nomor versi), dan itu layak jadi pekerjaan tersendiri, bukan tempelan di fase pengamanan.
 - **D10 (panen XP)**: soal desain gamifikasi, bukan bug keamanan; butuh keputusan pemilik.
 - **A4 (`confirm()`)**: diganti dialog sendiri di Fase 4, bersama perbaikan fokus.
+
+## Status sesudah Fase 6 (2026-10-15)
+
+- **P2:** salah ketik "proyek baba" sudah diperbaiki. Panduan Packet Tracer (Simulation Mode, berkas .pka, batasannya) BELUM ditulis.
+- **P3:** ditutup. Modul baru 15.5 dan 17.5, Tahap 23 (tiga modul), serta tujuh bagian istilah di modul yang sudah ada (XDP di 13.3, Hubble di 16.5, DCQCN di 16.3, 400ZR di 2.3, RFC 8925 di 8.3, 5G SA/UPF di 22.4, ABR di 6.3). Peta 18.2, 18.3, dan 18.5 dicek ulang terhadap halaman resmi. Kurikulum kini 149 modul, 930 kartu, dan 27 tahap.
+- **P4:** tetap terbuka, dan bertambah: perintah Junos di 23.1 dan sintaks opsi DHCP 108 di 8.3 juga belum dijalankan di perangkat.

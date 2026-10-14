@@ -1260,4 +1260,4 @@ sudo containerlab destroy -t sp-ha.clab.yml
 
 ---
 
-**Berikutnya:** `21-ekosistem-profesi/01-peta-ekosistem` — beralih dari teknologi ke peta profesi: di mana keahlian service provider dipakai, termasuk jalur telecom engineer dan network architect.
+**Berikutnya:** `23-jalur-vendor/01-junos` — pendalaman opsional: Junos, Cisco SD-Access dan Catalyst SD-WAN, serta API platform Cisco. Kalau ingin langsung ke peta profesi, lewati ke modul 21.1 Peta Ekosistem.

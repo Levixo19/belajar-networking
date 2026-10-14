@@ -717,6 +717,14 @@ Legenda kedalaman:
 - [ ] P NetBox sebagai Source of Truth, dynamic inventory
 - [ ] P Praktik aman: dry run, blast radius, rollback plan, approval gate
 
+### `15-otomasi/05-rekayasa-perangkat-lunak.md`
+- [ ] P Alur Git: branch, commit, merge vs rebase, pull request, membaca unified diff
+- [ ] P Pengujian: pytest, TDD singkat, test double untuk perangkat
+- [ ] P Pola desain otomasi: adapter per vendor, idempotensi, retry dengan backoff
+- [ ] P REST API: pagination, rate limit (429, Retry-After), webhook vs polling, diagram sekuens
+- [ ] P Dockerfile minimal, venv dan dependensi, rahasia di luar repo
+- [ ] P Pemetaan ke CCNA Automation 200-901 v1.1 (domain 1.0, 2.0, 4.0, 5.0)
+
 ---
 
 ## TAHAP 16 — DATA CENTER, CLOUD, SDN, CONTAINER
@@ -799,6 +807,14 @@ Legenda kedalaman:
 - [ ] P Kasus 3: data center kecil + DR site + koneksi cloud
 - [ ] P Kasus 4: ISP/WISP kecil (BGP multihoming, CGNAT, RPKI)
 - [ ] P Kasus 5: migrasi kampus L2 ke routed access tanpa downtime
+
+### `17-desain-arsitektur/05-operasi-kontinuitas.md`
+- [ ] P RPO, RTO, MTTR, MTBF, MTTF; menghitung availability (99,9% = 43,2 menit per bulan)
+- [ ] P Hot, warm, cold site, DR di cloud; backup full/incremental/differential, aturan 3-2-1
+- [ ] P Uji DR dan tabletop exercise
+- [ ] P Manajemen perubahan: RFC, CAB, standard/normal/emergency change; MOP, pre/post-check, rollback
+- [ ] P Siklus hidup aset (EOL/EOS, decommissioning aman), SLI/SLO, postmortem tanpa menyalahkan
+- [ ] P Praktik: Cisco archive/configure replace, MikroTik safe mode dan /export, Linux etckeeper dan netplan try
 
 ---
 
@@ -911,6 +927,21 @@ Inti jaringan operator dan ISP, multi-vendor (Cisco IOS XR/XE, Junos, MikroTik v
 - [ ] Pseudowire, VPWS, VPLS, EVPN-MPLS, MEF, QinQ/PBB, G.8032, CFM/Y.1731
 ### `22-service-provider/05-sp-ketersediaan-keamanan.md`
 - [ ] GR/NSR, BFD, BGP PIC dan Add-Path, CoPP/LPTS, uRPF, GTSM, graceful shutdown
+
+---
+
+## TAHAP 23 — JALUR VENDOR LANJUTAN (PENDALAMAN)
+
+Spesialisasi sesudah Tahap 22, untuk jalur JNCIA dan lingkungan Cisco enterprise. Tidak diuji di CCNA, Network+, atau MTCNA.
+
+### `23-jalur-vendor/01-junos.md`
+- [ ] Arsitektur RE/PFE, mode operasional vs konfigurasi, candidate config, commit, commit confirmed, rollback
+- [ ] Hierarki set, interface unit, routing-instance, OSPF dan BGP dasar, policy-options; perbandingan dengan IOS dan MikroTik v7
+### `23-jalur-vendor/02-sd-access-sd-wan.md`
+- [ ] SD-Access: underlay IS-IS, LISP + VXLAN, SGT, peran node, Catalyst Center
+- [ ] Catalyst SD-WAN: Manager, Controller, Validator, WAN Edge, OMP, TLOC, kebijakan aplikasi
+### `23-jalur-vendor/03-api-platform-cisco.md`
+- [ ] Catalyst Center Intent API, Meraki Dashboard API, NSO; token, pagination, rate limit, contoh Python
 
 ---
 

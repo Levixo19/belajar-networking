@@ -505,7 +505,31 @@ add chain=forward action=drop in-interface-list=WAN comment="Tolak inisiasi dari
 
 ---
 
-## 9. Ringkasan
+## 9. DHCPv4 Option 108: IPv6-Mostly (RFC 8925)
+
+Strategi migrasi di bagian 6 biasanya mengorbankan satu hal: untuk membuat segmen IPv6-only, Anda memisahkan perangkat modern dan lawas ke VLAN atau SSID berbeda. RFC 8925 (Oktober 2020, Standards Track) menyelesaikannya dengan satu opsi DHCPv4. Segmen yang dihasilkan disebut **IPv6-mostly**: segmen yang menyediakan NAT64 (umumnya dengan DNS64) sekaligus tetap menyediakan IPv4, sehingga host IPv6-only, dual-stack, dan IPv4-only bisa hidup berdampingan di segmen yang sama.
+
+Opsi ini bernama **IPv6-Only Preferred**, **kode 108**, panjang tetap 4 byte, dan nilainya adalah bilangan 32 bit tak bertanda berisi detik **V6ONLY_WAIT**. Cara kerjanya:
+
+1. Klien yang mampu IPv6-only (misalnya punya CLAT 464XLAT seperti di bagian 5) menaruh kode 108 di *Parameter Request List* pada DHCPDISCOVER dan DHCPREQUEST. Klien yang bukan IPv6-only-capable tidak boleh meminta opsi ini.
+2. Server hanya menyertakan opsi 108 bila (a) klien memintanya dan (b) kolam alamat itu memang dikonfigurasi sebagai IPv6-mostly. Server sebaiknya menawarkan alamat `0.0.0.0` agar tidak menghabiskan alamat dari kolam.
+3. Klien yang menerima opsi 108 tidak boleh meminta alamat IPv4 yang ditawarkan dan menunda DHCPv4 selama V6ONLY_WAIT detik, atau sampai terjadi *network attachment event* (misalnya link up), mana yang lebih dulu. Nilai minimum yang dipakai klien adalah `MIN_V6ONLY_WAIT` = **300 detik**; nilai server yang lebih kecil (termasuk 0 saat server tidak mengatur apa pun) diperlakukan sebagai 300. Nilai bawaan variabel V6ONLY_WAIT adalah **1800 detik**.
+4. Klien lama atau IPv4-only mengabaikan opsi ini dan menerima alamat IPv4 seperti biasa.
+
+Karena nilainya 32 bit, 1800 detik ditulis sebagai `0x00000708` dan 3600 detik sebagai `0x00000E10`. Di MikroTik RouterOS v7, opsi ini ditambahkan sebagai DHCP option mentah lalu dipasang ke jaringan DHCP; sintaks di bawah belum diuji di lab kurikulum ini, jadi verifikasi dengan `tcpdump` atau Wireshark pada paket DHCPOFFER.
+
+```
+/ip dhcp-server option add name=v6only-preferred code=108 value=0x00000708
+/ip dhcp-server network set [find address=192.0.2.0/24] dhcp-option=v6only-preferred
+```
+
+Di Cisco IOS XE, opsi generik ditulis di pool DHCP dengan `option 108 hex 0000.0708`; di Linux, server DHCPv4 seperti dnsmasq atau Kea punya sintaks masing-masing, cek dokumentasi versi Anda. Syarat jaringannya sama: **NAT64 dan DNS64 harus sudah berjalan** (lihat `NAT64 + DNS64` di bagian 5), dan router mengiklankan prefix NAT64 lewat RA PREF64 (RFC 8781) bila klien memerlukannya. Tanpa itu, klien yang menunda IPv4 akan kehilangan akses ke tujuan IPv4-only.
+
+⚠️ **Jangan mengaktifkan opsi 108 sebelum NAT64 dan DNS64 benar-benar diuji.** RFC 8925 sendiri tidak membahas apa yang terjadi bila IPv6 gagal setelah klien mematikan IPv4. Jadi mulailah dari satu kolam percobaan, dan pastikan aplikasi yang memakai IPv4 literal punya CLAT atau pengecualian.
+
+---
+
+## 10. Ringkasan
 
 - Routing IPv6 konsepnya identik dengan IPv4; yang berubah sintaks dan beberapa detail.
 - **`ipv6 unicast-routing` wajib.** Next hop link-local **harus** disertai exit interface.
@@ -520,10 +544,11 @@ add chain=forward action=drop in-interface-list=WAN comment="Tolak inisiasi dari
 - Migrasi bertahap: **edge → DMZ → core → access → IPv6-only**.
 - Rancang skema alamat untuk **kemudahan dibaca**, bukan penghematan.
 - Keamanan: pemindaian brute force tidak mungkin, tetapi enumerasi lewat DNS/log tetap ada; **RA Guard wajib**; jangan blokir ICMPv6.
+- **RFC 8925** (DHCPv4 option **108**, IPv6-Only Preferred) membuat segmen **IPv6-mostly**: klien IPv6-only-capable meminta opsi itu dan menunda DHCPv4 selama **V6ONLY_WAIT** (minimum 300 detik, bawaan 1800), sedangkan klien lain tetap mendapat IPv4. Syaratnya NAT64/DNS64 sudah berjalan.
 
 ---
 
-## 10. Latihan
+## 11. Latihan
 
 1. Kenapa next hop link-local pada static route IPv6 wajib disertai exit interface?
 2. Anda mengonfigurasi OSPFv3 tetapi tidak ada adjacency. Konfigurasi terlihat benar. Sebutkan tiga hal yang paling mungkin.
@@ -533,6 +558,7 @@ add chain=forward action=drop in-interface-list=WAN comment="Tolak inisiasi dari
 6. Rancang skema pengalamatan untuk perusahaan dengan alokasi `2001:db8:1234::/48`, 4 lokasi, masing-masing sampai 20 VLAN.
 7. Kenapa 464XLAT diperlukan padahal sudah ada NAT64?
 8. Apakah IPv6 lebih aman daripada IPv4 karena tidak bisa dipindai? Jelaskan.
+9. Kolam DHCPv4 `192.0.2.0/24` Anda ubah menjadi IPv6-mostly dengan V6ONLY_WAIT 3600 detik. Tulis kode opsi dan nilai 32-bit heksadesimalnya. Jelaskan apa yang terjadi pada (a) ponsel modern dengan CLAT, (b) printer lama IPv4-only, dan (c) apa yang akan dilakukan klien bila server mengirim nilai 0.
 
 <details>
 <summary>Jawaban</summary>
@@ -579,11 +605,13 @@ add chain=forward action=drop in-interface-list=WAN comment="Tolak inisiasi dari
    **Tetapi** penyerang punya cara lain: (a) **enumerasi DNS** — AAAA record, reverse DNS, zone transfer; (b) **Certificate Transparency logs** yang mengungkap nama host; (c) **alamat yang mudah ditebak** — `::1`, `::2`, `::80`, `::53`, atau alamat berurutan yang diberikan administrator; (d) **alamat EUI-64** — kalau OUI vendor diketahui, ruang pencarian menyusut drastis; (e) **log, traffic capture, dan referer**; (f) pemindaian dari **dalam** segmen memakai `ff02::1`.
    Kesimpulan: kesulitan pemindaian adalah **lapisan tambahan**, bukan pengganti kontrol keamanan. Firewall stateful, segmentasi, dan hardening tetap wajib — terlebih karena IPv6 menghilangkan perlindungan implisit yang dulu diberikan NAT. Gunakan interface ID acak untuk host sensitif agar tidak mudah ditebak.
 
+9. Kode opsi **108**, panjang 4 byte, nilai 3600 = **0x00000E10**. (a) Ponsel mengirim kode 108 di Parameter Request List; server menjawab dengan opsi 108 (dan umumnya alamat 0.0.0.0), sehingga ponsel tidak meminta IPv4 dan menunda DHCPv4 selama 3600 detik atau sampai link up berikutnya; akses ke tujuan IPv4-only lewat NAT64 dan CLAT. (b) Printer tidak meminta opsi 108 dan tidak boleh mendapat opsi itu dari server, jadi ia menerima alamat IPv4 normal dari kolam. (c) Nilai 0 berarti server tidak mengonfigurasi V6ONLY_WAIT; klien memperlakukan nilai di bawah MIN_V6ONLY_WAIT sebagai **300 detik**.
+
 </details>
 
 ---
 
-## 11. Sumber
+## 12. Sumber
 
 - RFC 4213 — Basic Transition Mechanisms for IPv6 Hosts and Routers
 - RFC 6146 — Stateful NAT64 · RFC 6147 — DNS64 · RFC 6052 — IPv6 Addressing of IPv4/IPv6 Translators
@@ -593,6 +621,8 @@ add chain=forward action=drop in-interface-list=WAN comment="Tolak inisiasi dari
 - RFC 7381 — Enterprise IPv6 Deployment Guidelines
 - RFC 5095 — Deprecation of Type 0 Routing Headers
 - Cisco CCNA 200-301 v1.1, topik 1.8, 1.9, 3.3
+- RFC 8925, IPv6-Only Preferred Option for DHCPv4 (Oktober 2020): https://www.rfc-editor.org/rfc/rfc8925
+- RFC 8781, Discovering PREF64 in Router Advertisements: https://www.rfc-editor.org/rfc/rfc8781
 
 ---
 

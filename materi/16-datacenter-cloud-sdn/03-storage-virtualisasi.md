@@ -149,7 +149,21 @@ Generasi terbaru: membawa protokol **NVMe** (SSD modern) melintasi jaringan (RDM
 
 ---
 
-## 6. Ringkasan
+## 6. RoCEv2 dan DCQCN: Ethernet Tanpa Rugi untuk AI dan HPC
+
+RDMA (bagian 5) hanya menarik kalau jaringannya nyaris tidak membuang paket. NIC RDMA mengandalkan pengiriman yang hampir tanpa kehilangan; satu paket hilang memaksa pengulangan yang mahal, dan pada klaster pelatihan AI satu aliran lambat menahan ribuan GPU yang menunggu. **RoCEv2** membawa RDMA di atas UDP/IP (tujuan UDP **4791**), sehingga bisa dirutekan lewat fabric spine-leaf layer 3 seperti yang dibahas di `16-datacenter-cloud-sdn/01-desain-dc`. Yang tidak ia bawa adalah kontrol kemacetan seperti TCP, jadi fabric harus diatur agar kemacetan ditangani sebelum antrean meluap.
+
+Dua mekanisme dipakai bersama. **PFC (Priority Flow Control, IEEE 802.1Qbb)** adalah pause per prioritas (hingga delapan kelas), bukan pause seluruh link seperti 802.3x: switch yang antreannya hampir penuh meminta pengirim berhenti untuk satu prioritas saja, sehingga kelas RoCE menjadi *lossless* sementara kelas lain berjalan normal. **ECN (RFC 3168)** memakai dua bit terakhir di octet TOS/Traffic Class IP: `00` Not-ECT, `10` ECT(0), `01` ECT(1), dan `11` CE (*Congestion Experienced*). Switch yang antreannya mulai memanjang mengubah paket ECT menjadi CE alih-alih membuangnya.
+
+**DCQCN (Data Center Quantized Congestion Notification)** menyatukan ECN dengan kontrol laju di NIC, dan dirancang untuk RoCEv2 oleh Zhu dkk. (SIGCOMM 2015). Tiga pihak berperan. **Switch** menandai paket dengan algoritma mirip RED memakai tiga parameter: di bawah **Kmin** tidak ada penandaan, antara Kmin dan **Kmax** probabilitas naik linear sampai **Pmax**, dan di atas Kmax semua paket ditandai. **Penerima (notification point)** yang melihat paket CE mengirim **CNP (Congestion Notification Packet)** ke pengirim, paling banyak satu per selang waktu tetap per aliran. **Pengirim (reaction point)** menurunkan laju kirimnya begitu menerima CNP, lalu menaikkannya perlahan lewat penghitung dan timer saat CNP berhenti datang.
+
+Urutannya penting: **ECN harus bereaksi lebih dulu daripada PFC**. PFC hanya cadangan terakhir ketika ECN tidak cukup cepat; ambang penandaan ECN (Kmin) harus lebih rendah daripada ambang yang memicu PFC. Menyalakan PFC saja tanpa ECN yang terkalibrasi adalah resep masalah, karena pause menyebar ke hulu (*head-of-line blocking*), bisa menyebabkan *deadlock* bila ada siklus ketergantungan buffer, dan membagi kapasitas secara tidak adil. Operator memverifikasi hal ini lewat counter ECN-marked, CNP, dan pause di switch maupun NIC; nama counter dan sintaks konfigurasi berbeda per vendor, jadi rujuk dokumentasi platform Anda.
+
+⚠️ Untuk traffic RoCE, jangan menempatkan antrean RDMA bersama lalu lintas lain pada prioritas yang sama, dan jangan menyalakan PFC pada semua kelas. Pisahkan kelas RoCE (mis. satu prioritas khusus), aktifkan PFC dan ECN hanya di sana, dan samakan DSCP dan kelas di seluruh switch serta NIC. Satu perangkat yang salah ambang memutus jaminan seluruh fabric.
+
+---
+
+## 7. Ringkasan
 
 - **Virtualisasi server**: hypervisor (**Type 1** bare-metal: ESXi/KVM/Hyper-V; **Type 2** hosted: VirtualBox) menjalankan banyak VM. **vSwitch** menghubungkan VM ke jaringan; VM adalah host biasa dengan MAC/IP sendiri.
 - **Container** memvirtualisasi di level **OS** (berbagi kernel) — ringan, cepat, padat, tetapi isolasi lebih lemah dari VM.
@@ -157,16 +171,18 @@ Generasi terbaru: membawa protokol **NVMe** (SSD modern) melintasi jaringan (RDM
 - **NAS** = akses **file** (NFS/SMB) di LAN biasa; **SAN** = akses **block** (server melihat disk lokal).
 - **iSCSI** = SCSI over TCP/IP (murah, butuh jaringan terpisah/jumbo); **FC** = jaringan storage khusus (andal, mahal, WWN+zoning); **FCoE** = FC di Ethernet (butuh DCB lossless); **NVMe-oF** = generasi terbaru latensi rendah (RDMA/RoCE/TCP).
 - **RDMA/RoCE** = akses memori jarak jauh tanpa CPU — latensi ultra-rendah untuk storage dan AI/HPC.
+- **RoCEv2** = RDMA di atas UDP 4791, bisa dirutekan L3; butuh fabric hampir tanpa loss. **PFC** (802.1Qbb) = pause per prioritas, **ECN** (RFC 3168) = tanda CE di IP. **DCQCN** = switch menandai ECN (Kmin, Kmax, Pmax), penerima mengirim CNP, pengirim menurunkan laju; **ECN harus bereaksi sebelum PFC**.
 
 ---
 
-## 7. Latihan
+## 8. Latihan
 
 1. Jelaskan perbedaan hypervisor Type 1 dan Type 2 dengan contoh masing-masing.
 2. Kenapa container jauh lebih ringan dari VM, dan apa trade-off-nya?
 3. Apa fungsi VRF dan kenapa disebut "VLAN untuk Layer 3"? Beri satu contoh kegunaan.
 4. Apa perbedaan mendasar NAS dan SAN dari sudut pandang klien?
 5. Kenapa iSCSI sebaiknya di jaringan/VLAN terpisah dengan jumbo frames?
+6. Sebuah switch fabric AI memakai ECN dengan Kmin = 100 KB, Kmax = 400 KB, dan Pmax = 10%. Hitung probabilitas penandaan CE saat antrean 250 KB dan saat 450 KB. Lalu jelaskan peran CNP dan mengapa Kmin harus lebih rendah dari ambang PFC.
 
 <details>
 <summary>Jawaban</summary>
@@ -181,16 +197,22 @@ Generasi terbaru: membawa protokol **NVMe** (SSD modern) melintasi jaringan (RDM
 
 5. Karena **iSCSI membawa protokol SCSI yang mengharapkan storage lokal yang cepat dan andal** — ia sangat sensitif terhadap latensi dan packet loss. Kalau berbagi jaringan dengan trafik lain, lonjakan trafik bisa menyebabkan antrean/loss yang membuat storage tampak lambat atau bahkan menyebabkan timeout I/O (aplikasi/DB bisa error atau corrupt). Memisahkan iSCSI ke jaringan/VLAN khusus menjamin bandwidth dan menghindari kontensi. **Jumbo frames** (MTU 9000) mengurangi overhead per paket — blok data besar dikirim dalam lebih sedikit frame, meningkatkan throughput dan menurunkan beban CPU untuk trafik storage yang bervolume besar.
 
+6. Untuk antrean di antara Kmin dan Kmax, p = Pmax x (q - Kmin) / (Kmax - Kmin). Pada q = 250 KB: p = 0,10 x (250 - 100) / (400 - 100) = 0,10 x 150/300 = **0,05 (5%)**. Pada q = 450 KB (di atas Kmax): **p = 1 (100%)**, semua paket ditandai CE. CNP adalah paket yang dikirim **penerima** (NIC) ke **pengirim** ketika ia menerima paket berbendera CE; pengirim bereaksi dengan menurunkan laju kirim aliran itu, lalu menaikkannya lagi bila CNP berhenti. Kmin harus lebih rendah dari ambang PFC karena ECN adalah kontrol yang halus (memperlambat pengirim tanpa menghentikan seluruh prioritas), sedangkan PFC adalah rem darurat. Jika PFC terpicu lebih dulu, pause menyebar ke hulu, memicu head-of-line blocking, risiko deadlock, dan ketidakadilan antar-aliran.
+
 </details>
 
 ---
 
-## 8. Sumber
+## 9. Sumber
 
 - Cisco CCNA 200-301 v1.1 — topik 1.12 (server virtualization, containers, VRFs)
 - RFC 7143 — iSCSI · RFC 3720
 - NVM Express over Fabrics spec · T11 Fibre Channel standards
 - VMware/KVM documentation
+- Zhu dkk., Congestion Control for Large-Scale RDMA Deployments (DCQCN), ACM SIGCOMM 2015: https://conferences.sigcomm.org/sigcomm/2015/pdf/papers/p523.pdf
+- IEEE 802.1Qbb, Priority-based Flow Control: https://1.ieee802.org/dcb/802-1qbb/
+- RFC 3168, The Addition of Explicit Congestion Notification (ECN) to IP: https://www.rfc-editor.org/rfc/rfc3168
+- NVIDIA, RoCE v2 UDP Port (tujuan 4791 sesuai arahan IANA): https://networking-docs.nvidia.com/winofdocumentation/55053000/roce-v2-udp-port
 
 ---
 

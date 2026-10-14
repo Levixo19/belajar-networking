@@ -5,9 +5,9 @@ berbasis kurikulum di `../materi/`. Stack **MERN**: MongoDB · Express · React 
 
 ## Fitur
 
-- **144 modul** kurikulum ter-render rapi (tipografi, callout berlabel, kode ter-highlight, tabel, TOC scroll-spy).
+- **149 modul** kurikulum ter-render rapi (tipografi, callout berlabel, kode ter-highlight, tabel, TOC scroll-spy).
 - **Progres, XP, level, streak** — tersimpan di **MongoDB** per profil.
-- **Spaced repetition** (SM-2): ~883 kartu latihan untuk active recall dengan interval bertambah.
+- **Spaced repetition** (SM-2): ~930 kartu latihan untuk active recall dengan interval bertambah.
 - **Lab yang bisa dijalankan**: kode lab di `../materi/lab/kode/` (containerlab/FRR, MikroTik CHR, Python dengan pytest). Teks materi CC BY-SA 4.0, kode lab MIT; atribusi di `../materi/NOTICE.md`.
 - **Peta profesi** (`/karier`): konstelasi 32 profesi di ekosistem jaringan, kesiapan pribadi dari modul yang tuntas, kuis kecocokan, dan perencana perpindahan karier. Data di `data/profesi/*.json`, divalidasi ketat saat build.
 - **Pustaka** (`/pustaka`): ±1.200 tautan belajar beratribusi (buku terbuka, standar, kursus resmi, dokumentasi, lab), bisa dicari dan disaring per jenis, bahasa, sumber, dan tahap; tiap modul punya "Bacaan lanjutan". Data panen di `data/pustaka/` (dihasilkan `npm run panen`), riset tangan di `data/pustaka-kurasi/`.

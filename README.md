@@ -97,16 +97,22 @@ TAHAP LANJUT (Minggu 17–30) ─ setara CCNP + praktik industri
 ├── 12-keamanan ................ Serangan & mitigasi per layer, AAA, Zero Trust
 ├── 13-linux-networking ........ ip, nftables, namespace, DNS/DHCP server
 ├── 14-monitoring-troubleshoot .. Metodologi, tcpdump, Wireshark, NetFlow, Grafana
-└── 15-otomasi ................. Python, Ansible, NETCONF, gNMI, NetBox, CI/CD
+└── 15-otomasi ................. Python, Ansible, NETCONF, gNMI, NetBox, CI/CD,
+                                 Git, pytest, Docker untuk alat otomasi
 
 TAHAP PROFESIONAL (Minggu 31–52)
 ├── 16-datacenter-cloud-sdn .... Spine-leaf, VXLAN/EVPN, VPC, Kubernetes, SDN
-├── 17-desain-arsitektur ....... Desain kampus/DC/WAN, HA, dokumentasi, migrasi
+├── 17-desain-arsitektur ....... Desain kampus/DC/WAN, HA, dokumentasi, migrasi,
+│                                DR (RPO/RTO), manajemen perubahan, MOP
 └── 18-karier-sertifikasi ...... Roadmap sertifikasi, portofolio, interview
 
-JALUR KHUSUS (bisa dimulai setelah Tahap 4)
-└── 19-mikrotik ................ RouterOS mendalam: bridge/VLAN, firewall,
-                                 hotspot, queue, wireless, tunnel, scripting
+JALUR KHUSUS (19 bisa dimulai setelah Tahap 4; 22 dan 23 sesudah Tahap 7)
+├── 19-mikrotik ................ RouterOS mendalam: bridge/VLAN, firewall,
+│                                hotspot, queue, wireless, tunnel, scripting
+├── 22-service-provider ........ MPLS, L3VPN, Segment Routing, EVPN, 5G transport
+├── 23-jalur-vendor ............ Junos, Cisco SD-Access dan Catalyst SD-WAN,
+│                                API platform Cisco (pendalaman)
+└── 21-ekosistem-profesi ....... 32 profesi di sekitar jaringan + Peta Karier
 
 PENUNJANG (dipakai sepanjang jalan)
 ├── lab/ ....................... ±34 lab praktik bertahap (7 berkas per area)

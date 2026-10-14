@@ -3,6 +3,9 @@ import * as D from './dasar'
 import * as L23 from './l2l3'
 import * as L47 from './l4l7'
 import * as A from './lanjut'
+import * as V8 from './b8-vendor'
+import * as P7 from './b7-rpl'
+import * as O6 from './b6-operasi'
 import * as L5 from './b5-lab'
 import * as S4 from './b4-sp'
 import * as D3 from './b3-dc'
@@ -138,6 +141,27 @@ export const DIAGRAMS: Record<string, FC> = {
   'l5-mikrotik-wireguard': L5.DgL5MikrotikWireguard,
   'l5-bobot-ccna': L5.DgL5BobotCcna,
   'l5-bobot-networkplus': L5.DgL5BobotNetworkplus,
+
+  // b6-operasi.tsx (Fase 6)
+  'o6-metrik-pemulihan': O6.DgO6MetrikPemulihan,
+  'o6-jenis-site': O6.DgO6JenisSite,
+  'o6-backup-tipe': O6.DgO6BackupTipe,
+  'o6-alur-perubahan': O6.DgO6AlurPerubahan,
+
+  // b7-rpl.tsx (Fase 6)
+  'p7-git-merge-rebase': P7.DgP7GitMergeRebase,
+  'p7-unified-diff': P7.DgP7UnifiedDiff,
+  'p7-test-double': P7.DgP7TestDouble,
+  'p7-sekuens-api': P7.DgP7SekuensApi,
+  'p7-webhook-polling': P7.DgP7WebhookPolling,
+
+  // b8-vendor.tsx (Fase 6)
+  'v8-junos-re-pfe': V8.DgV8JunosRePfe,
+  'v8-junos-commit': V8.DgV8JunosCommit,
+  'v8-sda-fabric': V8.DgV8SdaFabric,
+  'v8-sdwan-arsitektur': V8.DgV8SdwanArsitektur,
+  'v8-catc-token-alur': V8.DgV8CatcTokenAlur,
+  'v8-api-peta': V8.DgV8ApiPeta,
 }
 
 export function getDiagram(id: string): FC | null { return DIAGRAMS[id] || null }

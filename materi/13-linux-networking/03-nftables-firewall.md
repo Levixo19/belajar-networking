@@ -466,7 +466,45 @@ $ sudo nft flush ruleset       # ⚠️ hanya kalau ada cara memulihkan!
 
 ---
 
-## 12. Ringkasan
+## 12. XDP: Menjatuhkan Paket Sebelum Netfilter
+
+Semua hook netfilter di bagian 1 baru bekerja setelah driver kartu jaringan selesai membangun `sk_buff` untuk setiap paket. Pada serangan volumetrik, biaya alokasi `sk_buff` dan perjalanan paket lewat stack sudah mahal, bahkan kalau aturan `drop` di nftables menjatuhkannya satu langkah kemudian. **XDP (eXpress Data Path)** menjawab masalah itu dengan hook yang lebih awal: program **eBPF** dijalankan di jalur terima driver, terhadap paket mentah, **sebelum kernel mengalokasikan `sk_buff`**. Program itu lebih dulu diperiksa oleh verifier kernel sebelum boleh dimuat, jadi tidak bisa membuat kernel crash atau berputar tanpa henti.
+
+Setiap program XDP selesai dengan satu verdict:
+
+| Verdict | Arti |
+|---|---|
+| `XDP_PASS` | Teruskan ke stack kernel biasa (lalu netfilter, routing, dan seterusnya) |
+| `XDP_DROP` | Buang paket di driver |
+| `XDP_TX` | Pantulkan paket keluar lewat interface yang sama |
+| `XDP_REDIRECT` | Kirim ke interface lain, CPU lain, atau socket AF_XDP |
+| `XDP_ABORTED` | Tanda kesalahan program; paket dibuang |
+
+Ada tiga mode pemasangan. **Native (driver)** menjalankan program di dalam driver NIC dan memberi performa penuh, tetapi driver harus mendukung XDP. **Generic (skb)** berjalan di kernel setelah `sk_buff` dibuat, jadi bisa dipakai di driver apa pun untuk belajar atau menguji, namun keuntungan performanya hilang. **Offload** memuat program ke hardware atau firmware NIC. Dengan `ip link`, mode dipilih lewat kata kunci:
+
+```bash
+# Native, tanpa fallback: gagal jika driver tidak mendukung XDP
+sudo ip link set dev eth0 xdpdrv object xdp_drop.o section xdp
+
+# Generic: dipaksa berjalan di jalur skb (cocok untuk lab di VM)
+sudo ip link set dev eth0 xdpgeneric object xdp_drop.o section xdp
+
+# "xdp" saja = native bila bisa, otomatis jatuh ke generic bila tidak
+# Lepas program
+sudo ip link set dev eth0 xdp off
+```
+
+`xdp_drop.o` adalah berkas objek BPF hasil kompilasi dari C dengan `clang -target bpf`; penulisan programnya di luar cakupan modul ini. Yang perlu Anda pahami sebagai engineer jaringan adalah **kapan XDP masuk akal**: menjatuhkan lalu lintas serangan berskala besar (daftar sumber serangan disimpan di *BPF map*), membuat load balancer layer 4 yang memantulkan paket dengan `XDP_TX` atau `XDP_REDIRECT`, dan menyaring awal sebelum paket menyentuh nftables.
+
+XDP **tidak menggantikan** nftables. Ia hanya melihat paket masuk (ingress), tidak membawa conntrack, dan state apa pun harus Anda simpan sendiri di BPF map. Firewall stateful untuk server tetap ditulis di nftables; XDP ditaruh di depannya sebagai saringan kasar yang murah. Pola pikirnya mirip tabel `raw` di MikroTik, yang juga memutuskan sebelum connection tracking, hanya saja XDP berada lebih awal lagi, di dalam driver.
+
+Untuk aplikasi yang ingin memproses paket di user space dengan cepat (IDS, penangkap paket, atau stack jaringan khusus), `XDP_REDIRECT` bisa mengarahkan paket ke socket **AF_XDP**. Aplikasi mendaftarkan area memori bernama **UMEM** yang dibagi menjadi bingkai berukuran sama, lalu berkomunikasi dengan kernel lewat empat ring: **FILL** (aplikasi menyerahkan bingkai kosong untuk menerima), **RX** (paket diterima), **TX** (paket yang akan dikirim), dan **COMPLETION** (bingkai kirim yang sudah selesai). Program XDP memilih socket tujuan lewat map bertipe XSKMAP. Mode **zero-copy** menghindari penyalinan paket antara kernel dan aplikasi, asalkan driver mendukungnya; bila tidak, mode copy menjadi cadangan.
+
+⚠️ **Paket yang dijatuhkan XDP umumnya tidak muncul di `tcpdump`**, karena penangkap paket bekerja pada jalur `sk_buff` yang tidak pernah dibuat. Kalau paket "hilang tanpa jejak" di server yang memakai XDP, periksa dulu apakah ada program yang terpasang (`ip link show dev eth0`) sebelum menyalahkan nftables atau kabel. Perhatikan juga batas per driver, misalnya MTU maksimum yang boleh dipakai bersama XDP native.
+
+---
+
+## 13. Ringkasan
 
 - **nftables menggantikan iptables** di distribusi modern; iptables sering menjadi wrapper di atasnya.
 - **Netfilter hook**: prerouting, input, forward, output, postrouting — konsep yang sama dengan chain MikroTik.
@@ -479,10 +517,11 @@ $ sudo nft flush ruleset       # ⚠️ hanya kalau ada cara memulihkan!
 - **Set dinamis dengan timeout** = blacklist otomatis (setara address-list MikroTik).
 - **firewalld** (zona) dan **UFW** adalah frontend sederhana; tulis nftables langsung untuk router/aturan kompleks.
 - ⚠️ **Uji sintaks (`nft -c`) dan siapkan rollback** sebelum memuat `policy drop` dari jarak jauh — agar tidak terkunci.
+- **XDP** menjalankan program eBPF di driver NIC sebelum `sk_buff` dibuat, dengan verdict `PASS`, `DROP`, `TX`, `REDIRECT`, `ABORTED`. Pasang dengan `ip link set dev X xdpdrv|xdpgeneric|xdpoffload object F section S`. Ia pra-filter murah di depan nftables, bukan penggantinya (tanpa conntrack bawaan); `AF_XDP` mengantar paket ke user space dengan UMEM dan empat ring.
 
 ---
 
-## 13. Latihan
+## 14. Latihan
 
 1. Kenapa memakai family `inet` lebih baik daripada `ip`?
 2. Apa yang terjadi kalau Anda lupa `ct state established,related accept` di chain input?
@@ -492,6 +531,7 @@ $ sudo nft flush ruleset       # ⚠️ hanya kalau ada cara memulihkan!
 6. NAT tidak bekerja di router Linux Anda. Sebutkan tiga hal yang Anda periksa.
 7. Server sibuk menolak koneksi baru dengan error terkait conntrack. Apa yang Anda lakukan?
 8. Terjemahkan aturan iptables ini ke nftables: `iptables -A INPUT -p tcp --dport 443 -m state --state NEW,ESTABLISHED -j ACCEPT`
+9. Server Linux Anda diserang banjir paket UDP dari ribuan alamat sumber dan CPU habis sebelum aturan nftables sempat berpengaruh. Jelaskan mengapa XDP lebih murah daripada `drop` di chain prerouting nftables, sebutkan kelima verdict XDP, tulis perintah memasang program secara native tanpa fallback, dan sebutkan satu hal yang tidak bisa dilakukan XDP dibanding nftables.
 
 <details>
 <summary>Jawaban</summary>
@@ -540,17 +580,22 @@ $ sudo nft flush ruleset       # ⚠️ hanya kalau ada cara memulihkan!
    ```
    Catatan: `-m state --state` menjadi `ct state`; `NEW,ESTABLISHED` menjadi `new,established`; family sebaiknya `inet` (agar mencakup IPv6 juga, meski aturan asli iptables hanya IPv4 — kalau ingin persis IPv4 saja gunakan `add rule ip filter input`). Dalam praktik firewall yang baik, Anda biasanya memisahkan: `ct state established,related accept` di awal chain (untuk semua balasan), lalu `tcp dport 443 ct state new accept` untuk koneksi baru ke layanan itu.
 
+9. Di nftables, paket sudah melewati driver, sudah dibuatkan `sk_buff`, dan sudah masuk stack sampai hook prerouting; semua biaya itu terbayar sebelum `drop`. XDP berjalan di driver **sebelum `sk_buff` dialokasikan**, sehingga paket buangan dibuang dengan biaya per paket jauh lebih kecil dan CPU tidak habis oleh paket yang akan dibuang juga. Verdict: `XDP_PASS` (teruskan ke stack), `XDP_DROP` (buang), `XDP_TX` (pantulkan keluar interface yang sama), `XDP_REDIRECT` (ke interface, CPU, atau socket AF_XDP lain), `XDP_ABORTED` (kesalahan program, paket dibuang). Perintah native tanpa fallback: `sudo ip link set dev eth0 xdpdrv object xdp_drop.o section xdp` (bila driver tidak mendukung XDP, perintah gagal alih-alih jatuh ke generic; lepas dengan `xdp off`). Yang tidak bisa dilakukan XDP: ia tidak punya **connection tracking** bawaan sehingga tidak stateful sendiri (state harus dibuat di BPF map oleh programmer), dan ia hanya melihat paket masuk. Karena itu XDP dipakai sebagai pra-filter di depan nftables, bukan penggantinya.
+
 </details>
 
 ---
 
-## 14. Sumber
+## 15. Sumber
 
 - nftables wiki — https://wiki.nftables.org/
 - `man nft`, `man conntrack`
 - netfilter project — https://www.netfilter.org/
 - firewalld — https://firewalld.org/
 - Red Hat, *Securing Networks* (firewalld, nftables)
+- eBPF Docs, Program type BPF_PROG_TYPE_XDP: https://docs.ebpf.io/linux/program-type/BPF_PROG_TYPE_XDP/
+- Linux kernel documentation, AF_XDP: https://docs.kernel.org/networking/af_xdp.html
+- man ip-link(8), opsi xdp, xdpdrv, xdpgeneric, xdpoffload: https://man7.org/linux/man-pages/man8/ip-link.8.html
 
 ---
 

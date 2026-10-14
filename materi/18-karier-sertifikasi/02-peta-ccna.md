@@ -8,11 +8,16 @@
 ## 1. Tentang Ujian CCNA 200-301
 
 ```
-Durasi   : 120 menit
-Format   : ~100-120 soal (pilihan ganda, drag-drop, simulasi/simlet)
-Passing  : ~825/1000 (tidak dipublikasi resmi, bervariasi)
-Berlaku  : 3 tahun
-Versi    : v1.1 (berlaku sejak 2024) — menambah otomasi, AI/ML, keamanan
+Kode     : 200-301 CCNA
+Durasi   : 120 menit (resmi)
+Biaya    : US$300 atau Cisco Learning Credits (per Oktober 2026)
+Bahasa   : Inggris dan Jepang
+Format   : pilihan ganda, drag-drop, simulasi/simlet; jumlah soal TIDAK
+           dipublikasikan Cisco (perkiraan komunitas sekitar 100 soal)
+Passing  : tidak dipublikasikan Cisco (angka ~825/1000 hanya perkiraan komunitas)
+Berlaku  : 3 tahun (perpanjang dengan lulus ujian lagi atau 30 kredit CE)
+Versi    : v1.1, berlaku sejak 20 Agustus 2024 (menambah AI/ML dan manajemen cloud)
+Berikutnya: v2.0 mulai diuji 3 Februari 2027 (v1.1 terakhir 2 Februari 2027)
 ```
 
 **Enam domain & bobot:**
@@ -25,6 +30,18 @@ Versi    : v1.1 (berlaku sejak 2024) — menambah otomasi, AI/ML, keamanan
 | **4.0 IP Services** | **10%** | Tahap 6, 9, 11, 14 |
 | **5.0 Security Fundamentals** | **15%** | Tahap 9, 12, 10 |
 | **6.0 Automation & Programmability** | **10%** | Tahap 15, 16 |
+
+⚠️ **CCNA v2.0 sudah diumumkan.** Kode ujian tetap 200-301 dan durasi tetap 120 menit, tetapi blueprint dirombak: v1.1 hanya bisa diambil sampai 2 Februari 2027, dan sejak 3 Februari 2027 yang tersedia adalah v2.0. Peta di bab ini mengikuti **v1.1**, yang masih berlaku saat tulisan ini diperiksa (15 Oktober 2026). Kalau Anda berencana ujian setelah 2 Februari 2027, belajarlah dari blueprint v2.0 di bawah.
+
+| Domain v2.0 | Bobot |
+|---|---|
+| 1.0 Network Infrastructure and Connectivity | 25% |
+| 2.0 Switching and Network Access | 25% |
+| 3.0 IP Routing | 20% |
+| 4.0 Network Services and Security | 20% |
+| 5.0 AI, and Network Operations and Management | 10% |
+
+Perubahan yang terlihat di daftar topik resmi v2.0: ada soal troubleshooting (diagnosis kabel/fiber, IPv4/IPv6, DHCPv4, DNS, show log, ping, traceroute, packet capture), ada topik AI (agentic AI, menyusun prompt untuk generative AI), OSPFv3 untuk IPv6, HSRP dan VRRP, SFTP/SCP, RA guard dan storm control, serta DNS record (A, AAAA, CNAME, MX, NS, PTR). Topik v1.1 seperti REST API/JSON, QoS PHB, NTP, TFTP/FTP, GUI WLAN, dan SDN/controller-based tidak muncul lagi dalam daftar v2.0. Pemetaan rinci ke modul kurikulum untuk v2.0 belum disusun di bab ini.
 
 💡 **Domain 3.0 (IP Connectivity, 25%) adalah bobot terbesar** — routing, OSPF, static, komponen tabel routing. Domain 1.0 dan 2.0 masing-masing 20%. Fokuskan waktu belajar sesuai bobot, tetapi jangan abaikan domain kecil (6.0 otomasi sering terlupa padahal 10%).
 
@@ -150,7 +167,7 @@ Versi    : v1.1 (berlaku sejak 2024) — menambah otomasi, AI/ML, keamanan
 
 ## 9. Ringkasan
 
-- CCNA 200-301 v1.1: 120 menit, 6 domain. Bobot: **IP Connectivity 25%** (terbesar), Fundamentals & Access masing-masing 20%, Security 15%, IP Services & Automation masing-masing 10%.
+- CCNA 200-301 v1.1: 120 menit, 6 domain, US$300, berlaku 3 tahun. v2.0 (5 domain) mulai 3 Februari 2027. Bobot: **IP Connectivity 25%** (terbesar), Fundamentals & Access masing-masing 20%, Security 15%, IP Services & Automation masing-masing 10%.
 - Setiap topik blueprint dipetakan ke modul kurikulum ini (tabel di atas) — gunakan sebagai checklist.
 - Fokus terbesar: **OSPF, komponen & keputusan tabel routing, subnetting, VLAN/trunk, ACL**.
 - **Jangan lewatkan Domain 6.0 (otomasi, 10%)** — poin relatif mudah.
@@ -172,13 +189,13 @@ Versi    : v1.1 (berlaku sejak 2024) — menambah otomasi, AI/ML, keamanan
 
 1. **Domain 3.0 — IP Connectivity (25%)** adalah yang terbesar. Isinya: **3.1** interpretasi komponen tabel routing (kode protokol, prefix, network mask, next-hop, administrative distance, metric, gateway of last resort); **3.2** bagaimana router membuat keputusan forwarding secara default (longest prefix match, administrative distance, metric protokol); **3.3** konfigurasi dan verifikasi static routing IPv4 dan IPv6 (default route, network route, host route, floating static); **3.4** konfigurasi dan verifikasi single-area OSPFv2 (neighbor adjacency, point-to-point, broadcast dengan pemilihan DR/BDR, router ID); dan **3.5** tujuan, fungsi, dan konsep FHRP (first hop redundancy protocols seperti HSRP). Intinya adalah **routing** — inti dari fungsi Layer 3.
 
-2. Karena meskipun **Domain 6.0 (Automation & Programmability) "hanya" 10%**, itu tetap porsi signifikan (setara ~10-12 soal) yang bisa menentukan lulus/tidak, dan **soalnya relatif mudah** bila konsepnya sudah dipahami: mengenali komponen JSON, karakteristik REST API (HTTP verb/CRUD/autentikasi/encoding), perbedaan jaringan tradisional vs controller-based, konsep SDN (pemisahan control/data plane, overlay/underlay/fabric, northbound/southbound API), peran AI/ML, dan kapabilitas Ansible/Terraform. Ini sebagian besar **konseptual** (bukan konfigurasi rumit), sehingga menjadi "poin mudah" yang sering ditinggalkan peserta yang hanya fokus pada routing/switching tradisional. Mengabaikannya berarti membuang poin yang mudah didapat. Kurikulum Tahap 15–16 menyiapkan domain ini.
+2. Karena meskipun **Domain 6.0 (Automation & Programmability) "hanya" 10%**, itu tetap porsi signifikan (sekitar 10% dari isi ujian) yang bisa menentukan lulus/tidak, dan **soalnya relatif mudah** bila konsepnya sudah dipahami: mengenali komponen JSON, karakteristik REST API (HTTP verb/CRUD/autentikasi/encoding), perbedaan jaringan tradisional vs controller-based, konsep SDN (pemisahan control/data plane, overlay/underlay/fabric, northbound/southbound API), peran AI/ML, dan kapabilitas Ansible/Terraform. Ini sebagian besar **konseptual** (bukan konfigurasi rumit), sehingga menjadi "poin mudah" yang sering ditinggalkan peserta yang hanya fokus pada routing/switching tradisional. Mengabaikannya berarti membuang poin yang mudah didapat. Kurikulum Tahap 15–16 menyiapkan domain ini.
 
 3. Karena **CCNA secara eksplisit menguji kemampuan konfigurasi dan verifikasi**, bukan hanya pengetahuan teori — ujian mencakup **soal simulasi (sim/simlet)** di mana Anda harus benar-benar mengonfigurasi perangkat virtual (mis. menyiapkan VLAN/trunk, OSPF, ACL, atau NAT) dan memverifikasi hasilnya dengan perintah `show`. Banyak topik (subnetting, urutan perintah, output `show` yang harus diinterpretasi) hanya benar-benar melekat ketika Anda **mengetiknya sendiri** dan melihat hasilnya. Membaca saja meninggalkan celah: Anda mungkin "paham" konsep tetapi tidak tahu perintah persisnya, urutannya, atau cara membaca output verifikasi — yang semuanya diuji. Alat seperti **Packet Tracer** (gratis dari Cisco) atau GNS3/CML memungkinkan latihan ini tanpa hardware.
 
 4. (Lima dari) **(1) OSPF** — `07-routing-lanjutan/04` (domain terbesar, konsep adjacency/DR-BDR/router ID). **(2) Subnetting** — `04-network-layer/02` dan `03` (harus cepat dan otomatis). **(3) VLAN dan trunking/802.1Q** — `03-data-link/03` (inti Network Access). **(4) ACL** — `09-nat-acl-firewall/02` (keamanan dan filtering, sering muncul). **(5) Komponen dan keputusan tabel routing** — `04/05` dan `07/02` (longest prefix match, AD, metric). Tambahan yang layak fokus: STP/Rapid-PVST+ (`03/04`), NAT (`09/01`), dan IPv6 addressing (`08/01`).
 
-5. Karena ujian **berwaktu (120 menit untuk ~100+ soal)** dan sejumlah soal menuntut perhitungan subnetting (menentukan subnet, jumlah host, rentang alamat valid, alamat network/broadcast, atau memilih mask yang tepat). Jika Anda menghitung subnetting dengan lambat (mis. menggambar tabel biner penuh setiap kali), Anda akan **kehabisan waktu** dan tidak sempat mengerjakan soal lain — padahal soal subnetting sebenarnya adalah poin yang bisa dipastikan benar bila cepat. Menguasai teknik subnetting cepat (menghafal nilai blok/increment, kekuatan 2, dan metode cepat menentukan rentang) memungkinkan Anda menyelesaikan soal-soal ini dalam hitungan detik, menyisakan waktu untuk soal simulasi dan analisis yang lebih memakan waktu. Latih hingga otomatis menggunakan `04-network-layer/02` dan `referensi/tabel-subnetting.md`.
+5. Karena ujian **berwaktu (120 menit; jumlah soal tidak dipublikasikan Cisco, perkiraan komunitas sekitar 100)** dan sejumlah soal menuntut perhitungan subnetting (menentukan subnet, jumlah host, rentang alamat valid, alamat network/broadcast, atau memilih mask yang tepat). Jika Anda menghitung subnetting dengan lambat (mis. menggambar tabel biner penuh setiap kali), Anda akan **kehabisan waktu** dan tidak sempat mengerjakan soal lain — padahal soal subnetting sebenarnya adalah poin yang bisa dipastikan benar bila cepat. Menguasai teknik subnetting cepat (menghafal nilai blok/increment, kekuatan 2, dan metode cepat menentukan rentang) memungkinkan Anda menyelesaikan soal-soal ini dalam hitungan detik, menyisakan waktu untuk soal simulasi dan analisis yang lebih memakan waktu. Latih hingga otomatis menggunakan `04-network-layer/02` dan `referensi/tabel-subnetting.md`.
 
 </details>
 
@@ -186,7 +203,10 @@ Versi    : v1.1 (berlaku sejak 2024) — menambah otomasi, AI/ML, keamanan
 
 ## 11. Sumber
 
-- Cisco CCNA 200-301 v1.1 Exam Topics (blueprint resmi) — sumber pemetaan di atas
+- Cisco CCNA 200-301 v1.1 Exam Topics (blueprint resmi) — sumber pemetaan di atas: https://learningcontent.cisco.com/documents/marketing/exam-topics/200-301-CCNA-v1.1.pdf
+- Cisco CCNA 200-301 v2.0 Exam Topics: https://learningcontent.cisco.com/documents/marketing/exam-topics/200-301_CCNA_v2.0_Exam_Topics_PDF.pdf
+- Cisco, halaman ujian CCNA (durasi, biaya, bahasa): https://www.cisco.com/site/us/en/learn/training-certifications/exams/ccna.html
+- Cisco Learning Network, jadwal transisi v1.1 ke v2.0: https://blogs.cisco.com/learning/stay-on-track-get-certified-before-the-ccna-refresh
 - Cisco Packet Tracer (gratis via Cisco Networking Academy)
 - *CCNA 200-301 Official Cert Guide* (Wendell Odom, Cisco Press)
 - `referensi/soal-latihan.md` (soal latihan kurikulum ini)

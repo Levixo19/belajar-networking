@@ -28,7 +28,7 @@ const TANDA: Record<string, string> = {
   '09-nat-acl-firewall': 'ACL', '10-wireless': '802.11', '11-wan-vpn': 'VPN', '12-keamanan': 'sec', '13-linux-networking': 'ip a',
   '14-monitoring-troubleshooting': 'ping', '15-otomasi': 'API', '16-datacenter-cloud-sdn': 'SDN', '17-desain-arsitektur': 'HLD',
   '18-karier-sertifikasi': 'CCNA', '19-mikrotik': 'ROS', '20-proyek-akhir': 'v1.0', '21-ekosistem-profesi': 'role',
-  '22-service-provider': 'MPLS', lab: 'lab', referensi: 'RFC',
+  '22-service-provider': 'MPLS', '23-jalur-vendor': 'Junos', lab: 'lab', referensi: 'RFC',
 }
 /** Rona per rumpun profesi, untuk panel profesi. */
 export const RONA_RUMPUN: Record<string, number> = {

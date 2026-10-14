@@ -563,4 +563,4 @@ Detail lab di `lab/00-setup-lab.md`.
 
 ---
 
-**Berikutnya:** `16-datacenter-cloud-sdn/01-desain-dc.md` — memasuki dunia data center dan cloud.
+**Berikutnya:** `15-otomasi/05-rekayasa-perangkat-lunak` — rekayasa perangkat lunak untuk network engineer: Git, pengujian, pola desain, dan Docker.

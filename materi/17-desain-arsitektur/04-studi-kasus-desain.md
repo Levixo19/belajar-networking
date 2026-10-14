@@ -220,4 +220,4 @@ Saat mendesain, tanyakan berurutan:
 
 ---
 
-**Berikutnya:** `18-karier-sertifikasi/01-peta-sertifikasi.md` — memetakan jalur karier dan sertifikasi jaringan.
+**Berikutnya:** `17-desain-arsitektur/05-operasi-kontinuitas` — operasi, kontinuitas bisnis, dan manajemen perubahan.

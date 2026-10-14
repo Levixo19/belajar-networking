@@ -10,10 +10,12 @@
 ```
 Durasi   : 90 menit
 Format   : max 90 soal (pilihan ganda + berbasis kinerja/PBQ)
-Passing  : 720/900
-Berlaku  : 3 tahun (CE — continuing education)
+Passing  : 720 (skala 100-900)
+Berlaku  : 3 tahun (diperpanjang lewat CE, continuing education)
 Sifat    : VENDOR-NETRAL (konsep umum, bukan CLI vendor tertentu)
-Versi    : N10-009 (berlaku sejak Juni 2024)
+Versi    : N10-009 (diluncurkan 20 Juni 2024; menggantikan N10-008 yang pensiun Desember 2024)
+Pensiun  : perkiraan CompTIA 2027 (biasanya tiga tahun setelah peluncuran); belum ada penerus (N10-010) di halaman resmi
+Bahasa   : Inggris, Jerman, Jepang, Portugis, Spanyol
 ```
 
 **Lima domain & bobot:**
@@ -83,8 +85,8 @@ Bobot di atas adalah bobot resmi CompTIA untuk N10-009 (23/20/19/14/24). Selalu 
 | Dokumentasi (diagram fisik/logis, IPAM, baseline, SOP) | `17/03` |
 | Kesehatan/monitoring (SNMP, flow, syslog, SIEM, baseline) | `14/03` |
 | Ketersediaan tinggi (redundansi, SPOF, FHRP) | `17/01`, `07/08` |
-| Disaster recovery, objektif 3.3 (RPO, RTO, MTTR, MTBF, hot/warm/cold site, backup full/incremental/differential, uji DR) | **Belum dibahas mendalam di kurikulum ini.** RPO, RTO, MTTR, dan backup 3-2-1 baru muncul di profil karier `21/04` (bagian 2.2–2.3) dan `21/07` (bagian Disaster Recovery Specialist), bukan di modul inti. MTBF, istilah hot/warm/cold site, dan jenis backup incremental/differential belum ada. Rencana: bagian baru "Disaster Recovery & Kontinuitas" di `17/02` atau modul baru `17/05`. |
-| Konsep organisasi (change/config management, IaC) | `15/04` |
+| Disaster recovery, objektif 3.3 (RPO, RTO, MTTR, MTBF, hot/warm/cold site, backup full/incremental/differential, uji DR) | `17/05` (bagian 2 metrik, 3 jenis site, 4 backup dan aturan 3-2-1, 5 uji DR dan tabletop) |
+| Proses organisasi, objektif 3.1 (change management, configuration management, siklus hidup aset: EOL/EOS, decommissioning) | `17/05` (bagian 6 sampai 8), `15/04` (IaC) |
 | Layanan jaringan (DHCP, DNS, NTP, dll) | `06-aplikasi/01-02`, `06/05` |
 
 ---
@@ -168,6 +170,8 @@ Bobot di atas adalah bobot resmi CompTIA untuk N10-009 (23/20/19/14/24). Selalu 
 ## 11. Sumber
 
 - CompTIA Network+ N10-009 Exam Objectives (blueprint resmi)
+- CompTIA, halaman sertifikasi Network+ (kode ujian, jumlah soal, durasi, skor lulus, bahasa, bobot domain, perkiraan pensiun): https://www.comptia.org/en-us/certifications/network/
+- CompTIA, "The New Network+ (N10-009) Exam: Your Questions Answered" (N10-008 pensiun Desember 2024, masa berlaku 3 tahun): https://www.comptia.org/en-us/blog/the-new-network-n10-009-exam-your-questions-answered/
 - *CompTIA Network+ Study Guide* (Sybex) / Mike Meyers' All-in-One
 - `14-monitoring-troubleshooting/01` (metodologi troubleshooting)
 

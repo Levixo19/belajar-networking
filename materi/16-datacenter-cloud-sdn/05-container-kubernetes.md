@@ -167,7 +167,37 @@ Ini menyatukan hampir semua yang Anda pelajari: namespace/veth/bridge (Linux), N
 
 ---
 
-## 8. Ringkasan
+## 8. Hubble: Observability Jaringan di Cilium
+
+Bagian 6 menunjukkan bahwa NetworkPolicy bekerja diam-diam: paket yang ditolak tidak menghasilkan pesan galat, aplikasi hanya melihat timeout. Di cluster, ditambah Pod yang fana dan IP yang berubah-ubah, `tcpdump` per node tidak lagi praktis untuk menjawab pertanyaan sederhana "siapa yang bicara dengan siapa, dan siapa yang ditolak?". **Hubble** adalah lapisan observability jaringan dan keamanan di atas **Cilium** yang menjawabnya. Karena Cilium sudah memegang jalur paket lewat eBPF, Hubble bisa mencatat alur (*flow*) lengkap dengan identitas Kubernetes (Pod, namespace, label) dan bukan sekadar alamat IP, tanpa mengubah aplikasi atau menambah sidecar.
+
+Hubble punya empat komponen. **Hubble server** hidup di dalam Cilium agent di setiap node dan hanya melihat lalu lintas node itu; ia bisa diakses lewat Unix domain socket lokal. **Hubble CLI** (`hubble`) adalah klien baris perintah untuk bertanya ke API tersebut. **Hubble Relay** mengumpulkan data dari semua node supaya Anda bisa melihat seluruh cluster, bahkan beberapa cluster yang tergabung lewat ClusterMesh. **Hubble UI** menampilkan peta layanan (*service map*) yang menunjukkan ketergantungan antarlayanan pada lapisan L3/L4 dan L7. Metrik jaringan juga bisa diekspor ke sistem monitoring, melanjutkan ide NetFlow dan telemetri di `14-monitoring-troubleshooting/03-observability`, tetapi dengan label yang paham Kubernetes.
+
+Mengaktifkannya cukup beberapa langkah. Hubble Relay membutuhkan port TCP **4244** terbuka di semua node yang menjalankan Cilium.
+
+```bash
+# Aktifkan Hubble (termasuk Relay) lewat Cilium CLI
+cilium hubble enable
+
+# Atau lewat Helm
+helm upgrade cilium cilium/cilium --namespace kube-system \
+  --reuse-values --set hubble.relay.enabled=true
+
+# Dari workstation: buka port-forward ke Relay, cek status, lihat alur
+cilium hubble port-forward &
+hubble status
+hubble observe
+```
+
+Pada versi dokumentasi yang diperiksa, opsi `-P` pada `hubble status -P` dan `hubble observe -P` memasang port-forward otomatis ke port 4245, sehingga tidak perlu menjalankan `cilium hubble port-forward` terpisah. Filter yang paling sering dipakai: `--pod` untuk memilih Pod, `--protocol` (misalnya `http`) untuk protokol, `--verdict` untuk hasil keputusan, serta `--reply` atau `--not-reply` untuk memisahkan arah balasan. Verdict yang muncul adalah `FORWARDED` (diteruskan), `DROPPED` (ditolak, misalnya oleh NetworkPolicy), `ERROR`, dan `AUDIT`.
+
+Alur kerja untuk kasus klasik "Pod frontend tidak bisa menghubungi api setelah NetworkPolicy dipasang" menjadi pendek: jalankan `hubble observe --pod frontend --verdict DROPPED`, baca Pod tujuan dan port pada baris yang ditolak, lalu perbaiki aturan yang kurang. Itu menggantikan tebak-tebakan dari `kubectl describe` dan log aplikasi.
+
+💡 Hubble hanya melihat lalu lintas yang melewati datapath Cilium, jadi ia melengkapi, bukan menggantikan, alat seperti `tcpdump` di node untuk kasus tingkat paket. Ia juga mengandaikan Cilium sebagai CNI; di cluster dengan CNI lain, Anda butuh alat observability berbeda.
+
+---
+
+## 9. Ringkasan
 
 - **Docker** memakai primitif Linux: namespace + veth + bridge (`docker0`) + NAT/port-publish. Mode: bridge, host, none, overlay, macvlan.
 - **Kubernetes**: unit = **Pod** (1+ container berbagi namespace). Aturan: **IP-per-Pod, tanpa NAT, flat**.
@@ -176,16 +206,18 @@ Ini menyatukan hampir semua yang Anda pelajari: namespace/veth/bridge (Linux), N
 - **Ingress** = routing HTTP/HTTPS L7 terpusat (Ingress Controller mengimplementasikan); **Gateway API** penerusnya dan pilihan default untuk cluster baru, apalagi sejak Ingress NGINX pensiun (Maret 2026).
 - **NetworkPolicy** = firewall/segmentasi Pod (butuh CNI pendukung) — Zero Trust di level Pod. Cilium menambah policy L7.
 - Semua ini menyatukan konsep: namespace, NAT, DNS, load balancing, VXLAN, BGP, firewall, Zero Trust.
+- **Hubble** = observability jaringan di Cilium (eBPF): server per node, CLI `hubble`, Relay lintas node (port 4244), dan UI peta layanan. `hubble observe --verdict DROPPED` menemukan alur yang ditolak NetworkPolicy; verdict `FORWARDED`, `DROPPED`, `ERROR`, `AUDIT`.
 
 ---
 
-## 9. Latihan
+## 10. Latihan
 
 1. Apa primitif Linux yang mendasari jaringan Docker mode bridge?
 2. Sebutkan empat aturan fundamental jaringan Kubernetes. Apa bedanya dengan Docker default?
 3. Kenapa Service diperlukan padahal Pod sudah punya IP? Sebutkan tiga tipe Service dan fungsinya.
 4. Apa perbedaan Service LoadBalancer dan Ingress?
 5. Apa fungsi NetworkPolicy dan bagaimana ia mewujudkan Zero Trust di dalam cluster?
+6. Setelah NetworkPolicy baru dipasang, Pod `frontend` mendapat timeout saat menghubungi `api`. Bagaimana Hubble membantu menemukan penyebabnya, komponen apa yang dibutuhkan agar Anda melihat alur dari seluruh node, dan port apa yang harus terbuka?
 
 <details>
 <summary>Jawaban</summary>
@@ -200,17 +232,22 @@ Ini menyatukan hampir semua yang Anda pelajari: namespace/veth/bridge (Linux), N
 
 5. **NetworkPolicy** mendefinisikan aturan yang mengontrol trafik mana yang boleh masuk (ingress) dan keluar (egress) dari sekelompok Pod (dipilih via label) — pada dasarnya **firewall/ACL untuk Pod**. Ia mewujudkan **Zero Trust** karena: secara default cluster K8s "flat dan terbuka" (semua Pod bisa bicara ke semua Pod), tetapi begitu sebuah NetworkPolicy diterapkan pada Pod, Pod itu menjadi **default-deny** untuk arah yang diatur — hanya trafik yang **secara eksplisit diizinkan** (mis. "database hanya menerima koneksi dari Pod berlabel app=api pada port 5432") yang boleh lewat. Ini persis prinsip Zero Trust: jangan percaya berdasarkan lokasi (berada di cluster yang sama tidak cukup), verifikasi dan izinkan setiap alur secara eksplisit dengan hak paling minimal (mikrosegmentasi). ⚠️ Membutuhkan CNI yang mendukung (Calico, Cilium); Cilium bahkan memperluasnya ke policy L7.
 
+6. Jalankan `hubble observe --pod frontend --verdict DROPPED` (atau tambahkan `--protocol` untuk menyaring). Baris berverdict `DROPPED` menunjukkan Pod sumber, Pod tujuan, dan port yang ditolak, sehingga terlihat aturan NetworkPolicy mana yang kurang (misalnya ingress di `api` belum mengizinkan label `app=frontend` pada port tujuan). Hubble server pada tiap Cilium agent hanya melihat lalu lintas node-nya sendiri; untuk pandangan seluruh cluster dibutuhkan **Hubble Relay**, dan **Hubble UI** bila ingin peta layanan. Port TCP **4244** harus terbuka di semua node yang menjalankan Cilium. Hubble hanya efektif bila Cilium menjadi CNI.
+
 </details>
 
 ---
 
-## 10. Sumber
+## 11. Sumber
 
 - Kubernetes networking documentation — https://kubernetes.io/docs/concepts/services-networking/
 - CNI spec · Calico, Cilium (eBPF) documentation
 - Gateway API — https://gateway-api.sigs.k8s.io/
 - Kubernetes Blog, "Ingress NGINX Retirement" (11 November 2025): https://kubernetes.io/blog/2025/11/11/ingress-nginx-retirement/
 - *Kubernetes Networking* (O'Reilly)
+- Cilium documentation, Network Observability with Hubble: https://docs.cilium.io/en/stable/observability/hubble/
+- Cilium documentation, Setting up Hubble Observability: https://docs.cilium.io/en/stable/observability/hubble/setup/
+- Cilium documentation, Inspecting Network Flows with the CLI: https://docs.cilium.io/en/stable/observability/hubble/hubble-cli/
 
 ---
 

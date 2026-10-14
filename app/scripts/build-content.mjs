@@ -53,6 +53,7 @@ const STAGE_META = {
   '18-karier-sertifikasi': { title: 'Karier & Sertifikasi', icon: '🎓', band: 'profesional' },
   '19-mikrotik': { title: 'MikroTik RouterOS', icon: '🧿', band: 'khusus' },
   '22-service-provider': { title: 'Jaringan Service Provider', icon: '🏗️', band: 'khusus' },
+  '23-jalur-vendor': { title: 'Jalur Vendor Lanjutan', icon: '🧩', band: 'khusus' },
   '21-ekosistem-profesi': { title: 'Ekosistem Profesi', icon: '🧑‍💼', band: 'karier' },
   'lab': { title: 'Lab Praktik', icon: '🧪', band: 'penunjang' },
   'referensi': { title: 'Referensi', icon: '📚', band: 'penunjang' },

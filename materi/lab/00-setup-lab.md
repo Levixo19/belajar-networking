@@ -64,7 +64,7 @@ Kelola dengan: WinBox (GUI), WebFig (browser), atau SSH
 ```
 1. Daftar akun gratis di netacad.com
 2. Unduh & instal Packet Tracer
-3. Login → mulai proyek baba
+3. Login → mulai proyek baru
 4. Drag perangkat (router 4321, switch 2960, PC) → hubungkan dengan kabel
 5. Klik perangkat → CLI tab untuk konfigurasi
 ```

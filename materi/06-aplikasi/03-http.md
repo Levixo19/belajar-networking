@@ -557,7 +557,27 @@ tls.handshake.extensions_server_name == "example.com"   ← SNI
 
 ---
 
-## 8. Kesalahan Umum
+## 8. Streaming Video Adaptif (ABR): HLS dan DASH
+
+Sebagian besar video yang ditonton lewat internet hari ini bukan aliran RTP real-time, melainkan **adaptive bitrate streaming (ABR)** di atas HTTP biasa. Prinsipnya sederhana. Penyedia mengodekan satu video ke beberapa bitrate dan resolusi (misalnya 0,5; 1,2; 2,5; 5 Mbps), memotong masing-masing menjadi **segmen** pendek berdurasi beberapa detik, dan menyimpannya sebagai berkas yang disajikan server web atau CDN. Pemutar mengunduh daftar varian lalu mengunduh segmen satu per satu; sambil jalan ia mengukur kecepatan unduh dan isi buffer, dan memilih varian untuk segmen berikutnya. Kalau throughput turun, ia pindah ke bitrate lebih rendah alih-alih berhenti.
+
+Dua format yang dominan. **HLS (HTTP Live Streaming)** dijelaskan di RFC 8216 (Agustus 2017, kategori Informational). Ada **Master (Multivariant) Playlist** yang memuat daftar varian dengan tag `EXT-X-STREAM-INF`; atribut `BANDWIDTH` wajib dan berisi bitrate puncak segmen dalam bit per detik. Setiap varian menunjuk ke **Media Playlist** berisi urutan segmen, dengan `EXT-X-TARGETDURATION` sebagai batas atas durasi segmen. Segmen berformat MPEG-2 Transport Stream atau fragmented MP4. Pada siaran langsung, pemutar memuat ulang Media Playlist secara berkala untuk menemukan segmen baru. **MPEG-DASH** (ISO/IEC 23009-1) memakai ide yang sama dengan manifest XML bernama **MPD (Media Presentation Description)**, dan segmen berbasis ISO Base Media File Format atau MPEG-2 TS.
+
+```
+#EXTM3U
+#EXT-X-STREAM-INF:BANDWIDTH=1280000,RESOLUTION=640x360
+360p/index.m3u8
+#EXT-X-STREAM-INF:BANDWIDTH=2560000,RESOLUTION=1280x720
+720p/index.m3u8
+```
+
+Pengaruhnya ke jaringan ada di empat hal. **Pertama, karena segmen hanyalah berkas HTTP, ia bisa di-cache CDN** (bagian 6): hit ratio tinggi berarti origin hanya melayani sebagian kecil permintaan. **Kedua, trafik ABR elastis dan berbuffer.** Pemutar menyimpan beberapa detik video, sehingga toleran terhadap delay dan jitter (sesuai baris "Video streaming" pada tabel kebutuhan aplikasi di `11-wan-vpn/03-qos`); ia tidak perlu prioritas ketat seperti VoIP. Cukup kelas dengan jaminan bandwidth, bukan *priority queue* yang bisa menggusur kelas lain. **Ketiga, polanya bergelombang:** pemutar mengunduh segmen secepat mungkin lalu menunggu, sehingga jalur melihat burst periodik, dan banyak penonton pada satu bottleneck saling bersaing sambil menaik-turunkan bitrate. Shaping per pelanggan akhirnya menentukan varian yang stabil di sisi pemutar. **Keempat, latensi siaran langsung ditentukan oleh durasi segmen kali jumlah segmen yang disimpan di buffer.** Contoh: segmen 6 detik dan 3 segmen di buffer berarti sekitar 18 detik di belakang siaran asli; ada ekstensi latensi rendah untuk menurunkannya.
+
+Untuk troubleshooting, periksa dari sisi klien dengan `curl`: ambil master playlist (`curl -s https://cdn.contoh.id/video/master.m3u8`), unduh satu segmen dan lihat waktunya (`curl -o /dev/null -s -w '%{time_total} %{speed_download}\n' https://cdn.contoh.id/video/720p/seg001.ts`), dan baca header cache (`curl -I`) untuk melihat apakah segmen datang dari edge. Segmen yang butuh waktu lebih lama daripada durasinya adalah tanda throughput kurang dari bitrate varian itu.
+
+---
+
+## 9. Kesalahan Umum
 
 ⚠️ **1. Mengira 502/504 adalah masalah klien.** Keduanya berarti proxy/LB bermasalah menghubungi backend.
 
@@ -575,7 +595,7 @@ tls.handshake.extensions_server_name == "example.com"   ← SNI
 
 ---
 
-## 9. Ringkasan
+## 10. Ringkasan
 
 - HTTP = request (method + path + version + headers + body) dan response (status + headers + body).
 - Method **aman** tidak mengubah state; **idempoten** boleh diulang. GET/PUT/DELETE idempoten; POST/PATCH tidak.
@@ -588,10 +608,11 @@ tls.handshake.extensions_server_name == "example.com"   ← SNI
 - **gRPC/HTTP2** adalah dasar **gNMI** untuk streaming telemetry.
 - Load balancer **L4** (IP+port, cepat) vs **L7** (URL/header, kaya fitur). **Health check L7 sangat penting.**
 - **CDN** memangkas latency dengan mendekatkan konten; memakai anycast/GeoDNS.
+- **ABR (HLS/DASH)** = video dipotong jadi segmen HTTP berbitrate banyak (RFC 8216: master playlist + media playlist, `BANDWIDTH` = puncak bitrate), pemutar memilih varian per segmen. Trafiknya elastis, berbuffer, bergelombang, dan sangat cocok dengan **CDN**; tidak perlu priority queue seperti VoIP.
 
 ---
 
-## 10. Latihan
+## 11. Latihan
 
 1. Apa perbedaan 401 dan 403? Apa yang harus dilakukan klien pada masing-masing?
 2. Pengguna melapor situs menampilkan "502 Bad Gateway". Di mana Anda mulai mencari masalah?
@@ -601,6 +622,7 @@ tls.handshake.extensions_server_name == "example.com"   ← SNI
 6. Sebuah load balancer memakai health check ping. Server backend hidup tetapi database-nya mati. Apa yang terjadi dan bagaimana memperbaikinya?
 7. Kenapa `Access-Control-Allow-Origin: *` bersama `Access-Control-Allow-Credentials: true` berbahaya?
 8. Anda perlu menguji apakah backend `10.0.1.10` melayani situs `app.example.com` dengan benar, tanpa mengubah DNS. Bagaimana caranya?
+9. Platform video punya 2.000 penonton serentak dengan bitrate rata-rata 3 Mbps dan hit ratio CDN 90%. Hitung trafik total dari edge dan trafik yang sampai ke origin. Lalu jelaskan mengapa trafik ABR tidak sebaiknya dimasukkan ke priority queue seperti VoIP dan apa penyebab latensi siaran langsung HLS dengan segmen 6 detik dan 3 segmen di buffer.
 
 <details>
 <summary>Jawaban</summary>
@@ -634,11 +656,13 @@ tls.handshake.extensions_server_name == "example.com"   ← SNI
    ```
    Cara (b) lebih baik untuk HTTPS karena curl tetap mengirim **SNI** dan memverifikasi sertifikat untuk `app.example.com`, sementara koneksi TCP diarahkan ke `10.0.1.10`. Cara (a) tidak cocok untuk HTTPS karena sertifikat akan dianggap tidak cocok.
 
+9. Total dari edge = 2.000 x 3 Mbps = **6.000 Mbps = 6 Gbps**. Yang lolos ke origin = 10% (miss) x 6 Gbps = **600 Mbps**. ABR tidak perlu priority queue karena trafiknya berbasis HTTP (TCP/QUIC), elastis, dan **berbuffer**: pemutar menahan beberapa detik video dan menurunkan bitrate bila throughput turun, sehingga toleran terhadap delay dan jitter; priority queue justru bisa menggusur kelas lain dan perlu di-policing. Tempatkan di kelas dengan jaminan bandwidth (CBWFQ atau queue biasa). Latensi siaran langsung = durasi segmen x jumlah segmen di buffer = 6 s x 3 = **sekitar 18 detik** di belakang sumber, belum termasuk waktu encoding dan CDN.
+
 </details>
 
 ---
 
-## 11. Sumber
+## 12. Sumber
 
 - RFC 9110 — HTTP Semantics · RFC 9111 — HTTP Caching · RFC 9112 — HTTP/1.1
 - RFC 9113 — HTTP/2 · RFC 9114 — HTTP/3 · RFC 9204 — QPACK
@@ -647,6 +671,8 @@ tls.handshake.extensions_server_name == "example.com"   ← SNI
 - RFC 8040 — RESTCONF
 - Cisco CCNA 200-301 v1.1, topik 6.5 (REST API: authentication, CRUD, HTTP verbs, data encoding) dan 6.7 (komponen JSON)
 - MDN Web Docs — https://developer.mozilla.org/en-US/docs/Web/HTTP
+- RFC 8216, HTTP Live Streaming (Agustus 2017, Informational): https://www.rfc-editor.org/rfc/rfc8216
+- ISO/IEC 23009-1, Dynamic adaptive streaming over HTTP (DASH), Part 1: Media presentation description and segment formats: https://www.iso.org/standard/89027.html
 
 ---
 

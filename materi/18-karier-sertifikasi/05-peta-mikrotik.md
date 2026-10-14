@@ -27,7 +27,7 @@ Kekuatan MikroTik untuk pasar ini:
 ## 2. Jalur Sertifikasi MikroTik
 
 ```
-MTCNA (Network Associate) ★ : WAJIB, pintu masuk semua sertifikasi lain
+MTCNA (Network Associate) ★ : WAJIB, pintu masuk ke semua sertifikasi level Advanced
    │
    ├── MTCRE    (Routing Engineer)             : routing statis lanjutan, OSPF, tunnel
    ├── MTCWE    (Wireless Engineer)            : wireless MikroTik
@@ -37,12 +37,12 @@ MTCNA (Network Associate) ★ : WAJIB, pintu masuk semua sertifikasi lain
    ├── MTCUME   (User Management)              : hotspot, RADIUS, PPP
    ├── MTCSE    (Security Engineer)            : keamanan
    ├── MTCIPv6E (IPv6 Engineer)                : IPv6
-   └── MTCINE   (Inter-networking) ★★          : BGP, MPLS (level tertinggi, untuk ISP)
+   └── MTCRE ──► MTCINE (Inter-networking) ★★   : BGP, MPLS (level Extended, prasyaratnya MTCRE)
 ```
 
-- **MTCNA** adalah **prasyarat** untuk semua sertifikasi lain — mulai dari sini.
+- **MTCNA** adalah **prasyarat** untuk semua sertifikasi level Advanced (MTCRE, MTCWE, MTCTCE, MTCUME, MTCIPv6E, MTCSE, MTCSWE, MTCEWE). **MTCINE** (level Extended) menuntut **MTCRE**. Sertifikat MTCNA boleh sudah kedaluwarsa saat mengikuti kursus engineer pertama, tetapi Anda harus pernah memilikinya.
 - Sertifikasi engineer (MTCRE, MTCWE, dll.) adalah **spesialisasi** yang bisa diambil sesuai kebutuhan.
-- **MTCINE** (BGP/MPLS) adalah puncak jalur ISP/backbone. Konfigurasi MPLS di RouterOS (LDP, VPLS, VRF/L3VPN, RSVP-TE) dibahas di `19-mikrotik/09-mpls-routeros`, dengan konsep multi-vendornya di Tahap 22 (`22-service-provider/01-mpls-ldp` dan seterusnya).
+- **MTCINE** (BGP/MPLS) adalah puncak jalur ISP/backbone (level Extended). Konfigurasi MPLS di RouterOS (LDP, VPLS, VRF/L3VPN, RSVP-TE) dibahas di `19-mikrotik/09-mpls-routeros`, dengan konsep multi-vendornya di Tahap 22 (`22-service-provider/01-mpls-ldp` dan seterusnya).
 
 ⚠️ **Outline resmi lebih tua dari RouterOS v7.** Outline pelatihan yang ditautkan di halaman resmi MikroTik bertanggal 2011 sampai 2020 (misalnya MTCRE terakhir disunting 2015, MTCTCE dan MTCUME 2011, MTCSWE dan MTCEWE 2020), jadi semuanya ditulis sebelum RouterOS v7. Sintaks v7 untuk OSPF, BGP, routing table, dan wifi berbeda dari materi lama. Sebelum mendaftar, periksa outline dan jadwal terbaru di [mikrotik.com/training](https://mikrotik.com/training/about) dan tanyakan ke trainer versi RouterOS yang dipakai di kelas.
 
@@ -61,7 +61,7 @@ MTCNA (Network Associate) ★ : WAJIB, pintu masuk semua sertifikasi lain
 
 Modul lanjutan Tahap 19 kini mencakup routing v7 (`19/08`, MTCRE), MPLS di RouterOS (`19/09`, MTCINE), User Manager dan RADIUS (`19/10`, MTCUME), dan switching CRS (`19/11`, MTCSWE). Untuk wireless enterprise dan IPv6 lanjutan, gunakan dokumentasi resmi help.mikrotik.com dan training resmi.
 
-**Format ujian:** ujian online, diikuti setelah mengikuti training resmi (dari MikroTik Certified Trainer). MTCNA umumnya 25 soal, passing ~60% (50%+ memberi kesempatan ujian ulang sekali).
+**Format ujian:** ujian sertifikasi hanya bisa diikuti setelah training, yang diberikan Training Center resmi (MikroTik Certified Trainer); biaya ditentukan trainer. Tiap ujian berisi 25 soal pilihan tunggal atau ganda, waktu 60 menit, nilai lulus 60%. Praktik dan ujian untuk sertifikat baru tetap di kelas (tatap muka); bagian training boleh daring bila trainer dan peserta setuju, dan perpanjangan (renewal) kini bisa sepenuhnya daring. Hasil 50% sampai 59% boleh langsung mendapat kesempatan kedua dari trainer; di bawah itu peserta harus mengulang kursus dan menunggu minimal 30 hari. Sertifikat berlaku 3 tahun sejak diterbitkan; ujian saja tanpa training tidak diperkenankan.
 
 ---
 
@@ -135,7 +135,7 @@ Ingat bahwa **MikroTik terintegrasi di seluruh kurikulum**, bukan hanya Tahap 19
 ## 6. Ringkasan
 
 - **MikroTik dominan** di ISP kecil-menengah, RT-RW-Net, warnet/hotel di Indonesia (murah, fitur ISP lengkap).
-- Jalur: **MTCNA** (wajib, pintu masuk) → spesialisasi (MTCRE routing, MTCWE/MTCEWE wireless, MTCSWE switching, MTCTCE traffic, MTCUME user, dll.) → **MTCINE** (BGP/MPLS, puncak ISP).
+- Jalur: **MTCNA** (wajib, pintu masuk) → spesialisasi (MTCRE routing, MTCWE/MTCEWE wireless, MTCSWE switching, MTCTCE traffic, MTCUME user, dll.) → **MTCINE** (BGP/MPLS, puncak ISP; prasyarat MTCRE).
 - Kurikulum ini menyiapkan MTCNA secara penuh dan sebagian besar jalur lanjutan (MTCRE, MTCINE, MTCUME, MTCSWE, MTCTCE lewat `19/03` sampai `19/11`). Outline resmi lebih tua dari RouterOS v7, jadi cek mikrotik.com/training sebelum ujian.
 - **MTCNA** mencakup: RouterOS, DHCP, bridging, routing, wireless, firewall, QoS, network management, tunnels — semua **dipetakan ke modul kurikulum ini**.
 - Kurikulum mengajarkan **kenapa** (konsep mendalam), Tahap 19 memberi **bagaimana** (RouterOS) — lebih kuat dari tutorial klik-klik.
@@ -159,7 +159,7 @@ Ingat bahwa **MikroTik terintegrasi di seluruh kurikulum**, bukan hanya Tahap 19
 
 1. Karena MikroTik menawarkan **kombinasi harga murah dan fitur ISP yang lengkap** yang sangat cocok untuk segmen dengan anggaran terbatas: perangkat dan lisensinya jauh lebih murah daripada Cisco/Juniper, namun RouterOS menyediakan hampir semua yang dibutuhkan operator kecil dalam satu perangkat — routing (termasuk BGP/OSPF), firewall/NAT, **PPPoE server** (untuk autentikasi pelanggan), **hotspot** (login voucher untuk warnet/wifi publik), **bandwidth management** (queue), dan VPN. RouterOS juga berjalan di hardware murah maupun sebagai VM gratis (**CHR**), sehingga mudah dipelajari dan di-deploy. Ditambah **komunitas dan materi berbahasa Indonesia yang melimpah**, MikroTik menjadi pilihan de-facto untuk ISP kecil-menengah, RT-RW-Net, warnet, kafe, dan hotel di Indonesia. Untuk operator yang perlu menjalankan layanan internet komersial dengan modal terbatas, MikroTik memberi rasio fitur-terhadap-biaya yang sulit ditandingi.
 
-2. **MTCNA (MikroTik Certified Network Associate)** adalah sertifikasi **fondasi dan prasyarat wajib** — ia menjadi **pintu masuk untuk semua sertifikasi MikroTik lain**. Anda tidak bisa mengambil sertifikasi engineer yang lebih lanjut (MTCRE, MTCWE, MTCEWE, MTCSWE, MTCTCE, MTCUME, MTCINE, dll.) tanpa terlebih dahulu lulus MTCNA. MTCNA memvalidasi kemampuan dasar mengelola RouterOS: akses/manajemen, DHCP, bridging, routing dasar, wireless dasar, firewall/NAT dasar, QoS dasar, dan tunnel dasar. Setelah MTCNA, seseorang memilih **spesialisasi** sesuai kebutuhan (routing, wireless, switching, traffic control, user management, keamanan, IPv6), dengan **MTCINE** (BGP/MPLS) sebagai puncak untuk engineer ISP/backbone.
+2. **MTCNA (MikroTik Certified Network Associate)** adalah sertifikasi **fondasi dan prasyarat wajib** — ia menjadi **pintu masuk untuk semua sertifikasi MikroTik lain**. Anda tidak bisa mengambil sertifikasi engineer level Advanced (MTCRE, MTCWE, MTCEWE, MTCSWE, MTCTCE, MTCUME, MTCSE, MTCIPv6E) tanpa terlebih dahulu memiliki MTCNA, dan MTCINE menuntut MTCRE. MTCNA memvalidasi kemampuan dasar mengelola RouterOS: akses/manajemen, DHCP, bridging, routing dasar, wireless dasar, firewall/NAT dasar, QoS dasar, dan tunnel dasar. Setelah MTCNA, seseorang memilih **spesialisasi** sesuai kebutuhan (routing, wireless, switching, traffic control, user management, keamanan, IPv6), dengan **MTCINE** (BGP/MPLS) sebagai puncak untuk engineer ISP/backbone.
 
 3. (Lima dari) **Introduction to RouterOS** (akses, backup, user) → `19-mikrotik/01`; **DHCP** (server/client/relay) → `06-aplikasi/02` + bagian MikroTik; **Bridging** → `03-data-link/02` dan `19-mikrotik/02`; **Routing** (static, konsep) → `04-network-layer/05`, `07-routing-lanjutan/01` + MikroTik; **Firewall** (filter, NAT, connection tracking, address-list) → `09-nat-acl-firewall/01-03`, `12-keamanan/*`, dan `19-mikrotik/03`; **QoS** (simple queue, queue tree, burst) → `11-wan-vpn/03` dan `19-mikrotik/04`; **Wireless** → `10-wireless/01-03` dan `19-mikrotik/05`; **Tunnels** (PPPoE/PPTP) → `11-wan-vpn/02` dan `19-mikrotik/06`; **Network Management** (tools, DNS, NTP, monitoring) → `06/*`, `14-monitoring-troubleshooting/02`, dan `19-mikrotik/07`.
 

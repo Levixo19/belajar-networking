@@ -355,7 +355,19 @@ Serat **bend-insensitive** (G.657.A2/B3) lebih toleran, tetapi tetap ada batasny
 
 ---
 
-## 9. Troubleshooting Link Fiber
+## 9. 400ZR: Optik Koheren yang Dicolok Langsung ke Router
+
+Bagian 8 menunjukkan bahwa DWDM memerlukan laser terkontrol suhu, multiplexer, dan sering amplifier. Secara historis, sinyal DWDM dihasilkan oleh *transponder* terpisah, sebuah perangkat tersendiri yang mengubah port abu-abu dari router menjadi panjang gelombang tertentu. Untuk interkoneksi antar-data-center (**DCI**), itu berarti rak tambahan, daya, dan biaya. **400ZR** adalah *Implementation Agreement* dari **OIF** (Optical Internetworking Forum) yang memadatkan fungsi itu menjadi modul **pluggable** berbentuk QSFP-DD atau OSFP yang dicolok ke port 400GbE router atau switch. Berkat itu, router sendiri memancarkan panjang gelombang DWDM berstandar interoperabel antar-vendor.
+
+Isi spesifikasinya, menurut OIF-400ZR-03.0 (8 Oktober 2024): antarmuka digital koheren yang bekerja sebagai PHY 400GBASE-R, memakai satu pembawa dengan modulasi **DP-16QAM** (*dual-polarization*, 16 level amplitudo-fase, sehingga 4 bit per simbol per polarisasi; modulasi QAM dijelaskan di `02-layer-fisik/04-encoding-modulasi`) dan **C-FEC** (*concatenated FEC*) dengan batas galat sisa setelah FEC di bawah 1E-15. Laju simbolnya 59,84375 GBaud per polarisasi, atau total sekitar 478,75 Gb/s di sisi saluran; selisih dari 400 Gb/s dipakai untuk overhead frame ZR dan FEC. Tiga aplikasi yang dicakup: (1) **amplified**, titik-ke-titik hingga 120 km, DWDM 100 GHz, yang dibatasi derau (*noise limited*) dengan target jangkauan minimal 80 km; (2) **unamplified**, satu panjang gelombang, yang dibatasi redaman (*loss limited*) sehingga jangkauan tergantung daya kirim, sensitivitas penerima, dan loss saluran; (3) amplified dengan spasi 75 GHz.
+
+Perbedaan cara menghitung anggaran link penting. Pada optik biasa (bagian 5) Anda menghitung dB redaman terhadap power budget. Pada link amplified 400ZR, jangkauan ditentukan oleh **OSNR** (*optical signal-to-noise ratio*) di penerima, karena setiap amplifier EDFA menambah derau. IA menggambarkan lintasan di antara kedua modul sebagai *black link* dengan sifat spektral tertentu, yaitu semua yang ada di antara modul (multiplexer, amplifier, serat) dianggap satu kotak hitam. Praktisnya, pada aplikasi amplified modul 400ZR dihubungkan ke sistem DWDM berisi mux dan EDFA; pada aplikasi unamplified, dua modul dihubungkan langsung oleh serat pada satu panjang gelombang selama redamannya masih tertampung.
+
+💡 **400ZR hanya untuk Ethernet 400G, titik-ke-titik, jarak metro.** Jarak lebih jauh, topologi multi-span, atau laju lain ditangani oleh varian dan keluarga lain (misalnya ZR+ atau standar sesudahnya); cek spesifikasi vendor sebelum membeli. Modul koheren juga lebih panas dan lebih haus daya daripada optik LR biasa, jadi periksa anggaran daya dan pendinginan chassis.
+
+---
+
+## 10. Troubleshooting Link Fiber
 
 ### Alur diagnosis
 
@@ -397,7 +409,7 @@ Serat **bend-insensitive** (G.657.A2/B3) lebih toleran, tetapi tetap ada batasny
 
 ---
 
-## 10. Ringkasan
+## 11. Ringkasan
 
 - Serat membawa cahaya via total internal reflection: kebal EMI, aman antar-gedung, sulit disadap, jangkauan jauh.
 - **SMF** (core 9 µm, kuning): jauh (10–100+ km), transceiver mahal. **MMF** (core 50 µm, aqua): dekat (≤400 m), transceiver murah.
@@ -409,10 +421,11 @@ Serat **bend-insensitive** (G.657.A2/B3) lebih toleran, tetapi tetap ada batasny
 - **TX/RX tertukar** adalah penyebab nomor satu link fiber baru tidak naik.
 - **Optical overload** terjadi saat optik jarak jauh dipakai untuk link pendek — pasang attenuator.
 - Selalu bersihkan konektor sebelum menyambung; selalu pasang dust cap.
+- **400ZR (OIF)** = modul koheren pluggable (QSFP-DD/OSFP) untuk DCI: DP-16QAM, C-FEC, sekitar 478,75 Gb/s di saluran untuk 400GbE, target minimal 80 km pada link amplified DWDM 100 GHz. Link amplified dibatasi **OSNR**, bukan redaman biasa.
 
 ---
 
-## 11. Latihan
+## 12. Latihan
 
 1. Anda perlu menghubungkan dua gedung berjarak 2,5 km. Jenis serat dan transceiver apa?
 2. Data center, dari leaf switch ke server dalam rak yang sama (3 m), 25 Gbps. Apa pilihan paling ekonomis?
@@ -421,6 +434,7 @@ Serat **bend-insensitive** (G.657.A2/B3) lebih toleran, tetapi tetap ada batasny
 5. Kenapa OM1 tidak boleh dicampur dengan OM3 dalam satu jalur?
 6. Anda memakai transceiver 10GBASE-ER (40 km) untuk link 10 m di dalam rak. Apa yang mungkin terjadi dan bagaimana memperbaikinya?
 7. Sebutkan tiga alasan mengapa serat wajib dipakai untuk koneksi antar-gedung, bukan tembaga.
+8. Laju simbol 400ZR adalah 59,84375 GBaud per polarisasi dengan DP-16QAM. Hitung laju bit total di saluran, bandingkan dengan 400 Gb/s, lalu jelaskan mengapa jangkauan link amplified 400ZR tidak dihitung dengan power budget dB biasa.
 
 <details>
 <summary>Jawaban</summary>
@@ -439,17 +453,21 @@ Serat **bend-insensitive** (G.657.A2/B3) lebih toleran, tetapi tetap ada batasny
 
 7. (a) **Isolasi listrik** — mencegah kerusakan akibat perbedaan potensial tanah antar-gedung dan sambaran petir, yang bisa merusak perangkat dan membahayakan orang; (b) **jarak** — tembaga terbatas 100 m, serat bisa kilometer; (c) **kekebalan EMI** — jalur luar ruangan melewati banyak sumber interferensi; (d) tambahan: kapasitas masa depan jauh lebih besar tanpa mengganti kabel.
 
+8. 16QAM membawa 4 bit per simbol, dan DP berarti dua polarisasi, jadi 59,84375 x 2 x 4 = **478,75 Gb/s**. Ini sekitar 78,75 Gb/s (kurang lebih 19,7%) di atas 400 Gb/s; selisihnya dipakai untuk overhead frame ZR dan **C-FEC**. Pada link amplified yang dibatasi derau, setiap amplifier optik menambah derau, sehingga yang menentukan apakah sinyal bisa didecode adalah **OSNR** di penerima terhadap toleransi OSNR modul, bukan sekadar daya kirim dikurangi redaman serat. Link unamplified, sebaliknya, bersifat loss limited sehingga power budget biasa (daya kirim, sensitivitas, loss) masih relevan.
+
 </details>
 
 ---
 
-## 12. Sumber
+## 13. Sumber
 
 - ITU-T G.652 / G.657 — karakteristik serat single-mode
 - TIA-492 / ISO/IEC 11801 — klasifikasi OM1–OM5
 - IEEE 802.3 clause 38, 52, 86 — spesifikasi Ethernet optik
 - IEC 61300-3-35 — standar inspeksi kebersihan konektor serat
 - Cisco *Transceiver Module Compatibility Matrix*
+- OIF, Implementation Agreement OIF-400ZR-03.0 (8 Oktober 2024): https://www.oiforum.com/wp-content/uploads/OIF-400ZR-03.0.1.pdf
+- OIF, What is 400ZR? (ringkasan tujuan dan jangkauan): https://www.oiforum.com/fiercetelecom-what-is-400zr/
 
 ---
 

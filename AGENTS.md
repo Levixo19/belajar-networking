@@ -1,6 +1,6 @@
 # Catatan untuk agen
 
-Kurikulum jaringan komputer berbahasa Indonesia (`materi/`, 144 modul dalam 26
+Kurikulum jaringan komputer berbahasa Indonesia (`materi/`, 149 modul dalam 27
 tahap) plus aplikasi belajar di `app/`: React 19 + Vite 8 + Tailwind v4 +
 TypeScript, server Express + MongoDB, HashRouter. Pemiliknya pelajar yang memakai
 aplikasi ini **hanya di laptop**.
@@ -393,3 +393,41 @@ berdiagram baru, 1 tumpang-tindih nyata (ARP spoofing, sudah diperbaiki).
 dari Wikimedia Commons lewat API (`extmetadata`: lisensi dan pembuat dibaca dari
 metadata, bukan diketik), diunduh pada lebar 1.920 px, dan hanya CC BY, CC BY-SA, CC0,
 atau domain publik. Foto yang tampil di halaman wajib menampilkan kreditnya.
+
+### Kurikulum: tahap dan modul baru (Fase 6, 2026-10-15)
+
+**Tahap baru wajib didaftarkan di EMPAT tempat**: `STAGE_META` (`build-content.mjs`,
+judul + band), `TANDA` (`lib/sampul.tsx`), `STAGE` (`components/icons.tsx`), dan
+`TOPIK_TAHAP` (`lib/pustakaTopik.ts`). Yang terakhir dijaga tes (setiap tahap belajar
+4-6 bacaan lanjutan) dan validasi build (`TOPIK_TAHAP` yang menunjuk tahap tanpa modul
+menggagalkan build). Dua yang tengah tidak dijaga apa pun: tanpa keduanya tahap jatuh
+ke ikon dan tanda bawaan tanpa ada yang protes. Tahap 23 "Jalur Vendor Lanjutan" ada
+di band `khusus` sesudah Tahap 22; 22.5 menunjuk 23.1, dan 23.3 menunjuk 21.1.
+
+**Modul "pendalaman" diberi label itu di pengantarnya.** Tahap 23 dan bagian istilah
+lanjut (XDP, Hubble, DCQCN, 400ZR, RFC 8925, 5G SA/UPF, ABR) tidak diuji di CCNA,
+Network+, atau MTCNA; labelnya supaya pembelajar yang mengejar ujian tidak terseret.
+
+**Menambah bagian di tengah modul = menggeser nomor bagian sesudahnya DAN menjaga
+latihan-jawaban tetap berpasangan.** Kartu SRS diambil dari bagian Latihan; jumlah
+kartu per modul harus sama dengan jumlah latihannya. ID kartu ikut nomor, jadi
+menyisipkan latihan di tengah memutus jadwal review kartu sesudahnya: tambahkan di
+AKHIR daftar latihan.
+
+**Peta sertifikasi (18.2, 18.3, 18.5) diperiksa terhadap halaman resmi 2026-10-15**
+dan setiap angka membawa URL buktinya. Yang TIDAK dipublikasikan penerbit (jumlah soal
+dan nilai lulus CCNA) ditulis sebagai "tidak dipublikasikan", bukan angka komunitas
+yang disamarkan jadi fakta. **CCNA v2.0 mulai diuji 2027-02-03**; 18.2 masih memetakan
+v1.1 topik demi topik, dan pemetaan ulang ke v2.0 harus selesai sebelum tanggal itu.
+MTCINE menuntut MTCRE, bukan MTCNA; ujian MikroTik di kelas, bukan daring.
+
+**Teks materi baru ditulis sendiri, sumber hanya dirujuk.** Fase 6 tidak mengadaptasi
+teks atau kode dari luar, jadi `NOTICE.md` tidak bertambah. Google SRE Book (NC-ND)
+dan halaman vendor cuma boleh ditautkan.
+
+**Diagram modul baru diperiksa di browser seperti Fase 5.** 15 diagram (o6, p7, v8):
+pemeriksa kotak teks menemukan 1 tanda yang ternyata cuma kotak ascent/descent font di
+dalam `Box` bersub (huruf tidak bersentuhan, dicek di tangkapan layar), dan lembar
+kontak menemukan 3 masalah yang tidak tertangkap pemeriksa: label panah menempel
+batas panel, panah yang berakhir di ruang kosong, label di atas garis. Pemeriksa
+otomatis tidak menggantikan melihat gambarnya.

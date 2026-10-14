@@ -1139,7 +1139,28 @@ Terapkan `bgp-vpls-pe-contoh.rsc` di pe1, lalu versi yang disesuaikan di pe2 dan
 
 ---
 
-## 14. Kesalahan Umum
+## 14. 5G Standalone dan UPF: Yang Dilihat Jaringan Transport
+
+Backhaul seluler di bagian 1 dan 10 sering dibayangkan sebagai "pipa Ethernet dari menara ke pusat". Pada 5G, pipa itu membawa arsitektur inti yang berbeda dari 4G, dan sebagai engineer SP Anda perlu tahu apa yang berjalan di ujung-ujungnya. Ada dua cara menggelar 5G. **Non-Standalone (NSA)** memakai radio 5G New Radio (NR) bersama inti 4G (EPC) yang sudah ada. **Standalone (SA)** menghubungkan NR ke **5G Core (5GC)**; menurut 3GPP, hanya dalam konfigurasi inilah seluruh layanan 5G Phase 1 (Release 15) didukung. Inti 5GC dirancang sebagai *Service-Based Architecture*: fungsi jaringan (*Network Function*, NF) seperti AMF (akses dan mobilitas), SMF (manajemen sesi), AUSF (autentikasi), dan UPF saling menawarkan layanan lewat antarmuka umum.
+
+Prinsip yang paling relevan bagi jaringan IP adalah **CUPS** (*Control and User Plane Separation*). TS 23.501 menyatakan bahwa fungsi user plane dipisahkan dari control plane agar bisa berkembang dan diskalakan sendiri-sendiri, serta ditempatkan secara terpusat atau tersebar. Dalam istilah yang Anda kenal dari SDN (`16-datacenter-cloud-sdn/06-sdn`): **SMF** adalah control plane yang memutuskan aturan per sesi, dan **UPF (User Plane Function)** adalah data plane yang meneruskan paket pengguna. Keduanya terhubung lewat reference point **N4** memakai protokol **PFCP** (3GPP TS 29.244), yang juga dipakai di EPC untuk memisahkan SGW-C/PGW-C dari SGW-U/PGW-U.
+
+| Reference point | Menghubungkan | Catatan |
+|---|---|---|
+| **N3** | RAN (gNB) dan UPF | Lalu lintas pengguna dibawa dalam tunnel **GTP-U** |
+| **N4** | SMF dan UPF | Kontrol, PFCP |
+| **N6** | UPF dan Data Network (internet, jaringan enterprise, MEC) | Titik breakout ke IP biasa |
+| **N9** | UPF ke UPF | Antar-UPF, misalnya edge ke pusat |
+
+Menurut TS 23.501 bagian 6.2.3, UPF antara lain menjadi titik jangkar mobilitas, menyediakan interkoneksi ke Data Network, meneruskan paket (termasuk *uplink classifier* dan *branching point* untuk sesi multi-homed), memeriksa paket, menegakkan kebijakan dan QoS (batas laju uplink/downlink), membuat laporan penggunaan, dan menahan paket downlink serta memicu notifikasi data untuk perangkat yang sedang idle. Ia mirip router besar yang menyimpan state per pelanggan.
+
+Konsekuensi untuk transport: dari sisi jaringan SP, N3 adalah aliran IP biasa antara gNB dan UPF yang bisa dibawa L3VPN (`22-service-provider/02-mpls-l3vpn`), EVPN, atau SR-TE (`22-service-provider/03-te-segment-routing`), dengan kebutuhan latensi rendah dan keandalan yang ketat. Di sisi N6, UPF tampil sebagai router yang mengiklankan prefix alamat pengguna ke internet atau ke VRF pelanggan korporat, sehingga membutuhkan routing, firewall, dan sering NAT seperti perangkat edge lain. Memindahkan UPF ke edge (dekat pengguna) memperpendek jalur dan menurunkan latensi, tetapi memindahkan titik N6 breakout dan kebutuhan transport, serta menambah jumlah lokasi yang harus dioperasikan.
+
+⚠️ Bagian ini hanya menunjukkan batas antara inti seluler dan jaringan transport. Detail RAN, AMF, slicing, dan prosedur sesi PDU di luar cakupan kurikulum ini; rujuk TS 23.501 dan TS 23.502 untuk itu.
+
+---
+
+## 15. Kesalahan Umum
 
 1. **Lupa bahwa PW butuh LSP transport.** Sesi targeted LDP bisa naik lewat IP biasa, tetapi kalau tidak ada label ke loopback PE lawan (misalnya LDP tidak aktif di satu link core), frame tidak akan sampai.
 2. **Memakai loopback yang tidak di-/32 atau tidak diiklankan IGP.** Transport address LDP harus bisa dijangkau dan sebaiknya /32 agar label dialokasikan untuk FEC yang tepat.
@@ -1154,7 +1175,7 @@ Terapkan `bgp-vpls-pe-contoh.rsc` di pe1, lalu versi yang disesuaikan di pe2 dan
 
 ---
 
-## 15. Ringkasan
+## 16. Ringkasan
 
 - **L2VPN menjual transport**, bukan routing: operator membawa frame Ethernet utuh, pelanggan memegang L3 sendiri.
 - **MEF:** UNI, EVC, ENNI; layanan **E-Line** (EPL/EVPL), **E-LAN**, **E-Tree**, **E-Access**; bandwidth profile **CIR/CBS/EIR/EBS** dengan warna hijau/kuning/merah.
@@ -1168,10 +1189,11 @@ Terapkan `bgp-vpls-pe-contoh.rsc` di pe1, lalu versi yang disesuaikan di pe2 dan
 - **G.8032** memblokir **RPL** saat normal dan membukanya saat ada kegagalan, dengan sasaran pemulihan di bawah 50 ms.
 - **CFM** (CCM, loopback, linktrace) untuk konektivitas; **Y.1731** (DMM, LMM, SLM, AIS) untuk mengukur delay, jitter, dan loss sesuai SLA.
 - **Lab gratis:** FRR menunjukkan sinyal PW tanpa data plane; MikroTik CHR menjalankan VPLS (LDP dan BGP) dengan data plane nyata; EVPN-MPLS, G.8032, dan Y.1731 tidak bisa penulis verifikasi dengan alat gratis.
+- **5G SA** = NR terhubung ke 5GC (NSA memakai inti 4G). **CUPS**: SMF (control) memerintah **UPF** (user plane) lewat **N4/PFCP**; **N3** = gNB ke UPF (GTP-U), **N6** = UPF ke Data Network, **N9** = UPF ke UPF. Bagi transport, N3 adalah aliran IP yang dibawa L3VPN/SR, dan UPF di edge memindahkan titik breakout N6.
 
 ---
 
-## 16. Latihan
+## 17. Latihan
 
 1. Seorang pelanggan bank membeli layanan "Metro-E 100 Mbps" dan mengeluh hanya mendapat sekitar 50 Mbps pada jam sibuk, padahal pagi hari bisa 100 Mbps. Kontraknya menyebut CIR 50 Mbps, EIR 50 Mbps. Jelaskan apa yang terjadi dan apa yang seharusnya dijelaskan tim sales sejak awal.
 2. Gambarkan tumpukan header lengkap sebuah frame Ethernet pelanggan (dengan satu tag VLAN) saat melintasi link antara P dan PE tujuan pada VPWS dengan control word, jika core memakai PHP. Berapa MTU minimal link sebelumnya (antara P sebelum hop terakhir dan P terakhir)?
@@ -1183,6 +1205,7 @@ Terapkan `bgp-vpls-pe-contoh.rsc` di pe1, lalu versi yang disesuaikan di pe2 dan
 8. Pada ring G.8032 enam node, link antara node C dan D putus. Urutkan peristiwa yang terjadi sampai trafik pulih, lalu jelaskan peran WTR timer ketika link C-D kembali normal.
 9. Pelanggan menuntut bukti bahwa latensi layanan E-Line Jakarta-Surabaya selalu di bawah angka di kontrak. Fungsi Y.1731 apa yang Anda pakai, dua arah atau satu arah, dan apa syarat teknis untuk masing-masing?
 10. Di Lab A (FRR), seorang rekan melaporkan "PW sudah UP semua tapi ping antar-CE gagal, berarti konfigurasi salah". Bagaimana Anda menanggapinya, dan bukti apa yang Anda tunjukkan?
+11. Operator memindahkan UPF dari pusat data nasional ke lokasi regional untuk menurunkan latensi aplikasi pabrik. Sebutkan reference point yang jalurnya berubah dan reference point yang tetap berupa sesi kontrol, lalu uraikan tiga dampak pada jaringan transport/SP.
 
 <details>
 <summary>Jawaban</summary>
@@ -1207,11 +1230,13 @@ Terapkan `bgp-vpls-pe-contoh.rsc` di pe1, lalu versi yang disesuaikan di pe2 dan
 
 10. Tanggapan yang benar: konfigurasinya bisa saja **sudah benar**. Di Linux, FRR hanya menjalankan **control plane** pseudowire; kernel tidak punya data plane PW, dan fungsi zebra yang seharusnya memasang PW ke kernel tidak melakukan apa-apa. Bukti: (a) `show l2vpn atom binding` menunjukkan label lokal/remote dan parameter cocok, jadi sinyal sukses; (b) `ip -f mpls route show` di PE hanya berisi label transport, tidak ada label PW; (c) ping antar-CE gagal walaupun semua PW UP. Untuk menguji data plane, pakai Lab B (MikroTik CHR) atau perangkat yang punya data plane PW. Pelajaran umumnya: status UP di control plane bukan bukti layanan meneruskan trafik.
 
+11. Yang berubah jalurnya adalah **N3** (gNB ke UPF: kini lebih pendek dan berakhir di lokasi regional) dan **N6** (UPF ke Data Network: breakout ke internet atau VRF enterprise kini terjadi di lokasi regional), serta **N9** bila masih ada UPF pusat sebagai jangkar. **N4** (SMF ke UPF, PFCP) tetap sesi kontrol, tetapi kini melintasi jarak lebih jauh karena SMF masih di pusat sehingga butuh jalur yang andal dan latensi terkendali. Dampak transport: (1) rute N3 baru butuh kapasitas, QoS, dan SLA latensi di L3VPN/EVPN/SR-TE menuju lokasi regional; (2) lokasi regional kini perlu fungsi edge penuh untuk N6 (routing BGP ke internet atau VRF pelanggan, firewall, dan NAT bila diperlukan) beserta proteksi seperti iACL; (3) jumlah lokasi yang dioperasikan naik, sehingga monitoring, change window, dan redundansi UPF/link harus dirancang per lokasi.
+
 </details>
 
 ---
 
-## 17. Sumber
+## 18. Sumber
 
 - RFC 8077, Pseudowire Setup and Maintenance Using the Label Distribution Protocol (LDP): https://www.rfc-editor.org/rfc/rfc8077
 - RFC 4447, Pseudowire Setup and Maintenance Using LDP (digantikan RFC 8077): https://www.rfc-editor.org/rfc/rfc4447
@@ -1240,6 +1265,9 @@ Terapkan `bgp-vpls-pe-contoh.rsc` di pe1, lalu versi yang disesuaikan di pe2 dan
 - vrnetlab (srl-labs), image MikroTik RouterOS: https://github.com/srl-labs/vrnetlab/tree/master/mikrotik/routeros
 - Cisco, dokumentasi L2VPN dan Ethernet Services IOS XR (ASR 9000): https://www.cisco.com/c/en/us/support/routers/asr-9000-series-aggregation-services-routers/products-installation-and-configuration-guides-list.html
 - Juniper, dokumentasi VPLS, EVPN, dan l2circuit Junos: https://www.juniper.net/documentation/
+- 3GPP/ETSI, TS 123 501 V18.6.0, System architecture for the 5G System (bagian 4.1, 4.2.7, 6.2.3): https://www.etsi.org/deliver/etsi_ts/123500_123599/123501/18.06.00_60/ts_123501v180600p.pdf
+- 3GPP, 5G System Overview (perbedaan SA dan NSA, Release 15): https://www.3gpp.org/technologies/5g-system-overview
+- ETSI, daftar TS 129 244 (PFCP, antarmuka Control Plane dan User Plane): https://www.etsi.org/deliver/etsi_ts/129200_129299/129244/
 
 ---
 

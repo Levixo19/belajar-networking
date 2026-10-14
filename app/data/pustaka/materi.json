@@ -591,6 +591,34 @@
    ]
   },
   {
+   "id": "materi-122623d9",
+   "judul": "OIF, Implementation Agreement OIF-400ZR-03.0 (8 Oktober 2024)",
+   "url": "https://www.oiforum.com/wp-content/uploads/OIF-400ZR-03.0.1.pdf",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "fisik"
+   ],
+   "catatan": "",
+   "modul": [
+    "02-layer-fisik/03-fiber"
+   ]
+  },
+  {
+   "id": "materi-cd39076c",
+   "judul": "OIF, What is 400ZR? (ringkasan tujuan dan jangkauan)",
+   "url": "https://www.oiforum.com/fiercetelecom-what-is-400zr/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "fisik"
+   ],
+   "catatan": "",
+   "modul": [
+    "02-layer-fisik/03-fiber"
+   ]
+  },
+  {
    "id": "materi-a4778935",
    "judul": "IEEE Registration Authority (pencarian OUI)",
    "url": "https://regauth.standards.ieee.org/standards-ra-web/pub/view.html",
@@ -2081,6 +2109,36 @@
    ]
   },
   {
+   "id": "materi-ab1130f2",
+   "judul": "RFC 8925, IPv6-Only Preferred Option for DHCPv4 (Oktober 2020)",
+   "url": "https://www.rfc-editor.org/rfc/rfc8925",
+   "jenis": "standar",
+   "bahasa": "en",
+   "topik": [
+    "ipv6",
+    "standar"
+   ],
+   "catatan": "",
+   "modul": [
+    "08-ipv6/03-routing-transisi-ipv6"
+   ]
+  },
+  {
+   "id": "materi-33a01a4a",
+   "judul": "RFC 8781, Discovering PREF64 in Router Advertisements",
+   "url": "https://www.rfc-editor.org/rfc/rfc8781",
+   "jenis": "standar",
+   "bahasa": "en",
+   "topik": [
+    "ipv6",
+    "standar"
+   ],
+   "catatan": "",
+   "modul": [
+    "08-ipv6/03-routing-transisi-ipv6"
+   ]
+  },
+  {
    "id": "materi-98687da2",
    "judul": "MikroTik",
    "url": "https://help.mikrotik.com/docs/display/ROS/NAT",
@@ -2755,6 +2813,351 @@
    ]
   },
   {
+   "id": "materi-de99db82",
+   "judul": "Cisco, CCNA Automation 200-901 v1.1 exam topics (PDF resmi)",
+   "url": "https://learningcontent.cisco.com/documents/marketing/exam-topics/200-901-CCNAAUTO_v.1.1.pdf",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "otomasi",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "15-otomasi/05-rekayasa-perangkat-lunak"
+   ]
+  },
+  {
+   "id": "materi-5f9359ba",
+   "judul": "Pro Git, Basic Branching and Merging",
+   "url": "https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "",
+   "modul": [
+    "15-otomasi/05-rekayasa-perangkat-lunak"
+   ]
+  },
+  {
+   "id": "materi-269a93fd",
+   "judul": "Git, dokumentasi git-rebase",
+   "url": "https://git-scm.com/docs/git-rebase",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "",
+   "modul": [
+    "15-otomasi/05-rekayasa-perangkat-lunak"
+   ]
+  },
+  {
+   "id": "materi-dda4563f",
+   "judul": "Git, format diff (unified diff)",
+   "url": "https://git-scm.com/docs/diff-format",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "",
+   "modul": [
+    "15-otomasi/05-rekayasa-perangkat-lunak"
+   ]
+  },
+  {
+   "id": "materi-22bfc69e",
+   "judul": "pytest, dokumentasi",
+   "url": "https://docs.pytest.org/en/stable/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "",
+   "modul": [
+    "15-otomasi/05-rekayasa-perangkat-lunak"
+   ]
+  },
+  {
+   "id": "materi-b7bc99a5",
+   "judul": "GitHub Docs, pagination REST API",
+   "url": "https://docs.github.com/en/rest/using-the-rest-api/using-pagination-in-the-rest-api",
+   "jenis": "alat",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "",
+   "modul": [
+    "15-otomasi/05-rekayasa-perangkat-lunak"
+   ]
+  },
+  {
+   "id": "materi-81800dbe",
+   "judul": "RFC 8288, Web Linking (header Link)",
+   "url": "https://www.rfc-editor.org/rfc/rfc8288",
+   "jenis": "standar",
+   "bahasa": "en",
+   "topik": [
+    "otomasi",
+    "standar"
+   ],
+   "catatan": "",
+   "modul": [
+    "15-otomasi/05-rekayasa-perangkat-lunak"
+   ]
+  },
+  {
+   "id": "materi-8aff8dd6",
+   "judul": "RFC 6585, status 429 Too Many Requests",
+   "url": "https://www.rfc-editor.org/rfc/rfc6585",
+   "jenis": "standar",
+   "bahasa": "en",
+   "topik": [
+    "otomasi",
+    "standar"
+   ],
+   "catatan": "",
+   "modul": [
+    "15-otomasi/05-rekayasa-perangkat-lunak"
+   ]
+  },
+  {
+   "id": "materi-5a7fc9e7",
+   "judul": "RFC 9110, HTTP Semantics (Retry-After)",
+   "url": "https://www.rfc-editor.org/rfc/rfc9110",
+   "jenis": "standar",
+   "bahasa": "en",
+   "topik": [
+    "otomasi",
+    "aplikasi",
+    "standar"
+   ],
+   "catatan": "",
+   "modul": [
+    "15-otomasi/05-rekayasa-perangkat-lunak"
+   ]
+  },
+  {
+   "id": "materi-44f09b9a",
+   "judul": "AWS Builders' Library, Timeouts, retries, and backoff with jitter",
+   "url": "https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "",
+   "modul": [
+    "15-otomasi/05-rekayasa-perangkat-lunak"
+   ]
+  },
+  {
+   "id": "materi-232f73c4",
+   "judul": "MikroTik, REST API RouterOS v7",
+   "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/47579162/REST+API",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "otomasi",
+    "mikrotik"
+   ],
+   "catatan": "",
+   "modul": [
+    "15-otomasi/05-rekayasa-perangkat-lunak",
+    "23-jalur-vendor/01-junos",
+    "23-jalur-vendor/03-api-platform-cisco"
+   ]
+  },
+  {
+   "id": "materi-4794974f",
+   "judul": "Docker, referensi Dockerfile",
+   "url": "https://docs.docker.com/reference/dockerfile/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "otomasi",
+    "container"
+   ],
+   "catatan": "",
+   "modul": [
+    "15-otomasi/05-rekayasa-perangkat-lunak"
+   ]
+  },
+  {
+   "id": "materi-e7f4616a",
+   "judul": "Docker, best practices build",
+   "url": "https://docs.docker.com/build/building/best-practices/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "otomasi",
+    "container"
+   ],
+   "catatan": "",
+   "modul": [
+    "15-otomasi/05-rekayasa-perangkat-lunak"
+   ]
+  },
+  {
+   "id": "materi-48c8345e",
+   "judul": "Python, modul venv",
+   "url": "https://docs.python.org/3/library/venv.html",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "",
+   "modul": [
+    "15-otomasi/05-rekayasa-perangkat-lunak"
+   ]
+  },
+  {
+   "id": "materi-6fa5bb6a",
+   "judul": "Python Packaging, menulis pyproject.toml",
+   "url": "https://packaging.python.org/en/latest/guides/writing-pyproject-toml/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "",
+   "modul": [
+    "15-otomasi/05-rekayasa-perangkat-lunak"
+   ]
+  },
+  {
+   "id": "materi-1f48d09a",
+   "judul": "The Twelve-Factor App, Config",
+   "url": "https://12factor.net/config",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "",
+   "modul": [
+    "15-otomasi/05-rekayasa-perangkat-lunak"
+   ]
+  },
+  {
+   "id": "materi-421d815c",
+   "judul": "Cisco DevNet Sandbox",
+   "url": "https://developer.cisco.com/site/sandbox/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "otomasi",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "15-otomasi/05-rekayasa-perangkat-lunak"
+   ]
+  },
+  {
+   "id": "materi-afef77b6",
+   "judul": "CiscoDevNet/netprogbasics (MIT, hanya dirujuk)",
+   "url": "https://github.com/CiscoDevNet/netprog_basics",
+   "jenis": "alat",
+   "bahasa": "en",
+   "topik": [
+    "otomasi",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "15-otomasi/05-rekayasa-perangkat-lunak"
+   ]
+  },
+  {
+   "id": "materi-078a4d61",
+   "judul": "CiscoDevNet/coding-skills-sample-code (Apache-2.0, hanya dirujuk)",
+   "url": "https://github.com/CiscoDevNet/coding-skills-sample-code",
+   "jenis": "alat",
+   "bahasa": "en",
+   "topik": [
+    "otomasi",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "15-otomasi/05-rekayasa-perangkat-lunak"
+   ]
+  },
+  {
+   "id": "materi-b70457eb",
+   "judul": "Zhu dkk., Congestion Control for Large-Scale RDMA Deployments (DCQCN), ACM SIGCOMM 2015",
+   "url": "https://conferences.sigcomm.org/sigcomm/2015/pdf/papers/p523.pdf",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "cloud",
+    "container",
+    "datacenter"
+   ],
+   "catatan": "",
+   "modul": [
+    "16-datacenter-cloud-sdn/03-storage-virtualisasi"
+   ]
+  },
+  {
+   "id": "materi-3ec85677",
+   "judul": "IEEE 802.1Qbb, Priority-based Flow Control",
+   "url": "https://1.ieee802.org/dcb/802-1qbb/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "cloud",
+    "container",
+    "datacenter"
+   ],
+   "catatan": "",
+   "modul": [
+    "16-datacenter-cloud-sdn/03-storage-virtualisasi"
+   ]
+  },
+  {
+   "id": "materi-51bebaf6",
+   "judul": "RFC 3168, The Addition of Explicit Congestion Notification (ECN) to IP",
+   "url": "https://www.rfc-editor.org/rfc/rfc3168",
+   "jenis": "standar",
+   "bahasa": "en",
+   "topik": [
+    "cloud",
+    "container",
+    "datacenter",
+    "standar"
+   ],
+   "catatan": "",
+   "modul": [
+    "16-datacenter-cloud-sdn/03-storage-virtualisasi"
+   ]
+  },
+  {
+   "id": "materi-0845f19c",
+   "judul": "NVIDIA, RoCE v2 UDP Port (tujuan 4791 sesuai arahan IANA)",
+   "url": "https://networking-docs.nvidia.com/winofdocumentation/55053000/roce-v2-udp-port",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "cloud",
+    "container",
+    "datacenter",
+    "transport"
+   ],
+   "catatan": "",
+   "modul": [
+    "16-datacenter-cloud-sdn/03-storage-virtualisasi"
+   ]
+  },
+  {
    "id": "materi-197199c0",
    "judul": "Kubernetes networking documentation",
    "url": "https://kubernetes.io/docs/concepts/services-networking/",
@@ -2800,6 +3203,160 @@
    "catatan": "",
    "modul": [
     "16-datacenter-cloud-sdn/05-container-kubernetes"
+   ]
+  },
+  {
+   "id": "materi-0e34e51d",
+   "judul": "Cilium documentation, Network Observability with Hubble",
+   "url": "https://docs.cilium.io/en/stable/observability/hubble/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "cloud",
+    "container",
+    "datacenter"
+   ],
+   "catatan": "",
+   "modul": [
+    "16-datacenter-cloud-sdn/05-container-kubernetes"
+   ]
+  },
+  {
+   "id": "materi-b819d903",
+   "judul": "Cilium documentation, Setting up Hubble Observability",
+   "url": "https://docs.cilium.io/en/stable/observability/hubble/setup/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "cloud",
+    "container",
+    "datacenter"
+   ],
+   "catatan": "",
+   "modul": [
+    "16-datacenter-cloud-sdn/05-container-kubernetes"
+   ]
+  },
+  {
+   "id": "materi-900bc1c1",
+   "judul": "Cilium documentation, Inspecting Network Flows with the CLI",
+   "url": "https://docs.cilium.io/en/stable/observability/hubble/hubble-cli/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "cloud",
+    "container",
+    "datacenter"
+   ],
+   "catatan": "",
+   "modul": [
+    "16-datacenter-cloud-sdn/05-container-kubernetes"
+   ]
+  },
+  {
+   "id": "materi-ce01bc6c",
+   "judul": "CompTIA Network+ (N10-009), halaman sertifikasi dan ringkasan Domain 3.0",
+   "url": "https://www.comptia.org/en-us/certifications/network/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "desain"
+   ],
+   "catatan": "",
+   "modul": [
+    "17-desain-arsitektur/05-operasi-kontinuitas",
+    "18-karier-sertifikasi/03-peta-networkplus",
+    "21-ekosistem-profesi/01-peta-ekosistem",
+    "21-ekosistem-profesi/02-rumpun-infrastruktur",
+    "referensi/sumber-belajar"
+   ]
+  },
+  {
+   "id": "materi-8c00a8ed",
+   "judul": "CISA, Data Backup Options (aturan 3-2-1)",
+   "url": "https://www.cisa.gov/sites/default/files/publications/data_backup_options.pdf",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "desain"
+   ],
+   "catatan": "",
+   "modul": [
+    "17-desain-arsitektur/05-operasi-kontinuitas",
+    "21-ekosistem-profesi/04-rumpun-operasi-sistem-data"
+   ]
+  },
+  {
+   "id": "materi-0bb964a4",
+   "judul": "MikroTik, dokumentasi Safe Mode, export, dan backup",
+   "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/328155/Configuration+Management",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "desain",
+    "mikrotik"
+   ],
+   "catatan": "",
+   "modul": [
+    "17-desain-arsitektur/05-operasi-kontinuitas"
+   ]
+  },
+  {
+   "id": "materi-631eac06",
+   "judul": "Cisco, Configuration Replace and Rollback (IOS XE 16)",
+   "url": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/config-mgmt/configuration/xe-16/config-mgmt-xe-16-book/cm-config-rollback.html",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "desain",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "17-desain-arsitektur/05-operasi-kontinuitas"
+   ]
+  },
+  {
+   "id": "materi-cd6a7001",
+   "judul": "Netplan, netplan try",
+   "url": "https://netplan.readthedocs.io/en/stable/netplan-try/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "desain"
+   ],
+   "catatan": "",
+   "modul": [
+    "17-desain-arsitektur/05-operasi-kontinuitas"
+   ]
+  },
+  {
+   "id": "materi-39e03623",
+   "judul": "etckeeper",
+   "url": "https://etckeeper.branchable.com/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "desain"
+   ],
+   "catatan": "",
+   "modul": [
+    "17-desain-arsitektur/05-operasi-kontinuitas"
+   ]
+  },
+  {
+   "id": "materi-2d4b1dd2",
+   "judul": "Google SRE Book, Postmortem Culture",
+   "url": "https://sre.google/sre-book/postmortem-culture/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "desain"
+   ],
+   "catatan": "",
+   "modul": [
+    "17-desain-arsitektur/05-operasi-kontinuitas",
+    "21-ekosistem-profesi/05-rumpun-devops-sre"
    ]
   },
   {
@@ -2850,6 +3407,87 @@
    "modul": [
     "18-karier-sertifikasi/01-peta-sertifikasi",
     "referensi/sumber-belajar"
+   ]
+  },
+  {
+   "id": "materi-4f87b885",
+   "judul": "Cisco CCNA 200-301 v1.1 Exam Topics (blueprint resmi) — sumber pemetaan di atas",
+   "url": "https://learningcontent.cisco.com/documents/marketing/exam-topics/200-301-CCNA-v1.1.pdf",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "karier",
+    "sertifikasi",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "18-karier-sertifikasi/02-peta-ccna"
+   ]
+  },
+  {
+   "id": "materi-18738221",
+   "judul": "Cisco CCNA 200-301 v2.0 Exam Topics",
+   "url": "https://learningcontent.cisco.com/documents/marketing/exam-topics/200-301_CCNA_v2.0_Exam_Topics_PDF.pdf",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "karier",
+    "sertifikasi",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "18-karier-sertifikasi/02-peta-ccna"
+   ]
+  },
+  {
+   "id": "materi-bf6fc8d0",
+   "judul": "Cisco, halaman ujian CCNA (durasi, biaya, bahasa)",
+   "url": "https://www.cisco.com/site/us/en/learn/training-certifications/exams/ccna.html",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "karier",
+    "sertifikasi",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "18-karier-sertifikasi/02-peta-ccna",
+    "21-ekosistem-profesi/02-rumpun-infrastruktur"
+   ]
+  },
+  {
+   "id": "materi-cfd1b079",
+   "judul": "Cisco Learning Network, jadwal transisi v1.1 ke v2.0",
+   "url": "https://blogs.cisco.com/learning/stay-on-track-get-certified-before-the-ccna-refresh",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "karier",
+    "sertifikasi",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "18-karier-sertifikasi/02-peta-ccna"
+   ]
+  },
+  {
+   "id": "materi-e11ba67e",
+   "judul": "CompTIA, \"The New Network+ (N10-009) Exam: Your Questions Answered\" (N10-008 pensiun Desember 2024, masa berlaku 3 tahun)",
+   "url": "https://www.comptia.org/en-us/blog/the-new-network-n10-009-exam-your-questions-answered/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "karier",
+    "sertifikasi",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "18-karier-sertifikasi/03-peta-networkplus"
    ]
   },
   {
@@ -4347,22 +4985,6 @@
    ]
   },
   {
-   "id": "materi-ce01bc6c",
-   "judul": "CompTIA Network+",
-   "url": "https://www.comptia.org/en-us/certifications/network/",
-   "jenis": "artikel",
-   "bahasa": "en",
-   "topik": [
-    "karier"
-   ],
-   "catatan": "",
-   "modul": [
-    "21-ekosistem-profesi/01-peta-ekosistem",
-    "21-ekosistem-profesi/02-rumpun-infrastruktur",
-    "referensi/sumber-belajar"
-   ]
-  },
-  {
    "id": "materi-33b9ea92",
    "judul": "CompTIA Security+ V8 (SY0-801)",
    "url": "https://www.comptia.org/en/certifications/security/v8/",
@@ -4542,21 +5164,6 @@
    "id": "materi-a00f62f2",
    "judul": "Cisco: 350-501 SPCOR",
    "url": "https://www.cisco.com/site/us/en/learn/training-certifications/exams/spcor.html",
-   "jenis": "artikel",
-   "bahasa": "en",
-   "topik": [
-    "karier",
-    "cisco"
-   ],
-   "catatan": "",
-   "modul": [
-    "21-ekosistem-profesi/02-rumpun-infrastruktur"
-   ]
-  },
-  {
-   "id": "materi-bf6fc8d0",
-   "judul": "Cisco: CCNA 200-301",
-   "url": "https://www.cisco.com/site/us/en/learn/training-certifications/exams/ccna.html",
    "jenis": "artikel",
    "bahasa": "en",
    "topik": [
@@ -5433,20 +6040,6 @@
    ]
   },
   {
-   "id": "materi-8c00a8ed",
-   "judul": "CISA (US-CERT), Data Backup Options (aturan 3-2-1)",
-   "url": "https://www.cisa.gov/sites/default/files/publications/data_backup_options.pdf",
-   "jenis": "artikel",
-   "bahasa": "en",
-   "topik": [
-    "karier"
-   ],
-   "catatan": "",
-   "modul": [
-    "21-ekosistem-profesi/04-rumpun-operasi-sistem-data"
-   ]
-  },
-  {
    "id": "materi-0e0b6076",
    "judul": "Peraturan Pemerintah Nomor 71 Tahun 2019 tentang Penyelenggaraan Sistem dan Transaksi Elektronik (JDIH BPK)",
    "url": "https://peraturan.bpk.go.id/Details/122030/pp-no-71-tahun-2019",
@@ -6020,20 +6613,6 @@
    "id": "materi-cf7ea691",
    "judul": "Google, Site Reliability Engineering: Eliminating Toil",
    "url": "https://sre.google/sre-book/eliminating-toil/",
-   "jenis": "artikel",
-   "bahasa": "en",
-   "topik": [
-    "karier"
-   ],
-   "catatan": "",
-   "modul": [
-    "21-ekosistem-profesi/05-rumpun-devops-sre"
-   ]
-  },
-  {
-   "id": "materi-2d4b1dd2",
-   "judul": "Google, Site Reliability Engineering: Postmortem Culture",
-   "url": "https://sre.google/sre-book/postmortem-culture/",
    "jenis": "artikel",
    "bahasa": "en",
    "topik": [
@@ -7356,7 +7935,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -7372,7 +7950,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -7388,7 +7965,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -7404,7 +7980,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -7421,7 +7996,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -7437,7 +8011,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -7453,7 +8026,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -7469,7 +8041,6 @@
    "jenis": "buku",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider"
    ],
    "catatan": "",
@@ -7485,7 +8056,6 @@
    "jenis": "dokumentasi",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing"
    ],
@@ -7502,7 +8072,6 @@
    "jenis": "dokumentasi",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing"
    ],
@@ -7518,7 +8087,6 @@
    "jenis": "dokumentasi",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "mikrotik"
    ],
@@ -7535,7 +8103,6 @@
    "jenis": "dokumentasi",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "mikrotik"
    ],
@@ -7551,7 +8118,6 @@
    "jenis": "dokumentasi",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "cisco"
    ],
@@ -7567,8 +8133,8 @@
    "jenis": "artikel",
    "bahasa": "en",
    "topik": [
-    "juniper",
-    "provider"
+    "provider",
+    "juniper"
    ],
    "catatan": "",
    "modul": [
@@ -7582,7 +8148,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing",
     "standar"
@@ -7599,7 +8164,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing",
     "standar"
@@ -7616,7 +8180,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "ipv6",
     "routing",
@@ -7635,7 +8198,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing",
     "standar"
@@ -7652,7 +8214,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing",
     "standar"
@@ -7669,7 +8230,6 @@
    "jenis": "dokumentasi",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "cisco"
    ],
@@ -7685,8 +8245,8 @@
    "jenis": "artikel",
    "bahasa": "en",
    "topik": [
-    "juniper",
-    "provider"
+    "provider",
+    "juniper"
    ],
    "catatan": "",
    "modul": [
@@ -7700,7 +8260,6 @@
    "jenis": "dokumentasi",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "mikrotik"
    ],
@@ -7716,7 +8275,6 @@
    "jenis": "dokumentasi",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "mikrotik"
    ],
@@ -7732,7 +8290,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing",
     "standar"
@@ -7749,7 +8306,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing",
     "standar"
@@ -7766,7 +8322,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing",
     "standar"
@@ -7783,7 +8338,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing",
     "standar"
@@ -7800,7 +8354,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -7816,7 +8369,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -7832,7 +8384,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing",
     "standar"
@@ -7849,7 +8400,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -7865,7 +8415,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -7881,7 +8430,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -7897,7 +8445,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing",
     "standar"
@@ -7914,7 +8461,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -7930,7 +8476,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing",
     "standar"
@@ -7947,7 +8492,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing",
     "standar"
@@ -7964,7 +8508,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing",
     "standar"
@@ -7981,7 +8524,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -7997,7 +8539,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -8013,7 +8554,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -8029,7 +8569,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -8045,7 +8584,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -8061,7 +8599,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing",
     "standar"
@@ -8078,7 +8615,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "ipv6",
     "routing",
@@ -8096,7 +8632,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing",
     "standar"
@@ -8113,7 +8648,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "ipv6",
     "pemrograman-jaringan",
@@ -8132,7 +8666,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "ipv6",
     "routing",
@@ -8150,7 +8683,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -8166,7 +8698,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "ipv6",
     "standar"
@@ -8183,7 +8714,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "ipv6",
     "routing",
@@ -8201,7 +8731,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing",
     "standar"
@@ -8218,7 +8747,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing",
     "standar"
@@ -8235,7 +8763,6 @@
    "jenis": "dokumentasi",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing"
    ],
@@ -8252,7 +8779,6 @@
    "jenis": "dokumentasi",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing"
    ],
@@ -8268,7 +8794,6 @@
    "jenis": "dokumentasi",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing"
    ],
@@ -8284,7 +8809,6 @@
    "jenis": "alat",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing"
    ],
@@ -8300,7 +8824,6 @@
    "jenis": "artikel",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing"
    ],
@@ -8316,7 +8839,6 @@
    "jenis": "artikel",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing",
     "cisco"
@@ -8333,7 +8855,6 @@
    "jenis": "dokumentasi",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "linux"
    ],
@@ -8349,7 +8870,6 @@
    "jenis": "alat",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider"
    ],
    "catatan": "",
@@ -8364,7 +8884,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -8380,7 +8899,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -8396,7 +8914,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -8412,7 +8929,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -8428,7 +8944,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -8444,7 +8959,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing",
     "wan-vpn",
@@ -8462,7 +8976,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "wan-vpn",
     "standar"
@@ -8479,7 +8992,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -8495,7 +9007,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "wan-vpn",
     "standar"
@@ -8512,7 +9023,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -8528,7 +9038,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider"
    ],
    "catatan": "",
@@ -8543,7 +9052,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider"
    ],
    "catatan": "",
@@ -8558,7 +9066,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider"
    ],
    "catatan": "",
@@ -8573,7 +9080,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider"
    ],
    "catatan": "",
@@ -8588,7 +9094,6 @@
    "jenis": "artikel",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider"
    ],
    "catatan": "",
@@ -8603,7 +9108,6 @@
    "jenis": "alat",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing",
     "linux"
@@ -8620,7 +9124,6 @@
    "jenis": "dokumentasi",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing"
    ],
@@ -8636,7 +9139,6 @@
    "jenis": "dokumentasi",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "mikrotik"
    ],
@@ -8652,7 +9154,6 @@
    "jenis": "artikel",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "mikrotik"
    ],
@@ -8669,7 +9170,6 @@
    "jenis": "dokumentasi",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "linux"
    ],
@@ -8685,7 +9185,6 @@
    "jenis": "artikel",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "cisco"
    ],
@@ -8702,13 +9201,56 @@
    "jenis": "artikel",
    "bahasa": "en",
    "topik": [
-    "juniper",
-    "provider"
+    "provider",
+    "juniper"
    ],
    "catatan": "",
    "modul": [
     "22-service-provider/04-l2vpn-carrier-ethernet",
-    "22-service-provider/05-sp-ketersediaan-keamanan"
+    "22-service-provider/05-sp-ketersediaan-keamanan",
+    "23-jalur-vendor/01-junos"
+   ]
+  },
+  {
+   "id": "materi-3a22579a",
+   "judul": "3GPP/ETSI, TS 123 501 V18.6.0, System architecture for the 5G System (bagian 4.1, 4.2.7, 6.2.3)",
+   "url": "https://www.etsi.org/deliver/etsi_ts/123500_123599/123501/18.06.00_60/ts_123501v180600p.pdf",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "provider"
+   ],
+   "catatan": "",
+   "modul": [
+    "22-service-provider/04-l2vpn-carrier-ethernet"
+   ]
+  },
+  {
+   "id": "materi-7e75e7f1",
+   "judul": "3GPP, 5G System Overview (perbedaan SA dan NSA, Release 15)",
+   "url": "https://www.3gpp.org/technologies/5g-system-overview",
+   "jenis": "standar",
+   "bahasa": "en",
+   "topik": [
+    "provider"
+   ],
+   "catatan": "",
+   "modul": [
+    "22-service-provider/04-l2vpn-carrier-ethernet"
+   ]
+  },
+  {
+   "id": "materi-b22c9bbb",
+   "judul": "ETSI, daftar TS 129 244 (PFCP, antarmuka Control Plane dan User Plane)",
+   "url": "https://www.etsi.org/deliver/etsi_ts/129200_129299/129244/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "provider"
+   ],
+   "catatan": "",
+   "modul": [
+    "22-service-provider/04-l2vpn-carrier-ethernet"
    ]
   },
   {
@@ -8718,7 +9260,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -8734,7 +9275,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "ipv6",
     "standar"
@@ -8751,7 +9291,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -8767,7 +9306,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -8783,7 +9321,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -8799,7 +9336,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing",
     "standar"
@@ -8816,7 +9352,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing",
     "standar"
@@ -8833,7 +9368,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -8849,7 +9383,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing",
     "standar"
@@ -8866,7 +9399,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing",
     "standar"
@@ -8883,7 +9415,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing"
    ],
@@ -8899,7 +9430,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -8915,7 +9445,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -8931,7 +9460,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -8947,7 +9475,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -8963,7 +9490,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -8979,7 +9505,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "transport",
     "routing",
@@ -8997,7 +9522,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "transport",
     "standar"
@@ -9014,7 +9538,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "transport",
     "standar"
@@ -9031,7 +9554,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing",
     "standar"
@@ -9048,7 +9570,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -9064,7 +9585,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -9080,7 +9600,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "standar"
    ],
@@ -9096,7 +9615,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "ipv6",
     "standar"
@@ -9113,7 +9631,6 @@
    "jenis": "standar",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing",
     "standar"
@@ -9130,7 +9647,6 @@
    "jenis": "dokumentasi",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "transport",
     "linux"
@@ -9147,7 +9663,6 @@
    "jenis": "dokumentasi",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "routing"
    ],
@@ -9163,13 +9678,325 @@
    "jenis": "dokumentasi",
    "bahasa": "en",
    "topik": [
-    "juniper",
     "provider",
     "mikrotik"
    ],
    "catatan": "",
    "modul": [
     "22-service-provider/05-sp-ketersediaan-keamanan"
+   ]
+  },
+  {
+   "id": "materi-ef5098c9",
+   "judul": "Juniper, JNCIA-Junos Exam Flyer (kode JN0-106, objektif, 65 soal, 90 menit)",
+   "url": "https://www.juniper.net/content/dam/www/assets/training/us/en/jncia-junos-exam-flyer.pdf",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "juniper"
+   ],
+   "catatan": "",
+   "modul": [
+    "23-jalur-vendor/01-junos"
+   ]
+  },
+  {
+   "id": "materi-9dcf250a",
+   "judul": "Juniper, Junos Software Architecture (Routing Engine dan Packet Forwarding Engine)",
+   "url": "https://www.juniper.net/documentation/us/en/software/junos/junos-overview/topics/concept/junos-software-architecture.html",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "juniper",
+    "routing"
+   ],
+   "catatan": "",
+   "modul": [
+    "23-jalur-vendor/01-junos"
+   ]
+  },
+  {
+   "id": "materi-6c09d634",
+   "judul": "Juniper, Commit the Configuration Only After Confirmation ( , bawaan 10 menit)",
+   "url": "https://juniper.net/documentation/en_US/junos12.3/topics/task/configuration/junos-cli-configuration-activating-after-confirming.html",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "juniper"
+   ],
+   "catatan": "",
+   "modul": [
+    "23-jalur-vendor/01-junos"
+   ]
+  },
+  {
+   "id": "materi-e8052660",
+   "judul": "Cisco, SD-Access Design Guide (underlay IS-IS, MTU 9100, LISP, VXLAN, SGT, peran node, LISP Pub/Sub)",
+   "url": "https://www.cisco.com/c/en/us/td/docs/solutions/CVD/Campus/cisco-sda-design-guide.html",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "juniper",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "23-jalur-vendor/02-sd-access-sd-wan"
+   ]
+  },
+  {
+   "id": "materi-ae98a1d4",
+   "judul": "Cisco, Software-Defined Access (ringkasan solusi)",
+   "url": "https://www.cisco.com/c/en/us/solutions/enterprise-networks/software-defined-access/index.html",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "juniper",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "23-jalur-vendor/02-sd-access-sd-wan"
+   ]
+  },
+  {
+   "id": "materi-b2197c1b",
+   "judul": "Cisco, Catalyst SD-WAN Getting Started Guide, System Overview (Manager, Controller, Validator, WAN Edge, OMP, TLOC)",
+   "url": "https://www.cisco.com/c/en/us/td/docs/routers/sdwan/configuration/sdwan-xe-gs-book/system-overview.html",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "juniper",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "23-jalur-vendor/02-sd-access-sd-wan"
+   ]
+  },
+  {
+   "id": "materi-ba0899a0",
+   "judul": "Cisco, Catalyst SD-WAN Read Me First (penggantian nama komponen mulai 17.12.1a dan 20.12.1)",
+   "url": "https://www.cisco.com/c/ja_jp/td/docs/routers/sdwan/configuration/sdwan-xe-gs-book/read-me-first.html",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "juniper",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "23-jalur-vendor/02-sd-access-sd-wan"
+   ]
+  },
+  {
+   "id": "materi-97cffaec",
+   "judul": "Cisco DevNet, Catalyst Center",
+   "url": "https://developer.cisco.com/docs/catalyst-center/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "juniper",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "23-jalur-vendor/02-sd-access-sd-wan",
+    "23-jalur-vendor/03-api-platform-cisco"
+   ]
+  },
+  {
+   "id": "materi-7611b368",
+   "judul": "RFC 9300, The Locator/ID Separation Protocol (LISP)",
+   "url": "https://www.rfc-editor.org/rfc/rfc9300",
+   "jenis": "standar",
+   "bahasa": "en",
+   "topik": [
+    "juniper",
+    "standar"
+   ],
+   "catatan": "",
+   "modul": [
+    "23-jalur-vendor/02-sd-access-sd-wan"
+   ]
+  },
+  {
+   "id": "materi-77b0c12e",
+   "judul": "RFC 7348, Virtual eXtensible Local Area Network (VXLAN)",
+   "url": "https://www.rfc-editor.org/rfc/rfc7348",
+   "jenis": "standar",
+   "bahasa": "en",
+   "topik": [
+    "juniper",
+    "standar"
+   ],
+   "catatan": "",
+   "modul": [
+    "23-jalur-vendor/02-sd-access-sd-wan"
+   ]
+  },
+  {
+   "id": "materi-09af5a75",
+   "judul": "Cisco DevNet, Catalyst Center: Authentication (endpoint token, , 60 menit)",
+   "url": "https://developer.cisco.com/docs/catalyst-center/authentication/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "juniper",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "23-jalur-vendor/03-api-platform-cisco"
+   ]
+  },
+  {
+   "id": "materi-8c556984",
+   "judul": "Cisco DevNet, Meraki Dashboard API v1, pengenalan",
+   "url": "https://developer.cisco.com/meraki/api-v1/introduction/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "juniper",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "23-jalur-vendor/03-api-platform-cisco"
+   ]
+  },
+  {
+   "id": "materi-ff6d65e1",
+   "judul": "Cisco DevNet, Meraki Authorization (Bearer, key, redirect 302)",
+   "url": "https://developer.cisco.com/meraki/api-v1/authorization/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "juniper",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "23-jalur-vendor/03-api-platform-cisco"
+   ]
+  },
+  {
+   "id": "materi-60c78c80",
+   "judul": "Cisco DevNet, Meraki Pagination ( , , )",
+   "url": "https://developer.cisco.com/meraki/api-v1/pagination/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "juniper",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "23-jalur-vendor/03-api-platform-cisco"
+   ]
+  },
+  {
+   "id": "materi-fe5bd044",
+   "judul": "Cisco DevNet, Meraki Rate Limit (10 req/s per organisasi, 429, )",
+   "url": "https://developer.cisco.com/meraki/api-v1/rate-limit/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "juniper",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "23-jalur-vendor/03-api-platform-cisco"
+   ]
+  },
+  {
+   "id": "materi-4eeb2e21",
+   "judul": "Cisco DevNet, Catalyst SD-WAN Manager API: Authentication (JWT dan sesi)",
+   "url": "https://developer.cisco.com/docs/sdwan/authentication/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "juniper",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "23-jalur-vendor/03-api-platform-cisco"
+   ]
+  },
+  {
+   "id": "materi-14ce0b3f",
+   "judul": "Cisco DevNet, NSO",
+   "url": "https://developer.cisco.com/docs/nso/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "juniper",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "23-jalur-vendor/03-api-platform-cisco"
+   ]
+  },
+  {
+   "id": "materi-b9294083",
+   "judul": "Cisco NSO Documentation, RESTCONF API",
+   "url": "https://nso-docs.cisco.com/guides/nso-6.5/development/core-concepts/northbound-apis/restconf-api",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "juniper",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "23-jalur-vendor/03-api-platform-cisco"
+   ]
+  },
+  {
+   "id": "materi-1e826399",
+   "judul": "Cisco NSO Documentation, NED Overview",
+   "url": "https://nso-docs.cisco.com/neds",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "juniper",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "23-jalur-vendor/03-api-platform-cisco"
+   ]
+  },
+  {
+   "id": "materi-a46f88dc",
+   "judul": "RFC 8040, RESTCONF Protocol",
+   "url": "https://www.rfc-editor.org/rfc/rfc8040",
+   "jenis": "standar",
+   "bahasa": "en",
+   "topik": [
+    "juniper",
+    "standar"
+   ],
+   "catatan": "",
+   "modul": [
+    "23-jalur-vendor/03-api-platform-cisco"
+   ]
+  },
+  {
+   "id": "materi-871748dc",
+   "judul": "Python Requests",
+   "url": "https://requests.readthedocs.io",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "juniper"
+   ],
+   "catatan": "",
+   "modul": [
+    "23-jalur-vendor/03-api-platform-cisco"
    ]
   },
   {

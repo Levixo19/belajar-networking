@@ -3011,5 +3011,105 @@
       "after": "1-tentang-network-n10-009",
       "ganti": false
     }
+  ],
+  "17-desain-arsitektur/05-operasi-kontinuitas": [
+    {
+      "type": "diagram",
+      "id": "o6-metrik-pemulihan",
+      "after": "2-metrik-rpo-rto-mttr-mtbf-mttf",
+      "ganti": false
+    },
+    {
+      "type": "diagram",
+      "id": "o6-jenis-site",
+      "after": "3-jenis-site-pemulihan",
+      "ganti": false
+    },
+    {
+      "type": "diagram",
+      "id": "o6-backup-tipe",
+      "after": "4-backup-konfigurasi-dan-data",
+      "ganti": false
+    },
+    {
+      "type": "diagram",
+      "id": "o6-alur-perubahan",
+      "after": "6-manajemen-perubahan",
+      "ganti": false
+    }
+  ],
+  "15-otomasi/05-rekayasa-perangkat-lunak": [
+    {
+      "type": "diagram",
+      "id": "p7-git-merge-rebase",
+      "after": "merge-vs-rebase",
+      "ganti": false
+    },
+    {
+      "type": "diagram",
+      "id": "p7-unified-diff",
+      "after": "4-membaca-unified-diff",
+      "ganti": false
+    },
+    {
+      "type": "diagram",
+      "id": "p7-test-double",
+      "after": "test-double-untuk-perangkat",
+      "ganti": false
+    },
+    {
+      "type": "diagram",
+      "id": "p7-sekuens-api",
+      "after": "diagram-sekuens-topik-514",
+      "ganti": false
+    },
+    {
+      "type": "diagram",
+      "id": "p7-webhook-polling",
+      "after": "webhook-vs-polling-topik-22",
+      "ganti": false
+    }
+  ],
+  "23-jalur-vendor/01-junos": [
+    {
+      "type": "diagram",
+      "id": "v8-junos-re-pfe",
+      "after": "3-arsitektur-junos-routing-engine-dan-packet-forwarding-engi",
+      "ganti": false
+    },
+    {
+      "type": "diagram",
+      "id": "v8-junos-commit",
+      "after": "5-candidate-config-commit-dan-rollback",
+      "ganti": false
+    }
+  ],
+  "23-jalur-vendor/02-sd-access-sd-wan": [
+    {
+      "type": "diagram",
+      "id": "v8-sda-fabric",
+      "after": "3-sd-access-gambaran-fabric",
+      "ganti": false
+    },
+    {
+      "type": "diagram",
+      "id": "v8-sdwan-arsitektur",
+      "after": "6-catalyst-sd-wan-arsitektur",
+      "ganti": false
+    }
+  ],
+  "23-jalur-vendor/03-api-platform-cisco": [
+    {
+      "type": "diagram",
+      "id": "v8-catc-token-alur",
+      "after": "3-catalyst-center-intent-api",
+      "ganti": false
+    },
+    {
+      "type": "diagram",
+      "id": "v8-api-peta",
+      "after": "7-perbandingan-dengan-mikrotik-rest-api-v7",
+      "ganti": false
+    }
   ]
 }

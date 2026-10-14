@@ -10,7 +10,7 @@ import {
   GlobeHemisphereWestIcon, PlantIcon, GraduationCapIcon, FlagCheckeredIcon, LinuxLogoIcon,
   RulerIcon, BooksIcon, PackageIcon, WifiHighIcon, PlugIcon, LinkIcon, MapTrifoldIcon,
   TruckIcon, IdentificationCardIcon, ShieldCheckIcon, BroadcastIcon, RobotIcon,
-  BookOpenTextIcon, HardDrivesIcon, HashIcon, TargetIcon, UsersThreeIcon, GraphIcon, CertificateIcon, BriefcaseIcon, ShuffleIcon,
+  BookOpenTextIcon, HardDrivesIcon, HashIcon, TargetIcon, UsersThreeIcon, GraphIcon, CertificateIcon, BriefcaseIcon, ShuffleIcon, SignpostIcon,
   type Icon as PhosphorIcon,
 } from '@phosphor-icons/react'
 
@@ -82,6 +82,7 @@ const STAGE: Record<string, PhosphorIcon> = {
   '19-mikrotik': HardDrivesIcon,
   '21-ekosistem-profesi': UsersThreeIcon,
   '22-service-provider': GraphIcon,
+  '23-jalur-vendor': SignpostIcon,
   'lab': FlaskIcon,
   'referensi': BooksIcon,
   '20-proyek-akhir': FlagCheckeredIcon,
