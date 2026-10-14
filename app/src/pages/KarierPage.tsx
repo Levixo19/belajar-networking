@@ -4,7 +4,7 @@ import { useStore } from '../lib/store'
 import { getModule } from '../lib/content'
 import {
   PROFESI, byId, RUMPUN, rumpunMeta, edges, neighbors, readiness, shortestPath, gapModules,
-  QUIZ, scoreQuiz, KEAHLIAN_LABEL, JENJANG_LABEL, LABEL_GRAF, type Profesi, type Rumpun,
+  QUIZ, scoreQuiz, celahJalur, KEAHLIAN_LABEL, JENJANG_LABEL, LABEL_GRAF, type Profesi, type Rumpun,
 } from '../lib/profesi'
 import { gsap, useGSAP, MOTION_OK } from '../lib/motion'
 import { useScramble } from '../lib/useScramble'
@@ -41,7 +41,28 @@ const keAtas = () => document.getElementById('judul-karier')?.scrollIntoView({
 })
 
 /* ------------------------------------------------------------------ Halaman */
+/** /karier/<id> dengan id yang tidak dikenal menampilkan pesan. Versi lama diam-diam
+ *  menampilkan network-engineer, jadi tautan yang salah ketik terlihat "berhasil". */
 export default function KarierPage() {
+  const { id } = useParams()
+  if (id && !byId.has(id)) return <ProfesiTakDikenal id={id} />
+  return <PetaKarier />
+}
+
+function ProfesiTakDikenal({ id }: { id: string }) {
+  return (
+    <div className="mx-auto flex min-h-[60dvh] max-w-xl flex-col items-start justify-center px-4 py-20">
+      <h1 className="text-[clamp(2rem,4vw,2.75rem)] font-semibold leading-tight">Profesi itu tidak ada di peta.</h1>
+      <p className="mt-3 text-muted">
+        Tidak ada profesi berkode <code className="rounded bg-[var(--surface-2)] px-1.5 py-0.5 font-mono text-[0.9em]">{id}</code> di
+        antara {PROFESI.length} profesi yang dipetakan. Tautannya mungkin salah ketik atau sudah berubah.
+      </p>
+      <Link to="/karier" className="btn btn-primary mt-8">Buka peta karier</Link>
+    </div>
+  )
+}
+
+function PetaKarier() {
   const { id } = useParams()
   const nav = useNavigate()
   const s = useStore()
@@ -197,7 +218,7 @@ export default function KarierPage() {
         </div>
       </section>
 
-      <QuizSection onSelect={pid => { select(pid); keAtas() }} />
+      <QuizSection pemula={!Object.values(s.progress).includes('done')} onSelect={pid => { select(pid); keAtas() }} />
       <TransisiSection progress={s.progress} target={selected} onSelect={select} />
       <RumpunIndex onSelect={pid => { select(pid); keAtas() }} />
     </div>
@@ -350,11 +371,11 @@ function Chips({ label, ids, onSelect }: { label: string; ids: string[]; onSelec
 }
 
 /* ----------------------------------------------------------- Kuis kecocokan */
-function QuizSection({ onSelect }: { onSelect: (id: string) => void }) {
+function QuizSection({ onSelect, pemula }: { onSelect: (id: string) => void; pemula: boolean }) {
   const [picks, setPicks] = useState<(number | null)[]>(() => QUIZ.map(() => null))
   const [step, setStep] = useState(0)
   const done = step >= QUIZ.length
-  const hasil = useMemo(() => (done ? scoreQuiz(picks) : []), [done, picks])
+  const hasil = useMemo(() => (done ? scoreQuiz(picks, { pemula }) : []), [done, picks, pemula])
   const pick = (i: number) => {
     setPicks(p => p.map((v, k) => (k === step ? i : v)))
     setStep(x => x + 1)
@@ -408,6 +429,7 @@ function QuizSection({ onSelect }: { onSelect: (id: string) => void }) {
                         <span className="stat-num !text-[2rem] text-faint">{i + 1}</span>
                         <span className="min-w-0 flex-1">
                           <span className="block text-[18px] font-medium tracking-[-0.02em]">{h.p.nama}</span>
+                          {pemula && h.p.jenjang === 'senior' && <span className="mt-1 block text-[12.5px] text-faint">Tujuan jangka panjang: peran senior, biasanya setelah beberapa tahun di peran lain.</span>}
                           <span className="mt-1 block text-[13.5px] text-muted">{h.p.ringkas}</span>
                           <span className="mt-3 flex flex-wrap gap-1.5">
                             {h.hits.slice(0, 4).map(k => <span key={k} className="chip">{KEAHLIAN_LABEL[k] || k}</span>)}
@@ -437,7 +459,8 @@ function TransisiSection({ progress, target, onSelect }: { progress: Record<stri
   const to = target.id
   const path = useMemo(() => shortestPath(from, to), [from, to])
   const fromP = byId.get(from) ?? PROFESI[0]
-  const gap = gapModules(fromP, target)
+  // Celah dihitung atas SELURUH jalur, termasuk bekal profesi perantara.
+  const gap = path ? celahJalur(path) : gapModules(fromP, target)
   const sisa = gap.filter(m => progress[m] !== 'done')
 
   return (
@@ -471,7 +494,7 @@ function TransisiSection({ progress, target, onSelect }: { progress: Record<stri
               ))}
             </ol>
           ) : (
-            <p className="text-muted">Belum ada jalur yang tercatat antara dua profesi ini. Pilih profesi perantara yang bersebelahan.</p>
+            <p className="text-muted">Tidak ada jalur realistis dari {pendek(fromP.nama)} ke {pendek(target.nama)} di peta ini.</p>
           )}
           {path && path.length > 1 && (
             <p className="mt-4 text-[13.5px] text-faint">{path.length - 1} langkah. Tiap langkah biasanya butuh pengalaman nyata, bukan sekadar sertifikat.</p>
@@ -483,7 +506,7 @@ function TransisiSection({ progress, target, onSelect }: { progress: Record<stri
             <div className="lg:col-span-4">
               <div className="stat-num">{sisa.length}</div>
               <p className="mt-2 max-w-[32ch] text-[14px] text-muted">
-                modul bekal tambahan yang belum Anda tuntaskan untuk menjadi {pendek(target.nama)}.
+                modul bekal tambahan yang belum Anda tuntaskan untuk menempuh jalur ini sampai menjadi {pendek(target.nama)}.
               </p>
             </div>
             <ul className="road border-app lg:col-span-8 lg:border-t">
@@ -534,7 +557,7 @@ function RumpunIndex({ onSelect }: { onSelect: (id: string) => void }) {
   return (
     <section className="border-t border-app" aria-labelledby="judul-rumpun">
       <div className="mx-auto max-w-[1280px] px-4 py-20 sm:px-6 md:py-32 lg:px-8">
-        <h2 id="judul-rumpun" className="reveal max-w-[20ch] text-[clamp(1.9rem,3.2vw,2.75rem)] font-semibold leading-[1.08]">Tujuh rumpun, dibaca utuh.</h2>
+        <h2 id="judul-rumpun" className="reveal max-w-[20ch] text-[clamp(1.9rem,3.2vw,2.75rem)] font-semibold leading-[1.08]">Dua profesi inti, enam rumpun.</h2>
         {/* 2 kolom: inti melebar 2 + 6 rumpun = 8 sel = 2x4, tanpa sel kosong */}
         <div className="bento reveal mt-10 md:!grid-cols-2">
           {RUMPUN.map(r => {

@@ -105,10 +105,11 @@
       "Desain ulang jaringan perusahaan fiktif 20 cabang dengan rencana migrasi dan rollback bertahap"
     ],
     "gaji": {
-      "rentang": "Rp 6 juta - Rp 9 juta per bulan",
-      "konteks": "Rentang rata-rata nasional dari gaji yang dicantumkan di iklan lowongan (cenderung posisi junior-menengah); rata-rata Jakarta Barat sekitar Rp 20 juta",
-      "sumber": "Jobstreet, Gaji Insinyur Jaringan di Indonesia (di-refresh 1 Oktober 2026)",
-      "url": "https://id.jobstreet.com/id/career-advice/role/network-engineer/salary"
+      "rentang": "Rp 5,45 juta - Rp 8 juta per bulan",
+      "konteks": "Rentang rata-rata nasional dari gaji yang dicantumkan di iklan lowongan Jobstreet; iklan di Indonesia lebih sering mencantumkan gaji untuk posisi junior dan menengah.",
+      "sumber": "Jobstreet Indonesia, Gaji Insinyur Jaringan (data Oktober 2026)",
+      "url": "https://id.jobstreet.com/id/career-advice/role/network-engineer/salary",
+      "tanggal_diperiksa": "2026-10-15"
     },
     "sumber": [
       {
@@ -242,10 +243,11 @@
       "Tiga laporan insiden simulasi (VLAN salah, loop STP, DHCP habis) dengan timeline dan akar masalah"
     ],
     "gaji": {
-      "rentang": "Rp 4,92 juta - Rp 6,325 juta per bulan",
-      "konteks": "Rentang rata-rata nasional dari gaji yang dicantumkan di iklan lowongan; rata-rata Jakarta Selatan sekitar Rp 11 juta",
-      "sumber": "Jobstreet, Gaji Administrator Jaringan di Indonesia (di-refresh 1 Oktober 2026)",
-      "url": "https://id.jobstreet.com/id/career-advice/role/network-administrator/salary"
+      "rentang": "Rp 3,58 juta - Rp 4,48 juta per bulan",
+      "konteks": "Rentang rata-rata nasional dari gaji yang dicantumkan di iklan lowongan Jobstreet; iklan di Indonesia lebih sering mencantumkan gaji untuk posisi junior dan menengah.",
+      "sumber": "Jobstreet Indonesia, Gaji Administrator Jaringan (data Oktober 2026)",
+      "url": "https://id.jobstreet.com/id/career-advice/role/network-administrator/salary",
+      "tanggal_diperiksa": "2026-10-15"
     },
     "sumber": [
       {

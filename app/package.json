@@ -9,12 +9,12 @@
     "db:down": "docker compose down",
     "server": "node --watch server/index.mjs",
     "client": "vite",
-    "predev": "node scripts/build-content.mjs && (docker compose up -d || echo '\u26a0 Mongo via Docker gagal \u2014 set MONGODB_URI atau jalankan mongod manual')",
+    "predev": "node scripts/build-content.mjs && (docker compose up -d || echo '⚠ Mongo via Docker gagal — set MONGODB_URI atau jalankan mongod manual')",
     "dev": "concurrently -n server,client -c cyan,magenta \"node server/index.mjs\" \"vite\"",
     "prebuild": "node scripts/build-content.mjs",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "test": "node --import ./tests/_muat.mjs --test \"tests/**/*.test.mjs\"",
+    "test": "node --import ./tests/_muat.mjs --test --test-concurrency=1 \"tests/**/*.test.mjs\"",
     "panen": "node scripts/panen-pustaka.mjs"
   },
   "dependencies": {

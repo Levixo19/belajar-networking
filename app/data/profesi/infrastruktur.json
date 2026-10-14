@@ -57,14 +57,14 @@
     "masuk": "Hampir selalu lewat promosi: network engineer, lalu senior engineer yang mulai menulis desain di bank, BUMN, operator, atau system integrator besar.",
     "naik": [
       "solution-architect",
-      "security-architect",
-      "it-consultant"
+      "security-architect"
     ],
     "dekat": [
       "solution-architect",
       "cloud-network-engineer",
       "network-engineer",
-      "security-architect"
+      "security-architect",
+      "it-consultant"
     ],
     "modul": [
       "07-routing-lanjutan/06-bgp",

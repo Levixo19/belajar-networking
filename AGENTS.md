@@ -216,3 +216,49 @@ hasilnya 6 adalah angka yang berbohong. Dijaga tes "jumlah segi jujur".
 **Pustaka dimuat malas (`muatPustaka()`), tidak pernah diimpor statis.** Datanya
 ±480 KB; mengimpornya dari komponen yang ada di bundel utama membuat setiap halaman
 memuatnya.
+
+### Peta Karier: data dan logika
+
+**`data/profesi/*.json` ditulis tangan, dan build GAGAL kalau datanya berbohong.**
+Selain ID, tag, dan modul yang sah, validator menolak: "naik" timbal balik (dulu 5
+pasang, sehingga peta tidak bisa menggambar arah), "naik" yang turun jenjang (dulu
+7 sisi, misalnya arsitek "naik" ke konsultan), array wajib yang kosong (modul kosong
+= kesiapan selamanya 0%), sumber bukan https, tanggal gaji yang bukan YYYY-MM-DD,
+dan `jenjang_alasan` tanpa `jenjang_sumber`. `tests/profesi.test.mjs` menyuapkan
+data rusak lewat `BN_PROFESI_DIR` dan menuntut build keluar dengan status 1.
+
+**Gaji HANYA dari halaman publik yang memang untuk peran itu, dengan
+`tanggal_diperiksa` sendiri.** Halaman "Konsultan Teknis lintas bidang" dan rentang
+yang menggabungkan dua jabatan sudah dibuang; lebih baik kosong daripada salah.
+Angka Jobstreet berubah tiap bulan: tiga dari lima yang tercatat sudah meleset saat
+diperiksa ulang 2026-10-15. Angka diambil dari kalimat utama halaman ("Gaji
+rata-rata ... antara X dan Y"), bukan dari iklan yang kebetulan tampil di sana.
+
+**Koreksi jenjang membawa alasan dan sumbernya** (`jenjang_alasan`,
+`jenjang_sumber`): it-auditor dan cloud-infrastructure-engineer naik dari pemula
+ke menengah karena syarat sertifikasi bakunya (CISA: lima tahun; AWS CloudOps
+Engineer: sekitar satu tahun di AWS).
+
+**Graf perpindahan BERARAH.** "naik" cuma dilalui ke arah naiknya, "dekat" dua arah,
+turun jenjang hanya lewat "dekat" dan lebih mahal (`BIAYA_TURUN`), melompat dari
+pemula langsung ke senior lebih mahal lagi (`BIAYA_LONCAT`), dan peran senior mahal
+sebagai perantara (`BIAYA_LEWAT`). Tanpa biaya lompat, jalur terpendek IT support ke
+solution architect lewat hardware engineer, padahal materi 21.6 sendiri menulis
+cabang itu baru terbuka sesudah senior. Tes menuntut setiap pasangan profesi
+terjangkau dan setiap langkah adalah sisi yang ada, dilalui ke arah yang sah.
+
+**Celah sebuah jalur = bekal SEMUA profesi sesudah titik awal** (`celahJalur()`),
+termasuk perantara. Membandingkan asal dengan tujuan saja menyembunyikan biaya
+perantara yang wajib dilewati.
+
+**Kuis: setiap profesi harus BISA menang.** Skor = skor mentah dibagi akar skor
+tertinggi yang mungkin dicapai profesi itu. Tes menyapu seluruh 4.096 kombinasi dan
+menuntut himpunan pemenang = semua 32 profesi. Kalau kuis atau tag keahlian
+diubah, jalankan sapuan itu; angka pembanding tiap rumus ada di komentar
+`scoreQuiz()`. Profil tanpa satu modul pun tuntas mendapat peran senior di urutan
+belakang (`pemula: true`), dengan keterangan "tujuan jangka panjang".
+
+**`/karier/<id tak dikenal>` menampilkan pesan, bukan profesi lain.** Fallback diam-diam
+membuat tautan yang salah ketik terlihat berhasil.
+
+**Hitungan rumpun: dua profesi inti + enam rumpun**, sama di materi 21 dan di UI.

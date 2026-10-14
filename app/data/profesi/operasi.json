@@ -95,10 +95,11 @@
       "Playbook Ansible untuk hardening server baru: pengguna, kunci SSH, nftables, NTP, dan syslog pusat"
     ],
     "gaji": {
-      "rentang": "Rp 3,63 juta - Rp 4,94 juta per bulan",
-      "konteks": "Rentang tipikal nasional dari iklan yang mencantumkan gaji untuk Admin Sistem, didominasi posisi junior; rata-rata Jakarta Pusat sekitar Rp 13 juta, Jakarta Selatan dan Timur sekitar Rp 7 juta.",
-      "sumber": "Jobstreet Indonesia, Gaji Admin Sistem (diperbarui 1 Oktober 2026)",
-      "url": "https://id.jobstreet.com/id/career-advice/role/systems-administrator/salary"
+      "rentang": "Rp 4,75 juta - Rp 6,4 juta per bulan",
+      "konteks": "Rentang rata-rata nasional dari gaji yang dicantumkan di iklan lowongan Jobstreet; iklan di Indonesia lebih sering mencantumkan gaji untuk posisi junior dan menengah.",
+      "sumber": "Jobstreet Indonesia, Gaji Admin Sistem (data Oktober 2026)",
+      "url": "https://id.jobstreet.com/id/career-advice/role/systems-administrator/salary",
+      "tanggal_diperiksa": "2026-10-15"
     },
     "sumber": [
       {
@@ -536,16 +537,15 @@
       }
     ],
     "masuk": "Bukan posisi lulusan baru: biasanya dari sysadmin, network engineer, DBA, atau system engineer berpengalaman yang menjadi team lead lalu terbukti memimpin insiden besar dan mengelola vendor. Pengalaman memimpin NOC sangat membantu.",
-    "naik": [
-      "solution-architect",
-      "it-consultant",
-      "it-auditor"
-    ],
+    "naik": [],
     "dekat": [
       "disaster-recovery-specialist",
       "site-reliability-engineer",
       "scrum-master-infrastruktur",
-      "noc-technician"
+      "noc-technician",
+      "solution-architect",
+      "it-consultant",
+      "it-auditor"
     ],
     "modul": [
       "12-keamanan/01-konsep-keamanan",
@@ -562,12 +562,6 @@
       "Post-incident review dari gangguan nyata yang disamarkan, lengkap dengan tindakan perbaikan, pemilik, dan tenggat",
       "Rencana uji DRP satu hari dengan skenario, peran, kriteria lulus, dan lembar bukti untuk auditor"
     ],
-    "gaji": {
-      "rentang": "Rp 25 juta - Rp 45 juta per bulan",
-      "konteks": "Rata-rata gaji pokok tanpa bonus: IT Infrastructure Manager sekitar Rp 25 juta dan IT Manager sekitar Rp 45 juta (Indonesia, 2026).",
-      "sumber": "Michael Page Indonesia, Salary Comparison Tool: IT Infrastructure Manager dan IT Manager (diakses Oktober 2026)",
-      "url": "https://www.michaelpage.co.id/salary-comparison-tool/it-infrastructure-manager-salaries"
-    },
     "sumber": [
       {
         "judul": "O*NET OnLine: 11-3021.00 Computer and Information Systems Managers",

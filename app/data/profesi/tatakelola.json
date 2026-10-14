@@ -34,16 +34,49 @@
       "Wireshark"
     ],
     "sertifikasi": [
-      { "nama": "ITIL Foundation (Version 5)", "penerbit": "PeopleCert", "tingkat": "pemula" },
-      { "nama": "CCNA (200-301 v1.1)", "penerbit": "Cisco", "tingkat": "pemula" },
-      { "nama": "COBIT 2019 Foundation", "penerbit": "ISACA", "tingkat": "menengah" },
-      { "nama": "ISO/IEC 27001 Lead Implementer", "penerbit": "PECB", "tingkat": "menengah" },
-      { "nama": "CGEIT (Certified in the Governance of Enterprise IT)", "penerbit": "ISACA", "tingkat": "senior" },
-      { "nama": "CISM (Certified Information Security Manager)", "penerbit": "ISACA", "tingkat": "senior" }
+      {
+        "nama": "ITIL Foundation (Version 5)",
+        "penerbit": "PeopleCert",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "CCNA (200-301 v1.1)",
+        "penerbit": "Cisco",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "COBIT 2019 Foundation",
+        "penerbit": "ISACA",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "ISO/IEC 27001 Lead Implementer",
+        "penerbit": "PECB",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "CGEIT (Certified in the Governance of Enterprise IT)",
+        "penerbit": "ISACA",
+        "tingkat": "senior"
+      },
+      {
+        "nama": "CISM (Certified Information Security Manager)",
+        "penerbit": "ISACA",
+        "tingkat": "senior"
+      }
     ],
     "masuk": "Umumnya dua sampai lima tahun sebagai network atau system engineer di system integrator, lalu pindah ke peran technical/pre-sales consultant atau ke divisi technology consulting dan risk advisory Big Four maupun konsultan lokal.",
-    "naik": ["solution-architect", "security-architect", "it-operations-manager"],
-    "dekat": ["solution-architect", "it-auditor", "network-architect", "disaster-recovery-specialist"],
+    "naik": [
+      "solution-architect",
+      "security-architect",
+      "it-operations-manager"
+    ],
+    "dekat": [
+      "solution-architect",
+      "it-auditor",
+      "network-architect",
+      "disaster-recovery-specialist"
+    ],
     "modul": [
       "01-model-referensi/01-osi",
       "04-network-layer/02-subnetting",
@@ -60,18 +93,27 @@
       "Rencana integrasi dua jaringan dengan rentang IP bertumpuk: dua opsi, risiko, estimasi effort, dan rollback",
       "Slide 10 halaman untuk direksi tentang perlunya segmentasi jaringan tanpa jargon yang tidak dijelaskan"
     ],
-    "gaji": {
-      "rentang": "Rp 16 juta - Rp 19 juta per bulan",
-      "konteks": "Indonesia (nasional), persentil 25-75 gaji di iklan lowongan berjabatan Konsultan Teknis lintas bidang, bukan khusus TI; median Rp 17,5 juta",
-      "sumber": "Jobstreet Indonesia, wawasan gaji Konsultan Teknis (diakses Oktober 2026)",
-      "url": "https://id.jobstreet.com/id/career-advice/role/technical-consultant/salary"
-    },
     "sumber": [
-      { "judul": "ISACA, CGEIT", "url": "https://www.isaca.org/credentialing/cgeit" },
-      { "judul": "PeopleCert, ITIL certifications (Version 5)", "url": "https://www.peoplecert.org/browse-certifications/it-governance-and-service-management/ITIL-1" },
-      { "judul": "POJK 11/POJK.03/2022 tentang Penyelenggaraan TI oleh Bank Umum", "url": "https://peraturan.go.id/files/pojk11-2022.pdf" },
-      { "judul": "Permenkominfo 16/2022 tentang Kebijakan Umum Penyelenggaraan Audit TIK", "url": "https://peraturan.bpk.go.id/Details/255601" },
-      { "judul": "Jobstreet Indonesia, Gaji Konsultan Teknis", "url": "https://id.jobstreet.com/id/career-advice/role/technical-consultant/salary" }
+      {
+        "judul": "ISACA, CGEIT",
+        "url": "https://www.isaca.org/credentialing/cgeit"
+      },
+      {
+        "judul": "PeopleCert, ITIL certifications (Version 5)",
+        "url": "https://www.peoplecert.org/browse-certifications/it-governance-and-service-management/ITIL-1"
+      },
+      {
+        "judul": "POJK 11/POJK.03/2022 tentang Penyelenggaraan TI oleh Bank Umum",
+        "url": "https://peraturan.go.id/files/pojk11-2022.pdf"
+      },
+      {
+        "judul": "Permenkominfo 16/2022 tentang Kebijakan Umum Penyelenggaraan Audit TIK",
+        "url": "https://peraturan.bpk.go.id/Details/255601"
+      },
+      {
+        "judul": "Jobstreet Indonesia, Gaji Konsultan Teknis",
+        "url": "https://id.jobstreet.com/id/career-advice/role/technical-consultant/salary"
+      }
     ]
   },
   {
@@ -79,7 +121,7 @@
     "nama": "IT Auditor",
     "rumpun": "tatakelola",
     "ringkas": "Menguji apakah kontrol TI, dari hak akses sampai perubahan konfigurasi dan pemulihan bencana, benar-benar berjalan seperti yang diklaim organisasi.",
-    "jenjang": "pemula",
+    "jenjang": "menengah",
     "harian": [
       "Mencocokkan daftar karyawan keluar dengan akun aktif di sistem kritikal",
       "Menguji sampel tiket perubahan terhadap log konfigurasi firewall",
@@ -110,16 +152,49 @@
       "Splunk"
     ],
     "sertifikasi": [
-      { "nama": "CISA (Certified Information Systems Auditor)", "penerbit": "ISACA", "tingkat": "pemula" },
-      { "nama": "ISO/IEC 27001 Lead Auditor", "penerbit": "PECB", "tingkat": "pemula" },
-      { "nama": "Sertifikasi kompetensi SKKNI Audit Teknologi Informasi (Kepmenaker 231/2024)", "penerbit": "LSP berlisensi BNSP", "tingkat": "pemula" },
-      { "nama": "CRISC (Certified in Risk and Information Systems Control)", "penerbit": "ISACA", "tingkat": "menengah" },
-      { "nama": "CISM (Certified Information Security Manager)", "penerbit": "ISACA", "tingkat": "senior" },
-      { "nama": "AAIA (Advanced in AI Audit)", "penerbit": "ISACA", "tingkat": "senior" }
+      {
+        "nama": "CISA (Certified Information Systems Auditor)",
+        "penerbit": "ISACA",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "ISO/IEC 27001 Lead Auditor",
+        "penerbit": "PECB",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "Sertifikasi kompetensi SKKNI Audit Teknologi Informasi (Kepmenaker 231/2024)",
+        "penerbit": "LSP berlisensi BNSP",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "CRISC (Certified in Risk and Information Systems Control)",
+        "penerbit": "ISACA",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "CISM (Certified Information Security Manager)",
+        "penerbit": "ISACA",
+        "tingkat": "senior"
+      },
+      {
+        "nama": "AAIA (Advanced in AI Audit)",
+        "penerbit": "ISACA",
+        "tingkat": "senior"
+      }
     ],
     "masuk": "Program trainee atau associate IT audit/technology risk di KAP Big Four menerima lulusan baru; jalur lain dari network atau system administrator ke audit intern TI bank dan BUMN.",
-    "naik": ["it-consultant", "security-architect", "it-operations-manager"],
-    "dekat": ["cybersecurity-analyst", "disaster-recovery-specialist", "it-consultant", "it-asset-manager"],
+    "naik": [
+      "it-consultant",
+      "security-architect",
+      "it-operations-manager"
+    ],
+    "dekat": [
+      "cybersecurity-analyst",
+      "disaster-recovery-specialist",
+      "it-consultant",
+      "it-asset-manager"
+    ],
     "modul": [
       "06-aplikasi/05-layanan-lain",
       "09-nat-acl-firewall/02-acl",
@@ -136,13 +211,33 @@
       "Tabel pemetaan Pasal 17, 18, 25, dan 54 POJK 11/2022 ke kontrol teknis yang bisa diuji"
     ],
     "sumber": [
-      { "judul": "ISACA, CISA Job Practice Areas", "url": "https://www.isaca.org/credentialing/cisa/cisa-job-practice-areas" },
-      { "judul": "ISACA, CRISC", "url": "https://www.isaca.org/credentialing/crisc" },
-      { "judul": "PECB, ISO/IEC 27001 Lead Auditor", "url": "https://pecb.com/en/education-and-certification-for-individuals/iso-iec-27001/iso-iec-27001-lead-auditor" },
-      { "judul": "Kepmenaker 231/2024 tentang SKKNI Bidang Audit Teknologi Informasi", "url": "https://jdih.kemnaker.go.id/peraturan/detail/2551/keputusan-menteri-ketenagakerjaan-nomor-231-tahun-2024" },
-      { "judul": "POJK 11/POJK.03/2022 (Pasal 54-55 audit intern TI)", "url": "https://peraturan.go.id/files/pojk11-2022.pdf" },
-      { "judul": "OJK, PADK 1 Tahun 2026 tentang Penyelenggaraan TI oleh Bank Umum", "url": "https://ojk.go.id/id/regulasi/Pages/PADK-1-Tahun-2026-Penyelenggaraan-Teknologi-Informasi-oleh-Bank-Umum.aspx" }
-    ]
+      {
+        "judul": "ISACA, CISA Job Practice Areas",
+        "url": "https://www.isaca.org/credentialing/cisa/cisa-job-practice-areas"
+      },
+      {
+        "judul": "ISACA, CRISC",
+        "url": "https://www.isaca.org/credentialing/crisc"
+      },
+      {
+        "judul": "PECB, ISO/IEC 27001 Lead Auditor",
+        "url": "https://pecb.com/en/education-and-certification-for-individuals/iso-iec-27001/iso-iec-27001-lead-auditor"
+      },
+      {
+        "judul": "Kepmenaker 231/2024 tentang SKKNI Bidang Audit Teknologi Informasi",
+        "url": "https://jdih.kemnaker.go.id/peraturan/detail/2551/keputusan-menteri-ketenagakerjaan-nomor-231-tahun-2024"
+      },
+      {
+        "judul": "POJK 11/POJK.03/2022 (Pasal 54-55 audit intern TI)",
+        "url": "https://peraturan.go.id/files/pojk11-2022.pdf"
+      },
+      {
+        "judul": "OJK, PADK 1 Tahun 2026 tentang Penyelenggaraan TI oleh Bank Umum",
+        "url": "https://ojk.go.id/id/regulasi/Pages/PADK-1-Tahun-2026-Penyelenggaraan-Teknologi-Informasi-oleh-Bank-Umum.aspx"
+      }
+    ],
+    "jenjang_alasan": "CISA, sertifikasi baku auditor TI, mensyaratkan minimal lima tahun pengalaman profesional di audit, kontrol, atau keamanan sistem informasi. Lulusan baru masuk lewat peran asisten audit atau GRC, bukan sebagai auditor TI.",
+    "jenjang_sumber": "https://www.isaca.org/credentialing/cisa/get-cisa-certified"
   },
   {
     "id": "disaster-recovery-specialist",
@@ -178,15 +273,44 @@
       "Confluence"
     ],
     "sertifikasi": [
-      { "nama": "ABCP (Associate Business Continuity Professional)", "penerbit": "DRI International", "tingkat": "pemula" },
-      { "nama": "EC-Council Disaster Recovery Professional (EDRP, ujian 312-76)", "penerbit": "EC-Council", "tingkat": "pemula" },
-      { "nama": "CBCP (Certified Business Continuity Professional)", "penerbit": "DRI International", "tingkat": "menengah" },
-      { "nama": "ISO 22301 Lead Implementer", "penerbit": "PECB", "tingkat": "menengah" },
-      { "nama": "MBCP (Master Business Continuity Professional)", "penerbit": "DRI International", "tingkat": "senior" }
+      {
+        "nama": "ABCP (Associate Business Continuity Professional)",
+        "penerbit": "DRI International",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "EC-Council Disaster Recovery Professional (EDRP, ujian 312-76)",
+        "penerbit": "EC-Council",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "CBCP (Certified Business Continuity Professional)",
+        "penerbit": "DRI International",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "ISO 22301 Lead Implementer",
+        "penerbit": "PECB",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "MBCP (Master Business Continuity Professional)",
+        "penerbit": "DRI International",
+        "tingkat": "senior"
+      }
     ],
     "masuk": "Jarang menjadi pekerjaan pertama; biasanya dari system, storage, atau network engineer di bank atau penyedia data center yang rutin terlibat uji DRP tahunan wajib OJK.",
-    "naik": ["it-operations-manager", "solution-architect"],
-    "dekat": ["storage-administrator", "site-reliability-engineer", "system-engineer", "it-auditor", "data-center-engineer"],
+    "naik": [
+      "it-operations-manager",
+      "solution-architect"
+    ],
+    "dekat": [
+      "storage-administrator",
+      "site-reliability-engineer",
+      "system-engineer",
+      "it-auditor",
+      "data-center-engineer"
+    ],
     "modul": [
       "00-fondasi/03-sinyal-bandwidth-latency",
       "06-aplikasi/01-dns",
@@ -205,12 +329,30 @@
       "Runbook failover yang diotomasi dengan Ansible, termasuk verifikasi dan rollback"
     ],
     "sumber": [
-      { "judul": "DRI International, ABCP", "url": "https://drii.org/certification/abcp" },
-      { "judul": "NIST SP 800-34 Rev. 1, Contingency Planning Guide", "url": "https://csrc.nist.gov/pubs/sp/800/34/r1/upd1/final" },
-      { "judul": "O*NET OnLine, Business Continuity Planners (13-1199.04)", "url": "https://www.onetonline.org/link/summary/13-1199.04" },
-      { "judul": "AWS Whitepaper, Disaster recovery options in the cloud", "url": "https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-options-in-the-cloud.html" },
-      { "judul": "POJK 11/POJK.03/2022 (Pasal 18 Rencana Pemulihan Bencana)", "url": "https://peraturan.go.id/files/pojk11-2022.pdf" },
-      { "judul": "EC-Council, Disaster Recovery Professional (EDRP)", "url": "https://cert.eccouncil.org/ec-council-disaster-recovery-professional.html" }
+      {
+        "judul": "DRI International, ABCP",
+        "url": "https://drii.org/certification/abcp"
+      },
+      {
+        "judul": "NIST SP 800-34 Rev. 1, Contingency Planning Guide",
+        "url": "https://csrc.nist.gov/pubs/sp/800/34/r1/upd1/final"
+      },
+      {
+        "judul": "O*NET OnLine, Business Continuity Planners (13-1199.04)",
+        "url": "https://www.onetonline.org/link/summary/13-1199.04"
+      },
+      {
+        "judul": "AWS Whitepaper, Disaster recovery options in the cloud",
+        "url": "https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-options-in-the-cloud.html"
+      },
+      {
+        "judul": "POJK 11/POJK.03/2022 (Pasal 18 Rencana Pemulihan Bencana)",
+        "url": "https://peraturan.go.id/files/pojk11-2022.pdf"
+      },
+      {
+        "judul": "EC-Council, Disaster Recovery Professional (EDRP)",
+        "url": "https://cert.eccouncil.org/ec-council-disaster-recovery-professional.html"
+      }
     ]
   },
   {
@@ -249,16 +391,47 @@
       "Confluence"
     ],
     "sertifikasi": [
-      { "nama": "CCNA (200-301 v1.1)", "penerbit": "Cisco", "tingkat": "pemula" },
-      { "nama": "AWS Certified Solutions Architect – Associate (SAA-C03)", "penerbit": "Amazon Web Services", "tingkat": "menengah" },
-      { "nama": "Microsoft Certified: Azure Solutions Architect Expert (AZ-305, prasyarat AZ-104)", "penerbit": "Microsoft", "tingkat": "menengah" },
-      { "nama": "Google Cloud Professional Cloud Architect", "penerbit": "Google Cloud", "tingkat": "menengah" },
-      { "nama": "AWS Certified Solutions Architect – Professional (SAP-C03 mulai 17 November 2026, menggantikan SAP-C02)", "penerbit": "Amazon Web Services", "tingkat": "senior" },
-      { "nama": "TOGAF Enterprise Architecture Practitioner (TOGAF Standard, 10th Edition)", "penerbit": "The Open Group", "tingkat": "senior" }
+      {
+        "nama": "CCNA (200-301 v1.1)",
+        "penerbit": "Cisco",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "AWS Certified Solutions Architect – Associate (SAA-C03)",
+        "penerbit": "Amazon Web Services",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "Microsoft Certified: Azure Solutions Architect Expert (AZ-305, prasyarat AZ-104)",
+        "penerbit": "Microsoft",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "Google Cloud Professional Cloud Architect",
+        "penerbit": "Google Cloud",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "AWS Certified Solutions Architect – Professional (SAP-C03 mulai 17 November 2026, menggantikan SAP-C02)",
+        "penerbit": "Amazon Web Services",
+        "tingkat": "senior"
+      },
+      {
+        "nama": "TOGAF Enterprise Architecture Practitioner (TOGAF Standard, 10th Edition)",
+        "penerbit": "The Open Group",
+        "tingkat": "senior"
+      }
     ],
     "masuk": "Biasanya network atau system engineer tiga sampai lima tahun, lalu presales engineer atau technical consultant di system integrator, distributor, atau vendor sebelum dipercaya sebagai solution architect.",
-    "naik": ["it-consultant", "it-operations-manager"],
-    "dekat": ["network-architect", "cloud-network-engineer", "cloud-infrastructure-engineer", "security-architect", "it-consultant"],
+    "naik": [],
+    "dekat": [
+      "network-architect",
+      "cloud-network-engineer",
+      "cloud-infrastructure-engineer",
+      "security-architect",
+      "it-consultant",
+      "it-operations-manager"
+    ],
     "modul": [
       "11-wan-vpn/01-teknologi-wan",
       "11-wan-vpn/03-qos",
@@ -277,12 +450,30 @@
       "Tiga architecture decision record untuk keputusan desain nyata di lab sendiri"
     ],
     "sumber": [
-      { "judul": "AWS, Certified Solutions Architect – Associate", "url": "https://aws.amazon.com/certification/certified-solutions-architect-associate/" },
-      { "judul": "AWS Training and Certification Blog, September 2026 new offerings (SAP-C03)", "url": "https://aws.amazon.com/blogs/training-and-certification/september-2026-new-offerings/" },
-      { "judul": "Microsoft Learn, Azure Solutions Architect Expert", "url": "https://learn.microsoft.com/en-us/credentials/certifications/azure-solutions-architect/" },
-      { "judul": "Google Cloud, Professional Cloud Architect", "url": "https://cloud.google.com/learn/certification/cloud-architect" },
-      { "judul": "The Open Group, TOGAF Certification Portfolio", "url": "https://www.opengroup.org/certifications/togaf" },
-      { "judul": "AWS, Certified Advanced Networking – Specialty (pemberitahuan pensiun)", "url": "https://aws.amazon.com/certification/certified-advanced-networking-specialty/" }
+      {
+        "judul": "AWS, Certified Solutions Architect – Associate",
+        "url": "https://aws.amazon.com/certification/certified-solutions-architect-associate/"
+      },
+      {
+        "judul": "AWS Training and Certification Blog, September 2026 new offerings (SAP-C03)",
+        "url": "https://aws.amazon.com/blogs/training-and-certification/september-2026-new-offerings/"
+      },
+      {
+        "judul": "Microsoft Learn, Azure Solutions Architect Expert",
+        "url": "https://learn.microsoft.com/en-us/credentials/certifications/azure-solutions-architect/"
+      },
+      {
+        "judul": "Google Cloud, Professional Cloud Architect",
+        "url": "https://cloud.google.com/learn/certification/cloud-architect"
+      },
+      {
+        "judul": "The Open Group, TOGAF Certification Portfolio",
+        "url": "https://www.opengroup.org/certifications/togaf"
+      },
+      {
+        "judul": "AWS, Certified Advanced Networking – Specialty (pemberitahuan pensiun)",
+        "url": "https://aws.amazon.com/certification/certified-advanced-networking-specialty/"
+      }
     ]
   },
   {
@@ -318,17 +509,52 @@
       "ActionableAgile"
     ],
     "sertifikasi": [
-      { "nama": "Professional Scrum Master I (PSM I)", "penerbit": "Scrum.org", "tingkat": "pemula" },
-      { "nama": "Certified ScrumMaster (CSM)", "penerbit": "Scrum Alliance", "tingkat": "pemula" },
-      { "nama": "Professional Scrum with Kanban (PSK I)", "penerbit": "Scrum.org", "tingkat": "menengah" },
-      { "nama": "Kanban Management Professional (KMP)", "penerbit": "Kanban University", "tingkat": "menengah" },
-      { "nama": "SAFe Scrum Master (SSM)", "penerbit": "Scaled Agile", "tingkat": "menengah" },
-      { "nama": "ITIL Foundation (Version 5)", "penerbit": "PeopleCert", "tingkat": "menengah" },
-      { "nama": "Professional Scrum Master II (PSM II)", "penerbit": "Scrum.org", "tingkat": "senior" }
+      {
+        "nama": "Professional Scrum Master I (PSM I)",
+        "penerbit": "Scrum.org",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "Certified ScrumMaster (CSM)",
+        "penerbit": "Scrum Alliance",
+        "tingkat": "pemula"
+      },
+      {
+        "nama": "Professional Scrum with Kanban (PSK I)",
+        "penerbit": "Scrum.org",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "Kanban Management Professional (KMP)",
+        "penerbit": "Kanban University",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "SAFe Scrum Master (SSM)",
+        "penerbit": "Scaled Agile",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "ITIL Foundation (Version 5)",
+        "penerbit": "PeopleCert",
+        "tingkat": "menengah"
+      },
+      {
+        "nama": "Professional Scrum Master II (PSM II)",
+        "penerbit": "Scrum.org",
+        "tingkat": "senior"
+      }
     ],
     "masuk": "Paling realistis dari network atau system engineer di tim yang mulai memakai agile, mengambil peran scrum master paruh waktu dulu; lowongannya banyak di bank, telko, dan perusahaan digital.",
-    "naik": ["it-operations-manager"],
-    "dekat": ["devops-engineer", "site-reliability-engineer", "network-engineer", "it-operations-manager"],
+    "naik": [
+      "it-operations-manager"
+    ],
+    "dekat": [
+      "devops-engineer",
+      "site-reliability-engineer",
+      "network-engineer",
+      "it-operations-manager"
+    ],
     "modul": [
       "03-data-link/03-vlan",
       "07-routing-lanjutan/04-ospf",
@@ -345,11 +571,26 @@
       "Backlog, sprint goal, dan definisi selesai untuk proyek otomasi backup konfigurasi jaringan"
     ],
     "sumber": [
-      { "judul": "Scrum Guides (Scrum Guide 2020)", "url": "https://scrumguides.org/" },
-      { "judul": "Scrum Alliance, Certified ScrumMaster", "url": "https://www.scrumalliance.org/get-certified/scrum-master-track/certified-scrummaster" },
-      { "judul": "Scaled Agile, SAFe Scrum Master", "url": "https://scaledagile.com/training/safe-scrum-master/" },
-      { "judul": "Kanban University, Kanban Management Professional", "url": "https://kanban.university/kmp/" },
-      { "judul": "PeopleCert, ITIL certifications (Version 5)", "url": "https://www.peoplecert.org/browse-certifications/it-governance-and-service-management/ITIL-1" }
+      {
+        "judul": "Scrum Guides (Scrum Guide 2020)",
+        "url": "https://scrumguides.org/"
+      },
+      {
+        "judul": "Scrum Alliance, Certified ScrumMaster",
+        "url": "https://www.scrumalliance.org/get-certified/scrum-master-track/certified-scrummaster"
+      },
+      {
+        "judul": "Scaled Agile, SAFe Scrum Master",
+        "url": "https://scaledagile.com/training/safe-scrum-master/"
+      },
+      {
+        "judul": "Kanban University, Kanban Management Professional",
+        "url": "https://kanban.university/kmp/"
+      },
+      {
+        "judul": "PeopleCert, ITIL certifications (Version 5)",
+        "url": "https://www.peoplecert.org/browse-certifications/it-governance-and-service-management/ITIL-1"
+      }
     ]
   }
 ]

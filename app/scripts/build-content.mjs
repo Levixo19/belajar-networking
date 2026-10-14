@@ -377,10 +377,13 @@ const RUMPUN_MODUL = {
   tatakelola: '07-rumpun-tata-kelola-konsultasi',
 }
 {
-  const dir = path.join(EXTRA_DIR, 'profesi')
+  // BN_PROFESI_DIR cuma untuk tes: menyuapkan data rusak dan menuntut build GAGAL.
+  const dir = process.env.BN_PROFESI_DIR || path.join(EXTRA_DIR, 'profesi')
   const allIds = new Set(Object.values(PROFESI_ID).flat())
   const moduleIds = new Set(stages.flatMap(s => s.modules.map(m => m.id)))
   const profesi = [], errors = [], warns = []
+  const JENJANG = ['pemula', 'menengah', 'senior']
+  const https = u => typeof u === 'string' && /^https:\/\/[^\s]+$/.test(u)
   for (const rumpun of Object.keys(PROFESI_ID)) {
     const f = path.join(dir, rumpun + '.json')
     if (!fs.existsSync(f)) { warns.push(`data/profesi/${rumpun}.json belum ada`); continue }
@@ -396,8 +399,23 @@ const RUMPUN_MODUL = {
       for (const t of p.keahlian) if (!KEAHLIAN.has(t)) errors.push(`${at} tag keahlian "${t}" tidak ada di kosakata`)
       for (const r of [...p.naik, ...p.dekat]) if (!allIds.has(r)) errors.push(`${at} tautan ke profesi "${r}" tidak dikenal`)
       for (const m of p.modul) if (!moduleIds.has(m)) errors.push(`${at} modul "${m}" tidak ada di kurikulum`)
-      if (p.gaji && !(p.gaji.sumber && p.gaji.url)) errors.push(`${at} gaji tanpa sumber/url (hapus atau lengkapi)`)
-      if (!['pemula', 'menengah', 'senior'].includes(p.jenjang)) errors.push(`${at} jenjang harus pemula|menengah|senior`)
+      if (!JENJANG.includes(p.jenjang)) errors.push(`${at} jenjang harus pemula|menengah|senior`)
+      // Array kosong bukan "belum diisi" yang aman: modul kosong berarti kesiapan
+      // selamanya 0%, sumber kosong berarti klaim tanpa bukti.
+      for (const k of ['harian', 'keahlian', 'alat', 'modul', 'sertifikasi', 'sumber', 'proyek'])
+        if (Array.isArray(p[k]) && !p[k].length) errors.push(`${at} "${k}" tidak boleh kosong`)
+      for (const c of p.sertifikasi) {
+        if (typeof c?.nama !== 'string' || !c.nama.trim() || typeof c?.penerbit !== 'string' || !c.penerbit.trim()) errors.push(`${at} sertifikasi harus {nama, penerbit, tingkat?}`)
+        if (c?.tingkat !== undefined && !JENJANG.includes(c.tingkat)) errors.push(`${at} tingkat sertifikasi "${c.tingkat}" bukan pemula|menengah|senior`)
+      }
+      for (const r of p.sumber) if (typeof r?.judul !== 'string' || !r.judul.trim() || !https(r?.url)) errors.push(`${at} sumber harus {judul, url https}: ${r?.url}`)
+      if (p.gaji !== undefined) {
+        const g = p.gaji
+        if (!g || typeof g.rentang !== 'string' || typeof g.sumber !== 'string' || !https(g.url)) errors.push(`${at} gaji harus {rentang, sumber, url https, tanggal_diperiksa}`)
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(g?.tanggal_diperiksa || '') || Number.isNaN(Date.parse(g?.tanggal_diperiksa))) errors.push(`${at} gaji.tanggal_diperiksa harus YYYY-MM-DD`)
+      }
+      if ((p.jenjang_alasan === undefined) !== (p.jenjang_sumber === undefined)) errors.push(`${at} jenjang_alasan dan jenjang_sumber harus berpasangan`)
+      if (p.jenjang_sumber !== undefined && !https(p.jenjang_sumber)) errors.push(`${at} jenjang_sumber harus https`)
       profesi.push({ ...p, rumpun, bacaan: `21-ekosistem-profesi/${RUMPUN_MODUL[rumpun]}` })
     }
   }
@@ -406,11 +424,21 @@ const RUMPUN_MODUL = {
   // Tautan ke profesi yang datanya belum ditulis: dibuang dari output agar UI tidak menunjuk kekosongan
   for (const p of profesi) {
     const lost = [...p.naik, ...p.dekat].filter(r => !seen.has(r))
-    if (lost.length) warns.push(`${p.id}: tautan ke profesi tanpa data dilewati (${lost.join(', ')})`)
+    if (lost.length) errors.push(`${p.id}: tautan ke profesi tanpa data (${lost.join(', ')})`)
     p.naik = [...new Set(p.naik)].filter(r => seen.has(r) && r !== p.id)
     p.dekat = [...new Set(p.dekat)].filter(r => seen.has(r) && r !== p.id && !p.naik.includes(r))
     p.modul = [...new Set(p.modul)]
     if (!moduleIds.has(p.bacaan)) p.bacaan = null
+  }
+  // Arah "naik" harus berarti sesuatu: tidak boleh timbal balik, dan tidak boleh
+  // turun jenjang. Keduanya dulu ada (5 pasang dan 7 sisi), sehingga peta tidak bisa
+  // menggambar arah dan perencana jalur menyarankan "naik" ke peran yang lebih junior.
+  const perId = new Map(profesi.map(p => [p.id, p]))
+  for (const p of profesi) for (const q of p.naik) {
+    const t = perId.get(q)
+    if (!t) continue
+    if (t.naik.includes(p.id)) errors.push(`naik timbal balik: ${p.id} <-> ${q} (jadikan salah satunya "dekat")`)
+    if (JENJANG.indexOf(t.jenjang) < JENJANG.indexOf(p.jenjang)) errors.push(`naik menurun jenjang: ${p.id} (${p.jenjang}) -> ${q} (${t.jenjang})`)
   }
   for (const w of warns) console.warn('  peringatan profesi: ' + w)
   if (errors.length) {

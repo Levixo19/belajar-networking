@@ -72,35 +72,86 @@ export function readiness(p: Profesi, progress: Record<string, string>) {
   return { pct: mods.length ? done.length / mods.length : 0, done: done.length, total: mods.length, mods }
 }
 
+const URUT_JENJANG = { pemula: 0, menengah: 1, senior: 2 } as const
+// Biaya melewati profesi sebagai PERANTARA: orang jarang menjadi arsitek hanya supaya
+// bisa pindah ke peran lain, jadi peran senior mahal sebagai batu loncatan.
+const BIAYA_LEWAT = { pemula: 0, menengah: 0.4, senior: 2.5 } as const
+// Turun jenjang hanya lewat sisi "dekat", dan lebih mahal daripada pindah sejajar.
+const BIAYA_TURUN = 1.5
+// "naik" dari pemula langsung ke senior sah di data (materi 21.6: hardware engineer
+// bercabang ke solution architect), tapi baru SESUDAH bertahun-tahun di peran itu.
+// Tanpa biaya ini, jalur IT support -> hardware engineer -> solution architect
+// tampil sebagai jalur terpendek, seolah dua langkah biasa.
+const BIAYA_LONCAT = 1.5
+
 /**
- * Jalur perpindahan paling realistis (Dijkstra berbobot). Melewati peran senior sebagai
- * perantara diberi biaya tambahan, karena orang jarang menjadi arsitek hanya untuk pindah
- * ke peran lain. Relasi "naik" sedikit lebih murah daripada "dekat".
+ * Busur berarah graf perpindahan. "naik" cuma bisa dilalui ke arah naiknya (dari
+ * profesi yang mencantumkannya); "dekat" dua arah. Versi lama memperlakukan semua
+ * sisi tak berarah, sehingga jalur dari arsitek ke teknisi lapangan bisa "naik" turun.
+ */
+function busur(): Map<string, { n: string; w: number }[]> {
+  const adj = new Map<string, { n: string; w: number }[]>()
+  const tambah = (a: string, b: string, w: number) => {
+    const daftar = adj.get(a) || []
+    const ada = daftar.find(x => x.n === b)
+    if (ada) ada.w = Math.min(ada.w, w); else daftar.push({ n: b, w })
+    adj.set(a, daftar)
+  }
+  const turun = (a: string, b: string) => URUT_JENJANG[byId.get(b)!.jenjang] < URUT_JENJANG[byId.get(a)!.jenjang]
+  for (const p of PROFESI) {
+    for (const q of p.naik) if (byId.has(q) && q !== p.id)
+      tambah(p.id, q, 1 + (URUT_JENJANG[byId.get(q)!.jenjang] - URUT_JENJANG[p.jenjang] >= 2 ? BIAYA_LONCAT : 0))
+    for (const q of p.dekat) if (byId.has(q) && q !== p.id) {
+      tambah(p.id, q, 1.2 + (turun(p.id, q) ? BIAYA_TURUN : 0))
+      tambah(q, p.id, 1.2 + (turun(q, p.id) ? BIAYA_TURUN : 0))
+    }
+  }
+  for (const d of adj.values()) d.sort((x, y) => (x.n < y.n ? -1 : 1))
+  return adj
+}
+
+/**
+ * Jalur perpindahan paling realistis (Dijkstra berbobot di graf BERARAH). Tetangga
+ * diproses berurutan menurut id dan seri dipecahkan oleh id, jadi hasilnya
+ * deterministik. null kalau salah satu profesi tidak dikenal atau tidak terjangkau.
  */
 export function shortestPath(from: string, to: string): string[] | null {
-  if (from === to) return [from]
   if (!byId.has(from) || !byId.has(to)) return null
-  const adj = new Map<string, { n: string; w: number }[]>()
-  const add = (a: string, b: string, w: number) => adj.set(a, [...(adj.get(a) || []), { n: b, w }])
-  for (const e of edges()) { const w = e.kind === 'naik' ? 1 : 1.2; add(e.a, e.b, w); add(e.b, e.a, w) }
-  const lewat = (id: string) => { const j = byId.get(id)?.jenjang; return j === 'senior' ? 2.5 : j === 'menengah' ? 0.4 : 0 }
+  if (from === to) return [from]
+  const adj = busur()
   const dist = new Map<string, number>([[from, 0]])
   const prev = new Map<string, string>()
   const open = new Set([from])
   while (open.size) {
     let cur = '', best = Infinity
-    for (const n of open) { const d = dist.get(n)!; if (d < best) { best = d; cur = n } }
+    for (const n of open) { const d = dist.get(n)!; if (d < best - 1e-9 || (Math.abs(d - best) < 1e-9 && n < cur)) { best = d; cur = n } }
     open.delete(cur)
     if (cur === to) break
     for (const { n, w } of adj.get(cur) || []) {
-      const d = best + w + (n === to ? 0 : lewat(n))
-      if (d < (dist.get(n) ?? Infinity)) { dist.set(n, d); prev.set(n, cur); open.add(n) }
+      const d = best + w + (n === to ? 0 : BIAYA_LEWAT[byId.get(n)!.jenjang])
+      if (d < (dist.get(n) ?? Infinity) - 1e-9) { dist.set(n, d); prev.set(n, cur); open.add(n) }
     }
   }
   if (!dist.has(to)) return null
   const path = [to]
   while (path[0] !== from) path.unshift(prev.get(path[0])!)
   return path
+}
+
+/**
+ * Modul yang perlu ditambah untuk menempuh SELURUH jalur: bekal setiap profesi
+ * sesudah titik awal (perantara DAN tujuan) yang belum termasuk bekal profesi asal,
+ * berurutan menurut jalurnya. Versi lama cuma membandingkan asal dengan tujuan,
+ * sehingga perantara yang wajib dilewati tidak pernah terlihat biayanya.
+ */
+export function celahJalur(path: string[]): string[] {
+  if (!path.length) return []
+  const punya = new Set(byId.get(path[0])?.modul || [])
+  const out: string[] = []
+  for (const pid of path.slice(1))
+    for (const m of byId.get(pid)?.modul || [])
+      if (!punya.has(m) && getModule(m)) { punya.add(m); out.push(m) }
+  return out
 }
 
 /** Modul yang dibutuhkan profesi tujuan tetapi tidak termasuk bekal profesi asal. */
@@ -152,17 +203,50 @@ export const QUIZ: QuizQ[] = [
   ] },
 ]
 
-export function scoreQuiz(picks: (number | null)[]) {
+/** Indeks pilihan yang sah untuk soal ke-i, atau null. Menolak -1, 9, 1.5, NaN. */
+function pilihanSah(picks: (number | null)[], i: number): QuizOpt | null {
+  const v = picks[i]
+  return typeof v === 'number' && Number.isInteger(v) && v >= 0 && v < QUIZ[i].opts.length ? QUIZ[i].opts[v] : null
+}
+const sumbangan = (p: Profesi, o: QuizOpt) => p.keahlian.reduce((a, k) => a + (o.w[k] || 0), 0)
+
+// Skor mentah sebuah profesi aditif per soal, jadi skor TERTINGGI yang mungkin ia
+// capai = jumlah sumbangan terbesar di tiap soal. Dihitung sekali.
+let SKOR_MAKS: Map<string, number> | null = null
+function skorMaks(): Map<string, number> {
+  SKOR_MAKS ??= new Map(PROFESI.map(p => [p.id, QUIZ.reduce((a, q) => a + Math.max(...q.opts.map(o => sumbangan(p, o))), 0)]))
+  return SKOR_MAKS
+}
+
+/**
+ * Tiga profesi paling cocok. Skor = skor mentah dibagi AKAR skor tertinggi yang
+ * mungkin dicapai profesi itu. Angkanya diukur dengan menyapu seluruh 4.096 kombinasi
+ * jawaban (tests/profesi.test.mjs):
+ *   - mentah / akar(jumlah tag)  (versi lama): 29 profesi bisa juara, sistem
+ *     administrator dan hardware engineer tidak pernah; solution-architect juara 497 kali.
+ *   - mentah / skor maks (rasio murni): 32 bisa juara, tapi it-operations-manager
+ *     juara 1.124 kali, karena profesi bertag sedikit gampang mencapai rasio 1.
+ *   - mentah / akar(skor maks) (dipakai): 32 bisa juara, juara terbanyak 398 kali.
+ * Seri dipecahkan oleh skor mentah lalu id, supaya deterministik.
+ *
+ * `pemula`: orang yang belum menuntaskan modul apa pun tidak disarankan peran senior
+ * lebih dulu; peran senior tetap boleh muncul, tapi di belakang peran yang bisa
+ * dimasuki sekarang.
+ */
+export function scoreQuiz(picks: (number | null)[], { pemula = false }: { pemula?: boolean } = {}) {
   const w: Record<string, number> = {}
-  QUIZ.forEach((q, i) => {
-    const o = picks[i] == null ? null : q.opts[picks[i]!]
+  QUIZ.forEach((_, i) => {
+    const o = pilihanSah(picks, i)
     if (o) for (const [k, v] of Object.entries(o.w)) w[k] = (w[k] || 0) + (v || 0)
   })
+  const maks = skorMaks()
   const ranked = PROFESI.map(p => {
     const hits = p.keahlian.filter(k => w[k])
-    const score = hits.reduce((a, k) => a + w[k], 0) / Math.sqrt(p.keahlian.length || 1)
-    return { p, score, hits }
-  }).filter(x => x.score > 0).sort((a, b) => b.score - a.score)
+    const mentah = hits.reduce((a, k) => a + w[k], 0)
+    return { p, score: mentah / Math.sqrt(maks.get(p.id) || 1), mentah, hits }
+  }).filter(x => x.mentah > 0).sort((a, b) =>
+    (pemula ? (a.p.jenjang === 'senior' ? 1 : 0) - (b.p.jenjang === 'senior' ? 1 : 0) : 0) ||
+    b.score - a.score || b.mentah - a.mentah || (a.p.id < b.p.id ? -1 : 1))
   return ranked.slice(0, 3)
 }
 

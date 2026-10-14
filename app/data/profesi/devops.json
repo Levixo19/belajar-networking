@@ -95,9 +95,10 @@
     ],
     "gaji": {
       "rentang": "Rp 7,06 juta - Rp 8,88 juta per bulan",
-      "konteks": "Rentang tipikal nasional dari iklan lowongan yang mencantumkan gaji; Jakarta Raya sekitar Rp 8,5-11,5 juta. Perusahaan teknologi besar jarang mencantumkan gaji di iklan.",
-      "sumber": "Jobstreet Indonesia, Wawasan Gaji DevOps Engineer (diakses Oktober 2026)",
-      "url": "https://id.jobstreet.com/id/career-advice/role/devops-engineer/salary"
+      "konteks": "Rentang rata-rata nasional dari gaji yang dicantumkan di iklan lowongan Jobstreet; iklan di Indonesia lebih sering mencantumkan gaji untuk posisi junior dan menengah. Perusahaan teknologi besar jarang mencantumkan gaji di iklan.",
+      "sumber": "Jobstreet Indonesia, Gaji DevOps Engineer (data Oktober 2026)",
+      "url": "https://id.jobstreet.com/id/career-advice/role/devops-engineer/salary",
+      "tanggal_diperiksa": "2026-10-15"
     },
     "sumber": [
       {
@@ -243,7 +244,7 @@
     "nama": "Cloud Infrastructure Engineer",
     "rumpun": "devops",
     "ringkas": "Membangun fondasi cloud yang aman dan hemat: struktur akun, jaringan virtual, konektivitas hybrid, IAM, dan kontrol biaya, semuanya lewat kode.",
-    "jenjang": "pemula",
+    "jenjang": "menengah",
     "harian": [
       "Menulis modul Terraform untuk VPC, subnet, NAT, dan flow log",
       "Merencanakan blok CIDR agar tidak bertabrakan dengan jaringan on-premise",
@@ -346,7 +347,9 @@
         "judul": "Google Cloud: Associate Cloud Engineer",
         "url": "https://cloud.google.com/learn/certification/cloud-engineer"
       }
-    ]
+    ],
+    "jenjang_alasan": "Peran ini mengoperasikan infrastruktur cloud produksi. Sertifikasi associate yang dituntut lowongannya, AWS Certified CloudOps Engineer (SOA-C03), sendiri merekomendasikan sekitar satu tahun pengalaman mengoperasikan beban kerja di AWS, dan jalurnya lazim dimulai dari system administrator.",
+    "jenjang_sumber": "https://aws.amazon.com/certification/certified-cloudops-engineer-associate/"
   },
   {
     "id": "automation-engineer",

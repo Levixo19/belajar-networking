@@ -410,14 +410,14 @@
     ],
     "masuk": "Bukan posisi masuk: biasanya dicapai setelah 5-10 tahun sebagai network security engineer, security engineer, atau pentester yang terbiasa ikut tinjauan desain dan menulis dokumen keputusan.",
     "naik": [
-      "it-consultant",
       "solution-architect"
     ],
     "dekat": [
       "network-architect",
       "solution-architect",
       "it-auditor",
-      "cloud-infrastructure-engineer"
+      "cloud-infrastructure-engineer",
+      "it-consultant"
     ],
     "modul": [
       "06-aplikasi/04-tls-pki",
