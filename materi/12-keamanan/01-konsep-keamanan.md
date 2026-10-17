@@ -29,7 +29,7 @@
 | **Availability** | DDoS, kegagalan hardware, ransomware | Redundansi, backup, rate limiting, DDoS protection |
 
 > [!WARNING]
-> **Ketiganya sering saling bertentangan.** Enkripsi penuh (confidentiality) menyulitkan inspeksi keamanan; redundansi (availability) memperbesar permukaan serangan; kontrol ketat (integrity) memperlambat operasi. **Keamanan selalu soal keseimbangan, bukan maksimum.**
+> **Ketiganya sering saling bertentangan.** Enkripsi penuh (confidentiality) menyulitkan inspeksi keamanan; redundansi (availability) memperbesar permukaan serangan; kontrol ketat (integrity) memperlambat operasi. Keamanan selalu soal keseimbangan, bukan maksimum.
 
 ### Tambahan penting
 
@@ -75,7 +75,7 @@ THREAT memanfaatkan VULNERABILITY lewat EXPLOIT
 ```
 
 > [!TIP]
-> **"Accept" adalah keputusan yang sah** — asalkan **disadari, didokumentasikan, dan disetujui manajemen**. Yang berbahaya adalah risiko yang tidak diketahui, bukan risiko yang diterima secara sadar.
+> **"Accept" adalah keputusan yang sah**, asalkan disadari, didokumentasikan, dan disetujui manajemen. Yang berbahaya adalah risiko yang tidak diketahui, bukan risiko yang diterima secara sadar.
 
 ---
 
@@ -107,10 +107,10 @@ THREAT memanfaatkan VULNERABILITY lewat EXPLOIT
    └─────────────────────────────────────────────┘
 ```
 
-**Prinsipnya:** asumsikan setiap lapisan **akan** ditembus. Lapisan berikutnya harus tetap memberi perlindungan.
+**Prinsipnya:** asumsikan setiap lapisan akan ditembus. Lapisan berikutnya harus tetap memberi perlindungan.
 
 > [!WARNING]
-> **Kesalahan klasik: "kami punya firewall, jadi kami aman".** Firewall hanya melindungi perimeter. Sebagian besar serangan modern masuk lewat **email dan browser** — melewati firewall sebagai trafik yang tampak sah.
+> **Kesalahan klasik: "kami punya firewall, jadi kami aman".** Firewall hanya melindungi perimeter. Sebagian besar serangan modern masuk lewat email dan browser, melewati firewall sebagai trafik yang tampak sah.
 
 ### Prinsip lainnya
 
@@ -119,7 +119,7 @@ THREAT memanfaatkan VULNERABILITY lewat EXPLOIT
 | **Least Privilege** | Beri hak seminimal yang diperlukan | Admin tidak memakai akun domain admin untuk email |
 | **Separation of Duties** | Satu orang tidak boleh mengendalikan seluruh proses | Yang membuat perubahan ≠ yang menyetujui |
 | **Fail Secure** | Kalau gagal, gagal dalam keadaan aman | Firewall mati → tidak ada trafik lewat |
-| **Fail Open** | Kalau gagal, tetap berfungsi | ⚠️ Kadang perlu (sistem keselamatan), tetapi berisiko |
+| **Fail Open** | Kalau gagal, tetap berfungsi | Kadang perlu (sistem keselamatan), tetapi berisiko |
 | **Minimize Attack Surface** | Matikan yang tidak dipakai | Nonaktifkan port, layanan, protokol tidak terpakai |
 | **Zero Trust** | Jangan percaya siapa pun secara default | Verifikasi setiap permintaan |
 | **Security by Design** | Keamanan sejak awal, bukan ditambal | Ancam-modelkan sebelum membangun |
@@ -142,10 +142,10 @@ THREAT memanfaatkan VULNERABILITY lewat EXPLOIT
 | **Nation-state / APT** | Spionase, sabotase | **Sangat tinggi** | Infrastruktur kritis, pemerintah |
 
 > [!WARNING]
-> **Insider threat adalah yang paling sering diremehkan.** Mereka sudah punya akses, tahu di mana data berharga, dan tahu kontrol apa yang ada. Termasuk **kelalaian** (mengklik phishing, salah konfigurasi) — yang jauh lebih umum daripada niat jahat.
+> **Insider threat adalah yang paling sering diremehkan.** Mereka sudah punya akses, tahu di mana data berharga, dan tahu kontrol apa yang ada. Insider threat juga mencakup kelalaian (mengklik phishing, salah konfigurasi), yang jauh lebih umum daripada niat jahat.
 
 > [!TIP]
-> **Untuk sebagian besar organisasi, ancaman nyata adalah cybercriminal dengan ransomware dan insider yang lalai** — bukan APT. Rancang pertahanan sesuai ancaman yang realistis.
+> **Untuk sebagian besar organisasi, ancaman nyata adalah cybercriminal dengan ransomware dan insider yang lalai, bukan APT.** Rancang pertahanan sesuai ancaman yang realistis.
 
 ---
 
@@ -180,7 +180,7 @@ Manusia adalah lapisan yang paling sulit di-patch.
 ```
 
 > [!TIP]
-> **Budaya sangat penting.** Kalau karyawan takut dihukum karena mengklik phishing, mereka akan menyembunyikannya — dan Anda kehilangan waktu berharga untuk merespons.
+> **Budaya pelaporan ikut menentukan.** Kalau karyawan takut dihukum karena mengklik phishing, mereka akan menyembunyikannya, dan Anda kehilangan waktu berharga untuk merespons.
 
 ---
 
@@ -222,20 +222,20 @@ Keamanan siber tidak berarti kalau penyerang bisa masuk ke ruang server.
 ```
 
 > [!WARNING]
-> **Akses fisik = akses penuh.** Dengan akses fisik ke router/switch, penyerang bisa melakukan **password recovery** dalam hitungan menit — semua konfigurasi keamanan menjadi tidak berarti.
+> **Akses fisik = akses penuh.** Dengan akses fisik ke router/switch, penyerang bisa melakukan **password recovery** dalam hitungan menit, sehingga semua konfigurasi keamanan menjadi tidak berarti.
 
 ```
 # Cisco — matikan password recovery (⚠️ hati-hati!)
 R1(config)# no service password-recovery
 ```
 > [!WARNING]
-> Setelah ini, kalau Anda lupa password, satu-satunya jalan adalah **menghapus seluruh konfigurasi**. Pastikan Anda punya backup dan proses manajemen kredensial yang baik.
+> Setelah ini, kalau Anda lupa password, satu-satunya jalan adalah menghapus seluruh konfigurasi. Pastikan Anda punya backup dan proses manajemen kredensial yang baik.
 
 ---
 
 ## 7. Kill Chain dan MITRE ATT&CK
 
-Memahami **bagaimana** serangan berlangsung membantu menempatkan pertahanan di titik yang tepat.
+Memahami bagaimana serangan berlangsung membantu menempatkan pertahanan di titik yang tepat.
 
 ### Cyber Kill Chain (Lockheed Martin)
 
@@ -250,7 +250,7 @@ Memahami **bagaimana** serangan berlangsung membantu menempatkan pertahanan di t
 ```
 
 > [!TIP]
-> **Memutus satu tahap saja sudah menggagalkan serangan.** Ini alasan defense in depth bekerja — penyerang harus berhasil di **setiap** tahap; pembela cukup berhasil di **satu**.
+> **Memutus satu tahap saja sudah menggagalkan serangan.** Ini alasan defense in depth bekerja: penyerang harus berhasil di setiap tahap, sedangkan pembela cukup berhasil di satu.
 
 **Di mana kontrol jaringan berperan:**
 ```
@@ -345,10 +345,10 @@ Untuk bertahan dengan baik, Anda harus memahami cara berpikir penyerang.
 ```
 
 > [!WARNING]
-> **Perhatikan bahwa sebagian besar bukan serangan "canggih".** Mereka memanfaatkan kelalaian dasar: patch yang tertunda, MFA yang tidak dipakai, dan layanan yang tidak seharusnya terekspos.
+> **Sebagian besar jalan masuk itu bukan serangan "canggih".** Mereka memanfaatkan kelalaian dasar: patch yang tertunda, MFA yang tidak dipakai, dan layanan yang tidak seharusnya terekspos.
 
 > [!TIP]
-> **Konsekuensinya untuk network engineer:** pekerjaan keamanan Anda yang paling bernilai adalah hal-hal membosankan — patching, mematikan yang tidak dipakai, segmentasi, MFA, backup, dan monitoring. Bukan membeli produk keamanan termahal.
+> **Konsekuensinya untuk network engineer:** pekerjaan keamanan Anda yang paling bernilai adalah hal-hal membosankan seperti patching, mematikan yang tidak dipakai, segmentasi, MFA, backup, dan monitoring, bukan membeli produk keamanan termahal.
 
 ---
 
@@ -366,28 +366,28 @@ Untuk bertahan dengan baik, Anda harus memahami cara berpikir penyerang.
 | **IEC 62443** | Keamanan sistem industri (OT) | Pabrik, utilitas |
 
 > [!TIP]
-> **CIS Controls v8 adalah titik awal terbaik** untuk organisasi yang belum punya program keamanan — 18 kontrol yang diurutkan berdasarkan dampak, dengan panduan implementasi konkret.
+> **CIS Controls v8 adalah titik awal terbaik** untuk organisasi yang belum punya program keamanan: 18 kontrol yang diurutkan berdasarkan dampak, dengan panduan implementasi konkret.
 
 > [!WARNING]
-> **Kepatuhan ≠ keamanan.** Banyak organisasi yang "compliant" tetap diretas. Kepatuhan adalah **standar minimum**, bukan tujuan akhir.
+> **Kepatuhan ≠ keamanan.** Banyak organisasi yang "compliant" tetap diretas. Kepatuhan adalah standar minimum, bukan tujuan akhir.
 
 ---
 
 ## 11. Ringkasan
 
-- **CIA Triad**: Confidentiality, Integrity, Availability — ketiganya sering bertentangan; keamanan adalah keseimbangan.
+- **CIA Triad**: Confidentiality, Integrity, Availability. Ketiganya sering bertentangan, jadi keamanan adalah soal keseimbangan.
 - Kosakata: **vulnerability** (kelemahan) → **threat** (potensi bahaya) → **exploit** (cara) → **attack** (kejadian) → **risk** (kemungkinan × dampak) → **mitigation**.
 - Risiko ditangani dengan **mitigate, transfer, accept, atau avoid**. "Accept" sah asalkan disadari dan didokumentasikan.
 - **Defense in depth**: asumsikan setiap lapisan akan ditembus. **Least privilege**, **separation of duties**, **fail secure**, **minimize attack surface**, **KISS**.
 - **Kompleksitas adalah musuh keamanan.**
 - Threat actor: script kiddie, hacktivist, **cybercriminal**, **insider** (paling diremehkan), competitor, nation-state.
-- **Rekayasa sosial adalah vektor paling sukses** — mitigasi dengan pelatihan berkelanjutan, MFA tahan phishing, dan **budaya yang tidak menghukum pelaporan**.
+- **Rekayasa sosial adalah vektor paling sukses.** Mitigasinya: pelatihan berkelanjutan, MFA tahan phishing, dan budaya yang tidak menghukum pelaporan.
 - Program keamanan (CCNA 5.2): **user awareness**, **training**, **physical access control**.
-- **Akses fisik = akses penuh** — password recovery membuat semua konfigurasi tidak berarti.
+- **Akses fisik = akses penuh**: password recovery membuat semua konfigurasi tidak berarti.
 - **Kill chain**: memutus satu tahap menggagalkan serangan. **MITRE ATT&CK** untuk memetakan deteksi.
 - **Segmentasi adalah kontrol paling efektif melawan lateral movement.**
 - Jalan masuk tersering bukan serangan canggih, melainkan **patch tertunda, kredensial lemah tanpa MFA, dan layanan terekspos**.
-- **Kepatuhan ≠ keamanan** — ia standar minimum.
+- **Kepatuhan ≠ keamanan.** Kepatuhan adalah standar minimum.
 
 ---
 
@@ -406,34 +406,33 @@ Untuk bertahan dengan baik, Anda harus memahami cara berpikir penyerang.
 <summary>Jawaban</summary>
 
 1. Contoh terhubung: sebuah organisasi menjalankan server VPN dengan firmware yang belum di-patch.
-   - **Vulnerability**: kerentanan pada firmware VPN (mis. CVE tertentu yang memungkinkan bypass autentikasi) — ini **kelemahan** yang ada.
-   - **Threat**: kelompok ransomware yang aktif memindai internet mencari VPN rentan — ini **potensi bahaya** yang ada di luar sana.
-   - **Exploit**: kode publik yang memanfaatkan CVE itu untuk mendapat akses tanpa kredensial — ini **cara/alat** konkretnya.
-   - **Risk**: kemungkinan diserang (tinggi, karena VPN terekspos internet dan exploit tersedia publik) dikalikan dampaknya (sangat tinggi — akses ke seluruh jaringan internal) = **risiko kritis**.
+   - **Vulnerability**: kerentanan pada firmware VPN (mis. CVE tertentu yang memungkinkan bypass autentikasi). Ini **kelemahan** yang ada.
+   - **Threat**: kelompok ransomware yang aktif memindai internet mencari VPN rentan. Ini **potensi bahaya** yang ada di luar sana.
+   - **Exploit**: kode publik yang memanfaatkan CVE itu untuk mendapat akses tanpa kredensial. Ini **cara/alat** konkretnya.
+   - **Risk**: kemungkinan diserang (tinggi, karena VPN terekspos internet dan exploit tersedia publik) dikalikan dampaknya (sangat tinggi: akses ke seluruh jaringan internal) = **risiko kritis**.
    - **Mitigation**: patch firmware segera, batasi akses VPN dengan MFA, dan pantau log autentikasi.
 
-2. Karena firewall hanya melindungi **perimeter** — batas antara internal dan internet. Sementara itu: (a) sebagian besar serangan modern masuk lewat **email dan browser** sebagai trafik yang tampak sah dan diizinkan firewall; (b) firewall tidak melindungi dari **insider** atau perangkat yang sudah terinfeksi di dalam; (c) firewall tidak menghentikan **lateral movement** setelah penyerang masuk; (d) trafik **terenkripsi** (>95% web) tidak dapat diinspeksi tanpa TLS inspection; (e) kredensial yang dicuri menghasilkan login yang **sah** — tidak ada yang untuk diblokir.
+2. Karena firewall hanya melindungi **perimeter**, yaitu batas antara internal dan internet. Sementara itu: (a) sebagian besar serangan modern masuk lewat email dan browser sebagai trafik yang tampak sah dan diizinkan firewall; (b) firewall tidak melindungi dari insider atau perangkat yang sudah terinfeksi di dalam; (c) firewall tidak menghentikan lateral movement setelah penyerang masuk; (d) trafik terenkripsi (>95% web) tidak dapat diinspeksi tanpa TLS inspection; (e) kredensial yang dicuri menghasilkan login yang sah, jadi tidak ada yang bisa diblokir.
    Karena itu diperlukan **defense in depth**: email security, EDR di endpoint, segmentasi internal, MFA, monitoring, dan backup.
 
 3. **Mitigate** (kurangi dengan kontrol), **Transfer** (asuransi siber, outsourcing ke pihak yang menanggung), **Accept** (terima apa adanya), **Avoid** (hentikan aktivitasnya).
-   **"Accept" sah** ketika: biaya mitigasi jelas melebihi potensi kerugian; risikonya kecil dan dampaknya terbatas; atau tidak ada mitigasi yang praktis. Syaratnya: keputusan itu harus **disadari, dianalisis, didokumentasikan dalam risk register, dan disetujui oleh pihak yang berwenang menanggung konsekuensinya** (biasanya manajemen, bukan tim IT). Yang berbahaya adalah risiko yang **tidak diketahui** atau diabaikan diam-diam.
+   **"Accept" sah** ketika: biaya mitigasi jelas melebihi potensi kerugian; risikonya kecil dan dampaknya terbatas; atau tidak ada mitigasi yang praktis. Syaratnya: keputusan itu harus disadari, dianalisis, didokumentasikan dalam risk register, dan disetujui oleh pihak yang berwenang menanggung konsekuensinya (biasanya manajemen, bukan tim IT). Yang berbahaya adalah risiko yang tidak diketahui atau diabaikan diam-diam.
 
-4. Karena mereka **sudah melewati semua kontrol perimeter**: mereka punya akun yang sah, kredensial yang valid, dan akses fisik. Mereka juga **tahu di mana data berharga berada**, **tahu kontrol apa yang ada dan bagaimana menghindarinya**, dan aktivitas mereka **terlihat normal** bagi sistem monitoring.
-   Selain itu, kategori ini mencakup **kelalaian** — yang jauh lebih umum daripada niat jahat: mengklik phishing, salah mengonfigurasi firewall, mengunggah data ke cloud pribadi, atau membawa laptop yang tidak terenkripsi. Mitigasi: least privilege, separation of duties, monitoring perilaku (UEBA), DLP, rotasi tugas, dan proses offboarding yang ketat.
+4. Karena mereka **sudah melewati semua kontrol perimeter**: mereka punya akun yang sah, kredensial yang valid, dan akses fisik. Mereka juga tahu di mana data berharga berada, tahu kontrol apa yang ada dan bagaimana menghindarinya, dan aktivitas mereka terlihat normal bagi sistem monitoring.
+   Selain itu, kategori ini mencakup **kelalaian**, yang jauh lebih umum daripada niat jahat: mengklik phishing, salah mengonfigurasi firewall, mengunggah data ke cloud pribadi, atau membawa laptop yang tidak terenkripsi. Mitigasi: least privilege, separation of duties, monitoring perilaku (UEBA), DLP, rotasi tugas, dan proses offboarding yang ketat.
 
 5. Ransomware modern bekerja dengan: masuk ke satu host → mencuri kredensial → **bergerak menyamping** ke sebanyak mungkin sistem → mengenkripsi semuanya secara serentak.
-   **Segmentasi memutus langkah ketiga.** Dengan VLAN dan firewall antar-segmen: (a) host terinfeksi di jaringan pengguna **tidak bisa** menjangkau server produksi kecuali lewat port yang diizinkan secara eksplisit; (b) protokol yang biasa dipakai lateral movement (SMB 445, RDP 3389, WinRM) diblokir antar-segmen; (c) jaringan manajemen terpisah sehingga perangkat jaringan tidak dapat dicapai; (d) backup berada di segmen terisolasi sehingga tidak ikut terenkripsi.
+   **Segmentasi memutus langkah ketiga.** Dengan VLAN dan firewall antar-segmen: (a) host terinfeksi di jaringan pengguna tidak bisa menjangkau server produksi kecuali lewat port yang diizinkan secara eksplisit; (b) protokol yang biasa dipakai lateral movement (SMB 445, RDP 3389, WinRM) diblokir antar-segmen; (c) jaringan manajemen terpisah sehingga perangkat jaringan tidak dapat dicapai; (d) backup berada di segmen terisolasi sehingga tidak ikut terenkripsi.
    **Dampak nyata:** organisasi dengan segmentasi baik sering hanya kehilangan satu segmen dan pulih dari backup dalam hitungan jam; yang jaringannya datar kehilangan seluruh operasi selama berminggu-minggu.
 
-6. Karena **kepatuhan adalah standar minimum pada satu titik waktu, untuk ruang lingkup tertentu** — bukan jaminan keamanan menyeluruh. Beberapa alasan konkret: (a) **ruang lingkup terbatas** — PCI DSS hanya mencakup lingkungan data kartu (CDE); sistem lain di luar ruang lingkup bisa sangat rentan dan menjadi jalan masuk; (b) **audit adalah snapshot** — sistem yang patuh saat audit bisa berubah keesokan harinya; (c) **kontrol yang "ada" belum tentu **efektif** — firewall ada tetapi aturannya buruk, log dikumpulkan tetapi tidak pernah dibaca; (d) **checkbox mentality** — organisasi memenuhi huruf persyaratan tanpa memahami tujuannya; (e) kerangka apa pun tidak mencakup **semua** ancaman, terutama yang baru.
-   Kepatuhan berguna sebagai **lantai**, bukan langit-langit.
+6. Karena **kepatuhan adalah standar minimum pada satu titik waktu, untuk ruang lingkup tertentu**, bukan jaminan keamanan menyeluruh. Beberapa alasan konkret: (a) **ruang lingkup terbatas**: PCI DSS hanya mencakup lingkungan data kartu (CDE), sedangkan sistem lain di luar ruang lingkup bisa sangat rentan dan menjadi jalan masuk; (b) **audit adalah snapshot**: sistem yang patuh saat audit bisa berubah keesokan harinya; (c) **kontrol yang "ada" belum tentu efektif**: firewall ada tetapi aturannya buruk, log dikumpulkan tetapi tidak pernah dibaca; (d) **checkbox mentality**: organisasi memenuhi huruf persyaratan tanpa memahami tujuannya; (e) kerangka apa pun tidak mencakup semua ancaman, terutama yang baru.
 
 7. Sampaikan dengan data dan skenario, bukan perdebatan teknis:
-   (a) **Jelaskan apa yang firewall tidak bisa lakukan**: kredensial yang dicuri menghasilkan login yang **sah** — firewall melihat trafik yang diizinkan dan tidak punya alasan memblokirnya. Firewall tidak dapat membedakan karyawan asli dan penyerang yang memakai passwordnya.
-   (b) **Tunjukkan vektor nyata**: sebagian besar pelanggaran dimulai dari kredensial yang bocor atau phishing — bukan dari penyerang yang "menembus" firewall.
+   (a) **Jelaskan apa yang firewall tidak bisa lakukan**: kredensial yang dicuri menghasilkan login yang sah. Firewall melihat trafik yang diizinkan dan tidak punya alasan memblokirnya. Firewall tidak dapat membedakan karyawan asli dan penyerang yang memakai passwordnya.
+   (b) **Tunjukkan vektor nyata**: sebagian besar pelanggaran dimulai dari kredensial yang bocor atau phishing, bukan dari penyerang yang "menembus" firewall.
    (c) **Kuantifikasi**: berapa akun yang terekspos di kebocoran data publik (cek layanan seperti Have I Been Pwned untuk domain organisasi)? Berapa biaya downtime satu hari dibanding biaya lisensi MFA per tahun?
-   (d) **Lakukan simulasi phishing** dan tunjukkan tingkat klik yang sesungguhnya — data internal jauh lebih meyakinkan daripada statistik industri.
-   (e) **Kaitkan dengan kepatuhan dan asuransi** — banyak polis asuransi siber kini **mensyaratkan** MFA; tanpa itu klaim bisa ditolak.
+   (d) **Lakukan simulasi phishing** dan tunjukkan tingkat klik yang sesungguhnya. Data internal jauh lebih meyakinkan daripada statistik industri.
+   (e) **Kaitkan dengan kepatuhan dan asuransi**: banyak polis asuransi siber kini mensyaratkan MFA, dan tanpa itu klaim bisa ditolak.
    (f) **Tawarkan penerapan bertahap**: mulai dari akun admin dan akses jarak jauh (dampak tertinggi, biaya terendah), baru meluas.
 
 8. | Jalan masuk | Kontrol jaringan |
@@ -452,10 +451,10 @@ Untuk bertahan dengan baik, Anda harus memahami cara berpikir penyerang.
 ## 13. Sumber
 
 - NIST Cybersecurity Framework 2.0
-- NIST SP 800-53 Rev.5 — Security and Privacy Controls
+- NIST SP 800-53 Rev.5: Security and Privacy Controls
 - CIS Critical Security Controls v8
-- MITRE ATT&CK — https://attack.mitre.org
-- Lockheed Martin — *Cyber Kill Chain*
+- MITRE ATT&CK: https://attack.mitre.org
+- Lockheed Martin, *Cyber Kill Chain*
 - UU No. 27 Tahun 2022 tentang Perlindungan Data Pribadi (Indonesia)
 - Cisco CCNA 200-301 v1.1, topik 5.1 (threats, vulnerabilities, exploits, mitigation) dan 5.2 (security program elements)
 

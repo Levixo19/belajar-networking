@@ -1,18 +1,18 @@
 # Kurikulum Networking: Dari Nol Sampai Profesional
 
-Materi belajar jaringan komputer berbahasa Indonesia, disusun **berurutan tanpa lompatan**.
+Materi belajar jaringan komputer berbahasa Indonesia, disusun berurutan tanpa lompatan.
 Setiap modul hanya memakai konsep yang sudah dijelaskan di modul sebelumnya.
 
 Disusun dengan mengacu pada blueprint resmi:
 - **Cisco CCNA 200-301 v1.1** (6 domain, berlaku sampai 2 Feb 2027)
 - **CompTIA Network+ N10-009** (5 domain)
-- **MikroTik MTCNA/MTCRE** — RouterOS mendominasi pasar Indonesia
+- **MikroTik MTCNA/MTCRE**, karena RouterOS mendominasi pasar Indonesia
 - RFC IETF, standar IEEE 802, NIST SP 800-207
 - Materi profesional: otomasi, cloud, data center, SDN, observability
 
 ### Tiga platform, satu konsep
 
-Setiap modul menyertakan padanan perintah untuk **tiga platform** sekaligus:
+Setiap modul menyertakan padanan perintah untuk tiga platform sekaligus:
 
 | Platform | Kenapa |
 |---|---|
@@ -20,7 +20,7 @@ Setiap modul menyertakan padanan perintah untuk **tiga platform** sekaligus:
 | **MikroTik RouterOS** | Dominan di ISP kecil, RT/RW-Net, hotel, dan UKM Indonesia |
 | **Linux** | Dasar semua server, container, dan cloud |
 
-Memahami satu konsep di tiga platform membuat Anda **tidak terikat vendor** — dan itulah tanda engineer yang sesungguhnya.
+Memahami satu konsep di tiga platform membuat Anda tidak terikat pada satu vendor.
 
 ---
 
@@ -45,7 +45,7 @@ Memahami satu konsep di tiga platform membuat Anda **tidak terikat vendor** — 
 ## Cara Memakai Repositori Ini
 
 ### 1. Baca berurutan, jangan melompat
-Semua materi ada di **`materi/`**. Nomor folder = urutan belajar: `00-fondasi` → `18-karier-sertifikasi`.
+Semua materi ada di `materi/`. Nomor folder = urutan belajar: `00-fondasi` → `18-karier-sertifikasi`.
 Setiap berkas diberi nomor juga. Baca `materi/00-fondasi/01-*.md` dulu, sampai habis, baru lanjut.
 
 ### 2. Setiap modul punya struktur sama
@@ -63,18 +63,18 @@ Setiap berkas diberi nomor juga. Baca `materi/00-fondasi/01-*.md` dulu, sampai h
 | **Sumber** | RFC/dokumentasi resmi untuk pendalaman |
 
 ### 3. Jangan cuma membaca: praktikkan
-Mulai dari **`materi/lab/00-setup-lab.md`** setelah selesai `01-model-referensi`.
+Mulai dari `materi/lab/00-setup-lab.md` setelah selesai `01-model-referensi`.
 Semua lab bisa dijalankan gratis (Containerlab/GNS3/Packet Tracer/Linux namespace).
 
 ### 4. Ukur diri sendiri
 `materi/referensi/soal-latihan.md` berisi bank soal per tahap. Kerjakan sebelum lanjut tahap berikutnya.
-Target minimal **80% benar** sebelum naik tahap.
+Target minimal 80% benar sebelum naik tahap.
 
 ---
 
 ## Peta Jalan Lengkap
 
-Semua jalur di bawah relatif terhadap **`materi/`**.
+Semua jalur di bawah relatif terhadap `materi/`.
 
 ```
 TAHAP DASAR (Minggu 1–6) ─ tidak butuh pengetahuan apa pun sebelumnya
@@ -91,7 +91,7 @@ TAHAP MENENGAH (Minggu 7–16) ─ setara CCNA + Network+
 ├── 08-ipv6 .................... Alamat, SLAAC, NDP, transisi
 ├── 09-nat-acl-firewall ........ NAT/PAT, ACL, firewall, IDS/IPS
 ├── 10-wireless ................ RF, 802.11, WPA3, desain WLAN
-└── 11-wan-vpn ................. MPLS, SD-WAN, IPsec, WireGuard, QoS
+└── 11-wan-vpn ................. MPLS, SD-WAN, IPsec, WireGuard, QoS, satelit
 
 TAHAP LANJUT (Minggu 17–30) ─ setara CCNP + praktik industri
 ├── 12-keamanan ................ Serangan & mitigasi per layer, AAA, Zero Trust
@@ -130,29 +130,29 @@ PROYEK AKHIR (setelah semua modul + lab selesai)
 
 ## Proyek Akhir: Menguji Diri Sendiri
 
-Setelah seluruh modul dan lab selesai, kerjakan **`materi/20-proyek-akhir/`**. Isinya satu studi kasus
-berkelanjutan — **PT Bahari Nusantara Segar**, perusahaan ekspor hasil laut beku dengan 3 situs,
+Setelah seluruh modul dan lab selesai, kerjakan `materi/20-proyek-akhir/`. Isinya satu studi kasus
+berkelanjutan tentang **PT Bahari Nusantara Segar**, perusahaan ekspor hasil laut beku dengan 3 situs,
 20 titik pengumpulan di pesisir, pabrik bersuhu −25 °C, dan kewajiban merekam suhu tanpa putus.
 
 Yang membedakannya dari `materi/referensi/soal-latihan.md`: bank soal menguji hafalan per topik,
-proyek akhir menguji apakah Anda bisa **memakai semuanya sekaligus** pada masalah yang tidak
-memberi tahu jawabannya. Sembilan babak, dan **tiap babak bentuk kerjanya berbeda**:
+proyek akhir menguji apakah Anda bisa memakai semuanya sekaligus pada masalah yang tidak
+memberi tahu jawabannya. Ada sembilan babak, dan bentuk kerja tiap babak berbeda:
 
 | Babak | Bentuk kerja |
 |---|---|
-| 1 | Forensik — bedah konfigurasi warisan yang "katanya sudah jalan" |
-| 2 | Penjurian — nilai 3 proposal vendor, lalu rancang sendiri |
-| 3 | Teka-teki presisi — satu blok alamat sempit, dengan checksum verifikasi mandiri |
+| 1 | Forensik: bedah konfigurasi warisan yang "katanya sudah jalan" |
+| 2 | Penjurian: nilai 3 proposal vendor, lalu rancang sendiri |
+| 3 | Teka-teki presisi: satu blok alamat sempit, dengan checksum verifikasi mandiri |
 | 4 | Kerja tangan di lab + matriks uji terima PASS/FAIL (separuhnya uji negatif) |
 | 5 | Hitungan fisika RF & kapasitas penyimpanan |
-| 6 | Adversarial — sepuluh serangan, Anda yang bertahan |
+| 6 | Adversarial: sepuluh serangan, Anda yang bertahan |
 | 7 | Menulis kode yang benar-benar jalan (idempoten, teruji) |
 | 8 | Simulasi jaga malam bercabang, dikejar waktu, dengan keputusan bisnis |
-| 9 | Rapat direksi — anggaran dipotong 35%, jelaskan tanpa jargon |
+| 9 | Rapat direksi: anggaran dipotong 35%, jelaskan tanpa jargon |
 
 Ditutup sidang 40 pertanyaan + tantangan mengajar, dan penilaian 1230 poin lengkap dengan
 **peta perbaikan**: nilai rendah di babak tertentu menunjuk modul mana yang harus diulang.
-Hasil akhirnya satu repositori berisi 14 dokumen — sekaligus portofolio untuk wawancara kerja.
+Hasil akhirnya satu repositori berisi 14 dokumen, yang sekaligus menjadi portofolio untuk wawancara kerja.
 
 ---
 
@@ -164,7 +164,7 @@ Hasil akhirnya satu repositori berisi 14 dokumen — sekaligus portofolio untuk 
 | 2 jam/hari (14 jam/minggu) | ~6-7 bulan |
 | Full-time (40 jam/minggu) | ~3 bulan (intensif) |
 
-Angka ini termasuk waktu lab. **Tanpa lab, waktu belajar Anda terbuang** — teori jaringan tidak menempel tanpa tangan yang mengetik command.
+Angka ini termasuk waktu lab. Tanpa lab, waktu belajar Anda terbuang, karena teori jaringan tidak menempel tanpa tangan yang mengetik command.
 
 ---
 
@@ -180,11 +180,11 @@ Angka ini termasuk waktu lab. **Tanpa lab, waktu belajar Anda terbuang** — teo
 
 ## Untuk Siapa Materi Ini
 
-- **Pemula total** — belum pernah tahu apa itu IP address. Mulai dari `materi/00-fondasi/01`.
-- **Sudah paham dasar** — pakai `SILABUS.md` untuk cek celah pengetahuan, lompat ke bagian yang belum dikuasai (ini satu-satunya "lompatan" yang diizinkan: melewati apa yang sudah Anda kuasai, bukan melewati prasyarat).
-- **Sysadmin/DevOps** — jalur cepat: `01`, `04`, `05`, `06`, `13`, `16`.
-- **Persiapan CCNA** — `00`–`11` + `15` + lab. Peta ke blueprint ada di `materi/18-karier-sertifikasi/02-peta-ccna.md`.
-- **Persiapan MTCNA / kerja di ISP-RT/RW-Net** — `00`–`04`, `06`, `07.1`, `09`, lalu **seluruh `materi/19-mikrotik`**. Peta ke blueprint MTCNA ada di `materi/18-karier-sertifikasi/05-peta-mikrotik.md`.
+- **Pemula total**: belum pernah tahu apa itu IP address. Mulai dari `materi/00-fondasi/01`.
+- **Sudah paham dasar**: pakai `SILABUS.md` untuk cek celah pengetahuan, lompat ke bagian yang belum dikuasai (ini satu-satunya "lompatan" yang diizinkan: melewati apa yang sudah Anda kuasai, bukan melewati prasyarat).
+- **Sysadmin/DevOps**: jalur cepatnya `01`, `04`, `05`, `06`, `13`, `16`.
+- **Persiapan CCNA**: `00` sampai `11` + `15` + lab. Peta ke blueprint ada di `materi/18-karier-sertifikasi/02-peta-ccna.md`.
+- **Persiapan MTCNA / kerja di ISP-RT/RW-Net**: `00` sampai `04`, `06`, `07.1`, `09`, lalu seluruh `materi/19-mikrotik`. Peta ke blueprint MTCNA ada di `materi/18-karier-sertifikasi/05-peta-mikrotik.md`.
 
 ---
 
@@ -195,8 +195,12 @@ Angka ini termasuk waktu lab. **Tanpa lab, waktu belajar Anda terbuang** — teo
 - Command yang diawali `R1#` atau `SW1(config)#` = CLI Cisco IOS.
 - Command yang diawali `/ip address` atau `[admin@MikroTik] >` = CLI MikroTik RouterOS.
 - `PS>` = PowerShell Windows.
-- Blok `⚠️` = jebakan/kesalahan umum.
-- Blok `💡` = tip praktik lapangan.
+- Callout memakai sintaks alert GitHub dan di aplikasi tampil sebagai kotak berlabel:
+  - `> [!WARNING]` (label **Perhatian**) = jebakan/kesalahan umum.
+  - `> [!TIP]` (label **Tips**) = tip praktik lapangan.
+  - `> [!CAUTION]` (label **Hindari**) = praktik yang sebaiknya tidak dilakukan.
+  - `> [!NOTE]` (label **Catatan**) = keterangan tambahan, misalnya batas waktu Mode Ujian.
+  - `> [!IMPORTANT]` (label **Penting**) = hal yang wajib diingat.
 - `[RFC xxxx]` = rujukan standar resmi.
 
 ---
@@ -207,4 +211,4 @@ Angka ini termasuk waktu lab. **Tanpa lab, waktu belajar Anda terbuang** — teo
 👉 Buka: materi/00-fondasi/01-apa-itu-jaringan.md
 ```
 
-Atau jalankan aplikasi belajarnya — lihat `docs/menjalankan-aplikasi.md`.
+Atau jalankan aplikasi belajarnya; caranya ada di `docs/menjalankan-aplikasi.md`.

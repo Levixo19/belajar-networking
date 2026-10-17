@@ -82,7 +82,7 @@
 | RFC 4303 | ESP |
 | RFC 2865/2866 | RADIUS / Accounting |
 | RFC 8907 | TACACS+ |
-| RFC 9420 | (MLS) — konteks kripto modern |
+| RFC 9420 | MLS (konteks kripto modern) |
 
 ## Data Center & Overlay
 
@@ -159,6 +159,6 @@
 > **Cara membaca RFC:** mulai dari Abstract & Introduction; RFC "Requirements" (mis. 1122) & "Architecture" memberi gambaran besar. Kata kunci normatif: **MUST/SHOULD/MAY** (RFC 2119). Status "BCP" (Best Current Practice) & "STD" (Standard) paling matang.
 
 > [!WARNING]
-> Beberapa RFC lama digantikan (obsoleted) — mis. TCP RFC 793 → **9293**, HTTP RFC 2616 → **9110-9112**. Selalu cek "Obsoleted by" di datatracker untuk versi terkini.
+> Beberapa RFC lama sudah digantikan (obsoleted), mis. TCP RFC 793 → 9293, HTTP RFC 2616 → 9110-9112. Selalu cek "Obsoleted by" di datatracker untuk versi terkini.
 
 **Lihat juga:** bagian "Sumber" di tiap modul, `referensi/sumber-belajar.md`

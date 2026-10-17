@@ -1,9 +1,9 @@
 # 03.3 VLAN
 
 > **Prasyarat:** `03-data-link/02`
-> **Tujuan:** Anda bisa merancang, mengonfigurasi, dan mendiagnosis VLAN, trunk, dan inter-VLAN routing — termasuk memahami jebakan native VLAN dan VTP.
+> **Tujuan:** Anda bisa merancang, mengonfigurasi, dan mendiagnosis VLAN, trunk, dan inter-VLAN routing, termasuk memahami jebakan native VLAN dan VTP.
 
-VLAN adalah salah satu topik yang **paling sering ditanyakan** di pekerjaan dan ujian. Kuasai ini dengan baik.
+VLAN termasuk topik yang paling sering ditanyakan di pekerjaan dan ujian.
 
 ---
 
@@ -20,9 +20,9 @@ Kantor dengan 200 PC di 1 switch stack:
 - Tamu, server, dan CCTV berada di jaringan yang sama
 ```
 
-Solusi lama: **beli switch terpisah untuk setiap kelompok.** Mahal, tidak fleksibel, boros port.
+Solusi lama: beli switch terpisah untuk setiap kelompok. Cara ini mahal, tidak fleksibel, dan boros port.
 
-Solusi VLAN: **satu switch fisik, banyak jaringan logis.**
+Solusi VLAN: satu switch fisik, banyak jaringan logis.
 
 ```
         SWITCH FISIK TUNGGAL
@@ -45,15 +45,15 @@ Solusi VLAN: **satu switch fisik, banyak jaringan logis.**
 
 ### Manfaat VLAN
 
-1. **Isolasi broadcast** — broadcast VLAN 10 tidak sampai ke VLAN 20.
-2. **Keamanan** — pemisahan logis; trafik antar-VLAN bisa difilter di router/firewall.
-3. **Fleksibilitas** — perangkat bisa pindah lokasi fisik tanpa mengubah jaringan logisnya.
-4. **Manajemen** — kelompokkan berdasarkan fungsi/departemen, bukan lokasi.
-5. **Efisiensi biaya** — tidak perlu switch terpisah per kelompok.
-6. **QoS** — trafik suara bisa diberi prioritas terpisah.
+1. **Isolasi broadcast**: broadcast VLAN 10 tidak sampai ke VLAN 20.
+2. **Keamanan**: pemisahan logis; trafik antar-VLAN bisa difilter di router/firewall.
+3. **Fleksibilitas**: perangkat bisa pindah lokasi fisik tanpa mengubah jaringan logisnya.
+4. **Manajemen**: kelompokkan berdasarkan fungsi/departemen, bukan lokasi.
+5. **Efisiensi biaya**: tidak perlu switch terpisah per kelompok.
+6. **QoS**: trafik suara bisa diberi prioritas terpisah.
 
 > [!WARNING]
-> **Aturan penting:** satu VLAN = satu subnet IP. Ini bukan keharusan teknis mutlak, tetapi mencampur beberapa subnet dalam satu VLAN menciptakan kebingungan dan masalah routing. **Selalu petakan 1:1.**
+> **Satu VLAN = satu subnet IP.** Ini bukan keharusan teknis mutlak, tetapi mencampur beberapa subnet dalam satu VLAN menimbulkan kebingungan dan masalah routing. Selalu petakan 1:1.
 
 ---
 
@@ -63,7 +63,7 @@ Solusi VLAN: **satu switch fisik, banyak jaringan logis.**
 
 Port yang menjadi anggota **satu VLAN** dan menghubungkan **end device** (PC, printer, kamera).
 
-- Frame yang keluar dari access port **tidak punya VLAN tag** — end device tidak tahu apa-apa tentang VLAN.
+- Frame yang keluar dari access port **tidak punya VLAN tag**: end device tidak tahu apa-apa tentang VLAN.
 - Frame yang masuk diberi tag secara internal oleh switch.
 
 ```
@@ -110,7 +110,7 @@ SW1(config-if)# spanning-tree portfast
 SW1(config-if)# mls qos trust cos                ← percayai marking CoS dari telepon
 ```
 
-Telepon mengetahui VLAN suaranya lewat **CDP** atau **LLDP-MED**. Ini bukan trunk penuh — hanya dua VLAN dengan perlakuan khusus.
+Telepon mengetahui VLAN suaranya lewat **CDP** atau **LLDP-MED**. Port seperti ini hanya membawa dua VLAN dengan perlakuan khusus, bukan trunk penuh.
 
 ---
 
@@ -120,7 +120,7 @@ Standar IEEE untuk menandai frame dengan nomor VLAN.
 
 ### Struktur tag
 
-Tag 4 byte disisipkan **setelah MAC source**, sebelum EtherType asli:
+Tag 4 byte disisipkan setelah MAC source, sebelum EtherType asli:
 
 ```
 Frame tanpa tag:
@@ -137,7 +137,7 @@ Frame dengan tag 802.1Q:
                         (2 byte) (2 byte)
 ```
 
-**TPID** (*Tag Protocol Identifier*) = `0x8100` — menandai "ada tag VLAN di sini".
+**TPID** (*Tag Protocol Identifier*) = `0x8100`, penanda "ada tag VLAN di sini".
 
 **TCI** (*Tag Control Information*) = 16 bit:
 ```
@@ -154,7 +154,7 @@ Frame dengan tag 802.1Q:
 | **VID** (*VLAN Identifier*) | 12 | Nomor VLAN, 0-4095 |
 
 > [!WARNING]
-> **VID 12 bit → maksimum 4096 VLAN.** Inilah batasan mendasar yang mendorong lahirnya **VXLAN** (24 bit VNI = 16 juta segmen) untuk data center dan cloud multi-tenant (`16-datacenter-cloud-sdn/02`).
+> **VID 12 bit → maksimum 4096 VLAN.** Batas inilah yang mendorong lahirnya **VXLAN** (24 bit VNI = 16 juta segmen) untuk data center dan cloud multi-tenant (`16-datacenter-cloud-sdn/02`).
 
 Frame dengan tag menjadi **1522 byte** (dari 1518). Switch harus mendukung "baby giant".
 
@@ -167,7 +167,7 @@ Frame dengan tag menjadi **1522 byte** (dari 1518). Switch harus mendukung "baby
 | **2-1001** | Normal range | Disimpan di `vlan.dat`, didukung VTP v1/v2 |
 | 1002-1005 | Reserved | Token Ring & FDDI (warisan, tidak bisa dihapus) |
 | **1006-4094** | Extended range | Disimpan di running-config, butuh VTP transparent atau v3 |
-| 4095 | Reserved | — |
+| 4095 | Reserved | - |
 
 CCNA berfokus pada **normal range (1-1005)**.
 
@@ -175,7 +175,7 @@ CCNA berfokus pada **normal range (1-1005)**.
 
 ## 4. Default VLAN, Native VLAN, Management VLAN
 
-Tiga istilah yang sering tertukar. Pahami perbedaannya.
+Tiga istilah ini sering tertukar.
 
 | Istilah | Arti | Default |
 |---|---|---|
@@ -195,7 +195,7 @@ Di trunk:
 Kenapa ada native VLAN? Warisan dari masa ketika perangkat lama (hub, beberapa AP) tidak memahami tagging. Frame tanpa tag yang masuk trunk diasumsikan milik native VLAN.
 
 > [!WARNING]
-> **Native VLAN mismatch** — jika dua sisi trunk punya native VLAN berbeda:
+> **Native VLAN mismatch** terjadi jika dua sisi trunk punya native VLAN berbeda:
 ```
 SW1 trunk: native VLAN 1
 SW2 trunk: native VLAN 99
@@ -254,17 +254,17 @@ Matriks hasil:
 
 | | access | dynamic auto | dynamic desirable | trunk |
 |---|---|---|---|---|
-| **access** | access | access | access | ⚠️ salah |
+| **access** | access | access | access | salah |
 | **dynamic auto** | access | **access** | trunk | trunk |
 | **dynamic desirable** | access | trunk | trunk | trunk |
-| **trunk** | ⚠️ salah | trunk | trunk | trunk |
+| **trunk** | salah | trunk | trunk | trunk |
 
 > [!WARNING]
-> **Dua port `dynamic auto` menghasilkan ACCESS, bukan trunk** — karena tidak ada yang meminta. Ini jebakan lab yang sangat umum.
+> **Dua port `dynamic auto` menghasilkan ACCESS, bukan trunk**, karena tidak ada yang meminta. Ini jebakan lab yang sangat umum.
 
 ### DTP adalah risiko keamanan
 
-Penyerang yang mencolokkan laptop ke port `dynamic auto`/`desirable` bisa mengirim frame DTP dan **memaksa port menjadi trunk** — lalu mengakses semua VLAN (serangan *switch spoofing*).
+Penyerang yang mencolokkan laptop ke port `dynamic auto`/`desirable` bisa mengirim frame DTP dan memaksa port menjadi trunk, lalu mengakses semua VLAN (serangan *switch spoofing*).
 
 **Selalu matikan DTP:**
 ```
@@ -294,11 +294,11 @@ Trunking VLANs Enabled: 10,20,30
 
 ## 6. Inter-VLAN Routing
 
-VLAN memisahkan broadcast domain. Untuk berkomunikasi antar-VLAN, **wajib ada routing**.
+VLAN memisahkan broadcast domain. Untuk berkomunikasi antar-VLAN, wajib ada routing.
 
 ### Metode 1: Router dengan interface terpisah (legacy)
 
-Satu interface router per VLAN. Boros port, tidak scalable. Hanya untuk pemahaman historis.
+Satu interface router per VLAN. Cara ini boros port dan tidak scalable, jadi hanya berguna untuk pemahaman historis.
 
 ### Metode 2: Router-on-a-Stick (ROAS)
 
@@ -338,11 +338,11 @@ SW1(config-if)# switchport trunk native vlan 999
 ```
 
 > [!WARNING]
-> **Kelemahan ROAS:** semua trafik antar-VLAN harus naik ke router dan turun lagi lewat **satu link fisik yang sama** — link itu menjadi bottleneck. Untuk jaringan kecil masih baik; untuk jaringan besar gunakan metode 3.
+> **Kelemahan ROAS:** semua trafik antar-VLAN harus naik ke router dan turun lagi lewat satu link fisik yang sama, sehingga link itu menjadi bottleneck. Untuk jaringan kecil masih baik; untuk jaringan besar gunakan metode 3.
 
 ### Metode 3: Multilayer Switch dengan SVI (direkomendasikan)
 
-Switch layer 3 melakukan routing sendiri, di hardware (ASIC) — sangat cepat, tanpa bottleneck.
+Switch layer 3 melakukan routing sendiri di hardware (ASIC), sehingga cepat dan tanpa bottleneck.
 
 ```
 SW1(config)# ip routing                          ← WAJIB!
@@ -388,15 +388,15 @@ Protokol Cisco untuk menyinkronkan database VLAN antar-switch dalam satu **domai
 |---|---|---|---|
 | **Server** | Ya | Ya | Ya (`vlan.dat`) |
 | **Client** | Tidak | Ya | Tidak (v1/v2) |
-| **Transparent** | Ya (lokal saja) | ✅ Meneruskan (v2+) | Ya (running-config) |
-| **Off** (v3) | ✅ Lokal | Tidak | Ya |
+| **Transparent** | Ya (lokal saja) | Ya (v2+) | Ya (running-config) |
+| **Off** (v3) | Ya (lokal) | Tidak | Ya |
 
 ### Cara kerja & bahaya
 
-Setiap perubahan VLAN menaikkan **revision number**. Switch dengan revision number **lebih tinggi** akan menimpa database switch lain dalam domain yang sama.
+Setiap perubahan VLAN menaikkan **revision number**. Switch dengan revision number lebih tinggi akan menimpa database switch lain dalam domain yang sama.
 
 > [!WARNING]
-> **Skenario bencana yang benar-benar sering terjadi:**
+> **Skenario bencana yang sering terjadi:**
 ```
 1. Anda mengambil switch bekas dari lab (VTP domain sama, revision 150)
 2. Menghubungkannya ke jaringan produksi (revision 47)
@@ -433,7 +433,7 @@ SW1# show vtp password
 
 ### VTP Pruning
 
-Fitur yang mencegah trafik broadcast VLAN dikirim ke trunk yang tidak punya port aktif di VLAN itu. Menghemat bandwidth.
+Fitur ini mencegah trafik broadcast VLAN dikirim ke trunk yang tidak punya port aktif di VLAN itu, sehingga bandwidth lebih hemat.
 
 ```
 SW1(config)# vtp pruning
@@ -445,12 +445,12 @@ Alternatif manual yang lebih eksplisit dan aman: `switchport trunk allowed vlan`
 
 ## 8. Private VLAN (PVLAN)
 
-Memisahkan port **di dalam satu VLAN** — berguna untuk hosting, hotel, dan DMZ di mana banyak perangkat harus mencapai gateway tetapi tidak boleh saling menjangkau.
+PVLAN memisahkan port di dalam satu VLAN. Fitur ini berguna untuk hosting, hotel, dan DMZ, tempat banyak perangkat harus mencapai gateway tetapi tidak boleh saling menjangkau.
 
 | Jenis port | Bisa bicara dengan |
 |---|---|
 | **Promiscuous** | Semua port (biasanya gateway/router) |
-| **Isolated** | **Hanya** promiscuous — tidak dengan isolated lain |
+| **Isolated** | Hanya promiscuous, tidak dengan isolated lain |
 | **Community** | Promiscuous + community lain di grup yang sama |
 
 ```
@@ -512,13 +512,13 @@ SW1# show vtp status
 
 ### Membaca `show interfaces trunk` dengan benar
 
-Empat blok output punya arti berbeda:
-1. **Vlans allowed on trunk** — yang dikonfigurasi dengan `switchport trunk allowed vlan`.
-2. **Vlans allowed and active** — yang ada di allowed **dan** benar-benar ada di database VLAN switch ini.
-3. **Vlans in forwarding state and not pruned** — yang benar-benar melewatkan trafik saat ini (setelah STP dan pruning).
+Di bawah baris status trunk (mode, enkapsulasi, native VLAN), ada tiga blok daftar VLAN yang artinya berbeda:
+1. **Vlans allowed on trunk**: yang dikonfigurasi dengan `switchport trunk allowed vlan`.
+2. **Vlans allowed and active**: yang ada di allowed dan juga ada di database VLAN switch ini.
+3. **Vlans in forwarding state and not pruned**: yang saat ini melewatkan trafik (setelah STP dan pruning).
 
 > [!WARNING]
-> Kalau VLAN muncul di blok 1 tetapi tidak di blok 2 → VLAN itu **belum dibuat** di switch ini. Kalau ada di blok 2 tetapi tidak di blok 3 → **STP memblok** atau **pruning** memangkasnya.
+> Kalau VLAN muncul di blok 1 tetapi tidak di blok 2 → VLAN itu belum dibuat di switch ini. Kalau ada di blok 2 tetapi tidak di blok 3 → STP memblok atau pruning memangkasnya.
 
 ### Alur troubleshooting VLAN
 
@@ -612,20 +612,20 @@ VLAN 2xy : Lantai 2, kelompok y
 SW1(config-if)# switchport trunk allowed vlan add 40
 SW1(config-if)# switchport trunk allowed vlan remove 30
 ```
-Menjalankan `switchport trunk allowed vlan 40` saja akan **menghapus** VLAN 10, 20, 30 dari trunk — outage instan.
+Menjalankan `switchport trunk allowed vlan 40` saja akan menghapus VLAN 10, 20, 30 dari trunk, dan outage terjadi seketika.
 
 > [!WARNING]
-> **8. Mengira VLAN memberi keamanan sempurna.** VLAN adalah pemisahan **logis**, bukan enkripsi. Trafik antar-VLAN harus difilter di router/firewall, dan serangan VLAN hopping tetap mungkin jika konfigurasi lemah.
+> **8. Mengira VLAN memberi keamanan sempurna.** VLAN adalah pemisahan logis, bukan enkripsi. Trafik antar-VLAN harus difilter di router/firewall, dan serangan VLAN hopping tetap mungkin jika konfigurasi lemah.
 
 ---
 
 ## MikroTik RouterOS
 
-VLAN di RouterOS bisa dikonfigurasi dengan **dua pendekatan**. Memilih yang salah adalah kesalahan pemula paling umum.
+VLAN di RouterOS bisa dikonfigurasi dengan dua pendekatan. Memilih yang salah adalah kesalahan pemula paling umum.
 
 ### Pendekatan 1: Bridge VLAN Filtering (DIREKOMENDASIKAN)
 
-Ini cara modern yang setara dengan switch sungguhan dan **mendukung hardware offload**.
+Ini cara modern yang setara dengan switch sungguhan dan mendukung hardware offload.
 
 ```
 # 1. Buat bridge dengan VLAN filtering (aktifkan BELAKANGAN!)
@@ -657,10 +657,10 @@ Ini cara modern yang setara dengan switch sungguhan dan **mendukung hardware off
 ```
 
 > [!WARNING]
-> **Aktifkan `vlan-filtering=yes` PALING AKHIR.** Kalau diaktifkan sebelum keanggotaan VLAN dan pvid dikonfigurasi, **Anda akan langsung terputus** dari perangkat. Selalu gunakan **Safe Mode (Ctrl+X)**.
+> **Aktifkan `vlan-filtering=yes` PALING AKHIR.** Kalau diaktifkan sebelum keanggotaan VLAN dan pvid dikonfigurasi, Anda akan langsung terputus dari perangkat. Selalu gunakan **Safe Mode (Ctrl+X)**.
 
 > [!WARNING]
-> **`bridge-LAN` harus dimasukkan sebagai `tagged`** pada setiap VLAN yang perlu dirutekan router. Kalau lupa, interface VLAN tidak akan menerima trafik — gejala klasik "VLAN dibuat tapi tidak bisa ping gateway".
+> **`bridge-LAN` harus dimasukkan sebagai `tagged`** pada setiap VLAN yang perlu dirutekan router. Kalau lupa, interface VLAN tidak akan menerima trafik. Inilah gejala klasik "VLAN dibuat tapi tidak bisa ping gateway".
 
 ### Pendekatan 2: VLAN Interface Langsung (untuk router, bukan switch)
 
@@ -675,7 +675,7 @@ Ini cara modern yang setara dengan switch sungguhan dan **mendukung hardware off
 Ini setara **router-on-a-stick** di Cisco. Cocok kalau MikroTik hanya bertindak sebagai router dan switching dilakukan perangkat lain.
 
 > [!WARNING]
-> **Jangan mencampur kedua pendekatan pada port yang sama** — hasilnya perilaku yang tidak terduga.
+> **Jangan mencampur kedua pendekatan pada port yang sama.** Hasilnya perilaku yang tidak terduga.
 
 ### Verifikasi
 
@@ -702,10 +702,10 @@ Ini setara **router-on-a-stick** di Cisco. Cocok kalau MikroTik hanya bertindak 
 | `show interfaces trunk` | `/interface bridge vlan print detail` |
 
 > [!TIP]
-> **Konsep `pvid` menggantikan native VLAN.** Frame tanpa tag yang masuk port diberi VLAN sesuai `pvid`; frame keluar dengan VLAN = `pvid` dikirim **tanpa tag** (kalau port terdaftar `untagged`).
+> **Konsep `pvid` menggantikan native VLAN.** Frame tanpa tag yang masuk port diberi VLAN sesuai `pvid`; frame keluar dengan VLAN = `pvid` dikirim tanpa tag (kalau port terdaftar `untagged`).
 
 > [!WARNING]
-> **VLAN filtering bisa mematikan hardware offload** pada beberapa model lama. Verifikasi dengan `/interface bridge port print` — cari flag `H`. Pada CRS3xx dan RB modern, VLAN filtering tetap di-offload.
+> **VLAN filtering bisa mematikan hardware offload** pada beberapa model lama. Verifikasi dengan `/interface bridge port print` dan cari flag `H`. Pada CRS3xx dan RB modern, VLAN filtering tetap di-offload.
 
 ---
 
@@ -719,8 +719,8 @@ Ini setara **router-on-a-stick** di Cisco. Cocok kalau MikroTik hanya bertindak 
 - **Native VLAN harus cocok di kedua sisi trunk**, dan sebaiknya bukan VLAN 1 dan tidak membawa trafik pengguna.
 - **Matikan DTP** (`switchport nonegotiate`) untuk mencegah VLAN hopping.
 - Inter-VLAN routing: ROAS (subinterface, ada bottleneck) atau **SVI di multilayer switch** (wire-speed, standar enterprise). Jangan lupa `ip routing`.
-- **VTP berbahaya** — revision number tinggi bisa menimpa database produksi. Reset switch bekas sebelum dihubungkan; pertimbangkan mode transparent/off.
-- `switchport trunk allowed vlan X` **menimpa**; gunakan `add`/`remove`.
+- **VTP berbahaya**: revision number tinggi bisa menimpa database produksi. Reset switch bekas sebelum dihubungkan; pertimbangkan mode transparent/off.
+- `switchport trunk allowed vlan X` menimpa daftar lama; gunakan `add`/`remove`.
 
 ---
 
@@ -739,17 +739,17 @@ Ini setara **router-on-a-stick** di Cisco. Cocok kalau MikroTik hanya bertindak 
 
 1. **4096** (2¹² karena VID adalah 12 bit); praktisnya 4094 yang bisa dipakai (0 dan 4095 reserved). Di data center batas ini diatasi dengan **VXLAN** yang memakai VNI 24 bit → 16.777.216 segmen, cukup untuk multi-tenancy skala cloud.
 
-2. Frame VLAN 1 dari SW1 dikirim **tanpa tag** (karena VLAN 1 adalah native-nya). SW2 menerima frame tanpa tag dan memasukkannya ke **VLAN 99** (native-nya). Akibatnya **trafik VLAN 1 bocor ke VLAN 99** — pelanggaran isolasi. CDP akan melaporkan `NATIVE_VLAN_MISMATCH`. Perbaikan: samakan native VLAN di kedua sisi.
+2. Frame VLAN 1 dari SW1 dikirim tanpa tag (karena VLAN 1 adalah native-nya). SW2 menerima frame tanpa tag dan memasukkannya ke VLAN 99 (native-nya). Akibatnya trafik VLAN 1 bocor ke VLAN 99 dan isolasi VLAN dilanggar. CDP akan melaporkan `NATIVE_VLAN_MISMATCH`. Perbaikan: samakan native VLAN di kedua sisi.
 
-3. **Tidak.** Kedua port akan menjadi **access port** di VLAN default. `dynamic auto` berarti "saya mau jadi trunk kalau diminta" — tetapi tidak ada yang meminta karena keduanya pasif. Minimal satu sisi harus `dynamic desirable` atau `trunk`.
+3. **Tidak.** Kedua port akan menjadi **access port** di VLAN default. `dynamic auto` berarti "saya mau jadi trunk kalau diminta", tetapi tidak ada yang meminta karena keduanya pasif. Minimal satu sisi harus `dynamic desirable` atau `trunk`.
 
-4. Perintah itu **menimpa** daftar sebelumnya — trunk sekarang hanya mengizinkan VLAN 50, sehingga VLAN 10, 20, 30 **langsung terputus** (outage). Seharusnya: `switchport trunk allowed vlan add 50`.
+4. Perintah itu menimpa daftar sebelumnya: trunk sekarang hanya mengizinkan VLAN 50, sehingga VLAN 10, 20, 30 langsung terputus (outage). Seharusnya: `switchport trunk allowed vlan add 50`.
 
-5. (a) `show vlan brief` — apakah port PC benar-benar di VLAN 10? (b) `show interfaces status` — apakah port up? (c) `show ip interface brief | include Vlan10` — apakah SVI up/up? Jika down, apakah ada port aktif di VLAN 10 dan VLAN-nya ada di database? (d) `show running-config | include ip routing` — apakah routing diaktifkan (untuk komunikasi antar-VLAN; untuk ping ke SVI sendiri tidak wajib). (e) Cek konfigurasi IP di PC: alamat, mask, dan gateway benar? (f) Cek ACL pada SVI dan firewall di PC.
+5. (a) `show vlan brief`: apakah port PC memang di VLAN 10? (b) `show interfaces status`: apakah port up? (c) `show ip interface brief | include Vlan10`: apakah SVI up/up? Jika down, apakah ada port aktif di VLAN 10 dan VLAN-nya ada di database? (d) `show running-config | include ip routing`: apakah routing diaktifkan (untuk komunikasi antar-VLAN; untuk ping ke SVI sendiri tidak wajib). (e) Cek konfigurasi IP di PC: alamat, mask, dan gateway benar? (f) Cek ACL pada SVI dan firewall di PC.
 
 6. Beberapa kemungkinan: (a) VLAN itu **belum dibuat** di switch ini, sehingga tidak "active"; (b) **STP memblok** port trunk untuk VLAN tersebut (ada jalur redundan); (c) **VTP pruning** memangkasnya karena tidak ada port aktif di VLAN itu pada sisi seberang; (d) sisi lain trunk tidak mengizinkan VLAN tersebut.
 
-7. (a) Nyalakan switch **terisolasi** (tidak terhubung ke jaringan produksi). (b) `show vtp status` — periksa domain dan **revision number**. (c) Reset database VLAN: `vtp mode transparent` (revision jadi 0), atau hapus `vlan.dat` (`delete flash:vlan.dat`) lalu `reload`. (d) Hapus konfigurasi lama (`write erase` + `reload`) dan terapkan konfigurasi baru yang sesuai standar. (e) Periksa versi IOS dan lakukan upgrade jika perlu. (f) Verifikasi konfigurasi trunk/native VLAN sebelum menyambungkan uplink.
+7. (a) Nyalakan switch **terisolasi** (tidak terhubung ke jaringan produksi). (b) `show vtp status`: periksa domain dan revision number. (c) Reset database VLAN: `vtp mode transparent` (revision jadi 0), atau hapus `vlan.dat` (`delete flash:vlan.dat`) lalu `reload`. (d) Hapus konfigurasi lama (`write erase` + `reload`) dan terapkan konfigurasi baru yang sesuai standar. (e) Periksa versi IOS dan lakukan upgrade jika perlu. (f) Verifikasi konfigurasi trunk/native VLAN sebelum menyambungkan uplink.
 
 </details>
 
@@ -757,10 +757,10 @@ Ini setara **router-on-a-stick** di Cisco. Cocok kalau MikroTik hanya bertindak 
 
 ## 14. Sumber
 
-- IEEE 802.1Q-2022 — Virtual Bridged Local Area Networks
+- IEEE 802.1Q-2022: Virtual Bridged Local Area Networks
 - Cisco CCNA 200-301 v1.1, topik 2.1 (VLAN normal range, access port data & voice, default VLAN, InterVLAN connectivity) dan 2.2 (trunk, 802.1Q, native VLAN)
 - Cisco, *VLAN Security White Paper*
-- RFC 7348 — VXLAN (solusi untuk batas 4096 VLAN)
+- RFC 7348: VXLAN (solusi untuk batas 4096 VLAN)
 
 ---
 

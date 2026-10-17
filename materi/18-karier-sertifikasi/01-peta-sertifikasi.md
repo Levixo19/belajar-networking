@@ -7,20 +7,20 @@
 
 ## 1. Kenapa Sertifikasi?
 
-Sertifikasi **bukan** pengganti pemahaman, tetapi berguna untuk:
+Sertifikasi tidak menggantikan pemahaman, tetapi berguna untuk:
 - **Validasi** pengetahuan secara terstruktur & diakui industri.
-- **Kurikulum** — memberi peta belajar yang jelas.
-- **Pintu masuk** — banyak lowongan mensyaratkan/menyukai sertifikasi tertentu.
-- **Kredibilitas** — terutama di awal karier atau saat pindah bidang.
+- **Kurikulum**: memberi peta belajar yang jelas.
+- **Pintu masuk**: banyak lowongan mensyaratkan/menyukai sertifikasi tertentu.
+- **Kredibilitas**: terutama di awal karier atau saat pindah bidang.
 
 > [!WARNING]
-> **Sertifikasi tanpa pemahaman praktik = kertas kosong.** Pemberi kerja menguji apakah Anda benar-benar bisa. Kurikulum ini mengajarkan **pemahaman**; sertifikasi memvalidasinya. Kombinasikan dengan **lab praktik** (`lab/`) dan **portofolio** (`18.4`).
+> **Sertifikasi tanpa pemahaman praktik = kertas kosong.** Pemberi kerja menguji apakah Anda benar-benar bisa. Kurikulum ini mengajarkan pemahaman; sertifikasi memvalidasinya. Kombinasikan dengan lab praktik (`lab/`) dan portofolio (`18.4`).
 
 ---
 
 ## 2. Sertifikasi Vendor-Netral (Fondasi)
 
-Bagus untuk pemula — mengajarkan konsep tanpa terikat satu vendor:
+Bagus untuk pemula karena mengajarkan konsep tanpa terikat satu vendor:
 
 | Sertifikasi | Penerbit | Fokus | Level |
 |---|---|---|---|
@@ -29,7 +29,7 @@ Bagus untuk pemula — mengajarkan konsep tanpa terikat satu vendor:
 | **CompTIA A+** (220-1201 & 220-1202) | CompTIA | IT dasar (hardware/OS) | Sangat pemula |
 
 > [!TIP]
-> **Network+ (N10-009)** adalah titik awal yang bagus jika Anda benar-benar baru — vendor-netral, konsep murni. Setelahnya, spesialisasi ke vendor (Cisco/lainnya). Peta detail Network+ ada di `18.3`.
+> **Network+ (N10-009)** adalah titik awal yang bagus jika Anda benar-benar baru: vendor-netral, konsep murni. Setelahnya, spesialisasi ke vendor (Cisco/lainnya). Peta detail Network+ ada di `18.3`.
 
 ---
 
@@ -49,7 +49,7 @@ Architect : CCAr — level tertinggi (desain, sangat langka)
 **Track CCNP/CCIE** (pilih spesialisasi): **Enterprise, Security, Data Center, Service Provider, Collaboration, Wireless, Automation**. Per 2026, jalur DevNet berganti nama menjadi **CCNA/CCNP/CCIE Automation**, CyberOps Associate menjadi **CCNA Cybersecurity**, dan wireless kembali menjadi jalur CCNP tersendiri.
 
 > [!TIP]
-> **CCNA adalah fondasi de-facto industri jaringan** — kurikulum ini dipetakan langsung ke CCNA 200-301 v1.1 (lihat `18.2`). Setelah CCNA, pilih track CCNP sesuai minat (Enterprise umum, Security untuk keamanan, DevNet untuk otomasi).
+> **CCNA adalah fondasi de-facto industri jaringan.** Kurikulum ini dipetakan langsung ke CCNA 200-301 v1.1 (lihat `18.2`). Setelah CCNA, pilih track CCNP sesuai minat (Enterprise umum, Security untuk keamanan, Automation untuk otomasi, dulu bernama DevNet).
 
 ---
 
@@ -96,7 +96,7 @@ ISP/NOC Engineer                  → operator, BGP, MPLS (7, 11)
 **Progresi umum:** Technician → Admin → Engineer → Senior/Specialist → Architect / Lead. Spesialisasi (keamanan, cloud, otomasi, wireless, SP) bercabang dari Engineer.
 
 > [!TIP]
-> **NetDevOps/Automation Engineer** adalah jalur dengan permintaan tinggi & berkembang — menggabungkan jaringan (kurikulum ini) dengan pemrograman/otomasi (`15`). Skill langka & bernilai tinggi.
+> **NetDevOps/Automation Engineer** adalah jalur dengan permintaan tinggi & berkembang, yang menggabungkan jaringan (kurikulum ini) dengan pemrograman/otomasi (`15`). Kombinasi skill ini langka & bernilai tinggi.
 
 ---
 
@@ -115,20 +115,20 @@ Sudah berpengalaman, ingin naik     → CCNP track pilihan
 > **Nama dan kode sertifikasi berubah cepat.** Sepanjang 2025-2026 banyak yang berganti: DevNet menjadi CCNA/CCNP Automation, CyberOps Associate menjadi CCNA Cybersecurity, CASP+ menjadi SecurityX, CySA+ ke CS0-004, A+ ke 220-1201/1202, PCNSE digantikan sertifikasi berbasis peran, AWS SysOps menjadi CloudOps Engineer (SOA-C03), dan ITIL kini Version 5. Selalu cek halaman resmi penerbit sebelum mendaftar ujian. Rincian per profesi, lengkap dengan sumbernya, ada di Tahap 21 (`21-ekosistem-profesi/01-peta-ekosistem`).
 
 > [!WARNING]
-> **Jangan mengejar terlalu banyak sertifikasi sekaligus.** Lebih baik satu sertifikasi dengan pemahaman & praktik solid daripada banyak "kertas" dangkal. Untuk kebanyakan orang: **CCNA + portofolio praktik** adalah kombinasi awal terkuat.
+> **Jangan mengejar terlalu banyak sertifikasi sekaligus.** Lebih baik satu sertifikasi dengan pemahaman & praktik solid daripada banyak "kertas" dangkal. Untuk kebanyakan orang, CCNA + portofolio praktik adalah kombinasi awal terkuat.
 
 ---
 
 ## 8. Ringkasan
 
-- Sertifikasi memvalidasi & memandu, tetapi **bukan pengganti pemahaman + praktik + portofolio**.
+- Sertifikasi memvalidasi & memandu, tetapi tidak menggantikan pemahaman + praktik + portofolio.
 - **Vendor-netral fondasi**: CompTIA Network+ (N10-009), Security+.
-- **Cisco** (paling berpengaruh): CCST → **CCNA** ★ → CCNP (track) → CCIE → CCAr.
+- **Cisco** (paling berpengaruh): CCST → **CCNA** → CCNP (track) → CCIE → CCAr.
 - **Vendor lain**: MikroTik (MTCNA, populer di Indonesia), Juniper, Aruba, Fortinet, Palo Alto, cloud.
 - **Spesialisasi**: keamanan (Security+/OSCP/CISSP), wireless (CWNA), otomasi (CCNA/CCNP Automation), cloud.
 - **Peran**: Technician → Admin → Engineer → Architect; cabang: security, NetDevOps, cloud, wireless, ISP/NOC.
 - **NetDevOps** = permintaan tinggi (jaringan + otomasi).
-- Rekomendasi umum: **CCNA + portofolio praktik**; ISP Indonesia: **MTCNA + CCNA**.
+- Rekomendasi umum: CCNA + portofolio praktik; ISP Indonesia: MTCNA + CCNA.
 
 ---
 
@@ -143,15 +143,15 @@ Sudah berpengalaman, ingin naik     → CCNP track pilihan
 <details>
 <summary>Jawaban</summary>
 
-1. Karena **pemberi kerja pada akhirnya menguji kemampuan nyata**, bukan sekadar kepemilikan sertifikat. Sertifikasi yang diperoleh dengan menghafal tanpa memahami atau mempraktikkan tidak akan bertahan di wawancara teknis (yang menanyakan skenario dan "kenapa") maupun di pekerjaan nyata (yang menuntut troubleshooting dan pengambilan keputusan di bawah tekanan). Sertifikasi paling bernilai ketika ia **memvalidasi pemahaman yang benar-benar ada** — karena itu kombinasi ideal adalah belajar konsep secara mendalam (seperti kurikulum ini), mempraktikkannya di lab, membangun portofolio, **lalu** memvalidasinya dengan sertifikasi. "Kertas" tanpa isi cepat terbongkar.
+1. Karena pemberi kerja pada akhirnya menguji kemampuan nyata, dan memiliki sertifikat saja tidak membuktikannya. Sertifikasi yang diperoleh dengan menghafal tanpa memahami atau mempraktikkan tidak akan bertahan di wawancara teknis (yang menanyakan skenario dan "kenapa") maupun di pekerjaan nyata (yang menuntut troubleshooting dan pengambilan keputusan di bawah tekanan). Sertifikasi paling bernilai ketika ia memvalidasi pemahaman yang benar-benar ada. Karena itu kombinasi idealnya adalah belajar konsep secara mendalam (seperti kurikulum ini), mempraktikkannya di lab, membangun portofolio, lalu memvalidasinya dengan sertifikasi. "Kertas" tanpa isi cepat terbongkar.
 
-2. Cisco: **CCST** (Cisco Certified Support Technician — entry) → **CCNA** (Associate, 200-301) → **CCNP** (Professional — Core + Concentration exam, per track) → **CCIE** (Expert — dengan ujian lab praktik 8 jam) → **CCAr** (Architect — level tertinggi, fokus desain arsitektur, sangat langka).
+2. Cisco: **CCST** (Cisco Certified Support Technician, entry) → **CCNA** (Associate, 200-301) → **CCNP** (Professional: Core + Concentration exam, per track) → **CCIE** (Expert, dengan ujian lab praktik 8 jam) → **CCAr** (Architect: level tertinggi, fokus desain arsitektur, sangat langka).
 
-3. **MTCNA (MikroTik Certified Network Associate) + CCNA** masuk akal. **MTCNA** karena **MikroTik sangat dominan di ISP kecil-menengah dan RT-RW-Net di Indonesia** — perangkat MikroTik (RouterOS) murah, kuat, dan banyak dipakai untuk routing, firewall, hotspot, bandwidth management, dan PPPoE di lingkungan ISP lokal; sertifikasi MTCNA memvalidasi kemampuan langsung pada perangkat yang akan dipakai sehari-hari. **CCNA** melengkapi dengan **fondasi konsep yang vendor-agnostik dan diakui luas** (routing, switching, subnetting, keamanan) yang membuat pemahaman Anda transferable dan kredibel di luar ekosistem MikroTik — juga membuka pintu ke pekerjaan enterprise. Bersama, keduanya memberi kombinasi "konsep kuat (CCNA) + keterampilan alat yang laku di pasar lokal (MTCNA)". Lihat `18.5` untuk peta MikroTik.
+3. **MTCNA (MikroTik Certified Network Associate) + CCNA** masuk akal. MTCNA, karena MikroTik sangat dominan di ISP kecil-menengah dan RT-RW-Net di Indonesia. Perangkat MikroTik (RouterOS) murah, kuat, dan banyak dipakai untuk routing, firewall, hotspot, bandwidth management, dan PPPoE di lingkungan ISP lokal; sertifikasi MTCNA memvalidasi kemampuan langsung pada perangkat yang akan dipakai sehari-hari. CCNA melengkapinya dengan fondasi konsep yang vendor-agnostik dan diakui luas (routing, switching, subnetting, keamanan), sehingga pemahaman Anda transferable dan kredibel di luar ekosistem MikroTik. CCNA juga membuka pintu ke pekerjaan enterprise. Bersama, keduanya memberi kombinasi "konsep kuat (CCNA) + keterampilan alat yang laku di pasar lokal (MTCNA)". Lihat `18.5` untuk peta MikroTik.
 
-4. **NetDevOps** (atau Network Automation Engineering) adalah peran yang **menggabungkan keahlian jaringan dengan praktik pengembangan software/DevOps** — otomasi konfigurasi (Ansible), Infrastructure as Code (Terraform), skrip Python (Netmiko/NAPALM/Nornir), CI/CD untuk jaringan, source of truth (NetBox), dan API/telemetri. **Permintaannya tinggi** karena: (a) jaringan modern terlalu besar dan berubah terlalu cepat untuk dikelola manual per-perangkat, sehingga otomasi menjadi kebutuhan; (b) ini menggabungkan **dua keahlian yang jarang dimiliki satu orang** (jaringan mendalam + pemrograman), membuat kandidat yang menguasainya langka dan bernilai; (c) tren industri (SDN, controller-based, cloud) semuanya mengarah ke jaringan yang programmable. Karena itu peran ini menawarkan prospek dan kompensasi yang menarik. Kurikulum ini mempersiapkannya lewat Tahap 15 (otomasi).
+4. **NetDevOps** (atau Network Automation Engineering) adalah peran yang menggabungkan keahlian jaringan dengan praktik pengembangan software/DevOps: otomasi konfigurasi (Ansible), Infrastructure as Code (Terraform), skrip Python (Netmiko/NAPALM/Nornir), CI/CD untuk jaringan, source of truth (NetBox), dan API/telemetri. **Permintaannya tinggi** karena: (a) jaringan modern terlalu besar dan berubah terlalu cepat untuk dikelola manual per-perangkat, sehingga otomasi menjadi kebutuhan; (b) ini menggabungkan dua keahlian yang jarang dimiliki satu orang (jaringan mendalam + pemrograman), sehingga kandidat yang menguasainya langka dan bernilai; (c) tren industri (SDN, controller-based, cloud) semuanya mengarah ke jaringan yang programmable. Karena itu peran ini menawarkan prospek dan kompensasi yang menarik. Kurikulum ini mempersiapkannya lewat Tahap 15 (otomasi).
 
-5. Karena **kedalaman menghasilkan kemampuan nyata dan kredibilitas yang bertahan**, sedangkan banyak sertifikasi dangkal hanya menghasilkan daftar "kertas" yang cepat terbongkar saat diuji. Satu sertifikasi seperti CCNA yang dipelajari dengan pemahaman mendalam dan praktik lab membuat Anda benar-benar mampu mendesain, mengonfigurasi, dan men-troubleshoot — kemampuan yang terlihat di wawancara dan pekerjaan. Mengejar banyak sertifikasi sekaligus memecah fokus, mendorong penghafalan alih-alih pemahaman, menghabiskan waktu dan biaya, dan menghasilkan pengetahuan yang rapuh. Untuk kebanyakan orang di awal karier, **satu sertifikasi fondasi yang solid (CCNA) + portofolio praktik nyata** jauh lebih meyakinkan pemberi kerja daripada tumpukan sertifikat tanpa kedalaman. Kedalaman juga menjadi dasar yang kuat untuk menambah spesialisasi kemudian.
+5. Karena kedalaman menghasilkan kemampuan nyata dan kredibilitas yang bertahan, sedangkan banyak sertifikasi dangkal hanya menghasilkan daftar "kertas" yang cepat terbongkar saat diuji. Satu sertifikasi seperti CCNA yang dipelajari dengan pemahaman mendalam dan praktik lab membuat Anda benar-benar mampu mendesain, mengonfigurasi, dan men-troubleshoot. Kemampuan itu terlihat di wawancara dan pekerjaan. Mengejar banyak sertifikasi sekaligus memecah fokus, mendorong penghafalan alih-alih pemahaman, menghabiskan waktu dan biaya, dan menghasilkan pengetahuan yang rapuh. Untuk kebanyakan orang di awal karier, satu sertifikasi fondasi yang solid (CCNA) + portofolio praktik nyata jauh lebih meyakinkan pemberi kerja daripada tumpukan sertifikat tanpa kedalaman. Kedalaman juga menjadi dasar yang kuat untuk menambah spesialisasi kemudian.
 
 </details>
 
@@ -159,9 +159,9 @@ Sudah berpengalaman, ingin naik     → CCNP track pilihan
 
 ## 10. Sumber
 
-- Cisco Certification tracks — https://www.cisco.com/site/us/en/learn/training-certifications/
-- CompTIA — https://www.comptia.org/certifications
-- MikroTik Training — https://mikrotik.com/training
+- Cisco Certification tracks: https://www.cisco.com/site/us/en/learn/training-certifications/
+- CompTIA: https://www.comptia.org/certifications
+- MikroTik Training: https://mikrotik.com/training
 - Situs vendor masing-masing untuk silabus terbaru
 
 ---

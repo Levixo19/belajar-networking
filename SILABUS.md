@@ -1,8 +1,8 @@
 # Silabus Lengkap: Checklist Penguasaan
 
 Centang setiap topik yang sudah Anda kuasai (bisa menjelaskan ke orang lain + bisa mengonfigurasi).
-Ini juga **daftar isi rinci** repositori: kalau sebuah topik ada di sini, materinya ada di berkas yang disebut.
-Semua jalur berkas di bawah relatif terhadap folder **`materi/`** — mis. `00-fondasi/01-apa-itu-jaringan.md`
+Ini juga daftar isi rinci repositori: kalau sebuah topik ada di sini, materinya ada di berkas yang disebut.
+Semua jalur berkas di bawah relatif terhadap folder `materi/`. Misalnya `00-fondasi/01-apa-itu-jaringan.md`
 ada di `materi/00-fondasi/01-apa-itu-jaringan.md`.
 
 Legenda kedalaman:
@@ -19,7 +19,7 @@ Legenda kedalaman:
 - [ ] D Skala jaringan: PAN, LAN, CAN, MAN, WAN, GAN
 - [ ] D Intranet, ekstranet, internet, DMZ (istilah awal)
 - [ ] D Peran perangkat: NIC, hub, switch, router, firewall, AP, WLC, load balancer, proxy, server
-- [ ] D PoE (Power over Ethernet) — kenapa ada
+- [ ] D PoE (Power over Ethernet): kenapa ada
 - [ ] D SOHO vs enterprise vs data center vs cloud
 
 ### `00-fondasi/02-bit-byte-biner.md`
@@ -83,7 +83,7 @@ Legenda kedalaman:
 ## TAHAP 2: LAYER FISIK
 
 ### `02-layer-fisik/01-media-transmisi.md`
-- [ ] D Copper, fiber, wireless — kelebihan/kekurangan
+- [ ] D Copper, fiber, wireless: kelebihan/kekurangan
 - [ ] D Atenuasi, noise, EMI/RFI, crosstalk (NEXT/FEXT), impedance
 - [ ] D Bit rate vs baud rate, teorema Nyquist & Shannon (intuitif)
 
@@ -120,7 +120,7 @@ Legenda kedalaman:
 - [ ] M MTU, jumbo frame, baby giant, runt, minimum 64 byte & padding
 - [ ] M CRC/FCS, error detection (bukan koreksi)
 - [ ] M CSMA/CD, collision domain, half duplex, late collision; kenapa mati di era switch
-- [ ] M Duplex/speed mismatch — gejala & deteksi
+- [ ] M Duplex/speed mismatch: gejala & deteksi
 - [ ] M Interface error counters: CRC, input errors, collisions, late collision, runts, giants
 
 ### `03-data-link/02-switching.md`
@@ -155,12 +155,12 @@ Legenda kedalaman:
 - [ ] P Alternatif STP: MLAG/vPC/stacking, TRILL/SPB (historis), fabric
 
 ### `03-data-link/05-etherchannel.md`
-- [ ] M Konsep link aggregation, kenapa bukan sekadar dua kabel
+- [ ] M Konsep link aggregation, dan kenapa dua kabel paralel saja tidak cukup
 - [ ] M LACP 802.3ad (active/passive), PAgP (desirable/auto), static/on
 - [ ] M Load balancing hash (src-mac, dst-ip, src-dst-ip, dll) & keterbatasannya
 - [ ] M L2 vs L3 EtherChannel, syarat konsistensi konfigurasi
 - [ ] M Troubleshooting: mismatch, suspended port, misconfig guard
-- [ ] P MLAG, vPC, VSS, stackwise — agregasi lintas chassis
+- [ ] P MLAG, vPC, VSS, stackwise: agregasi lintas chassis
 
 ### `03-data-link/06-discovery-dan-l2-lain.md`
 - [ ] M CDP & LLDP (LLDP-MED), informasi yang dibawa, risiko keamanan
@@ -187,9 +187,9 @@ Legenda kedalaman:
 - [ ] M Kenapa subnetting (efisiensi + isolasi broadcast)
 - [ ] M Menghitung: jumlah subnet, jumlah host, mask, network ID, broadcast, range
 - [ ] M Metode cepat (magic number / block size)
-- [ ] M Subnetting /24, /16, /8 — 30+ contoh berlatih
+- [ ] M Subnetting /24, /16, /8: 30+ contoh berlatih
 - [ ] M Menentukan apakah dua IP satu subnet
-- [ ] M Tabel referensi lengkap /1–/32
+- [ ] M Tabel referensi lengkap /1 sampai /32
 
 ### `04-network-layer/03-vlsm-cidr.md`
 - [ ] M VLSM: alokasi berbeda ukuran, urutan besar→kecil
@@ -210,7 +210,7 @@ Legenda kedalaman:
 
 ### `04-network-layer/05-routing-dasar.md`
 - [ ] M Routing table: destination, mask, next hop, interface, metric, AD
-- [ ] M Longest prefix match — proses keputusan forwarding
+- [ ] M Longest prefix match: proses keputusan forwarding
 - [ ] M Directly connected, local, static, dynamic route
 - [ ] M Default route, gateway of last resort, 0.0.0.0/0
 - [ ] M Administrative distance (tabel nilai default)
@@ -256,7 +256,7 @@ Legenda kedalaman:
 ### `05-transport/04-congestion-control.md`
 - [ ] M Congestion vs flow control (beda!)
 - [ ] M Slow start, congestion avoidance, AIMD, cwnd, ssthresh
-- [ ] M Tahoe, Reno, NewReno, CUBIC, BBR — perbedaan filosofi
+- [ ] M Tahoe, Reno, NewReno, CUBIC, BBR: perbedaan filosofi
 - [ ] M ECN, AQM (RED, CoDel, FQ-CoDel), bufferbloat
 - [ ] M MSS/MTU/PMTUD interaksi, MTU mismatch & gejalanya
 - [ ] P Tuning buffer & BDP untuk link long-fat
@@ -268,7 +268,7 @@ Legenda kedalaman:
 ### `06-aplikasi/01-dns.md`
 - [ ] M Namespace hierarkis, root, TLD, SLD, FQDN, trailing dot
 - [ ] M Resolver stub, recursive, authoritative, forwarder
-- [ ] M Query iteratif vs rekursif — alur lengkap dari root
+- [ ] M Query iteratif vs rekursif: alur lengkap dari root
 - [ ] M Record: A, AAAA, CNAME, MX, NS, PTR, SOA, TXT, SRV, CAA, ALIAS/ANAME
 - [ ] M Zone file, SOA field, serial, TTL, negative caching
 - [ ] M Zone transfer AXFR/IXFR, notify, primary/secondary
@@ -277,7 +277,7 @@ Legenda kedalaman:
 - [ ] M DNSSEC: DS, DNSKEY, RRSIG, chain of trust
 - [ ] M DoT (853), DoH (443), DoQ, ODoH; implikasi privasi & operasional
 - [ ] M EDNS0, DNS cookies, ANY/refuse, response rate limiting
-- [ ] P Membangun resolver sendiri (Unbound/BIND/dnsmasq/Knot) — langkah lengkap
+- [ ] P Membangun resolver sendiri (Unbound/BIND/dnsmasq/Knot): langkah lengkap
 - [ ] P Split-horizon DNS, GeoDNS, DNS load balancing, anycast DNS
 - [ ] P Troubleshooting DNS dengan `dig` (+trace, +norec, +dnssec)
 
@@ -310,12 +310,12 @@ Legenda kedalaman:
 - [ ] M Revocation: CRL, OCSP, OCSP stapling, short-lived cert
 - [ ] M SNI, ESNI/ECH, mTLS, certificate pinning
 - [ ] M Kesalahan sertifikat umum & cara membaca error
-- [ ] P TLS inspection/interception di enterprise — teknis & etika
+- [ ] P TLS inspection/interception di enterprise: teknis & etika
 - [ ] P Debug dengan `openssl s_client`, `curl -v`, `sslyze`
 
 ### `06-aplikasi/05-layanan-lain.md`
 - [ ] M Email: SMTP (25/465/587), IMAP (143/993), POP3 (110/995), MIME
-- [ ] M SPF, DKIM, DMARC, MTA-STS — anti-spoofing
+- [ ] M SPF, DKIM, DMARC, MTA-STS: anti-spoofing
 - [ ] M FTP (aktif vs pasif!), FTPS, SFTP, TFTP
 - [ ] M SSH: key exchange, autentikasi kunci, port forwarding (L/R/D), jump host
 - [ ] M Telnet (dan kenapa dilarang), console, out-of-band management
@@ -417,7 +417,7 @@ Legenda kedalaman:
 - [ ] M Tipe alamat: GUA (2000::/3), ULA (fc00::/7), LLA (fe80::/10), multicast (ff00::/8), anycast
 - [ ] M Solicited-node multicast, well-known multicast address
 - [ ] M Interface ID, EUI-64 modified, privacy extension, stable-privacy
-- [ ] M Prefix planning /48, /56, /64 — kenapa /64 di LAN
+- [ ] M Prefix planning /48, /56, /64: kenapa /64 di LAN
 
 ### `08-ipv6/02-ndp-slaac-dhcpv6.md`
 - [ ] M NDP: NS, NA, RS, RA, redirect; ganti ARP
@@ -523,7 +523,7 @@ Legenda kedalaman:
 - [ ] M DSL, cable/DOCSIS, GPON/FTTH, satelit (GEO vs LEO), 4G/5G WAN
 - [ ] M Metro Ethernet, E-Line/E-LAN/E-Tree, VPLS
 - [ ] M MPLS: label, LSP, LER/LSR, L3VPN (VRF, RD, RT), L2VPN, TE
-- [ ] M Segment Routing (SR-MPLS, SRv6) — pengantar
+- [ ] M Segment Routing (SR-MPLS, SRv6): pengantar
 - [ ] M SD-WAN: overlay, controller, path selection, DIA, zero-touch
 - [ ] M Last mile, CPE, demarc, CIR/EIR, SLA
 
@@ -550,6 +550,15 @@ Legenda kedalaman:
 - [ ] M QoS untuk VoIP (RTP, 150 ms one-way, jitter buffer) & video
 - [ ] M QoS wireless (WMM), QoS di cloud/SD-WAN
 - [ ] P Merancang policy QoS end-to-end 4/8/12 class
+
+### `11-wan-vpn/04-satelit-antarplanet.md`
+- [ ] D Kenapa satelit: bandwidth dan latensi itu dua hal berbeda
+- [ ] D Orbit GEO, MEO, LEO: ketinggian, periode, jumlah satelit, RTT dari kecepatan cahaya
+- [ ] M Komponen: VSAT, antena phased array, gateway dan hub, topologi bintang dan double hop, pita L/C/Ku/Ka dan rain fade, handover LEO, laser antarsatelit
+- [ ] D Satelit di Indonesia: Palapa (1976), VSAT di daerah 3T, SATRIA-1
+- [ ] M Dampak ke protokol: BDP dan window scaling, handshake dan slow start, PEP yang memecah koneksi TCP (dan kenapa tidak bekerja di dalam IPsec atau QUIC)
+- [ ] P Pendalaman: jaringan antarplanet, Deep Space Network, kenapa TCP gagal ke Mars, DTN dan Bundle Protocol v7, LTP, standar CCSDS
+- [ ] M Praktik: menghitung BDP, `ping`, `mtr`, `ss -ti`, ping di Cisco dan MikroTik, tuning sysctl dan BBR
 
 ---
 
@@ -585,7 +594,7 @@ Legenda kedalaman:
 ### `12-keamanan/04-aaa-identitas.md`
 - [ ] M Authentication vs Authorization vs Accounting
 - [ ] M Local auth, enable secret, password policy, MFA, sertifikat, biometrik
-- [ ] M RADIUS (UDP 1812/1813) vs TACACS+ (TCP 49) — perbandingan detail
+- [ ] M RADIUS (UDP 1812/1813) vs TACACS+ (TCP 49): perbandingan detail
 - [ ] M Command authorization, privilege level, RBAC, role view
 - [ ] M 802.1X + RADIUS + dynamic VLAN/dACL
 - [ ] M NAC, posture assessment, ISE (konsep)
@@ -603,9 +612,9 @@ Legenda kedalaman:
 - [ ] P Kerangka kepatuhan: NIST CSF 2.0, PCI DSS 4.0, ISO 27001, CIS Controls v8
 
 ### `12-keamanan/06-tools-keamanan.md`
-- [ ] M nmap (host discovery, port scan, NSE) — pemakaian sah/berizin
+- [ ] M nmap (host discovery, port scan, NSE): pemakaian sah/berizin
 - [ ] M Wireshark/tcpdump untuk analisis insiden
-- [ ] M hping3, iperf3, scapy — pengujian terkontrol
+- [ ] M hping3, iperf3, scapy: pengujian terkontrol
 - [ ] M Vulnerability scanner (OpenVAS/Nessus), config auditing
 - [ ] M Etika & legalitas: izin tertulis, scope, rules of engagement
 
@@ -614,7 +623,7 @@ Legenda kedalaman:
 ## TAHAP 13: LINUX NETWORKING (PRAKTIK)
 
 ### `13-linux-networking/01-iproute2.md`
-- [ ] M `ip addr/link/route/neigh/rule` — pengganti ifconfig/route/arp
+- [ ] M `ip addr/link/route/neigh/rule`: pengganti ifconfig/route/arp
 - [ ] M Membaca & mengubah routing table, multiple table, policy routing
 - [ ] M `ss`, `ethtool`, `nmcli`, `resolvectl`, `tc`
 - [ ] M Konfigurasi persisten: NetworkManager, systemd-networkd, netplan, ifupdown
@@ -654,7 +663,7 @@ Legenda kedalaman:
 - [ ] P Eskalasi & komunikasi saat outage
 
 ### `14-monitoring-troubleshooting/02-tools.md`
-- [ ] P ping, traceroute/tracert, mtr, pathping — dan cara salah menafsirkannya
+- [ ] P ping, traceroute/tracert, mtr, pathping, dan cara salah menafsirkannya
 - [ ] P dig/nslookup/host, curl/wget verbose, telnet/nc port test
 - [ ] P tcpdump: filter BPF lengkap, capture di titik yang tepat
 - [ ] P Wireshark: display filter, follow stream, IO graph, expert info, TCP analysis
@@ -665,7 +674,7 @@ Legenda kedalaman:
 
 ### `14-monitoring-troubleshooting/03-observability.md`
 - [ ] P SNMP polling vs streaming telemetry (gNMI/gRPC)
-- [ ] P NetFlow/IPFIX/sFlow — flow record, sampling, collector
+- [ ] P NetFlow/IPFIX/sFlow: flow record, sampling, collector
 - [ ] P Syslog centralization, structured logging
 - [ ] P Prometheus + node/snmp exporter + Grafana (dashboard jaringan)
 - [ ] P Zabbix/LibreNMS/Observium/Netdata, alerting & threshold
@@ -688,11 +697,11 @@ Legenda kedalaman:
 - [ ] P Traditional vs controller-based networking
 - [ ] P Arsitektur SDN: control plane vs data plane, northbound/southbound API
 - [ ] P Overlay, underlay, fabric (definisi CCNA)
-- [ ] P AI/ML dalam operasi jaringan: prediktif, generatif, AIOps — dan batasnya
+- [ ] P AI/ML dalam operasi jaringan: prediktif, generatif, AIOps, dan batasnya
 - [ ] P Infrastructure as Code, idempotensi, source of truth
 
 ### `15-otomasi/02-data-dan-api.md`
-- [ ] P JSON (struktur, tipe, parsing), YAML, XML — dan kapan masing-masing
+- [ ] P JSON (struktur, tipe, parsing), YAML, XML, dan kapan memakai masing-masing
 - [ ] P REST API: HTTP verb ↔ CRUD, status code, autentikasi (basic, token, OAuth), rate limit
 - [ ] P NETCONF + YANG (datastore, candidate, commit), RESTCONF, gNMI/gRPC
 - [ ] P Postman/curl untuk eksplorasi API perangkat
@@ -849,7 +858,7 @@ Legenda kedalaman:
 - [ ] D Lini produk (hEX, RB, CCR, CRS, CHR), RouterOS v6 vs v7
 - [ ] D Akses: WinBox (termasuk lewat MAC address), WebFig, SSH, API, REST API
 - [ ] M Struktur CLI hierarkis, `print`/`add`/`set`/`remove`/`find`/`export`
-- [ ] M Safe Mode (Ctrl+X) — wajib untuk perubahan jarak jauh
+- [ ] M Safe Mode (Ctrl+X): wajib untuk perubahan jarak jauh
 - [ ] M `/export` vs `/system backup`
 - [ ] M Konfigurasi awal wajib & hardening dasar
 - [ ] M Tabel padanan Cisco ↔ MikroTik ↔ Linux
@@ -884,11 +893,11 @@ Legenda kedalaman:
 - [ ] P PPPoE server + rate-limit per pelanggan (model RT/RW-Net)
 
 ### `19-mikrotik/05-wireless-mikrotik.md`
-- [ ] M Wireless (v6) vs WiFi (v7) — perbedaan menu
+- [ ] M Wireless (v6) vs WiFi (v7): perbedaan menu
 - [ ] M Mode: ap-bridge, station, bridge, station-pseudobridge
 - [ ] M Security profile: WPA2/WPA3, PSK, EAP
 - [ ] M Nstreme dan NV2 (protokol proprietary MikroTik untuk PtP/PtMP)
-- [ ] M CAPsMAN — manajemen AP terpusat
+- [ ] M CAPsMAN: manajemen AP terpusat
 - [ ] P Wireless PtP/PtMP outdoor, alignment, registration table
 - [ ] P Access list & connect list
 
@@ -896,14 +905,14 @@ Legenda kedalaman:
 - [ ] M EoIP, GRE, IPIP
 - [ ] M PPTP/L2TP (dan kenapa PPTP dilarang)
 - [ ] M SSTP, OVPN
-- [ ] M **WireGuard** (RouterOS v7)
+- [ ] M WireGuard (RouterOS v7)
 - [ ] M IPsec: policy-based dan route-based
 - [ ] P Site-to-site dan remote access lengkap
 - [ ] P Troubleshooting VPN MikroTik
 
 ### `19-mikrotik/07-monitoring-scripting.md`
-- [ ] P `/tool torch` — analisis trafik real-time
-- [ ] P `/tool sniffer` — capture paket, kirim ke Wireshark (TZSP)
+- [ ] P `/tool torch`: analisis trafik real-time
+- [ ] P `/tool sniffer`: capture paket, kirim ke Wireshark (TZSP)
 - [ ] P `/tool netwatch`, `/system scheduler`
 - [ ] P Graphing, SNMP, The Dude
 - [ ] P Bahasa skrip RouterOS: variabel, loop, kondisi, fungsi
@@ -949,8 +958,9 @@ Spesialisasi sesudah Tahap 22, untuk jalur JNCIA dan lingkungan Cisco enterprise
 
 Tujuan tahap: memahami ke mana fondasi jaringan bisa membawa, apa yang benar-benar dikerjakan
 tiap profesi, dan modul mana di kurikulum ini yang menjadi bekalnya. Di aplikasi, tahap ini
-dilengkapi **Peta Profesi** interaktif (`/karier`): konstelasi profesi, kesiapan pribadi
-berdasarkan modul yang sudah tuntas, kuis kecocokan, dan perencana perpindahan karier.
+dilengkapi **Peta Profesi** interaktif (`/karier`): tangga profesi (baris = rumpun, kolom =
+jenjang), kesiapan pribadi berdasarkan modul yang sudah tuntas, kuis kecocokan, dan perencana
+perpindahan karier.
 
 ### `21-ekosistem-profesi/01-peta-ekosistem.md`
 - [ ] Network engineer vs network administrator: tanggung jawab, kedalaman, jenjang
@@ -980,13 +990,14 @@ berdasarkan modul yang sudah tuntas, kuis kecocokan, dan perencana perpindahan k
 ## LAB & REFERENSI
 
 ### `lab/`
-- [ ] `00-setup-lab.md` — pilih & pasang Packet Tracer / GNS3 / Containerlab / MikroTik CHR / Linux
-- [ ] `01-lab-fondasi-switching.md` — IP dasar, VLAN, trunk, STP, EtherChannel (5 lab bergradasi)
-- [ ] `02-lab-routing.md` — static, floating static, inter-VLAN, OSPF, DR/BDR, BGP (6 lab)
-- [ ] `03-lab-ip-services.md` — DHCP+relay, DNS, NAT/PAT, ACL, NTP, SSH (5 lab)
-- [ ] `04-lab-keamanan-wireless.md` — port security, DHCP snooping, DAI, WLAN/WLC, hardening (5 lab)
-- [ ] `05-lab-linux-otomasi.md` — iproute2, namespaces, bridge, nftables, Python, Ansible (6 lab)
-- [ ] `06-lab-mikrotik.md` — hardening, bridge/VLAN, NAT/DHCP, queue, PPPoE, hotspot, WireGuard (7 lab)
+- [ ] `00-setup-lab.md`: pilih & pasang Packet Tracer / GNS3 / Containerlab / MikroTik CHR / Linux
+- [ ] `00b-panduan-packet-tracer.md`: memasang Packet Tracer, tur antarmuka, topologi pertama (2 PC, 1 switch, 1 router), Simulation Mode dan jendela PDU, berkas .pkt/.pka, batasan alat
+- [ ] `01-lab-fondasi-switching.md`: IP dasar, VLAN, trunk, STP, EtherChannel (5 lab bergradasi)
+- [ ] `02-lab-routing.md`: static, floating static, inter-VLAN, OSPF, DR/BDR, BGP (6 lab)
+- [ ] `03-lab-ip-services.md`: DHCP+relay, DNS, NAT/PAT, ACL, NTP, SSH (5 lab)
+- [ ] `04-lab-keamanan-wireless.md`: port security, DHCP snooping, DAI, WLAN/WLC, hardening (5 lab)
+- [ ] `05-lab-linux-otomasi.md`: iproute2, namespaces, bridge, nftables, Python, Ansible (6 lab)
+- [ ] `06-lab-mikrotik.md`: hardening, bridge/VLAN, NAT/DHCP, queue, PPPoE, hotspot, WireGuard (7 lab)
 - > Total ±34 lab bergradasi (TUGAS → VERIFIKASI → KRITERIA SUKSES → solusi), terikat ke modul teori.
 
 ### `referensi/`
@@ -1005,10 +1016,10 @@ berdasarkan modul yang sudah tuntas, kuis kecocokan, dan perencana perpindahan k
 
 ## PROYEK AKHIR: `20-proyek-akhir/`
 
-> Dikerjakan **setelah** semua tahap dan lab selesai. Satu studi kasus berkelanjutan
-> (**PT Bahari Nusantara Segar** — ekspor hasil laut beku, 3 situs + 20 titik pesisir,
-> cold storage −25 °C, wajib merekam suhu tanpa putus). Sembilan babak, dan **tiap babak
-> bentuk kerjanya berbeda** supaya tidak jadi pengulangan soal. Total **1230 poin**.
+> Dikerjakan setelah semua tahap dan lab selesai. Satu studi kasus berkelanjutan
+> (**PT Bahari Nusantara Segar**: ekspor hasil laut beku, 3 situs + 20 titik pesisir,
+> cold storage −25 °C, wajib merekam suhu tanpa putus). Ada sembilan babak, dan bentuk kerja tiap
+> babak berbeda supaya tidak jadi pengulangan soal. Total 1230 poin.
 
 ### `01-briefing-dan-aturan.md`: Briefing
 - [ ] Menggali kebutuhan dari dokumen yang saling bertentangan (email, notulen, tiket, inventaris)
@@ -1023,7 +1034,7 @@ berdasarkan modul yang sudah tuntas, kuis kecocokan, dan perencana perpindahan k
 - [ ] Memisahkan perbaikan yang aman siang hari dari yang wajib jendela malam
 
 ### `03-babak-2-sidang-arsitektur.md`: Penjurian & desain (130 poin)
-- [ ] Menyusun matriks kriteria berbobot **sebelum** melihat proposal dan harga
+- [ ] Menyusun matriks kriteria berbobot sebelum melihat proposal dan harga
 - [ ] Menilai 3 proposal vendor; menyatakan kesalahan fatal sebagai kebutuhan yang gagal
 - [ ] Menentukan kriteria gugur (mis. rantai dingin harus hidup saat WAN mati)
 - [ ] Menulis 10 ADR lengkap dengan alternatif yang ditolak dan pemicu peninjauan
@@ -1040,12 +1051,12 @@ berdasarkan modul yang sudah tuntas, kuis kecocokan, dan perencana perpindahan k
 ### `05-babak-4-bangun-di-lab.md`: Kerja tangan + uji terima (150 poin)
 - [ ] Membangun topologi minimum yang mewakili semua pola (inti berpasangan, akses, OT, 2 WAN, 2 TPI, Linux)
 - [ ] Mengisi kerangka config Cisco/MikroTik/Linux dari rencana sendiri
-- [ ] Menjalankan 30 uji terima — 6 di antaranya **uji negatif** (membuktikan sesuatu tidak bisa terjadi)
+- [ ] Menjalankan 30 uji terima, 6 di antaranya **uji negatif** (membuktikan sesuatu tidak bisa terjadi)
 - [ ] Mengukur waktu failover dengan menghitung paket, bukan dengan kesan
 - [ ] Uji ketahanan lokal: putus WAN 20 menit, tidak boleh ada celah data
 
 ### `06-babak-5-udara-dan-gudang-beku.md`: Hitungan RF & kapasitas (110 poin)
-- [ ] FSPL, EIRP, RSSI, SNR — 7 hitungan dengan 9 checksum
+- [ ] FSPL, EIRP, RSSI, SNR: 7 hitungan dengan 9 checksum
 - [ ] Membuktikan dengan angka bahwa geometri mengalahkan daya pancar (±26 dB vs ±3-6 dB)
 - [ ] Kapasitas & retensi CCTV (64 kamera → 1,38 TB/hari → NVR 7,3 TB cukup 5,3 hari)
 - [ ] Jumlah AP: kapasitas vs cakupan · lebar kanal · sikap terhadap DFS · perpindahan forklift
@@ -1062,22 +1073,22 @@ berdasarkan modul yang sudah tuntas, kuis kecocokan, dan perencana perpindahan k
 - [ ] Inventory sebagai sumber kebenaran (menambah TPI ke-21 hanya menyentuh satu tempat)
 - [ ] Templat Jinja2 untuk MikroTik & Cisco, tanpa nilai ditulis keras
 - [ ] Playbook idempoten: `changed=0` pada jalan kedua, `serial` beralasan, verifikasi + jalur kembali
-- [ ] Audit kepatuhan sebagai kode: ≥ 20 pemeriksaan, kode keluar benar, **tanpa kegagalan senyap**
+- [ ] Audit kepatuhan sebagai kode: ≥ 20 pemeriksaan, kode keluar benar, tanpa kegagalan senyap
 - [ ] CI: lint rencana alamat → render → uji di lab → diff → gerbang manusia → terapkan
-- [ ] SLO, aturan alarm berbasis gejala, runbook, dan **uji alarm bulanan yang benar-benar dijalankan**
+- [ ] SLO, aturan alarm berbasis gejala, runbook, dan uji alarm bulanan yang benar-benar dijalankan
 
 ### `09-babak-8-malam-panjang.md`: Simulasi jaga malam (140 poin)
 - [ ] Lima tiket bercabang dengan anggaran waktu; pemeriksaan berbiaya menit; ada pengalih perhatian
 - [ ] Menulis hipotesis sebelum memeriksa; memilih pemeriksaan yang membelah ruang kemungkinan
 - [ ] Mengenali "sinyal penuh", "tautan up", dan "tidak ada keluhan" sebagai jebakan
-- [ ] Keputusan bisnis saat bukti kepatuhan hilang 73 menit — tanpa menambal data
+- [ ] Keputusan bisnis saat bukti kepatuhan hilang 73 menit, tanpa menambal data
 - [ ] Penanganan insiden: kekang sebelum bersihkan, awetkan bukti, eskalasi tepat
 - [ ] Postmortem tanpa menyalahkan: garis waktu, lima kenapa sampai tingkat proses, **akar bersama**
 
 ### `10-babak-9-ruang-rapat.md`: Bisnis & komunikasi (100 poin)
 - [ ] Anggaran dipotong 35%: rincian berjenjang P1/P2/P3 dengan kebutuhan yang dilayani
 - [ ] Tiga penolakan potong dengan pembanding rupiah (hemat X vs paparan Y)
-- [ ] Risk register dengan **pemilik risiko bernama** — dan itu bukan orang teknis
+- [ ] Risk register dengan pemilik risiko bernama, yang bukan orang teknis
 - [ ] Rencana migrasi: risiko terbesar dulu, jendela malam, rollback teruji ≤ 30 menit
 - [ ] Penjelasan lima kalimat tanpa jargon + kerangka 10 slide + laporan bulanan 1 halaman
 - [ ] Menjawab 8 pertanyaan tidak ramah tanpa bersikap defensif

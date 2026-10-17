@@ -18,7 +18,7 @@ Skrip otomasi yang dijalankan langsung ke router produksi adalah cara pertama. G
 Dokumen topik ujian resmi (Automating Networks Using Cisco Platforms v1.1, 200-901) membagi ujian menjadi enam domain: 1.0 Software Development and Design (15%), 2.0 Understanding and Using APIs (20%), 3.0 Cisco Platforms and Development (15%), 4.0 Application Deployment and Security (15%), 5.0 Infrastructure and Automation (20%), dan 6.0 Network Fundamentals (15%).
 
 > [!WARNING]
-> Ada satu catatan penomoran. Topik rekayasa perangkat lunak di modul ini tersebar di domain **1.0, 2.0, 4.0, dan 5.0**. Domain 3.0 adalah platform Cisco (Meraki, Catalyst Center, RESTCONF/NETCONF di IOS XE, DevNet) dan hanya disentuh lewat praktik Cisco di bagian 9. Jangan mengandalkan peta lama yang menyebut "domain 3.0" untuk Git atau pengujian.
+> Ada satu catatan penomoran. Topik rekayasa perangkat lunak di modul ini tersebar di domain 1.0, 2.0, 4.0, dan 5.0. Domain 3.0 adalah platform Cisco (Meraki, Catalyst Center, RESTCONF/NETCONF di IOS XE, DevNet) dan hanya disentuh lewat praktik Cisco di bagian 9. Jangan mengandalkan peta lama yang menyebut "domain 3.0" untuk Git atau pengujian.
 
 | Topik resmi | Bagian modul |
 |---|---|
@@ -59,7 +59,7 @@ git pull --rebase origin main                       # 1.8.d ambil perubahan terb
 git rm config-lama.cfg                              # 1.8.b hapus dan stage penghapusan
 ```
 
-Aturan commit yang baik: satu commit satu maksud, pesan menjelaskan *mengapa* (bukan sekadar "update"), dan jangan menggabungkan perubahan konfigurasi dengan perubahan kode yang tidak berhubungan.
+Aturan commit yang baik: satu commit satu maksud, pesan menjelaskan *mengapa* (jangan cuma "update"), dan jangan menggabungkan perubahan konfigurasi dengan perubahan kode yang tidak berhubungan.
 
 ### Merge vs rebase
 
@@ -421,7 +421,7 @@ Kredensial, token API, dan kunci privat tidak boleh masuk repositori. Alasannya 
 > Jangan menulis `password="admin123"` di skrip, jangan menaruh token di URL yang masuk log, dan jangan menonaktifkan verifikasi TLS secara permanen demi "supaya jalan".
 
 > [!WARNING]
-> Jika rahasia terlanjur ter-commit, anggap sudah bocor: **ganti (rotate) kredensialnya segera**. Menghapus commit atau menulis ulang riwayat tidak menjamin tidak ada yang sempat menyalinnya.
+> Jika rahasia terlanjur ter-commit, anggap sudah bocor: ganti (rotate) kredensialnya segera. Menghapus commit atau menulis ulang riwayat tidak menjamin tidak ada yang sempat menyalinnya.
 
 ### Dockerfile minimal (topik 4.6 dan 4.7)
 
@@ -443,11 +443,11 @@ Cara membacanya baris demi baris:
 
 - `FROM` menentukan image dasar; varian `slim` lebih kecil.
 - `WORKDIR` menetapkan direktori kerja di dalam image.
-- `COPY requirements.txt` dan `RUN pip install` dikerjakan **sebelum** menyalin kode, supaya lapisan dependensi di-cache Docker dan tidak dibangun ulang tiap kali Anda mengubah satu baris kode.
+- `COPY requirements.txt` dan `RUN pip install` dikerjakan sebelum menyalin kode, supaya lapisan dependensi di-cache Docker dan tidak dibangun ulang tiap kali Anda mengubah satu baris kode.
 - `USER appuser` menjalankan proses tanpa hak root.
 - `CMD` adalah perintah default saat kontainer dijalankan.
 
-Rahasia **tidak** dimasukkan ke image (`ENV ROUTER_PASS=...` akan tersimpan di lapisan image). Berikan saat runtime:
+Rahasia tidak dimasukkan ke image (`ENV ROUTER_PASS=...` akan tersimpan di lapisan image). Berikan saat runtime:
 
 ```bash
 docker build -t netauto:0.1 .

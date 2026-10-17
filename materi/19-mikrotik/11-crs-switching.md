@@ -38,7 +38,7 @@ Port internal `switch1-cpu` adalah satu-satunya pintu antara kedua mesin. Ia han
 - aturan sengaja menyalin atau mengalihkan paket ke CPU (ACL `copy-to-cpu`, `redirect-to-cpu`);
 - fitur kontrol butuh melihat paket (DHCP snooping, IGMP snooping).
 
-Seluruh modul ini pada dasarnya menjawab satu pertanyaan: **bagaimana menjaga trafik data tetap di chip dan hanya trafik kontrol yang naik ke CPU?**
+Seluruh modul ini menjawab satu pertanyaan: **bagaimana menjaga trafik data tetap di chip dan hanya trafik kontrol yang naik ke CPU?**
 
 ### 1.1 Keluarga switch chip
 

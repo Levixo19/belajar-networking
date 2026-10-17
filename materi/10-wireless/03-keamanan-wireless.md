@@ -14,7 +14,7 @@ Wireless : sinyal menyebar melewati dinding, ke jalan, ke gedung sebelah
 ```
 
 > [!WARNING]
-> **Setiap frame wireless dapat ditangkap oleh siapa pun dengan adapter murah dalam mode monitor.** Enkripsi bukan pilihan — ia keharusan mutlak.
+> **Setiap frame wireless dapat ditangkap oleh siapa pun dengan adapter murah dalam mode monitor.** Karena itu enkripsi wajib.
 
 ---
 
@@ -22,11 +22,11 @@ Wireless : sinyal menyebar melewati dinding, ke jalan, ke gedung sebelah
 
 | Standar | Tahun | Enkripsi | Integritas | Status |
 |---|---|---|---|---|
-| **Open** | — | Tidak ada | Tidak | ⚠️ Hanya untuk hotspot publik dengan captive portal |
-| **WEP** | 1999 | RC4 (40/104 bit) | CRC-32 | ❌ **RUSAK TOTAL** — dipecahkan dalam menit |
-| **WPA** | 2003 | RC4 + **TKIP** | Michael MIC | ❌ Usang, rentan |
-| **WPA2** | 2004 | **AES-CCMP** | CCM | ⚠️ Masih dipakai luas; rentan KRACK & offline attack |
-| **WPA3** | 2018 | **AES-GCMP** / CCMP | GCM | ✅ **Standar saat ini** |
+| **Open** | - | Tidak ada | Tidak | Hanya untuk hotspot publik dengan captive portal |
+| **WEP** | 1999 | RC4 (40/104 bit) | CRC-32 | **Rusak total**: dipecahkan dalam menit |
+| **WPA** | 2003 | RC4 + **TKIP** | Michael MIC | Usang, rentan |
+| **WPA2** | 2004 | **AES-CCMP** | CCM | Masih dipakai luas; rentan KRACK & offline attack |
+| **WPA3** | 2018 | **AES-GCMP** / CCMP | GCM | **Standar saat ini** |
 
 ### Kenapa WEP rusak total
 
@@ -46,21 +46,21 @@ Wireless : sinyal menyebar melewati dinding, ke jalan, ke gedung sebelah
 
 ### WPA2: masih dominan tetapi punya kelemahan
 
-**Kelemahan 1 — Offline dictionary attack (PSK):**
+**Kelemahan 1: offline dictionary attack (PSK).**
 ```
 Penyerang menangkap 4-way handshake (butuh deauth klien atau menunggu)
 → brute force PSK secara OFFLINE tanpa terdeteksi
 → passphrase lemah dipecahkan dalam jam/hari dengan GPU
 ```
 
-**Kelemahan 2 — KRACK (2017):**
+**Kelemahan 2: KRACK (2017).**
 Serangan pada 4-way handshake yang memaksa key reinstallation → nonce reuse → sebagian trafik dapat didekripsi. Sudah ditambal lewat pembaruan firmware/driver, tetapi banyak perangkat lama tidak pernah diperbarui.
 
-**Kelemahan 3 — Tidak ada forward secrecy:**
+**Kelemahan 3: tidak ada forward secrecy.**
 Kalau PSK bocor, **semua trafik yang pernah direkam** bisa didekripsi.
 
-**Kelemahan 4 — PMKID attack (2018):**
-Penyerang bisa mendapat material untuk brute force **tanpa perlu menunggu klien melakukan handshake** — cukup satu paket dari AP.
+**Kelemahan 4: PMKID attack (2018).**
+Penyerang bisa mendapat material untuk brute force tanpa perlu menunggu klien melakukan handshake: cukup satu paket dari AP.
 
 ---
 
@@ -72,16 +72,16 @@ Penyerang bisa mendapat material untuk brute force **tanpa perlu menunggu klien 
 
 | Aspek | WPA2-PSK | WPA3-SAE |
 |---|---|---|
-| Offline dictionary attack | ✅ Mungkin | ❌ **Tidak mungkin** |
-| Forward secrecy | Tidak | ✅ **Ya** |
+| Offline dictionary attack | Mungkin | **Tidak mungkin** |
+| Forward secrecy | Tidak | **Ya** |
 | Passphrase lemah | Sangat berbahaya | Masih tidak disarankan, tetapi tidak bisa di-brute-force offline |
 | Protected Management Frames | Opsional | **Wajib** |
 
 > [!TIP]
-> **Keunggulan terbesar SAE: setiap percobaan tebakan harus dilakukan ONLINE dengan AP** — sehingga rate limiting dan deteksi bekerja. Penyerang tidak bisa lagi menangkap handshake lalu menyerangnya di rumah dengan GPU.
+> **Keunggulan terbesar SAE: setiap percobaan tebakan harus dilakukan ONLINE dengan AP**, sehingga rate limiting dan deteksi bekerja. Penyerang tidak bisa lagi menangkap handshake lalu menyerangnya di rumah dengan GPU.
 
 > [!TIP]
-> **Forward secrecy** berarti kalau passphrase bocor besok, trafik yang direkam hari ini **tetap tidak bisa didekripsi**.
+> **Forward secrecy** berarti kalau passphrase bocor besok, trafik yang direkam hari ini tetap tidak bisa didekripsi.
 
 ### WPA3-Enterprise
 
@@ -97,7 +97,7 @@ WPA3-Enterprise 192-bit   : mode keamanan tinggi (CNSA)
 
 ### OWE (Enhanced Open)
 
-Untuk jaringan **publik tanpa password**, OWE (*Opportunistic Wireless Encryption*, RFC 8110) memberikan **enkripsi tanpa autentikasi**.
+Untuk jaringan publik tanpa password, OWE (*Opportunistic Wireless Encryption*, RFC 8110) memberikan **enkripsi tanpa autentikasi**.
 
 ```
 Open biasa : trafik PLAINTEXT — siapa pun bisa membaca
@@ -106,10 +106,10 @@ OWE        : setiap klien menegosiasikan kunci unik lewat Diffie-Hellman
 ```
 
 > [!WARNING]
-> **OWE tidak mengautentikasi AP** — masih rentan evil twin. Tetapi jauh lebih baik daripada open biasa yang sepenuhnya plaintext.
+> **OWE tidak mengautentikasi AP**, jadi masih rentan evil twin. Meski begitu, OWE jauh lebih baik daripada open biasa yang sepenuhnya plaintext.
 
 > [!TIP]
-> **Untuk Wi-Fi tamu di kafe/hotel, OWE adalah pilihan yang benar** — pengguna tidak perlu password, tetapi trafiknya tetap terenkripsi.
+> **Untuk Wi-Fi tamu di kafe/hotel, OWE adalah pilihan yang benar**: pengguna tidak perlu password, tetapi trafiknya tetap terenkripsi.
 
 ### Transition Mode
 
@@ -118,10 +118,10 @@ WPA2/WPA3 mixed → mendukung klien lama dan baru
 ```
 
 > [!WARNING]
-> **Transition mode mewarisi kelemahan WPA2** — penyerang bisa memaksa klien turun ke WPA2 (downgrade attack). Gunakan hanya selama masa migrasi, dan tetapkan tanggal untuk beralih ke WPA3-only.
+> **Transition mode mewarisi kelemahan WPA2.** Penyerang bisa memaksa klien turun ke WPA2 (downgrade attack). Gunakan hanya selama masa migrasi, dan tetapkan tanggal untuk beralih ke WPA3-only.
 
 > [!WARNING]
-> **Band 6 GHz WAJIB WPA3** — tidak boleh open, tidak boleh WPA2, tidak boleh transition mode.
+> **Band 6 GHz WAJIB WPA3.** Open, WPA2, dan transition mode tidak boleh dipakai.
 
 ---
 
@@ -164,7 +164,7 @@ GTK  → Group Temporal Key (mengenkripsi broadcast/multicast, SAMA untuk semua 
 
 ## 5. 802.1X / EAP: Autentikasi Enterprise
 
-Untuk lingkungan korporat, PSK tidak memadai: satu passphrase bersama untuk semua orang berarti mengganti password saat ada karyawan keluar berarti mengonfigurasi ulang semua perangkat.
+Untuk lingkungan korporat, PSK tidak memadai. Semua orang memakai satu passphrase bersama, jadi saat ada karyawan keluar, password harus diganti dan semua perangkat harus dikonfigurasi ulang.
 
 **802.1X** memberi setiap pengguna kredensial sendiri.
 
@@ -177,18 +177,18 @@ Untuk lingkungan korporat, PSK tidak memadai: satu passphrase bersama untuk semu
 
 | Metode | Kredensial klien | Sertifikat server | Keamanan |
 |---|---|---|---|
-| **EAP-TLS** | **Sertifikat** | ✅ Wajib | Terbaik (5/5) |
-| **PEAP-MSCHAPv2** | Username/password | ✅ Wajib | Umum (3/5) |
-| **EAP-TTLS** | Username/password | ✅ Wajib | 3/5 |
+| **EAP-TLS** | **Sertifikat** | Wajib | Terbaik (5/5) |
+| **PEAP-MSCHAPv2** | Username/password | Wajib | Umum (3/5) |
+| **EAP-TTLS** | Username/password | Wajib | 3/5 |
 | **EAP-FAST** | PAC / kredensial | Opsional | Cisco (2/5) |
-| EAP-MD5 | Password | Tidak | ❌ Jangan dipakai |
-| LEAP | Password | Tidak | ❌ Rusak |
+| EAP-MD5 | Password | Tidak | Jangan dipakai |
+| LEAP | Password | Tidak | Rusak |
 
 > [!WARNING]
-> **PEAP-MSCHAPv2 rentan jika klien tidak memvalidasi sertifikat server.** Penyerang bisa mendirikan AP palsu dengan RADIUS palsu, menangkap MSCHAPv2 challenge/response, lalu memecahkannya offline (MSCHAPv2 dapat direduksi ke satu DES). **Klien HARUS dikonfigurasi untuk memvalidasi CA server** — dan pengguna tidak boleh diizinkan mengeklik "trust" pada sertifikat yang tidak dikenal.
+> **PEAP-MSCHAPv2 rentan jika klien tidak memvalidasi sertifikat server.** Penyerang bisa mendirikan AP palsu dengan RADIUS palsu, menangkap MSCHAPv2 challenge/response, lalu memecahkannya offline. Respons MSCHAPv2 dibentuk dari tiga enkripsi DES, tetapi kelemahan strukturnya membuat usaha memecahkannya setara dengan memecahkan satu kunci DES 56-bit. Klien HARUS dikonfigurasi untuk memvalidasi CA server, dan pengguna tidak boleh diizinkan mengeklik "trust" pada sertifikat yang tidak dikenal.
 
 > [!TIP]
-> **EAP-TLS adalah pilihan terbaik** karena memakai sertifikat di kedua sisi — tidak ada password yang bisa dicuri atau ditebak. Biayanya: perlu PKI dan proses penyediaan sertifikat ke setiap perangkat (biasanya lewat MDM).
+> **EAP-TLS adalah pilihan terbaik** karena memakai sertifikat di kedua sisi, sehingga tidak ada password yang bisa dicuri atau ditebak. Biayanya: perlu PKI dan proses penyediaan sertifikat ke setiap perangkat (biasanya lewat MDM).
 
 ### Manfaat 802.1X di luar keamanan
 
@@ -213,7 +213,7 @@ Penyerang mengirim frame DEAUTH palsu (management frame TIDAK terenkripsi di WPA
                  memaksa klien pindah ke evil twin
 ```
 
-**Mitigasi:** **802.11w / PMF (Protected Management Frames)** — mengenkripsi dan mengautentikasi management frame.
+**Mitigasi:** **802.11w / PMF (Protected Management Frames)**, yang mengenkripsi dan mengautentikasi management frame.
 ```
 WPA2: PMF opsional  → aktifkan!
 WPA3: PMF WAJIB     ✅
@@ -257,14 +257,14 @@ Karyawan menancapkan router Wi-Fi rumahan ke port jaringan kantor.
 
 ### WPS Attack
 
-**WPS** (Wi-Fi Protected Setup) dengan PIN 8 digit punya kelemahan desain: PIN divalidasi dalam dua bagian terpisah, sehingga ruang pencarian turun dari 10⁸ menjadi **11.000** — dapat dipecahkan dalam beberapa jam.
+**WPS** (Wi-Fi Protected Setup) dengan PIN 8 digit punya kelemahan desain: PIN divalidasi dalam dua bagian terpisah, sehingga ruang pencarian turun dari 10⁸ menjadi **11.000**. Akibatnya PIN dapat dipecahkan dalam beberapa jam.
 
 > [!WARNING]
-> **MATIKAN WPS.** Selalu. Tidak ada alasan memakainya.
+> **Selalu matikan WPS.** Tidak ada alasan untuk memakainya.
 
 ### PMKID Attack
 
-Penyerang meminta PMKID dari AP dan melakukan brute force offline — **tanpa perlu menunggu klien melakukan handshake**.
+Penyerang meminta PMKID dari AP dan melakukan brute force offline, tanpa perlu menunggu klien melakukan handshake.
 
 **Mitigasi:** WPA3-SAE, atau passphrase yang sangat kuat (≥ 20 karakter acak).
 
@@ -282,7 +282,7 @@ Perangkat mengirim Probe Request untuk semua SSID yang pernah disimpan. Penyeran
 
 ### Jamming
 
-Membanjiri kanal dengan noise. **Tidak bisa dicegah secara teknis** — hanya bisa dideteksi (spectrum analyzer) dan dilaporkan ke otoritas.
+Penyerang membanjiri kanal dengan noise. Jamming tidak bisa dicegah secara teknis; ia hanya bisa dideteksi (spectrum analyzer) dan dilaporkan ke otoritas.
 
 ---
 
@@ -399,7 +399,7 @@ Advanced tab:
 ```
 
 > [!WARNING]
-> **Topik CCNA 2.9 secara eksplisit menguji kemampuan menafsirkan konfigurasi WLAN GUI ini** — pelajari nama field dan artinya.
+> **Topik CCNA 2.9 secara eksplisit menguji kemampuan menafsirkan konfigurasi WLAN GUI ini.** Pelajari nama field dan artinya.
 
 ---
 
@@ -433,23 +433,23 @@ Advanced tab:
 ```
 
 > [!WARNING]
-> **Setiap SSID tambahan memakan airtime.** Dengan 8 SSID dan 3 AP di kanal yang sama, beacon saja bisa memakan 20–30% airtime sebelum ada data apa pun yang dikirim. **Maksimal 3–4 SSID per band.**
+> **Setiap SSID tambahan memakan airtime.** Dengan 8 SSID dan 3 AP di kanal yang sama, beacon saja bisa memakan 20-30% airtime sebelum ada data apa pun yang dikirim. Maksimal 3-4 SSID per band.
 
 ---
 
 ## 10. Ringkasan
 
-- Wireless berbeda karena **sinyal menyebar tanpa batas fisik** — enkripsi wajib.
+- Wireless berbeda karena **sinyal menyebar tanpa batas fisik**, sehingga enkripsi wajib.
 - **WEP rusak total** (dipecahkan dalam menit). **WPA/TKIP usang**. **WPA2-AES** masih dipakai tetapi rentan offline dictionary attack, KRACK, dan PMKID.
 - **WPA3-SAE** menghilangkan offline dictionary attack dan memberi **forward secrecy**. **PMF wajib**.
-- **OWE (Enhanced Open)** memberi enkripsi tanpa password — pilihan yang benar untuk hotspot publik.
-- **6 GHz wajib WPA3** — tidak boleh open, WPA2, atau transition mode.
+- **OWE (Enhanced Open)** memberi enkripsi tanpa password. Ini pilihan yang benar untuk hotspot publik.
+- **6 GHz wajib WPA3**: tidak boleh open, WPA2, atau transition mode.
 - **4-way handshake** menurunkan PTK (per klien) dan GTK (bersama, untuk broadcast).
 - **802.1X/EAP** memberi kredensial per pengguna. **EAP-TLS terbaik**; **PEAP rentan bila klien tidak memvalidasi sertifikat server**.
 - Serangan utama: **deauth** (mitigasi: PMF), **evil twin** (mitigasi: 802.1X + validasi sertifikat, WIPS), **WPS** (matikan), **PMKID** (mitigasi: WPA3), **Karma** (mitigasi: jangan hidden SSID, hapus jaringan tersimpan).
 - **Hidden SSID dan MAC filtering bukan keamanan.**
 - Jaringan tamu: VLAN terpisah + isolasi klien + firewall ke internet saja + rate limit + logging.
-- **Batasi jumlah SSID (maks 3-4)** — setiap SSID memakan airtime.
+- **Batasi jumlah SSID (maks 3-4)**, karena setiap SSID memakan airtime.
 
 ---
 
@@ -467,19 +467,19 @@ Advanced tab:
 <details>
 <summary>Jawaban</summary>
 
-1. Karena beberapa kelemahan desain yang saling memperkuat: (a) **IV hanya 24 bit**, sehingga berulang setelah ~5.000 paket pada jaringan sibuk — dan IV dikirim dalam plaintext, memungkinkan penyerang mengumpulkan pasangan IV/ciphertext; (b) **RC4 punya kelemahan statistik** pada byte awal keystream (serangan FMS/PTW) yang memungkinkan pemulihan kunci dari IV yang cukup banyak; (c) **CRC-32 bersifat linear**, sehingga penyerang bisa memodifikasi paket dan menyesuaikan checksum tanpa mengetahui kunci — memungkinkan serangan injeksi untuk **mempercepat** pengumpulan IV; (d) **kunci statis** tidak pernah dirotasi. Dengan `aireplay-ng` untuk injeksi dan `aircrack-ng` untuk analisis, kunci WEP 104-bit dipecahkan dalam **2-10 menit**.
+1. Karena beberapa kelemahan desain yang saling memperkuat: (a) **IV hanya 24 bit**, sehingga berulang setelah ~5.000 paket pada jaringan sibuk. IV juga dikirim dalam plaintext, jadi penyerang bisa mengumpulkan pasangan IV/ciphertext. (b) **RC4 punya kelemahan statistik** pada byte awal keystream (serangan FMS/PTW) yang memungkinkan pemulihan kunci dari IV yang cukup banyak. (c) **CRC-32 bersifat linear**, sehingga penyerang bisa memodifikasi paket dan menyesuaikan checksum tanpa mengetahui kunci. Ini membuka jalan bagi serangan injeksi untuk mempercepat pengumpulan IV. (d) **Kunci statis** tidak pernah dirotasi. Dengan `aireplay-ng` untuk injeksi dan `aircrack-ng` untuk analisis, kunci WEP 104-bit dipecahkan dalam **2-10 menit**.
 
-2. Pada **WPA2-PSK**, penyerang cukup menangkap **4-way handshake** (satu kali, bisa dipaksa dengan deauth) yang berisi MIC. Dari situ ia dapat menghitung apakah sebuah tebakan passphrase menghasilkan MIC yang sama — **seluruhnya secara offline**, di komputernya sendiri, dengan GPU yang menguji miliaran tebakan per detik. AP tidak pernah tahu.
-   **WPA3-SAE** memakai pertukaran Dragonfly berbasis kurva eliptik di mana setiap percobaan autentikasi **harus dilakukan secara interaktif dengan AP**. Material yang ditangkap penyerang tidak memungkinkan verifikasi tebakan secara offline. Akibatnya, penyerang hanya bisa mencoba satu tebakan per interaksi — sehingga **rate limiting dan deteksi di AP menjadi efektif**. SAE juga memberikan **forward secrecy**: passphrase yang bocor kemudian tidak membuka trafik yang direkam sebelumnya.
+2. Pada **WPA2-PSK**, penyerang cukup menangkap **4-way handshake** (satu kali, bisa dipaksa dengan deauth) yang berisi MIC. Dari situ ia dapat menghitung apakah sebuah tebakan passphrase menghasilkan MIC yang sama. Semua itu dilakukan **secara offline**, di komputernya sendiri, dengan GPU yang menguji miliaran tebakan per detik. AP tidak pernah tahu.
+   **WPA3-SAE** memakai pertukaran Dragonfly berbasis kurva eliptik di mana setiap percobaan autentikasi **harus dilakukan secara interaktif dengan AP**. Material yang ditangkap penyerang tidak memungkinkan verifikasi tebakan secara offline. Akibatnya, penyerang hanya bisa mencoba satu tebakan per interaksi, sehingga **rate limiting dan deteksi di AP menjadi efektif**. SAE juga memberikan **forward secrecy**: passphrase yang bocor kemudian tidak membuka trafik yang direkam sebelumnya.
 
-3. **PMF (Protected Management Frames, IEEE 802.11w)** mengenkripsi dan mengautentikasi **management frame** — yang pada WPA2 biasa dikirim dalam plaintext tanpa autentikasi.
+3. **PMF (Protected Management Frames, IEEE 802.11w)** mengenkripsi dan mengautentikasi **management frame**, yang pada WPA2 biasa dikirim dalam plaintext tanpa autentikasi.
    Serangan yang dicegahnya terutama **deauthentication/disassociation attack**: penyerang mengirim frame deauth palsu dengan MAC address AP yang dipalsukan, memaksa klien terputus. Ini dipakai untuk DoS, untuk memaksa klien melakukan handshake ulang agar dapat ditangkap, dan untuk mendorong klien berpindah ke evil twin.
-   Dengan PMF, frame deauth harus diautentikasi dengan kunci sesi — penyerang tanpa kunci tidak bisa memalsukannya. PMF **opsional di WPA2** (aktifkan!) dan **wajib di WPA3**.
+   Dengan PMF, frame deauth harus diautentikasi dengan kunci sesi, jadi penyerang tanpa kunci tidak bisa memalsukannya. PMF **opsional di WPA2** (aktifkan!) dan **wajib di WPA3**.
 
-4. Ini serangan **evil twin**. Mitigasi: (a) **802.1X dengan validasi sertifikat server** — klien dikonfigurasi untuk hanya mempercayai RADIUS dengan sertifikat dari CA organisasi; AP palsu tidak punya sertifikat itu, sehingga klien menolak terhubung dan autentikasi gagal; (b) **WPA3-SAE** yang memberi **autentikasi mutual** — AP palsu tanpa passphrase yang benar tidak bisa menyelesaikan pertukaran SAE; (c) **WIPS (Wireless IPS)** yang memantau udara, mendeteksi AP dengan SSID organisasi yang bukan milik organisasi, memberi alarm, dan (pada mode agresif) mengirim deauth untuk menetralkannya; (d) tambahan: **edukasi pengguna** agar tidak mengeklik "trust" pada sertifikat yang tidak dikenal, dan memakai **VPN** di jaringan publik.
+4. Ini serangan **evil twin**. Mitigasi: (a) **802.1X dengan validasi sertifikat server.** Klien dikonfigurasi untuk hanya mempercayai RADIUS dengan sertifikat dari CA organisasi. AP palsu tidak punya sertifikat itu, sehingga klien menolak terhubung dan autentikasi gagal. (b) **WPA3-SAE** yang memberi autentikasi mutual: AP palsu tanpa passphrase yang benar tidak bisa menyelesaikan pertukaran SAE. (c) **WIPS (Wireless IPS)** yang memantau udara, mendeteksi AP dengan SSID organisasi yang bukan milik organisasi, memberi alarm, dan (pada mode agresif) mengirim deauth untuk menetralkannya. (d) Tambahan: **edukasi pengguna** agar tidak mengeklik "trust" pada sertifikat yang tidak dikenal, dan memakai **VPN** di jaringan publik.
 
-5. **PEAP-MSCHAPv2 aman hanya jika klien memvalidasi sertifikat server RADIUS.** Kalau tidak divalidasi, penyerang dapat mendirikan AP palsu dengan server RADIUS palsu; klien akan melakukan handshake MSCHAPv2 dengannya dan mengirimkan **challenge/response** berbasis hash NT dari password pengguna. MSCHAPv2 dapat direduksi menjadi tiga operasi DES 56-bit, yang **dapat dipecahkan secara offline dalam hitungan jam** dengan layanan khusus — memberi penyerang password domain pengguna.
-   **Pengamanannya:** (a) konfigurasikan klien untuk **memvalidasi sertifikat server** dan menyebutkan **nama CA yang tepat**, bukan sekadar "validate"; (b) sebutkan **nama server RADIUS** yang diharapkan; (c) **larang pengguna mengeklik "trust"** pada sertifikat baru — terapkan lewat Group Policy/MDM agar pengaturan tidak bisa diubah; (d) lebih baik lagi: **beralih ke EAP-TLS** yang memakai sertifikat klien sehingga tidak ada password untuk dicuri.
+5. **PEAP-MSCHAPv2 aman hanya jika klien memvalidasi sertifikat server RADIUS.** Kalau tidak divalidasi, penyerang dapat mendirikan AP palsu dengan server RADIUS palsu; klien akan melakukan handshake MSCHAPv2 dengannya dan mengirimkan **challenge/response** berbasis hash NT dari password pengguna. Respons MSCHAPv2 dibentuk dari tiga enkripsi DES, tetapi kelemahan strukturnya membuat usaha memecahkannya setara dengan memecahkan satu kunci DES 56-bit: kunci ketiga hampir seluruhnya berisi nol, dan dua kunci lainnya mengenkripsi challenge yang sama sehingga bisa dicari dalam satu sapuan ruang kunci. Pemecahan ini dapat dilakukan offline dalam waktu sekitar sehari dengan layanan khusus. Hasilnya, penyerang mendapat password domain pengguna.
+   **Pengamanannya:** (a) konfigurasikan klien untuk **memvalidasi sertifikat server** dan menyebutkan **nama CA yang tepat**, bukan sekadar "validate"; (b) sebutkan **nama server RADIUS** yang diharapkan; (c) **larang pengguna mengeklik "trust"** pada sertifikat baru, dan terapkan lewat Group Policy/MDM agar pengaturan tidak bisa diubah; (d) lebih baik lagi: **beralih ke EAP-TLS** yang memakai sertifikat klien sehingga tidak ada password untuk dicuri.
 
 6. Konfigurasi jaringan tamu hotel:
    ```
@@ -498,7 +498,7 @@ Advanced tab:
    Band steering : dorong ke 5 GHz
    Maksimal SSID : 1 untuk tamu (jangan buat terpisah per band)
    ```
-   **Perhatian:** Verifikasi secara aktif bahwa perangkat tamu **tidak bisa** menjangkau sistem PMS, POS, CCTV, atau jaringan staf — ini pelanggaran paling umum dan paling berbahaya di hotel.
+   **Perhatian:** Verifikasi secara aktif bahwa perangkat tamu tidak bisa menjangkau sistem PMS, POS, CCTV, atau jaringan staf. Ini pelanggaran paling umum dan paling berbahaya di hotel.
 
 7. **Setiap SSID mengirim beacon frame ~10 kali per detik pada rate dasar (rendah)**, dan setiap beacon memakan airtime. Dengan 8 SSID:
    - 80 beacon/detik per AP per band
@@ -507,8 +507,8 @@ Advanced tab:
    - Setiap SSID juga menambah beban probe response, dan memperbesar kemungkinan klien memilih SSID yang salah
    **Perbaikan:** kurangi menjadi **maksimal 3-4 SSID per band**. Gunakan **VLAN dinamis lewat 802.1X** untuk memisahkan kelompok pengguna dalam satu SSID, alih-alih membuat SSID terpisah untuk setiap departemen.
 
-8. **OWE (Opportunistic Wireless Encryption, RFC 8110)** dipakai untuk **jaringan publik yang tidak memerlukan password**: kafe, hotel, bandara, ruang publik. Ia memberikan **enkripsi per-klien** lewat pertukaran Diffie-Hellman, sehingga trafik tidak lagi plaintext — pengalaman pengguna tetap sama (tidak perlu memasukkan apa pun), tetapi penyadap di sekitar tidak bisa membaca trafik.
-   **Keterbatasannya:** OWE **tidak mengautentikasi AP**. Karena tidak ada kredensial bersama, klien tidak bisa memverifikasi bahwa AP yang ia hubungi adalah yang sah — sehingga **evil twin tetap mungkin**. Penyerang bisa mendirikan AP OWE dengan SSID yang sama dan melakukan MITM.
+8. **OWE (Opportunistic Wireless Encryption, RFC 8110)** dipakai untuk **jaringan publik yang tidak memerlukan password**: kafe, hotel, bandara, ruang publik. Ia memberikan **enkripsi per-klien** lewat pertukaran Diffie-Hellman, sehingga trafik tidak lagi plaintext. Pengalaman pengguna tetap sama (tidak perlu memasukkan apa pun), tetapi penyadap di sekitar tidak bisa membaca trafik.
+   **Keterbatasannya:** OWE **tidak mengautentikasi AP**. Karena tidak ada kredensial bersama, klien tidak bisa memverifikasi bahwa AP yang ia hubungi adalah yang sah, sehingga **evil twin tetap mungkin**. Penyerang bisa mendirikan AP OWE dengan SSID yang sama dan melakukan MITM.
    Karena itu OWE adalah **peningkatan besar dibanding open biasa**, tetapi bukan pengganti WPA3-SAE atau 802.1X. Untuk jaringan publik, kombinasikan dengan saran agar pengguna memakai VPN untuk data sensitif.
 
 </details>
@@ -518,11 +518,11 @@ Advanced tab:
 ## 12. Sumber
 
 - IEEE 802.11i (WPA2), 802.11w (PMF)
-- Wi-Fi Alliance — WPA3 Specification
-- RFC 8110 — Opportunistic Wireless Encryption
-- Vanhoef & Piessens (2017) — *Key Reinstallation Attacks* (KRACK)
-- Vanhoef & Ronen (2020) — *Dragonblood* (analisis WPA3)
-- NIST SP 800-153 — Guidelines for Securing WLANs
+- Wi-Fi Alliance, WPA3 Specification
+- RFC 8110, Opportunistic Wireless Encryption
+- Vanhoef & Piessens (2017), *Key Reinstallation Attacks* (KRACK)
+- Vanhoef & Ronen (2020), *Dragonblood* (analisis WPA3)
+- NIST SP 800-153, Guidelines for Securing WLANs
 - Cisco CCNA 200-301 v1.1, topik 5.9 (WPA, WPA2, WPA3) dan 5.10 (configure WLAN dengan WPA2 PSK via GUI)
 
 ---

@@ -19,9 +19,9 @@ TCP [RFC 9293, menggantikan RFC 793] memberikan **abstraksi byte-stream yang and
 | **Tidak membanjiri jaringan** | Congestion control |
 
 Yang **tidak** dijamin TCP:
-- **Hindari:** Latency tertentu (tidak ada jaminan waktu)
-- **Hindari:** Keamanan (butuh TLS)
-- **Hindari:** Batas pesan (TCP adalah **stream**, bukan pesan — aplikasi harus membuat framingnya sendiri)
+- Latency tertentu (tidak ada jaminan waktu)
+- Keamanan (butuh TLS)
+- Batas pesan (TCP adalah **stream**, bukan pesan; aplikasi harus membuat framingnya sendiri)
 
 > [!WARNING]
 > **Poin terakhir sering menjebak developer:** kalau Anda mengirim `send("HALO")` lalu `send("DUNIA")`, penerima bisa menerimanya sebagai satu `recv()` berisi `"HALODUNIA"`, atau tiga `recv()` berisi `"HAL"`, `"ODUN"`, `"IA"`. TCP tidak menjaga batas pesan.
@@ -70,7 +70,7 @@ Yang **tidak** dijamin TCP:
 | **SYN** | Synchronize | Memulai koneksi, sinkronkan sequence number |
 | **ACK** | Acknowledgment | Field acknowledgment number valid |
 | **FIN** | Finish | Selesai mengirim data (penutupan sopan) |
-| **RST** | Reset | Putuskan paksa — ada yang salah |
+| **RST** | Reset | Putuskan paksa karena ada yang salah |
 | **PSH** | Push | Kirim data ke aplikasi segera, jangan buffer |
 | **URG** | Urgent | Ada data mendesak (praktis tidak dipakai; dianggap berisiko) |
 | **ECE** | ECN-Echo | Memberi tahu pengirim ada congestion |
@@ -96,7 +96,7 @@ Penerima menjawab ack=1100
   → "saya sudah punya sampai byte 1099, kirimkan mulai 1100"
 ```
 
-**ISN (Initial Sequence Number)** dipilih **acak** saat handshake — bukan mulai dari 0. Ini keamanan: ISN yang dapat ditebak memungkinkan penyerang menyuntikkan data ke koneksi (session hijacking) [RFC 6528].
+**ISN (Initial Sequence Number)** dipilih acak saat handshake, tidak mulai dari 0. Alasannya keamanan: ISN yang dapat ditebak memungkinkan penyerang menyuntikkan data ke koneksi (session hijacking) [RFC 6528].
 
 > [!TIP]
 > Wireshark menampilkan **relative sequence number** (dimulai dari 0) secara default agar mudah dibaca. Untuk melihat nilai sebenarnya: *Preferences → Protocols → TCP → uncheck "Relative sequence numbers"*.
@@ -107,7 +107,7 @@ Penerima menjawab ack=1100
 |---|---|
 | **MSS** (*Maximum Segment Size*) | Ukuran payload maksimum yang bisa diterima. Dinegosiasikan di SYN |
 | **Window Scale** | Faktor pengali window (window 16 bit terlalu kecil untuk link cepat) |
-| **SACK Permitted / SACK** | Selective ACK — beri tahu blok mana saja yang sudah diterima |
+| **SACK Permitted / SACK** | Selective ACK: beri tahu blok mana saja yang sudah diterima |
 | **Timestamps** | Pengukuran RTT akurat + perlindungan wrap-around sequence (PAWS) |
 
 ---
@@ -130,17 +130,17 @@ Klien                                          Server
 ```
 
 **Kenapa tiga langkah, bukan dua?**
-Karena **kedua arah** harus disinkronkan. Langkah 1-2 menyinkronkan arah klien→server; langkah 2-3 menyinkronkan arah server→klien. Dengan dua langkah saja, server tidak tahu apakah klien menerima SYN-ACK-nya.
+Karena kedua arah harus disinkronkan. Langkah 1-2 menyinkronkan arah klien→server; langkah 2-3 menyinkronkan arah server→klien. Dengan dua langkah saja, server tidak tahu apakah klien menerima SYN-ACK-nya.
 
 **Yang dinegosiasikan selama handshake:**
 - Sequence number awal kedua arah
-- **MSS** — ukuran segmen maksimum
-- **Window scale** — hanya bisa dinegosiasikan di SYN/SYN-ACK
-- **SACK** — didukung atau tidak
+- **MSS**: ukuran segmen maksimum
+- **Window scale**: hanya bisa dinegosiasikan di SYN/SYN-ACK
+- **SACK**: didukung atau tidak
 - **Timestamps**
 
 > [!WARNING]
-> **Window scale hanya bisa disepakati di handshake.** Kalau middlebox menghapus opsi ini dari SYN, koneksi akan terbatas pada window 64 KB selamanya — menyebabkan throughput rendah pada link berlatency tinggi.
+> **Window scale hanya bisa disepakati di handshake.** Kalau middlebox menghapus opsi ini dari SYN, koneksi akan terbatas pada window 64 KB selamanya. Akibatnya throughput rendah pada link berlatency tinggi.
 
 **Biaya:** handshake butuh **1 RTT** sebelum data pertama bisa dikirim. Ditambah TLS (1 RTT untuk TLS 1.3, 2 RTT untuk TLS 1.2), total 2-3 RTT sebelum request pertama. Inilah yang dipangkas QUIC.
 
@@ -162,9 +162,9 @@ Klien                                    Server
   │                                        │
 ```
 
-**Cumulative ACK** — satu ACK bisa mengonfirmasi banyak segmen sekaligus. Efisien.
+**Cumulative ACK**: satu ACK bisa mengonfirmasi banyak segmen sekaligus. Cara ini efisien.
 
-**Delayed ACK** — penerima menunda ACK sampai ~40-200 ms, berharap bisa menggabungkannya dengan data balasan (piggyback) atau mengonfirmasi dua segmen sekaligus. Mengurangi jumlah paket.
+**Delayed ACK**: penerima menunda ACK sampai ~40-200 ms, berharap bisa menggabungkannya dengan data balasan (piggyback) atau mengonfirmasi dua segmen sekaligus. Hasilnya, jumlah paket berkurang.
 
 > [!WARNING]
 > **Interaksi buruk Nagle + Delayed ACK:**
@@ -175,7 +175,7 @@ Delayed ACK: "jangan kirim ACK sampai 40 ms atau ada data balasan"
 → Pengirim menunggu ACK, penerima menunggu data
 → DEADLOCK 40–200 ms per transaksi kecil
 ```
-Gejala: aplikasi request-response kecil (RPC, database query) terasa lambat dengan latency yang aneh konsisten ~40 ms.
+Gejala: aplikasi request-response kecil (RPC, database query) terasa lambat dengan latency yang anehnya konsisten ~40 ms.
 
 Perbaikan: matikan Nagle di aplikasi yang latency-sensitif:
 ```c
@@ -239,7 +239,7 @@ Penerima: "window=8000" (window update) → pengirim lanjut
 ```
 
 > [!WARNING]
-> **Zero window yang sering muncul di Wireshark = aplikasi penerima terlalu lambat membaca socket buffer.** Ini masalah **aplikasi/server**, bukan jaringan. Sering terjadi pada server yang CPU-bound atau disk-bound.
+> **Zero window yang sering muncul di Wireshark = aplikasi penerima terlalu lambat membaca socket buffer.** Ini masalah aplikasi/server, bukan jaringan. Sering terjadi pada server yang CPU-bound atau disk-bound.
 
 ---
 
@@ -259,7 +259,7 @@ RTTVAR = variasi RTT
 RTO    = SRTT + 4 × RTTVAR    (minimum biasanya 200 ms – 1 detik)
 ```
 
-**Karn's algorithm** — jangan gunakan RTT dari segmen yang di-retransmit untuk menghitung SRTT (ambigu: ACK itu untuk transmisi asli atau retransmisi?).
+**Karn's algorithm**: jangan gunakan RTT dari segmen yang di-retransmit untuk menghitung SRTT (ambigu: ACK itu untuk transmisi asli atau retransmisi?).
 
 **Exponential backoff:** RTO digandakan setiap retransmisi berturut-turut (1s, 2s, 4s, 8s, ...) sampai batas percobaan.
 
@@ -280,7 +280,7 @@ Pengirim melihat 3 duplicate ACK
 → FAST RETRANSMIT seg2 SEGERA, tanpa menunggu RTO
 ```
 
-Ini menghemat waktu besar dibanding menunggu timeout.
+Cara ini menghemat banyak waktu dibanding menunggu timeout.
 
 ### SACK (Selective Acknowledgment)
 
@@ -293,7 +293,7 @@ ack=2000, SACK: 3000-4000, 5000-6000
 → pengirim hanya mengirim ulang yang benar-benar hilang
 ```
 
-Sangat penting pada jaringan dengan loss. Aktif secara default di semua OS modern.
+Manfaat SACK paling terasa pada jaringan dengan loss, dan SACK aktif secara default di semua OS modern.
 
 ---
 
@@ -318,7 +318,7 @@ Klien                                       Server
   │  klien menunggu 2×MSL di TIME_WAIT         │
 ```
 
-Butuh empat langkah karena TCP **full duplex** — setiap arah ditutup terpisah. Kondisi di mana satu arah sudah ditutup tetapi yang lain masih terbuka disebut **half-close**.
+Butuh empat langkah karena TCP **full duplex**: setiap arah ditutup terpisah. Kondisi di mana satu arah sudah ditutup tetapi yang lain masih terbuka disebut **half-close**.
 
 ### RST (Penutupan Paksa)
 
@@ -336,10 +336,10 @@ RST dikirim ketika:
 
 ### TIME_WAIT
 
-Setelah menutup koneksi, sisi yang **menutup lebih dulu** (active close) masuk `TIME_WAIT` selama **2 × MSL** (*Maximum Segment Lifetime*) — biasanya **60 detik** di Linux, 240 detik di beberapa sistem.
+Setelah menutup koneksi, sisi yang **menutup lebih dulu** (active close) masuk `TIME_WAIT` selama **2 × MSL** (*Maximum Segment Lifetime*), biasanya **60 detik** di Linux dan 240 detik di beberapa sistem.
 
 **Kenapa perlu:**
-1. Memastikan ACK terakhir sampai — kalau hilang, sisi lain akan mengirim ulang FIN, dan socket ini masih ada untuk membalas.
+1. Memastikan ACK terakhir sampai. Kalau ACK itu hilang, sisi lain akan mengirim ulang FIN, dan socket ini masih ada untuk membalas.
 2. Mencegah segmen "nyasar" dari koneksi lama muncul di koneksi baru dengan 5-tuple yang sama.
 
 > [!WARNING]
@@ -360,7 +360,7 @@ $ sudo sysctl -w net.ipv4.tcp_tw_reuse=1
 ```
 
 > [!WARNING]
-> **JANGAN memakai `net.ipv4.tcp_tw_recycle`** — sudah **dihapus** dari kernel Linux sejak 4.12 karena merusak koneksi dari klien di balik NAT. Banyak tutorial lama masih menyarankannya; abaikan.
+> **JANGAN memakai `net.ipv4.tcp_tw_recycle`.** Opsi ini sudah dihapus dari kernel Linux sejak 4.12 karena merusak koneksi dari klien di balik NAT. Banyak tutorial lama masih menyarankannya; abaikan.
 
 ---
 
@@ -400,16 +400,16 @@ $ sudo sysctl -w net.ipv4.tcp_tw_reuse=1
 | State | Arti | Kalau menumpuk berarti |
 |---|---|---|
 | `LISTEN` | Server siap menerima | Normal |
-| `SYN_SENT` | Klien mengirim SYN, menunggu jawaban | **Tujuan tidak menjawab** — firewall/host mati |
+| `SYN_SENT` | Klien mengirim SYN, menunggu jawaban | **Tujuan tidak menjawab**: firewall/host mati |
 | `SYN_RECV` | Server menerima SYN, menunggu ACK | **SYN flood** atau klien menghilang |
 | `ESTABLISHED` | Koneksi aktif | Normal |
 | `FIN_WAIT_1/2` | Kita menutup, menunggu sisi lain | Sisi lain lambat menutup |
-| **`CLOSE_WAIT`** | Sisi lain menutup, **aplikasi kita belum memanggil `close()`** | ⚠️ **BUG APLIKASI** — socket leak |
+| **`CLOSE_WAIT`** | Sisi lain menutup, **aplikasi kita belum memanggil `close()`** | **BUG APLIKASI** (socket leak) |
 | `LAST_ACK` | Menunggu ACK terakhir | Normal sesaat |
 | `TIME_WAIT` | Menunggu 2×MSL | Normal; menumpuk pada server yang menutup duluan |
 
 > [!WARNING]
-> **`CLOSE_WAIT` yang menumpuk adalah tanda bug aplikasi**, bukan masalah jaringan. Aplikasi menerima FIN tetapi tidak pernah memanggil `close()` pada socket — kebocoran file descriptor yang akhirnya menyebabkan "too many open files".
+> **`CLOSE_WAIT` yang menumpuk adalah tanda bug aplikasi**, bukan masalah jaringan. Aplikasi menerima FIN tetapi tidak pernah memanggil `close()` pada socket. Ini kebocoran file descriptor yang akhirnya menyebabkan "too many open files".
 
 ```bash
 $ ss -tan state close-wait
@@ -480,12 +480,12 @@ tcp.time_delta > 1                           ← jeda > 1 detik
 | **Retransmission** banyak | Packet loss di jaringan; kemacetan; kabel/wireless bermasalah |
 | **Duplicate ACK** (3+) | Paket hilang di tengah; segera diikuti fast retransmit |
 | **Out-of-order** | Load balancing per-packet; jalur berbeda; bukan selalu masalah |
-| **Zero window** | **Aplikasi penerima terlalu lambat membaca** — masalah server, bukan jaringan |
+| **Zero window** | Aplikasi penerima terlalu lambat membaca; masalahnya di server, bukan jaringan |
 | **Window full** | Pengirim mencapai batas window; jika sering, window terlalu kecil untuk BDP |
 | **RST** di tengah sesi | Firewall/IPS memutus; aplikasi crash; timeout NAT/LB |
 | **TCP Previous segment not captured** | Paket hilang sebelum titik capture |
 | **Keep-Alive** | Koneksi idle; normal |
-| **Spurious retransmission** | Retransmisi yang tidak perlu — RTO terlalu agresif atau ACK terlambat |
+| **Spurious retransmission** | Retransmisi yang tidak perlu, karena RTO terlalu agresif atau ACK terlambat |
 
 > [!TIP]
 > **Aturan diagnosis:** kalau retransmisi terlihat di **kedua** titik capture (klien dan server), loss terjadi **antara** keduanya. Kalau hanya terlihat di sisi pengirim, loss terjadi dekat pengirim.
@@ -549,7 +549,7 @@ $ sudo sysctl -w net.ipv4.tcp_syncookies=1
 
 ## 12. Prinsip Transfer Andal: dari Stop-and-Wait ke Selective Repeat
 
-> **Pendalaman.** Bagian ini tidak diuji di CCNA, Network+, maupun MTCNA. Isinya menjawab pertanyaan yang lebih mendasar: *mengapa* TCP dirancang seperti di bagian 4 sampai 6, bukan sekadar *apa* yang dilakukannya. Praktiknya ada di `lab/07-lab-membangun-protokol`, tempat Anda menulis sendiri protokol-protokol di bawah ini dan mengukurnya.
+> **Pendalaman.** Bagian ini tidak diuji di CCNA, Network+, maupun MTCNA. Bagian 4 sampai 6 menjelaskan *apa* yang dilakukan TCP; bagian ini menjawab *mengapa* TCP dirancang seperti itu. Praktiknya ada di `lab/07-lab-membangun-protokol`, tempat Anda menulis sendiri protokol-protokol di bawah ini dan mengukurnya.
 
 Sebagian struktur dan contoh di bagian ini diadaptasi dari *Computer Networks: A Systems Approach* (Larry Peterson & Bruce Davie, © Elsevier 2012, https://github.com/SystemsApproach/book, CC BY 4.0), bab 2.5 "Reliable Transmission". Perubahan: diterjemahkan ke bahasa Indonesia, disusun ulang, diberi contoh baru (Jakarta-Makassar, kegagalan jendela 4 nomor urut), dan dikaitkan ke TCP.
 
@@ -559,7 +559,7 @@ IP hanya berjanji "berusaha sebaik mungkin". Sebuah paket bisa hilang (antrean r
 
 Cara termudah memahaminya: bangun protokol secara bertahap, mulai dari kanal yang paling ramah, lalu tambahkan satu jenis kerusakan setiap kali dan lihat mekanisme apa yang terpaksa muncul.
 
-**Tahap 1: kanal sempurna.** Bila kanal tidak pernah menghilangkan, merusak, atau mengacak paket, pengirim cukup memotong data dan mengirimnya, dan penerima cukup menyerahkan apa yang datang. Tidak perlu header tambahan sama sekali. Tahap ini penting justru karena memperlihatkan bahwa *semua* kerumitan TCP adalah harga yang dibayar untuk kanal yang tidak sempurna.
+**Tahap 1: kanal sempurna.** Bila kanal tidak pernah menghilangkan, merusak, atau mengacak paket, pengirim cukup memotong data dan mengirimnya, dan penerima cukup menyerahkan apa yang datang. Tidak perlu header tambahan sama sekali. Tahap ini memperlihatkan bahwa *semua* kerumitan TCP adalah harga yang dibayar untuk kanal yang tidak sempurna.
 
 **Tahap 2: kanal yang membalik bit.** Kini penerima harus bisa *mendeteksi* kerusakan dan *memberi tahu* pengirim. Muncul tiga mekanisme:
 
@@ -723,7 +723,7 @@ Dengan jendela 2, jendela penerima setelah menyerahkan A dan B adalah [2 3], yan
 
 ### 12.7 Kaitan ke TCP nyata
 
-TCP bukan GBN murni dan bukan SR murni, melainkan hibrida yang mengambil bagian terbaik dari keduanya:
+TCP adalah hibrida GBN dan SR yang menggabungkan unsur keduanya:
 
 | Gagasan rdt | Wujudnya di TCP |
 |---|---|
@@ -735,7 +735,7 @@ TCP bukan GBN murni dan bukan SR murni, melainkan hibrida yang mengambil bagian 
 | Timer | **Satu** timer retransmisi per koneksi dengan RTO adaptif (RFC 6298) |
 | Ukuran jendela N | `min(rwnd, cwnd)`: jendela penerima (flow control) dan jendela kemacetan (congestion control) |
 
-Dua catatan penting:
+Dua catatan:
 - Jendela TCP **tidak tetap**. Jendela GBN/SR di atas adalah konstanta, sedangkan TCP mengubah `cwnd` terus-menerus untuk menebak kapasitas jaringan (`05-transport/04`). Itulah perbedaan terbesar antara protokol buku teks dan TCP sungguhan.
 - Deteksi kehilangan di Linux modern tidak lagi hanya menghitung tiga duplicate ACK. Dokumentasi kernel menyebut **RACK** (RFC 8985) sebagai satu-satunya algoritma deteksi kehilangan yang didukung (`net.ipv4.tcp_recovery`). RACK memakai waktu kirim segmen untuk memutuskan apakah suatu segmen hilang atau sekadar terlambat karena reordering. Gagasannya tetap sama dengan bagian ini: gabungkan ACK kumulatif, informasi selektif, dan timer.
 
@@ -746,10 +746,10 @@ Dua catatan penting:
 
 ## 13. Ringkasan
 
-- TCP menjamin: pengiriman, urutan, tanpa duplikat, tanpa korupsi, flow control, congestion control. **Tidak menjamin batas pesan** — TCP adalah byte-stream.
+- TCP menjamin: pengiriman, urutan, tanpa duplikat, tanpa korupsi, flow control, congestion control. **Tidak menjamin batas pesan**, karena TCP adalah byte-stream.
 - **Seq** = nomor byte pertama segmen; **Ack** = byte berikutnya yang diharapkan. ISN acak untuk keamanan.
 - **Three-way handshake** (SYN, SYN-ACK, ACK) menyinkronkan kedua arah dan menegosiasikan MSS, window scale, SACK, timestamps. Biaya 1 RTT.
-- **Window scale hanya bisa dinegosiasikan di SYN** — middlebox yang menghapusnya membatasi throughput.
+- **Window scale hanya bisa dinegosiasikan di SYN.** Middlebox yang menghapusnya membatasi throughput.
 - **Flow control** melindungi penerima (window); **congestion control** melindungi jaringan (cwnd).
 - **Fast retransmit** dipicu 3 duplicate ACK; **SACK** memungkinkan retransmisi yang tepat sasaran.
 - Penutupan **four-way** (FIN masing-masing arah); **RST** = paksa. **TIME_WAIT 2×MSL** pada sisi yang menutup duluan.
@@ -776,25 +776,25 @@ Dua catatan penting:
 <details>
 <summary>Jawaban</summary>
 
-1. Karena TCP **full duplex** — kedua arah harus disinkronkan secara independen. Langkah 1 (SYN) menyinkronkan ISN klien; langkah 2 (SYN-ACK) mengonfirmasi ISN klien **dan** mengirim ISN server; langkah 3 (ACK) mengonfirmasi ISN server. Dengan hanya dua langkah, server tidak akan pernah tahu apakah klien menerima SYN-ACK-nya, sehingga tidak bisa yakin arah server→klien tersinkronisasi. Handshake juga memungkinkan kedua sisi menegosiasikan opsi (MSS, window scale, SACK).
+1. Karena TCP **full duplex**: kedua arah harus disinkronkan secara independen. Langkah 1 (SYN) menyinkronkan ISN klien; langkah 2 (SYN-ACK) mengonfirmasi ISN klien **dan** mengirim ISN server; langkah 3 (ACK) mengonfirmasi ISN server. Dengan hanya dua langkah, server tidak akan pernah tahu apakah klien menerima SYN-ACK-nya, sehingga tidak bisa yakin arah server→klien tersinkronisasi. Handshake juga memungkinkan kedua sisi menegosiasikan opsi (MSS, window scale, SACK).
 
-2. Segmen berisi byte 5000-5499, sehingga penerima menjawab **`ack=5500`** — "saya sudah punya semua sampai 5499, kirim mulai 5500".
+2. Segmen berisi byte 5000-5499, sehingga penerima menjawab **`ack=5500`**, artinya "saya sudah punya semua sampai 5499, kirim mulai 5500".
 
-3. `CLOSE_WAIT` berarti sisi lain sudah mengirim FIN (menutup arahnya), dan kernel sudah membalas ACK, tetapi **aplikasi lokal belum memanggil `close()`** pada socket tersebut. Ini adalah **bug aplikasi** — kebocoran file descriptor, bukan masalah jaringan. Yang harus memperbaiki: **tim pengembang aplikasi**. Gejala lanjutannya: "too many open files" dan server berhenti menerima koneksi baru.
+3. `CLOSE_WAIT` berarti sisi lain sudah mengirim FIN (menutup arahnya), dan kernel sudah membalas ACK, tetapi **aplikasi lokal belum memanggil `close()`** pada socket tersebut. Ini **bug aplikasi** (kebocoran file descriptor), bukan masalah jaringan. Yang harus memperbaiki: **tim pengembang aplikasi**. Gejala lanjutannya: "too many open files" dan server berhenti menerima koneksi baru.
 
-4. Server mengiklankan `window=0`, artinya **buffer penerimaan server penuh** — aplikasi di server tidak membaca data dari socket buffer cukup cepat. Ini menunjukkan bottleneck di **aplikasi/server** (CPU-bound, disk-bound, thread pool habis, atau lock contention), bukan di jaringan. Menambah bandwidth tidak akan membantu.
+4. Server mengiklankan `window=0`, artinya **buffer penerimaan server penuh**: aplikasi di server tidak membaca data dari socket buffer dengan cukup cepat. Ini menunjukkan bottleneck di **aplikasi/server** (CPU-bound, disk-bound, thread pool habis, atau lock contention), bukan di jaringan. Menambah bandwidth tidak akan membantu.
 
-5. **Window TCP terlalu kecil untuk BDP.** BDP = 1e9 × 0,15 / 8 = **18,75 MB**. Throughput 3,5 Mbps setara window ≈ 3,5e6 × 0,15 / 8 ≈ 65 KB — persis batas window 16-bit tanpa scaling.
+5. **Window TCP terlalu kecil untuk BDP.** BDP = 1e9 × 0,15 / 8 = **18,75 MB**. Throughput 3,5 Mbps setara window ≈ 3,5e6 × 0,15 / 8 ≈ 65 KB, persis batas window 16-bit tanpa scaling.
    **Diagnosis:** `ss -tin` untuk memeriksa `wscale`; jika `wscale:0,0` maka window scaling tidak aktif atau dihapus middlebox. Periksa juga `tcp_rmem`/`tcp_wmem`.
    **Perbaikan:** pastikan `net.ipv4.tcp_window_scaling=1` di kedua sisi; perbesar `net.core.rmem_max`/`wmem_max` dan `tcp_rmem`/`tcp_wmem`; cari middlebox (firewall/IPS lama) yang menghapus opsi window scale dari SYN dan perbaiki/lewati. Alternatif sementara: transfer paralel multi-stream.
 
-6. **TIME_WAIT** menahan socket selama 2×MSL setelah penutupan untuk dua alasan: (a) memastikan ACK terakhir sampai — jika hilang, sisi lain akan mengirim ulang FIN dan socket ini masih ada untuk membalasnya; (b) mencegah segmen "nyasar" dari koneksi lama muncul di koneksi baru dengan 5-tuple identik dan merusak data.
-   **`tcp_tw_recycle` berbahaya** karena ia memakai TCP timestamp per-alamat-sumber untuk mempercepat daur ulang. Klien-klien berbeda di balik satu NAT terlihat berasal dari IP yang sama tetapi punya nilai timestamp yang tidak berurutan — server akan **membuang koneksi sah** dari sebagian klien secara acak. Karena itu opsi ini **dihapus dari kernel Linux sejak versi 4.12**. Gunakan `tcp_tw_reuse` (aman, hanya untuk koneksi keluar) dan perbaikan di tingkat aplikasi (keep-alive, connection pooling).
+6. **TIME_WAIT** menahan socket selama 2×MSL setelah penutupan untuk dua alasan: (a) memastikan ACK terakhir sampai, karena jika ACK itu hilang, sisi lain akan mengirim ulang FIN dan socket ini masih ada untuk membalasnya; (b) mencegah segmen "nyasar" dari koneksi lama muncul di koneksi baru dengan 5-tuple identik dan merusak data.
+   **`tcp_tw_recycle` berbahaya** karena ia memakai TCP timestamp per-alamat-sumber untuk mempercepat daur ulang. Klien-klien berbeda di balik satu NAT terlihat berasal dari IP yang sama tetapi punya nilai timestamp yang tidak berurutan, sehingga server akan **membuang koneksi sah** dari sebagian klien secara acak. Karena itu opsi ini **dihapus dari kernel Linux sejak versi 4.12**. Gunakan `tcp_tw_reuse` (aman, hanya untuk koneksi keluar) dan perbaikan di tingkat aplikasi (keep-alive, connection pooling).
 
 7. **Interaksi Nagle's algorithm dengan Delayed ACK.** Nagle menahan segmen kecil sampai ACK sebelumnya diterima; Delayed ACK menahan ACK sampai ~40 ms atau sampai ada data balasan. Ketika keduanya bertemu pada pola request-response kecil, terjadi jeda 40 ms per transaksi. **Perbaikan:** aktifkan `TCP_NODELAY` (mematikan Nagle) pada socket aplikasi yang latency-sensitif, atau gabungkan penulisan kecil menjadi satu `send()`.
 
 8. **Flow control** melindungi **penerima** dari kebanjiran: penerima mengiklankan `window` sesuai kapasitas buffer-nya, dan pengirim tidak boleh melebihi itu. Sifatnya **end-to-end** dan eksplisit.
-   **Congestion control** melindungi **jaringan** dari kebanjiran: pengirim memelihara `cwnd` (congestion window) yang diperkirakan sendiri berdasarkan sinyal tidak langsung (packet loss, RTT, ECN) — jaringan tidak pernah memberi tahu kapasitasnya secara eksplisit.
+   **Congestion control** melindungi **jaringan** dari kebanjiran: pengirim memelihara `cwnd` (congestion window) yang diperkirakan sendiri berdasarkan sinyal tidak langsung (packet loss, RTT, ECN). Jaringan tidak pernah memberi tahu kapasitasnya secara eksplisit.
    Pengirim dibatasi oleh **nilai terkecil** dari keduanya: `jumlah data in-flight ≤ min(rwnd, cwnd)`.
 
 9. Ini stop-and-wait. L = 8.000 bit, R = 100 Mbps, jadi L/R = 0,08 ms. Satu siklus = RTT + L/R = 30,08 ms, sehingga **throughput ≈ 8.000 bit / 30,08 ms ≈ 266 kbit/s** dan **utilisasi ≈ 0,08 / 30,08 ≈ 0,27%**. Upgrade ke 1 Gbps hanya memperkecil L/R menjadi 0,008 ms: throughput naik dari sekitar 266 menjadi sekitar 267 kbit/s, praktis **tidak menolong**, karena hambatannya RTT, bukan bandwidth. Saran: minta vendor mendukung **pipelining** (jendela beberapa blok, idealnya mendekati BDP = 100 Mbps × 30 ms = 375 KB, sekitar 375 blok), atau beralih ke TCP/QUIC yang sudah melakukannya; sebagai tambalan sementara, jalankan beberapa sesi paralel. Ukur dulu dengan `ping` dan perhitungan ini sebelum membayar link lebih besar.
@@ -807,13 +807,13 @@ Dua catatan penting:
 
 ## 15. Sumber
 
-- RFC 9293 — Transmission Control Protocol (menggantikan RFC 793)
-- RFC 7323 — TCP Extensions for High Performance (window scale, timestamps)
-- RFC 2018 — TCP Selective Acknowledgment Options
-- RFC 6528 — Defending against Sequence Number Attacks
-- RFC 7413 — TCP Fast Open
+- RFC 9293, Transmission Control Protocol (menggantikan RFC 793)
+- RFC 7323, TCP Extensions for High Performance (window scale, timestamps)
+- RFC 2018, TCP Selective Acknowledgment Options
+- RFC 6528, Defending against Sequence Number Attacks
+- RFC 7413, TCP Fast Open
 - Cisco CCNA 200-301 v1.1, topik 1.5 (Compare TCP to UDP)
-- Wireshark TCP Analysis — https://www.wireshark.org/docs/wsug_html_chunked/ChAdvTCPAnalysis.html
+- Wireshark TCP Analysis: https://www.wireshark.org/docs/wsug_html_chunked/ChAdvTCPAnalysis.html
 - Computer Networks: A Systems Approach, bab 2.5 Reliable Transmission (Peterson & Davie, CC BY 4.0): https://book.systemsapproach.org/direct/reliable.html
 - RFC 1071, Computing the Internet Checksum: https://www.rfc-editor.org/rfc/rfc1071
 - RFC 5681, TCP Congestion Control (fast retransmit): https://www.rfc-editor.org/rfc/rfc5681

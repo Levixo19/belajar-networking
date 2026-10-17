@@ -7,7 +7,7 @@
 
 ## 1. Bentuk Kerja Babak Ini
 
-Babak ini bukan mendesain. Babak ini **mencari yang salah pada sesuatu yang "katanya sudah jalan"** — keterampilan yang paling sering dipakai di hari pertama kerja dan paling jarang dilatih di kelas.
+Babak ini tidak meminta Anda mendesain. Tugasnya mencari yang salah pada sesuatu yang "katanya sudah jalan", keterampilan yang paling sering dipakai di hari pertama kerja dan paling jarang dilatih di kelas.
 
 Aturannya:
 
@@ -22,7 +22,7 @@ Aturannya:
 > Mode Ujian: 120 menit. Mode Kilat: 45 menit, cukup kejar tingkat 1 dan 2.
 
 > [!TIP]
-> Trik profesional: baca konfigurasi **dua kali dengan pertanyaan berbeda**. Sapuan pertama: "apa yang ada di sini tapi seharusnya tidak ada?" Sapuan kedua: "apa yang tidak ada di sini tapi seharusnya ada?" Sapuan kedua selalu menghasilkan lebih banyak temuan, dan hampir selalu dilewatkan pemula.
+> Trik profesional: baca konfigurasi dua kali dengan pertanyaan berbeda. Sapuan pertama: "apa yang ada di sini tapi seharusnya tidak ada?" Sapuan kedua: "apa yang tidak ada di sini tapi seharusnya ada?" Sapuan kedua selalu menghasilkan lebih banyak temuan, dan hampir selalu dilewatkan pemula.
 
 ---
 
@@ -263,11 +263,11 @@ Router internet HQ punya aturan *port forward* `TCP/22 → 192.168.10.20` "supay
 
 Tulis `02-temuan-audit.md` berisi:
 
-1. **Tabel temuan** — lima kolom seperti di §1, satu baris satu temuan. Jangan gabungkan dua masalah dalam satu baris.
-2. **Sepuluh besar** — urutkan sepuluh temuan paling mendesak. Urutan berdasar **risiko bisnis**, bukan berdasar "yang paling gampang diperbaiki" atau "yang paling bikin malu".
-3. **Peta tiket** — untuk tiap tiket helpdesk T-881, T-902, T-915, T-930, T-944 di `20.1 §3.3`, tunjuk temuan mana yang menjelaskannya. Satu tiket boleh punya lebih dari satu penyebab, dan satu temuan boleh menjelaskan beberapa tiket.
-4. **Perbaikan aman untuk pabrik** — pilih 5 temuan yang bisa diperbaiki **tanpa menghentikan produksi**, dan 5 yang **wajib jendela malam**. Bu Ratna akan menanyakan ini.
-5. **Satu paragraf untuk direksi** — tanpa jargon, maksimal 120 kata, menjawab: seberapa parah, apa yang paling mungkin terjadi kalau dibiarkan, dan apa yang Anda minta.
+1. **Tabel temuan**: lima kolom seperti di §1, satu baris satu temuan. Jangan gabungkan dua masalah dalam satu baris.
+2. **Sepuluh besar**: urutkan sepuluh temuan paling mendesak. Urutan berdasar **risiko bisnis**, bukan berdasar "yang paling gampang diperbaiki" atau "yang paling bikin malu".
+3. **Peta tiket**: untuk tiap tiket helpdesk T-881, T-902, T-915, T-930, T-944 di `20.1 §3.3`, tunjuk temuan mana yang menjelaskannya. Satu tiket boleh punya lebih dari satu penyebab, dan satu temuan boleh menjelaskan beberapa tiket.
+4. **Perbaikan aman untuk pabrik**: pilih 5 temuan yang bisa diperbaiki **tanpa menghentikan produksi**, dan 5 yang **wajib jendela malam**. Bu Ratna akan menanyakan ini.
+5. **Satu paragraf untuk direksi**, tanpa jargon dan maksimal 120 kata, yang menjawab: seberapa parah, apa yang paling mungkin terjadi kalau dibiarkan, dan apa yang Anda minta.
 
 ---
 
@@ -277,13 +277,13 @@ Supaya bisa menilai kelengkapan tanpa mengintip kunci, hitung sebaran temuan And
 
 | Bukti | Temuan minimum yang seharusnya ketemu |
 |---|---|
-| A — config switch | 14 |
-| B — keluaran perintah | 8 |
-| C — MikroTik TPI | 11 |
-| D — Linux & router | 9 |
-| E — proses kerja | 7 |
+| A (config switch) | 14 |
+| B (keluaran perintah) | 8 |
+| C (MikroTik TPI) | 11 |
+| D (Linux & router) | 9 |
+| E (proses kerja) | 7 |
 
-Kalau salah satu baris Anda jauh di bawah angka itu, kembali ke bukti tersebut **sebelum** membuka kunci. Biasanya yang terlewat adalah temuan jenis "seharusnya ada tapi tidak ada".
+Kalau salah satu baris Anda jauh di bawah angka itu, kembali ke bukti tersebut sebelum membuka kunci. Biasanya yang terlewat adalah temuan jenis "seharusnya ada tapi tidak ada".
 
 ---
 
@@ -298,7 +298,7 @@ Kalau salah satu baris Anda jauh di bawah angka itu, kembali ke bukti tersebut *
 
 ## 10. Latihan: Pembuktian Temuan
 
-Kerjakan setelah tabel temuan Anda selesai. Soal ini menguji apakah Anda memahami **mekanismenya**, bukan hanya mengenali polanya.
+Kerjakan setelah tabel temuan Anda selesai. Soal ini menguji apakah Anda memahami mekanismenya; mengenali polanya saja belum cukup.
 
 1. Pada Bukti B, switch akses ini menjadi *root bridge* untuk VLAN 1 dan mencatat 41.892 perubahan topologi. Jelaskan rangkaian sebab-akibatnya sampai ke gejala yang dirasakan pengguna, dan sebutkan satu perintah konfigurasi yang mencegah perangkat liar mengambil peran root.
 2. `show mac address-table count` menunjukkan 7.940 alamat dinamis dengan sisa ruang 252. Sebutkan dua penjelasan yang sangat berbeda untuk angka ini, lalu jelaskan perintah apa yang Anda pakai untuk membedakan keduanya.
@@ -309,18 +309,18 @@ Kerjakan setelah tabel temuan Anda selesai. Soal ini menguji apakah Anda memaham
 <details>
 <summary>Jawaban</summary>
 
-1. Rangkaiannya: semua port akses memakai `switchport mode dynamic desirable` dan tidak ada `spanning-tree portfast` maupun `bpduguard`, jadi ketika seseorang menancapkan switch 8 port tak dikenal ke Fa0/23 (terlihat di `show cdp neighbors` sebagai `SWITCH-8P`, dan Fa0/23 berlabel "tidak dipakai" tapi statusnya `connected`), switch liar itu ikut pemilihan STP. Prioritas semua perangkat masih default 32768, sehingga **pemenangnya ditentukan oleh MAC terendah** — akibatnya switch akses (atau bahkan switch liar) bisa menjadi root, dan lalu lintas antar-lantai mengambil jalur yang tidak masuk akal (melewati switch akses, bahkan lewat perangkat murah dengan uplink 100 Mbps). Lebih buruk: topologi berubah terus (41.892 kali, terakhir 9 detik lalu) sehingga setiap perubahan memicu penghapusan tabel MAC dan *flooding* — inilah yang dirasakan pengguna sebagai "jaringan lambat dan kadang putus sebentar", termasuk tiket T-930. Pesan `MACFLAP` mengonfirmasi ada jalur ganda/loop lewat Fa0/23. Pencegahan di port akses: **`spanning-tree portfast` + `spanning-tree bpduguard enable`** (atau global `spanning-tree portfast bpduguard default`) — port yang menerima BPDU langsung masuk err-disable. Lengkapi dengan `spanning-tree guard root` pada port yang tidak boleh mengarah ke root, menetapkan `spanning-tree vlan x root primary` (prioritas rendah) di switch core, dan berpindah ke `rapid-pvst` supaya konvergensi detik, bukan puluhan detik. Catatan: `switchport mode dynamic desirable` juga harus diganti menjadi `access` + `nonegotiate`, karena DTP di port pengguna membuka jalan VLAN hopping.
+1. Rangkaiannya: semua port akses memakai `switchport mode dynamic desirable` dan tidak ada `spanning-tree portfast` maupun `bpduguard`, jadi ketika seseorang menancapkan switch 8 port tak dikenal ke Fa0/23 (terlihat di `show cdp neighbors` sebagai `SWITCH-8P`, dan Fa0/23 berlabel "tidak dipakai" tapi statusnya `connected`), switch liar itu ikut pemilihan STP. Prioritas semua perangkat masih default 32768, sehingga **pemenangnya ditentukan oleh MAC terendah**. Akibatnya switch akses (atau bahkan switch liar) bisa menjadi root, dan lalu lintas antar-lantai mengambil jalur yang tidak masuk akal (melewati switch akses, bahkan lewat perangkat murah dengan uplink 100 Mbps). Lebih buruk: topologi berubah terus (41.892 kali, terakhir 9 detik lalu) sehingga setiap perubahan memicu penghapusan tabel MAC dan *flooding*. Inilah yang dirasakan pengguna sebagai "jaringan lambat dan kadang putus sebentar", termasuk tiket T-930. Pesan `MACFLAP` mengonfirmasi ada jalur ganda/loop lewat Fa0/23. Pencegahan di port akses: **`spanning-tree portfast` + `spanning-tree bpduguard enable`** (atau global `spanning-tree portfast bpduguard default`). Port yang menerima BPDU langsung masuk err-disable. Lengkapi dengan `spanning-tree guard root` pada port yang tidak boleh mengarah ke root, menetapkan `spanning-tree vlan x root primary` (prioritas rendah) di switch core, dan berpindah ke `rapid-pvst` supaya konvergensi detik, bukan puluhan detik. Catatan: `switchport mode dynamic desirable` juga harus diganti menjadi `access` + `nonegotiate`, karena DTP di port pengguna membuka jalan VLAN hopping.
 
-2. Dua penjelasan yang sangat berbeda: **(a)** ini switch kecil dengan tabel MAC terbatas yang benar-benar sedang menampung ribuan alamat karena **satu broadcast domain datar** menampung seluruh kantor (plus perangkat di balik switch liar); **(b)** ini **serangan/kegagalan MAC flooding** — perangkat terinfeksi atau alat seperti `macof` membanjiri alamat sumber palsu supaya tabel penuh, switch berubah perilaku menjadi seperti hub (*unknown unicast flooding*), sehingga penyerang bisa menyadap lalu lintas. Cara membedakan: `show mac address-table dynamic interface <port>` per port — pada kasus (a) alamat tersebar wajar di banyak port dengan jumlah masuk akal; pada kasus (b) **satu port menyumbang ribuan MAC** dan pola alamatnya acak/berurutan tidak wajar. Dukung dengan `show mac address-table count` berulang (kecepatan pertumbuhan), `show interfaces <port> counters` (laju paket tidak wajar), dan cek apakah alamat-alamat itu pernah membalas ARP. Perbaikannya berbeda pula: (a) segmentasi VLAN, (b) `switchport port-security` dengan batas jumlah MAC + `violation restrict/shutdown`, ditambah pemantauan. Poin pelajaran: satu angka bisa berarti kapasitas habis atau serangan; auditor yang baik tidak memilih tafsir paling dramatis, ia mencari data pembeda.
+2. Dua penjelasan yang sangat berbeda: **(a)** ini switch kecil dengan tabel MAC terbatas yang benar-benar sedang menampung ribuan alamat karena **satu broadcast domain datar** menampung seluruh kantor (plus perangkat di balik switch liar); **(b)** ini **serangan/kegagalan MAC flooding**: perangkat terinfeksi atau alat seperti `macof` membanjiri alamat sumber palsu supaya tabel penuh, switch berubah perilaku menjadi seperti hub (*unknown unicast flooding*), sehingga penyerang bisa menyadap lalu lintas. Cara membedakan: `show mac address-table dynamic interface <port>` per port. Pada kasus (a) alamat tersebar wajar di banyak port dengan jumlah masuk akal; pada kasus (b) **satu port menyumbang ribuan MAC** dan pola alamatnya acak/berurutan tidak wajar. Dukung dengan `show mac address-table count` berulang (kecepatan pertumbuhan), `show interfaces <port> counters` (laju paket tidak wajar), dan cek apakah alamat-alamat itu pernah membalas ARP. Perbaikannya berbeda pula: (a) segmentasi VLAN, (b) `switchport port-security` dengan batas jumlah MAC + `violation restrict/shutdown`, ditambah pemantauan. Poin pelajaran: satu angka bisa berarti kapasitas habis atau serangan; auditor yang baik tidak memilih tafsir paling dramatis, ia mencari data pembeda.
 
 3. Dua cacat berbeda di Bukti C yang menghasilkan gejala T-902:
-   - **Waktu tidak tersinkronisasi.** `/system clock set time-zone-name=manual` tanpa klien NTP, dan RouterOS tanpa baterai jam akan mulai dari waktu default setelah mati listrik. Tablet dan timbangan berkomunikasi lewat HTTPS; **validasi sertifikat TLS bergantung pada jam yang benar**. Jam yang salah membuat sertifikat dianggap "belum berlaku" atau "kedaluwarsa", token sesi dianggap kedaluwarsa, sehingga aplikasi meminta login ulang berkali-kali. Gejalanya bukan "tidak bisa terhubung" karena lapisan IP tetap normal — ping jalan, portal jalan, hanya autentikasi dan TLS yang gagal. Gejala ini juga naik-turun: setelah listrik mati jam mundur, kadang teknisi menyetel jam manual sehingga sempat normal beberapa hari.
-   - **Tidak ada penyesuaian MSS/MTU pada jalur terowongan LTE.** Lalu lintas menuju HQ melewati WireGuard di atas LTE; MTU jalur efektif lebih kecil dari 1500 karena tambahan header terowongan, dan pada jalur seluler pesan ICMP "fragmentation needed" sering diblokir sehingga **Path MTU Discovery gagal (black hole)**. Akibatnya: pertukaran paket kecil sukses (login berhasil, ping mulus), tetapi begitu ada paket besar — unggahan batch data suhu/timbangan, handshake TLS dengan sertifikat panjang — koneksi menggantung sampai *timeout*, lalu dicoba lagi, sehingga "gagal kirim 2 jam". Perbaikan: `/ip firewall mangle` aturan `action=change-mss` `new-mss=clamp-to-pmtu` pada paket SYN di antarmuka terowongan (atau setel MTU/MSS terowongan secara eksplisit), plus izinkan ICMP tipe 3 kode 4.
+   - **Waktu tidak tersinkronisasi.** `/system clock set time-zone-name=manual` tanpa klien NTP, dan RouterOS tanpa baterai jam akan mulai dari waktu default setelah mati listrik. Tablet dan timbangan berkomunikasi lewat HTTPS; **validasi sertifikat TLS bergantung pada jam yang benar**. Jam yang salah membuat sertifikat dianggap "belum berlaku" atau "kedaluwarsa", token sesi dianggap kedaluwarsa, sehingga aplikasi meminta login ulang berkali-kali. Gejalanya bukan "tidak bisa terhubung" karena lapisan IP tetap normal: ping jalan, portal jalan, hanya autentikasi dan TLS yang gagal. Gejala ini juga naik-turun: setelah listrik mati jam mundur, kadang teknisi menyetel jam manual sehingga sempat normal beberapa hari.
+   - **Tidak ada penyesuaian MSS/MTU pada jalur terowongan LTE.** Lalu lintas menuju HQ melewati WireGuard di atas LTE; MTU jalur efektif lebih kecil dari 1500 karena tambahan header terowongan, dan pada jalur seluler pesan ICMP "fragmentation needed" sering diblokir sehingga **Path MTU Discovery gagal (black hole)**. Akibatnya: pertukaran paket kecil sukses (login berhasil, ping mulus), tetapi begitu ada paket besar (unggahan batch data suhu/timbangan, handshake TLS dengan sertifikat panjang), koneksi menggantung sampai *timeout*, lalu dicoba lagi, sehingga "gagal kirim 2 jam". Perbaikan: `/ip firewall mangle` aturan `action=change-mss` `new-mss=clamp-to-pmtu` pada paket SYN di antarmuka terowongan (atau setel MTU/MSS terowongan secara eksplisit), plus izinkan ICMP tipe 3 kode 4.
    - Catatan: "sinyal LTE lemah" pada penutupan tiket adalah contoh klasik menutup tiket dengan sebab yang paling mudah dipercaya. Kedua cacat di atas menghasilkan gejala yang **tidak bergantung kekuatan sinyal**, dan itulah petunjuk bahwa tafsir lama salah.
 
-4. Karena ketiga bukti itu bersama-sama berarti: cadangan berada di **mesin yang sama dengan data aslinya** (`/srv/erp-db` → `/srv/backup/erp-db` di host yang sama, `/dev/md0`), dicapai lewat `rsync -a` yang **menyalin keadaan terkini** sehingga file yang terenkripsi ransomware akan menimpa salinan yang masih baik pada siklus berikutnya, tidak ada versi/riwayat, mesinnya punya SSH root+password terbuka ke internet lewat *port forward* (jadi justru sasaran pertama), ruang tinggal 2% sehingga pekerjaan cadangan kemungkinan sudah gagal diam-diam, dan **pemulihannya belum pernah diuji sekali pun**. Ransomware yang mendapat root di host ini mengenkripsi data dan cadangan dalam satu langkah. Tiga sifat wajib cadangan: **(a) terpisah** — media/host/kredensial berbeda, minimal satu salinan di luar lokasi dan satu salinan yang tidak bisa ditimpa (*immutable*/WORM atau media lepas); **(b) berversi & teruji** — beberapa titik waktu, dan **uji pemulihan terjadwal** yang membuktikan datanya bisa hidup kembali, bukan hanya berkasnya ada; **(c) terpantau** — kegagalan pekerjaan cadangan memicu alarm, dan kapasitas diawasi. Aturan praktis 3-2-1-1-0: 3 salinan, 2 media, 1 di luar lokasi, 1 tidak bisa diubah, 0 kesalahan pada uji pemulihan terakhir.
+4. Karena ketiga bukti itu bersama-sama berarti: cadangan berada di **mesin yang sama dengan data aslinya** (`/srv/erp-db` → `/srv/backup/erp-db` di host yang sama, `/dev/md0`), dicapai lewat `rsync -a` yang **menyalin keadaan terkini** sehingga file yang terenkripsi ransomware akan menimpa salinan yang masih baik pada siklus berikutnya, tidak ada versi/riwayat, mesinnya punya SSH root+password terbuka ke internet lewat *port forward* (jadi justru sasaran pertama), ruang tinggal 2% sehingga pekerjaan cadangan kemungkinan sudah gagal diam-diam, dan **pemulihannya belum pernah diuji sekali pun**. Ransomware yang mendapat root di host ini mengenkripsi data dan cadangan dalam satu langkah. Tiga sifat wajib cadangan: **(a) terpisah**: media/host/kredensial berbeda, minimal satu salinan di luar lokasi dan satu salinan yang tidak bisa ditimpa (*immutable*/WORM atau media lepas); **(b) berversi & teruji**: beberapa titik waktu, dan **uji pemulihan terjadwal** yang membuktikan datanya bisa hidup kembali, bukan hanya berkasnya ada; **(c) terpantau**: kegagalan pekerjaan cadangan memicu alarm, dan kapasitas diawasi. Aturan praktis 3-2-1-1-0: 3 salinan, 2 media, 1 di luar lokasi, 1 tidak bisa diubah, 0 kesalahan pada uji pemulihan terakhir.
 
-5. Karena TPI terhubung lewat LTE yang hampir selalu berada di belakang **CGNAT**: alamat yang didapat antarmuka `lte1` bukan alamat publik yang bisa dituju, dan operator tidak meneruskan port masuk. Konfigurasi dengan `listen-port` tanpa `endpoint` berarti TPI **menunggu dipanggil** — model ini menuntut TPI punya alamat publik tetap yang bisa dihubungi, yang tidak dimiliki. Ditambah lagi `/ip cloud ddns-enabled=yes` memberi ilusi "ada nama yang bisa dituju", padahal nama DDNS yang menunjuk alamat CGNAT tetap tidak bisa dihubungi dari luar — sekaligus membocorkan keberadaan perangkat. Rancangan yang benar: **TPI selalu yang menginisiasi** (*dial-out*) ke satu titik pusat yang punya alamat publik tetap — di sisi TPI setel `endpoint-address` dan `endpoint-port` ke hub, `persistent-keepalive` 20-25 detik supaya pemetaan NAT operator tetap hidup, dan `allowed-address` hanya prefix yang memang perlu dijangkau (bukan `10.0.0.0/8` seluruhnya, yang membuat perutean sembarang dan menghapus batas keamanan). Di sisi hub: satu antarmuka WireGuard dengan 20 peer berbeda kunci, satu prefix unik per TPI supaya perutean dan pencatatan jelas, dan hub sebaiknya redundan (dua hub di lokasi berbeda) karena kalau hub tunggal mati, seluruh 20 TPI kehilangan jalur pelaporan suhu sekaligus. Kunci konseptualnya: **pada jaringan yang ber-NAT, arah pembentukan sesi adalah keputusan desain, bukan detail teknis.**
+5. Karena TPI terhubung lewat LTE yang hampir selalu berada di belakang **CGNAT**: alamat yang didapat antarmuka `lte1` bukan alamat publik yang bisa dituju, dan operator tidak meneruskan port masuk. Konfigurasi dengan `listen-port` tanpa `endpoint` berarti TPI **menunggu dipanggil**. Model ini menuntut TPI punya alamat publik tetap yang bisa dihubungi, sesuatu yang tidak dimilikinya. Ditambah lagi `/ip cloud ddns-enabled=yes` memberi ilusi "ada nama yang bisa dituju", padahal nama DDNS yang menunjuk alamat CGNAT tetap tidak bisa dihubungi dari luar, dan sekaligus membocorkan keberadaan perangkat. Rancangan yang benar: **TPI selalu yang menginisiasi** (*dial-out*) ke satu titik pusat yang punya alamat publik tetap. Di sisi TPI, setel `endpoint-address` dan `endpoint-port` ke hub, `persistent-keepalive` 20-25 detik supaya pemetaan NAT operator tetap hidup, dan `allowed-address` hanya prefix yang memang perlu dijangkau (bukan `10.0.0.0/8` seluruhnya, yang membuat perutean sembarang dan menghapus batas keamanan). Di sisi hub: satu antarmuka WireGuard dengan 20 peer berbeda kunci, satu prefix unik per TPI supaya perutean dan pencatatan jelas, dan hub sebaiknya redundan (dua hub di lokasi berbeda) karena kalau hub tunggal mati, seluruh 20 TPI kehilangan jalur pelaporan suhu sekaligus. Kunci konseptualnya: **pada jaringan yang ber-NAT, arah pembentukan sesi adalah keputusan desain, bukan detail teknis.**
 
 </details>
 
@@ -335,18 +335,18 @@ Kerjakan setelah tabel temuan Anda selesai. Soal ini menguji apakah Anda memaham
 | Peta ke tiket helpdesk | 20 | 4 poin per tiket yang penyebabnya ditunjuk dengan benar |
 | Perbaikan yang aman untuk produksi | 15 | Memisahkan yang bisa dikerjakan siang hari dari yang wajib jendela malam, dengan alasan |
 
-Nilai < 60 berarti kembali ke `03`, `09`, `12`, `13`, dan `19` sebelum lanjut — bukan gagal, hanya belum siap.
+Nilai < 60 berarti kembali ke `03`, `09`, `12`, `13`, dan `19` sebelum lanjut. Itu bukan gagal, hanya belum siap.
 
 ---
 
 ## 12. Sumber
 
-- `03-data-link/04-stp.md`, `03-data-link/03-vlan.md` — STP, DTP, native VLAN
-- `12-keamanan/02-serangan-l2.md` — MAC flooding, ARP spoofing, VLAN hopping
-- `13-linux-networking` — nftables, sshd, resolusi nama
-- `19-mikrotik/03-firewall-nat.md`, `19-mikrotik/06-vpn-tunnel.md` — pengamanan RouterOS & terowongan
+- `03-data-link/04-stp.md`, `03-data-link/03-vlan.md`: STP, DTP, native VLAN
+- `12-keamanan/02-serangan-l2.md`: MAC flooding, ARP spoofing, VLAN hopping
+- `13-linux-networking`: nftables, sshd, resolusi nama
+- `19-mikrotik/03-firewall-nat.md`, `19-mikrotik/06-vpn-tunnel.md`: pengamanan RouterOS & terowongan
 - `referensi/cheatsheet-cisco-ios.md`, `referensi/cheatsheet-mikrotik.md`
-- CIS Benchmark untuk Cisco IOS dan Linux — daftar periksa hardening yang dipakai auditor
+- CIS Benchmark untuk Cisco IOS dan Linux: daftar periksa hardening yang dipakai auditor
 
 ---
 

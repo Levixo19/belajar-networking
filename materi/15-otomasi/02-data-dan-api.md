@@ -1,7 +1,7 @@
 # 15.2 Format Data dan API Perangkat
 
 > **Prasyarat:** `15-otomasi/01`, `06-aplikasi/03` (HTTP/REST/JSON)
-> **Tujuan:** Anda menguasai JSON/YAML/XML, memahami REST/NETCONF/RESTCONF/gNMI, dan bisa berinteraksi dengan API perangkat — sesuai CCNA 6.5-6.7.
+> **Tujuan:** Anda menguasai JSON/YAML/XML, memahami REST/NETCONF/RESTCONF/gNMI, dan bisa berinteraksi dengan API perangkat (sesuai CCNA 6.5-6.7).
 
 ---
 
@@ -137,7 +137,7 @@ Lebih verbose; dipakai NETCONF dan API lama.
 
 | | JSON | YAML | XML |
 |---|---|---|---|
-| Keterbacaan | Sedang | **Terbaik** | Buruk (verbose) |
+| Keterbacaan | Sedang | Terbaik | Buruk (verbose) |
 | Verbositas | Sedang | Ringkas | Tinggi |
 | Komentar | Tidak | Ya | Ya |
 | Dipakai | REST, RESTCONF | Ansible, K8s, config | NETCONF |
@@ -174,17 +174,17 @@ Sudah dibahas di `06-aplikasi/03`. Ringkasan untuk otomasi jaringan.
 
 | Metode | Cara |
 |---|---|
-| **Basic** | `Authorization: Basic base64(user:pass)` — ⚠️ wajib HTTPS |
-| **Bearer token** | `Authorization: Bearer <token>` — dari login/OAuth |
+| **Basic** | `Authorization: Basic base64(user:pass)` (wajib HTTPS) |
+| **Bearer token** | `Authorization: Bearer <token>` (dari login/OAuth) |
 | **API key** | Header `X-API-Key` atau parameter |
 | **OAuth 2.0** | Alur token dengan refresh |
 
 > [!WARNING]
-> **Base64 pada Basic Auth BUKAN enkripsi** — hanya encoding. Wajib HTTPS.
+> **Base64 pada Basic Auth BUKAN enkripsi**, hanya encoding. Wajib HTTPS.
 
 ### Data encoding
 
-REST API biasanya memakai **JSON** untuk body; kadang XML.
+REST API biasanya memakai JSON untuk body; kadang XML.
 
 ### Contoh: interaksi REST API perangkat
 
@@ -237,7 +237,7 @@ Ada beberapa cara program berkomunikasi dengan perangkat jaringan:
 
 ## 4. NETCONF
 
-Protokol manajemen berbasis XML yang **transaksional** — dirancang khusus untuk konfigurasi jaringan.
+Protokol manajemen berbasis XML yang transaksional dan dirancang khusus untuk konfigurasi jaringan.
 
 ```
 Transport : SSH port 830
@@ -263,7 +263,7 @@ startup     → konfigurasi saat boot
 ```
 
 > [!TIP]
-> **Keunggulan NETCONF: transaksi atomik.** Kalau satu bagian gagal, **seluruh perubahan di-rollback** — tidak ada keadaan setengah jadi. Ini jauh lebih aman daripada CLI scraping yang bisa gagal di tengah dan meninggalkan konfigurasi rusak.
+> **Keunggulan NETCONF: transaksi atomik.** Kalau satu bagian gagal, seluruh perubahan di-rollback, jadi tidak ada keadaan setengah jadi. Ini jauh lebih aman daripada CLI scraping yang bisa gagal di tengah dan meninggalkan konfigurasi rusak.
 
 ### Operasi NETCONF
 
@@ -311,7 +311,7 @@ with manager.connect(host="192.168.1.1", port=830, username="admin",
 
 ## 5. RESTCONF
 
-**RESTCONF** [RFC 8040] adalah NETCONF yang disederhanakan menjadi **REST + JSON** — lebih mudah dipakai.
+**RESTCONF** [RFC 8040] adalah NETCONF yang disederhanakan menjadi REST + JSON sehingga lebih mudah dipakai.
 
 ```
 Transport : HTTPS
@@ -352,8 +352,8 @@ $ curl -sk -u admin:password -X PATCH \
 |---|---|---|
 | Transport | SSH 830 | HTTPS |
 | Data | XML | JSON atau XML |
-| Transaksi | ✅ Penuh (candidate, commit, rollback) | ⚠️ Terbatas (per-request) |
-| Kompleksitas | Tinggi | **Rendah** |
+| Transaksi | Penuh (candidate, commit, rollback) | Terbatas (per-request) |
+| Kompleksitas | Tinggi | Rendah |
 | Untuk | Konfigurasi kompleks, transaksional | Interaksi sederhana, integrasi web |
 
 > [!TIP]
@@ -363,7 +363,7 @@ $ curl -sk -u admin:password -X PATCH \
 
 ## 6. YANG (Model Data)
 
-**YANG** adalah bahasa untuk **memodelkan** data konfigurasi dan operasional. Ia mendefinisikan **struktur** yang dipakai NETCONF, RESTCONF, dan gNMI.
+**YANG** adalah bahasa untuk memodelkan data konfigurasi dan operasional. Ia mendefinisikan struktur yang dipakai NETCONF, RESTCONF, dan gNMI.
 
 ```
 Analogi: YANG adalah "skema"; XML/JSON adalah "data" yang mengikutinya.
@@ -383,7 +383,7 @@ VENDOR (native):
 ```
 
 > [!TIP]
-> **OpenConfig adalah model YANG multi-vendor** — tujuannya satu model konfigurasi untuk semua vendor. Kalau perangkat mendukung OpenConfig, skrip yang sama bisa mengelola Cisco, Juniper, Arista, dll. Ini impian otomasi multi-vendor.
+> **OpenConfig adalah model YANG multi-vendor.** Tujuannya satu model konfigurasi untuk semua vendor. Kalau perangkat mendukung OpenConfig, skrip yang sama bisa mengelola Cisco, Juniper, Arista, dll. Ini impian otomasi multi-vendor.
 
 ```bash
 # Lihat model YANG yang didukung perangkat
@@ -395,7 +395,7 @@ $ curl -sk -u admin:pass \
 
 ## 7. gNMI dan Streaming Telemetry
 
-**gNMI** (gRPC Network Management Interface) memakai **gRPC** (HTTP/2 + Protobuf) — modern, cepat, dan mendukung **streaming telemetry**.
+**gNMI** (gRPC Network Management Interface) memakai gRPC (HTTP/2 + Protobuf). Protokol ini modern, cepat, dan mendukung streaming telemetry.
 
 ```
 Transport : gRPC (HTTP/2)
@@ -413,7 +413,7 @@ Subscribe    → STREAMING telemetry (push kontinu!)
 ```
 
 > [!TIP]
-> **`Subscribe` adalah keunggulan gNMI** — perangkat **mendorong** data secara kontinu (setiap detik/sub-detik) alih-alih di-poll. Ini memberi granularitas yang tidak mungkin dengan SNMP, dan menangkap microburst serta transien (lihat `14-monitoring-troubleshooting/03`).
+> **`Subscribe` adalah keunggulan gNMI.** Perangkat mendorong data secara kontinu (setiap detik/sub-detik) alih-alih di-poll. Ini memberi granularitas yang tidak mungkin dengan SNMP, dan menangkap microburst serta transien (lihat `14-monitoring-troubleshooting/03`).
 
 ```bash
 # gnmic (client gNMI populer)
@@ -430,7 +430,7 @@ $ gnmic -a 192.168.1.1:57400 -u admin -p password --skip-verify \
 
 ## 8. Postman dan curl untuk Eksplorasi
 
-Sebelum menulis skrip, **eksplorasi API secara interaktif**.
+Sebelum menulis skrip, eksplorasi API secara interaktif.
 
 ```bash
 # curl untuk RESTCONF
@@ -443,10 +443,10 @@ $ curl -skv -u admin:pass https://192.168.1.1/restconf/ 2>&1 | head -30
 ```
 
 > [!TIP]
-> **Postman** memberi GUI untuk eksplorasi API — menyimpan koleksi request, mengelola autentikasi/token, dan menampilkan respons dengan rapi. Sangat berguna untuk memahami API perangkat/controller sebelum mengotomasinya. Alternatif CLI: **HTTPie** (`http`) yang lebih ramah daripada curl.
+> **Postman** memberi GUI untuk eksplorasi API: menyimpan koleksi request, mengelola autentikasi/token, dan menampilkan respons dengan rapi. Alat ini sangat berguna untuk memahami API perangkat/controller sebelum mengotomasinya. Alternatif CLI: **HTTPie** (`http`) yang lebih ramah daripada curl.
 
 > [!WARNING]
-> **`--skip-verify`/`-k` dan `verify=False` hanya untuk lab.** Di produksi, gunakan sertifikat yang tervalidasi — mematikan verifikasi TLS menghilangkan perlindungan terhadap MITM.
+> **`--skip-verify`/`-k` dan `verify=False` hanya untuk lab.** Di produksi, gunakan sertifikat yang tervalidasi, karena mematikan verifikasi TLS menghilangkan perlindungan terhadap MITM.
 
 ---
 
@@ -478,15 +478,15 @@ $ curl -skv -u admin:pass https://192.168.1.1/restconf/ 2>&1 | head -30
 
 - Otomasi berkomunikasi dengan **data terstruktur** (JSON/YAML/XML), bukan output CLI untuk manusia.
 - **JSON**: 6 tipe (string, number, boolean, null, object, array); kutip ganda, tanpa trailing comma, tanpa komentar. Format REST/RESTCONF.
-- **YAML**: paling mudah dibaca, indentasi bermakna (spasi, bukan tab); ⚠️ `yes`/`1.10` bisa salah ditafsirkan — pakai kutip. Format Ansible/K8s/config.
+- **YAML**: paling mudah dibaca, indentasi bermakna (spasi, bukan tab); hati-hati, `yes`/`1.10` bisa salah ditafsirkan, jadi pakai kutip. Format Ansible/K8s/config.
 - **XML**: verbose, format NETCONF.
 - **REST API**: CRUD ↔ POST/GET/PUT-PATCH/DELETE; autentikasi Basic (wajib HTTPS)/Bearer/API key/OAuth; JSON encoding.
 - Model interaksi: **CLI scraping** (universal, rapuh), **SNMP** (monitoring), **NETCONF** (XML, transaksional), **RESTCONF** (JSON, sederhana), **gNMI** (gRPC, streaming).
-- **NETCONF**: transaksional dengan **candidate datastore + commit** (atomik, rollback); lebih aman daripada CLI scraping.
+- **NETCONF**: transaksional dengan candidate datastore + commit (atomik, rollback); lebih aman daripada CLI scraping.
 - **RESTCONF**: NETCONF disederhanakan menjadi REST+JSON; mudah tetapi transaksi terbatas.
 - **YANG** memodelkan struktur data; **OpenConfig** adalah model multi-vendor (impian otomasi lintas vendor).
 - **gNMI** dengan **Subscribe** memberi streaming telemetry granular (push, bukan poll).
-- **Eksplorasi dulu dengan curl/Postman** sebelum menulis skrip. ⚠️ `--skip-verify` hanya lab.
+- **Eksplorasi dulu dengan curl/Postman** sebelum menulis skrip. Hati-hati: `--skip-verify` hanya untuk lab.
 
 ---
 
@@ -509,24 +509,24 @@ $ curl -skv -u admin:pass https://192.168.1.1/restconf/ 2>&1 | head -30
    ```
    Perbaikan: (a) tanda kutip tunggal `'device'` → ganda `"device"`; (b) key `enabled` tanpa kutip → diberi kutip `"enabled"`; (c) trailing comma setelah `20` (dalam array) dan setelah `True` (dalam object) dihapus; (d) `True` (Python-style) → `true` (JSON huruf kecil).
 
-2. Di YAML, `version: 1.10` ditafsirkan sebagai **number floating-point**, dan number `1.10` sama dengan `1.1` — **nol di belakang hilang**. Jadi kalau Anda memaksudkan versi software "1.10" (versi kesepuluh minor), YAML akan membacanya sebagai "1.1" (versi pertama minor) — kesalahan yang halus dan berbahaya. Masalah serupa: `port: 022` mungkin ditafsirkan oktal, dan `enabled: yes` menjadi boolean `true`.
+2. Di YAML, `version: 1.10` ditafsirkan sebagai number floating-point, dan number `1.10` sama dengan `1.1`: nol di belakang hilang. Jadi kalau Anda memaksudkan versi software "1.10" (versi kesepuluh minor), YAML akan membacanya sebagai "1.1" (versi pertama minor). Kesalahan ini halus dan berbahaya. Masalah serupa: `port: 022` mungkin ditafsirkan oktal, dan `enabled: yes` menjadi boolean `true`.
    **Perbaikan:** paksa interpretasi sebagai string dengan tanda kutip: `version: "1.10"`. Aturan umum: untuk nilai yang harus tetap sebagai string (versi, nomor telepon, ID yang berawalan nol, nilai yes/no yang bukan boolean), selalu gunakan kutip.
 
 3. **Create → POST**, **Read → GET**, **Update → PUT** (ganti seluruhnya) atau **PATCH** (ubah sebagian), **Delete → DELETE**. Catatan: GET aman dan idempoten (tidak mengubah); PUT dan DELETE idempoten (mengulang menghasilkan keadaan sama); POST dan PATCH tidak idempoten (mengulang bisa membuat duplikat atau efek berbeda).
 
-4. **Transaksi atomik.** NETCONF memakai model candidate datastore + commit: Anda menyiapkan seluruh perubahan di candidate, memvalidasinya, lalu commit — dan **kalau ada bagian yang gagal, SELURUH perubahan di-rollback**, tidak ada keadaan setengah jadi. CLI scraping mengirim perintah satu per satu; kalau koneksi putus atau satu perintah gagal di tengah, perangkat bisa tertinggal dalam **konfigurasi rusak sebagian** yang sulit dipulihkan. Keunggulan lain NETCONF: data terstruktur (XML dengan model YANG) yang **tidak rapuh terhadap perubahan format output** antar-versi software (CLI scraping harus di-parse ulang setiap kali vendor mengubah format `show`), locking untuk mencegah konflik perubahan bersamaan, dan pemisahan jelas antara data konfigurasi dan operasional.
+4. **Transaksi atomik.** NETCONF memakai model candidate datastore + commit: Anda menyiapkan seluruh perubahan di candidate, memvalidasinya, lalu commit. Kalau ada bagian yang gagal, SELURUH perubahan di-rollback, sehingga tidak ada keadaan setengah jadi. CLI scraping mengirim perintah satu per satu; kalau koneksi putus atau satu perintah gagal di tengah, perangkat bisa tertinggal dalam konfigurasi rusak sebagian yang sulit dipulihkan. Keunggulan lain NETCONF: data terstruktur (XML dengan model YANG) yang tidak rapuh terhadap perubahan format output antar-versi software (CLI scraping harus di-parse ulang setiap kali vendor mengubah format `show`), locking untuk mencegah konflik perubahan bersamaan, dan pemisahan jelas antara data konfigurasi dan operasional.
 
-5. Gunakan **RESTCONF** untuk **kesederhanaan dan integrasi**: interaksi sederhana (baca status, ubah satu-dua setting), integrasi dengan tool web/skrip yang sudah berbicara HTTP+JSON, dan ketika Anda ingin memakai curl/Postman/requests tanpa library khusus. RESTCONF memakai HTTPS + JSON yang familiar bagi developer web.
-   Gunakan **NETCONF** untuk **konfigurasi kompleks dan transaksional**: perubahan besar yang harus atomik (semua-atau-tidak-ada), yang butuh candidate datastore + validate + commit + rollback, locking untuk mencegah konflik, dan operasi yang tidak didukung RESTCONF pada perangkat tertentu. NETCONF lebih kuat tetapi lebih kompleks (XML, library ncclient).
+5. Gunakan **RESTCONF** untuk kesederhanaan dan integrasi: interaksi sederhana (baca status, ubah satu-dua setting), integrasi dengan tool web/skrip yang sudah berbicara HTTP+JSON, dan ketika Anda ingin memakai curl/Postman/requests tanpa library khusus. RESTCONF memakai HTTPS + JSON yang familiar bagi developer web.
+   Gunakan **NETCONF** untuk konfigurasi kompleks dan transaksional: perubahan besar yang harus atomik (semua-atau-tidak-ada), yang butuh candidate datastore + validate + commit + rollback, locking untuk mencegah konflik, dan operasi yang tidak didukung RESTCONF pada perangkat tertentu. NETCONF lebih kuat tetapi lebih kompleks (XML, library ncclient).
 
-6. **OpenConfig** adalah sekumpulan model data **YANG yang netral-vendor** — dikembangkan oleh operator jaringan besar (Google, dll) untuk mendefinisikan struktur konfigurasi dan telemetri yang **sama di semua vendor**. Tanpa OpenConfig, setiap vendor punya model native sendiri (Cisco-IOS-XE-native, Junos, dll), sehingga skrip otomasi harus ditulis ulang untuk setiap vendor.
-   **Kenapa penting:** kalau perangkat Cisco, Juniper, dan Arista sama-sama mendukung model OpenConfig (mis. `openconfig-interfaces`, `openconfig-bgp`), maka **satu skrip yang sama** bisa mengonfigurasi ketiganya — inilah impian otomasi multi-vendor. Ini mengurangi lock-in dan kompleksitas. Realitanya: dukungan OpenConfig bervariasi antar-vendor dan tidak selalu lengkap, sehingga sering perlu campuran model OpenConfig (untuk yang umum) dan model native (untuk fitur spesifik vendor).
+6. **OpenConfig** adalah sekumpulan model data YANG yang netral-vendor, dikembangkan oleh operator jaringan besar (Google, dll) untuk mendefinisikan struktur konfigurasi dan telemetri yang sama di semua vendor. Tanpa OpenConfig, setiap vendor punya model native sendiri (Cisco-IOS-XE-native, Junos, dll), sehingga skrip otomasi harus ditulis ulang untuk setiap vendor.
+   **Kenapa penting:** kalau perangkat Cisco, Juniper, dan Arista sama-sama mendukung model OpenConfig (mis. `openconfig-interfaces`, `openconfig-bgp`), maka satu skrip yang sama bisa mengonfigurasi ketiganya. Inilah impian otomasi multi-vendor, yang mengurangi lock-in dan kompleksitas. Dalam praktiknya, dukungan OpenConfig bervariasi antar-vendor dan tidak selalu lengkap, sehingga sering perlu campuran model OpenConfig (untuk yang umum) dan model native (untuk fitur spesifik vendor).
 
-7. **gNMI Subscribe memakai model PUSH** — setelah klien berlangganan sekali, perangkat **mendorong** data secara kontinu (setiap detik atau sub-detik) tanpa diminta lagi. **SNMP memakai model PULL** — sistem monitoring harus **meminta** data berulang kali pada interval (biasanya 1-5 menit), dan setiap poll membebani CPU perangkat.
-   Keunggulan Subscribe: (a) **granularitas jauh lebih halus** — data setiap detik/sub-detik memungkinkan menangkap microburst dan transien yang tidak terlihat SNMP; (b) **beban perangkat lebih rendah** — subscribe sekali, bukan poll terus-menerus; (c) **efisiensi** — Protobuf lebih ringkas daripada SNMP ASN.1, dan gRPC/HTTP2 lebih efisien; (d) **skalabilitas** — mendukung ribuan metrik dari ribuan perangkat; (e) **hanya kirim perubahan** (on-change subscription) atau sampel berkala sesuai kebutuhan. Ini menjadikan gNMI dasar streaming telemetry modern, meski SNMP masih dominan karena dukungan universal.
+7. **gNMI Subscribe memakai model PUSH**: setelah klien berlangganan sekali, perangkat mendorong data secara kontinu (setiap detik atau sub-detik) tanpa diminta lagi. **SNMP memakai model PULL**: sistem monitoring harus meminta data berulang kali pada interval (biasanya 1-5 menit), dan setiap poll membebani CPU perangkat.
+   Keunggulan Subscribe: (a) **granularitas jauh lebih halus**: data setiap detik/sub-detik memungkinkan menangkap microburst dan transien yang tidak terlihat SNMP; (b) **beban perangkat lebih rendah**: subscribe sekali, bukan poll terus-menerus; (c) **efisiensi**: Protobuf lebih ringkas daripada SNMP ASN.1, dan gRPC/HTTP2 lebih efisien; (d) **skalabilitas**: mendukung ribuan metrik dari ribuan perangkat; (e) **hanya kirim perubahan** (on-change subscription) atau sampel berkala sesuai kebutuhan. Ini menjadikan gNMI dasar streaming telemetry modern, meski SNMP masih dominan karena dukungan universal.
 
-8. `verify=False` (di requests) atau `-k`/`--skip-verify` (di curl/gnmic) **mematikan verifikasi sertifikat TLS**. Ini menghilangkan perlindungan mendasar terhadap **man-in-the-middle**: klien tidak lagi memeriksa apakah ia benar-benar berbicara dengan perangkat yang dituju atau dengan penyerang yang menyamar. Penyerang di jalur bisa mencegat koneksi, menyajikan sertifikat palsu, **menangkap kredensial** (username/password/token yang dikirim), dan **memodifikasi konfigurasi** yang dikirim ke perangkat — semua tanpa terdeteksi.
-   Di **lab** ini sering diperlukan karena perangkat memakai sertifikat self-signed. Di **produksi**, gunakan sertifikat yang ditandatangani CA yang tepercaya (atau CA internal yang dipasang di trust store klien), dan biarkan verifikasi aktif. Kalau memakai sertifikat internal, tunjuk CA bundle-nya (`verify="/path/ca.pem"` di requests) alih-alih mematikan verifikasi sepenuhnya. Kredensial otomasi sering punya hak tinggi — mengeksposnya lewat MITM bisa berarti kompromi seluruh jaringan.
+8. `verify=False` (di requests) atau `-k`/`--skip-verify` (di curl/gnmic) mematikan verifikasi sertifikat TLS. Ini menghilangkan perlindungan mendasar terhadap man-in-the-middle: klien tidak lagi memeriksa apakah ia benar-benar berbicara dengan perangkat yang dituju atau dengan penyerang yang menyamar. Penyerang di jalur bisa mencegat koneksi, menyajikan sertifikat palsu, menangkap kredensial (username/password/token yang dikirim), dan memodifikasi konfigurasi yang dikirim ke perangkat, semuanya tanpa terdeteksi.
+   Di lab ini sering diperlukan karena perangkat memakai sertifikat self-signed. Di produksi, gunakan sertifikat yang ditandatangani CA yang tepercaya (atau CA internal yang dipasang di trust store klien), dan biarkan verifikasi aktif. Kalau memakai sertifikat internal, tunjuk CA bundle-nya (`verify="/path/ca.pem"` di requests) alih-alih mematikan verifikasi sepenuhnya. Kredensial otomasi sering punya hak tinggi, jadi mengeksposnya lewat MITM bisa berarti kompromi seluruh jaringan.
 
 </details>
 
@@ -534,14 +534,14 @@ $ curl -skv -u admin:pass https://192.168.1.1/restconf/ 2>&1 | head -30
 
 ## 12. Sumber
 
-- RFC 8259 — JSON · YAML spec — https://yaml.org/
-- RFC 6241 — NETCONF · RFC 8040 — RESTCONF
-- RFC 7950 — YANG 1.1
-- OpenConfig — https://www.openconfig.net/
-- gNMI — https://github.com/openconfig/gnmi
+- RFC 8259 (JSON) · YAML spec: https://yaml.org/
+- RFC 6241 (NETCONF) · RFC 8040 (RESTCONF)
+- RFC 7950 (YANG 1.1)
+- OpenConfig: https://www.openconfig.net/
+- gNMI: https://github.com/openconfig/gnmi
 - Cisco CCNA 200-301 v1.1, topik 6.5 (REST API: authentication, CRUD, HTTP verbs, data encoding) dan 6.7 (JSON)
-- gnmic — https://gnmic.openconfig.net/
+- gnmic: https://gnmic.openconfig.net/
 
 ---
 
-**Berikutnya:** `15-otomasi/03-python-jaringan.md` — Python untuk otomasi jaringan.
+**Berikutnya:** `15-otomasi/03-python-jaringan.md`. Python untuk otomasi jaringan.

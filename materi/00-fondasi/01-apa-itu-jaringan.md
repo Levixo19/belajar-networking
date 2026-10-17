@@ -16,7 +16,7 @@ Bayangkan Anda ingin mengirim surat ke teman di kota lain.
 5. Pak pos mengantar ke rumah teman Anda (**delivery**).
 6. Teman Anda membuka amplop dan membaca surat (**dekapsulasi**).
 
-Jaringan komputer bekerja **persis seperti ini**, hanya jauh lebih cepat dan dengan aturan yang sangat ketat. Hampir semua konsep yang akan Anda pelajari punya padanan di sistem pos:
+Jaringan komputer bekerja persis seperti ini, hanya jauh lebih cepat dan dengan aturan yang sangat ketat. Hampir semua konsep yang akan Anda pelajari punya padanan di sistem pos:
 
 | Sistem pos | Jaringan komputer |
 |---|---|
@@ -42,15 +42,15 @@ Simpan tabel ini. Kita akan kembali ke sini di banyak modul.
 
 Tiga kata kunci di definisi itu:
 
-**a. Terhubung** — ada jalur fisik atau nirkabel di antara mereka. Tanpa jalur, tidak ada jaringan.
+**a. Terhubung:** ada jalur fisik atau nirkabel di antara mereka. Tanpa jalur, tidak ada jaringan.
 
-**b. Protokol** — aturan yang disepakati. Ini bagian yang paling sering diremehkan pemula. Dua komputer yang terhubung kabel tapi "berbicara bahasa berbeda" tetap tidak bisa berkomunikasi. Protokol menentukan:
+**b. Protokol:** aturan yang disepakati. Ini bagian yang paling sering diremehkan pemula. Dua komputer yang terhubung kabel tapi "berbicara bahasa berbeda" tetap tidak bisa berkomunikasi. Protokol menentukan:
 - Format pesan (bagian mana alamat, bagian mana data)
 - Urutan pesan (siapa bicara dulu)
 - Arti setiap pesan
 - Apa yang dilakukan kalau ada error
 
-**c. Berbagi sumber daya** — inilah alasan jaringan ada.
+**c. Berbagi sumber daya:** inilah alasan jaringan ada.
 
 ---
 
@@ -62,7 +62,7 @@ Tiga kata kunci di definisi itu:
 
 3. **Komunikasi.** Email (1971) lahir lebih dulu daripada web (1991). Sekarang: chat, video call, kolaborasi dokumen.
 
-4. **Keandalan.** Kalau satu server mati, yang lain mengambil alih. Konsep **redundansi** — yang akan Anda temui di STP, HSRP, BGP multihoming.
+4. **Keandalan.** Kalau satu server mati, yang lain mengambil alih. Inilah konsep **redundansi**, yang akan Anda temui di STP, HSRP, dan BGP multihoming.
 
 5. **Skalabilitas & ekonomi.** Lebih murah menambah server kecil daripada mengganti satu komputer raksasa. Ini dasar cloud computing.
 
@@ -79,7 +79,7 @@ Istilah-istilah ini akan muncul di setiap modul. Pahami sekarang, bukan nanti.
 | **Endpoint** | Sinonim praktis dari host; titik akhir komunikasi | PC karyawan, kamera IP |
 | **Link** | Koneksi fisik/logis antara dua node | Kabel dari PC ke switch |
 | **Interface** | Titik masuk/keluar data pada sebuah node | Port Ethernet, adapter Wi-Fi |
-| **NIC** | *Network Interface Card* — perangkat keras interface | Kartu Ethernet, chip Wi-Fi |
+| **NIC** | Perangkat keras interface (*Network Interface Card*) | Kartu Ethernet, chip Wi-Fi |
 | **Media** | Bahan yang membawa sinyal | Tembaga, serat optik, udara |
 | **Protokol** | Aturan komunikasi | IP, TCP, HTTP |
 | **Paket** | Unit data yang dikirim | Satu "amplop" berisi data |
@@ -89,7 +89,7 @@ Istilah-istilah ini akan muncul di setiap modul. Pahami sekarang, bukan nanti.
 | **Topologi** | Bentuk susunan jaringan | Star, mesh |
 
 > [!WARNING]
-> **Kesalahan umum #1:** Menyamakan *host* dan *node*. Semua host adalah node, tapi tidak semua node adalah host. Switch adalah node, bukan host (ia meneruskan data, bukan menghasilkan/mengonsumsinya — kecuali untuk manajemen dirinya sendiri).
+> **Kesalahan umum #1:** Menyamakan *host* dan *node*. Semua host adalah node, tapi tidak semua node adalah host. Switch adalah node, bukan host (ia meneruskan data, bukan menghasilkan/mengonsumsinya, kecuali untuk manajemen dirinya sendiri).
 
 > [!WARNING]
 > **Kesalahan umum #2:** Menyamakan *bandwidth* dan *throughput*. Bandwidth = lebar pipa. Throughput = air yang benar-benar mengalir. Detail di modul `00-fondasi/03`.
@@ -136,7 +136,7 @@ Setiap perangkat bisa jadi klien sekaligus server.
 
 ## 6. Skala Jaringan
 
-Diurutkan dari terkecil ke terbesar. Perhatikan bahwa yang membedakan bukan cuma jarak, tapi juga **siapa yang memiliki dan mengelola**.
+Diurutkan dari terkecil ke terbesar. Selain jarak, pembedanya adalah siapa yang memiliki dan mengelola jaringan itu.
 
 | Singkatan | Nama | Jangkauan | Contoh | Dikelola oleh |
 |---|---|---|---|---|
@@ -150,17 +150,17 @@ Diurutkan dari terkecil ke terbesar. Perhatikan bahwa yang membedakan bukan cuma
 
 Ada juga istilah yang muncul belakangan:
 
-- **SAN** (*Storage Area Network*) — jaringan khusus untuk storage (Fibre Channel/iSCSI). Bukan soal jarak, tapi fungsi.
-- **DCN** (*Data Center Network*) — jaringan di dalam data center; padat, cepat, punya desain khusus (spine-leaf).
-- **SD-WAN** — WAN yang dikendalikan software; overlay di atas internet biasa.
+- **SAN** (*Storage Area Network*): jaringan khusus untuk storage (Fibre Channel/iSCSI). Namanya merujuk ke fungsi, bukan jarak.
+- **DCN** (*Data Center Network*): jaringan di dalam data center; padat, cepat, dan punya desain khusus (spine-leaf).
+- **SD-WAN**: WAN yang dikendalikan software, berupa overlay di atas internet biasa.
 
 ### Kunci pemahaman
 
-Perbedaan terpenting antara **LAN** dan **WAN** bukan jarak, tetapi:
+Perbedaan terpenting antara LAN dan WAN bukan jarak, tetapi:
 
 | | LAN | WAN |
 |---|---|---|
-| Kepemilikan media | Anda memiliki kabelnya | Anda **menyewa** dari provider |
+| Kepemilikan media | Anda memiliki kabelnya | Anda menyewa dari provider |
 | Bandwidth | Murah dan besar (1-100 Gbps) | Mahal dan lebih kecil |
 | Latency | Sangat rendah (<1 ms) | Lebih tinggi (10-300 ms) |
 | Teknologi | Ethernet, Wi-Fi | MPLS, Metro-E, internet, seluler |
@@ -172,10 +172,10 @@ Konsekuensi praktisnya besar: desain aplikasi yang jalan mulus di LAN bisa hancu
 
 ## 7. Istilah Berbasis Kepemilikan & Akses
 
-- **Intranet** — jaringan internal organisasi, memakai teknologi internet (IP, HTTP), tapi hanya bisa diakses dari dalam.
-- **Ekstranet** — bagian intranet yang sengaja dibuka untuk mitra tertentu (vendor, supplier), biasanya lewat VPN.
-- **Internet** — jaringan publik global; gabungan puluhan ribu jaringan otonom (AS) yang saling bertukar rute.
-- **DMZ** (*Demilitarized Zone*) — zona penyangga antara internet dan jaringan internal, tempat menaruh server yang harus diakses publik (web server, mail gateway). Dibahas tuntas di `09-nat-acl-firewall/03`.
+- **Intranet**: jaringan internal organisasi, memakai teknologi internet (IP, HTTP), tapi hanya bisa diakses dari dalam.
+- **Ekstranet**: bagian intranet yang sengaja dibuka untuk mitra tertentu (vendor, supplier), biasanya lewat VPN.
+- **Internet**: jaringan publik global; gabungan puluhan ribu jaringan otonom (AS) yang saling bertukar rute.
+- **DMZ** (*Demilitarized Zone*): zona penyangga antara internet dan jaringan internal, tempat menaruh server yang harus diakses publik (web server, mail gateway). Dibahas tuntas di `09-nat-acl-firewall/03`.
 
 ```
    INTERNET
@@ -190,13 +190,13 @@ Konsekuensi praktisnya besar: desain aplikasi yang jalan mulus di LAN bisa hancu
 
 ## 8. Peran Perangkat Jaringan
 
-Ini daftar yang harus Anda kenali sekarang secara **fungsi**. Cara kerjanya dibahas rinci di modul masing-masing.
+Untuk sekarang, kenali perangkat berikut dari fungsinya. Cara kerjanya dibahas rinci di modul masing-masing.
 
 ### 8.1 Perangkat Akhir (End Devices)
 
-- **PC / laptop / server / HP / tablet** — menghasilkan dan mengonsumsi data.
-- **Printer jaringan, kamera IP, sensor IoT, telepon IP** — juga host.
-- **Server** — host yang menjalankan layanan: web, file, database, DNS, DHCP, autentikasi.
+- **PC / laptop / server / HP / tablet**: menghasilkan dan mengonsumsi data.
+- **Printer jaringan, kamera IP, sensor IoT, telepon IP**: juga host.
+- **Server**: host yang menjalankan layanan (web, file, database, DNS, DHCP, autentikasi).
 
 ### 8.2 Perangkat Perantara (Intermediary Devices)
 
@@ -204,19 +204,19 @@ Ini daftar yang harus Anda kenali sekarang secara **fungsi**. Cara kerjanya diba
 |---|---|---|---|
 | **NIC** | Menghubungkan host ke media, memberi identitas MAC | 1-2 | `03-data-link/01` |
 | **Repeater** | Menguatkan/membangkitkan ulang sinyal agar bisa lebih jauh | 1 | `02-layer-fisik/03` |
-| **Hub** | Repeater banyak port — mengirim ulang ke semua port | 1 | `03-data-link/02` |
+| **Hub** | Repeater banyak port yang mengirim ulang ke semua port | 1 | `03-data-link/02` |
 | **Bridge** | Menghubungkan dua segmen, memfilter berdasarkan MAC | 2 | `03-data-link/02` |
 | **Switch** | Bridge banyak port berbasis hardware; meneruskan frame ke port yang tepat | 2 (dan 3 untuk multilayer) | `03-data-link/02` |
 | **Router** | Menghubungkan jaringan berbeda; memilih jalur terbaik berdasarkan IP | 3 | `04-network-layer/05` |
 | **Firewall** | Menegakkan kebijakan boleh/tidak boleh lewat | 3-7 | `09-nat-acl-firewall/03` |
 | **IPS/IDS** | Mendeteksi (IDS) atau memblokir (IPS) serangan | 3-7 | `09-nat-acl-firewall/03` |
 | **Access Point (AP)** | Menjembatani klien nirkabel ke jaringan kabel | 1-2 | `10-wireless/04` |
-| **WLC** (*Wireless LAN Controller*) | Mengelola banyak AP secara terpusat (config, RF, roaming) | — | `10-wireless/04` |
+| **WLC** (*Wireless LAN Controller*) | Mengelola banyak AP secara terpusat (config, RF, roaming) | - | `10-wireless/04` |
 | **Load balancer** | Membagi beban ke banyak server | 4 atau 7 | `06-aplikasi/03` |
 | **Proxy** | Perantara permintaan aplikasi (cache, filter, anonimisasi) | 7 | `06-aplikasi/03` |
 | **Modem** | Mengubah sinyal digital ↔ sinyal media provider (DSL, kabel, fiber) | 1 | `11-wan-vpn/01` |
 | **Media converter** | Mengubah media (copper ↔ fiber) tanpa mengubah data | 1 | `02-layer-fisik/03` |
-| **Controller** | Otak terpusat pada jaringan berbasis controller (SDN) | — | `16-datacenter-cloud-sdn/06` |
+| **Controller** | Otak terpusat pada jaringan berbasis controller (SDN) | - | `16-datacenter-cloud-sdn/06` |
 
 ### 8.3 Cara Cepat Membedakan Hub, Switch, Router
 
@@ -244,18 +244,18 @@ Kalimat yang layak dihafal:
 
 ## 9. PoE: Power over Ethernet
 
-Kabel Ethernet bisa membawa **listrik** sekaligus data. Ini bukan hal sepele: tanpa PoE, memasang 40 access point di plafon berarti menarik 40 kabel listrik juga.
+Kabel Ethernet bisa membawa listrik sekaligus data. Tanpa PoE, memasang 40 access point di plafon berarti menarik 40 kabel listrik juga.
 
-- **802.3af (PoE)** — sampai 15,4 W di sumber, ~12,95 W di perangkat.
-- **802.3at (PoE+)** — sampai 30 W di sumber, ~25,5 W di perangkat.
-- **802.3bt (PoE++ / 4PPoE)** — Type 3 sampai 60 W, Type 4 sampai 90-100 W di sumber.
+- **802.3af (PoE)**: sampai 15,4 W di sumber, ~12,95 W di perangkat.
+- **802.3at (PoE+)**: sampai 30 W di sumber, ~25,5 W di perangkat.
+- **802.3bt (PoE++ / 4PPoE)**: Type 3 sampai 60 W, Type 4 sampai 90-100 W di sumber.
 
 Perangkat yang lazim memakai PoE: access point, telepon IP, kamera CCTV, small switch, sensor, bahkan lampu LED gedung.
 
 Istilah:
-- **PSE** (*Power Sourcing Equipment*) — yang memberi daya (switch PoE atau injector).
-- **PD** (*Powered Device*) — yang menerima daya (AP, kamera).
-- **Power budget** — total daya yang bisa disediakan switch. Switch 24 port PoE+ dengan budget 370 W **tidak** bisa memberi 30 W ke semua 24 port (butuh 720 W).
+- **PSE** (*Power Sourcing Equipment*): perangkat yang memberi daya (switch PoE atau injector).
+- **PD** (*Powered Device*): perangkat yang menerima daya (AP, kamera).
+- **Power budget**: total daya yang bisa disediakan switch. Switch 24 port PoE+ dengan budget 370 W tidak bisa memberi 30 W ke semua 24 port (butuh 720 W).
 
 > [!WARNING]
 > **Jebakan lapangan:** Menghitung jumlah port PoE tanpa menghitung power budget. Perangkat akan menyala bergantian atau mati acak. Selalu jumlahkan kebutuhan daya nyata.
@@ -298,7 +298,7 @@ Anda akan bekerja pada salah satu (atau beberapa) dari ini. Perbedaannya menentu
 
 ## 11. Praktik Pertama Anda
 
-Coba langsung di komputer Anda sekarang. Belum perlu paham hasilnya — tujuannya mengenali bahwa semua ini nyata.
+Coba langsung di komputer Anda sekarang. Belum perlu paham hasilnya. Tujuannya mengenali bahwa semua ini nyata.
 
 **Linux:**
 ```bash
@@ -327,13 +327,13 @@ Simpan hasilnya. Di modul `04-network-layer/01` Anda akan membaca setiap baris o
 
 ## 12. Ringkasan
 
-- Jaringan = perangkat + media + **protokol** + tujuan berbagi.
+- Jaringan = perangkat + media + protokol + tujuan berbagi.
 - Analogi sistem pos berlaku hampir sempurna; gunakan terus.
 - Host menghasilkan/mengonsumsi data; node mencakup perangkat perantara juga.
 - Klien-server terpusat & mudah dikelola; P2P tersebar & tahan gangguan.
-- Skala: PAN → LAN → CAN → MAN → WAN → internet. Beda LAN/WAN yang paling penting adalah **kepemilikan media**, bukan jarak.
+- Skala: PAN → LAN → CAN → MAN → WAN → internet. Beda LAN/WAN yang paling penting adalah kepemilikan media, bukan jarak.
 - Switch memisahkan collision domain; router memisahkan broadcast domain.
-- PoE membawa listrik lewat kabel data; hitung **power budget**, bukan jumlah port.
+- PoE membawa listrik lewat kabel data; hitung power budget, bukan jumlah port.
 
 ---
 
@@ -342,15 +342,15 @@ Simpan hasilnya. Di modul `04-network-layer/01` Anda akan membaca setiap baris o
 1. Sebutkan tiga hal yang membedakan LAN dari WAN selain jarak.
 2. Anda punya 30 kamera CCTV PoE (masing-masing 12 W) dan switch 48-port PoE+ dengan power budget 370 W. Apakah cukup? Tunjukkan hitungannya.
 3. Perangkat apa yang Anda perlukan agar dua jaringan dengan alamat berbeda bisa saling berkomunikasi? Mengapa switch tidak cukup?
-4. Sebuah kantor punya 200 karyawan di 3 lantai satu gedung. Jaringan apa itu — LAN, CAN, atau MAN?
+4. Sebuah kantor punya 200 karyawan di 3 lantai satu gedung. Jaringan apa itu: LAN, CAN, atau MAN?
 5. Jelaskan dengan analogi pos: apa peran DNS?
 
 <details>
 <summary>Jawaban</summary>
 
-1. (a) Kepemilikan media — LAN milik sendiri, WAN disewa dari provider; (b) biaya per bandwidth — WAN jauh lebih mahal; (c) latency — LAN <1 ms, WAN puluhan sampai ratusan ms; (d) teknologi — Ethernet/Wi-Fi vs MPLS/Metro-E/seluler; (e) tingkat kendali — penuh vs dibatasi SLA.
+1. (a) Kepemilikan media: LAN milik sendiri, WAN disewa dari provider; (b) biaya per bandwidth: WAN jauh lebih mahal; (c) latency: LAN <1 ms, WAN puluhan sampai ratusan ms; (d) teknologi: Ethernet/Wi-Fi vs MPLS/Metro-E/seluler; (e) tingkat kendali: penuh vs dibatasi SLA.
 
-2. 30 × 12 W = 360 W kebutuhan perangkat. Budget 370 W. **Secara angka cukup, tetapi terlalu ketat.** Belum menghitung rugi daya di kabel (PSE harus mengirim lebih besar daripada yang diterima PD) dan tidak ada ruang untuk penambahan. Praktik yang benar: sisakan minimal 20-30% headroom, atau pilih switch dengan budget ≥ 500 W.
+2. 30 × 12 W = 360 W kebutuhan perangkat. Budget 370 W. Secara angka cukup, tetapi terlalu ketat. Belum menghitung rugi daya di kabel (PSE harus mengirim lebih besar daripada yang diterima PD) dan tidak ada ruang untuk penambahan. Praktik yang benar: sisakan minimal 20-30% headroom, atau pilih switch dengan budget ≥ 500 W.
 
 3. **Router** (atau switch layer 3 / multilayer switch). Switch biasa hanya membaca alamat MAC dan bekerja dalam satu broadcast domain; ia tidak bisa memindahkan paket antar-jaringan IP yang berbeda karena tidak membaca alamat IP dan tidak punya tabel routing.
 
@@ -364,9 +364,9 @@ Simpan hasilnya. Di modul `04-network-layer/01` Anda akan membaca setiap baris o
 
 ## 14. Sumber
 
-- Cisco, *Networking Basics* — https://www.netacad.com/courses/networking-basics
-- Cloudflare Learning Center, *How does the Internet work?* — https://www.cloudflare.com/learning/network-layer/how-does-the-internet-work/
-- IEEE 802.3bt-2018 (PoE++) — standar Power over Ethernet
+- Cisco, *Networking Basics*: https://www.netacad.com/courses/networking-basics
+- Cloudflare Learning Center, *How does the Internet work?*: https://www.cloudflare.com/learning/network-layer/how-does-the-internet-work/
+- IEEE 802.3bt-2018 (PoE++): standar Power over Ethernet
 - Cisco CCNA 200-301 v1.1 blueprint, topik 1.1 (role dan fungsi komponen jaringan) dan 1.2 (arsitektur topologi)
 
 ---

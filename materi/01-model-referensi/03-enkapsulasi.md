@@ -1,9 +1,9 @@
 # 01.3 Enkapsulasi dan Perjalanan Sebuah Paket
 
 > **Prasyarat:** `01-model-referensi/01`, `01-model-referensi/02`
-> **Tujuan:** Anda bisa menjelaskan langkah demi langkah apa yang terjadi sejak menekan Enter di browser sampai halaman muncul — dan tahu persis apa yang berubah di setiap hop.
+> **Tujuan:** Anda bisa menjelaskan langkah demi langkah apa yang terjadi sejak menekan Enter di browser sampai halaman muncul, dan tahu persis apa yang berubah di setiap hop.
 
-Modul ini adalah **inti dari seluruh kurikulum**. Kalau Anda benar-benar memahami satu narasi ini, sisa materi hanyalah pendalaman tiap bagiannya.
+Modul ini inti kurikulum: kalau Anda benar-benar memahami satu narasi ini, sisa materi hanyalah pendalaman tiap bagiannya.
 
 ---
 
@@ -23,7 +23,7 @@ Serahkan ke kurir, tulis nomor truk           → header data link
 Truk berangkat                                → sinyal fisik
 ```
 
-Setiap layer **tidak peduli** isi dari layer di atasnya. Bagi layer 3, seluruh segmen TCP hanyalah "muatan" yang harus diantar.
+Setiap layer tidak peduli isi dari layer di atasnya. Bagi layer 3, seluruh segmen TCP hanyalah "muatan" yang harus diantar.
 
 ---
 
@@ -56,7 +56,7 @@ Setiap layer **tidak peduli** isi dari layer di atasnya. Bagi layer 3, seluruh s
 └─────────────────────────────────────────────────────────┘
 ```
 
-**Perhatikan:** hanya layer 2 yang menambahkan **trailer** (FCS untuk deteksi error). Layer lain hanya menambahkan header.
+Hanya layer 2 yang menambahkan **trailer** (FCS untuk deteksi error). Layer lain hanya menambahkan header.
 
 ### Ukuran nyata
 
@@ -92,7 +92,7 @@ L4 → memeriksa checksum TCP
 L7 → aplikasi memproses data
 ```
 
-Setiap layer melakukan hal yang sama: **buka header saya, periksa validitas, lihat penanda protokol berikutnya, serahkan sisanya ke atas.**
+Setiap layer melakukan hal yang sama: buka header saya, periksa validitas, lihat penanda protokol berikutnya, serahkan sisanya ke atas.
 
 ### Field penanda "protokol berikutnya"
 
@@ -112,16 +112,16 @@ Ini yang membuat dekapsulasi berantai bekerja:
 
 ## 4. Yang Berubah dan Tidak Berubah di Setiap Hop
 
-Ini konsep yang **paling sering salah dipahami** pemula. Hafalkan tabelnya:
+Pemula paling sering salah memahami konsep ini. Hafalkan tabelnya:
 
 | Field | Berubah tiap hop? | Kenapa |
 |---|---|---|
-| **MAC sumber** | ✅ **Ya** | Diganti dengan MAC interface router yang mengirim |
-| **MAC tujuan** | ✅ **Ya** | Diganti dengan MAC next hop |
+| **MAC sumber** | **Ya** | Diganti dengan MAC interface router yang mengirim |
+| **MAC tujuan** | **Ya** | Diganti dengan MAC next hop |
 | **IP sumber** | Tidak | Identitas pengirim asli (kecuali NAT) |
 | **IP tujuan** | Tidak | Identitas penerima akhir (kecuali NAT) |
-| **TTL** | ✅ **Ya** | Dikurangi 1 oleh setiap router |
-| **Checksum header IP** | ✅ **Ya** | Dihitung ulang karena TTL berubah (IPv4 saja) |
+| **TTL** | **Ya** | Dikurangi 1 oleh setiap router |
+| **Checksum header IP** | **Ya** | Dihitung ulang karena TTL berubah (IPv4 saja) |
 | **Port sumber/tujuan** | Tidak | Kecuali PAT/NAT |
 | **Data aplikasi** | Tidak | Kecuali proxy/inspeksi |
 
@@ -169,7 +169,7 @@ Network tujuan: 192.168.1.1 AND 255.255.255.0 = 192.168.1.0
 SAMA → tujuan ada di jaringan lokal → kirim langsung, tidak lewat gateway
 ```
 
-Ini operasi **AND** yang Anda pelajari di `00-fondasi/02`. Setiap host melakukan ini untuk **setiap** paket keluar.
+Ini operasi **AND** yang Anda pelajari di `00-fondasi/02`. Setiap host melakukan ini untuk setiap paket keluar.
 
 **Langkah 5. PC perlu MAC address dari 192.168.1.1 → ARP.**
 ```
@@ -217,7 +217,7 @@ BERBEDA → tujuan JAUH → kirim ke default gateway
 IP tujuan di paket  = 93.184.216.34   (tujuan akhir)
 MAC tujuan di frame = bb:bb:bb:bb:bb:bb  (MAC ROUTER, bukan MAC server!)
 ```
-PC **tidak akan pernah tahu** MAC address server example.com — dan tidak perlu tahu. Ia hanya perlu MAC hop berikutnya.
+PC tidak akan pernah tahu MAC address server example.com, dan memang tidak perlu tahu. Ia hanya perlu MAC hop berikutnya.
 
 **Langkah 9. TCP three-way handshake.**
 ```
@@ -276,7 +276,7 @@ Switch bekerja murni di layer 2. Ia tidak membuka header IP.
 10. Kirim
 ```
 
-**Perhatikan langkah 9:** header L2 dibuat **baru sepenuhnya**. Header L3 dan seterusnya tetap (kecuali TTL & checksum).
+Pada langkah 9, header L2 dibuat baru sepenuhnya. Header L3 dan seterusnya tetap (kecuali TTL & checksum).
 
 **Langkah 14. NAT (kalau ada).**
 Di router rumah/kantor:
@@ -286,7 +286,7 @@ Sesudah : 203.0.113.77:61001 → 93.184.216.34:443
 
 Tabel NAT mencatat pemetaan agar balasan bisa dikembalikan.
 ```
-Ini **satu-satunya** hal yang mengubah IP sumber di tengah jalan. Detail di `09-nat-acl-firewall/01`.
+Ini satu-satunya hal yang mengubah IP sumber di tengah jalan. Detail di `09-nat-acl-firewall/01`.
 
 **Langkah 15. Melintasi banyak router (10-20 hop tipikal).**
 Setiap router mengulang Langkah 13:
@@ -321,12 +321,12 @@ Content-Type: text/html
 ```
 
 **Langkah 18. Balasan menempuh jalur pulang.**
-- Bisa lewat **jalur berbeda** dari jalur pergi (asymmetric routing) — normal di internet.
-- IP sumber/tujuan **ditukar**: `93.184.216.34:443 → 203.0.113.77:61001`.
+- Bisa lewat jalur berbeda dari jalur pergi (asymmetric routing). Ini normal di internet.
+- IP sumber/tujuan ditukar: `93.184.216.34:443 → 203.0.113.77:61001`.
 - Router NAT mencocokkan port 61001 ke `192.168.1.50:51234` dan menulis ulang tujuan.
 
 **Langkah 19. PC menerima, merakit, mendekripsi, merender.**
-Browser mengurai HTML, menemukan referensi ke CSS/JS/gambar, dan **mengulang seluruh proses ini** untuk setiap sumber daya (sering ke domain berbeda → DNS lookup lagi).
+Browser mengurai HTML, menemukan referensi ke CSS/JS/gambar, dan mengulang seluruh proses ini untuk setiap sumber daya (sering ke domain berbeda → DNS lookup lagi).
 
 ---
 
@@ -343,17 +343,17 @@ Untuk memuat satu halaman sederhana dengan RTT 20 ms:
 | **Total sebelum byte pertama** | **4-5** | **80-100 ms** |
 
 Ini menjelaskan banyak hal:
-- **Kenapa DNS caching penting** — menghemat 1 RTT penuh.
-- **Kenapa keep-alive penting** — menghindari handshake berulang.
-- **Kenapa TLS 1.3 lebih cepat** — menghemat 1 RTT dibanding TLS 1.2.
-- **Kenapa QUIC/HTTP/3 dibuat** — menggabungkan handshake transport & kripto menjadi 1 RTT, bahkan 0-RTT untuk kunjungan berulang.
-- **Kenapa CDN bekerja** — memotong RTT dari 200 ms menjadi 10 ms mengubah semua angka di tabel.
+- DNS caching penting karena menghemat 1 RTT penuh.
+- Keep-alive penting karena menghindari handshake berulang.
+- TLS 1.3 lebih cepat karena menghemat 1 RTT dibanding TLS 1.2.
+- QUIC/HTTP/3 dibuat untuk menggabungkan handshake transport & kripto menjadi 1 RTT, bahkan 0-RTT untuk kunjungan berulang.
+- CDN bekerja karena memangkas RTT. Memotong RTT dari 200 ms menjadi 10 ms mengubah semua angka di tabel.
 
 ---
 
 ## 7. Enkapsulasi Bertingkat (Tunneling)
 
-Saat memakai VPN, enkapsulasi terjadi **dua kali**:
+Saat memakai VPN, enkapsulasi terjadi dua kali:
 
 ```
 ┌────────────────────────────────────────────────────────────────┐
@@ -366,7 +366,7 @@ Saat memakai VPN, enkapsulasi terjadi **dua kali**:
   └── frame di jaringan lokal Anda
 ```
 
-Konsekuensi praktis yang **wajib** Anda ingat: **overhead tunnel mengurangi MTU efektif.**
+Konsekuensi praktis yang wajib Anda ingat: overhead tunnel mengurangi MTU efektif.
 
 ```
 MTU Ethernet          : 1500
@@ -377,7 +377,7 @@ MTU Ethernet          : 1500
 MTU di dalam tunnel   : 1440
 ```
 
-Kalau MTU tidak disesuaikan, paket besar akan terfragmentasi atau **hilang diam-diam** (MTU black hole): SSH tersambung, tapi `ls` di direktori besar menggantung. Ini salah satu masalah VPN paling umum. Solusinya di `11-wan-vpn/02` (MSS clamping).
+Kalau MTU tidak disesuaikan, paket besar akan terfragmentasi atau hilang diam-diam (MTU black hole): SSH tersambung, tapi `ls` di direktori besar menggantung. Ini salah satu masalah VPN paling umum. Solusinya di `11-wan-vpn/02` (MSS clamping).
 
 Contoh overhead tunnel lain:
 | Tunnel | Overhead | MTU dalam (dari 1500) |
@@ -432,7 +432,7 @@ Angkanya akan mencerminkan tabel di §6.
 > **2. Mengira IP berubah tiap hop.** Tidak, kecuali NAT.
 
 > [!WARNING]
-> **3. Lupa ARP diperlukan sebelum paket pertama.** Kalau ARP gagal, tidak ada paket yang bisa keluar — walau routing sempurna.
+> **3. Lupa ARP diperlukan sebelum paket pertama.** Kalau ARP gagal, tidak ada paket yang bisa keluar, walau routing sempurna.
 
 > [!WARNING]
 > **4. Mengabaikan MTU di tunnel.** Penyebab utama "koneksi jalan tapi transfer besar macet".
@@ -476,13 +476,13 @@ Angkanya akan mencerminkan tabel di §6.
 
 2. **TTL 52.** Setiap router mengurangi 1: 64 − 12 = 52.
 
-3. Checksum header IPv4 hanya mencakup **header IP**, dan field TTL di dalamnya berubah di setiap router — jadi checksum harus dihitung ulang. Checksum TCP mencakup header TCP + data + pseudo-header (IP sumber, IP tujuan, protokol, panjang) — semuanya **tidak berubah** dalam transit normal, jadi tidak perlu dihitung ulang. (Pengecualian: perangkat NAT mengubah IP/port sehingga harus memperbarui checksum TCP juga.)
+3. Checksum header IPv4 hanya mencakup **header IP**, dan field TTL di dalamnya berubah di setiap router, jadi checksum harus dihitung ulang. Checksum TCP mencakup header TCP + data + pseudo-header (IP sumber, IP tujuan, protokol, panjang). Semuanya **tidak berubah** dalam transit normal, jadi tidak perlu dihitung ulang. (Pengecualian: perangkat NAT mengubah IP/port sehingga harus memperbarui checksum TCP juga.)
 
 4. **DNS Query** (perlu tahu IP dulu) → **ARP Request** (perlu MAC gateway; sebenarnya ARP terjadi lebih dulu jika resolver DNS-nya juga di luar host, tetapi dalam urutan logis yang diminta: setelah tahu IP tujuan, host perlu MAC next hop) → **TCP SYN** → **TLS ClientHello** → **HTTP GET**.
    Catatan: jika ARP cache kosong, ARP Request untuk gateway sebenarnya terjadi sebelum DNS Query dapat dikirim keluar.
 
-5. **MTU black hole.** Paket kecil (ping, keystroke SSH) muat; paket besar (transfer data scp) melebihi MTU tunnel dan dibuang tanpa pemberitahuan — biasanya karena ICMP "Fragmentation Needed" diblokir sehingga PMTUD gagal.
-   Pembuktian: `ping -M do -s 1400 <tujuan>` lalu turunkan ukurannya sampai berhasil — itu menemukan MTU efektif. Perbaikan: set MTU interface WireGuard (mis. 1420) atau terapkan MSS clamping.
+5. **MTU black hole.** Paket kecil (ping, keystroke SSH) muat; paket besar (transfer data scp) melebihi MTU tunnel dan dibuang tanpa pemberitahuan, biasanya karena ICMP "Fragmentation Needed" diblokir sehingga PMTUD gagal.
+   Pembuktian: `ping -M do -s 1400 <tujuan>` lalu turunkan ukurannya sampai berhasil. Cara ini menemukan MTU efektif. Perbaikan: set MTU interface WireGuard (mis. 1420) atau terapkan MSS clamping.
 
 6. Switch melakukan **flooding**: mengirimkan frame itu ke **semua port dalam VLAN yang sama**, kecuali port asalnya. Ini disebut *unknown unicast flooding*. Saat tujuan menjawab, switch mempelajari lokasinya dan tidak perlu flooding lagi.
 
@@ -494,12 +494,12 @@ Angkanya akan mencerminkan tabel di §6.
 
 ## 12. Sumber
 
-- RFC 791 — Internet Protocol (TTL, checksum, fragmentasi)
-- RFC 826 — Address Resolution Protocol (ARP)
-- RFC 9293 — Transmission Control Protocol (handshake)
-- RFC 8446 — TLS 1.3 (handshake 1-RTT)
-- RFC 1191 & 8899 — Path MTU Discovery
-- "What happens when you type google.com" — https://github.com/alex/what-happens-when
+- RFC 791: Internet Protocol (TTL, checksum, fragmentasi)
+- RFC 826: Address Resolution Protocol (ARP)
+- RFC 9293: Transmission Control Protocol (handshake)
+- RFC 8446: TLS 1.3 (handshake 1-RTT)
+- RFC 1191 & 8899: Path MTU Discovery
+- "What happens when you type google.com": https://github.com/alex/what-happens-when
 
 ---
 

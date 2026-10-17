@@ -10,7 +10,7 @@
 
 ## 1. iproute2 Menggantikan net-tools
 
-Perintah lama (`ifconfig`, `route`, `arp`, `netstat`) sudah **usang** dan tidak dikembangkan lagi. Suite **iproute2** (`ip`, `ss`, `tc`) menggantikannya.
+Perintah lama (`ifconfig`, `route`, `arp`, `netstat`) sudah usang dan tidak dikembangkan lagi. Suite **iproute2** (`ip`, `ss`, `tc`) menggantikannya.
 
 | Lama (net-tools) | Baru (iproute2) | Fungsi |
 |---|---|---|
@@ -179,7 +179,7 @@ $ ip route get 8.8.8.8
     cache
 ```
 > [!TIP]
-> **`ip route get` adalah alat diagnostik terbaik** — menunjukkan rute mana yang **benar-benar dipakai** untuk tujuan tertentu, termasuk alamat sumber yang dipilih. Setara `show ip cef exact-route` di Cisco.
+> **`ip route get` adalah alat diagnostik terbaik.** Perintah ini menunjukkan rute mana yang benar-benar dipakai untuk tujuan tertentu, termasuk alamat sumber yang dipilih. Setara `show ip cef exact-route` di Cisco.
 
 ---
 
@@ -289,10 +289,10 @@ $ sudo ethtool --identify eth0 10
 ```
 
 > [!TIP]
-> **`ethtool -S` menampilkan counter hardware** — setara `show interfaces` di Cisco. CRC error, drop, dan discard di sini menunjukkan masalah layer 1 (kabel, SFP, interferensi).
+> **`ethtool -S` menampilkan counter hardware**, setara `show interfaces` di Cisco. CRC error, drop, dan discard di sini menunjukkan masalah layer 1 (kabel, SFP, interferensi).
 
 > [!WARNING]
-> **Offload features (`ethtool -k`)** bisa menyebabkan capture yang membingungkan — dengan GRO/TSO aktif, tcpdump/Wireshark melihat "paket raksasa" yang sebenarnya sudah digabung NIC. Untuk analisis akurat, matikan sementara:
+> **Offload features (`ethtool -k`)** bisa menyebabkan capture yang membingungkan. Dengan GRO/TSO aktif, tcpdump/Wireshark melihat "paket raksasa" yang sebenarnya sudah digabung NIC. Untuk analisis akurat, matikan sementara:
 ```bash
 $ sudo ethtool -K eth0 gro off tso off gso off
 ```
@@ -301,7 +301,7 @@ $ sudo ethtool -K eth0 gro off tso off gso off
 
 ## 8. Konfigurasi Persisten
 
-Perintah `ip` bersifat **sementara** — hilang setelah reboot. Untuk permanen, gunakan sistem manajemen jaringan distribusi Anda.
+Perintah `ip` bersifat sementara: hasilnya hilang setelah reboot. Untuk permanen, gunakan sistem manajemen jaringan distribusi Anda.
 
 ### NetworkManager (Fedora, RHEL, Ubuntu Desktop)
 
@@ -393,13 +393,13 @@ network:
 ```
 
 ```bash
-$ sudo netplan try               # uji dengan rollback otomatis (100 detik)
+$ sudo netplan try               # uji dengan rollback otomatis (120 detik)
 $ sudo netplan apply
 $ sudo netplan get
 ```
 
 > [!WARNING]
-> **Netplan sensitif terhadap indentasi (YAML)** dan **tidak boleh memakai tab**. `netplan try` memberi rollback otomatis kalau konfigurasi memutus koneksi Anda — selalu pakai ini untuk perubahan jarak jauh.
+> **Netplan sensitif terhadap indentasi (YAML)** dan tidak boleh memakai tab. `netplan try` memberi rollback otomatis kalau konfigurasi memutus koneksi Anda, jadi selalu pakai ini untuk perubahan jarak jauh.
 
 ### Debian klasik (`/etc/network/interfaces`)
 
@@ -479,7 +479,7 @@ $ getent hosts example.com        # memakai nsswitch (files + dns)
 ```
 
 > [!WARNING]
-> **`/etc/resolv.conf` sering merupakan symlink yang dikelola systemd-resolved** — mengeditnya langsung tidak permanen. Gunakan `resolvectl` atau konfigurasi NetworkManager/netplan.
+> **`/etc/resolv.conf` sering merupakan symlink yang dikelola systemd-resolved**, sehingga mengeditnya langsung tidak permanen. Gunakan `resolvectl` atau konfigurasi NetworkManager/netplan.
 
 Detail DNS di `06-aplikasi/01`.
 
@@ -548,13 +548,13 @@ $ ss -tn state established | awk '{print $4}' | cut -d: -f1 | sort | uniq -c | s
 - **iproute2 (`ip`, `ss`, `tc`) menggantikan net-tools** (`ifconfig`, `route`, `arp`, `netstat`) yang usang dan tidak akurat.
 - `ip link` (interface L1/L2), `ip addr` (alamat L3), `ip route` (routing), `ip neigh` (ARP/NDP).
 - **`UP` = admin up; `LOWER_UP` = ada carrier fisik.** `NO-CARRIER` = kabel dicabut.
-- **`ip route get <tujuan>`** menunjukkan rute yang benar-benar dipakai — alat diagnostik terbaik.
+- **`ip route get <tujuan>`** menunjukkan rute yang benar-benar dipakai. Ini alat diagnostik terbaik.
 - **`ethtool`** untuk hardware NIC: kecepatan/duplex, counter error (setara `show interfaces`), offload, ring buffer.
-- **Offload (GRO/TSO) membuat capture membingungkan** — matikan sementara untuk analisis akurat.
-- Perintah `ip` **sementara** — persisten lewat **NetworkManager** (`nmcli`), **systemd-networkd**, **Netplan**, atau `/etc/network/interfaces`. Pilih satu, konsisten.
+- **Offload (GRO/TSO) membuat capture membingungkan.** Matikan sementara untuk analisis akurat.
+- Perintah `ip` bersifat sementara. Konfigurasi persisten lewat **NetworkManager** (`nmcli`), **systemd-networkd**, **Netplan**, atau `/etc/network/interfaces`. Pilih satu dan konsisten.
 - **`netplan try`** dan **`nmcli`** memberi cara aman untuk perubahan jarak jauh (rollback).
 - **sysctl** untuk tuning: `ip_forward` (router), `rp_filter` (anti-spoof), congestion control. Permanen di `/etc/sysctl.d/`.
-- **`/etc/resolv.conf` sering dikelola systemd-resolved** — jangan edit langsung; pakai `resolvectl`.
+- **`/etc/resolv.conf` sering dikelola systemd-resolved.** Jangan edit langsung; pakai `resolvectl`.
 - Alur troubleshooting: L1/L2 (`ip link`, `ethtool`) → L3 (`ip addr`, `ip route get`) → gateway → internet → DNS → L4 (`ss`, `nc`) → trace (`mtr`) → firewall (`nft`).
 
 ---
@@ -573,21 +573,21 @@ $ ss -tn state established | awk '{print $4}' | cut -d: -f1 | sort | uniq -c | s
 <details>
 <summary>Jawaban</summary>
 
-1. **`UP`** berarti interface telah **diaktifkan secara administratif** — administrator menjalankan `ip link set eth0 up`. **`LOWER_UP`** berarti ada **carrier fisik** — kabel tersambung dan link layer 1 benar-benar naik (setara "line protocol up" di Cisco). Sebuah interface bisa `UP` tetapi tanpa `LOWER_UP` (ditandai `NO-CARRIER`) — artinya diaktifkan tetapi kabelnya dicabut atau perangkat lawan mati. Untuk konektivitas, keduanya harus ada.
+1. **`UP`** berarti interface telah diaktifkan secara administratif: administrator menjalankan `ip link set eth0 up`. **`LOWER_UP`** berarti ada carrier fisik: kabel tersambung dan link layer 1 benar-benar naik (setara "line protocol up" di Cisco). Sebuah interface bisa `UP` tetapi tanpa `LOWER_UP` (ditandai `NO-CARRIER`), artinya diaktifkan tetapi kabelnya dicabut atau perangkat lawan mati. Untuk konektivitas, keduanya harus ada.
 
-2. `ip route get 8.8.8.8`. Perintah ini menjalankan lookup routing yang sebenarnya dan menampilkan: rute yang cocok, next hop (`via`), interface keluar (`dev`), dan **alamat sumber yang dipilih** (`src`). Ini jauh lebih akurat daripada membaca `ip route show` dan menebak rute mana yang menang — setara dengan `show ip cef exact-route` di Cisco. Sangat berguna saat ada beberapa rute atau policy routing.
+2. `ip route get 8.8.8.8`. Perintah ini menjalankan lookup routing yang sebenarnya dan menampilkan: rute yang cocok, next hop (`via`), interface keluar (`dev`), dan **alamat sumber yang dipilih** (`src`). Ini jauh lebih akurat daripada membaca `ip route show` dan menebak rute mana yang menang. Padanannya di Cisco adalah `show ip cef exact-route`. Perintah ini sangat berguna saat ada beberapa rute atau policy routing.
 
 3. Karena `ifconfig` (bagian dari net-tools) sudah **usang dan tidak dikembangkan lagi**, dan yang lebih penting: ia **tidak menampilkan semua informasi dengan akurat**. Contoh: ia tidak menampilkan semua alamat IPv6, tidak menampilkan beberapa alamat sekunder dengan benar, tidak memahami fitur jaringan modern (namespace, beberapa jenis interface), dan format outputnya tidak lengkap. Suite `ip` dari iproute2 adalah antarmuka resmi ke kernel network modern dan menampilkan keadaan yang sebenarnya. `ifconfig` sering bahkan tidak terinstal di distribusi minimal/container.
 
-4. **Offload NIC — GRO (Generic Receive Offload) atau LRO** sedang aktif. NIC/kernel **menggabungkan beberapa paket TCP yang berurutan menjadi satu segmen besar** sebelum menyerahkannya ke stack (dan tcpdump), untuk efisiensi. Jadi apa yang Anda lihat bukan paket sesungguhnya di kabel. Hal serupa terjadi di sisi kirim dengan TSO/GSO.
+4. **Offload NIC: GRO (Generic Receive Offload) atau LRO** sedang aktif. NIC/kernel **menggabungkan beberapa paket TCP yang berurutan menjadi satu segmen besar** sebelum menyerahkannya ke stack (dan tcpdump), untuk efisiensi. Jadi apa yang Anda lihat bukan paket sesungguhnya di kabel. Hal serupa terjadi di sisi kirim dengan TSO/GSO.
    **Perbaikan untuk analisis:** matikan offload sementara:
    ```
    sudo ethtool -K eth0 gro off lro off tso off gso off
    ```
    Setelah selesai, aktifkan kembali (offload penting untuk kinerja). Alternatif: lakukan capture di titik lain (mis. switch SPAN) yang melihat paket sesungguhnya di kabel.
 
-5. Karena perintah `ip addr add` (dan semua perintah `ip`) **bekerja langsung pada kernel state yang bersifat sementara** — tidak menulis ke file konfigurasi mana pun, sehingga hilang saat reboot atau restart layanan jaringan. Ini disengaja: `ip` adalah alat untuk mengubah keadaan runtime.
-   **Solusi:** konfigurasikan lewat sistem manajemen jaringan yang persisten sesuai distribusi Anda — **NetworkManager** (`nmcli con mod ...`), **systemd-networkd** (file `.network`), **Netplan** (YAML), atau `/etc/network/interfaces` (Debian klasik). Sistem ini menulis konfigurasi ke disk dan menerapkannya saat boot.
+5. Karena perintah `ip addr add` (dan semua perintah `ip`) **bekerja langsung pada kernel state yang bersifat sementara**. Perintah itu tidak menulis ke file konfigurasi mana pun, sehingga hasilnya hilang saat reboot atau restart layanan jaringan. Ini disengaja: `ip` adalah alat untuk mengubah keadaan runtime.
+   **Solusi:** konfigurasikan lewat sistem manajemen jaringan yang persisten sesuai distribusi Anda: **NetworkManager** (`nmcli con mod ...`), **systemd-networkd** (file `.network`), **Netplan** (YAML), atau `/etc/network/interfaces` (Debian klasik). Sistem ini menulis konfigurasi ke disk dan menerapkannya saat boot.
 
 6. Dua langkah: (a) **Aktifkan IP forwarding** di kernel:
    ```
@@ -598,15 +598,15 @@ $ ss -tn state established | awk '{print $4}' | cut -d: -f1 | sort | uniq -c | s
    echo 'net.ipv6.conf.all.forwarding=1' | sudo tee -a /etc/sysctl.d/99-router.conf
    sudo sysctl --system
    ```
-   (b) **Konfigurasikan interface, rute, dan (biasanya) NAT/firewall** sesuai peran router — alamat pada setiap interface, rute statis atau protokol routing (FRR), dan aturan nftables untuk NAT/filtering. Untuk router yang serius, gunakan **FRRouting** (OSPF/BGP di Linux) — dibahas di `13-linux-networking/04`.
+   (b) **Konfigurasikan interface, rute, dan (biasanya) NAT/firewall** sesuai peran router: alamat pada setiap interface, rute statis atau protokol routing (FRR), dan aturan nftables untuk NAT/filtering. Untuk router yang serius, gunakan **FRRouting** (OSPF/BGP di Linux), yang dibahas di `13-linux-networking/04`.
 
-7. **CRC error adalah masalah Layer 1 (fisik)** — frame tiba dengan checksum yang tidak cocok, artinya rusak dalam transmisi. Yang diperiksa: (a) **kabel** — coba ganti dengan patch cord yang diketahui baik; (b) **konektor/port** — periksa apakah bersih dan terpasang benar; (c) untuk fiber: **SFP dan daya optik** (`ethtool -m eth0`), kebersihan konektor; (d) **duplex mismatch** — periksa `ethtool eth0` di kedua sisi (CRC error di satu sisi + late collision di sisi lain = duplex mismatch); (e) **interferensi EMI** kalau kabel dekat sumber listrik; (f) **panjang kabel** melebihi batas. Ini bukan masalah IP/routing — jangan buang waktu memeriksa konfigurasi layer atas sampai CRC error berhenti.
+7. **CRC error adalah masalah Layer 1 (fisik).** Frame tiba dengan checksum yang tidak cocok, artinya rusak dalam transmisi. Yang diperiksa: (a) **kabel**: coba ganti dengan patch cord yang diketahui baik; (b) **konektor/port**: periksa apakah bersih dan terpasang benar; (c) untuk fiber: **SFP dan daya optik** (`ethtool -m eth0`), kebersihan konektor; (d) **duplex mismatch**: periksa `ethtool eth0` di kedua sisi (CRC error di satu sisi + late collision di sisi lain = duplex mismatch); (e) **interferensi EMI** kalau kabel dekat sumber listrik; (f) **panjang kabel** melebihi batas. Ini bukan masalah IP/routing, jadi jangan buang waktu memeriksa konfigurasi layer atas sampai CRC error berhenti.
 
 8. Beberapa cara aman:
-   - **`netplan try`** (Ubuntu) — menerapkan konfigurasi baru dengan **rollback otomatis setelah 120 detik** kecuali Anda mengonfirmasinya; kalau konfigurasi memutus koneksi Anda, ia otomatis kembali.
+   - **`netplan try`** (Ubuntu): menerapkan konfigurasi baru dengan rollback otomatis setelah 120 detik kecuali Anda mengonfirmasinya. Kalau konfigurasi memutus koneksi Anda, ia otomatis kembali.
    - **`nmcli`** dengan pengujian bertahap, atau membuat koneksi baru dan mengaktifkannya sambil mempertahankan yang lama sebagai fallback.
-   - **Menjadwalkan reboot** beberapa menit ke depan sebelum perubahan (`sleep 300 && reboot` atau `shutdown -r +5`), lalu membatalkannya (`shutdown -c`) jika perubahan berhasil — perangkat kembali ke konfigurasi lama kalau Anda terkunci.
-   - **Akses out-of-band** — console serial, IPMI/iDRAC/iLO, atau KVM — sehingga Anda bisa memperbaiki tanpa jaringan.
+   - **Menjadwalkan reboot** beberapa menit ke depan sebelum perubahan (`sleep 300 && reboot` atau `shutdown -r +5`), lalu membatalkannya (`shutdown -c`) jika perubahan berhasil. Kalau Anda terkunci, perangkat kembali ke konfigurasi lama.
+   - **Akses out-of-band** (console serial, IPMI/iDRAC/iLO, atau KVM), sehingga Anda bisa memperbaiki tanpa jaringan.
    - Untuk perubahan firewall: aturan yang mengizinkan sesi SSH Anda saat ini di paling atas, dan uji dari sesi kedua sebelum menutup yang pertama.
    Prinsip umumnya sama dengan Safe Mode di MikroTik dan `configure revert timer` di Cisco: **selalu punya jalan pulang otomatis** saat mengubah konfigurasi jaringan dari jarak jauh.
 
@@ -617,10 +617,10 @@ $ ss -tn state established | awk '{print $4}' | cut -d: -f1 | sort | uniq -c | s
 ## 14. Sumber
 
 - `man ip`, `man ip-route`, `man ip-address`, `man ethtool`
-- iproute2 — https://wiki.linuxfoundation.org/networking/iproute2
+- iproute2: https://wiki.linuxfoundation.org/networking/iproute2
 - Red Hat, *Configuring and Managing Networking*
-- systemd-networkd — https://www.freedesktop.org/software/systemd/man/systemd.network.html
-- Netplan — https://netplan.io/
+- systemd-networkd: https://www.freedesktop.org/software/systemd/man/systemd.network.html
+- Netplan: https://netplan.io/
 
 ---
 

@@ -179,7 +179,7 @@ add chain=forward src-address-list=BLOKIR action=drop
 ```
 
 > [!TIP]
-> **`/export`** (teks, untuk Git) vs `/system backup` (biner, lengkap). **Torch** & **netwatch** adalah tools diagnostik/otomasi paling berguna. **`ip firewall filter` chain input** melindungi router; **forward** trafik pelanggan.
+> `/export` (teks, untuk Git) vs `/system backup` (biner, lengkap). Torch & netwatch adalah tools diagnostik/otomasi paling berguna. Di `ip firewall filter`, chain input melindungi router; chain forward untuk trafik pelanggan.
 
 > [!WARNING]
 > **Amankan router sejak awal:** firewall input default-deny, batasi Winbox/SSH, matikan layanan tak perlu, ganti password default. RouterOS default cukup terbuka.

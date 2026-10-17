@@ -1,7 +1,7 @@
 # 13.2 Virtual Networking di Linux
 
 > **Prasyarat:** `13-linux-networking/01`, `03-data-link/02`, `03-data-link/03`
-> **Tujuan:** Anda paham blok bangunan jaringan virtual Linux dan bisa membangun topologi lengkap (router, switch, VLAN) hanya dengan Linux — fondasi container dan cloud.
+> **Tujuan:** Anda paham blok bangunan jaringan virtual Linux dan bisa membangun topologi lengkap (router, switch, VLAN) hanya dengan Linux, fondasi container dan cloud.
 
 > > [!NOTE]
 > > **Kenapa ini penting?** Semua jaringan container (Docker, Kubernetes) dan cloud dibangun dari primitif ini: namespace, veth, bridge, VLAN, dan tunnel. Memahaminya membuat jaringan container/cloud tidak lagi menjadi kotak hitam.
@@ -25,7 +25,7 @@
 ```
 
 > [!TIP]
-> **Inilah yang membuat container terisolasi.** Setiap container Docker adalah proses dalam network namespace sendiri — punya `eth0`, IP, dan routing table sendiri, tetapi berbagi kernel dengan host.
+> **Inilah yang membuat container terisolasi.** Setiap container Docker adalah proses dalam network namespace sendiri, dengan `eth0`, IP, dan routing table sendiri, tetapi berbagi kernel dengan host.
 
 ```bash
 # Buat namespace
@@ -57,7 +57,7 @@ $ sudo ip netns exec merah ip link set lo up
 
 ## 2. veth: Kabel Virtual
 
-**veth pair** adalah sepasang interface virtual yang terhubung seperti kabel — apa yang masuk satu ujung keluar ujung lainnya. Dipakai untuk menghubungkan namespace.
+**veth pair** adalah sepasang interface virtual yang terhubung seperti kabel: apa yang masuk satu ujung keluar ujung lainnya. Pasangan ini dipakai untuk menghubungkan namespace.
 
 ```
    [netns merah]                [host / netns lain]
@@ -86,13 +86,13 @@ $ sudo ip netns exec merah ping 10.0.0.254
 ```
 
 > [!TIP]
-> **Docker membuat veth pair untuk setiap container** — satu ujung di namespace container (bernama `eth0` di dalam), satu ujung di host (terhubung ke bridge `docker0`).
+> **Docker membuat veth pair untuk setiap container:** satu ujung di namespace container (bernama `eth0` di dalam), satu ujung di host (terhubung ke bridge `docker0`).
 
 ---
 
 ## 3. Linux Bridge: Switch Virtual
 
-**Bridge** adalah switch layer 2 dalam software. Ia mempelajari MAC address dan meneruskan frame antar-port — persis seperti switch fisik.
+**Bridge** adalah switch layer 2 dalam software. Ia mempelajari MAC address dan meneruskan frame antar-port, persis seperti switch fisik.
 
 ```
         ┌──────── Linux Bridge (br0) ────────┐
@@ -197,7 +197,7 @@ sudo ip netns exec host-a traceroute -n 10.2.2.10
 ```
 
 > [!TIP]
-> **Ini adalah router sungguhan** — hanya dalam software. Anda bisa menambahkan OSPF/BGP (FRR), firewall (nftables), dan NAT ke namespace router untuk membuat lab jaringan lengkap tanpa perangkat fisik. Inilah dasar **Containerlab** dan **GNS3** (lihat `lab/00-setup-lab.md`).
+> **Ini adalah router sungguhan, hanya saja dalam software.** Anda bisa menambahkan OSPF/BGP (FRR), firewall (nftables), dan NAT ke namespace router untuk membuat lab jaringan lengkap tanpa perangkat fisik. Inilah dasar **Containerlab** dan **GNS3** (lihat `lab/00-setup-lab.md`).
 
 > [!WARNING]
 > **`ip_forward` diatur per-namespace.** Mengaktifkannya di host tidak otomatis berlaku di namespace.
@@ -225,7 +225,7 @@ $ sudo ip link del eth0.10
 ```
 
 > [!TIP]
-> **Ini setara router-on-a-stick** — satu interface fisik membawa banyak VLAN, masing-masing menjadi subinterface dengan subnet sendiri. Linux merutekan di antaranya (dengan `ip_forward=1`).
+> **Ini setara router-on-a-stick:** satu interface fisik membawa banyak VLAN, masing-masing menjadi subinterface dengan subnet sendiri. Linux merutekan di antaranya (dengan `ip_forward=1`).
 
 ### VLAN + Bridge (untuk trunk ke switch)
 
@@ -281,7 +281,7 @@ $ sudo ip link set mac0 up
 ```
 
 > [!WARNING]
-> **Keterbatasan macvlan:** host **tidak bisa berkomunikasi** dengan container macvlan-nya sendiri (secara desain). Dan switch fisik harus mengizinkan **banyak MAC per port** — beberapa switch (dan Wi-Fi) memblokirnya.
+> **Keterbatasan macvlan:** host tidak bisa berkomunikasi dengan container macvlan-nya sendiri (secara desain). Selain itu, switch fisik harus mengizinkan banyak MAC per port; beberapa switch (dan Wi-Fi) memblokirnya.
 
 ### ipvlan
 
@@ -420,15 +420,15 @@ Detail lengkap di `16-datacenter-cloud-sdn/05`.
 
 ## 12. Ringkasan
 
-- **Network namespace** memberi stack jaringan terpisah total (interface, routing, ARP, firewall, socket) — dasar isolasi container.
+- **Network namespace** memberi stack jaringan terpisah total (interface, routing, ARP, firewall, socket). Inilah dasar isolasi container.
 - **veth pair** = kabel virtual yang menghubungkan namespace; satu ujung bisa dipindah ke namespace lain.
 - **Linux bridge** = switch layer 2 dalam software (learning, flooding, STP); `docker0` adalah contohnya. Beri IP ke bridge, bukan anggotanya.
-- Router lengkap bisa dibangun dengan namespace + veth + **`ip_forward=1`** (per-namespace) — dasar Containerlab/GNS3.
+- Router lengkap bisa dibangun dengan namespace + veth + **`ip_forward=1`** (per-namespace), yang menjadi dasar Containerlab/GNS3.
 - **VLAN** (`ip link add ... type vlan id N`) untuk subinterface bertag; bridge dengan `vlan_filtering` untuk switch VLAN sungguhan.
-- **macvlan** (MAC unik per container) vs **ipvlan** (berbagi MAC host) — untuk memberi container alamat di jaringan fisik.
+- **macvlan** (MAC unik per container) vs **ipvlan** (berbagi MAC host) dipakai untuk memberi container alamat di jaringan fisik.
 - **TUN** (L3, paket IP) vs **TAP** (L2, frame Ethernet) untuk VPN dan VM.
 - Interface lain: **dummy** (loopback tambahan), **VXLAN** (overlay), **GRE/WireGuard** (tunnel), **VRF** (routing table terpisah).
-- **Docker networking = namespace + veth + bridge + NAT** — semua primitif yang Anda pelajari di modul ini.
+- **Docker networking = namespace + veth + bridge + NAT**, semua primitif yang Anda pelajari di modul ini.
 
 ---
 
@@ -454,23 +454,23 @@ Detail lengkap di `16-datacenter-cloud-sdn/05`.
    ```
    Untuk konektivitas ke luar, Anda juga perlu menambahkan veth pair (satu ujung ke namespace) dan mengonfigurasinya.
 
-3. Karena **interface yang menjadi anggota bridge beroperasi murni di layer 2** — mereka menjadi "port switch" dan **alamat IP yang diberikan kepadanya diabaikan**. Frame yang masuk `eth1` diteruskan oleh logika bridge, bukan diproses oleh stack IP interface itu.
+3. Karena **interface yang menjadi anggota bridge beroperasi murni di layer 2**: mereka menjadi "port switch" dan alamat IP yang diberikan kepadanya diabaikan. Frame yang masuk `eth1` diteruskan oleh logika bridge, bukan diproses oleh stack IP interface itu.
    **Perbaikan:** berikan alamat IP ke **interface bridge (`br0`)**, bukan ke anggotanya:
    ```
    sudo ip addr add 192.168.1.1/24 dev br0
    ```
-   Bridge bertindak sebagai antarmuka layer 3 gabungan untuk semua port-nya — sama seperti SVI (interface VLAN) pada switch.
+   Bridge bertindak sebagai antarmuka layer 3 gabungan untuk semua port-nya, sama seperti SVI (interface VLAN) pada switch.
 
-4. Docker membuat: (a) **network namespace baru** untuk container — memberi isolasi jaringan; (b) **veth pair** — satu ujung ditempatkan di namespace container dan dinamai `eth0` (dengan IP dari subnet bridge, mis. `172.17.0.2`), ujung lainnya (bernama `vethXXXX`) tetap di host; (c) ujung host dari veth **dimasukkan ke bridge `docker0`** (Linux bridge yang bertindak sebagai switch virtual, dengan gateway `172.17.0.1`); (d) **aturan NAT (masquerade)** di nftables/iptables agar trafik keluar container di-NAT ke IP host untuk akses internet; (e) kalau memakai `-p`, **aturan DNAT** untuk port publishing. Semua container di bridge default terhubung ke `docker0` dan bisa saling berkomunikasi lewat layer 2.
+4. Docker membuat: (a) **network namespace baru** untuk container, yang memberi isolasi jaringan; (b) **veth pair**: satu ujung ditempatkan di namespace container dan dinamai `eth0` (dengan IP dari subnet bridge, mis. `172.17.0.2`), ujung lainnya (bernama `vethXXXX`) tetap di host; (c) ujung host dari veth **dimasukkan ke bridge `docker0`** (Linux bridge yang bertindak sebagai switch virtual, dengan gateway `172.17.0.1`); (d) **aturan NAT (masquerade)** di nftables/iptables agar trafik keluar container di-NAT ke IP host untuk akses internet; (e) kalau memakai `-p`, **aturan DNAT** untuk port publishing. Semua container di bridge default terhubung ke `docker0` dan bisa saling berkomunikasi lewat layer 2.
 
-5. Gunakan **ipvlan** ketika: (a) **switch atau AP Wi-Fi membatasi jumlah MAC address per port** (port security, atau Wi-Fi yang hanya mengizinkan satu MAC per klien) — ipvlan membuat semua container berbagi MAC host, sehingga hanya satu MAC yang terlihat switch; (b) MAC address yang berlebihan menjadi masalah (membebani CAM table switch); (c) provider cloud yang memfilter berdasarkan MAC.
-   Gunakan **macvlan** ketika Anda butuh setiap container punya **MAC unik** — misalnya untuk DHCP (setiap container mendapat lease sendiri berdasarkan MAC), atau kebijakan jaringan berbasis MAC. Keterbatasan macvlan: host tidak bisa berkomunikasi langsung dengan container macvlan-nya, dan butuh switch yang mengizinkan banyak MAC per port.
+5. Gunakan **ipvlan** ketika: (a) **switch atau AP Wi-Fi membatasi jumlah MAC address per port** (port security, atau Wi-Fi yang hanya mengizinkan satu MAC per klien), karena ipvlan membuat semua container berbagi MAC host sehingga hanya satu MAC yang terlihat switch; (b) MAC address yang berlebihan menjadi masalah (membebani CAM table switch); (c) provider cloud yang memfilter berdasarkan MAC.
+   Gunakan **macvlan** ketika Anda butuh setiap container punya **MAC unik**, misalnya untuk DHCP (setiap container mendapat lease sendiri berdasarkan MAC) atau kebijakan jaringan berbasis MAC. Keterbatasan macvlan: host tidak bisa berkomunikasi langsung dengan container macvlan-nya, dan butuh switch yang mengizinkan banyak MAC per port.
 
-6. Kombinasi: (a) **3 network namespace** — satu untuk setiap "router"; (b) **veth pair** untuk menghubungkan router-router (misalnya membentuk topologi segitiga atau linear); (c) **`ip_forward=1`** di setiap namespace router agar mereka meneruskan paket; (d) **FRRouting (FRR)** dijalankan di dalam setiap namespace untuk menyediakan OSPF — `ip netns exec routerA frr` dengan konfigurasi OSPF-nya; (e) alamat IP pada setiap interface veth. Tambahkan namespace "host" di ujung untuk menguji konektivitas end-to-end.
+6. Kombinasi: (a) **3 network namespace**, satu untuk setiap "router"; (b) **veth pair** untuk menghubungkan router-router (misalnya membentuk topologi segitiga atau linear); (c) **`ip_forward=1`** di setiap namespace router agar mereka meneruskan paket; (d) **FRRouting (FRR)** dijalankan di dalam setiap namespace untuk menyediakan OSPF (`ip netns exec routerA frr` dengan konfigurasi OSPF-nya); (e) alamat IP pada setiap interface veth. Tambahkan namespace "host" di ujung untuk menguji konektivitas end-to-end.
    Ini persis prinsip yang dipakai **Containerlab** (yang mengotomasi ini dengan file YAML dan container image router seperti FRR, Arista cEOS, Nokia SR Linux) dan **GNS3**. Lihat `lab/00-setup-lab.md`.
 
-7. **TUN** beroperasi di **layer 3** — ia membawa **paket IP** mentah (tanpa header Ethernet). Dipakai untuk VPN **routed** di mana Anda hanya perlu memindahkan paket IP: WireGuard, OpenVPN mode tun. Ini yang paling umum karena efisien dan tidak membawa overhead layer 2.
-   **TAP** beroperasi di **layer 2** — ia membawa **frame Ethernet penuh** (dengan header MAC). Dipakai ketika Anda perlu memindahkan frame layer 2: VPN **bridged** (menggabungkan dua LAN menjadi satu broadcast domain, seperti EoIP), emulasi jaringan, dan **VM** (QEMU/KVM menghubungkan `tap` ke bridge host sehingga VM muncul di LAN seperti mesin fisik).
+7. **TUN** beroperasi di **layer 3**: ia membawa paket IP mentah (tanpa header Ethernet). Dipakai untuk VPN **routed** di mana Anda hanya perlu memindahkan paket IP: WireGuard, OpenVPN mode tun. Ini yang paling umum karena efisien dan tidak membawa overhead layer 2.
+   **TAP** beroperasi di **layer 2**: ia membawa frame Ethernet penuh (dengan header MAC). Dipakai ketika Anda perlu memindahkan frame layer 2: VPN **bridged** (menggabungkan dua LAN menjadi satu broadcast domain, seperti EoIP), emulasi jaringan, dan **VM** (QEMU/KVM menghubungkan `tap` ke bridge host sehingga VM muncul di LAN seperti mesin fisik).
    Pilih TUN untuk VPN routed biasa (lebih efisien); pilih TAP hanya kalau benar-benar butuh konektivitas layer 2 (broadcast, protokol non-IP, atau VM yang harus tampak di LAN fisik).
 
 8. Host bertindak sebagai **router NAT**. Langkah-langkah: (a) hubungkan namespace ke host lewat **veth pair** dengan alamat IP; (b) beri **default route** di namespace yang menunjuk ke alamat host di veth itu; (c) **aktifkan `ip_forward=1` di host** agar meneruskan paket; (d) buat aturan **NAT masquerade** untuk subnet namespace pada interface keluar host:
@@ -489,10 +489,10 @@ Detail lengkap di `16-datacenter-cloud-sdn/05`.
 ## 14. Sumber
 
 - `man ip-netns`, `man ip-link`, `man bridge`
-- Linux Foundation — https://wiki.linuxfoundation.org/networking/
-- Docker networking — https://docs.docker.com/network/
-- "Linux network namespaces" — dokumentasi kernel
-- Containerlab — https://containerlab.dev/
+- Linux Foundation: https://wiki.linuxfoundation.org/networking/
+- Docker networking: https://docs.docker.com/network/
+- "Linux network namespaces", dokumentasi kernel
+- Containerlab: https://containerlab.dev/
 
 ---
 

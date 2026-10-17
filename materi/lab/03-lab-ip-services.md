@@ -17,7 +17,7 @@
 
 **VERIFIKASI:** PC menampilkan IP/gateway/DNS dari DHCP; `show ip dhcp binding`.
 
-**KRITERIA SUKSES:** ✅ Kedua LAN mendapat IP otomatis (langsung & via relay).
+**KRITERIA SUKSES:** Kedua LAN mendapat IP otomatis (langsung & via relay).
 
 <details><summary>Solusi & penjelasan</summary>
 
@@ -28,7 +28,7 @@ R1(dhcp-config)# network 10.0.1.0 255.255.255.0
 R1(dhcp-config)# default-router 10.0.1.1
 R1(dhcp-config)# dns-server 8.8.8.8
 ```
-Untuk LAN kedua yang DHCP server-nya "jauh" (beda subnet): pada interface LAN kedua, `ip helper-address <IP-server-DHCP>` — router **me-relay** broadcast DHCP (DISCOVER) sebagai unicast ke server. Ini perlu karena **broadcast DHCP tidak melewati router** (`06-aplikasi/02`). `show ip dhcp binding` menampilkan lease. ⚠️ **Exclude** gateway & IP statis agar tidak diberikan ke klien. Membuktikan DORA & relay.
+Untuk LAN kedua yang DHCP server-nya "jauh" (beda subnet): pada interface LAN kedua, pasang `ip helper-address <IP-server-DHCP>`. Router lalu me-relay broadcast DHCP (DISCOVER) sebagai unicast ke server. Ini perlu karena broadcast DHCP tidak melewati router (`06-aplikasi/02`). `show ip dhcp binding` menampilkan lease. Exclude gateway & IP statis agar tidak diberikan ke klien. Membuktikan DORA & relay.
 </details>
 
 ---
@@ -42,13 +42,13 @@ Untuk LAN kedua yang DHCP server-nya "jauh" (beda subnet): pada interface LAN ke
 2. Set PC memakai server DNS itu.
 3. Uji: dari PC, `ping www.lab.test` dan akses web via nama.
 
-**VERIFIKASI:** ping/akses via **nama** (bukan IP) berhasil; resolusi nama bekerja.
+**VERIFIKASI:** ping/akses via nama (bukan IP) berhasil; resolusi nama bekerja.
 
-**KRITERIA SUKSES:** ✅ Nama domain ter-resolve ke IP; akses via nama berhasil.
+**KRITERIA SUKSES:** Nama domain ter-resolve ke IP; akses via nama berhasil.
 
 <details><summary>Solusi & penjelasan</summary>
 
-Di Server (PT): Services → DNS → On, tambah record A `www.lab.test` = IP web server. Set PC → DNS Server = IP server DNS. Dari PC, `ping www.lab.test` memicu **query DNS** (A record) → dapat IP → ping ke IP itu. Ini mendemonstrasikan peran DNS (`06-aplikasi/01`): menerjemahkan nama ke IP. ⚠️ Jika gagal: cek PC menunjuk DNS server yang benar, record ada, dan konektivitas IP ke server DNS OK (DNS tak berguna kalau IP tak nyambung). Eksperimen: tambah CNAME, amati query.
+Di Server (PT): Services → DNS → On, tambah record A `www.lab.test` = IP web server. Set PC → DNS Server = IP server DNS. Dari PC, `ping www.lab.test` memicu query DNS (A record) → dapat IP → ping ke IP itu. Ini mendemonstrasikan peran DNS (`06-aplikasi/01`): menerjemahkan nama ke IP. Jika gagal, cek: PC menunjuk DNS server yang benar, record ada, dan konektivitas IP ke server DNS OK (DNS tak berguna kalau IP tak nyambung). Eksperimen: tambah CNAME, amati query.
 </details>
 
 ---
@@ -64,7 +64,7 @@ Di Server (PT): Services → DNS → On, tambah record A `www.lab.test` = IP web
 
 **VERIFIKASI:** `show ip nat translations` (banyak host privat → satu IP publik, port berbeda).
 
-**KRITERIA SUKSES:** ✅ Host privat mencapai luar via satu IP publik; tabel NAT menunjukkan PAT.
+**KRITERIA SUKSES:** Host privat mencapai luar via satu IP publik; tabel NAT menunjukkan PAT.
 
 <details><summary>Solusi & penjelasan</summary>
 
@@ -76,7 +76,7 @@ R1(config-if)# ip nat outside
 R1(config)# access-list 1 permit 192.168.1.0 0.0.0.255
 R1(config)# ip nat inside source list 1 interface gi0/1 overload
 ```
-`overload` = **PAT** — banyak host privat berbagi satu IP publik, dibedakan **port sumber**. `show ip nat translations` menampilkan mapping (inside local → inside global:port). Ini yang memungkinkan ribuan perangkat rumah berbagi satu IP publik ISP. Membuktikan `09-nat-acl-firewall/01`. ⚠️ Interface inside/outside harus ditandai benar; ACL menentukan siapa yang di-NAT.
+`overload` = **PAT**: banyak host privat berbagi satu IP publik dan dibedakan lewat port sumber. `show ip nat translations` menampilkan mapping (inside local → inside global:port). Ini yang memungkinkan ribuan perangkat rumah berbagi satu IP publik ISP. Membuktikan `09-nat-acl-firewall/01`. Hati-hati: interface inside/outside harus ditandai benar; ACL menentukan siapa yang di-NAT.
 </details>
 
 ---
@@ -92,7 +92,7 @@ R1(config)# ip nat inside source list 1 interface gi0/1 overload
 
 **VERIFIKASI:** trafik yang diblok gagal, yang diizinkan berhasil; `show access-lists` (hit counter).
 
-**KRITERIA SUKSES:** ✅ ACL memfilter sesuai maksud; counter bertambah pada match.
+**KRITERIA SUKSES:** ACL memfilter sesuai maksud; counter bertambah pada match.
 
 <details><summary>Solusi & penjelasan</summary>
 
@@ -113,7 +113,7 @@ R1(config)# interface gi0/0
 R1(config-if)# ip access-group SRV in
 ```
 > [!WARNING]
-> **Ada `deny any` implisit di akhir setiap ACL** — selalu sertakan `permit` yang diperlukan atau semua trafik terblokir. **Standard ACL** dekat **tujuan** (hanya lihat sumber); **Extended** dekat **sumber** (efisien, buang trafik lebih awal). `show access-lists` menampilkan hit count. Membuktikan `09-nat-acl-firewall/02`. Urutan baris penting (top-down, first match).
+> **Ada `deny any` implisit di akhir setiap ACL.** Selalu sertakan `permit` yang diperlukan, atau semua trafik terblokir. Standard ACL dipasang dekat tujuan (karena hanya melihat sumber); Extended dekat sumber (efisien, trafik dibuang lebih awal). `show access-lists` menampilkan hit count. Membuktikan `09-nat-acl-firewall/02`. Urutan baris penting (top-down, first match).
 > </details>
 
 ---
@@ -127,7 +127,7 @@ R1(config-if)# ip access-group SRV in
 
 **VERIFIKASI:** `show ntp status` (synchronized); SSH berhasil, Telnet gagal.
 
-**KRITERIA SUKSES:** ✅ Waktu tersinkron; akses hanya via SSH (Telnet mati).
+**KRITERIA SUKSES:** Waktu tersinkron; akses hanya via SSH (Telnet mati).
 
 <details><summary>Solusi & penjelasan</summary>
 
@@ -141,7 +141,7 @@ R1(config)# line vty 0 4
 R1(config-line)# transport input ssh          (HANYA ssh, bukan telnet)
 R1(config-line)# login local
 ```
-NTP menjaga **waktu sinkron** — kritis untuk korelasi log & sertifikat (`06-aplikasi/05`, `14/03`). SSH mengenkripsi sesi manajemen (Telnet plaintext — `12-keamanan/05`). `transport input ssh` menonaktifkan Telnet. ⚠️ RSA key butuh hostname + domain-name lebih dulu. Membuktikan CCNA 4.2 (NTP) & 5.3/2.8 (SSH). Praktik hardening dasar.
+NTP menjaga waktu tetap sinkron, syarat untuk korelasi log & sertifikat (`06-aplikasi/05`, `14/03`). SSH mengenkripsi sesi manajemen (Telnet mengirim plaintext, lihat `12-keamanan/05`). `transport input ssh` menonaktifkan Telnet. Hati-hati: RSA key butuh hostname + domain-name lebih dulu. Membuktikan CCNA 4.2 (NTP) & 5.3/2.8 (SSH). Ini praktik hardening dasar.
 </details>
 
 ---
@@ -151,6 +151,6 @@ NTP menjaga **waktu sinkron** — kritis untuk korelasi log & sertifikat (`06-ap
 Anda mempraktikkan: DHCP (server + relay), DNS, NAT/PAT, ACL (standard & extended), NTP & SSH. Ini inti CCNA domain 4.0 (IP Services) dan bagian keamanan/manajemen.
 
 > [!TIP]
-> Gabungkan dengan Lab 02: bangun jaringan lengkap dengan routing + DHCP + NAT ke internet + ACL keamanan + SSH — mendekati desain nyata (`17/04`).
+> Gabungkan dengan Lab 02: bangun jaringan lengkap dengan routing + DHCP + NAT ke internet + ACL keamanan + SSH. Hasilnya mendekati desain nyata (`17/04`).
 
 **Berikutnya:** `lab/04-lab-keamanan-wireless.md`. Keamanan L2, port security, dan WLAN.

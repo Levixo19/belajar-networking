@@ -1,9 +1,9 @@
 # 04.2 Subnetting
 
-> **Prasyarat:** `00-fondasi/02` (biner — **wajib kuasai**), `04-network-layer/01`
+> **Prasyarat:** `00-fondasi/02` (biner, **wajib kuasai**), `04-network-layer/01`
 > **Tujuan:** Anda bisa mengerjakan soal subnetting apa pun dalam **kurang dari 30 detik tanpa kalkulator**.
 
-Subnetting adalah keterampilan yang **paling sering diuji** dan **paling sering menghambat** orang di CCNA/Network+. Kabar baiknya: setelah Anda memahami satu metode dan melatihnya, ini menjadi mekanis.
+Subnetting adalah keterampilan yang paling sering diuji dan paling sering menghambat orang di CCNA/Network+. Setelah Anda memahami satu metode dan melatihnya, pengerjaannya menjadi mekanis.
 
 ---
 
@@ -16,7 +16,7 @@ Anda diberi `192.168.1.0/24` (254 host) untuk kantor dengan:
 - 5 printer
 - 2 link ke router
 
-**Tanpa subnetting** — semua di satu jaringan:
+**Tanpa subnetting**, semua di satu jaringan:
 ```
 ❌ Satu broadcast domain untuk semua → broadcast dari printer sampai ke server
 ❌ Tidak ada isolasi keamanan → tamu bisa mengakses server
@@ -24,7 +24,7 @@ Anda diberi `192.168.1.0/24` (254 host) untuk kantor dengan:
 ❌ Satu broadcast storm melumpuhkan semuanya
 ```
 
-**Dengan subnetting** — dipecah menjadi beberapa jaringan kecil:
+**Dengan subnetting**, alamat dipecah menjadi beberapa jaringan kecil:
 ```
 ✅ Broadcast terisolasi per kelompok
 ✅ Bisa memasang ACL/firewall antar-kelompok
@@ -75,7 +75,7 @@ Jumlah host usable = 2^(bit host tersisa) − 2
 
 ## 3. Metode Magic Number (Cara Cepat)
 
-Ini metode yang dipakai praktisi. Kuasai ini dan Anda tidak perlu menggambar biner lagi.
+Ini metode yang dipakai praktisi. Dengan metode ini Anda tidak perlu menggambar biner lagi.
 
 ### Langkah
 
@@ -273,7 +273,7 @@ PC-A berpikir: 192.168.1.20 ada di subnet saya → kirim langsung
 ```
 
 > [!TIP]
-> **Pelajaran:** ketika gejalanya "sebagian host bisa, sebagian tidak", **selalu periksa subnet mask di semua perangkat**, bukan hanya alamat IP-nya.
+> **Pelajaran:** ketika gejalanya "sebagian host bisa, sebagian tidak", selalu periksa subnet mask di semua perangkat, bukan hanya alamat IP-nya.
 
 ---
 
@@ -327,7 +327,7 @@ Butuh 6 bit host → prefix = 32 − 6 = /26
 | 511-1022 | 10 | /22 | 1022 |
 
 > [!TIP]
-> **Selalu sisakan ruang tumbuh.** Kalau butuh 60 host hari ini, /26 (62 host) sudah nyaris penuh. Pilih /25 (126 host) kecuali alamat benar-benar terbatas.
+> **Selalu sisakan ruang tumbuh.** Kalau butuh 60 host hari ini, /26 (62 host) sudah nyaris penuh. Pilih /25 (126 host) kecuali alamat memang terbatas.
 
 ---
 
@@ -335,7 +335,7 @@ Butuh 6 bit host → prefix = 32 − 6 = /26
 
 Kerjakan tanpa kalkulator. Target: **rata-rata 30 detik per soal.**
 
-**Bagian A — Cari network, broadcast, dan host range:**
+**Bagian A (cari network, broadcast, dan host range):**
 1. `192.168.4.77/26`
 2. `10.10.10.200/27`
 3. `172.16.8.45/28`
@@ -345,18 +345,18 @@ Kerjakan tanpa kalkulator. Target: **rata-rata 30 detik per soal.**
 7. `192.168.200.35/30`
 8. `10.50.60.70/19`
 
-**Bagian B — Berapa host usable dan berapa subnet:**
+**Bagian B (berapa host usable dan berapa subnet):**
 9. `/26` dari `/24`
 10. `/28` dari `/24`
 11. `/22` dari `/16`
 12. `/30` dari `/24`
 
-**Bagian C — Apakah satu subnet:**
+**Bagian C (apakah satu subnet):**
 13. `192.168.1.50/26` dan `192.168.1.70/26`
 14. `10.1.5.10/22` dan `10.1.7.200/22`
 15. `172.16.20.5/20` dan `172.16.40.5/20`
 
-**Bagian D — Terapan:**
+**Bagian D (terapan):**
 16. Anda butuh subnet untuk 100 host. Prefix minimum apa?
 17. Berapa subnet /27 yang bisa dibuat dari satu /24?
 18. Subnet ke-3 dari `192.168.50.0/24` yang dipecah menjadi /27?
@@ -367,26 +367,26 @@ Kerjakan tanpa kalkulator. Target: **rata-rata 30 detik per soal.**
 <summary>Jawaban Bagian A</summary>
 
 1. `/26`, block 64. 77 → blok 64.
-   **Network 192.168.4.64 · Broadcast 192.168.4.127 · Host .65–.126**
+   **Network 192.168.4.64 · Broadcast 192.168.4.127 · Host .65-.126**
 
 2. `/27`, block 32. 200 → kelipatan: 0,32,64,96,128,160,192,224. Terbesar ≤200 = 192.
-   **Network 10.10.10.192 · Broadcast 10.10.10.223 · Host .193–.222**
+   **Network 10.10.10.192 · Broadcast 10.10.10.223 · Host .193-.222**
 
 3. `/28`, block 16. 45 → kelipatan: 0,16,32,48. Terbesar ≤45 = 32.
-   **Network 172.16.8.32 · Broadcast 172.16.8.47 · Host .33–.46**
+   **Network 172.16.8.32 · Broadcast 172.16.8.47 · Host .33-.46**
 
 4. `/25`, block 128. 130 → blok 128.
-   **Network 192.168.1.128 · Broadcast 192.168.1.255 · Host .129–.254**
+   **Network 192.168.1.128 · Broadcast 192.168.1.255 · Host .129-.254**
 
 5. `/29`, block 8. 99 → kelipatan 8: ...96, 104. Terbesar ≤99 = 96.
-   **Network 10.0.5.96 · Broadcast 10.0.5.103 · Host .97–.102**
+   **Network 10.0.5.96 · Broadcast 10.0.5.103 · Host .97-.102**
 
 6. `/22`, block 4 pada oktet 3. Oktet 3 = 100 → kelipatan 4: 100 tepat kelipatan.
    **Network 172.20.100.0 · Broadcast 172.20.103.255 · Host 172.20.100.1-172.20.103.254**
 
 7. `/30`, block 4. 35 → kelipatan 4: 32.
-   **Network 192.168.200.32 · Broadcast 192.168.200.35 · Host .33–.34**
-   **Perhatian:** Perhatikan: `.35` justru adalah broadcast, bukan alamat host!
+   **Network 192.168.200.32 · Broadcast 192.168.200.35 · Host .33-.34**
+   **Perhatian:** `.35` justru adalah broadcast, bukan alamat host!
 
 8. `/19`, block 32 pada oktet 3. Oktet 3 = 60 → kelipatan 32: 0, 32, 64. Terbesar ≤60 = 32.
    **Network 10.50.32.0 · Broadcast 10.50.63.255 · Host 10.50.32.1-10.50.63.254**
@@ -417,7 +417,7 @@ Kerjakan tanpa kalkulator. Target: **rata-rata 30 detik per soal.**
 
 16. 2⁷ − 2 = 126 ≥ 100 → butuh 7 bit host → **/25**.
 17. 256 ÷ 32 = **8 subnet**.
-18. Block 32. Subnet ke-3 = (3−1) × 32 = 64 → **192.168.50.64/27** (host .65–.94, broadcast .95).
+18. Block 32. Subnet ke-3 = (3−1) × 32 = 64 → **192.168.50.64/27** (host .65-.94, broadcast .95).
 19. Mask `/26`, block 64. Oktet 4 = 40 → blok 0-63 → network `10.20.30.0`. Alamat pertama yang usable = **10.20.30.1**.
 20. **TIDAK VALID.** `/26` dengan block 64: 63 adalah **broadcast address** dari subnet `192.168.1.0/26`, sehingga tidak bisa diberikan ke host. Gejalanya: host tidak bisa berkomunikasi sama sekali, atau perilaku aneh (beberapa OS menolak konfigurasi ini secara langsung).
 
@@ -477,7 +477,7 @@ for s in ipaddress.ip_network('192.168.1.0/24').subnets(new_prefix=26):
 > **4. Memberikan broadcast address ke host.** Periksa: apakah oktet terakhir adalah `network + block_size − 1`?
 
 > [!WARNING]
-> **5. Mask tidak konsisten antar-host.** Menyebabkan komunikasi asimetris yang sangat sulit didiagnosis.
+> **5. Mask tidak konsisten antar-host.** Ini menyebabkan komunikasi asimetris yang sulit didiagnosis.
 
 > [!WARNING]
 > **6. Membuat subnet terlalu pas.** Butuh 60 host lalu memakai /26 (62 host) berarti hanya ada ruang untuk 2 perangkat tambahan.
@@ -496,18 +496,18 @@ for s in ipaddress.ip_network('192.168.1.0/24').subnets(new_prefix=26):
 - Nilai mask hanya: **0, 128, 192, 224, 240, 248, 252, 254, 255**. Block size: **256, 128, 64, 32, 16, 8, 4, 2, 1**.
 - Hafalkan host per prefix: /30=2, /29=6, /28=14, /27=30, /26=62, /25=126, /24=254, /23=510, /22=1022.
 - Untuk memeriksa apakah dua IP satu subnet: bandingkan blok mereka dengan block size yang sama.
-- **Mask yang tidak konsisten** menyebabkan komunikasi asimetris — selalu periksa mask, bukan hanya IP.
+- **Mask yang tidak konsisten** menyebabkan komunikasi asimetris, jadi selalu periksa mask, bukan hanya IP.
 - Sisakan ruang tumbuh saat memilih prefix.
 
 ---
 
 ## 12. Sumber
 
-- RFC 950 — Internet Standard Subnetting Procedure
-- RFC 1878 — Variable Length Subnet Table For IPv4
-- RFC 4632 — CIDR: The Internet Address Assignment and Aggregation Plan
+- RFC 950: Internet Standard Subnetting Procedure
+- RFC 1878: Variable Length Subnet Table For IPv4
+- RFC 4632, CIDR: The Internet Address Assignment and Aggregation Plan
 - Cisco CCNA 200-301 v1.1, topik 1.6
-- `referensi/tabel-subnetting.md` di repositori ini — tabel lengkap /1–/32
+- `referensi/tabel-subnetting.md` di repositori ini: tabel lengkap /1-/32
 
 ---
 

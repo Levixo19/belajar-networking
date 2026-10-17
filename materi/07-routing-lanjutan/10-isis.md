@@ -25,20 +25,20 @@ Di modul `07-routing-lanjutan/02-konsep-routing-dinamis` Anda membaca rekomendas
 **5. Basis keahlian.** Sebagian alasannya historis. Ketika backbone internet besar dibangun pada 1990-an, sejumlah operator memilih IS-IS, dan pengalaman operasional serta fitur vendor (TE, SR, fast reroute) banyak dikembangkan dan diuji di sana lebih dulu. Akibatnya, dokumentasi, sertifikasi SP (Cisco SPCOR, Juniper JNCIS-SP), dan lowongan kerja di operator cenderung menganggap IS-IS sebagai default.
 
 > [!WARNING]
-> **Ini bukan berarti OSPF "kalah".** Banyak operator, termasuk yang besar, menjalankan OSPF dengan baik. Perbandingan yang adil ada di bagian 16. Yang penting: kalau Anda ingin bekerja di NOC atau tim core ISP, Anda harus fasih keduanya.
+> **Ini bukan berarti OSPF "kalah".** Banyak operator, termasuk yang besar, menjalankan OSPF dengan baik. Perbandingan yang adil ada di bagian 16. Kalau Anda ingin bekerja di NOC atau tim core ISP, Anda harus fasih keduanya.
 
 ### Karakteristik IS-IS
 
 | Aspek | Nilai |
 |---|---|
-| Jenis | **Link state** |
-| Algoritma | **Dijkstra SPF**, dijalankan terpisah per level |
-| Metrik | **Default 10 per interface** (tidak dihitung dari bandwidth); narrow 6 bit atau wide 24 bit |
-| Administrative Distance | **115** (Cisco, FRR); Junos memakai *preference* 15/18 (L1/L2 internal) |
-| Transport | **Langsung di atas data link** (LLC DSAP/SSAP 0xFE), bukan IP |
-| Alamat tujuan | MAC multicast **01-80-C2-00-00-14** (AllL1ISs), **01-80-C2-00-00-15** (AllL2ISs) |
+| Jenis | Link state |
+| Algoritma | Dijkstra SPF, dijalankan terpisah per level |
+| Metrik | Default 10 per interface (tidak dihitung dari bandwidth); narrow 6 bit atau wide 24 bit |
+| Administrative Distance | 115 (Cisco, FRR); Junos memakai *preference* 15/18 (L1/L2 internal) |
+| Transport | Langsung di atas data link (LLC DSAP/SSAP 0xFE), bukan IP |
+| Alamat tujuan | MAC multicast 01-80-C2-00-00-14 (AllL1ISs), 01-80-C2-00-00-15 (AllL2ISs) |
 | Standar | ISO/IEC 10589, RFC 1195 (Integrated IS-IS), RFC 5305, RFC 5308, RFC 5120 |
-| Hierarki | **Level 1** (dalam area) dan **Level 2** (antar-area/backbone) |
+| Hierarki | Level 1 (dalam area) dan Level 2 (antar-area/backbone) |
 | IPv6 | Bawaan lewat TLV, tanpa versi protokol baru |
 
 ---
@@ -70,7 +70,7 @@ Warisan OSI ini menjelaskan istilah-istilahnya yang terasa asing:
 
 ## 3. Alamat: NSAP, NET, dan System ID
 
-OSPF mengenali router lewat Router ID 32 bit. IS-IS mengenali router lewat **NET** (*Network Entity Title*), yaitu alamat NSAP dengan byte terakhir (NSEL) bernilai `00`. Bahkan di jaringan yang hanya merutekan IP, setiap router IS-IS **wajib** punya NET.
+OSPF mengenali router lewat Router ID 32 bit. IS-IS mengenali router lewat **NET** (*Network Entity Title*), yaitu alamat NSAP dengan byte terakhir (NSEL) bernilai `00`. Bahkan di jaringan yang hanya merutekan IP, setiap router IS-IS wajib punya NET.
 
 ```
 NET:  49.0001.0000.0000.0002.00
@@ -84,10 +84,10 @@ NET:  49.0001.0000.0000.0002.00
 |---|---|---|
 | **AFI** | 1 byte | `49` = alamat privat (seperti RFC 1918 untuk NSAP). Hampir semua jaringan IP memakai 49 |
 | **Area ID** | 0-12 byte setelah AFI | Nomor area pilihan Anda, mis. `0001` |
-| **System ID** | **6 byte** (12 digit hex) | Identitas router, wajib unik |
+| **System ID** | 6 byte (12 digit hex) | Identitas router, wajib unik |
 | **NSEL** | 1 byte | `00` untuk router itu sendiri |
 
-Panjang NET bervariasi (8 sampai 20 byte), tetapi pembacaannya selalu dari **belakang**: byte terakhir NSEL, 6 byte sebelumnya System ID, sisanya di depan adalah Area ID.
+Panjang NET bervariasi (8 sampai 20 byte), tetapi pembacaannya selalu dari belakang: byte terakhir NSEL, 6 byte sebelumnya System ID, sisanya di depan adalah Area ID.
 
 ### Dari alamat loopback ke System ID
 
@@ -103,7 +103,7 @@ Cara 2: nomor urut atau ID inventaris
   NET: 49.0001.0000.0000.0002.00
 ```
 
-Cara 1 memudahkan pemetaan System ID ke loopback saat membaca LSDB. Cara 2 lebih pendek. Yang penting **konsisten** dan terdokumentasi.
+Cara 1 memudahkan pemetaan System ID ke loopback saat membaca LSDB. Cara 2 lebih pendek. Yang penting konsisten dan terdokumentasi.
 
 ### Aturan yang tidak boleh dilanggar
 
@@ -155,7 +155,7 @@ IS-IS: setiap router berada di SATU area (sesuai NET-nya)
        batas area ada di LINK antara dua router beda area
 ```
 
-Akibatnya, **backbone IS-IS bukanlah area tertentu**. Tidak ada "area 0". Backbone L2 adalah **rantai router yang mampu L2 dan saling bersambung**, dari area mana pun. Di lab modul ini, r2 (area 49.0001), r5 (area 49.0000), dan r3 (area 49.0002) bersama-sama membentuk backbone L2.
+Akibatnya, backbone IS-IS bukanlah area tertentu. Tidak ada "area 0". Backbone L2 adalah rantai router yang mampu L2 dan saling bersambung, dari area mana pun. Di lab modul ini, r2 (area 49.0001), r5 (area 49.0000), dan r3 (area 49.0002) bersama-sama membentuk backbone L2.
 
 ```
    Area 49.0001             Backbone L2               Area 49.0002
@@ -174,12 +174,12 @@ Akibatnya, **backbone IS-IS bukanlah area tertentu**. Tidak ada "area 0". Backbo
 | Router A | Router B | Area sama? | Adjacency yang terbentuk |
 |---|---|---|---|
 | L1 | L1 | Ya | L1 |
-| L1 | L1 | Tidak | **Tidak ada** |
+| L1 | L1 | Tidak | Tidak ada |
 | L1 | L1/L2 | Ya | L1 |
 | L1/L2 | L1/L2 | Ya | L1 dan L2 |
 | L1/L2 | L1/L2 | Tidak | L2 saja |
 | L2 | L2 atau L1/L2 | Bebas | L2 |
-| L1 | L2 | Bebas | **Tidak ada** |
+| L1 | L2 | Bebas | Tidak ada |
 
 ### Bagaimana prefiks berpindah antar-level
 
@@ -205,7 +205,7 @@ L2 → L1 : TIDAK, secara default. Router L1 hanya mendapat default
 └──────────────┴──────────────┴────────┴──────┴──────┴──────┴─────────────────┘
 ```
 
-IS-IS memakai frame IEEE 802.3 dengan header LLC 3 byte, bukan EtherType. Karena itu PDU IS-IS terbesar di link ber-MTU 1500 adalah **1497 byte**. Angka ini akan muncul lagi saat membahas hello padding dan masalah MTU.
+IS-IS memakai frame IEEE 802.3 dengan header LLC 3 byte, bukan EtherType. Karena itu PDU IS-IS terbesar di link ber-MTU 1500 adalah 1497 byte. Angka ini akan muncul lagi saat membahas hello padding dan masalah MTU.
 
 > [!TIP]
 > Di Wireshark, filter tampilan untuk IS-IS adalah `isis`. Karena tidak ada header IP, filter `ip` tidak akan menangkapnya.
@@ -264,7 +264,7 @@ Bandingkan dengan OSPF: Hello ↔ IIH, LSU/LSA ↔ LSP, DBD ↔ CSNP, LSR dan LS
 
 ### Hello (IIH)
 
-Router mengirim IIH secara periodik ke setiap interface yang aktif IS-IS. Holding time (padanan dead interval) dibawa **di dalam IIH**, sehingga kedua sisi tidak harus memakai timer yang sama, berbeda dengan OSPF yang mewajibkan hello/dead identik.
+Router mengirim IIH secara periodik ke setiap interface yang aktif IS-IS. Holding time (padanan dead interval) dibawa di dalam IIH, sehingga kedua sisi tidak harus memakai timer yang sama, berbeda dengan OSPF yang mewajibkan hello/dead identik.
 
 | Platform | Hello | Multiplier | Holding time |
 |---|---|---|---|
@@ -274,7 +274,7 @@ Router mengirim IIH secara periodik ke setiap interface yang aktif IS-IS. Holdin
 
 ### Hello padding dan MTU
 
-Secara default, IIH **diisi padding (TLV 8) sampai ukuran MTU penuh**. Tujuannya cerdik: kalau MTU kedua sisi berbeda, hello dari sisi ber-MTU besar tidak akan sampai ke sisi ber-MTU kecil, sehingga adjacency **tidak terbentuk sama sekali**. Lebih baik gagal di awal daripada adjacency "Up" lalu LSP besar diam-diam hilang di tengah jalan.
+Secara default, IIH diisi padding (TLV 8) sampai ukuran MTU penuh. Tujuannya cerdik: kalau MTU kedua sisi berbeda, hello dari sisi ber-MTU besar tidak akan sampai ke sisi ber-MTU kecil, sehingga adjacency tidak terbentuk sama sekali. Lebih baik gagal di awal daripada adjacency "Up" lalu LSP besar diam-diam hilang di tengah jalan.
 
 ```
 r2 (MTU 1500) ── IIH 1497 byte ──X  r1 (MTU 1400)   ← dibuang, terlalu besar
@@ -286,7 +286,7 @@ Di jaringan nyata, padding penuh pada setiap hello menghabiskan bandwidth di lin
 
 ### Tiga-arah (three-way) di LAN
 
-Di link broadcast, LAN IIH membawa **TLV 6 (IS Neighbors)** berisi MAC address semua tetangga yang hello-nya sudah diterima. Router baru menganggap adjacency **Up** setelah melihat MAC-nya sendiri di hello tetangga. Ini mekanisme dua arah yang sama dengan OSPF 2-WAY.
+Di link broadcast, LAN IIH membawa **TLV 6 (IS Neighbors)** berisi MAC address semua tetangga yang hello-nya sudah diterima. Router baru menganggap adjacency Up setelah melihat MAC-nya sendiri di hello tetangga. Ini mekanisme dua arah yang sama dengan OSPF 2-WAY.
 
 ### Tiga-arah di point-to-point (RFC 5303)
 
@@ -329,7 +329,7 @@ Up            → tetangga melaporkan melihat kita (System ID kita ada di TLV 24
 ✓ Dukungan protokol kompatibel (IPv4/IPv6 di single topology, lihat bagian 10)
 ```
 
-Perhatikan apa yang **tidak** ada di daftar: hello/holding time tidak harus sama, dan tidak ada "area type" seperti stub flag OSPF.
+Perhatikan apa yang tidak ada di daftar: hello/holding time tidak harus sama, dan tidak ada "area type" seperti stub flag OSPF.
 
 ---
 
@@ -348,17 +348,17 @@ Perbedaan penting dengan DR di OSPF:
 
 | | OSPF DR | IS-IS DIS |
 |---|---|---|
-| Preemption | **Tidak** (DR bertahan sampai mati) | **Ya**, router berprioritas lebih tinggi langsung mengambil alih |
-| Backup | Ada BDR | **Tidak ada** backup; kalau DIS mati, dipilih ulang |
-| Priority 0 | Tidak pernah menjadi DR | **Tetap bisa** menjadi DIS (hanya prioritas terendah) |
-| Adjacency | DROTHER hanya FULL dengan DR/BDR | **Semua router membentuk adjacency dengan semua router** di LAN |
+| Preemption | Tidak (DR bertahan sampai mati) | Ya, router berprioritas lebih tinggi langsung mengambil alih |
+| Backup | Ada BDR | Tidak ada backup; kalau DIS mati, dipilih ulang |
+| Priority 0 | Tidak pernah menjadi DR | Tetap bisa menjadi DIS (hanya prioritas terendah) |
+| Adjacency | DROTHER hanya FULL dengan DR/BDR | Semua router membentuk adjacency dengan semua router di LAN |
 | Per level | Satu DR | DIS L1 dan DIS L2 bisa berbeda router |
 
 Karena tidak ada BDR dan pemilihan ulang cepat, IS-IS tidak terlalu dirugikan oleh preemption. Tetapi ingat: setiap pergantian DIS berarti LSP pseudonode baru dan SPF ulang di seluruh level.
 
 ### Pseudonode
 
-Segmen LAN dengan N router tidak digambarkan sebagai full mesh N(N-1)/2 link, tetapi sebagai **satu node virtual** yang disebut **pseudonode**. Setiap router mengiklankan satu link ke pseudonode; DIS menerbitkan **LSP pseudonode** yang mendaftar semua router di segmen itu dengan metrik 0.
+Segmen LAN dengan N router tidak digambarkan sebagai full mesh N(N-1)/2 link, tetapi sebagai satu node virtual yang disebut **pseudonode**. Setiap router mengiklankan satu link ke pseudonode; DIS menerbitkan **LSP pseudonode** yang mendaftar semua router di segmen itu dengan metrik 0.
 
 ```
 Fisik:   r1 ──┬── r2           Graf SPF:  r1 ──10──► [r2.03] ◄──10── r2
@@ -366,7 +366,7 @@ Fisik:   r1 ──┬── r2           Graf SPF:  r1 ──10──► [r2.03]
             (LAN)                           metrik pseudonode → router = 0
 ```
 
-LSP ID pseudonode memakai System ID milik DIS ditambah **Circuit ID bukan nol**. Di lab, r2 adalah DIS link r1-r2 dan pseudonode-nya bernama `r2.03-00`:
+LSP ID pseudonode memakai System ID milik DIS ditambah Circuit ID bukan nol. Di lab, r2 adalah DIS link r1-r2 dan pseudonode-nya bernama `r2.03-00`:
 
 ```
 r1# show isis database detail
@@ -380,7 +380,7 @@ r2.03-00                   70   0x00000001  0xdda0    1109    1/0/0
 
 ### Tugas DIS: CSNP periodik
 
-Di LAN tidak ada acknowledgment per LSP. Sebagai gantinya, DIS mengirim **CSNP** (daftar semua LSP beserta nomor urutnya) secara periodik, default **10 detik**. Router lain membandingkannya dengan LSDB-nya: kalau ada yang kurang atau lebih tua, ia meminta lewat **PSNP**; kalau ia punya versi lebih baru, ia mem-flood LSP tersebut.
+Di LAN tidak ada acknowledgment per LSP. Sebagai gantinya, DIS mengirim **CSNP** (daftar semua LSP beserta nomor urutnya) secara periodik, default 10 detik. Router lain membandingkannya dengan LSDB-nya: kalau ada yang kurang atau lebih tua, ia meminta lewat **PSNP**; kalau ia punya versi lebih baru, ia mem-flood LSP tersebut.
 
 ```
 r2# show isis interface eth1
@@ -426,13 +426,13 @@ Karena satu LSP bisa punya sampai 256 fragmen (nomor 00 sampai FF), satu router 
 Prinsip flooding di semua protokol link state sama. Ringkasnya (diadaptasi dari Peterson & Davie, §3.4.3):
 
 1. Router X menerima LSP milik router Y. Kalau X belum punya LSP dari Y, ia menyimpannya.
-2. Kalau X sudah punya, ia membandingkan **nomor urut**. Nomor lebih besar berarti lebih baru: simpan dan ganti yang lama. Nomor lebih kecil atau sama: buang, tidak perlu tindakan lanjut.
-3. Kalau LSP yang diterima lebih baru, X meneruskannya ke **semua tetangga kecuali** tetangga asal LSP itu. Larangan mengirim balik inilah yang membuat flooding berhenti.
-4. Setiap LSP punya **umur**. Router menuakan LSP yang tersimpan; kalau umurnya habis, LSP itu dibanjirkan dengan umur 0 sebagai tanda "hapus" ke seluruh jaringan.
+2. Kalau X sudah punya, ia membandingkan nomor urut. Nomor lebih besar berarti lebih baru: simpan dan ganti yang lama. Nomor lebih kecil atau sama: buang, tidak perlu tindakan lanjut.
+3. Kalau LSP yang diterima lebih baru, X meneruskannya ke semua tetangga kecuali tetangga asal LSP itu. Larangan mengirim balik inilah yang membuat flooding berhenti.
+4. Setiap LSP punya umur. Router menuakan LSP yang tersimpan; kalau umurnya habis, LSP itu dibanjirkan dengan umur 0 sebagai tanda "hapus" ke seluruh jaringan.
 
 IS-IS menerapkannya dengan beberapa kekhasan:
 
-- **Lifetime menghitung mundur** dari MaxAge, default **1200 detik**. Router penerbit memperbarui (refresh) LSP-nya sebelum habis, default sekitar **900 detik**. Operator besar sering menaikkan lifetime sampai mendekati 65535 detik agar refresh tidak membebani jaringan.
+- **Lifetime menghitung mundur** dari MaxAge, default 1200 detik. Router penerbit memperbarui (refresh) LSP-nya sebelum habis, default sekitar 900 detik. Operator besar sering menaikkan lifetime sampai mendekati 65535 detik agar refresh tidak membebani jaringan.
 - **Purge:** LSP dengan Remaining Lifetime 0 berarti "hapus". RFC 6232 menambahkan identitas router yang melakukan purge, sehingga purge misterius bisa dilacak (FRR: `purge-originator`).
 - **Nomor urut 32 bit dan tidak berputar.** Router yang baru menyala memulai dari angka kecil. Kalau di jaringan masih beredar LSP lamanya dengan nomor lebih besar, ia menerima LSP itu, lalu menerbitkan ulang dengan nomor yang lebih tinggi lagi.
 - **Flag SRM/SSN.** ISO 10589 mendeskripsikan flooding dengan dua flag per LSP per interface: *Send Routing Message* (LSP ini perlu dikirim ke interface itu) dan *Send Sequence Numbers* (perlu dikirim PSNP sebagai ack/permintaan). Anda tidak mengonfigurasinya, tetapi istilah ini muncul di debug dan dokumentasi vendor.
@@ -441,7 +441,7 @@ IS-IS menerapkannya dengan beberapa kekhasan:
 
 | | Point-to-point | Broadcast |
 |---|---|---|
-| Ack per LSP | **Ya, lewat PSNP** | Tidak |
+| Ack per LSP | Ya, lewat PSNP | Tidak |
 | Retransmisi | LSP dikirim ulang sampai di-ack | Bergantung pada CSNP periodik dari DIS |
 | CSNP | Sekali, saat adjacency naik | Periodik dari DIS (default 10 s) |
 | Meminta LSP yang kurang | PSNP | PSNP |
@@ -460,7 +460,7 @@ r2 ◄── PSNP (ack seq 7) ──── r5        r1   ── PSNP "minta r3.
 
 ## 9. LSDB dan SPF
 
-Setelah setiap router di satu level memiliki LSP dari semua router lain, LSDB-nya identik, dan masing-masing menjalankan Dijkstra dengan dirinya sebagai akar. IS-IS menjalankan **SPF terpisah untuk L1 dan L2**; router L1/L2 menjalankan keduanya.
+Setelah setiap router di satu level memiliki LSP dari semua router lain, LSDB-nya identik, dan masing-masing menjalankan Dijkstra dengan dirinya sebagai akar. IS-IS menjalankan SPF terpisah untuk L1 dan L2; router L1/L2 menjalankan keduanya.
 
 ### Contoh: SPF L2 dari sudut pandang r2
 
@@ -495,7 +495,7 @@ Di IS-IS, prefiks IP tidak membentuk node di graf; mereka **daun** yang menempel
 
 ### Pemeriksaan dua arah
 
-Sebuah link hanya dipakai SPF kalau **kedua** ujungnya melaporkan link itu di LSP masing-masing. Kalau r2 bilang "saya terhubung ke r3" tetapi LSP r3 tidak menyebut r2 (mis. karena adjacency satu arah), link itu diabaikan. Ini melindungi dari jalur yang hanya bekerja satu arah.
+Sebuah link hanya dipakai SPF kalau kedua ujungnya melaporkan link itu di LSP masing-masing. Kalau r2 bilang "saya terhubung ke r3" tetapi LSP r3 tidak menyebut r2 (mis. karena adjacency satu arah), link itu diabaikan. Ini melindungi dari jalur yang hanya bekerja satu arah.
 
 ### Throttling
 
@@ -507,28 +507,28 @@ Seperti OSPF, IS-IS memakai penundaan eksponensial agar SPF dan pembuatan LSP ti
 
 ### Metrik default: 10, bukan bandwidth
 
-IS-IS **tidak menghitung metrik dari bandwidth**. Setiap interface bermetrik **10** kecuali diatur manual. Link 1 Gbps dan 100 Gbps dianggap setara. Di jaringan nyata, Anda **wajib** merancang skema metrik (bagian 15).
+IS-IS tidak menghitung metrik dari bandwidth. Setiap interface bermetrik 10 kecuali diatur manual. Link 1 Gbps dan 100 Gbps dianggap setara. Di jaringan nyata, Anda wajib merancang skema metrik (bagian 15).
 
 ### Narrow vs wide
 
 | | Narrow (ISO 10589 / RFC 1195) | Wide (RFC 5305) |
 |---|---|---|
-| Metrik per link | **6 bit: 0-63** | **24 bit: 0-16.777.215** |
+| Metrik per link | 6 bit: 0-63 | 24 bit: 0-16.777.215 |
 | Total jalur maksimum | 1023 | 0xFE000000 (4.261.412.864) |
-| TLV IS | 2 | **22** |
-| TLV prefiks IPv4 | 128 / 130 | **135** |
-| Sub-TLV (TE, SR, tag) | Tidak bisa | **Bisa** |
+| TLV IS | 2 | 22 |
+| TLV prefiks IPv4 | 128 / 130 | 135 |
+| Sub-TLV (TE, SR, tag) | Tidak bisa | Bisa |
 
-Metrik narrow terlalu sempit untuk jaringan modern: dengan maksimum 63 per link, Anda tidak bisa membedakan 10G, 100G, dan 400G dengan halus. Lebih penting lagi, **TE, Segment Routing, dan route tag membutuhkan wide metric** karena informasinya dibawa sebagai sub-TLV di TLV 22/135.
+Metrik narrow terlalu sempit untuk jaringan modern: dengan maksimum 63 per link, Anda tidak bisa membedakan 10G, 100G, dan 400G dengan halus. Lebih penting lagi, TE, Segment Routing, dan route tag membutuhkan wide metric karena informasinya dibawa sebagai sub-TLV di TLV 22/135.
 
-RFC 5305 juga mendefinisikan nilai khusus: link dengan metrik maksimum (2^24 - 1) **tidak dipakai** dalam SPF normal, dan prefiks dengan metrik di atas MAX_PATH_METRIC tidak dipertimbangkan.
+RFC 5305 juga mendefinisikan nilai khusus: link dengan metrik maksimum (2^24 - 1) tidak dipakai dalam SPF normal, dan prefiks dengan metrik di atas MAX_PATH_METRIC tidak dipertimbangkan.
 
 | Platform | Default metric-style |
 |---|---|
-| Cisco IOS / IOS XE / IOS XR | **narrow** |
+| Cisco IOS / IOS XE / IOS XR | narrow |
 | Junos | mengirim narrow dan wide (pakai `wide-metrics-only` untuk wide saja) |
-| FRR | **wide** |
-| MikroTik RouterOS v7 | **hanya wide** (menurut dokumentasi MikroTik) |
+| FRR | wide |
+| MikroTik RouterOS v7 | hanya wide (menurut dokumentasi MikroTik) |
 
 > [!WARNING]
 > **Mismatch metric style menyebabkan routing hilang secara diam-diam.** Adjacency tetap Up, LSDB tersinkron, tetapi router narrow tidak mengerti TLV 22/135 dari router wide (dan sebaliknya). Akibatnya prefiks dan link "tidak terlihat". Gejala klasik saat router Cisco default (narrow) bertetangga dengan MikroTik atau FRR. Selalu set `metric-style wide` di semua router.
@@ -537,9 +537,9 @@ RFC 5305 juga mendefinisikan nilai khusus: link dengan metrik maksimum (2^24 - 1
 
 ### IPv6 di IS-IS (RFC 5308)
 
-RFC 5308 cukup menambahkan dua TLV: **236** (IPv6 Reachability) dan **232** (IPv6 Interface Address), serta NLPID 0x8E di TLV Protocols Supported. Tidak ada protokol baru, tidak ada adjacency baru.
+RFC 5308 cukup menambahkan dua TLV: 236 (IPv6 Reachability) dan 232 (IPv6 Interface Address), serta NLPID 0x8E di TLV Protocols Supported. Tidak ada protokol baru, tidak ada adjacency baru.
 
-Masalahnya ada pada mode **single topology** (default di Cisco): satu SPF dipakai untuk IPv4 dan IPv6 sekaligus. Akibatnya **topologi IPv4 dan IPv6 harus identik**. Kalau ada satu link yang hanya menjalankan IPv4, SPF tetap menganggap link itu bisa dipakai IPv6, dan paket IPv6 dikirim ke router yang tidak bisa meneruskannya: **blackhole**. Sebagian implementasi memilih jalan lain: menolak adjacency kalau dukungan protokol kedua sisi berbeda. Itu mencegah blackhole, tetapi membuat link "hilang" dari IS-IS saat IPv6 baru diaktifkan di satu sisi.
+Masalahnya ada pada mode **single topology** (default di Cisco): satu SPF dipakai untuk IPv4 dan IPv6 sekaligus. Akibatnya topologi IPv4 dan IPv6 harus identik. Kalau ada satu link yang hanya menjalankan IPv4, SPF tetap menganggap link itu bisa dipakai IPv6, dan paket IPv6 dikirim ke router yang tidak bisa meneruskannya: blackhole. Sebagian implementasi memilih jalan lain: menolak adjacency kalau dukungan protokol kedua sisi berbeda. Itu mencegah blackhole, tetapi membuat link "hilang" dari IS-IS saat IPv6 baru diaktifkan di satu sisi.
 
 ### Multi-Topology (RFC 5120)
 
@@ -548,11 +548,11 @@ Masalahnya ada pada mode **single topology** (default di Cisco): satu SPF dipaka
 | MT ID | Topologi |
 |---|---|
 | 0 | Standar (IPv4) |
-| 2 | **IPv6 unicast** |
+| 2 | IPv6 unicast |
 | 3 | IPv4 multicast |
 | 4 | IPv6 multicast |
 
-Router mengiklankan topologi yang ia ikuti di TLV 229, tetangga per topologi di TLV 222, dan prefiks IPv6 di TLV 237. Dengan MT, IPv6 bisa digelar link demi link tanpa risiko blackhole. **Untuk jaringan dual-stack baru, pakai MT.**
+Router mengiklankan topologi yang ia ikuti di TLV 229, tetangga per topologi di TLV 222, dan prefiks IPv6 di TLV 237. Dengan MT, IPv6 bisa digelar link demi link tanpa risiko blackhole. Untuk jaringan dual-stack baru, pakai MT.
 
 Di lab, semua router memakai `topology ipv6-unicast`. Lihat bagaimana satu LSP membawa kedua dunia:
 
@@ -573,7 +573,7 @@ r1.00-00             *    173   0x00000002  0x90c7    1142    0/0/0
 ```
 
 > [!TIP]
-> Next hop rute IPv6 dari IS-IS selalu **alamat link-local** tetangga (`fe80::...`), sama seperti OSPFv3.
+> Next hop rute IPv6 dari IS-IS selalu alamat link-local tetangga (`fe80::...`), sama seperti OSPFv3.
 
 ---
 
@@ -581,7 +581,7 @@ r1.00-00             *    173   0x00000002  0x90c7    1142    0/0/0
 
 ### ATT bit dan default route
 
-Router L1/L2 yang terhubung ke backbone L2 (punya adjacency L2 ke area lain) memasang **ATT bit** (*Attached*) di LSP L1-nya. Router L1 yang melihat ATT bit memasang **default route** ke router L1/L2 terdekat yang memasang bit itu.
+Router L1/L2 yang terhubung ke backbone L2 (punya adjacency L2 ke area lain) memasang **ATT bit** (*Attached*) di LSP L1-nya. Router L1 yang melihat ATT bit memasang default route ke router L1/L2 terdekat yang memasang bit itu.
 
 ```
 r1# show ip route isis
@@ -608,15 +608,15 @@ Kalau r1 lebih dekat ke r2 (dalam metrik L1), semua trafik keluar area lewat r2,
 
 ### Masalah 2: MPLS dan BGP butuh /32
 
-Di backbone ISP, router PE perlu tahu **prefiks /32 loopback setiap PE lain**:
+Di backbone ISP, router PE perlu tahu prefiks /32 loopback setiap PE lain:
 - LDP hanya membangun LSP untuk FEC yang cocok persis dengan entri di tabel routing. Default route tidak cukup untuk membangun LSP ke loopback PE tertentu.
 - Next hop BGP (loopback PE) harus bisa diselesaikan secara spesifik.
 
-Inilah alasan banyak operator memilih **satu level saja (L2 datar)** atau melakukan route leaking.
+Inilah alasan banyak operator memilih satu level saja (L2 datar) atau melakukan route leaking.
 
 ### Route leaking L2 → L1 (RFC 5302)
 
-Router L1/L2 boleh membocorkan prefiks L2 terpilih ke L1. Prefiks yang dibocorkan ditandai **up/down bit** (bit dalam TLV 135). Aturannya: prefiks dengan up/down bit terpasang **tidak boleh** diiklankan kembali dari L1 ke L2. Inilah pencegah loop antar-level.
+Router L1/L2 boleh membocorkan prefiks L2 terpilih ke L1. Prefiks yang dibocorkan ditandai **up/down bit** (bit dalam TLV 135). Aturannya: prefiks dengan up/down bit terpasang tidak boleh diiklankan kembali dari L1 ke L2. Inilah pencegah loop antar-level.
 
 ```
 Cisco IOS XE
@@ -666,7 +666,7 @@ Kadang router L1 punya jalan keluar sendiri (mis. default route statis ke firewa
 
 ### Overload bit (RFC 3277)
 
-Router yang memasang **OL bit** di LSP-nya berkata: "jangan jadikan saya jalur transit". Router lain tetap bisa mencapai prefiks yang **menempel langsung** pada router itu (loopback-nya, misalnya), tetapi tidak akan melewatkan trafik **menembus** router tersebut.
+Router yang memasang **OL bit** di LSP-nya berkata: "jangan jadikan saya jalur transit". Router lain tetap bisa mencapai prefiks yang menempel langsung pada router itu (loopback-nya, misalnya), tetapi tidak akan melewatkan trafik menembus router tersebut.
 
 Dua pemakaian yang sangat umum di ISP:
 
@@ -702,7 +702,7 @@ r1# traceroute -n 10.2.255.4
 
 ## 12. Autentikasi
 
-IS-IS punya tiga lingkup autentikasi yang **independen**:
+IS-IS punya tiga lingkup autentikasi yang independen:
 
 | Lingkup | Melindungi | Cisco IOS XE | FRR |
 |---|---|---|---|
@@ -781,7 +781,7 @@ router isis INTI
    prefix-sid index 5
 ```
 
-Perhatikan kebutuhan **wide metric**: SR tidak bisa berjalan di atas metric-style narrow. Begitu SR aktif, IS-IS juga menjadi dasar **TI-LFA** (fast reroute dengan cakupan topologi penuh) dan **Flex-Algo** (beberapa "bidang" SPF dengan kriteria berbeda, mis. latensi terendah). Semua topik itu dibahas mendalam di `22-service-provider/03-te-segment-routing`.
+Perhatikan kebutuhan wide metric: SR tidak bisa berjalan di atas metric-style narrow. Begitu SR aktif, IS-IS juga menjadi dasar **TI-LFA** (fast reroute dengan cakupan topologi penuh) dan **Flex-Algo** (beberapa "bidang" SPF dengan kriteria berbeda, mis. latensi terendah). Semua topik itu dibahas mendalam di `22-service-provider/03-te-segment-routing`.
 
 ---
 
@@ -925,7 +925,7 @@ RP/0/RP0/CPU0:r2# show route isis
 
 ### Juniper Junos
 
-Junos mewajibkan **`family iso`** di setiap interface yang menjalankan IS-IS, dan NET dipasang sebagai alamat ISO di `lo0`:
+Junos mewajibkan `family iso` di setiap interface yang menjalankan IS-IS, dan NET dipasang sebagai alamat ISO di `lo0`:
 
 ```
 set interfaces lo0 unit 0 family inet address 10.1.255.2/32
@@ -975,7 +975,7 @@ user@r2> show route protocol isis
 
 ### MikroTik RouterOS v7
 
-IS-IS tersedia sejak **RouterOS 7.13** (catatan rilis: "added IS-IS protocol support (CLI only)"). Fitur-fiturnya bertambah di versi-versi berikutnya: parameter `passive` pada interface-template baru ada di 7.20, dan pengaturan metric-type di 7.23. Jalankan versi terbaru dari kanal *stable* kalau Anda ingin memakai IS-IS di MikroTik.
+IS-IS tersedia sejak RouterOS 7.13 (catatan rilis: "added IS-IS protocol support (CLI only)"). Fitur-fiturnya bertambah di versi-versi berikutnya: parameter `passive` pada interface-template baru ada di 7.20, dan pengaturan metric-type di 7.23. Jalankan versi terbaru dari kanal *stable* kalau Anda ingin memakai IS-IS di MikroTik.
 
 ```
 /routing isis instance
@@ -994,7 +994,7 @@ Verifikasi:
 ```
 
 Catatan RouterOS:
-- Dokumentasi MikroTik menyebut implementasinya hanya mendukung **wide metric** (RFC 5305). Router Cisco tetangganya wajib `metric-style wide`.
+- Dokumentasi MikroTik menyebut implementasinya hanya mendukung wide metric (RFC 5305). Router Cisco tetangganya wajib `metric-style wide`.
 - Untuk link P2P ke Cisco, aktifkan `isis three-way-handshake ietf` di sisi Cisco. Gejala kalau lupa: peringatan "invalid 3way tlv" di log RouterOS.
 - Contoh di atas hanya memakai parameter yang muncul di dokumentasi resmi (`afi`, `areas`, `system-id`, `instance`, `interfaces`, `levels`). Nama parameter untuk metrik, autentikasi, dan tipe jaringan per interface bisa berbeda antar-versi 7.x; periksa langsung di router Anda dengan `/routing isis interface-template add ?` dan `/routing isis instance add ?`.
 - Sejak 7.16, tipe rute di tabel routing bernama `isis` (sebelumnya `is-is`).
@@ -1082,12 +1082,12 @@ Geografi Indonesia memberi tantangan khas: backbone antar-pulau yang panjang (ka
 
 ### 1. Mulai dari L2 datar
 
-Untuk ISP regional dengan puluhan sampai beberapa ratus router, **satu level L2 saja** biasanya paling sederhana:
+Untuk ISP regional dengan puluhan sampai beberapa ratus router, satu level L2 saja biasanya paling sederhana:
 - Semua router melihat semua /32 loopback, sehingga LDP, BGP next hop, dan SR berjalan tanpa route leaking.
 - Tidak ada routing suboptimal akibat ATT bit.
 - Satu LSDB, satu SPF, troubleshooting lebih mudah.
 
-Pertimbangkan **L1/L2** hanya kalau ada alasan konkret: ratusan router akses yang kecil memorinya, atau domain akses yang tidak stabil (link radio yang sering flap) yang ingin Anda isolasi dari backbone. Kalau memakai L1, rencanakan route leaking untuk loopback PE sejak awal.
+Pertimbangkan L1/L2 hanya kalau ada alasan konkret: ratusan router akses yang kecil memorinya, atau domain akses yang tidak stabil (link radio yang sering flap) yang ingin Anda isolasi dari backbone. Kalau memakai L1, rencanakan route leaking untuk loopback PE sejak awal.
 
 ### 2. Rencana NET
 
@@ -1112,11 +1112,11 @@ Metrik default 10 untuk semua link hampir pasti salah untuk ISP. Dua pendekatan 
 | Berbasis kapasitas | Metrik turun saat kapasitas naik, mis. 100G = 10, 10G = 100, 1G = 1000 | Backbone metro dengan latensi kecil |
 | Berbasis latensi | Metrik sebanding dengan delay terukur (mis. 1 unit per 10 µs) | Backbone antar-pulau, karena 1.000 km kabel laut jauh lebih "mahal" daripada 1 hop metro |
 
-Banyak operator mencampur: latensi sebagai dasar, ditambah penalti untuk kapasitas kecil. Apa pun pilihannya, **dokumentasikan dan terapkan konsisten**. Dengan SR dan Flex-Algo (Tahap 22), Anda bahkan bisa punya topologi "latensi terendah" dan "kapasitas terbesar" sekaligus.
+Banyak operator mencampur: latensi sebagai dasar, ditambah penalti untuk kapasitas kecil. Apa pun pilihannya, dokumentasikan dan terapkan konsisten. Dengan SR dan Flex-Algo (Tahap 22), Anda bahkan bisa punya topologi "latensi terendah" dan "kapasitas terbesar" sekaligus.
 
 ### 4. MTU
 
-Jalur microwave, perangkat radio, dan link sewa dari operator lain sering punya MTU yang tidak seragam. Karena hello padding, MTU mismatch langsung terlihat sebagai adjacency yang macet di **Initializing**. Itu bagus, karena masalahnya ketahuan lebih awal. Tetapi rencanakan MTU dengan memperhitungkan overhead MPLS (4 byte per label) dan VLAN/QinQ sejak awal. Standarkan MTU core (mis. 9000-an untuk link milik sendiri) dan catat pengecualiannya.
+Jalur microwave, perangkat radio, dan link sewa dari operator lain sering punya MTU yang tidak seragam. Karena hello padding, MTU mismatch langsung terlihat sebagai adjacency yang macet di Initializing. Itu bagus, karena masalahnya ketahuan lebih awal. Tetapi rencanakan MTU dengan memperhitungkan overhead MPLS (4 byte per label) dan VLAN/QinQ sejak awal. Standarkan MTU core (mis. 9000-an untuk link milik sendiri) dan catat pengecualiannya.
 
 ### 5. Perlindungan operasional
 
@@ -1171,7 +1171,7 @@ Router MikroTik banyak dipakai di POP kecil dan jaringan akses ISP lokal. Kalau 
 **Pilih IS-IS** kalau Anda membangun backbone operator yang akan membawa MPLS/SR, dual-stack penuh, ratusan router dalam satu domain, atau Anda ingin IGP inti terisolasi dari bidang data IP.
 
 > [!TIP]
-> **Yang sering dilupakan:** konvergensi kedua protokol pada perangkat modern praktis setara. Yang menentukan kecepatan konvergensi adalah tuning (BFD, SPF/LSP throttle, FRR/TI-LFA) dan kualitas implementasi vendor, bukan pilihan OSPF atau IS-IS itu sendiri.
+> **Soal konvergensi:** kedua protokol pada perangkat modern praktis setara. Yang menentukan kecepatan konvergensi adalah tuning (BFD, SPF/LSP throttle, FRR/TI-LFA) dan kualitas implementasi vendor, bukan pilihan OSPF atau IS-IS itu sendiri.
 
 ---
 
@@ -1294,7 +1294,7 @@ isis/
 Rencana alamat sengaja dibuat hierarkis: semua prefiks area 49.0001 ada di 10.1.0.0/16 dan 2001:db8:1::/48, area 49.0002 di 10.2.0.0/16 dan 2001:db8:2::/48. Alasannya dijelaskan di catatan berikut.
 
 > [!WARNING]
-> **Catatan penting tentang FRR.** Menurut RFC 1195, router L1/L2 seharusnya otomatis mengiklankan prefiks areanya ke L2. **isisd FRR 10.4 belum melakukannya**: LSP L2 router L1/L2 hanya berisi prefiks interface miliknya sendiri dan rute hasil redistribusi. Hal ini tercatat sebagai isu di repositori FRR, dan perbaikannya masih berupa pull request terbuka saat modul ini ditulis. Agar lab tetap mencerminkan perilaku standar, r2 dan r3 mengiklankan **ringkasan area** (route ke `blackhole` yang diredistribusi ke L2). Ini persis yang dilakukan `summary-address` di router Cisco, dan sekaligus mengajarkan bahwa ringkasan di batas level adalah praktik yang baik.
+> **Catatan penting tentang FRR.** Menurut RFC 1195, router L1/L2 seharusnya otomatis mengiklankan prefiks areanya ke L2. isisd FRR 10.4 belum melakukannya: LSP L2 router L1/L2 hanya berisi prefiks interface miliknya sendiri dan rute hasil redistribusi. Hal ini tercatat sebagai isu di repositori FRR, dan perbaikannya masih berupa pull request terbuka saat modul ini ditulis. Agar lab tetap mencerminkan perilaku standar, r2 dan r3 mengiklankan ringkasan area (route ke `blackhole` yang diredistribusi ke L2). Ini persis yang dilakukan `summary-address` di router Cisco, dan sekaligus mengajarkan bahwa ringkasan di batas level adalah praktik yang baik.
 
 ### Berkas topologi
 
@@ -1534,7 +1534,7 @@ r2.03-00                   70   0x00000001  0xdda0    1109    1/0/0
     3 LSPs
 ```
 
-Tanda `*` menandai LSP milik router itu sendiri. Perhatikan **ATT=1** pada LSP r2.
+Tanda `*` menandai LSP milik router itu sendiri. Perhatikan ATT=1 pada LSP r2.
 
 **Tugas:** turunkan priority r2 menjadi 10 (`interface eth1` lalu `isis priority 10 level-1`). Apa yang terjadi pada nama pseudonode? Karena DIS IS-IS preemptive, r1 langsung mengambil alih dan pseudonode berganti menjadi `r1.xx-00`.
 
@@ -1558,7 +1558,7 @@ r5.00-00                  218   0x00000002  0x03d6    1173    0/0/0
     3 LSPs
 ```
 
-r2 menyimpan dua LSDB terpisah. LSP L1 r4 **tidak ada** di sini: LSP L1 tidak pernah keluar dari areanya. Lihat isi LSP L2 r2 dari sudut pandang r5:
+r2 menyimpan dua LSDB terpisah. LSP L1 r4 tidak ada di sini: LSP L1 tidak pernah keluar dari areanya. Lihat isi LSP L2 r2 dari sudut pandang r5:
 
 ```
 r5# show isis database detail r2.00-00
@@ -1597,7 +1597,7 @@ I>* 10.2.34.0/30 [115/20] via 10.0.35.1, eth2, weight 1, 00:00:13
 I>* 10.2.255.3/32 [115/20] via 10.0.35.1, eth2, weight 1, 00:00:13
 ```
 
-Perhatikan **ECMP** ke 10.0.23.0/30: lewat r2 (10 + 100) dan lewat r3 (10 + 100) sama-sama 110. Router L1 r4 hanya mengenal areanya plus default:
+Perhatikan ECMP ke 10.0.23.0/30: lewat r2 (10 + 100) dan lewat r3 (10 + 100) sama-sama 110. Router L1 r4 hanya mengenal areanya plus default:
 
 ```
 r4# show ip route isis
@@ -1658,7 +1658,7 @@ Area INTI:
  System Id           Interface   L  State         Holdtime SNPA
 ```
 
-r2 menerima hello r1 (1397 byte) tetapi r1 tidak pernah menerima hello r2 (1497 byte), sehingga r2 macet di **Initializing** dan r1 tidak melihat apa-apa. Dengan `debug isis adj-packets` Anda melihat panjang IIH yang dikirim masing-masing sisi. Perbaikan: samakan MTU (`ip link set dev eth1 mtu 1500`).
+r2 menerima hello r1 (1397 byte) tetapi r1 tidak pernah menerima hello r2 (1497 byte), sehingga r2 macet di Initializing dan r1 tidak melihat apa-apa. Dengan `debug isis adj-packets` Anda melihat panjang IIH yang dikirim masing-masing sisi. Perbaikan: samakan MTU (`ip link set dev eth1 mtu 1500`).
 
 **Skenario B: area mismatch di L1.** Di r4: `router isis INTI`, `no net 49.0002.0000.0000.0004.00`, `net 49.0003.0000.0000.0004.00`.
 
@@ -1695,7 +1695,7 @@ r5# show isis summary
      L2 LSP: 9
 ```
 
-Adjacency tetap **Up**, r2 sudah mengenal 10.2.255.33 tetapi r5 tidak. LSP r5 di r2 tidak pernah diperbarui (nomor urut tertahan, holdtime terus turun). Kalau dibiarkan, LSP r5 akan kedaluwarsa di seluruh domain dan r5 lenyap dari topologi. Perbaikan: kembalikan password, hapus loopback tambahan, lalu pastikan nomor urut LSP sama di r2 dan r5.
+Adjacency tetap Up, r2 sudah mengenal 10.2.255.33 tetapi r5 tidak. LSP r5 di r2 tidak pernah diperbarui (nomor urut tertahan, holdtime terus turun). Kalau dibiarkan, LSP r5 akan kedaluwarsa di seluruh domain dan r5 lenyap dari topologi. Perbaikan: kembalikan password, hapus loopback tambahan, lalu pastikan nomor urut LSP sama di r2 dan r5.
 
 ### Membongkar lab
 
@@ -1714,17 +1714,17 @@ $ sudo containerlab destroy -t isis.clab.yml --cleanup
 
 ## 19. Ringkasan
 
-- IS-IS adalah protokol **link state** dari dunia OSI (ISO 10589) yang diperluas untuk IP oleh **RFC 1195**. Ia berjalan **langsung di atas data link**, bukan IP.
-- Router dikenali lewat **NET**: Area ID + **System ID 6 byte** (unik di seluruh domain) + NSEL 00. Baca NET dari belakang.
-- **L1** = routing dalam area, **L2** = backbone. Router L1, L2, atau L1/L2. **Batas area ada di link**, dan backbone adalah rantai router L2 yang harus bersambung. Default Cisco adalah L1/L2.
-- Prefiks L1 naik ke L2 secara otomatis menurut standar; L2 tidak turun ke L1 kecuali dibocorkan (up/down bit, RFC 5302). Router L1 keluar area lewat default route dari **ATT bit**.
-- Adjacency: IIH dengan **hello padding** (MTU mismatch → macet di Initializing), three-way di LAN lewat TLV 6, di P2P lewat **TLV 240** (RFC 5303). Hello timer tidak harus sama.
-- **DIS**: priority tertinggi (default 64) lalu MAC tertinggi, **preemptive**, tanpa backup. DIS menerbitkan **LSP pseudonode** dan mengirim **CSNP** periodik. Link dua router: pakai **point-to-point**.
-- **LSP**: ID = System ID.Pseudonode-Fragmen, lifetime menghitung mundur dari **1200 s**, nomor urut menentukan versi terbaru. **CSNP** = ringkasan LSDB, **PSNP** = permintaan/ack.
-- **Metrik default 10**, tidak dari bandwidth. Pakai **wide metric** (TLV 22/135, 24 bit) di semua router; narrow vs wide yang tercampur menyembunyikan rute.
-- IPv6 lewat TLV 236/232 (RFC 5308); pakai **multi-topology** (RFC 5120, MT ID 2) untuk dual-stack.
+- IS-IS adalah protokol link state dari dunia OSI (ISO 10589) yang diperluas untuk IP oleh RFC 1195. Ia berjalan langsung di atas data link, bukan IP.
+- Router dikenali lewat **NET**: Area ID + System ID 6 byte (unik di seluruh domain) + NSEL 00. Baca NET dari belakang.
+- **L1** = routing dalam area, **L2** = backbone. Router L1, L2, atau L1/L2. Batas area ada di link, dan backbone adalah rantai router L2 yang harus bersambung. Default Cisco adalah L1/L2.
+- Prefiks L1 naik ke L2 secara otomatis menurut standar; L2 tidak turun ke L1 kecuali dibocorkan (up/down bit, RFC 5302). Router L1 keluar area lewat default route dari ATT bit.
+- Adjacency: IIH dengan hello padding (MTU mismatch → macet di Initializing), three-way di LAN lewat TLV 6, di P2P lewat TLV 240 (RFC 5303). Hello timer tidak harus sama.
+- **DIS**: priority tertinggi (default 64) lalu MAC tertinggi, preemptive, tanpa backup. DIS menerbitkan LSP pseudonode dan mengirim CSNP periodik. Link dua router: pakai point-to-point.
+- **LSP**: ID = System ID.Pseudonode-Fragmen, lifetime menghitung mundur dari 1200 s, nomor urut menentukan versi terbaru. CSNP = ringkasan LSDB, PSNP = permintaan/ack.
+- **Metrik default 10**, tidak dari bandwidth. Pakai wide metric (TLV 22/135, 24 bit) di semua router; narrow vs wide yang tercampur menyembunyikan rute.
+- IPv6 lewat TLV 236/232 (RFC 5308); pakai multi-topology (RFC 5120, MT ID 2) untuk dual-stack.
 - **Overload bit** mencegah transit (pemeliharaan, `on-startup wait-for-bgp`). Autentikasi punya tiga lingkup; area/domain password yang salah membuat LSDB basi walau adjacency Up.
-- IS-IS membawa label **Segment Routing** lewat sub-TLV (RFC 8667) dan menjadi dasar TI-LFA dan Flex-Algo.
+- IS-IS membawa label Segment Routing lewat sub-TLV (RFC 8667) dan menjadi dasar TI-LFA dan Flex-Algo.
 
 ---
 
@@ -1748,19 +1748,19 @@ $ sudo containerlab destroy -t isis.clab.yml --cleanup
 
 2. Default Cisco adalah **L1/L2** untuk router dan interface, dan keduanya satu area. Maka terbentuk **dua adjacency** di link itu (L1 dan L2), dan setiap router menyimpan **dua LSDB** serta menjalankan dua SPF. Untuk router akses, set `is-type level-1` (atau `isis circuit-type level-1` pada interface yang menghadap area) agar hanya ada adjacency L1 dan satu LSDB. Router akses lalu keluar area lewat default route dari ATT bit router L1/L2.
 
-3. Masalah pertama adalah **three-way handshake**: RouterOS mengharapkan TLV 240 sesuai RFC 5303, sementara IOS lama tidak mengirimnya dalam format lengkap. Perbaikannya `isis three-way-handshake ietf` di interface Cisco. Masalah kedua adalah **metric style**: default Cisco adalah **narrow**, sedangkan MikroTik hanya mendukung **wide**. LSDB tersinkron, tetapi Cisco tidak memakai TLV 22/135 dari MikroTik saat menghitung rute. Perbaikannya `metric-style wide` (atau `transition` sebagai langkah migrasi) di semua router Cisco.
+3. Masalah pertama adalah **three-way handshake**: RouterOS mengharapkan TLV 240 sesuai RFC 5303, sementara IOS lama tidak mengirimnya dalam format lengkap. Perbaikannya `isis three-way-handshake ietf` di interface Cisco. Masalah kedua adalah **metric style**: default Cisco adalah narrow, sedangkan MikroTik hanya mendukung wide. LSDB tersinkron, tetapi Cisco tidak memakai TLV 22/135 dari MikroTik saat menghitung rute. Perbaikannya `metric-style wide` (atau `transition` sebagai langkah migrasi) di semua router Cisco.
 
 4. **MTU mismatch.** Karena hello padding, IIH dari sisi ber-MTU besar sebesar MTU penuh (mis. 1497 byte) dan dibuang oleh perangkat atau interface ber-MTU lebih kecil. A menerima hello B yang lebih kecil, tetapi B tidak pernah menerima hello A, sehingga A macet di Initializing dan B tidak melihat tetangga. Desain ini disengaja agar masalah MTU langsung terlihat sebagai kegagalan adjacency. Kalau hello kecil dan adjacency Up, LSP atau CSNP besar akan hilang diam-diam belakangan, dan itu jauh lebih sulit didiagnosis. Perbaikannya: samakan MTU di kedua sisi dan di perangkat radio, bukan mematikan padding.
 
-5. Router L1 tidak tahu topologi L2. Ia hanya memasang default route ke router L1/L2 **terdekat dalam metrik L1** yang memasang ATT bit, dan dari Bandung itu Jakarta, tanpa memandang di mana tujuan sebenarnya. Perbaikan: (a) **route leaking** L2 ke L1 untuk prefiks yang perlu jalur optimal (Cisco `redistribute isis ip level-2 into level-1 route-map ...`, IOS XR `propagate level 2 into level 1`, Junos policy `from level 2` / `to level 1`), sehingga router akses memilih berdasarkan metrik sebenarnya; atau (b) mengubah desain, mis. menjadikan router Bandung L1/L2 atau meratakan jaringan menjadi L2 saja. Menyetel metrik L1 bisa memindahkan pilihan default, tetapi hanya memindahkan masalah ke tujuan lain.
+5. Router L1 tidak tahu topologi L2. Ia hanya memasang default route ke router L1/L2 terdekat dalam metrik L1 yang memasang ATT bit, dan dari Bandung itu Jakarta, tanpa memandang di mana tujuan sebenarnya. Perbaikan: (a) **route leaking** L2 ke L1 untuk prefiks yang perlu jalur optimal (Cisco `redistribute isis ip level-2 into level-1 route-map ...`, IOS XR `propagate level 2 into level 1`, Junos policy `from level 2` / `to level 1`), sehingga router akses memilih berdasarkan metrik sebenarnya; atau (b) mengubah desain, mis. menjadikan router Bandung L1/L2 atau meratakan jaringan menjadi L2 saja. Menyetel metrik L1 bisa memindahkan pilihan default, tetapi hanya memindahkan masalah ke tujuan lain.
 
-6. Domain password melindungi **LSP dan SNP level 2**, bukan hello. Adjacency router yang tertinggal tetap Up, sehingga tidak ada alarm adjacency. Tetapi LSP yang ia terima ditolak (dan LSP-nya ditolak router lain). LSDB-nya membeku: LSP lama tidak diperbarui, dan router lain juga tidak menerima LSP terbarunya. Setelah **remaining lifetime** LSP habis (default 1200 detik, sekitar 20 menit), LSP itu kedaluwarsa dan dihapus, router hilang dari topologi, dan pelanggan di belakangnya terputus. Bukti: penghitung drop LSP di `show isis summary` (FRR) atau log autentikasi, nomor urut LSP yang berbeda untuk LSP yang sama di dua router (`show isis database`), dan holdtime LSP router tersebut yang terus turun tanpa refresh.
+6. Domain password melindungi LSP dan SNP level 2, bukan hello. Adjacency router yang tertinggal tetap Up, sehingga tidak ada alarm adjacency. Tetapi LSP yang ia terima ditolak (dan LSP-nya ditolak router lain). LSDB-nya membeku: LSP lama tidak diperbarui, dan router lain juga tidak menerima LSP terbarunya. Setelah remaining lifetime LSP habis (default 1200 detik, sekitar 20 menit), LSP itu kedaluwarsa dan dihapus, router hilang dari topologi, dan pelanggan di belakangnya terputus. Bukti: penghitung drop LSP di `show isis summary` (FRR) atau log autentikasi, nomor urut LSP yang berbeda untuk LSP yang sama di dua router (`show isis database`), dan holdtime LSP router tersebut yang terus turun tanpa refresh.
 
 7. Sebelum pemeliharaan, pasang **overload bit** (`set-overload-bit`) dan tunggu sampai trafik transit berpindah (verifikasi dengan counter interface atau traceroute), baru lakukan upgrade. Untuk saat menyala kembali, konfigurasi **`set-overload-bit on-startup wait-for-bgp`** (Cisco/IOS XR) atau `overload timeout` (Junos). IGP membentuk adjacency dalam hitungan detik, sedangkan BGP butuh waktu jauh lebih lama untuk menerima semua rute. Tanpa overload saat boot, router lain langsung mengirim trafik transit lewat router yang belum punya rute BGP lengkap, dan trafik itu dibuang (blackhole) sampai BGP selesai konvergen.
 
-8. Risiko: router di area L1 hanya menerima **default route** dari ATT bit, sehingga **/32 loopback PE di area lain hilang**. LDP tidak bisa membangun LSP ke FEC yang tidak ada di tabel routing dengan prefiks persis, sehingga layanan MPLS (L3VPN, L2VPN) lintas region putus. Next hop BGP juga hanya bisa diselesaikan lewat default. Selain itu bisa muncul routing suboptimal. Kalau tetap dipecah, Anda wajib merancang route leaking /32 loopback (dan RFC 5302 up/down bit) dengan disiplin. Saran: 120 router masih nyaman untuk **satu level L2 datar**. IS-IS dengan prefiks sebagai daun dan PRC menangani ukuran ini dengan baik. Fokuskan upaya skalabilitas pada metrik, throttle, BFD, dan pembatasan prefiks yang diiklankan (mis. hanya loopback dan link core).
+8. Risiko: router di area L1 hanya menerima default route dari ATT bit, sehingga **/32 loopback PE di area lain hilang**. LDP tidak bisa membangun LSP ke FEC yang tidak ada di tabel routing dengan prefiks persis, sehingga layanan MPLS (L3VPN, L2VPN) lintas region putus. Next hop BGP juga hanya bisa diselesaikan lewat default. Selain itu bisa muncul routing suboptimal. Kalau tetap dipecah, Anda wajib merancang route leaking /32 loopback (dan RFC 5302 up/down bit) dengan disiplin. Saran: 120 router masih nyaman untuk **satu level L2 datar**. IS-IS dengan prefiks sebagai daun dan PRC menangani ukuran ini dengan baik. Fokuskan upaya skalabilitas pada metrik, throttle, BFD, dan pembatasan prefiks yang diiklankan (mis. hanya loopback dan link core).
 
-9. Overload bit berarti "jangan pakai saya sebagai **transit**". Saat SPF, router lain tidak melanjutkan pencarian jalur melewati r5, tetapi prefiks yang **menempel langsung** pada r5 (loopback dan link-nya) tetap bisa dicapai karena r5 adalah tujuan akhir, bukan perantara. Trafik r1 ke r4 sebelumnya lewat r2-r5-r3 (biaya 20 di L2); dengan r5 overload, satu-satunya jalur transit tersisa adalah link langsung r2-r3 (biaya 100), sehingga traceroute menunjukkan hop 10.0.23.2.
+9. Overload bit berarti "jangan pakai saya sebagai transit". Saat SPF, router lain tidak melanjutkan pencarian jalur melewati r5, tetapi prefiks yang menempel langsung pada r5 (loopback dan link-nya) tetap bisa dicapai karena r5 adalah tujuan akhir, bukan perantara. Trafik r1 ke r4 sebelumnya lewat r2-r5-r3 (biaya 20 di L2); dengan r5 overload, satu-satunya jalur transit tersisa adalah link langsung r2-r3 (biaya 100), sehingga traceroute menunjukkan hop 10.0.23.2.
 
 10. Pada single topology, satu SPF dipakai untuk IPv4 dan IPv6, sehingga topologi keduanya dianggap identik. Akibatnya: (a) adjacency bisa ditolak di link yang dukungan protokolnya berbeda di kedua sisi, sehingga trafik IPv4 ikut terganggu; atau (b) kalau adjacency tetap ada, SPF memilih jalur IPv6 melewati link atau router yang tidak menjalankan IPv6, dan paket IPv6 dibuang (blackhole). Pencegahnya: **multi-topology** (RFC 5120), mis. `address-family ipv6` + `multi-topology` di IOS XE, `address-family ipv6 unicast` di IOS XR, `topologies ipv6-unicast` di Junos, `topology ipv6-unicast` di FRR. Dengan MT, IPv6 memakai SPF sendiri (MT ID 2) sehingga bisa digelar link demi link dengan aman.
 

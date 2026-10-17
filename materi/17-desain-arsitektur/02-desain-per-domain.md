@@ -24,7 +24,7 @@ ACCESS (L2)
 ```
 
 **Keputusan desain kampus:**
-- **VLAN per fungsi**, bukan per lokasi (data, voice, guest, mgmt) — segmentasi jelas.
+- **VLAN per fungsi**, bukan per lokasi (data, voice, guest, mgmt), supaya segmentasinya jelas.
 - **Voice VLAN** terpisah dari data (QoS + keamanan).
 - **STP:** RSTP/Rapid-PVST+, root bridge di distribution (bukan access), aktifkan **Root Guard** di distribution & **BPDU Guard** di access (lihat `03-data-link/04`).
 - **EtherChannel** untuk uplink access→distribution (agregasi + redundansi tanpa STP blocking).
@@ -47,10 +47,10 @@ Metro-E        — Ethernet antar-lokasi dalam kota
 ```
 
 **Prinsip desain WAN:**
-- **Redundansi transport** — minimal dua jalur (mis. MPLS + internet), idealnya dua provider.
-- **Routing WAN** — BGP dengan provider; backup dengan floating static atau IP SLA tracking.
-- **QoS di WAN edge** — bandwidth WAN mahal & terbatas; prioritaskan suara/kritis (LLQ), shape ke kecepatan sirkuit.
-- **Enkripsi** — IPsec untuk semua yang lewat internet.
+- **Redundansi transport**: minimal dua jalur (mis. MPLS + internet), idealnya dua provider.
+- **Routing WAN**: BGP dengan provider; backup dengan floating static atau IP SLA tracking.
+- **QoS di WAN edge**: bandwidth WAN mahal & terbatas; prioritaskan suara/kritis (LLQ), shape ke kecepatan sirkuit.
+- **Enkripsi**: IPsec untuk semua yang lewat internet.
 - **DMVPN/SD-WAN** untuk topologi hub-spoke berskala dengan spoke-to-spoke dinamis.
 
 > [!TIP]
@@ -73,7 +73,7 @@ Lihat `16-datacenter-cloud-sdn` untuk detail. Ringkas prinsip:
 ```
 
 > [!WARNING]
-> **Server dual-homed** (terhubung ke dua leaf) butuh **MLAG/vPC** (Multi-chassis LACP) agar dua leaf tampak sebagai satu ke server — memberi redundansi tanpa STP blocking. Ini padanan EtherChannel yang membentang dua switch fisik.
+> **Server dual-homed** (terhubung ke dua leaf) butuh **MLAG/vPC** (Multi-chassis LACP) agar dua leaf tampak sebagai satu ke server. Hasilnya redundansi tanpa STP blocking. Ini padanan EtherChannel yang membentang dua switch fisik.
 
 ---
 
@@ -93,7 +93,7 @@ Lihat `10-wireless/04` untuk detail site survey. Ringkas prinsip:
 ```
 
 > [!TIP]
-> **Desain untuk kapasitas, bukan hanya coverage.** Di area padat (aula, kelas), kebutuhan bukan "sinyal sampai" tetapi "cukup AP untuk jumlah klien". Satu AP melayani terbatas klien aktif — hitung kepadatan.
+> **Desain untuk kapasitas, bukan hanya coverage.** Di area padat (aula, kelas), sinyal yang sampai saja belum cukup; jumlah AP harus cukup untuk jumlah klien. Satu AP hanya bisa melayani klien aktif dalam jumlah terbatas, jadi hitung kepadatannya.
 
 ---
 
@@ -118,11 +118,11 @@ Lihat `10-wireless/04` untuk detail site survey. Ringkas prinsip:
 ```
 
 **Zona keamanan tipikal:**
-- **Inside/Trusted** — jaringan internal (segmentasi lebih lanjut per fungsi).
-- **DMZ** — server yang diakses publik (web, mail) — terisolasi dari inside.
-- **Outside/Untrusted** — internet.
-- **Management** — VLAN/jaringan terpisah untuk akses admin (idealnya out-of-band).
-- **Guest** — terisolasi total dari internal.
+- **Inside/Trusted**: jaringan internal (segmentasi lebih lanjut per fungsi).
+- **DMZ**: server yang diakses publik (web, mail), terisolasi dari inside.
+- **Outside/Untrusted**: internet.
+- **Management**: VLAN/jaringan terpisah untuk akses admin (idealnya out-of-band).
+- **Guest**: terisolasi total dari internal.
 
 > [!WARNING]
 > **DMZ** memisahkan server publik sehingga bila diretas, penyerang tidak langsung masuk jaringan internal. Trafik: outside→DMZ diizinkan (port layanan), DMZ→inside sangat dibatasi, inside→DMZ diizinkan. Jangan taruh server publik langsung di jaringan internal.
@@ -134,9 +134,9 @@ Lihat `10-wireless/04` untuk detail site survey. Ringkas prinsip:
 
 ## 6. Manajemen & Operasi dalam Desain
 
-Sering terlupa, tetapi kritis:
-- **Out-of-band management** — jaringan manajemen terpisah (console server, port mgmt) agar tetap bisa akses perangkat saat jaringan produksi bermasalah.
-- **Observability** sejak awal — SNMP/syslog/NetFlow/streaming telemetry (`14-monitoring-troubleshooting/03`), NTP tersinkron (untuk korelasi log), collector terpusat.
+Bagian desain yang sering terlupa:
+- **Out-of-band management**: jaringan manajemen terpisah (console server, port mgmt) agar tetap bisa akses perangkat saat jaringan produksi bermasalah.
+- **Observability** sejak awal: SNMP/syslog/NetFlow/streaming telemetry (`14-monitoring-troubleshooting/03`), NTP tersinkron (untuk korelasi log), collector terpusat.
 - **IP address management (IPAM)** & **source of truth** (NetBox, `15-otomasi/04`).
 - **Dokumentasi & penamaan** konsisten (`17.3`).
 - **Otomasi** (`15`) untuk konsistensi pada skala.
@@ -165,15 +165,15 @@ Sering terlupa, tetapi kritis:
 <details>
 <summary>Jawaban</summary>
 
-1. **Root bridge STP** ditempatkan di lapisan **distribution** (bukan access), dan sebaiknya **root primary di distribution switch yang juga aktif HSRP** agar jalur forwarding L2 dan gateway L3 selaras (menghindari trafik menyeberang link antar-distribution secara tidak perlu). **Gateway HSRP/VRRP (SVI)** juga di **distribution**, karena distribution adalah **batas L2/L3** — tempat inter-VLAN routing dan gateway default untuk VLAN berada. Alasannya: distribution adalah titik agregasi dan kebijakan; menaruh root dan gateway di sana membuat topologi forwarding predictable dan optimal, sementara access hanya L2 (menaruh root di access akan membuat jalur trafik aneh dan tidak stabil). Access mendapat **PortFast + BPDU Guard** justru untuk memastikan port user tidak pernah menjadi jalur STP/root.
+1. **Root bridge STP** ditempatkan di lapisan **distribution** (bukan access), dan sebaiknya **root primary di distribution switch yang juga aktif HSRP** agar jalur forwarding L2 dan gateway L3 selaras (menghindari trafik menyeberang link antar-distribution secara tidak perlu). **Gateway HSRP/VRRP (SVI)** juga di **distribution**, karena distribution adalah **batas L2/L3**, tempat inter-VLAN routing dan gateway default untuk VLAN berada. Alasannya: distribution adalah titik agregasi dan kebijakan; menaruh root dan gateway di sana membuat topologi forwarding predictable dan optimal, sementara access hanya L2 (menaruh root di access akan membuat jalur trafik aneh dan tidak stabil). Access mendapat **PortFast + BPDU Guard** justru untuk memastikan port user tidak pernah menjadi jalur STP/root.
 
-2. (Empat dari) **(1) Redundansi transport** — minimal dua jalur WAN, idealnya dari dua provider berbeda, agar satu kegagalan sirkuit/provider tidak memutus lokasi. **(2) Routing dengan failover** — BGP dengan provider, atau floating static/IP SLA tracking untuk beralih ke backup otomatis. **(3) QoS di WAN edge** — karena bandwidth WAN mahal dan terbatas, prioritaskan trafik kritis (suara via LLQ) dan shape ke kecepatan sirkuit untuk menghindari drop di provider. **(4) Enkripsi** — IPsec untuk semua trafik yang melintasi internet publik. Tambahan: gunakan DMVPN/SD-WAN untuk topologi hub-spoke berskala dengan jalur spoke-to-spoke dinamis dan manajemen terpusat.
+2. (Empat dari) **(1) Redundansi transport**: minimal dua jalur WAN, idealnya dari dua provider berbeda, agar satu kegagalan sirkuit/provider tidak memutus lokasi. **(2) Routing dengan failover**: BGP dengan provider, atau floating static/IP SLA tracking untuk beralih ke backup otomatis. **(3) QoS di WAN edge**: karena bandwidth WAN mahal dan terbatas, prioritaskan trafik kritis (suara via LLQ) dan shape ke kecepatan sirkuit untuk menghindari drop di provider. **(4) Enkripsi**: IPsec untuk semua trafik yang melintasi internet publik. Tambahan: gunakan DMVPN/SD-WAN untuk topologi hub-spoke berskala dengan jalur spoke-to-spoke dinamis dan manajemen terpusat.
 
-3. **MLAG (Multi-chassis Link Aggregation)** — di dunia Cisco Nexus disebut **vPC (virtual Port Channel)** — memungkinkan sebuah server (atau switch) yang terhubung ke **dua switch fisik berbeda** memperlakukan kedua uplink itu sebagai **satu EtherChannel/LACP bundle**, seolah kedua switch adalah satu perangkat logis. **Masalah yang dipecahkan:** server yang dual-homed ke dua leaf demi redundansi biasanya akan memicu **loop L2**, sehingga STP akan **memblokir salah satu link** (kehilangan setengah bandwidth dan redundansi aktif-aktif). Dengan MLAG/vPC, **kedua link aktif sekaligus** (tak ada yang diblok STP), memberikan redundansi perangkat **dan** bandwidth penuh — kalau satu leaf mati, server tetap terhubung lewat leaf lainnya tanpa gangguan STP.
+3. **MLAG (Multi-chassis Link Aggregation)**, yang di dunia Cisco Nexus disebut **vPC (virtual Port Channel)**, memungkinkan sebuah server (atau switch) yang terhubung ke **dua switch fisik berbeda** memperlakukan kedua uplink itu sebagai **satu EtherChannel/LACP bundle**, seolah kedua switch adalah satu perangkat logis. **Masalah yang dipecahkan:** server yang dual-homed ke dua leaf demi redundansi biasanya akan memicu **loop L2**, sehingga STP akan **memblokir salah satu link** (kehilangan setengah bandwidth dan redundansi aktif-aktif). Dengan MLAG/vPC, **kedua link aktif sekaligus** (tak ada yang diblok STP), memberikan redundansi perangkat dan bandwidth penuh. Kalau satu leaf mati, server tetap terhubung lewat leaf lainnya tanpa gangguan STP.
 
-4. Karena di area padat (aula, ruang kelas, stadion) tantangannya bukan "apakah sinyal Wi-Fi sampai ke seluruh area" (coverage) — itu mudah dipenuhi beberapa AP berdaya tinggi — melainkan "apakah ada **cukup kapasitas** untuk melayani banyak klien aktif secara bersamaan". Satu AP hanya bisa melayani sejumlah terbatas klien aktif dengan throughput layak (media Wi-Fi adalah **shared medium** — makin banyak klien, makin sedikit airtime per klien). Kalau didesain hanya untuk coverage, satu-dua AP mungkin "menjangkau" seluruh ruangan tetapi kewalahan saat ratusan perangkat terhubung. Desain kapasitas menghitung **jumlah klien per AP** dan menempatkan **lebih banyak AP dengan daya lebih rendah** (sel lebih kecil) sehingga klien terdistribusi merata — masing-masing AP melayani lebih sedikit klien dengan performa lebih baik.
+4. Karena di area padat (aula, ruang kelas, stadion) tantangannya adalah "apakah ada **cukup kapasitas** untuk melayani banyak klien aktif secara bersamaan". Coverage ("apakah sinyal Wi-Fi sampai ke seluruh area") mudah dipenuhi beberapa AP berdaya tinggi. Satu AP hanya bisa melayani sejumlah terbatas klien aktif dengan throughput layak (media Wi-Fi adalah **shared medium**: makin banyak klien, makin sedikit airtime per klien). Kalau didesain hanya untuk coverage, satu-dua AP mungkin "menjangkau" seluruh ruangan tetapi kewalahan saat ratusan perangkat terhubung. Desain kapasitas menghitung **jumlah klien per AP** dan menempatkan **lebih banyak AP dengan daya lebih rendah** (sel lebih kecil) sehingga klien terdistribusi merata dan masing-masing AP melayani lebih sedikit klien dengan performa lebih baik.
 
-5. **DMZ (Demilitarized Zone)** adalah zona jaringan terisolasi tempat menempatkan **server yang harus diakses dari publik/internet** (web server, mail server, DNS publik, reverse proxy). Fungsinya: **memisahkan server yang terekspos dari jaringan internal** sehingga jika server DMZ diretas, penyerang **tidak langsung** mendapat akses ke jaringan internal yang tepercaya. **Aturan trafik tipikal:** **Outside→DMZ** diizinkan tetapi hanya pada port layanan yang diperlukan (mis. 443 ke web server); **DMZ→Inside** sangat dibatasi/ditolak (server DMZ tidak boleh bebas menginisiasi koneksi ke internal — kalaupun perlu, hanya ke host/port spesifik seperti database backend); **Inside→DMZ** umumnya diizinkan (staf internal mengakses/mengelola server); **DMZ→Outside** dibatasi sesuai kebutuhan (mis. untuk update). Prinsipnya: server publik tidak pernah ditaruh langsung di jaringan internal, dan DMZ diperlakukan sebagai zona semi-tepercaya di antara outside dan inside.
+5. **DMZ (Demilitarized Zone)** adalah zona jaringan terisolasi tempat menempatkan **server yang harus diakses dari publik/internet** (web server, mail server, DNS publik, reverse proxy). Fungsinya: **memisahkan server yang terekspos dari jaringan internal** sehingga jika server DMZ diretas, penyerang tidak langsung mendapat akses ke jaringan internal yang tepercaya. **Aturan trafik tipikal:** **Outside→DMZ** diizinkan tetapi hanya pada port layanan yang diperlukan (mis. 443 ke web server); **DMZ→Inside** sangat dibatasi/ditolak (server DMZ tidak boleh bebas menginisiasi koneksi ke internal; kalaupun perlu, hanya ke host/port spesifik seperti database backend); **Inside→DMZ** umumnya diizinkan (staf internal mengakses/mengelola server); **DMZ→Outside** dibatasi sesuai kebutuhan (mis. untuk update). Prinsipnya: server publik tidak pernah ditaruh langsung di jaringan internal, dan DMZ diperlakukan sebagai zona semi-tepercaya di antara outside dan inside.
 
 </details>
 
@@ -181,8 +181,8 @@ Sering terlupa, tetapi kritis:
 
 ## 9. Sumber
 
-- Cisco CCNA 200-301 v1.1 — topik 1.2, dan desain lintas domain
-- Cisco Validated Designs (CVD) — Campus, WAN, Data Center, Wireless
+- Cisco CCNA 200-301 v1.1, topik 1.2, dan desain lintas domain
+- Cisco Validated Designs (CVD): Campus, WAN, Data Center, Wireless
 - Cisco SAFE (security reference architecture)
 
 ---

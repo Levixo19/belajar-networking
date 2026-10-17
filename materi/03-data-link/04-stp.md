@@ -7,11 +7,11 @@
 
 ## 1. Kenapa Loop Layer 2 Sangat Fatal
 
-Ini bukan pernyataan berlebihan. Loop layer 2 bisa **melumpuhkan seluruh jaringan dalam hitungan detik**.
+Loop layer 2 bisa melumpuhkan seluruh jaringan dalam hitungan detik.
 
 ### Tiga bencana yang terjadi bersamaan
 
-Skenario: dua switch dihubungkan dengan **dua kabel** (tanpa STP), lalu PC-A mengirim satu frame broadcast.
+Skenario: dua switch dihubungkan dengan dua kabel (tanpa STP), lalu PC-A mengirim satu frame broadcast.
 
 ```
         ┌─────────────┐
@@ -20,7 +20,7 @@ Skenario: dua switch dihubungkan dengan **dua kabel** (tanpa STP), lalu PC-A men
      ╚══┴═════════════┴══╝
 ```
 
-**Bencana 1 — Broadcast Storm**
+**Bencana 1: Broadcast Storm**
 ```
 1. PC-A mengirim 1 frame broadcast ke SW1
 2. SW1 flooding ke semua port → keluar lewat kabel 1 DAN kabel 2
@@ -31,11 +31,11 @@ Skenario: dua switch dihubungkan dengan **dua kabel** (tanpa STP), lalu PC-A men
 ```
 
 > [!WARNING]
-> **Tidak ada TTL di layer 2.** Header IP punya TTL yang mencegah paket berputar selamanya; header Ethernet **tidak punya mekanisme itu sama sekali**. Frame akan berputar selamanya sampai jaringan runtuh.
+> **Tidak ada TTL di layer 2.** Header IP punya TTL yang mencegah paket berputar selamanya; header Ethernet tidak punya mekanisme itu sama sekali. Frame akan berputar selamanya sampai jaringan runtuh.
 
-Dalam beberapa detik: link 100% penuh, CPU switch 100%, semua perangkat tidak responsif — termasuk akses manajemen Anda ke switch.
+Dalam beberapa detik, link 100% penuh, CPU switch 100%, dan semua perangkat tidak responsif, termasuk akses manajemen Anda ke switch.
 
-**Bencana 2 — MAC Table Instability (flapping)**
+**Bencana 2: MAC Table Instability (flapping)**
 ```
 SW2 melihat MAC PC-A datang dari kabel 1 → catat di port 1
 Sesaat kemudian dari kabel 2 → ubah ke port 2
@@ -44,7 +44,7 @@ Lalu dari kabel 1 lagi → ubah ke port 1
 MAC table berubah ribuan kali per detik → switch tidak bisa forwarding dengan benar
 ```
 
-**Bencana 3 — Duplikasi Frame Unicast**
+**Bencana 3: Duplikasi Frame Unicast**
 Penerima mendapat salinan ganda dari frame yang sama. Aplikasi yang tidak siap (terutama protokol lama) bisa error atau berperilaku aneh.
 
 ### Kenapa loop terjadi meski tidak disengaja
@@ -57,7 +57,7 @@ Penerima mendapat salinan ganda dari frame yang sama. Aplikasi yang tidak siap (
 - Kegagalan unidirectional pada link fiber (hanya satu arah yang mati)
 
 > [!TIP]
-> Redundansi fisik **diperlukan** untuk keandalan. STP-lah yang membuat redundansi itu aman: ia menyediakan jalur cadangan yang **diblokir sampai dibutuhkan**.
+> Redundansi fisik diperlukan untuk keandalan. STP-lah yang membuat redundansi itu aman: ia menyediakan jalur cadangan yang diblokir sampai dibutuhkan.
 
 ---
 
@@ -128,7 +128,7 @@ Priority hanya bisa diubah dalam **kelipatan 4096**: 0, 4096, 8192, 12288, 16384
 ```
 
 > [!WARNING]
-> **Bahaya default:** kalau semua switch memakai priority 32768, yang menang adalah **MAC address terendah** — biasanya switch **tertua** di jaringan, yang sering kali switch access kecil di sudut ruangan, bukan core switch yang kuat. Ini menghasilkan topologi yang buruk: semua trafik memutar lewat switch lemah.
+> **Bahaya default:** kalau semua switch memakai priority 32768, yang menang adalah MAC address terendah. Biasanya itu switch tertua di jaringan, yang sering kali switch access kecil di sudut ruangan, bukan core switch yang kuat. Akibatnya topologi menjadi buruk: semua trafik memutar lewat switch lemah.
 
 **Selalu tetapkan root bridge secara sengaja:**
 ```
@@ -145,7 +145,7 @@ SW-CORE2(config)# spanning-tree vlan 1-100 priority 8192
 
 ### Langkah 2: Memilih Root Port
 
-Setiap switch **non-root** memilih **satu** root port — port dengan jalur terbaik menuju root.
+Setiap switch non-root memilih satu root port, yaitu port dengan jalur terbaik menuju root.
 
 **Kriteria berurutan (tie-breaker):**
 ```
@@ -163,14 +163,14 @@ Setiap switch **non-root** memilih **satu** root port — port dengan jalur terb
 | 100 Mbps | 19 | 200.000 |
 | **1 Gbps** | **4** | 20.000 |
 | 10 Gbps | 2 | 2.000 |
-| 100 Gbps | — | 200 |
+| 100 Gbps | - | 200 |
 
 > [!WARNING]
 > Cost lama tidak bisa membedakan 10 G dan 100 G dengan baik (2 vs 1). Untuk jaringan cepat, aktifkan mode long:
 ```
 SW1(config)# spanning-tree pathcost method long
 ```
-Pastikan **konsisten di seluruh jaringan**, kalau tidak perhitungan jalur akan kacau.
+Pastikan konsisten di seluruh jaringan, kalau tidak perhitungan jalur akan kacau.
 
 **Cost dijumlahkan sepanjang jalur:**
 ```
@@ -186,7 +186,7 @@ STP memilih berdasarkan **cost**, bukan jumlah hop.
 
 ### Langkah 3: Memilih Designated Port
 
-Setiap **segmen** (link antara dua switch) punya satu designated port — port yang bertanggung jawab meneruskan trafik ke/dari segmen itu menuju root.
+Setiap **segmen** (link antara dua switch) punya satu designated port, yaitu port yang bertanggung jawab meneruskan trafik ke/dari segmen itu menuju root.
 
 ```
 1. Semua port di root bridge adalah DESIGNATED (root selalu designated di semua port)
@@ -226,10 +226,10 @@ Bridge ID:
   SW3: priority 32768, MAC 0000.3333.3333
 ```
 
-**Langkah 1 — Root bridge:**
+**Langkah 1 (root bridge):**
 Priority sama semua (32768) → MAC terendah menang → **SW1 adalah root**.
 
-**Langkah 2 — Root port:**
+**Langkah 2 (root port):**
 ```
 SW2: Gi0/1 langsung ke SW1        → cost 4
      Gi0/2 lewat SW3 ke SW1       → cost 4 + 4 = 8
@@ -240,7 +240,7 @@ SW3: Gi0/1 langsung ke SW1        → cost 4
      → ROOT PORT = Gi0/1 (cost 4)
 ```
 
-**Langkah 3 — Designated port:**
+**Langkah 3 (designated port):**
 ```
 Segmen SW1–SW2 : SW1 adalah root → SW1 Gi0/1 = DESIGNATED
 Segmen SW1–SW3 : SW1 adalah root → SW1 Gi0/2 = DESIGNATED
@@ -250,7 +250,7 @@ Segmen SW2–SW3 : kedua switch punya root path cost 4 (seri)
                  → SW2 Gi0/2 = DESIGNATED
 ```
 
-**Langkah 4 — Blocking:**
+**Langkah 4 (blocking):**
 ```
 SW3 Gi0/2 = bukan root port, bukan designated → BLOCKING
 ```
@@ -273,11 +273,11 @@ R = Root Port, D = Designated Port, B = Blocking
 
 | State | Meneruskan data? | Belajar MAC? | Memproses BPDU? | Durasi |
 |---|---|---|---|---|
-| **Disabled** | Tidak | Tidak | Tidak | — (admin down) |
+| **Disabled** | Tidak | Tidak | Tidak | Tidak dibatasi (admin down) |
 | **Blocking** | Tidak | Tidak | Ya | 20 detik (max age) |
 | **Listening** | Tidak | Tidak | Ya | 15 detik (forward delay) |
 | **Learning** | Tidak | Ya | Ya | 15 detik (forward delay) |
-| **Forwarding** | Ya | Ya | Ya | — (normal) |
+| **Forwarding** | Ya | Ya | Ya | Tidak dibatasi (normal) |
 
 **Timer default:**
 ```
@@ -293,13 +293,13 @@ Kegagalan link tak langsung: 20 (max age) + 15 + 15 = 50 detik
 ```
 
 > [!WARNING]
-> **30–50 detik adalah keabadian** dalam istilah jaringan modern. Panggilan VoIP putus, sesi TCP timeout, aplikasi error. Inilah alasan utama RSTP diciptakan.
+> **30-50 detik terlalu lama** untuk jaringan modern. Dalam waktu itu panggilan VoIP putus, sesi TCP timeout, dan aplikasi error. Inilah alasan utama RSTP diciptakan.
 
 ---
 
 ## 6. BPDU
 
-**BPDU** (*Bridge Protocol Data Unit*) — pesan yang dipertukarkan switch untuk membangun dan memelihara topologi STP.
+**BPDU** (*Bridge Protocol Data Unit*) adalah pesan yang dipertukarkan switch untuk membangun dan memelihara topologi STP.
 
 - Dikirim ke MAC multicast `01:80:C2:00:00:00`
 - Setiap 2 detik (hello time) oleh root; switch lain meneruskannya
@@ -316,16 +316,16 @@ Port ID                 ← port mana yang mengirim
 Message Age, Max Age, Hello Time, Forward Delay
 ```
 
-**TCN BPDU** (*Topology Change Notification*) — dikirim ke arah root ketika topologi berubah. Root lalu mengirim BPDU dengan flag TC diset, memerintahkan semua switch mempersingkat MAC aging time menjadi forward delay (15 detik) agar tabel cepat diperbarui.
+**TCN BPDU** (*Topology Change Notification*) dikirim ke arah root ketika topologi berubah. Root lalu mengirim BPDU dengan flag TC diset, memerintahkan semua switch mempersingkat MAC aging time menjadi forward delay (15 detik) agar tabel cepat diperbarui.
 
 > [!WARNING]
-> **Topology change berlebihan berbahaya.** Setiap TC memaksa semua switch membuang sebagian MAC table → flooding meningkat. Port access yang naik-turun (PC dinyalakan/dimatikan) akan memicu TC — kecuali port itu dikonfigurasi **PortFast**.
+> **Topology change berlebihan berbahaya.** Setiap TC memaksa semua switch membuang sebagian MAC table → flooding meningkat. Port access yang naik-turun (PC dinyalakan/dimatikan) akan memicu TC, kecuali port itu dikonfigurasi **PortFast**.
 
 ---
 
 ## 7. RSTP: 802.1w
 
-Perbaikan besar dari 802.1D. Waktu konvergensi turun dari 30-50 detik menjadi **kurang dari 1 detik** pada kondisi ideal.
+RSTP adalah perbaikan besar dari 802.1D. Waktu konvergensi turun dari 30-50 detik menjadi **kurang dari 1 detik** pada kondisi ideal.
 
 ### Port role baru
 
@@ -333,7 +333,7 @@ Perbaikan besar dari 802.1D. Waktu konvergensi turun dari 30-50 detik menjadi **
 |---|---|
 | **Root** | Jalur terbaik ke root bridge (sama seperti 802.1D) |
 | **Designated** | Meneruskan ke segmen (sama) |
-| **Alternate** | Jalur cadangan ke root **lewat switch lain** — bisa langsung menggantikan root port |
+| **Alternate** | Jalur cadangan ke root **lewat switch lain**; bisa langsung menggantikan root port |
 | **Backup** | Jalur cadangan ke segmen yang sama **lewat switch yang sama** (jarang; terjadi pada hub) |
 
 ### Port state disederhanakan
@@ -346,7 +346,7 @@ Perbaikan besar dari 802.1D. Waktu konvergensi turun dari 30-50 detik menjadi **
 
 ### Kenapa RSTP jauh lebih cepat
 
-1. **Proposal/Agreement handshake** — dua switch bertetangga langsung bernegosiasi tanpa menunggu timer:
+1. **Proposal/Agreement handshake.** Dua switch bertetangga langsung bernegosiasi tanpa menunggu timer:
    ```
    SW1 → SW2 : "Saya ingin port ini jadi designated & forwarding" (proposal)
    SW2       : memblokir semua port non-edge lainnya (sync)
@@ -355,7 +355,7 @@ Perbaikan besar dari 802.1D. Waktu konvergensi turun dari 30-50 detik menjadi **
    ```
    Berlangsung dalam milidetik, bukan detik.
 
-2. **Alternate port langsung mengambil alih** — tidak perlu melewati listening/learning karena sudah tahu topologinya.
+2. **Alternate port langsung mengambil alih.** Port ini tidak perlu melewati listening/learning karena sudah tahu topologinya.
 
 3. **Semua switch bisa mengirim BPDU** (di 802.1D hanya root yang mengirim, sisanya meneruskan). Kegagalan terdeteksi lebih cepat.
 
@@ -363,7 +363,7 @@ Perbaikan besar dari 802.1D. Waktu konvergensi turun dari 30-50 detik menjadi **
 
 5. **Edge port** (setara PortFast) langsung forwarding.
 
-6. **Link type** — RSTP membedakan point-to-point (full duplex, bisa cepat) dan shared (half duplex, harus lambat).
+6. **Link type**: RSTP membedakan point-to-point (full duplex, bisa cepat) dan shared (half duplex, harus lambat).
 
 ### Konfigurasi
 
@@ -372,7 +372,7 @@ SW1(config)# spanning-tree mode rapid-pvst
 ```
 
 > [!TIP]
-> **RSTP kompatibel mundur dengan 802.1D** — jika ada switch lama, port yang terhubung ke sana otomatis turun ke mode 802.1D. Tapi ini juga berarti satu switch lama bisa memperlambat sebagian jaringan.
+> **RSTP kompatibel mundur dengan 802.1D.** Jika ada switch lama, port yang terhubung ke sana otomatis turun ke mode 802.1D. Akibatnya, satu switch lama bisa memperlambat sebagian jaringan.
 
 ---
 
@@ -398,7 +398,7 @@ SW-CORE2(config)# spanning-tree vlan 20,40,60 root primary
 SW-CORE2(config)# spanning-tree vlan 10,30,50 root secondary
 ```
 
-Hasilnya: trafik VLAN ganjil lewat CORE1, VLAN genap lewat CORE2. Kedua uplink terpakai, bukan satu menganggur.
+Hasilnya: trafik VLAN 10, 30, dan 50 lewat CORE1, sedangkan VLAN 20, 40, dan 60 lewat CORE2. Kedua uplink terpakai, bukan satu menganggur.
 
 > [!WARNING]
 > Kelemahan: dengan 500 VLAN, ada 500 instance STP → beban CPU dan memori besar.
@@ -420,7 +420,7 @@ SW1(config)# spanning-tree mst 2 root secondary
 ```
 
 > [!WARNING]
-> **Semua switch dalam satu MST region HARUS punya name, revision, dan pemetaan VLAN→instance yang IDENTIK.** Kalau berbeda satu karakter saja, switch dianggap berada di region berbeda dan perilaku STP menjadi tidak sesuai harapan. Ini kesalahan konfigurasi MST paling umum.
+> **Semua switch dalam satu MST region harus punya name, revision, dan pemetaan VLAN→instance yang identik.** Kalau berbeda satu karakter saja, switch dianggap berada di region berbeda dan perilaku STP menjadi tidak sesuai harapan. Ini kesalahan konfigurasi MST paling umum.
 
 ```
 SW1# show spanning-tree mst configuration
@@ -431,7 +431,7 @@ SW1# show spanning-tree mst configuration digest    ← bandingkan digest antar-
 
 ## 9. Fitur Perlindungan STP
 
-Fitur-fitur ini **wajib** di jaringan produksi. Menghafalnya adalah bagian dari CCNA.
+Fitur-fitur ini wajib di jaringan produksi. Menghafalnya adalah bagian dari CCNA.
 
 ### PortFast
 
@@ -448,7 +448,7 @@ SW1(config)# spanning-tree portfast default
 - Port naik-turun tidak memicu Topology Change
 
 > [!WARNING]
-> **HANYA untuk port yang terhubung ke end device.** Memasang PortFast pada port yang terhubung switch lain = **loop instan** karena tidak ada jeda untuk mendeteksi.
+> **Hanya untuk port yang terhubung ke end device.** Memasang PortFast pada port yang terhubung switch lain = loop instan, karena tidak ada jeda untuk mendeteksi.
 
 ### BPDU Guard
 
@@ -481,9 +481,9 @@ SW1(config)# errdisable recovery interval 300
 Menghentikan pengiriman/penerimaan BPDU pada port.
 
 > [!WARNING]
-> **BERBAHAYA.** Jika diterapkan global pada port PortFast, port akan berhenti mengirim BPDU tetapi masih memproses BPDU masuk (dan kehilangan status PortFast). Jika diterapkan per-interface, port sepenuhnya buta terhadap BPDU → **loop tidak akan terdeteksi**.
+> **Berbahaya.** Jika diterapkan global pada port PortFast, port akan berhenti mengirim BPDU tetapi masih memproses BPDU masuk (dan kehilangan status PortFast). Jika diterapkan per-interface, port sepenuhnya buta terhadap BPDU → loop tidak akan terdeteksi.
 
-Gunakan hanya jika Anda benar-benar paham konsekuensinya, misalnya pada port yang menghadap penyedia layanan yang tidak boleh menerima BPDU Anda.
+Gunakan hanya jika Anda paham konsekuensinya, misalnya pada port yang menghadap penyedia layanan yang tidak boleh menerima BPDU Anda.
 
 ### Root Guard
 
@@ -493,7 +493,7 @@ Mencegah port menjadi jalur menuju root baru. Jika menerima BPDU "superior" (dar
 SW-CORE(config-if)# spanning-tree guard root
 ```
 
-**Kapan dipakai:** pada port yang menghadap ke bawah (arah access) atau ke jaringan mitra/pelanggan — tempat root bridge **tidak boleh** berada.
+**Kapan dipakai:** pada port yang menghadap ke bawah (arah access) atau ke jaringan mitra/pelanggan, yaitu tempat root bridge tidak boleh berada.
 
 ```
 %SPANTREE-2-ROOTGUARD_BLOCK: Root guard blocking port GigabitEthernet0/12 on VLAN0010.
@@ -503,9 +503,9 @@ Port pulih otomatis begitu BPDU superior berhenti datang.
 
 ### Loop Guard
 
-Mencegah port blocking berubah menjadi forwarding secara keliru ketika **berhenti menerima BPDU**.
+Mencegah port blocking berubah menjadi forwarding secara keliru ketika berhenti menerima BPDU.
 
-Skenario yang dilindungi: kegagalan **unidirectional** — port masih bisa mengirim tetapi tidak menerima (mis. satu serat putus, atau transceiver rusak sebelah). Tanpa loop guard, port blocking yang berhenti menerima BPDU akan mengira jalur redundan sudah hilang, lalu masuk forwarding → **loop**.
+Skenario yang dilindungi adalah kegagalan **unidirectional**: port masih bisa mengirim tetapi tidak menerima (mis. satu serat putus, atau transceiver rusak sebelah). Tanpa loop guard, port blocking yang berhenti menerima BPDU akan mengira jalur redundan sudah hilang, lalu masuk forwarding → loop.
 
 ```
 SW1(config)# spanning-tree loopguard default
@@ -593,7 +593,7 @@ SW1# show spanning-tree detail | include ieee|occurr|from|is exec
 | MAC flapping di log | Loop |
 | Root bridge berpindah tanpa alasan | Switch baru dengan priority lebih rendah; pakai Root Guard |
 | Topology change sangat sering | Port access tanpa PortFast; kabel/perangkat flapping |
-| Port di-err-disable | BPDU Guard terpicu — ada perangkat mengirim BPDU di port access |
+| Port di-err-disable | BPDU Guard terpicu: ada perangkat mengirim BPDU di port access |
 | Port `root-inconsistent` | Root Guard memblokir BPDU superior |
 | Port `loop-inconsistent` | Loop Guard mendeteksi BPDU berhenti |
 | Uplink cadangan tidak aktif saat utama mati | STP tidak berjalan, atau konvergensi lambat (masih 802.1D) |
@@ -627,7 +627,7 @@ SW1# show storm-control
 
 ## 11. Alternatif Modern untuk STP
 
-STP memblokir jalur — artinya **membuang kapasitas**. Dalam topologi dengan dua uplink 10 G, hanya 10 G yang terpakai. Teknologi modern mengatasi ini:
+STP memblokir jalur, artinya ada kapasitas yang terbuang. Dalam topologi dengan dua uplink 10 G, hanya 10 G yang terpakai. Teknologi modern mengatasi ini:
 
 | Teknologi | Cara kerja |
 |---|---|
@@ -638,7 +638,7 @@ STP memblokir jalur — artinya **membuang kapasitas**. Dalam topologi dengan du
 | **VXLAN + EVPN** | Overlay L2 di atas underlay L3 dengan ECMP (`16-datacenter-cloud-sdn/02`) |
 
 > [!TIP]
-> **Arah desain modern: kurangi domain layer 2 sekecil mungkin, gunakan routing untuk redundansi.** Tetapi STP tetap harus aktif sebagai jaring pengaman — jangan pernah mematikannya di jaringan L2.
+> **Arah desain modern: kurangi domain layer 2 sekecil mungkin, gunakan routing untuk redundansi.** Tetapi STP tetap harus aktif sebagai jaring pengaman. Jangan pernah mematikannya di jaringan L2.
 
 ---
 
@@ -685,10 +685,10 @@ STP memblokir jalur — artinya **membuang kapasitas**. Dalam topologi dengan du
 ```
 
 > [!WARNING]
-> **`protocol-mode=none` mematikan STP sepenuhnya.** Ini default pada beberapa konfigurasi dan **sangat berbahaya** — satu kabel yang salah akan menyebabkan broadcast storm. **Selalu aktifkan minimal `rstp`** pada bridge yang punya lebih dari satu port ke perangkat lain.
+> **`protocol-mode=none` mematikan STP sepenuhnya.** Ini default pada beberapa konfigurasi dan berbahaya: satu kabel yang salah akan menyebabkan broadcast storm. Selalu aktifkan minimal `rstp` pada bridge yang punya lebih dari satu port ke perangkat lain.
 
 > [!TIP]
-> **`edge=yes-discover`** adalah pilihan yang aman: port berperilaku sebagai edge (langsung forwarding) tetapi tetap mendeteksi BPDU — kalau ada switch yang tercolok, ia otomatis beralih ke mode normal.
+> **`edge=yes-discover`** adalah pilihan yang aman: port berperilaku sebagai edge (langsung forwarding) tetapi tetap mendeteksi BPDU. Kalau ada switch yang tercolok, port otomatis beralih ke mode normal.
 
 ### Padanan istilah
 
@@ -712,12 +712,12 @@ STP memblokir jalur — artinya **membuang kapasitas**. Dalam topologi dengan du
 - STP memblokir port berlebih dan menyimpannya sebagai cadangan.
 - Empat langkah: pilih **root bridge** → **root port** (per switch) → **designated port** (per segmen) → sisanya **blocking**.
 - Bridge ID = priority (kelipatan 4096) + extended system ID (VLAN) + MAC. **Priority terendah menang; seri → MAC terendah.**
-- **Selalu tetapkan root bridge secara sengaja** — default memilih switch tertua.
+- **Selalu tetapkan root bridge secara sengaja**, karena default memilih switch tertua.
 - Cost berdasarkan bandwidth, dijumlahkan sepanjang jalur. Aktifkan `pathcost method long` untuk link cepat.
 - 802.1D lambat (30-50 detik); **RSTP <1 detik** berkat proposal/agreement dan alternate port.
 - Rapid PVST+ (default Cisco) = cepat + load balancing per VLAN. MSTP hemat CPU untuk banyak VLAN.
 - Wajib: **PortFast + BPDU Guard** di port access, **Root Guard** menghadap access, **Loop Guard + UDLD** di trunk fiber.
-- MST region butuh name, revision, dan pemetaan VLAN **identik** di semua switch.
+- MST region butuh name, revision, dan pemetaan VLAN identik di semua switch.
 - Saat storm terjadi: akses lewat console, shutdown port penyebab, baru investigasi.
 
 ---
@@ -736,21 +736,21 @@ STP memblokir jalur — artinya **membuang kapasitas**. Dalam topologi dengan du
 <details>
 <summary>Jawaban</summary>
 
-1. **SW-B.** Pemilihan pertama berdasarkan **priority terendah**: SW-B punya 24576, lebih rendah daripada 32768. MAC address hanya menjadi tie-breaker jika priority seri — di sini tidak perlu. (Perhatikan: MAC SW-C paling rendah, tetapi itu tidak relevan karena priority-nya lebih tinggi.)
+1. **SW-B.** Pemilihan pertama berdasarkan **priority terendah**: SW-B punya 24576, lebih rendah daripada 32768. MAC address hanya menjadi tie-breaker jika priority seri, dan di sini tidak perlu. (Perhatikan: MAC SW-C paling rendah, tetapi itu tidak relevan karena priority-nya lebih tinggi.)
 
-2. Karena header Ethernet **tidak punya TTL/hop count**. Paket IP yang berputar akan dibuang setelah TTL mencapai 0, sehingga loop L3 menyebabkan paket hilang tetapi jaringan tetap hidup. Frame Ethernet yang berputar tidak pernah dibuang — ia berlipat ganda setiap kali di-flood, sehingga dalam hitungan detik memenuhi seluruh bandwidth dan CPU, melumpuhkan jaringan.
+2. Karena header Ethernet **tidak punya TTL/hop count**. Paket IP yang berputar akan dibuang setelah TTL mencapai 0, sehingga loop L3 menyebabkan paket hilang tetapi jaringan tetap hidup. Frame Ethernet yang berputar tidak pernah dibuang. Ia berlipat ganda setiap kali di-flood, sehingga dalam hitungan detik bandwidth dan CPU penuh, dan jaringan lumpuh.
 
 3. Port menerima BPDU, artinya ada **switch, hub, atau perangkat yang menjalankan STP** dicolokkan ke port yang seharusnya untuk end device. BPDU Guard mematikan port untuk mencegah loop. Langkah: (a) periksa apa yang tercolok secara fisik; (b) kalau itu perangkat tidak sah, cabut dan edukasi pengguna; (c) kalau memang perlu switch di sana, konfigurasikan port sebagai trunk/uplink yang benar tanpa PortFast; (d) pulihkan port dengan `shutdown` lalu `no shutdown`, atau aktifkan `errdisable recovery cause bpduguard`.
 
-4. **Kegagalan unidirectional.** Port blocking berhenti menerima BPDU (karena satu arah link mati — misalnya satu serat putus atau TX transceiver rusak), tetapi masih bisa mengirim. STP biasa menafsirkan "tidak ada BPDU" sebagai "jalur redundan hilang" dan memindahkan port ke forwarding → terbentuk **loop**, karena secara fisik link masih menyambung di arah lain. Loop Guard menempatkan port ke state `loop-inconsistent` (tetap memblokir) alih-alih forwarding.
+4. **Kegagalan unidirectional.** Port blocking berhenti menerima BPDU (karena satu arah link mati, misalnya satu serat putus atau TX transceiver rusak), tetapi masih bisa mengirim. STP biasa menafsirkan "tidak ada BPDU" sebagai "jalur redundan hilang" dan memindahkan port ke forwarding → terbentuk **loop**, karena secara fisik link masih menyambung di arah lain. Loop Guard menempatkan port ke state `loop-inconsistent` (tetap memblokir) alih-alih forwarding.
 
-5. **Loop.** PortFast melewati state listening dan learning, sehingga port langsung forwarding tanpa memberi STP waktu mendeteksi jalur redundan. Jika port itu terhubung ke switch lain yang menciptakan loop, storm terjadi seketika. (Perlindungan tambahan: BPDU Guard akan mematikan port begitu BPDU pertama diterima — inilah alasan keduanya selalu dipasang bersama.)
+5. **Loop.** PortFast melewati state listening dan learning, sehingga port langsung forwarding tanpa memberi STP waktu mendeteksi jalur redundan. Jika port itu terhubung ke switch lain yang menciptakan loop, storm terjadi seketika. (Perlindungan tambahan: BPDU Guard akan mematikan port begitu BPDU pertama diterima. Inilah alasan keduanya selalu dipasang bersama.)
 
-6. (a) **Proposal/Agreement handshake** — dua switch bertetangga langsung menyepakati state forwarding dalam milidetik, tanpa menunggu forward delay. (b) **Alternate port** sudah mengetahui topologi dan bisa langsung mengambil alih tanpa melewati listening/learning. (c) **Semua switch mengirim BPDU sendiri** (bukan hanya meneruskan dari root), dan kehilangan 3 BPDU (6 detik) sudah dianggap link mati — bukan menunggu max age 20 detik. (d) Tambahan: edge port langsung forwarding, dan RSTP membedakan link point-to-point yang bisa dikonvergensikan cepat.
+6. (a) **Proposal/Agreement handshake**: dua switch bertetangga langsung menyepakati state forwarding dalam milidetik, tanpa menunggu forward delay. (b) **Alternate port** sudah mengetahui topologi dan bisa langsung mengambil alih tanpa melewati listening/learning. (c) **Semua switch mengirim BPDU sendiri** (bukan hanya meneruskan dari root), dan kehilangan 3 BPDU (6 detik) sudah dianggap link mati, tanpa menunggu max age 20 detik. (d) Tambahan: edge port langsung forwarding, dan RSTP membedakan link point-to-point yang bisa dikonvergensikan cepat.
 
-7. Rapid PVST+ menjalankan **satu instance STP per VLAN** → 400 instance. Ini memakan CPU dan memori switch secara signifikan, memperlambat konvergensi, dan bisa membuat switch tidak stabil. Solusi: migrasi ke **MSTP (802.1s)**, memetakan 400 VLAN ke misalnya 2-4 instance saja — tetap mendapat load balancing tetapi dengan beban jauh lebih ringan. Alternatif lain: kurangi span VLAN dengan desain routed access.
+7. Rapid PVST+ menjalankan **satu instance STP per VLAN** → 400 instance. Ini banyak memakan CPU dan memori switch, memperlambat konvergensi, dan bisa membuat switch tidak stabil. Solusi: migrasi ke **MSTP (802.1s)** dan petakan 400 VLAN ke misalnya 2-4 instance saja. Load balancing tetap didapat, dengan beban jauh lebih ringan. Alternatif lain: kurangi span VLAN dengan desain routed access.
 
-8. Periksa tiga hal yang harus **identik persis** di semua switch dalam satu region: (a) **MST region name**; (b) **revision number**; (c) **pemetaan VLAN ke instance**. Perbedaan sekecil apa pun (termasuk huruf besar/kecil pada nama, atau satu VLAN yang tertinggal di pemetaan) membuat switch dianggap berada di region berbeda. Verifikasi dengan `show spanning-tree mst configuration` dan bandingkan **digest**-nya — digest yang berbeda memastikan konfigurasinya tidak sama.
+8. Periksa tiga hal yang harus identik persis di semua switch dalam satu region: (a) **MST region name**; (b) **revision number**; (c) **pemetaan VLAN ke instance**. Perbedaan sekecil apa pun (termasuk huruf besar/kecil pada nama, atau satu VLAN yang tertinggal di pemetaan) membuat switch dianggap berada di region berbeda. Verifikasi dengan `show spanning-tree mst configuration` dan bandingkan **digest**-nya: digest yang berbeda memastikan konfigurasinya tidak sama.
 
 </details>
 
@@ -758,8 +758,8 @@ STP memblokir jalur — artinya **membuang kapasitas**. Dalam topologi dengan du
 
 ## 14. Sumber
 
-- IEEE 802.1D-2004 — Spanning Tree Protocol (termasuk RSTP yang diserap dari 802.1w)
-- IEEE 802.1s / 802.1Q-2022 clause 13 — Multiple Spanning Tree
+- IEEE 802.1D-2004: Spanning Tree Protocol (termasuk RSTP yang diserap dari 802.1w)
+- IEEE 802.1s / 802.1Q-2022 clause 13: Multiple Spanning Tree
 - Cisco CCNA 200-301 v1.1, topik 2.5 (Rapid PVST+: root port, root bridge, port states & roles, PortFast, root guard, loop guard, BPDU filter, BPDU guard)
 - Cisco, *Spanning Tree Protocol Root Guard Enhancement*
 - Perlman, R. (1985), *An Algorithm for Distributed Computation of a Spanning Tree in an Extended LAN*

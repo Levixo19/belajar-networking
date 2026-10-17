@@ -7,7 +7,7 @@
 
 ## 1. Routing IPv6
 
-Konsepnya identik dengan IPv4 — yang berubah hanya sintaks dan beberapa detail.
+Konsepnya identik dengan IPv4; yang berubah hanya sintaks dan beberapa detail.
 
 ### Static Route
 
@@ -51,15 +51,15 @@ R1# show ipv6 route ospf
 **Perbedaan dari OSPFv2:**
 | Aspek | OSPFv2 | OSPFv3 |
 |---|---|---|
-| Aktivasi | `network` atau per interface | **Selalu per interface** |
-| Router ID | Bisa otomatis dari IPv4 | **Wajib manual** |
-| Adjacency | Lewat alamat IPv4 subnet | Lewat **link-local** |
-| Multicast | 224.0.0.5 / 224.0.0.6 | **FF02::5 / FF02::6** |
-| Autentikasi | Bawaan (MD5/SHA) | **IPsec** (atau auth trailer RFC 7166) |
-| Address family | IPv4 saja | **IPv4 dan IPv6** |
+| Aktivasi | `network` atau per interface | Selalu per interface |
+| Router ID | Bisa otomatis dari IPv4 | Wajib manual |
+| Adjacency | Lewat alamat IPv4 subnet | Lewat link-local |
+| Multicast | 224.0.0.5 / 224.0.0.6 | FF02::5 / FF02::6 |
+| Autentikasi | Bawaan (MD5/SHA) | IPsec (atau auth trailer RFC 7166) |
+| Address family | IPv4 saja | IPv4 dan IPv6 |
 
 > [!TIP]
-> Karena adjacency memakai **link-local**, interface tidak perlu punya alamat global untuk membentuk tetangga OSPFv3. Ini memudahkan desain "IPv6 unnumbered".
+> Karena adjacency memakai link-local, interface tidak perlu punya alamat global untuk membentuk tetangga OSPFv3. Ini memudahkan desain "IPv6 unnumbered".
 
 ### EIGRP untuk IPv6
 
@@ -99,10 +99,10 @@ R1# show bgp ipv6 unicast
 ```
 
 > [!WARNING]
-> **`no bgp default ipv4-unicast` penting** — tanpa itu, setiap neighbor otomatis diaktifkan untuk IPv4 unicast, yang sering tidak diinginkan pada peering IPv6.
+> **`no bgp default ipv4-unicast` penting.** Tanpa itu, setiap neighbor otomatis diaktifkan untuk IPv4 unicast, yang sering tidak diinginkan pada peering IPv6.
 
 > [!TIP]
-> **BGP unnumbered** memakai link-local untuk peering, menghilangkan kebutuhan mengalokasikan alamat untuk link P2P:
+> **BGP unnumbered** memakai link-local untuk peering, sehingga Anda tidak perlu mengalokasikan alamat untuk link P2P:
 ```
 # FRRouting
 interface swp1
@@ -118,7 +118,7 @@ R1(config)# ipv6 router rip RIPPROC
 R1(config)# interface gi0/1
 R1(config-if)# ipv6 rip RIPPROC enable
 ```
-(Tidak ada `network` — diaktifkan per interface. Jangan dipakai di produksi.)
+(Tidak ada `network`; RIPng diaktifkan per interface. Jangan dipakai di produksi.)
 
 ### IS-IS
 
@@ -140,7 +140,7 @@ Ada tiga keluarga besar. Pilihannya bergantung situasi.
 
 ## 3. Dual Stack: Pendekatan yang Direkomendasikan
 
-Setiap perangkat menjalankan **IPv4 dan IPv6 secara bersamaan**.
+Setiap perangkat menjalankan IPv4 dan IPv6 secara bersamaan.
 
 ```
 R1(config)# interface gi0/0
@@ -149,22 +149,22 @@ R1(config-if)# ipv6 address 2001:db8:acad:1::1/64
 ```
 
 **Cara host memilih:**
-- DNS mengembalikan **A** (IPv4) dan/atau **AAAA** (IPv6)
-- Kalau ada AAAA, host **mengutamakan IPv6** (RFC 6724)
+- DNS mengembalikan A (IPv4) dan/atau AAAA (IPv6)
+- Kalau ada AAAA, host mengutamakan IPv6 (RFC 6724)
 - **Happy Eyeballs** (RFC 8305): coba keduanya paralel, pakai yang lebih dulu berhasil
 
 > [!TIP]
-> **Happy Eyeballs sangat penting.** Tanpa itu, IPv6 yang bermasalah menyebabkan timeout panjang sebelum fallback ke IPv4 — pengalaman pengguna yang buruk. Dengan Happy Eyeballs, browser memberi IPv6 keunggulan kecil (~50–300 ms) lalu langsung beralih ke IPv4 kalau tidak responsif.
+> **Kenapa Happy Eyeballs perlu:** tanpa itu, IPv6 yang bermasalah menyebabkan timeout panjang sebelum fallback ke IPv4, dan pengalaman pengguna menjadi buruk. Dengan Happy Eyeballs, browser memberi IPv6 keunggulan kecil (~50-300 ms) lalu langsung beralih ke IPv4 kalau tidak responsif.
 
-| ✅ Kelebihan | ❌ Kekurangan |
+| Kelebihan | Kekurangan |
 |---|---|
-| Paling sederhana secara konseptual | Harus mengelola **dua** stack, dua set ACL, dua set rute |
+| Paling sederhana secara konseptual | Harus mengelola dua stack, dua set ACL, dua set rute |
 | Tidak ada translasi yang merusak aplikasi | Butuh alamat IPv4 (yang langka) |
 | Fallback alami | Permukaan serangan ganda |
 | Migrasi bertahap | Troubleshooting lebih rumit |
 
 > [!WARNING]
-> **Bahaya keamanan dual stack:** banyak organisasi mengonfigurasi firewall IPv4 dengan ketat tetapi **lupa IPv6** — padahal IPv6 aktif secara default dan lebih diutamakan host. Hasilnya: pintu belakang yang terbuka lebar.
+> **Bahaya keamanan dual stack:** banyak organisasi mengonfigurasi firewall IPv4 dengan ketat tetapi lupa IPv6, padahal IPv6 aktif secara default dan lebih diutamakan host. Akibatnya ada pintu belakang yang terbuka lebar.
 
 **Selalu:** buat kebijakan firewall IPv6 yang setara dengan IPv4, dan uji keduanya.
 
@@ -172,18 +172,18 @@ R1(config-if)# ipv6 address 2001:db8:acad:1::1/64
 
 ## 4. Tunneling
 
-Membawa paket IPv6 di dalam paket IPv4 (atau sebaliknya).
+Tunneling membawa paket IPv6 di dalam paket IPv4 (atau sebaliknya).
 
 | Mekanisme | RFC | Cara kerja | Status |
 |---|---|---|---|
-| **Manual / 6in4** | 4213 | Tunnel statis IPv6-in-IPv4 (protokol 41) | ✅ Masih dipakai (tunnel broker) |
-| **GRE** | 2784 | Tunnel generik yang bisa membawa IPv6 | ✅ Umum di enterprise |
-| **6to4** | 3056 | Otomatis, memakai `2002::/16` | ❌ Usang, tidak andal |
-| **Teredo** | 4380 | IPv6 lewat UDP, menembus NAT | ❌ Praktis mati |
-| **ISATAP** | 5214 | Intra-site, memperlakukan IPv4 sebagai link | ❌ Jarang |
-| **6rd** | 5969 | 6to4 versi ISP dengan prefix sendiri | ✅ Dipakai beberapa ISP |
-| **DS-Lite** | 6333 | IPv4 di dalam IPv6 (untuk ISP IPv6-only) | ✅ Dipakai ISP modern |
-| **MAP-E/MAP-T** | 7597/7599 | IPv4 di atas IPv6 dengan port sharing | ✅ Dipakai ISP besar |
+| **Manual / 6in4** | 4213 | Tunnel statis IPv6-in-IPv4 (protokol 41) | Masih dipakai (tunnel broker) |
+| **GRE** | 2784 | Tunnel generik yang bisa membawa IPv6 | Umum di enterprise |
+| **6to4** | 3056 | Otomatis, memakai `2002::/16` | Usang, tidak andal |
+| **Teredo** | 4380 | IPv6 lewat UDP, menembus NAT | Praktis mati |
+| **ISATAP** | 5214 | Intra-site, memperlakukan IPv4 sebagai link | Jarang |
+| **6rd** | 5969 | 6to4 versi ISP dengan prefix sendiri | Dipakai beberapa ISP |
+| **DS-Lite** | 6333 | IPv4 di dalam IPv6 (untuk ISP IPv6-only) | Dipakai ISP modern |
+| **MAP-E/MAP-T** | 7597/7599 | IPv4 di atas IPv6 dengan port sharing | Dipakai ISP besar |
 
 ### Manual tunnel (6in4)
 
@@ -226,7 +226,7 @@ R1(config-if)# tunnel path-mtu-discovery
 
 ### NAT64 + DNS64
 
-Memungkinkan klien **IPv6-only** mengakses server **IPv4-only**.
+Mekanisme ini memungkinkan klien IPv6-only mengakses server IPv4-only.
 
 ```
 1. Klien IPv6-only mencari "example.com" (yang hanya punya A record)
@@ -250,13 +250,13 @@ R1(config-if)# nat64 enable
 
 > [!WARNING]
 > **Keterbatasan NAT64/DNS64:**
-- Aplikasi yang menyertakan **alamat IPv4 literal** (bukan nama domain) tidak akan bekerja
-- **DNSSEC rusak** — DNS64 memodifikasi jawaban, sehingga tanda tangan tidak valid
+- Aplikasi yang menyertakan alamat IPv4 literal (bukan nama domain) tidak akan bekerja
+- **DNSSEC rusak**: DNS64 memodifikasi jawaban, sehingga tanda tangan tidak valid
 - Beberapa protokol dengan alamat di payload (FTP aktif, SIP tanpa ALG) bermasalah
 
 ### 464XLAT
 
-Menambahkan **CLAT** (customer-side translator) di perangkat klien, sehingga aplikasi IPv4-only tetap bekerja di jaringan IPv6-only.
+Mekanisme ini menambahkan **CLAT** (customer-side translator) di perangkat klien, sehingga aplikasi IPv4-only tetap bekerja di jaringan IPv6-only.
 
 ```
 [Aplikasi IPv4-only]
@@ -271,11 +271,11 @@ Menambahkan **CLAT** (customer-side translator) di perangkat klien, sehingga apl
 ```
 
 > [!TIP]
-> **Inilah yang membuat jaringan seluler IPv6-only bekerja.** Banyak operator besar (T-Mobile US, Jio, dan lainnya) menjalankan jaringan **IPv6-only** dengan 464XLAT — pengguna tidak menyadarinya sama sekali. Android dan iOS mendukung CLAT secara bawaan.
+> **Inilah yang membuat jaringan seluler IPv6-only bekerja.** Banyak operator besar (T-Mobile US, Jio, dan lainnya) menjalankan jaringan IPv6-only dengan 464XLAT, dan pengguna tidak menyadarinya sama sekali. Android dan iOS mendukung CLAT secara bawaan.
 
 ### NPTv6
 
-**Network Prefix Translation** [RFC 6296] — menerjemahkan **prefix saja**, bersifat stateless dan 1:1.
+**Network Prefix Translation** [RFC 6296] menerjemahkan prefix saja, bersifat stateless dan 1:1.
 
 ```
 fd00:1234::/48  ←→  2001:db8:abcd::/48
@@ -337,7 +337,7 @@ FASE 5 — IPv6-ONLY (bertahap, jangka panjang)
 2. **Jangan tunggu sempurna.** Aktifkan bertahap; dual stack memberi fallback alami.
 3. **Firewall IPv6 dari hari pertama.** Ini kesalahan paling berbahaya kalau terlewat.
 4. **Uji monitoring dan logging.** Banyak alat lama tidak menangani IPv6 dengan benar.
-5. **Perhatikan aplikasi**, bukan hanya jaringan — aplikasi yang menyimpan alamat sebagai `VARCHAR(15)` akan rusak.
+5. **Perhatikan aplikasi**, bukan hanya jaringan: aplikasi yang menyimpan alamat sebagai `VARCHAR(15)` akan rusak.
 
 ### Perencanaan alamat
 
@@ -368,18 +368,18 @@ Bagi berdasarkan lokasi (16 bit subnet ID):
 
 | Aspek | IPv4 | IPv6 |
 |---|---|---|
-| **Pemindaian** | /24 = 254 host, dipindai dalam detik | /64 = 18 kuintiliun, **tidak mungkin dipindai brute force** |
-| **NAT sebagai "firewall"** | Sering diandalkan (keliru) | Tidak ada NAT → **firewall stateful WAJIB** |
-| **Extension header** | — | Bisa dipakai mengelabui firewall |
-| **ICMP** | Bisa diblokir | **Tidak boleh diblokir** |
+| **Pemindaian** | /24 = 254 host, dipindai dalam detik | /64 = 18 kuintiliun, tidak mungkin dipindai brute force |
+| **NAT sebagai "firewall"** | Sering diandalkan (keliru) | Tidak ada NAT → firewall stateful WAJIB |
+| **Extension header** | - | Bisa dipakai mengelabui firewall |
+| **ICMP** | Bisa diblokir | Tidak boleh diblokir |
 | **Rogue RA** | Setara rogue DHCP | Lebih mudah dan lebih sering tidak disengaja |
-| **Alamat sementara** | — | Privacy extension menyulitkan pelacakan |
+| **Alamat sementara** | - | Privacy extension menyulitkan pelacakan |
 
 > [!WARNING]
 > **Pemindaian IPv6 tetap mungkin** dengan cara lain: melalui DNS enumeration, log, alamat yang mudah ditebak (`::1`, `::2`, `::80`), alamat EUI-64 (jika OUI diketahui), dan Certificate Transparency logs.
 
 > [!TIP]
-> Karena itu, **jangan memakai alamat yang mudah ditebak untuk server yang sensitif** — gunakan interface ID acak.
+> Karena itu, jangan memakai alamat yang mudah ditebak untuk server yang sensitif; gunakan interface ID acak.
 
 ### Checklist keamanan IPv6
 
@@ -506,10 +506,10 @@ add chain=forward action=drop in-interface-list=WAN comment="Tolak inisiasi dari
 ```
 
 > [!WARNING]
-> **Ini bagian paling kritis dari dual stack.** Tanpa NAT, **setiap host IPv6 dapat dijangkau langsung dari internet**. Firewall IPv6 yang tidak dikonfigurasi = seluruh jaringan internal terbuka.
+> **Ini bagian paling kritis dari dual stack.** Tanpa NAT, setiap host IPv6 dapat dijangkau langsung dari internet. Firewall IPv6 yang tidak dikonfigurasi = seluruh jaringan internal terbuka.
 
 > [!WARNING]
-> **Jangan blokir ICMPv6 sepenuhnya** — NDP, RA, DAD, dan Packet Too Big semuanya memakainya. Tanpa ICMPv6, IPv6 berhenti bekerja.
+> **Jangan blokir ICMPv6 sepenuhnya.** NDP, RA, DAD, dan Packet Too Big semuanya memakainya. Tanpa ICMPv6, IPv6 berhenti bekerja.
 
 ### Padanan istilah
 
@@ -527,11 +527,11 @@ add chain=forward action=drop in-interface-list=WAN comment="Tolak inisiasi dari
 
 Strategi migrasi di bagian 6 biasanya mengorbankan satu hal: untuk membuat segmen IPv6-only, Anda memisahkan perangkat modern dan lawas ke VLAN atau SSID berbeda. RFC 8925 (Oktober 2020, Standards Track) menyelesaikannya dengan satu opsi DHCPv4. Segmen yang dihasilkan disebut **IPv6-mostly**: segmen yang menyediakan NAT64 (umumnya dengan DNS64) sekaligus tetap menyediakan IPv4, sehingga host IPv6-only, dual-stack, dan IPv4-only bisa hidup berdampingan di segmen yang sama.
 
-Opsi ini bernama **IPv6-Only Preferred**, **kode 108**, panjang tetap 4 byte, dan nilainya adalah bilangan 32 bit tak bertanda berisi detik **V6ONLY_WAIT**. Cara kerjanya:
+Opsi ini bernama **IPv6-Only Preferred**, kode 108, panjang tetap 4 byte, dan nilainya adalah bilangan 32 bit tak bertanda berisi detik **V6ONLY_WAIT**. Cara kerjanya:
 
 1. Klien yang mampu IPv6-only (misalnya punya CLAT 464XLAT seperti di bagian 5) menaruh kode 108 di *Parameter Request List* pada DHCPDISCOVER dan DHCPREQUEST. Klien yang bukan IPv6-only-capable tidak boleh meminta opsi ini.
 2. Server hanya menyertakan opsi 108 bila (a) klien memintanya dan (b) kolam alamat itu memang dikonfigurasi sebagai IPv6-mostly. Server sebaiknya menawarkan alamat `0.0.0.0` agar tidak menghabiskan alamat dari kolam.
-3. Klien yang menerima opsi 108 tidak boleh meminta alamat IPv4 yang ditawarkan dan menunda DHCPv4 selama V6ONLY_WAIT detik, atau sampai terjadi *network attachment event* (misalnya link up), mana yang lebih dulu. Nilai minimum yang dipakai klien adalah `MIN_V6ONLY_WAIT` = **300 detik**; nilai server yang lebih kecil (termasuk 0 saat server tidak mengatur apa pun) diperlakukan sebagai 300. Nilai bawaan variabel V6ONLY_WAIT adalah **1800 detik**.
+3. Klien yang menerima opsi 108 tidak boleh meminta alamat IPv4 yang ditawarkan dan menunda DHCPv4 selama V6ONLY_WAIT detik, atau sampai terjadi *network attachment event* (misalnya link up), mana yang lebih dulu. Nilai minimum yang dipakai klien adalah `MIN_V6ONLY_WAIT` = 300 detik; nilai server yang lebih kecil (termasuk 0 saat server tidak mengatur apa pun) diperlakukan sebagai 300. Nilai bawaan variabel V6ONLY_WAIT adalah 1800 detik.
 4. Klien lama atau IPv4-only mengabaikan opsi ini dan menerima alamat IPv4 seperti biasa.
 
 Karena nilainya 32 bit, 1800 detik ditulis sebagai `0x00000708` dan 3600 detik sebagai `0x00000E10`. Di MikroTik RouterOS v7, opsi ini ditambahkan sebagai DHCP option mentah lalu dipasang ke jaringan DHCP; sintaks di bawah belum diuji di lab kurikulum ini, jadi verifikasi dengan `tcpdump` atau Wireshark pada paket DHCPOFFER.
@@ -541,7 +541,7 @@ Karena nilainya 32 bit, 1800 detik ditulis sebagai `0x00000708` dan 3600 detik s
 /ip dhcp-server network set [find address=192.0.2.0/24] dhcp-option=v6only-preferred
 ```
 
-Di Cisco IOS XE, opsi generik ditulis di pool DHCP dengan `option 108 hex 0000.0708`; di Linux, server DHCPv4 seperti dnsmasq atau Kea punya sintaks masing-masing, cek dokumentasi versi Anda. Syarat jaringannya sama: **NAT64 dan DNS64 harus sudah berjalan** (lihat `NAT64 + DNS64` di bagian 5), dan router mengiklankan prefix NAT64 lewat RA PREF64 (RFC 8781) bila klien memerlukannya. Tanpa itu, klien yang menunda IPv4 akan kehilangan akses ke tujuan IPv4-only.
+Di Cisco IOS XE, opsi generik ditulis di pool DHCP dengan `option 108 hex 0000.0708`; di Linux, server DHCPv4 seperti dnsmasq atau Kea punya sintaks masing-masing, cek dokumentasi versi Anda. Syarat jaringannya sama: NAT64 dan DNS64 harus sudah berjalan (lihat `NAT64 + DNS64` di bagian 5), dan router mengiklankan prefix NAT64 lewat RA PREF64 (RFC 8781) bila klien memerlukannya. Tanpa itu, klien yang menunda IPv4 akan kehilangan akses ke tujuan IPv4-only.
 
 > [!WARNING]
 > **Jangan mengaktifkan opsi 108 sebelum NAT64 dan DNS64 benar-benar diuji.** RFC 8925 sendiri tidak membahas apa yang terjadi bila IPv6 gagal setelah klien mematikan IPv4. Jadi mulailah dari satu kolam percobaan, dan pastikan aplikasi yang memakai IPv4 literal punya CLAT atau pengecualian.
@@ -551,19 +551,19 @@ Di Cisco IOS XE, opsi generik ditulis di pool DHCP dengan `option 108 hex 0000.0
 ## 10. Ringkasan
 
 - Routing IPv6 konsepnya identik dengan IPv4; yang berubah sintaks dan beberapa detail.
-- **`ipv6 unicast-routing` wajib.** Next hop link-local **harus** disertai exit interface.
+- **`ipv6 unicast-routing` wajib.** Next hop link-local harus disertai exit interface.
 - **OSPFv3**: selalu per interface, RID wajib manual, adjacency lewat link-local, FF02::5/6.
-- **EIGRPv6 classic shutdown by default** — jangan lupa `no shutdown`.
-- **MP-BGP** untuk IPv6; gunakan `no bgp default ipv4-unicast`. **BGP unnumbered** memakai link-local.
-- **Dual stack adalah pendekatan yang direkomendasikan** — sederhana dan punya fallback alami lewat **Happy Eyeballs**.
-- **Bahaya dual stack: firewall IPv6 yang terlupa** — pintu belakang yang terbuka lebar.
+- **EIGRPv6 classic shutdown by default**, jadi jangan lupa `no shutdown`.
+- **MP-BGP** untuk IPv6; gunakan `no bgp default ipv4-unicast`. BGP unnumbered memakai link-local.
+- **Dual stack adalah pendekatan yang direkomendasikan**: sederhana dan punya fallback alami lewat Happy Eyeballs.
+- **Bahaya dual stack: firewall IPv6 yang terlupa**, yang menjadi pintu belakang terbuka lebar.
 - **Tunneling** (6in4, GRE, 6rd, DS-Lite, MAP-E) adalah solusi sementara; mengurangi MTU dan menambah kompleksitas.
-- **NAT64 + DNS64** untuk klien IPv6-only mengakses server IPv4-only; **merusak DNSSEC** dan alamat literal.
+- **NAT64 + DNS64** untuk klien IPv6-only mengakses server IPv4-only; merusak DNSSEC dan alamat literal.
 - **464XLAT** adalah yang membuat jaringan seluler IPv6-only bekerja untuk aplikasi IPv4-only.
-- Migrasi bertahap: **edge → DMZ → core → access → IPv6-only**.
-- Rancang skema alamat untuk **kemudahan dibaca**, bukan penghematan.
-- Keamanan: pemindaian brute force tidak mungkin, tetapi enumerasi lewat DNS/log tetap ada; **RA Guard wajib**; jangan blokir ICMPv6.
-- **RFC 8925** (DHCPv4 option **108**, IPv6-Only Preferred) membuat segmen **IPv6-mostly**: klien IPv6-only-capable meminta opsi itu dan menunda DHCPv4 selama **V6ONLY_WAIT** (minimum 300 detik, bawaan 1800), sedangkan klien lain tetap mendapat IPv4. Syaratnya NAT64/DNS64 sudah berjalan.
+- Migrasi bertahap: edge → DMZ → core → access → IPv6-only.
+- Rancang skema alamat untuk kemudahan dibaca, bukan penghematan.
+- Keamanan: pemindaian brute force tidak mungkin, tetapi enumerasi lewat DNS/log tetap ada; RA Guard wajib; jangan blokir ICMPv6.
+- **RFC 8925** (DHCPv4 option 108, IPv6-Only Preferred) membuat segmen IPv6-mostly: klien IPv6-only-capable meminta opsi itu dan menunda DHCPv4 selama V6ONLY_WAIT (minimum 300 detik, bawaan 1800), sedangkan klien lain tetap mendapat IPv4. Syaratnya NAT64/DNS64 sudah berjalan.
 
 ---
 
@@ -582,18 +582,18 @@ Di Cisco IOS XE, opsi generik ditulis di pool DHCP dengan `option 108 hex 0000.0
 <details>
 <summary>Jawaban</summary>
 
-1. Karena alamat link-local (`fe80::/10`) **hanya unik dalam satu link** — alamat `fe80::2` bisa ada di banyak interface router yang berbeda secara bersamaan. Tanpa menyebut interface, router tidak tahu ke link mana paket harus dikirim; alamatnya ambigu. Karena itu IOS menolak `ipv6 route 2001:db8::/64 fe80::2` dan mengharuskan `ipv6 route 2001:db8::/64 gi0/1 fe80::2`. Konsep yang sama berlaku saat melakukan ping ke link-local dari host (`ping6 fe80::1%eth0`).
+1. Karena alamat link-local (`fe80::/10`) hanya unik dalam satu link: alamat `fe80::2` bisa ada di banyak interface router yang berbeda secara bersamaan. Tanpa menyebut interface, router tidak tahu ke link mana paket harus dikirim; alamatnya ambigu. Karena itu IOS menolak `ipv6 route 2001:db8::/64 fe80::2` dan mengharuskan `ipv6 route 2001:db8::/64 gi0/1 fe80::2`. Konsep yang sama berlaku saat melakukan ping ke link-local dari host (`ping6 fe80::1%eth0`).
 
-2. (a) **`ipv6 unicast-routing` belum diaktifkan** — tanpa ini router tidak memproses IPv6 sama sekali. (b) **Router ID belum dikonfigurasi** — OSPFv3 tidak punya alamat IPv4 untuk diambil otomatis, sehingga RID **wajib** diset manual; tanpa itu proses tidak akan start. (c) **`ipv6 ospf 1 area 0` belum dipasang di interface** — OSPFv3 tidak punya perintah `network`, aktivasi selalu per interface. Kemungkinan lain: area ID berbeda, MTU tidak cocok, interface belum `no shutdown`, atau ACL memblokir FF02::5.
+2. (a) **`ipv6 unicast-routing` belum diaktifkan**: tanpa ini router tidak memproses IPv6 sama sekali. (b) **Router ID belum dikonfigurasi**: OSPFv3 tidak punya alamat IPv4 untuk diambil otomatis, sehingga RID wajib diset manual; tanpa itu proses tidak akan start. (c) **`ipv6 ospf 1 area 0` belum dipasang di interface**: OSPFv3 tidak punya perintah `network`, aktivasi selalu per interface. Kemungkinan lain: area ID berbeda, MTU tidak cocok, interface belum `no shutdown`, atau ACL memblokir FF02::5.
 
-3. **Cara kerja:** klien IPv6-only mencari nama domain. **DNS64** melihat domain itu hanya punya record A (IPv4), lalu **mensintesis record AAAA palsu** dengan menempelkan alamat IPv4 32-bit ke prefix `64:ff9b::/96` (mis. `93.184.216.34` → `64:ff9b::5db8:d822`). Klien mengirim paket IPv6 ke alamat itu; **gateway NAT64** mengenali prefix tersebut, mengekstrak alamat IPv4-nya, dan menerjemahkan paket menjadi IPv4 (dengan NAT ke pool alamat publik). Balasan diterjemahkan kembali.
-   **Keterbatasan:** (a) **DNSSEC rusak** — DNS64 memodifikasi jawaban DNS, sehingga tanda tangan tidak lagi valid; klien yang memvalidasi DNSSEC akan menolak jawaban sintetis. (b) **Alamat IPv4 literal tidak bekerja** — aplikasi yang menghubungi `http://93.184.216.34` langsung (tanpa DNS) tidak melewati DNS64 sehingga tidak pernah mendapat alamat tersintesis. Tambahan: protokol yang menyertakan alamat di payload (FTP aktif, SIP tanpa ALG) juga bermasalah.
+3. **Cara kerja:** klien IPv6-only mencari nama domain. DNS64 melihat domain itu hanya punya record A (IPv4), lalu mensintesis record AAAA palsu dengan menempelkan alamat IPv4 32-bit ke prefix `64:ff9b::/96` (mis. `93.184.216.34` → `64:ff9b::5db8:d822`). Klien mengirim paket IPv6 ke alamat itu; gateway NAT64 mengenali prefix tersebut, mengekstrak alamat IPv4-nya, dan menerjemahkan paket menjadi IPv4 (dengan NAT ke pool alamat publik). Balasan diterjemahkan kembali.
+   **Keterbatasan:** (a) **DNSSEC rusak**: DNS64 memodifikasi jawaban DNS, sehingga tanda tangan tidak lagi valid; klien yang memvalidasi DNSSEC akan menolak jawaban sintetis. (b) **Alamat IPv4 literal tidak bekerja**: aplikasi yang menghubungi `http://93.184.216.34` langsung (tanpa DNS) tidak melewati DNS64 sehingga tidak pernah mendapat alamat tersintesis. Tambahan: protokol yang menyertakan alamat di payload (FTP aktif, SIP tanpa ALG) juga bermasalah.
 
-4. **Happy Eyeballs** (RFC 8305) adalah algoritma di klien yang **mencoba koneksi IPv6 dan IPv4 secara hampir paralel**, lalu memakai yang lebih dulu berhasil. Biasanya IPv6 diberi keunggulan waktu kecil (~50-300 ms) sebelum IPv4 dicoba.
-   **Kenapa penting:** tanpa itu, host yang mengutamakan IPv6 (sesuai RFC 6724) akan menunggu **timeout TCP penuh** — bisa 30 detik atau lebih — sebelum fallback ke IPv4 ketika konektivitas IPv6 rusak (jalur bermasalah, MTU black hole, firewall salah). Pengalaman pengguna menjadi sangat buruk dan sering disalahkan sebagai "IPv6 itu lambat". Happy Eyeballs membuat kegagalan IPv6 nyaris tidak terasa, sehingga organisasi berani mengaktifkan IPv6.
+4. **Happy Eyeballs** (RFC 8305) adalah algoritma di klien yang mencoba koneksi IPv6 dan IPv4 secara hampir paralel, lalu memakai yang lebih dulu berhasil. Biasanya IPv6 diberi keunggulan waktu kecil (~50-300 ms) sebelum IPv4 dicoba.
+   **Kenapa penting:** tanpa itu, host yang mengutamakan IPv6 (sesuai RFC 6724) akan menunggu timeout TCP penuh (bisa 30 detik atau lebih) sebelum fallback ke IPv4 ketika konektivitas IPv6 rusak (jalur bermasalah, MTU black hole, firewall salah). Pengalaman pengguna menjadi sangat buruk dan sering disalahkan sebagai "IPv6 itu lambat". Happy Eyeballs membuat kegagalan IPv6 nyaris tidak terasa, sehingga organisasi berani mengaktifkan IPv6.
 
-5. **Firewall IPv6 yang tidak dikonfigurasi atau jauh lebih longgar daripada IPv4.** Ini kesalahan yang sangat umum dan berbahaya karena: (a) IPv6 **aktif secara default** di hampir semua OS modern; (b) host **mengutamakan IPv6** ketika tersedia; (c) tidak ada NAT di IPv6, sehingga setiap host punya alamat yang **dapat dijangkau langsung dari internet** — perlindungan implisit yang dulu diberikan NAT hilang; (d) tim sering menganggap "kami belum pakai IPv6" padahal jaringannya sudah membawa trafik IPv6.
-   Akibatnya: layanan internal yang dilindungi ketat di IPv4 bisa **terbuka penuh lewat IPv6**. Perbaikan: buat kebijakan firewall IPv6 yang setara sebelum mengaktifkan IPv6, dan uji dari luar dengan pemindai IPv6.
+5. **Firewall IPv6 yang tidak dikonfigurasi atau jauh lebih longgar daripada IPv4.** Ini kesalahan yang sangat umum dan berbahaya karena: (a) IPv6 aktif secara default di hampir semua OS modern; (b) host mengutamakan IPv6 ketika tersedia; (c) tidak ada NAT di IPv6, sehingga setiap host punya alamat yang dapat dijangkau langsung dari internet, dan perlindungan implisit yang dulu diberikan NAT hilang; (d) tim sering menganggap "kami belum pakai IPv6" padahal jaringannya sudah membawa trafik IPv6.
+   Akibatnya: layanan internal yang dilindungi ketat di IPv4 bisa terbuka penuh lewat IPv6. Perbaikan: buat kebijakan firewall IPv6 yang setara sebelum mengaktifkan IPv6, dan uji dari luar dengan pemindai IPv6.
 
 6. Alokasi `/48` memberi 16 bit subnet ID (65.536 subnet /64). Dengan 4 lokasi dan 20 VLAN per lokasi, skema yang mudah dibaca:
    ```
@@ -617,12 +617,12 @@ Di Cisco IOS XE, opsi generik ditulis di pool DHCP dengan `option 108 hex 0000.0
    ```
    **Keuntungan skema ini:** nomor VLAN terbaca langsung dari alamat, lokasi terbaca dari digit pertama, summarization rapi per lokasi (`2001:db8:1234:1000::/52` untuk seluruh Bandung), dan masih tersisa ruang sangat besar untuk pertumbuhan.
 
-7. **NAT64 saja hanya menyelesaikan separuh masalah.** NAT64 memungkinkan **aplikasi IPv6** di klien IPv6-only mengakses server IPv4. Tetapi banyak aplikasi — terutama di ponsel — masih **hard-code IPv4** atau memakai socket API IPv4 saja (mis. game lama, aplikasi VoIP tertentu, SDK pihak ketiga). Aplikasi seperti itu tidak bisa mengirim paket IPv6 sama sekali, sehingga NAT64 tidak pernah terlibat.
-   **464XLAT** menambahkan **CLAT** di perangkat klien yang menerjemahkan trafik IPv4 aplikasi menjadi IPv6 sebelum meninggalkan perangkat. Di sisi operator, **PLAT (NAT64)** menerjemahkannya kembali ke IPv4. Dengan begitu aplikasi IPv4-only tetap bekerja sempurna di jaringan IPv6-only. Inilah yang memungkinkan operator seluler besar menjalankan jaringan IPv6-only tanpa keluhan pengguna.
+7. **NAT64 saja hanya menyelesaikan separuh masalah.** NAT64 memungkinkan aplikasi IPv6 di klien IPv6-only mengakses server IPv4. Tetapi banyak aplikasi, terutama di ponsel, masih hard-code IPv4 atau memakai socket API IPv4 saja (mis. game lama, aplikasi VoIP tertentu, SDK pihak ketiga). Aplikasi seperti itu tidak bisa mengirim paket IPv6 sama sekali, sehingga NAT64 tidak pernah terlibat.
+   **464XLAT** menambahkan CLAT di perangkat klien yang menerjemahkan trafik IPv4 aplikasi menjadi IPv6 sebelum meninggalkan perangkat. Di sisi operator, PLAT (NAT64) menerjemahkannya kembali ke IPv4. Dengan begitu aplikasi IPv4-only tetap bekerja sempurna di jaringan IPv6-only. Inilah yang memungkinkan operator seluler besar menjalankan jaringan IPv6-only tanpa keluhan pengguna.
 
-8. **Sebagian benar, tetapi tidak boleh diandalkan.** Benar bahwa **pemindaian brute force sebuah /64 tidak mungkin** — 18 kuintiliun alamat akan memakan waktu miliaran tahun, sehingga teknik pemindaian massal IPv4 (yang bisa memindai seluruh internet dalam hitungan menit) tidak berlaku.
-   **Tetapi** penyerang punya cara lain: (a) **enumerasi DNS** — AAAA record, reverse DNS, zone transfer; (b) **Certificate Transparency logs** yang mengungkap nama host; (c) **alamat yang mudah ditebak** — `::1`, `::2`, `::80`, `::53`, atau alamat berurutan yang diberikan administrator; (d) **alamat EUI-64** — kalau OUI vendor diketahui, ruang pencarian menyusut drastis; (e) **log, traffic capture, dan referer**; (f) pemindaian dari **dalam** segmen memakai `ff02::1`.
-   Kesimpulan: kesulitan pemindaian adalah **lapisan tambahan**, bukan pengganti kontrol keamanan. Firewall stateful, segmentasi, dan hardening tetap wajib — terlebih karena IPv6 menghilangkan perlindungan implisit yang dulu diberikan NAT. Gunakan interface ID acak untuk host sensitif agar tidak mudah ditebak.
+8. **Sebagian benar, tetapi tidak boleh diandalkan.** Benar bahwa pemindaian brute force sebuah /64 tidak mungkin: 18 kuintiliun alamat akan memakan waktu miliaran tahun, sehingga teknik pemindaian massal IPv4 (yang bisa memindai seluruh internet dalam hitungan menit) tidak berlaku.
+   Tetapi penyerang punya cara lain: (a) **enumerasi DNS**: AAAA record, reverse DNS, zone transfer; (b) **Certificate Transparency logs** yang mengungkap nama host; (c) **alamat yang mudah ditebak**: `::1`, `::2`, `::80`, `::53`, atau alamat berurutan yang diberikan administrator; (d) **alamat EUI-64**: kalau OUI vendor diketahui, ruang pencarian menyusut drastis; (e) **log, traffic capture, dan referer**; (f) pemindaian dari dalam segmen memakai `ff02::1`.
+   Kesimpulan: kesulitan pemindaian adalah lapisan tambahan, bukan pengganti kontrol keamanan. Firewall stateful, segmentasi, dan hardening tetap wajib, terlebih karena IPv6 menghilangkan perlindungan implisit yang dulu diberikan NAT. Gunakan interface ID acak untuk host sensitif agar tidak mudah ditebak.
 
 9. Kode opsi **108**, panjang 4 byte, nilai 3600 = **0x00000E10**. (a) Ponsel mengirim kode 108 di Parameter Request List; server menjawab dengan opsi 108 (dan umumnya alamat 0.0.0.0), sehingga ponsel tidak meminta IPv4 dan menunda DHCPv4 selama 3600 detik atau sampai link up berikutnya; akses ke tujuan IPv4-only lewat NAT64 dan CLAT. (b) Printer tidak meminta opsi 108 dan tidak boleh mendapat opsi itu dari server, jadi ia menerima alamat IPv4 normal dari kolam. (c) Nilai 0 berarti server tidak mengonfigurasi V6ONLY_WAIT; klien memperlakukan nilai di bawah MIN_V6ONLY_WAIT sebagai **300 detik**.
 
@@ -632,13 +632,13 @@ Di Cisco IOS XE, opsi generik ditulis di pool DHCP dengan `option 108 hex 0000.0
 
 ## 12. Sumber
 
-- RFC 4213 — Basic Transition Mechanisms for IPv6 Hosts and Routers
-- RFC 6146 — Stateful NAT64 · RFC 6147 — DNS64 · RFC 6052 — IPv6 Addressing of IPv4/IPv6 Translators
-- RFC 6877 — 464XLAT · RFC 6333 — DS-Lite · RFC 7597 — MAP-E
-- RFC 6724 — Default Address Selection for IPv6
-- RFC 8305 — Happy Eyeballs Version 2
-- RFC 7381 — Enterprise IPv6 Deployment Guidelines
-- RFC 5095 — Deprecation of Type 0 Routing Headers
+- RFC 4213, Basic Transition Mechanisms for IPv6 Hosts and Routers
+- RFC 6146 (Stateful NAT64) · RFC 6147 (DNS64) · RFC 6052 (IPv6 Addressing of IPv4/IPv6 Translators)
+- RFC 6877 (464XLAT) · RFC 6333 (DS-Lite) · RFC 7597 (MAP-E)
+- RFC 6724, Default Address Selection for IPv6
+- RFC 8305, Happy Eyeballs Version 2
+- RFC 7381, Enterprise IPv6 Deployment Guidelines
+- RFC 5095, Deprecation of Type 0 Routing Headers
 - Cisco CCNA 200-301 v1.1, topik 1.8, 1.9, 3.3
 - RFC 8925, IPv6-Only Preferred Option for DHCPv4 (Oktober 2020): https://www.rfc-editor.org/rfc/rfc8925
 - RFC 8781, Discovering PREF64 in Router Advertisements: https://www.rfc-editor.org/rfc/rfc8781

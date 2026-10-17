@@ -5,7 +5,7 @@
 > **Platform:** Linux (native atau VM) dengan Docker, containerlab v0.81.x, Python 3.11 ke atas. RAM 16 GB disarankan. Semua perangkat lunak gratis.
 > **Format:** setiap langkah berisi TUGAS → VERIFIKASI → KRITERIA SUKSES, ditutup skenario troubleshooting dan rollback.
 
-Modul `15-otomasi/02-data-dan-api` sampai `15-otomasi/04-ansible-cicd` memperkenalkan NETCONF, gNMI, Nornir, NetBox, Batfish, dan CI/CD sebagai konsep. Lab 05 baru menyentuh backup dengan Netmiko dan satu playbook Ansible. Lab ini menyambungkan semuanya menjadi satu rantai kerja yang sama dengan yang dipakai tim jaringan modern: data mengalir dari source of truth ke perangkat tanpa diketik ulang oleh manusia, dan setiap perubahan diperiksa tiga kali: sebelum deploy oleh Batfish, saat deploy oleh canary dan post-check, dan sesudah deploy oleh telemetri.
+Modul `15-otomasi/02-data-dan-api` sampai `15-otomasi/04-ansible-cicd` memperkenalkan NETCONF, gNMI, Nornir, NetBox, Batfish, dan CI/CD sebagai konsep. Lab 05 baru menyentuh backup dengan Netmiko dan satu playbook Ansible. Lab ini menyambungkan semuanya menjadi satu rantai kerja yang sama dengan yang dipakai tim jaringan modern. Data mengalir dari source of truth ke perangkat tanpa diketik ulang oleh manusia, dan setiap perubahan diperiksa tiga kali: sebelum deploy oleh Batfish, saat deploy oleh canary dan post-check, dan sesudah deploy oleh telemetri.
 
 > [!WARNING]
 > Lab ini panjang. Kerjakan berurutan, satu langkah per sesi bila perlu. Setiap langkah menghasilkan sesuatu yang bisa Anda periksa sendiri, jadi Anda tidak perlu menyelesaikan semuanya dalam sekali duduk.
@@ -165,7 +165,7 @@ pytest -q tests/test_offline.py
 10 passed
 ```
 
-**KRITERIA SUKSES:** ✅ 10 uji offline lulus, image `netdevops/srv:local` ada di `docker images`, dan repositori Git punya satu commit.
+**KRITERIA SUKSES:** 10 uji offline lulus, image `netdevops/srv:local` ada di `docker images`, dan repositori Git punya satu commit.
 
 > [!TIP]
 > Perhatikan bahwa `build/` sudah berisi hasil render dari `sot/seed.yml`. Itu disengaja: di alur GitOps, konfigurasi yang dimaksud ikut tersimpan di Git, sehingga setiap perubahan konfigurasi terlihat sebagai diff di pull request.
@@ -174,7 +174,7 @@ pytest -q tests/test_offline.py
 
 ## 3. Langkah 1: Jaringan "Produksi" dengan containerlab
 
-Router FRR dan switch SR Linux dinyalakan **tanpa konfigurasi jaringan**. Itu inti "dari nol": tidak ada satu baris konfigurasi pun yang akan Anda ketik langsung di perangkat. Hanya host yang diberi alamat lewat `exec` di berkas topologi, karena host berada di luar cakupan otomasi jaringan lab ini (kecuali firewall srv1).
+Router FRR dan switch SR Linux dinyalakan tanpa konfigurasi jaringan. Itu inti "dari nol": tidak ada satu baris konfigurasi pun yang akan Anda ketik langsung di perangkat. Hanya host yang diberi alamat lewat `exec` di berkas topologi, karena host berada di luar cakupan otomasi jaringan lab ini (kecuali firewall srv1).
 
 Potongan penting `topology/netdevops.clab.yml`:
 
@@ -235,7 +235,7 @@ docker exec -it clab-netdevops-sw1 sr_cli
 # di prompt SR Linux:  show interface brief   lalu  quit
 ```
 
-**KRITERIA SUKSES:** ✅ 13 node berstatus running, ping h1 ke srv1 gagal, SSH ke `root@clab-netdevops-r1` berhasil dengan kunci.
+**KRITERIA SUKSES:** 13 node berstatus running, ping h1 ke srv1 gagal, SSH ke `root@clab-netdevops-r1` berhasil dengan kunci.
 
 > [!WARNING]
 > Bila SSH meminta kata sandi, containerlab tidak menemukan kunci publik Anda saat deploy. Buat kunci dulu (Langkah 0), lalu `sudo containerlab deploy -t topology/netdevops.clab.yml --reconfigure`.
@@ -289,18 +289,18 @@ Skrip ini membuat site, peran prefix, prefix, tipe perangkat, peran perangkat, p
 | Cara menjangkau perangkat | user, metode koneksi | Git (`nornir/groups.yaml`) | bukan data jaringan |
 | Rahasia | sandi, token | variabel lingkungan atau secret CI | tidak boleh masuk Git |
 
-Satu keputusan desain penting: **peran prefix di IPAM menentukan fungsi interface**. `sotlib.py` mencari prefix paling spesifik yang memuat alamat interface (seperti longest prefix match), lalu:
+Dalam desain lab ini, peran prefix di IPAM menentukan fungsi interface. `sotlib.py` mencari prefix paling spesifik yang memuat alamat interface (seperti longest prefix match), lalu:
 
 - prefix berperan `loopback` → interface masuk OSPF dan menjadi sumber router-id,
 - prefix berperan `p2p` → interface OSPF point-to-point dengan biaya dari `ospf_cost`,
 - prefix berperan `users`, `noc`, atau `servers` → LAN, diumumkan ke OSPF lewat redistribusi terkendali,
-- alamat yang tidak berada di prefix mana pun → render **ditolak**.
+- alamat yang tidak berada di prefix mana pun → render ditolak.
 
 Dengan aturan ini, data yang tidak konsisten (alamat di luar IPAM, IP ganda) tertangkap sebelum menjadi konfigurasi.
 
 **VERIFIKASI:** buka `http://localhost:8000` (admin / sandi di berkas override). Periksa IPAM → Prefixes (enam prefix dengan perannya), perangkat r3 beserta interface dan IP-nya, dan tombol Trace pada interface `r3 eth3`, yang harus berakhir di `sw1 ethernet-1/1`.
 
-**KRITERIA SUKSES:** ✅ sembilan perangkat terdaftar, setiap perangkat punya primary IPv4 di 172.30.30.0/24, dan menjalankan `seed_netbox.py` kedua kali tidak membuat objek baru.
+**KRITERIA SUKSES:** sembilan perangkat terdaftar, setiap perangkat punya primary IPv4 di 172.30.30.0/24, dan menjalankan `seed_netbox.py` kedua kali tidak membuat objek baru.
 
 ---
 
@@ -354,7 +354,7 @@ router ospf
 {% endif %}
 ```
 
-Mengapa LAN diredistribusi, bukan dimasukkan ke OSPF sebagai interface pasif? FRR modern memakai `ip ospf passive` per interface, tetapi parser FRR di Batfish belum mengenal baris itu. Bila dipakai, Batfish akan menganggap interface LAN aktif OSPF dan melaporkan baris tak dikenal. Redistribusi lewat `route-map` yang hanya meloloskan prefix LAN dimodelkan penuh oleh Batfish, dan secara operasional sama amannya karena interface LAN tidak pernah mengirim hello OSPF ke host. Ini contoh nyata bagaimana **kemampuan alat verifikasi ikut membentuk desain konfigurasi**.
+Mengapa LAN diredistribusi, bukan dimasukkan ke OSPF sebagai interface pasif? FRR modern memakai `ip ospf passive` per interface, tetapi parser FRR di Batfish belum mengenal baris itu. Bila dipakai, Batfish akan menganggap interface LAN aktif OSPF dan melaporkan baris tak dikenal. Redistribusi lewat `route-map` yang hanya meloloskan prefix LAN dimodelkan penuh oleh Batfish, dan secara operasional sama amannya karena interface LAN tidak pernah mengirim hello OSPF ke host. Ini contoh nyata bagaimana kemampuan alat verifikasi ikut membentuk desain konfigurasi.
 
 **TUGAS:**
 
@@ -410,7 +410,7 @@ git diff build/configs/r2.frr.conf
 
 Diff harus menunjukkan satu baris `ip ospf cost` di `r2.frr.conf`, satu baris yang sama di `build/batfish/configs/r2.cfg`, dan satu nilai di `intent.json`. Kembalikan nilainya ke 20 di NetBox, render lagi, dan `git status` harus bersih.
 
-**KRITERIA SUKSES:** ✅ `render.py --check` mencetak `OK: build/ sesuai dengan source of truth`, dan Anda bisa menjelaskan mengapa satu perubahan di NetBox menghasilkan tepat tiga baris diff.
+**KRITERIA SUKSES:** `render.py --check` mencetak `OK: build/ sesuai dengan source of truth`, dan Anda bisa menjelaskan mengapa satu perubahan di NetBox menghasilkan tepat tiga baris diff.
 
 > [!TIP]
 > Render harus **deterministik**: urutan perangkat, interface, dan kunci JSON selalu sama. Tanpa itu, setiap render menghasilkan diff palsu dan reviewer berhenti membaca diff. `tests/test_offline.py::test_render_deterministik` menjaga sifat ini.
@@ -434,7 +434,7 @@ Edsger Dijkstra merumuskannya untuk perangkat lunak: pengujian bisa menunjukkan 
 Riset verifikasi jaringan berkembang dalam dua gelombang:
 
 1. **Verifikasi data plane** memeriksa tabel forwarding dan ACL yang sudah ada. Header Space Analysis (Kazemian dkk., NSDI 2012) memodelkan setiap perangkat sebagai fungsi yang mengubah himpunan header, sehingga pertanyaan "paket mana dari A bisa sampai ke B" dijawab untuk seluruh himpunan sekaligus. Kelemahannya, ia butuh keadaan forwarding yang sudah terjadi.
-2. **Verifikasi control plane** memprediksi data plane langsung dari **konfigurasi**, sebelum apa pun diterapkan. Batfish (Fogel dkk., NSDI 2015) mem-parse konfigurasi, mensimulasikan protokol routing sampai stabil, lalu menghasilkan data plane untuk dianalisis. Minesweeper (Beckett dkk., SIGCOMM 2017) mengodekan control plane sebagai formula logika agar properti bisa dibuktikan untuk banyak kondisi kegagalan.
+2. **Verifikasi control plane** memprediksi data plane langsung dari konfigurasi, sebelum apa pun diterapkan. Batfish (Fogel dkk., NSDI 2015) mem-parse konfigurasi, mensimulasikan protokol routing sampai stabil, lalu menghasilkan data plane untuk dianalisis. Minesweeper (Beckett dkk., SIGCOMM 2017) mengodekan control plane sebagai formula logika agar properti bisa dibuktikan untuk banyak kondisi kegagalan.
 
 Cara kerja Batfish secara ringkas:
 
@@ -452,7 +452,7 @@ Verifikasi hanya sebaik modelnya. Jujurlah terhadap batas-batas ini, karena di s
 
 - **Baris yang tidak dikenali.** Batfish belum mengenal `log stdout`. Uji `test_semua_konfigurasi_terbaca` memakai daftar izin eksplisit (`ALLOWED_UNRECOGNIZED`) untuk baris yang diketahui aman. Setiap tambahan ke daftar itu mengurangi apa yang diuji, jadi wajib lewat review.
 - **Perangkat yang tidak dimodelkan.** SR Linux tidak dimodelkan sama sekali. Batfish menyimpulkan bahwa `r3 eth3` dan `h1 eth1` bertetangga karena satu subnet. Bila mac-vrf di sw1 salah konfigurasi, Batfish tidak akan tahu; post-check dan telemetri yang akan tahu.
-- **Model host iptables terbatas.** Parser iptables Batfish hanya mengenal `-p`, `-s`, `-d`, `--dport` tunggal, `--sport`, `-i`, `-o`, `-m tcp`, serta aksi ACCEPT dan DROP. Pada model host, kecocokan `-i`/`-o` **diabaikan** saat filter dipasang, sehingga aturan `-i lo -j ACCEPT` dimodelkan sebagai "terima semua". Karena itu `templates/iptables.j2` tidak pernah memakai `-i`. Aturan UDP dengan `-m udp` juga akan gagal di-parse.
+- **Model host iptables terbatas.** Parser iptables Batfish hanya mengenal `-p`, `-s`, `-d`, `--dport` tunggal, `--sport`, `-i`, `-o`, `-m tcp`, serta aksi ACCEPT dan DROP. Pada model host, kecocokan `-i`/`-o` diabaikan saat filter dipasang, sehingga aturan `-i lo -j ACCEPT` dimodelkan sebagai "terima semua". Karena itu `templates/iptables.j2` tidak pernah memakai `-i`. Aturan UDP dengan `-m udp` juga akan gagal di-parse.
 - **Tidak ada waktu.** Batfish menghitung keadaan stabil. Konvergensi, microloop sesaat, bug perangkat lunak, dan kerusakan perangkat keras di luar jangkauannya.
 
 ### Menjalankan Batfish dan uji
@@ -481,7 +481,7 @@ Setiap uji adalah satu janji jaringan yang ditulis sebagai kode:
 | `test_web_tetap_jalan_bila_satu_router_inti_mati` | web tetap jalan bila r1 atau r2 mati | `fork_snapshot` + `reachability` |
 | `test_tidak_ada_reachability_yang_hilang` | perubahan tidak menghilangkan flow yang tadinya sukses | `differentialReachability` |
 
-Perhatikan perbedaan antara `test_pengguna_tidak_bisa_ssh_ke_server` dan `test_firewall_ssh_hanya_dari_noc`. Yang pertama menguji satu sumber (h1), mirip ping. Yang kedua menguji **semua** alamat sumber di luar prefix NOC (`0.0.0.0/0 \ 10.99.0.0/24`) terhadap filter srv1. Itulah lompatan dari pengujian ke verifikasi.
+Perhatikan perbedaan antara `test_pengguna_tidak_bisa_ssh_ke_server` dan `test_firewall_ssh_hanya_dari_noc`. Yang pertama menguji satu sumber (h1), mirip ping. Yang kedua menguji semua alamat sumber di luar prefix NOC (`0.0.0.0/0 \ 10.99.0.0/24`) terhadap filter srv1. Itulah lompatan dari pengujian ke verifikasi.
 
 Bentuk keluaran yang diharapkan (dipotong):
 
@@ -515,7 +515,7 @@ tr = bf.q.traceroute(startLocation="h1", headers=hc).answer(snapshot="tanpa-r1")
 print(tr.Traces[0][0])          # jalur cadangan: h1 → r3 → r2 → r4 → srv1
 ```
 
-**KRITERIA SUKSES:** ✅ semua uji Batfish lulus (uji differential boleh di-skip), dan Anda bisa menunjukkan jalur utama serta jalur cadangan h1 ke srv1 tanpa menyentuh satu perangkat pun.
+**KRITERIA SUKSES:** semua uji Batfish lulus (uji differential boleh di-skip), dan Anda bisa menunjukkan jalur utama serta jalur cadangan h1 ke srv1 tanpa menyentuh satu perangkat pun.
 
 ---
 
@@ -534,7 +534,7 @@ Nornir memberi inventaris, konkurensi, filter, dan hasil terstruktur. Pekerjaan 
 Beberapa detail yang membuat ini aman:
 
 - `frr-reload.py` adalah alat bawaan FRR yang membandingkan konfigurasi kandidat dengan running-config dan hanya mengirim perintah selisihnya. Sebelum apa pun diterapkan, kandidat divalidasi oleh `vtysh`; kandidat bersintaks salah ditolak tanpa mengubah router.
-- Cadangan running-config diambil **sebelum** perubahan dan disimpan di `build/backups/<waktu>/` (diabaikan Git).
+- Cadangan running-config diambil sebelum perubahan dan disimpan di `build/backups/<waktu>/` (diabaikan Git).
 - napalm-srlinux mengemulasikan kandidat di sisi klien karena JSON-RPC SR Linux tidak punya datastore kandidat yang bertahan antar-permintaan. Konfigurasi SR Linux dimuat sebagai **merge**: menambah dan mengubah, tetapi tidak menghapus yang tidak disebut.
 - `docker exec` untuk srv1 adalah jalan pintas lab. Di produksi, server biasanya dikelola tim sistem dengan alat mereka sendiri; yang penting adalah kebijakan firewall tetap berasal dari Git dan diuji Batfish.
 
@@ -545,7 +545,7 @@ Beberapa detail yang membuat ini aman:
 1. **Pre-check**: catat pemeriksaan mana yang sudah gagal sebelum deploy.
 2. **Tahap canary** (bawaan r4): terapkan ke satu perangkat, jalankan post-check. Bila ada pemeriksaan yang tadinya lulus lalu gagal (**regresi**), rollback dan berhenti.
 3. **Tahap sisanya**: terapkan ke semua perangkat lain, post-check lagi dengan aturan yang sama.
-4. Bila di akhir masih ada pemeriksaan gagal yang **sudah gagal sejak pre-check**, deploy tidak di-rollback (rollback tidak akan menolong) dan keluar dengan kode 5 agar manusia menyelidiki.
+4. Bila di akhir masih ada pemeriksaan gagal yang sudah gagal sejak pre-check, deploy tidak di-rollback (rollback tidak akan menolong) dan keluar dengan kode 5 agar manusia menyelidiki.
 
 Post-check tidak dijalankan sekali saja. Ia diulang setiap 5 detik sampai syaratnya terpenuhi atau batas `--settle` habis (bawaan 90 detik), karena OSPF butuh waktu untuk bertukar hello, membentuk adjacency, dan menyinkronkan LSDB. Memeriksa sekali tepat setelah commit akan membuat perubahan yang sah pun tampak seperti regresi sesaat, lalu di-rollback tanpa alasan.
 
@@ -618,7 +618,7 @@ docker exec clab-netdevops-h1 curl -s -o /dev/null -w "%{http_code}\n" http://10
 docker exec clab-netdevops-srv1 iptables -S INPUT
 ```
 
-Jalur dari `mtr` harus sama dengan jalur yang Anda lihat di traceroute Batfish pada Langkah 4. Model dan perangkat sepakat.
+Jalur dari `mtr` harus sama dengan jalur yang Anda lihat di traceroute Batfish pada Langkah 4; artinya model dan perangkat sepakat.
 
 **Uji idempoten:**
 
@@ -626,9 +626,9 @@ Jalur dari `mtr` harus sama dengan jalur yang Anda lihat di traceroute Batfish p
 python scripts/deploy.py --dry-run --fail-on-diff
 ```
 
-Seharusnya semua perangkat berstatus "tetap" dan kode keluar 0. Bila satu baris FRR terus muncul di diff pada setiap jalan (misalnya karena FRR menulis ulang perintah ke bentuk kanoniknya), sesuaikan template agar menulis bentuk yang sama dengan `show running-config`. Idempotensi bukan sifat bawaan alat; ia hasil disiplin template.
+Seharusnya semua perangkat berstatus "tetap" dan kode keluar 0. Bila satu baris FRR terus muncul di diff pada setiap jalan (misalnya karena FRR menulis ulang perintah ke bentuk kanoniknya), sesuaikan template agar menulis bentuk yang sama dengan `show running-config`. Alat tidak membuat deploy idempoten dengan sendirinya: template harus ditulis dengan disiplin.
 
-**KRITERIA SUKSES:** ✅ deploy keluar dengan kode 0, `mtr` menunjukkan jalur via r1, dry-run berikutnya tidak menunjukkan perubahan.
+**KRITERIA SUKSES:** deploy keluar dengan kode 0, `mtr` menunjukkan jalur via r1, dry-run berikutnya tidak menunjukkan perubahan.
 
 ---
 
@@ -667,7 +667,7 @@ docker exec clab-netdevops-sw1 sr_cli -edc "/interface ethernet-1/2 admin-state 
 docker exec clab-netdevops-sw1 sr_cli -edc "/interface ethernet-1/2 admin-state enable"
 ```
 
-Notifikasi `down` lalu `up` muncul seketika di terminal gnmic, tanpa menunggu interval apa pun. Inilah keunggulan on-change untuk status: perubahan dikirim saat terjadi.
+Notifikasi `down` lalu `up` muncul seketika di terminal gnmic, tanpa menunggu interval apa pun. Untuk status, on-change unggul karena perubahan dikirim saat terjadi.
 
 ### Tumpukan telemetri
 
@@ -704,7 +704,7 @@ Hitung sendiri mengapa: misalkan burst mengalir 2 Gbit/s selama 5 detik lalu dia
 > [!WARNING]
 > Pilihan fungsi PromQL bisa menghapus perbedaan yang ingin Anda lihat. `rate(x[30s])` menghitung rata-rata per detik selama 30 detik terakhir, sehingga burst 5 detik dari gNMI pun ikut diratakan menjadi seperenamnya. Dashboard lab ini memakai `irate()`, yang hanya memakai dua sampel terakhir, sehingga resolusi setiap garis sama dengan interval datanya. Jendela kurung siku tetap harus memuat minimal dua sampel: `[30s]` cukup untuk data 5 detik, sedangkan data 30 detik butuh `[2m]` agar tidak kosong ketika satu scrape terlambat. Untuk alarm dan laporan kapasitas, `rate()` dengan jendela panjang justru yang tepat; untuk mencari burst, pakai `irate()` atau resolusi data yang lebih tinggi.
 
-**KRITERIA SUKSES:** ✅ dashboard menampilkan kedua garis, Anda bisa menjelaskan selisih puncaknya dengan hitungan di atas, dan grafik status port menunjukkan 0 saat port dimatikan.
+**KRITERIA SUKSES:** dashboard menampilkan kedua garis, Anda bisa menjelaskan selisih puncaknya dengan hitungan di atas, dan grafik status port menunjukkan 0 saat port dimatikan.
 
 ---
 
@@ -714,7 +714,7 @@ Hitung sendiri mengapa: misalkan burst mengalir 2 Gbit/s selama 5 detik lalu dia
 
 OpenGitOps merumuskan empat prinsip: keadaan yang diinginkan dinyatakan secara **deklaratif**; disimpan dengan **versi dan tidak bisa diubah diam-diam** (riwayat lengkap); **ditarik otomatis** oleh agen; dan **terus direkonsiliasi**, yaitu agen terus membandingkan keadaan nyata dengan yang diinginkan lalu menerapkannya.
 
-Pipeline lab ini memenuhi dua prinsip pertama sepenuhnya (`build/` di Git, setiap perubahan lewat PR). Untuk dua prinsip terakhir, lab ini memakai pola yang lebih umum di dunia jaringan: CI **mendorong** perubahan saat merge, dan job terjadwal mendeteksi drift. Ini pendekatan push dengan rekonsiliasi berkala, bukan agen pull murni seperti yang lazim di Kubernetes. Sadari perbedaannya agar Anda tidak mengklaim lebih dari yang dibangun.
+Pipeline lab ini memenuhi dua prinsip pertama sepenuhnya (`build/` di Git, setiap perubahan lewat PR). Untuk dua prinsip terakhir, lab ini memakai pola yang lebih umum di dunia jaringan: CI mendorong perubahan saat merge, dan job terjadwal mendeteksi drift. Ini pendekatan push dengan rekonsiliasi berkala, bukan agen pull murni seperti yang lazim di Kubernetes. Sadari perbedaannya agar Anda tidak mengklaim lebih dari yang dibangun.
 
 ### Isi pipeline
 
@@ -759,11 +759,11 @@ Potongan job Batfish:
         run: pytest -v tests/ --junitxml=build/reports/batfish.xml
 ```
 
-Uji differential membandingkan snapshot PR dengan snapshot `main`. Flow yang tadinya sukses lalu gagal adalah **perubahan berisiko** dan menggagalkan CI, kecuali PR diberi label `izinkan-reachability-hilang`. Label itu adalah persetujuan eksplisit dan tercatat: "ya, kami memang sengaja mematikan layanan ini".
+Uji differential membandingkan snapshot PR dengan snapshot `main`. Flow yang tadinya sukses lalu gagal adalah perubahan berisiko dan menggagalkan CI, kecuali PR diberi label `izinkan-reachability-hilang`. Label itu adalah persetujuan eksplisit dan tercatat: "ya, kami memang sengaja mematikan layanan ini".
 
 ### Menyiapkan repositori
 
-1. Buat repositori GitHub **privat**, lalu `git remote add origin ...` dan `git push -u origin main`.
+1. Buat repositori GitHub privat, lalu `git remote add origin ...` dan `git push -u origin main`.
 2. Settings → Environments → buat `lab`, aktifkan **Required reviewers**. Job `deploy` akan menunggu persetujuan di sini: inilah gerbang manusia yang dibahas di `15-otomasi/04-ansible-cicd`.
 3. Settings → Secrets and variables → Actions: buat `NETBOX_TOKEN` (sebaiknya token baca saja) dan `SRL_PASSWORD`.
 4. Settings → Actions → Runners → New self-hosted runner. Ikuti perintah pemasangan di mesin lab, beri label `netdevops-lab`. User runner harus anggota grup `docker` dan memiliki kunci SSH yang tersalin ke node FRR (deploy ulang containerlab bila perlu).
@@ -793,7 +793,7 @@ gh pr create --fill
 4. Merge. Job `deploy` menunggu persetujuan environment `lab`, lalu menjalankan dry-run dan deploy dengan canary r4.
 5. Verifikasi: `docker exec clab-netdevops-h1 mtr -n -r -c 1 10.20.20.10` kini menunjukkan r2 di hop kedua dan 10.0.0.9 (r4 eth2) di hop ketiga, karena r3 ke r2 ke r4 berbiaya 40 dibanding 60 lewat r1. Alamat hop r2 bisa tampil sebagai 10.0.0.6 atau 10.0.0.1: r2 punya dua jalur berbiaya sama kembali ke LAN pengguna, dan Linux secara bawaan memakai alamat interface keluar balasan ICMP sebagai alamat sumbernya. Batfish `traceroute` memberi jawaban yang sama tanpa ambiguitas ini.
 
-Rollback **niat** di GitOps cukup `git revert` commit tadi, lalu ulangi alur PR. Jangan mengubah perangkat langsung: perubahan langsung akan tertangkap job drift besok pagi.
+Rollback niat di GitOps cukup `git revert` commit tadi, lalu ulangi alur PR. Jangan mengubah perangkat langsung: perubahan langsung akan tertangkap job drift besok pagi.
 
 ### Padanan GitLab CI
 
@@ -836,7 +836,7 @@ deploy:
     - .venv/bin/python scripts/deploy.py
 ```
 
-**KRITERIA SUKSES:** ✅ satu PR melewati `lint`, `render-check`, dan `batfish`, lalu setelah merge dan persetujuan, `deploy` sukses dan jalur h1 ke srv1 berpindah ke r2.
+**KRITERIA SUKSES:** satu PR melewati `lint`, `render-check`, dan `batfish`, lalu setelah merge dan persetujuan, `deploy` sukses dan jalur h1 ke srv1 berpindah ke r2.
 
 ---
 
@@ -852,7 +852,7 @@ Setiap skenario di bawah meniru kesalahan yang benar-benar terjadi di tim jaring
 
 - `test_semua_adjacency_ospf_terbentuk` gagal: adjacency `r2 eth3` dan `r4 eth2` tidak terbentuk.
 - `test_web_tetap_jalan_bila_satu_router_inti_mati[r1]` gagal: tanpa r1, r4 hanya terhubung ke r2 lewat link yang kini rusak, sehingga srv1 terisolasi.
-- Sementara itu, ping h1 ke srv1 **tetap sukses** karena jalur utama lewat r1 tidak tersentuh.
+- Sementara itu, ping h1 ke srv1 tetap sukses karena jalur utama lewat r1 tidak tersentuh.
 
 **Pelajaran:** inilah alasan "ping setelah ubah" tidak cukup. Kesalahan ini menghapus redundansi tanpa gejala, dan baru menjadi gangguan pada hari r1 bermasalah. Perbaiki di NetBox, bukan di berkas hasil render.
 
@@ -866,7 +866,7 @@ Setiap skenario di bawah meniru kesalahan yang benar-benar terjadi di tim jaring
 
 ### Skenario C: aturan mati
 
-**TUGAS:** tambahkan aturan `{name: web-semua, proto: tcp, ports: [80], from: any}` di **awal** daftar aturan srv1. Render dan uji.
+**TUGAS:** tambahkan aturan `{name: web-semua, proto: tcp, ports: [80], from: any}` di awal daftar aturan srv1. Render dan uji.
 
 **Yang terjadi:** `test_firewall_tanpa_aturan_mati` gagal. Baris port 80 untuk users, noc, dan servers tidak akan pernah cocok karena sudah tertutup aturan `web-semua` di atasnya.
 
@@ -924,7 +924,7 @@ python scripts/deploy.py --dry-run --limit sw1
 
 **Perbaikan:** `python scripts/deploy.py --limit sw1` mengembalikan port sesuai niat.
 
-**Pelajaran:** Batfish tidak melihat apa pun di skenario ini karena SR Linux tidak dimodelkan dan konfigurasi di Git tidak berubah. Kegagalan di luar model ditangkap oleh post-check dan telemetri. Ketiga lapisan saling melengkapi, tidak saling menggantikan.
+**Pelajaran:** Batfish tidak melihat apa pun di skenario ini karena SR Linux tidak dimodelkan dan konfigurasi di Git tidak berubah. Kegagalan di luar model ditangkap oleh post-check dan telemetri. Itulah sebabnya Batfish, post-check, dan telemetri dipakai bersama: masing-masing menangkap kegagalan yang tidak terlihat oleh yang lain.
 
 ### Dua jenis rollback
 
@@ -936,7 +936,7 @@ python scripts/deploy.py --dry-run --limit sw1
 
 Rollback perangkat menyelamatkan menit-menit pertama. Rollback niat menjaga agar Git, NetBox, dan perangkat tetap mengatakan hal yang sama.
 
-**KRITERIA SUKSES:** ✅ Anda menyelesaikan keenam skenario, dan untuk tiap skenario bisa menyebut lapisan mana (render, Batfish, canary dan post-check, drift, telemetri) yang menangkapnya lebih dulu.
+**KRITERIA SUKSES:** Anda menyelesaikan keenam skenario, dan untuk tiap skenario bisa menyebut lapisan mana (render, Batfish, canary dan post-check, drift, telemetri) yang menangkapnya lebih dulu.
 
 ---
 
@@ -988,7 +988,7 @@ Rollback perangkat menyelamatkan menit-menit pertama. Rollback niat menjaga agar
 | Observasi | gnmic → Prometheus → Grafana | Apa yang sedang terjadi sekarang, detik demi detik? |
 | Tata kelola | Git, PR, CI, environment approval, drift job | Siapa mengubah apa, kapan, dan apakah keadaan nyata masih sama dengan Git? |
 
-Inti lab ini bukan alat-alatnya, karena alat akan berganti. Intinya adalah kebiasaan: niat ditulis sebagai data, perubahan ditinjau sebagai diff, janji ditulis sebagai uji, dan setiap deploy siap dibatalkan.
+Alat-alat di lab ini akan berganti. Yang perlu Anda bawa adalah kebiasaannya: niat ditulis sebagai data, perubahan ditinjau sebagai diff, janji ditulis sebagai uji, dan setiap deploy siap dibatalkan.
 
 ---
 
@@ -1016,7 +1016,7 @@ Inti lab ini bukan alat-alatnya, karena alat akan berganti. Intinya adalah kebia
 6. Burst membawa 1 × 6 = 6 Gbit. SNMP dengan interval 30 detik menampilkan 6 ÷ 30 = 0,2 Gbit/s, sekitar 20% utilisasi. Dengan sample 5 detik, hasil gNMI bergantung pada posisi burst terhadap batas sampel: misalnya 100% lalu 20% (5 detik plus 1 detik), atau 60% lalu 60% (3 detik plus 3 detik). Dalam kasus apa pun, gNMI menunjukkan link penuh atau hampir penuh, sedangkan SNMP melaporkan link "hanya 20%". Keluhan video patah-patah lebih cocok dijelaskan oleh data gNMI: saat link penuh, antrian penuh, dan paket real-time terlambat atau dibuang. Ingat juga bahwa grafik harus memakai `irate()`; `rate()` dengan jendela 30 detik akan meratakan data gNMI kembali ke sekitar 20%.
 7. Kegagalan di r4 hanya memengaruhi LAN server dan pemeriksaan langsung terlihat lewat probe ke srv1, sedangkan r1 adalah inti yang membawa jalur utama semua lalu lintas. Blast radius canary harus kecil tetapi tetap representatif. Pilihan itu salah bila perubahannya justru menyangkut fungsi yang hanya ada di r1 dan r2 (misalnya biaya link inti): canary r4 tidak akan menguji apa pun yang relevan, jadi pilih salah satu router inti dan jalankan di jam sepi.
 8. Teknis: (a) template tidak idempoten; FRR menulis ulang perintah ke bentuk kanonik sehingga `frr-reload.py --test` selalu melihat selisih. Bandingkan dengan `show running-config` lalu sesuaikan template. (b) Ada proses lain yang mengubah perangkat, misalnya skrip lama di cron, alat monitoring yang menulis konfigurasi, atau containerlab yang di-deploy ulang dengan konfigurasi awal. Periksa log perangkat dan riwayat perintah. Proses: seseorang rutin mengubah langsung di perangkat tanpa PR. Pastikan semua orang tahu bahwa drift akan ditimpa, sediakan jalur darurat yang cepat lewat PR, dan batasi akses tulis langsung ke perangkat.
-9. Uji jalur, bukan sekadar reachability: misalnya `bf.q.reachability(pathConstraints=PathConstraints(startLocation="h1", transitLocations="r1"), headers=HeaderConstraints(dstIps="10.20.20.10"), actions="SUCCESS")` harus mengembalikan flow, atau sebaliknya cari flow h1 ke srv1 yang sukses *tanpa* melewati r1 (`forbiddenLocations="r1"`) dan pastikan hasilnya kosong. Kebijakan "lalu lintas server wajib melewati firewall" adalah janji tentang jalur, dan janji itu harus ditulis sebagai uji. Reachability yang sama tidak berarti kebijakannya sama.
+9. Yang harus diuji adalah jalurnya, karena reachability saja tidak cukup. Misalnya `bf.q.reachability(pathConstraints=PathConstraints(startLocation="h1", transitLocations="r1"), headers=HeaderConstraints(dstIps="10.20.20.10"), actions="SUCCESS")` harus mengembalikan flow, atau sebaliknya cari flow h1 ke srv1 yang sukses *tanpa* melewati r1 (`forbiddenLocations="r1"`) dan pastikan hasilnya kosong. Kebijakan "lalu lintas server wajib melewati firewall" adalah janji tentang jalur, dan janji itu harus ditulis sebagai uji. Reachability yang sama tidak berarti kebijakannya sama.
 10. Di model host Batfish, kecocokan interface (`-i`/`-o`) dicatat terpisah dan tidak ikut menjadi kondisi aturan ketika rantai INPUT dipasang sebagai filter di interface host. Akibatnya `-i lo -j ACCEPT` dimodelkan sebagai "terima semua paket", dan karena ia berada paling atas, Batfish menyimpulkan semua sumber boleh SSH ke srv1. Di perangkat nyata aturan itu hanya cocok untuk paket yang masuk lewat loopback, sehingga SSH dari h1 tetap tertolak. Kasus ini menghasilkan alarm palsu: CI merah padahal perangkat aman, menjengkelkan tetapi tidak berbahaya. Kebalikannya jauh lebih berbahaya: aturan DROP dengan `-i` akan dimodelkan sebagai "tolak semua" untuk kecocokannya, sehingga Batfish bisa menyatakan sebuah layanan tertutup padahal di perangkat terbuka lewat interface lain. Itu rasa aman palsu. Karena itu template melarang `-i`/`-o`: setiap fitur konfigurasi yang dipakai harus berada di dalam bagian yang dimodelkan alat verifikasi, atau hasil verifikasinya harus dianggap tidak berlaku. Bila srv1 memang butuh lalu lintas loopback, izinkan dengan sumber `-s 127.0.0.0/8`, yang dimodelkan dengan benar.
 
 </details>

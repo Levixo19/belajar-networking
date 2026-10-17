@@ -7,7 +7,7 @@
 
 ## 1. Anatomi Kabel Twisted Pair
 
-Kabel LAN standar berisi **4 pasang** kawat tembaga yang dipilin, total 8 kawat.
+Kabel LAN standar berisi 4 pasang kawat tembaga yang dipilin, total 8 kawat.
 
 ```
 Penampang kabel UTP:
@@ -47,7 +47,7 @@ Pilinan memastikan kedua kawat berada di posisi yang hampir identik terhadap sum
 | **UTP** | Unshielded Twisted Pair | Tanpa pelindung. Paling umum, murah, fleksibel |
 | **FTP / F/UTP** | Foil Twisted Pair | Satu lapis foil membungkus semua pasang |
 | **STP / U/FTP** | Shielded Twisted Pair | Foil per pasang |
-| **S/FTP** | Screened + Foiled | Foil per pasang **plus** braid keseluruhan |
+| **S/FTP** | Screened + Foiled | Foil per pasang plus braid keseluruhan |
 | **SF/UTP** | Foil + braid keseluruhan | Tanpa foil per pasang |
 
 Notasi modern: `X/YTP` di mana X = pelindung keseluruhan, Y = pelindung per pasang.
@@ -59,7 +59,7 @@ S/FTP  = braid keseluruhan + foil tiap pasang (paling terlindungi)
 ```
 
 > [!WARNING]
-> **Kabel bershield HARUS di-grounding dengan benar** di salah satu ujung (atau keduanya, sesuai standar yang dipakai). Shield yang tidak di-grounding justru menjadi **antena** dan memperburuk keadaan. Ini kesalahan instalasi yang sangat umum.
+> **Kabel bershield HARUS di-grounding dengan benar** di salah satu ujung (atau keduanya, sesuai standar yang dipakai). Shield yang tidak di-grounding justru menjadi antena dan memperburuk keadaan. Ini kesalahan instalasi yang sangat umum.
 
 Kapan pakai shielded:
 - Lingkungan industri (pabrik, dekat motor besar, inverter, las)
@@ -86,18 +86,18 @@ Kapan pakai shielded:
 
 1. **Cat5e cukup untuk 1 Gbps.** Tidak perlu Cat6 kalau kebutuhannya hanya gigabit.
 2. **Cat6 mendukung 10G hanya sampai 55 m** (dan lebih pendek lagi jika ada alien crosstalk berat).
-3. **Cat6A adalah pilihan default untuk instalasi baru** — mendukung 10G penuh 100 m, siap untuk masa depan, dan biaya kabelnya tidak jauh berbeda. Biaya terbesar instalasi adalah **tenaga kerja**, bukan kabel; menarik ulang kabel jauh lebih mahal daripada memilih kategori lebih tinggi sejak awal.
-4. **Cat8 hanya 30 m** — dirancang untuk koneksi pendek dalam rak data center, bukan untuk kabel gedung.
-5. **Kategori kabel harus konsisten dengan seluruh komponen**: patch panel, keystone jack, patch cord. Rantai sekuat mata rantai terlemah — Cat6A dengan jack Cat5e = kinerja Cat5e.
+3. **Cat6A adalah pilihan default untuk instalasi baru.** Kabel ini mendukung 10G penuh 100 m, dan biaya kabelnya tidak jauh berbeda. Biaya terbesar instalasi adalah tenaga kerja, bukan kabel; menarik ulang kabel jauh lebih mahal daripada memilih kategori lebih tinggi sejak awal.
+4. **Cat8 hanya 30 m.** Kabel ini dirancang untuk koneksi pendek dalam rak data center, bukan untuk kabel gedung.
+5. **Kategori kabel harus konsisten dengan seluruh komponen**: patch panel, keystone jack, patch cord. Rantai sekuat mata rantai terlemah: Cat6A dengan jack Cat5e = kinerja Cat5e.
 
 ### CCA: jebakan pasar
 
 **CCA** (*Copper Clad Aluminum*) adalah kabel aluminium berlapis tembaga tipis, dijual murah dengan label "Cat6".
 
 Masalahnya:
-- Resistansi DC jauh lebih tinggi → **gagal pada PoE** (perangkat mati/restart), kabel bisa panas
+- Resistansi DC jauh lebih tinggi → gagal pada PoE (perangkat mati/restart), kabel bisa panas
 - Lebih rapuh, mudah patah saat ditekuk
-- Tidak memenuhi standar TIA/ISO — gagal uji sertifikasi
+- Tidak memenuhi standar TIA/ISO, sehingga gagal uji sertifikasi
 - Kadang terbakar pada PoE++ berdaya tinggi
 
 > [!TIP]
@@ -159,10 +159,10 @@ Konektor **RJ45** (nama teknisnya 8P8C) punya 8 pin.
 **Perbedaannya hanya:** pasangan oranye dan hijau ditukar (pin 1-2 ↔ 3-6).
 
 > [!TIP]
-> Mnemonic T568B: **"Putih-Oranye, Oranye, Putih-Hijau, Biru, Putih-Biru, Hijau, Putih-Coklat, Coklat."** Ucapkan berulang sampai hafal — ini akan Anda pakai seumur karier.
+> Mnemonic T568B: **"Putih-Oranye, Oranye, Putih-Hijau, Biru, Putih-Biru, Hijau, Putih-Coklat, Coklat."** Ucapkan berulang sampai hafal, karena urutan ini akan Anda pakai seumur karier.
 
 > [!WARNING]
-> Perhatikan pin 4-5 dan 3-6: pasang biru menempati pin 4-5 (berdampingan) tetapi pasang hijau **terpisah** di pin 3 dan 6. Ini bukan kesalahan desain — ini untuk kompatibilitas mundur dengan telepon analog yang memakai pin 4-5.
+> Perhatikan pin 4-5 dan 3-6: pasang biru menempati pin 4-5 (berdampingan) tetapi pasang hijau terpisah di pin 3 dan 6. Susunan ini disengaja untuk kompatibilitas mundur dengan telepon analog yang memakai pin 4-5.
 
 ### Straight-through vs Crossover vs Rollover
 
@@ -180,7 +180,7 @@ Konektor **RJ45** (nama teknisnya 8P8C) punya 8 pin.
 Perangkat yang masih butuh perhatian:
 - Switch/router lama tanpa auto-MDIX
 - Beberapa perangkat industri
-- Saat auto-negotiation dimatikan (hard-coded speed/duplex) — **auto-MDIX ikut mati** pada banyak perangkat Cisco
+- Saat auto-negotiation dimatikan (hard-coded speed/duplex), karena auto-MDIX ikut mati pada banyak perangkat Cisco
 
 ### Pasangan yang dipakai per kecepatan
 
@@ -192,7 +192,7 @@ Perangkat yang masih butuh perhatian:
 | 10GBASE-T | 4 pasang, dua arah | Butuh Cat6A |
 
 > [!TIP]
-> Ini menjelaskan gejala klasik: **kabel dengan satu pasang rusak tetap jalan di 100 Mbps tetapi tidak bisa 1 Gbps.** Kalau link tiba-tiba "turun" ke 100 Mbps, curigai kabel/konektor, bukan konfigurasi.
+> Ini menjelaskan gejala klasik: kabel dengan satu pasang rusak tetap jalan di 100 Mbps tetapi tidak bisa 1 Gbps. Kalau link tiba-tiba "turun" ke 100 Mbps, curigai kabel/konektor, bukan konfigurasi.
 
 ---
 
@@ -215,9 +215,9 @@ Perangkat yang masih butuh perhatian:
 
 ### Cable tester
 
-- **Continuity tester** (murah) — hanya memeriksa apakah semua 8 kawat tersambung dan urutannya benar (wiremap).
-- **Qualification tester** — memeriksa apakah kabel bisa mendukung kecepatan tertentu.
-- **Certification tester** (Fluke DSX, dll — mahal) — mengukur NEXT, return loss, insertion loss, delay skew, dan menerbitkan sertifikat sesuai TIA/ISO. Diperlukan untuk garansi instalasi.
+- **Continuity tester** (murah): hanya memeriksa apakah semua 8 kawat tersambung dan urutannya benar (wiremap).
+- **Qualification tester**: memeriksa apakah kabel bisa mendukung kecepatan tertentu.
+- **Certification tester** (mahal, misalnya Fluke DSX): mengukur NEXT, return loss, insertion loss, delay skew, dan menerbitkan sertifikat sesuai TIA/ISO. Diperlukan untuk garansi instalasi.
 
 Parameter yang diuji sertifikasi:
 ```
@@ -233,11 +233,11 @@ DC resistance      : penting untuk PoE
 ```
 
 > [!WARNING]
-> **Split pair** — kesalahan yang lolos dari tester murah. Kawat tersambung ke pin yang benar, tetapi memakai kawat dari pasangan yang salah. Continuity tester bilang "OK", tetapi crosstalk parah dan gigabit gagal. Hanya tester bagus yang mendeteksinya.
+> **Split pair** adalah kesalahan yang lolos dari tester murah. Kawat tersambung ke pin yang benar, tetapi memakai kawat dari pasangan yang salah. Continuity tester bilang "OK", tetapi crosstalk parah dan gigabit gagal. Hanya tester bagus yang mendeteksinya.
 
 ### TDR (Time Domain Reflectometer)
 
-Mengirim pulsa dan mengukur pantulannya untuk menemukan **lokasi** kerusakan.
+Mengirim pulsa dan mengukur pantulannya untuk menemukan lokasi kerusakan.
 
 ```
 SW1# test cable-diagnostics tdr interface gi0/5
@@ -265,7 +265,7 @@ Ini menghemat berjam-jam pencarian fisik.
 | **802.3bt Type 3** | PoE++ / 4PPoE | 60 W | 51 W | **4 pasang** | 50-57 V |
 | **802.3bt Type 4** | PoE++ / HDBaseT | 90-100 W | 71,3 W | **4 pasang** | 52-57 V |
 
-Selisih daya PSE vs PD adalah **rugi daya di kabel** — makin panjang dan makin tipis kabelnya, makin besar rugi.
+Selisih daya PSE vs PD adalah **rugi daya di kabel**: makin panjang dan makin tipis kabelnya, makin besar rugi.
 
 ### Kelas daya (Class)
 
@@ -297,23 +297,23 @@ Selisih daya PSE vs PD adalah **rugi daya di kabel** — makin panjang dan makin
                 dalam ~300–400 ms.
 ```
 
-Inilah kenapa PoE **aman**: perangkat non-PoE yang tertancap tidak akan menerima 48 V karena gagal di tahap deteksi.
+Inilah kenapa PoE aman: perangkat non-PoE yang tertancap tidak akan menerima 48 V karena gagal di tahap deteksi.
 
 ### Alternative A vs Alternative B
 
 Untuk 802.3af/at (2 pasang):
-- **Alternative A** — daya di pasang 1-2 dan 3-6 (pasang data, memakai phantom power).
-- **Alternative B** — daya di pasang 4-5 dan 7-8 (pasang cadangan).
+- **Alternative A**: daya di pasang 1-2 dan 3-6 (pasang data, memakai phantom power).
+- **Alternative B**: daya di pasang 4-5 dan 7-8 (pasang cadangan).
 
-PD wajib mendukung keduanya. 802.3bt memakai **keempat pasang** sekaligus.
+PD wajib mendukung keduanya. 802.3bt memakai keempat pasang sekaligus.
 
 ### Istilah
 
-- **PSE** (*Power Sourcing Equipment*) — switch PoE atau injector.
-- **PD** (*Powered Device*) — AP, kamera IP, telepon IP.
-- **Endspan** — PSE adalah switch itu sendiri.
-- **Midspan / injector** — perangkat terpisah yang disisipkan di jalur kabel (untuk switch non-PoE).
-- **PoE splitter** — memisahkan daya dan data untuk perangkat non-PoE.
+- **PSE** (*Power Sourcing Equipment*): switch PoE atau injector.
+- **PD** (*Powered Device*): AP, kamera IP, telepon IP.
+- **Endspan**: PSE adalah switch itu sendiri.
+- **Midspan / injector**: perangkat terpisah yang disisipkan di jalur kabel (untuk switch non-PoE).
+- **PoE splitter**: memisahkan daya dan data untuk perangkat non-PoE.
 
 ### Power Budget: Perhitungan yang Wajib
 
@@ -326,7 +326,7 @@ Perangkat : 40 AP Wi-Fi 6, masing-masing class 4 (25,5 W)
 
 Kebutuhan = 40 × 25,5 = 1.020 W  >  740 W  ❌ TIDAK CUKUP
 ```
-Yang terjadi: switch memberi daya sesuai prioritas dan **mematikan sisanya**, atau AP restart bergantian secara acak — gejala yang sangat membingungkan kalau tidak tahu penyebabnya.
+Yang terjadi: switch memberi daya sesuai prioritas dan mematikan sisanya, atau AP restart bergantian secara acak. Gejala ini sangat membingungkan kalau Anda tidak tahu penyebabnya.
 
 **Contoh 2:**
 ```
@@ -357,19 +357,19 @@ SW1# show power inline police          ← pelanggaran batas daya
 ### Masalah PoE yang sering terjadi
 
 > [!WARNING]
-> **1. Power budget habis** — perangkat mati acak. Cek `show power inline`.
+> **1. Power budget habis.** Perangkat mati acak. Cek `show power inline`.
 
 > [!WARNING]
-> **2. Kabel CCA atau terlalu panjang** — rugi daya terlalu besar, PD tidak menyala walaupun budget cukup.
+> **2. Kabel CCA atau terlalu panjang.** Rugi daya terlalu besar, sehingga PD tidak menyala walaupun budget cukup.
 
 > [!WARNING]
-> **3. Perangkat butuh 802.3bt tetapi switch hanya 802.3at** — misalnya AP Wi-Fi 6E/7 kelas atas atau kamera PTZ dengan pemanas.
+> **3. Perangkat butuh 802.3bt tetapi switch hanya 802.3at.** Misalnya AP Wi-Fi 6E/7 kelas atas atau kamera PTZ dengan pemanas.
 
 > [!WARNING]
-> **4. AP masuk mode daya rendah** — Wi-Fi 6/7 AP yang hanya diberi 802.3af akan mematikan sebagian radio atau port. Gejalanya: throughput jauh di bawah spesifikasi. Cek log AP: "AP is running in low power mode".
+> **4. AP masuk mode daya rendah.** Wi-Fi 6/7 AP yang hanya diberi 802.3af akan mematikan sebagian radio atau port. Gejalanya: throughput jauh di bawah spesifikasi. Cek log AP: "AP is running in low power mode".
 
 > [!WARNING]
-> **5. Injector non-standar (passive PoE)** — perangkat murah yang langsung mengirim 24 V/48 V tanpa negosiasi. **Bisa merusak perangkat non-PoE.** Hindari di lingkungan campuran.
+> **5. Injector non-standar (passive PoE).** Perangkat murah ini langsung mengirim 24 V/48 V tanpa negosiasi dan bisa merusak perangkat non-PoE. Hindari di lingkungan campuran.
 
 ---
 
@@ -395,19 +395,19 @@ SW1# show power inline police          ← pelanggaran batas daya
 
 Konektor: **F-type** (TV/kabel modem), **BNC** (CCTV, alat ukur).
 
-Di dunia jaringan modern, coax hanya Anda temui pada **koneksi internet kabel (DOCSIS)** dan CCTV analog lama.
+Di dunia jaringan modern, coax hanya Anda temui pada koneksi internet kabel (DOCSIS) dan CCTV analog lama.
 
 ### DAC / Twinax
 
-**DAC** (*Direct Attach Copper*) — kabel tembaga dengan transceiver terpasang permanen di kedua ujung.
+**DAC** (*Direct Attach Copper*) adalah kabel tembaga dengan transceiver terpasang permanen di kedua ujung.
 
 - Untuk jarak sangat pendek (1-7 m; active DAC sampai 10-15 m).
-- Jauh **lebih murah** daripada sepasang transceiver optik + patch fiber.
+- Jauh lebih murah daripada sepasang transceiver optik + patch fiber.
 - Konsumsi daya lebih rendah.
 - Dipakai untuk: server ke ToR switch, switch ke switch dalam rak yang sama.
 - Bentuk: SFP+ DAC (10G), SFP28 (25G), QSFP+ (40G), QSFP28 (100G).
 
-**AOC** (*Active Optical Cable*) — mirip DAC tetapi memakai serat di dalamnya; untuk jarak menengah (sampai ~100 m) tanpa perlu membeli transceiver terpisah.
+**AOC** (*Active Optical Cable*) mirip DAC tetapi memakai serat di dalamnya; untuk jarak menengah (sampai ~100 m) tanpa perlu membeli transceiver terpisah.
 
 ---
 
@@ -437,11 +437,11 @@ Channel total                          : 100 m
 
 ### Komponen
 
-- **Patch panel** — panel di rak tempat semua kabel permanen diterminasi. Membuat perubahan cukup dilakukan dengan memindah patch cord, bukan menarik ulang kabel.
-- **Keystone jack** — soket di sisi pengguna (wall plate).
-- **Punch-down tool** — alat menekan kawat ke terminal IDC pada jack/panel (tipe 110 atau Krone).
-- **Cable management** — rapikan dengan velcro, **jangan cable tie yang dikencangkan** (menekan kabel → mengubah impedansi).
-- **Labeling** — setiap ujung kabel diberi label yang konsisten dengan dokumentasi. Ini bukan formalitas; ini yang menyelamatkan Anda saat pukul 2 pagi.
+- **Patch panel**: panel di rak tempat semua kabel permanen diterminasi. Membuat perubahan cukup dilakukan dengan memindah patch cord, bukan menarik ulang kabel.
+- **Keystone jack**: soket di sisi pengguna (wall plate).
+- **Punch-down tool**: alat menekan kawat ke terminal IDC pada jack/panel (tipe 110 atau Krone).
+- **Cable management**: rapikan dengan velcro, jangan cable tie yang dikencangkan (menekan kabel → mengubah impedansi).
+- **Labeling**: setiap ujung kabel diberi label yang konsisten dengan dokumentasi. Label inilah yang menyelamatkan Anda saat pukul 2 pagi.
 
 ### Ruang-ruang
 
@@ -455,7 +455,7 @@ Channel total                          : 100 m
 | **Demarc** | Titik batas tanggung jawab dengan provider |
 
 > [!TIP]
-> Aturan 90 m menentukan **jangkauan satu IDF ≈ radius 70–80 m** (setelah memperhitungkan jalur kabel yang tidak lurus). Ini yang menentukan berapa banyak ruang IDF dibutuhkan sebuah gedung — pertimbangan desain nyata, bukan teori.
+> Aturan 90 m menentukan jangkauan satu IDF ≈ radius 70-80 m (setelah memperhitungkan jalur kabel yang tidak lurus). Angka inilah yang menentukan berapa banyak ruang IDF dibutuhkan sebuah gedung.
 
 ---
 
@@ -494,14 +494,14 @@ SW1# show interfaces counters errors
 
 - Kabel LAN = 4 pasang dipilin; pilinan meniadakan noise lewat differential signaling.
 - Cat5e = 1 Gbps; Cat6 = 10 G hanya 55 m; **Cat6A = 10 G penuh 100 m (pilihan default instalasi baru)**; Cat8 = 30 m untuk data center.
-- Hindari **CCA** — gagal pada PoE dan tidak memenuhi standar.
+- Hindari **CCA**, yang gagal pada PoE dan tidak memenuhi standar.
 - T568B paling umum; T568A dan T568B hanya berbeda tukar pasang oranye/hijau.
-- Straight-through untuk perangkat berbeda jenis, crossover untuk sejenis — tetapi **auto-MDIX** membuat ini jarang relevan.
+- Straight-through untuk perangkat berbeda jenis, crossover untuk sejenis, tetapi **auto-MDIX** membuat ini jarang relevan.
 - 1000BASE-T memakai **keempat pasang**; satu pasang rusak → turun ke 100 Mbps.
 - Buka pilinan maksimal **13 mm**; channel maksimum **100 m** (90 m permanent + 10 m patch).
 - PoE: af 15,4 W / at 30 W / bt 60-90 W di PSE. Selalu hitung **power budget dengan headroom 20-30%**.
 - PoE aman karena ada tahap deteksi & klasifikasi sebelum tegangan penuh dikirim.
-- Split pair adalah kesalahan yang lolos tester murah — pakai tester yang benar.
+- Split pair adalah kesalahan yang lolos tester murah, jadi pakai tester yang benar.
 
 ---
 
@@ -520,17 +520,17 @@ SW1# show interfaces counters errors
 
 1. **Cat6A.** Cat6 hanya mendukung 10GBASE-T sampai 55 m (bahkan lebih pendek jika ada alien crosstalk). Untuk 80 m dibutuhkan Cat6A yang tersertifikasi 10 G sampai 100 m.
 
-2. **Kabel/konektor rusak pada salah satu pasang.** 1000BASE-T memerlukan keempat pasang; 100BASE-TX hanya butuh dua. Jika satu pasang putus, link otomatis turun ke 100 Mbps. Pembuktian: jalankan TDR (`test cable-diagnostics tdr`) atau uji dengan cable tester — akan terlihat pasang mana yang open/short. Alternatif cepat: ganti dengan patch cord yang diketahui baik.
+2. **Kabel/konektor rusak pada salah satu pasang.** 1000BASE-T memerlukan keempat pasang; 100BASE-TX hanya butuh dua. Jika satu pasang putus, link otomatis turun ke 100 Mbps. Pembuktian: jalankan TDR (`test cable-diagnostics tdr`) atau uji dengan cable tester; hasilnya akan menunjukkan pasang mana yang open/short. Alternatif cepat: ganti dengan patch cord yang diketahui baik.
 
 3. (24 × 25,5) + (20 × 6,49) = 612 + 129,8 = **741,8 W**. Budget 740 W → **TIDAK CUKUP** (kurang 1,8 W), dan bahkan jika pas, tidak ada headroom sama sekali. Solusi: pakai switch dengan budget lebih besar, tambah PSU redundan yang menaikkan budget, distribusikan perangkat ke dua switch, atau pakai injector untuk beberapa perangkat.
 
 4. Untuk **kompatibilitas mundur dengan telepon analog**. Telepon memakai pin 4-5 (pasang biru) untuk satu jalur dan pin 3-6 untuk jalur kedua. Dengan menempatkan pasang data di 1-2 dan 3-6, satu kabel bisa dipakai untuk data dan telepon secara bersamaan pada instalasi lama.
 
-5. Kemungkinan besar **split pair** — kawat sampai ke pin yang benar tetapi diambil dari pasangan yang salah, sehingga pasangan yang membawa sinyal tidak dipilin bersama. Continuity tester hanya memeriksa "pin 1 ke pin 1", jadi lolos; tetapi crosstalk menjadi parah dan gigabit gagal. Kemungkinan lain: pilinan dibuka terlalu panjang (>13 mm), crimp buruk, atau kabel melebihi panjang maksimum.
+5. Kemungkinan besar **split pair**: kawat sampai ke pin yang benar tetapi diambil dari pasangan yang salah, sehingga pasangan yang membawa sinyal tidak dipilin bersama. Continuity tester hanya memeriksa "pin 1 ke pin 1", jadi lolos; tetapi crosstalk menjadi parah dan gigabit gagal. Kemungkinan lain: pilinan dibuka terlalu panjang (>13 mm), crimp buruk, atau kabel melebihi panjang maksimum.
 
-6. Karena PoE melakukan **deteksi signature** sebelum mengirim daya. PSE mengirim tegangan rendah (2,8-10 V) dan mencari resistansi signature 25 kΩ yang hanya dimiliki PD valid. Laptop biasa tidak punya signature itu, sehingga PSE tidak pernah menaikkan tegangan ke 48 V. (Pengecualian: *passive PoE* non-standar yang langsung mengirim tegangan — inilah yang berbahaya dan harus dihindari.)
+6. Karena PoE melakukan **deteksi signature** sebelum mengirim daya. PSE mengirim tegangan rendah (2,8-10 V) dan mencari resistansi signature 25 kΩ yang hanya dimiliki PD valid. Laptop biasa tidak punya signature itu, sehingga PSE tidak pernah menaikkan tegangan ke 48 V. (Pengecualian: *passive PoE* non-standar yang langsung mengirim tegangan. Inilah yang berbahaya dan harus dihindari.)
 
-7. **Melebihi batas 90 m untuk permanent link** — dengan patch cord di kedua ujung, channel akan melebihi 100 m, sehingga tidak memenuhi standar dan berisiko error/kecepatan turun. Solusi: (a) tambahkan IDF baru yang lebih dekat ke area itu; (b) pindahkan posisi IDF ke titik yang lebih sentral; (c) gunakan serat optik untuk jalur tersebut dengan media converter/switch kecil di ujung; (d) periksa apakah jalur kabel bisa dibuat lebih pendek.
+7. **Melebihi batas 90 m untuk permanent link.** Dengan patch cord di kedua ujung, channel akan melebihi 100 m, sehingga tidak memenuhi standar dan berisiko error/kecepatan turun. Solusi: (a) tambahkan IDF baru yang lebih dekat ke area itu; (b) pindahkan posisi IDF ke titik yang lebih sentral; (c) gunakan serat optik untuk jalur tersebut dengan media converter/switch kecil di ujung; (d) periksa apakah jalur kabel bisa dibuat lebih pendek.
 
 </details>
 
@@ -538,10 +538,10 @@ SW1# show interfaces counters errors
 
 ## 12. Sumber
 
-- TIA/EIA-568-D — Commercial Building Telecommunications Cabling Standard
-- ISO/IEC 11801-1:2017 — Generic cabling
-- IEEE 802.3af / 802.3at / 802.3bt — Power over Ethernet
-- IEEE 802.3bz — 2.5G/5GBASE-T (memakai Cat5e/Cat6 yang ada)
+- TIA/EIA-568-D: Commercial Building Telecommunications Cabling Standard
+- ISO/IEC 11801-1:2017, Generic cabling
+- IEEE 802.3af / 802.3at / 802.3bt: Power over Ethernet
+- IEEE 802.3bz: 2.5G/5GBASE-T (memakai Cat5e/Cat6 yang ada)
 - Cisco CCNA 200-301 v1.1, topik 1.3, 1.4, dan 1.1.h (PoE)
 
 ---

@@ -12,12 +12,12 @@
 | Membawa | Sinyal listrik | Cahaya | Gelombang radio |
 | Jarak tipikal | 100 m | 300 m - 100+ km | 30-100 m indoor |
 | Kecepatan | 1-40 Gbps | 1 Gbps - 800 Gbps+ | 100 Mbps - beberapa Gbps |
-| Kekebalan EMI | Buruk | **Sempurna** | Buruk |
-| Keamanan fisik | Bisa disadap | Sulit disadap | **Paling mudah disadap** |
+| Kekebalan EMI | Buruk | Sempurna | Buruk |
+| Keamanan fisik | Bisa disadap | Sulit disadap | Paling mudah disadap |
 | Biaya per meter | Murah | Sedang (kabel murah, optik mahal) | Tanpa kabel |
 | Instalasi | Mudah | Butuh keahlian (splicing) | Paling mudah |
 | Bisa bawa listrik (PoE) | Ya | Tidak | Tidak |
-| Media bersama? | Tidak (switched) | Tidak | **Ya** (half duplex) |
+| Media bersama? | Tidak (switched) | Tidak | Ya (half duplex) |
 
 ### Aturan pemilihan cepat
 
@@ -33,7 +33,7 @@ Butuh throughput konsisten & rendah latency → Kabel, bukan nirkabel
 ```
 
 > [!WARNING]
-> **Aturan yang sering dilanggar:** menghubungkan dua gedung terpisah dengan kabel tembaga. Perbedaan potensial tanah (*ground potential difference*) dan sambaran petir bisa merusak perangkat di kedua ujung — bahkan membahayakan orang. Antar-gedung **selalu** pakai serat optik (atau media converter dengan isolasi yang benar).
+> **Aturan yang sering dilanggar:** menghubungkan dua gedung terpisah dengan kabel tembaga. Perbedaan potensial tanah (*ground potential difference*) dan sambaran petir bisa merusak perangkat di kedua ujung, bahkan membahayakan orang. Antar-gedung selalu pakai serat optik (atau media converter dengan isolasi yang benar).
 
 ---
 
@@ -41,7 +41,7 @@ Butuh throughput konsisten & rendah latency → Kabel, bukan nirkabel
 
 ### 2.1 Atenuasi (Attenuation)
 
-Sinyal melemah seiring jarak. Ini fisika, tidak bisa dihindari — hanya bisa dikelola.
+Sinyal melemah seiring jarak. Ini fisika: tidak bisa dihindari, hanya bisa dikelola.
 
 ```
 Kuat sinyal
@@ -53,7 +53,7 @@ Kuat sinyal
 ```
 
 - **Tembaga:** melemah karena resistansi kabel; makin tinggi frekuensi, makin cepat melemah. Inilah alasan batas 100 m untuk UTP.
-- **Serat:** melemah jauh lebih lambat (~0,2-0,35 dB/km untuk single-mode) — karena itu bisa puluhan kilometer.
+- **Serat:** melemah jauh lebih lambat (~0,2-0,35 dB/km untuk single-mode), karena itu bisa puluhan kilometer.
 - **Nirkabel:** melemah dengan kuadrat jarak (*free space path loss*), plus terhalang benda.
 
 Solusi: repeater, switch (yang membangkitkan ulang sinyal), amplifier optik, atau memperpendek jarak.
@@ -62,12 +62,12 @@ Solusi: repeater, switch (yang membangkitkan ulang sinyal), amplifier optik, ata
 
 Sinyal asing yang bercampur dengan sinyal Anda.
 
-- **EMI** (*Electromagnetic Interference*) — dari motor listrik, lampu neon/ballast, kabel listrik, lift, mesin las, microwave.
-- **RFI** (*Radio Frequency Interference*) — dari pemancar radio, ponsel, Wi-Fi tetangga.
-- **Thermal noise** — derau dasar akibat gerakan elektron; tidak bisa dihilangkan.
-- **Impulse noise** — lonjakan mendadak (petir, kontaktor, switching daya).
+- **EMI** (*Electromagnetic Interference*): dari motor listrik, lampu neon/ballast, kabel listrik, lift, mesin las, microwave.
+- **RFI** (*Radio Frequency Interference*): dari pemancar radio, ponsel, Wi-Fi tetangga.
+- **Thermal noise**: derau dasar akibat gerakan elektron; tidak bisa dihilangkan.
+- **Impulse noise**: lonjakan mendadak (petir, kontaktor, switching daya).
 
-Serat optik **kebal EMI/RFI sepenuhnya** karena membawa cahaya, bukan listrik. Ini keunggulan yang menentukan di lingkungan industri.
+Serat optik kebal EMI/RFI sepenuhnya karena membawa cahaya, bukan listrik. Ini keunggulan yang menentukan di lingkungan industri.
 
 ### 2.3 Crosstalk
 
@@ -80,19 +80,19 @@ Sinyal dari satu pasang kabel "bocor" ke pasangan tetangga di dalam kabel yang s
 | **ACR-F / ELFEXT** | FEXT relatif terhadap atenuasi |
 | **Alien crosstalk** | Bocor dari **kabel lain** di sebelahnya (masalah di Cat6A 10G) |
 
-**Mitigasi crosstalk pada UTP:** setiap pasang dipilin (*twisted*) dengan **rapatan berbeda**. Pilinan membuat medan elektromagnetik saling meniadakan; rapatan berbeda mencegah dua pasang beresonansi bersama.
+**Mitigasi crosstalk pada UTP:** setiap pasang dipilin (*twisted*) dengan rapatan berbeda. Pilinan membuat medan elektromagnetik saling meniadakan; rapatan berbeda mencegah dua pasang beresonansi bersama.
 
 > [!WARNING]
-> **Konsekuensi praktis:** jangan membuka pilinan lebih dari **13 mm** saat memasang RJ45. Instalasi yang "rapi terlihat" dengan pilinan dibuka panjang justru gagal uji sertifikasi Cat6.
+> **Konsekuensi praktis:** jangan membuka pilinan lebih dari 13 mm saat memasang RJ45. Instalasi yang "rapi terlihat" dengan pilinan dibuka panjang justru gagal uji sertifikasi Cat6.
 
 ### 2.4 Distorsi & Delay Skew
 
-- **Distorsi** — bentuk sinyal berubah karena komponen frekuensi berbeda merambat dengan kecepatan berbeda.
-- **Delay skew** — 4 pasang dalam satu kabel punya panjang fisik sedikit berbeda (karena rapatan pilinan berbeda), sehingga bit tiba tidak bersamaan. Penting untuk 1000BASE-T yang memakai keempat pasang secara paralel.
+- **Distorsi**: bentuk sinyal berubah karena komponen frekuensi berbeda merambat dengan kecepatan berbeda.
+- **Delay skew**: 4 pasang dalam satu kabel punya panjang fisik sedikit berbeda (karena rapatan pilinan berbeda), sehingga bit tiba tidak bersamaan. Penting untuk 1000BASE-T yang memakai keempat pasang secara paralel.
 
 ### 2.5 Return Loss & Impedance Mismatch
 
-Kabel jaringan punya **impedansi karakteristik 100 Ω** (UTP). Jika ada perubahan impedansi (konektor buruk, kabel tertekuk tajam, sambungan campuran), sebagian sinyal **memantul kembali** ke pengirim.
+Kabel jaringan punya **impedansi karakteristik 100 Ω** (UTP). Jika ada perubahan impedansi (konektor buruk, kabel tertekuk tajam, sambungan campuran), sebagian sinyal memantul kembali ke pengirim.
 
 Ini yang diukur sebagai **return loss**. Nilai buruk = banyak pantulan = error.
 
@@ -114,16 +114,16 @@ Sudah dibahas di `00-fondasi/03`. Di layer fisik, penyebabnya adalah kecepatan r
 SNR (dB) = 10 × log₁₀ (daya sinyal / daya derau)
 ```
 
-Inilah **metrik yang paling menentukan** kualitas link, bukan "kekuatan sinyal" saja.
+Inilah metrik yang paling menentukan kualitas link, bukan "kekuatan sinyal" saja.
 
-Analogi: berbicara di ruang sepi dengan suara pelan lebih jelas daripada berteriak di konser. Yang penting bukan volume suara Anda, tapi **selisih** antara suara Anda dan kebisingan.
+Analogi: berbicara di ruang sepi dengan suara pelan lebih jelas daripada berteriak di konser. Yang penting adalah selisih antara suara Anda dan kebisingan, bukan volume suara Anda.
 
 Konsekuensi (dari hukum Shannon di `00-fondasi/03`):
 - SNR tinggi → bisa memakai modulasi padat (banyak bit per simbol) → cepat.
 - SNR rendah → harus turun ke modulasi sederhana → lambat, tapi tetap terhubung.
 
 Ini menjelaskan perilaku yang sering membingungkan:
-> Wi-Fi menunjukkan "sinyal penuh" tetapi lambat — karena ada sumber derau kuat di frekuensi yang sama, sehingga SNR rendah walaupun RSSI tinggi.
+> Wi-Fi menunjukkan "sinyal penuh" tetapi lambat karena ada sumber derau kuat di frekuensi yang sama, sehingga SNR rendah walaupun RSSI tinggi.
 
 Panduan kasar SNR untuk Wi-Fi:
 | SNR | Kualitas |
@@ -170,7 +170,7 @@ Contoh perhitungan cepat:
 
 Karena rentangnya luar biasa besar. Pemancar Wi-Fi 100 mW, penerima bisa mendeteksi 0,000000001 mW. Menuliskan itu dalam angka biasa tidak praktis; dalam dBm menjadi +20 dBm dan −90 dBm.
 
-Keuntungan lain: **penguatan dan redaman tinggal dijumlahkan**, tidak dikalikan.
+Keuntungan lain: penguatan dan redaman tinggal dijumlahkan, tidak dikalikan.
 ```
 Pemancar +20 dBm
 Kabel −3 dB
@@ -180,7 +180,7 @@ Path loss −80 dB
 Diterima: 20 − 3 + 9 − 80 = −54 dBm
 ```
 
-Ini dipakai untuk **link budget** — perhitungan wajib saat merancang link nirkabel atau serat optik (`02-layer-fisik/03`, `10-wireless/01`).
+Ini dipakai untuk **link budget**, perhitungan wajib saat merancang link nirkabel atau serat optik (`02-layer-fisik/03`, `10-wireless/01`).
 
 ---
 
@@ -189,21 +189,21 @@ Ini dipakai untuk **link budget** — perhitungan wajib saat merancang link nirk
 Sudah diperkenalkan di `00-fondasi/03`; di sini konsekuensi fisiknya.
 
 **Kenapa Ethernet kabel bisa full duplex:**
-Kabel UTP punya 4 pasang. Pada 10/100BASE-TX, satu pasang untuk kirim, satu pasang untuk terima — terpisah secara fisik, jadi tidak mungkin bertabrakan.
+Kabel UTP punya 4 pasang. Pada 10/100BASE-TX, satu pasang untuk kirim, satu pasang untuk terima. Keduanya terpisah secara fisik, jadi tidak mungkin bertabrakan.
 
-Pada 1000BASE-T, keempat pasang dipakai **dua arah sekaligus** — dimungkinkan oleh *echo cancellation* di chip (perangkat "mengurangi" sinyal yang ia kirim sendiri dari yang ia terima).
+Pada 1000BASE-T, keempat pasang dipakai dua arah sekaligus. Ini dimungkinkan oleh *echo cancellation* di chip (perangkat "mengurangi" sinyal yang ia kirim sendiri dari yang ia terima).
 
 **Kenapa Wi-Fi selalu half duplex:**
 Radio memakai satu frekuensi. Jika perangkat mengirim dan menerima bersamaan di frekuensi yang sama, sinyal kirimnya sendiri (yang jutaan kali lebih kuat) akan menenggelamkan sinyal terima. Karena itu Wi-Fi harus bergiliran (CSMA/CA).
 
-Konsekuensi: **kapasitas Wi-Fi dibagi antara semua klien dan kedua arah.** "Wi-Fi 6 sampai 9,6 Gbps" adalah angka agregat teoretis, bukan yang didapat satu klien.
+Konsekuensi: kapasitas Wi-Fi dibagi antara semua klien dan kedua arah. "Wi-Fi 6 sampai 9,6 Gbps" adalah angka agregat teoretis, bukan yang didapat satu klien.
 
 ---
 
 ## 6. Baseband vs Broadband (Ulasan)
 
-- **Baseband** — satu sinyal digital memakai seluruh kapasitas media. Ethernet (`1000BASE-T` → "BASE" = baseband).
-- **Broadband** — media dibagi menjadi banyak kanal frekuensi. TV kabel, DOCSIS, DSL, dan OFDM di Wi-Fi/5G.
+- **Baseband**: satu sinyal digital memakai seluruh kapasitas media. Ethernet (`1000BASE-T` → "BASE" = baseband).
+- **Broadband**: media dibagi menjadi banyak kanal frekuensi. TV kabel, DOCSIS, DSL, dan OFDM di Wi-Fi/5G.
 
 ---
 
@@ -244,7 +244,7 @@ Contoh yang wajib dikenal:
 | 400GBASE-DR4 | 400 Gbps | SMF (MPO) | 500 m |
 
 > [!TIP]
-> Angka `4` di akhir (SR4, LR4) berarti sinyal dibagi ke **4 jalur paralel** — 4 pasang serat atau 4 panjang gelombang.
+> Angka `4` di akhir (SR4, LR4) berarti sinyal dibagi ke 4 jalur paralel: 4 pasang serat atau 4 panjang gelombang.
 
 ---
 
@@ -316,7 +316,7 @@ Ini menunjukkan panjang kabel dan lokasi perkiraan kerusakan tiap pasang.
 > **5. Mengira "sinyal kuat = cepat" pada Wi-Fi.** Yang menentukan adalah SNR.
 
 > [!WARNING]
-> **6. Memakai kabel murah tanpa sertifikasi.** Banyak kabel "Cat6" di pasar sebenarnya CCA (*Copper Clad Aluminum*) — bukan tembaga murni. Resistansi lebih tinggi, gagal pada PoE dan pada jarak jauh, dan mudah patah.
+> **6. Memakai kabel murah tanpa sertifikasi.** Banyak kabel "Cat6" di pasar sebenarnya CCA (*Copper Clad Aluminum*), bukan tembaga murni. Kabel CCA punya resistansi lebih tinggi, gagal pada PoE dan pada jarak jauh, dan mudah patah.
 
 ---
 
@@ -347,11 +347,11 @@ Ini menunjukkan panjang kabel dan lokasi perkiraan kerusakan tiap pasang.
 
 1. EIRP = 23 − 4 + 12 = **+31 dBm** (≈ 1,26 W).
 
-2. SNR = −70 − (−95) = **25 dB**. Ini di batas bawah kategori "baik" — cukup untuk data dan suara, tetapi tidak akan mencapai kecepatan maksimum. Perlu diperbaiki jika untuk aplikasi berat.
+2. SNR = −70 − (−95) = **25 dB**. Ini di batas bawah kategori "baik": cukup untuk data dan suara, tetapi tidak akan mencapai kecepatan maksimum. Perlu diperbaiki jika untuk aplikasi berat.
 
 3. Agar dua pasangan yang berdekatan tidak "beresonansi" bersama. Jika rapatan pilinannya sama, medan magnet keduanya berpola serupa dan crosstalk justru menguat. Rapatan berbeda membuat pola interferensi tidak sinkron sehingga saling meniadakan.
 
-4. **Serat optik** (single-mode atau multimode dengan transceiver yang sesuai). Alasan: (a) 180 m melebihi batas 100 m UTP; (b) antar-gedung berarti risiko perbedaan potensial tanah dan sambaran petir — serat memberi isolasi listrik sempurna; (c) halaman terbuka berarti jalur luar ruangan, perlu kabel outdoor/armored.
+4. **Serat optik** (single-mode atau multimode dengan transceiver yang sesuai). Alasan: (a) 180 m melebihi batas 100 m UTP; (b) antar-gedung berarti risiko perbedaan potensial tanah dan sambaran petir, sedangkan serat memberi isolasi listrik sempurna; (c) halaman terbuka berarti jalur luar ruangan, perlu kabel outdoor/armored.
 
 5. Contoh: (a) kabel rusak/tertekuk/terjepit; (b) konektor RJ45 buruk atau kotor / SFP tidak duduk sempurna; (c) panjang kabel melebihi batas; (d) interferensi EMI dari kabel listrik/motor; (e) SFP tidak kompatibel atau daya optik di luar rentang; (f) duplex mismatch (menghasilkan CRC/late collision); (g) kabel CCA berkualitas rendah.
 
@@ -363,10 +363,10 @@ Ini menunjukkan panjang kabel dan lokasi perkiraan kerusakan tiap pasang.
 
 ## 12. Sumber
 
-- IEEE 802.3 — Ethernet (semua varian media)
-- TIA/EIA-568 — Commercial Building Telecommunications Cabling Standard
+- IEEE 802.3: Ethernet (semua varian media)
+- TIA/EIA-568: Commercial Building Telecommunications Cabling Standard
 - Cisco CCNA 200-301 v1.1, topik 1.3 (physical interface & cabling) dan 1.4 (interface & cable issues)
-- ISO/IEC 11801 — Generic cabling for customer premises
+- ISO/IEC 11801: Generic cabling for customer premises
 
 ---
 

@@ -7,7 +7,7 @@
 
 ## 1. Gelombang Radio
 
-Wi-Fi adalah gelombang elektromagnetik — sama seperti cahaya, hanya frekuensinya jauh lebih rendah.
+Wi-Fi adalah gelombang elektromagnetik seperti cahaya, hanya frekuensinya jauh lebih rendah.
 
 ```
 Amplitudo
@@ -86,7 +86,7 @@ Semua perhitungan RF memakai skala logaritmik. Ulasan dari `02-layer-fisik/01` d
 | **−67 dBm** | **Minimum untuk VoIP/video** | Ambang desain standar |
 | −70 dBm | Cukup untuk data ringan | Browsing, email |
 | −80 dBm | Buruk | Sering terputus |
-| −90 dBm | Tidak dapat dipakai | — |
+| −90 dBm | Tidak dapat dipakai | Tidak ada |
 
 > [!TIP]
 > **−67 dBm adalah angka desain standar industri** untuk cakupan Wi-Fi yang mendukung suara dan video. Rancang cakupan agar setiap titik menerima minimal −67 dBm.
@@ -183,19 +183,19 @@ UNII-2C (100–144) : 5470–5725 MHz  — DFS wajib
 UNII-3  (149–165) : 5725–5850 MHz  — daya lebih tinggi, tanpa DFS
 ```
 
-**DFS (Dynamic Frequency Selection)** — kanal ini dipakai bersama radar cuaca dan militer. AP **wajib**:
-1. Mendengarkan 60 detik sebelum memakai kanal (CAC — Channel Availability Check)
+**DFS (Dynamic Frequency Selection)** diperlukan karena kanal ini dipakai bersama radar cuaca dan militer. AP wajib:
+1. Mendengarkan 60 detik sebelum memakai kanal (CAC, Channel Availability Check)
 2. Terus memantau
 3. Kalau radar terdeteksi → **pindah kanal dalam 10 detik** dan tidak memakai kanal itu selama 30 menit
 
 > [!WARNING]
-> **Dampak DFS pada pengguna:** ketika radar terdeteksi (atau false positive), **semua klien terputus** dan harus menyambung ulang. Di dekat bandara atau pelabuhan, ini bisa terjadi berkali-kali sehari.
+> **Dampak DFS pada pengguna:** ketika radar terdeteksi (atau false positive), semua klien terputus dan harus menyambung ulang. Di dekat bandara atau pelabuhan, ini bisa terjadi berkali-kali sehari.
 
 > [!TIP]
 > **Untuk lingkungan kritis (rumah sakit, bandara), pertimbangkan menghindari kanal DFS** meski itu mengurangi jumlah kanal yang tersedia.
 
 > [!WARNING]
-> **Banyak perangkat klien lama tidak mendukung DFS** — mereka tidak akan melihat SSID Anda sama sekali kalau AP memakai kanal DFS.
+> **Banyak perangkat klien lama tidak mendukung DFS.** Mereka tidak akan melihat SSID Anda sama sekali kalau AP memakai kanal DFS.
 
 ### 6 GHz (Wi-Fi 6E / 7)
 
@@ -209,7 +209,7 @@ UNII-3  (149–165) : 5725–5850 MHz  — daya lebih tinggi, tanpa DFS
 ```
 
 > [!WARNING]
-> **Status regulasi 6 GHz berbeda per negara.** Di Indonesia, sebagian band 6 GHz (5925–6425 MHz) telah dibuka untuk penggunaan tanpa izin — periksa peraturan Kominfo/Komdigi terbaru sebelum menerapkan.
+> **Status regulasi 6 GHz berbeda per negara.** Di Indonesia, sebagian band 6 GHz (5925-6425 MHz) telah dibuka untuk penggunaan tanpa izin. Periksa peraturan Kominfo/Komdigi terbaru sebelum menerapkannya.
 
 ### Lebar Kanal
 
@@ -270,10 +270,10 @@ Pohon (basah)             : 10–20 dB
 ```
 
 > [!WARNING]
-> **Redaman di 5 GHz umumnya 1,5–2× lebih besar** daripada 2,4 GHz untuk material yang sama.
+> **Redaman di 5 GHz umumnya 1,5-2× lebih besar** daripada 2,4 GHz untuk material yang sama.
 
 > [!TIP]
-> **Tubuh manusia menyerap RF secara signifikan.** Survei yang dilakukan di ruang kosong akan memberi hasil terlalu optimistis untuk auditorium atau ruang rapat yang penuh. Selalu perhitungkan ini.
+> **Tubuh manusia ikut menyerap RF.** Survei yang dilakukan di ruang kosong akan memberi hasil terlalu optimistis untuk auditorium atau ruang rapat yang penuh. Selalu perhitungkan ini.
 
 ### Free Space Path Loss
 
@@ -294,7 +294,7 @@ FSPL (dB) = 20·log₁₀(d) + 20·log₁₀(f) + 32,44
 ```
 
 > [!TIP]
-> **Selisih ~6 dB antara 2,4 dan 5 GHz** menjelaskan mengapa jangkauan 5 GHz jauh lebih pendek — dan mengapa AP dual-band perlu menyeimbangkan daya pancar antar-band agar klien tidak "menempel" di 2,4 GHz.
+> **Selisih ~6 dB antara 2,4 dan 5 GHz** menjelaskan mengapa jangkauan 5 GHz jauh lebih pendek, dan mengapa AP dual-band perlu menyeimbangkan daya pancar antar-band agar klien tidak "menempel" di 2,4 GHz.
 
 ### Multipath
 
@@ -306,8 +306,8 @@ Sinyal mencapai penerima lewat beberapa jalur (langsung + pantulan) dengan waktu
 [AP] ─────── jalur langsung ──────────► [Klien]
 ```
 
-- **Merusak** pada Wi-Fi lama (802.11a/b/g) — menyebabkan interferensi destruktif
-- **Dimanfaatkan** oleh MIMO (802.11n dan seterusnya) — beberapa jalur = beberapa aliran data
+- **Merusak** pada Wi-Fi lama (802.11a/b/g): menyebabkan interferensi destruktif
+- **Dimanfaatkan** oleh MIMO (802.11n dan seterusnya): beberapa jalur = beberapa aliran data
 
 > [!TIP]
 > **MIMO mengubah multipath dari musuh menjadi teman.** Inilah terobosan terbesar 802.11n.
@@ -327,7 +327,7 @@ Sinyal mencapai penerima lewat beberapa jalur (langsung + pantulan) dengan waktu
 | **Sector** | 10-20 dBi | 60/90/120° | Menara PtMP (WISP) |
 
 > [!WARNING]
-> **Gain antena tidak "menciptakan" daya.** Ia **memfokuskan** daya ke arah tertentu — seperti reflektor senter. Gain tinggi berarti jangkauan lebih jauh **tetapi sudut lebih sempit**.
+> **Gain antena tidak "menciptakan" daya.** Ia memfokuskan daya ke arah tertentu, seperti reflektor senter. Gain tinggi berarti jangkauan lebih jauh, tetapi sudutnya lebih sempit.
 
 ```
 Omni 3 dBi  : seperti bola lampu — ke segala arah, jangkauan sedang
@@ -343,7 +343,7 @@ Omni 9 dBi  : seperti donat pipih — jauh secara horizontal,
 Orientasi medan listrik gelombang: **vertikal**, **horizontal**, atau **circular**.
 
 > [!WARNING]
-> **Polarisasi yang tidak cocok menyebabkan rugi 20–30 dB.** Pada link point-to-point, pastikan kedua antena berpolarisasi sama. Pada AP indoor, klien bergerak dengan orientasi acak — karena itu AP modern memakai **dual-polarization** (MIMO).
+> **Polarisasi yang tidak cocok menyebabkan rugi 20-30 dB.** Pada link point-to-point, pastikan kedua antena berpolarisasi sama. Pada AP indoor, klien bergerak dengan orientasi acak. Karena itu AP modern memakai **dual-polarization** (MIMO).
 
 ### EIRP (Daya Pancar Efektif)
 
@@ -361,7 +361,7 @@ EIRP     : 29 dBm (≈ 800 mW)
 ```
 
 > [!WARNING]
-> **EIRP dibatasi regulasi.** Di Indonesia (Peraturan Kominfo), batas umum untuk 2,4 GHz adalah **500 mW (27 dBm) EIRP** dan 5 GHz bervariasi per sub-band. Melebihi batas adalah pelanggaran hukum dan menyebabkan interferensi. **Selalu periksa peraturan Komdigi/Kominfo terbaru.**
+> **EIRP dibatasi regulasi.** Di Indonesia (Peraturan Kominfo), batas umum untuk 2,4 GHz adalah **500 mW (27 dBm) EIRP** dan 5 GHz bervariasi per sub-band. Melebihi batas adalah pelanggaran hukum dan menyebabkan interferensi. Selalu periksa peraturan Komdigi/Kominfo terbaru.
 
 ---
 
@@ -399,11 +399,11 @@ Margin = −64,2 − (−77) = 12,8 dB  ✅ SEHAT
 ```
 
 > [!TIP]
-> **Margin minimum yang disarankan: 10 dB** untuk link luar ruangan (mengakomodasi hujan, pertumbuhan vegetasi, dan penuaan perangkat). Untuk daerah dengan curah hujan tinggi seperti Indonesia, targetkan **15–20 dB**.
+> **Margin minimum yang disarankan: 10 dB** untuk link luar ruangan (mengakomodasi hujan, pertumbuhan vegetasi, dan penuaan perangkat). Untuk daerah dengan curah hujan tinggi seperti Indonesia, targetkan **15-20 dB**.
 
 ### Fresnel Zone
 
-Link point-to-point membutuhkan **ruang bebas berbentuk elips** di sekitar garis pandang — bukan hanya garis lurus.
+Garis pandang yang lurus saja belum cukup. Link point-to-point membutuhkan **ruang bebas berbentuk elips** di sekitar garis pandang itu.
 
 ```
 r = 17,32 × √(d / (4 × f))
@@ -416,7 +416,7 @@ r = 17,32 × √(5 / (4 × 5)) = 17,32 × √0,25 = 8,66 m
 ```
 
 > [!WARNING]
-> **Minimal 60% zona Fresnel pertama harus bebas hambatan.** Dalam contoh di atas: 8,66 × 0,6 = **5,2 m ruang bebas** di titik tengah — di atas pohon, gedung, dan bukit.
+> **Minimal 60% zona Fresnel pertama harus bebas hambatan.** Dalam contoh di atas: 8,66 × 0,6 = **5,2 m ruang bebas** di titik tengah (di atas pohon, gedung, dan bukit).
 
 > [!TIP]
 > Ini alasan link yang "terlihat lurus" tetap bermasalah: pohon setinggi 3 m di titik tengah bisa memotong zona Fresnel meski tidak menghalangi garis pandang.
@@ -457,15 +457,15 @@ PS> netsh wlan show drivers
 ```
 
 > [!TIP]
-> **`spectral-scan` di MikroTik adalah spectrum analyzer gratis** yang menampilkan energi RF di seluruh band — termasuk sumber non-Wi-Fi seperti microwave dan kamera analog. Fitur yang biasanya butuh alat seharga puluhan juta.
+> **`spectral-scan` di MikroTik adalah spectrum analyzer gratis** yang menampilkan energi RF di seluruh band, termasuk sumber non-Wi-Fi seperti microwave dan kamera analog. Biasanya, fitur seperti ini butuh alat seharga puluhan juta.
 
 **Alat profesional:**
-- **Ekahau AI Pro** — survei prediktif & aktif (standar industri)
-- **Hamina** — survei berbasis cloud
-- **NetSpot** — terjangkau, macOS/Windows
-- **WiFi Explorer** — analisis cepat macOS
-- **Wireshark + adapter monitor mode** — analisis frame 802.11
-- **MetaGeek Chanalyzer + Wi-Spy** — spectrum analyzer khusus
+- **Ekahau AI Pro**: survei prediktif & aktif (standar industri)
+- **Hamina**: survei berbasis cloud
+- **NetSpot**: terjangkau, macOS/Windows
+- **WiFi Explorer**: analisis cepat macOS
+- **Wireshark + adapter monitor mode**: analisis frame 802.11
+- **MetaGeek Chanalyzer + Wi-Spy**: spectrum analyzer khusus
 
 ---
 
@@ -474,13 +474,13 @@ PS> netsh wlan show drivers
 - Wi-Fi adalah gelombang EM; **λ = 300/f(MHz)**. Frekuensi lebih rendah = jangkauan lebih jauh, tembus dinding lebih baik.
 - **dB logaritmik**: +3 dB = 2× daya, +10 dB = 10×. **0 dBm = 1 mW**, 20 dBm = 100 mW.
 - **−67 dBm** adalah ambang desain standar untuk suara/video.
-- **SNR = RSSI − noise floor** — inilah yang menentukan kecepatan, bukan RSSI saja. "Sinyal penuh tapi lambat" = SNR rendah.
+- **SNR = RSSI − noise floor**. SNR-lah yang menentukan kecepatan, bukan RSSI saja. "Sinyal penuh tapi lambat" = SNR rendah.
 - **2,4 GHz: hanya kanal 1, 6, 11** yang tidak tumpang tindih. Selalu 20 MHz.
 - **5 GHz**: banyak kanal, tetapi **DFS** bisa memutus klien saat radar terdeteksi.
 - **6 GHz**: sangat bersih, WPA3 wajib, jangkauan pendek.
-- **Kanal lebar = trade-off** — kecepatan puncak naik, tetapi kanal non-overlap berkurang dan interferensi meningkat.
-- Redaman material: beton bertulang 20-30 dB, kaca low-E 10-25 dB, **tubuh manusia 3-5 dB**.
-- **MIMO mengubah multipath dari musuh menjadi keunggulan.**
+- **Kanal lebar = trade-off**: kecepatan puncak naik, tetapi kanal non-overlap berkurang dan interferensi meningkat.
+- Redaman material: beton bertulang 20-30 dB, kaca low-E 10-25 dB, tubuh manusia 3-5 dB.
+- MIMO mengubah multipath dari musuh menjadi keunggulan.
 - **Gain antena memfokuskan, tidak menciptakan daya.** Omni gain tinggi = pola pipih, buruk untuk multi-lantai.
 - **EIRP = daya − rugi kabel + gain antena**; dibatasi regulasi Komdigi.
 - Link PtP butuh **margin ≥ 10 dB** (15-20 dB untuk Indonesia) dan **60% zona Fresnel bebas**.
@@ -501,26 +501,26 @@ PS> netsh wlan show drivers
 <summary>Jawaban</summary>
 
 1. EIRP = 20 − 3 + 15 = **+32 dBm**. Konversi: 30 dBm = 1000 mW, +2 dB ≈ ×1,58 → **≈1585 mW (1,6 W)**.
-   **Perhatian:** Ini **jauh melebihi batas regulasi** untuk 2,4 GHz di Indonesia (500 mW EIRP). Harus dikurangi — turunkan daya pemancar atau pakai antena gain lebih rendah.
+   **Perhatian:** Ini jauh melebihi batas regulasi untuk 2,4 GHz di Indonesia (500 mW EIRP). Dayanya harus dikurangi: turunkan daya pemancar atau pakai antena gain lebih rendah.
 
-2. SNR = −55 − (−72) = **17 dB**. Ini kategori **cukup/buruk** — cukup untuk data ringan tetapi modulasi akan turun ke 64-QAM atau lebih rendah, sehingga kecepatan jauh di bawah maksimum.
-   Masalahnya bukan kekuatan sinyal (−55 dBm bagus), melainkan **noise floor yang sangat tinggi** (−72 dBm; normalnya sekitar −95 dBm). Ada sumber interferensi kuat.
-   **Tindakan:** jalankan spectrum analysis (mis. `/interface wireless spectral-scan` di MikroTik) untuk menemukan sumbernya — bisa microwave, kamera analog, AP tetangga, atau perangkat non-Wi-Fi. Lalu: pindah kanal, hilangkan sumber interferensi, atau pindah klien ke 5/6 GHz.
+2. SNR = −55 − (−72) = **17 dB**. Ini kategori **cukup/buruk**: cukup untuk data ringan, tetapi modulasi akan turun ke 64-QAM atau lebih rendah, sehingga kecepatan jauh di bawah maksimum.
+   Kekuatan sinyalnya bagus (−55 dBm). Masalahnya ada di **noise floor yang sangat tinggi** (−72 dBm; normalnya sekitar −95 dBm), tanda ada sumber interferensi kuat.
+   **Tindakan:** jalankan spectrum analysis (mis. `/interface wireless spectral-scan` di MikroTik) untuk menemukan sumbernya, entah microwave, kamera analog, AP tetangga, atau perangkat non-Wi-Fi. Lalu: pindah kanal, hilangkan sumber interferensi, atau pindah klien ke 5/6 GHz.
 
-3. Karena setiap kanal Wi-Fi 2,4 GHz menempati **~22 MHz**, sementara jarak antar-nomor kanal hanya **5 MHz**. Kanal 1 (2412 MHz) menempati ~2401-2423 MHz; kanal 6 (2437) menempati ~2426-2448; kanal 11 (2462) menempati ~2451-2473. Hanya kombinasi ini yang **tidak saling tumpang tindih** dalam band 2,400-2,4835 GHz.
-   Memakai kanal lain (mis. 3, 5, 9) menyebabkan **partial overlap** — yang justru lebih buruk daripada co-channel: perangkat pada kanal yang tumpang tindih sebagian tidak bisa saling "mendengar" untuk melakukan CSMA/CA, sehingga mereka mengirim bersamaan dan saling merusak.
+3. Karena setiap kanal Wi-Fi 2,4 GHz menempati **~22 MHz**, sementara jarak antar-nomor kanal hanya **5 MHz**. Kanal 1 (2412 MHz) menempati ~2401-2423 MHz; kanal 6 (2437) menempati ~2426-2448; kanal 11 (2462) menempati ~2451-2473. Hanya kombinasi ini yang tidak saling tumpang tindih dalam band 2,400-2,4835 GHz.
+   Memakai kanal lain (mis. 3, 5, 9) menyebabkan **partial overlap**, yang justru lebih buruk daripada co-channel. Perangkat pada kanal yang tumpang tindih sebagian tidak bisa saling "mendengar" untuk melakukan CSMA/CA, sehingga mereka mengirim bersamaan dan saling merusak.
 
-4. (a) **SNR rendah** — RSSI kuat tetapi noise floor tinggi karena interferensi, sehingga modulasi turun. (b) **Co-channel interference / airtime terbagi** — banyak klien atau AP tetangga di kanal yang sama; setiap perangkat harus antre memakai media (Wi-Fi half duplex). (c) **Satu klien lambat menyeret semua** — klien jauh dengan MCS rendah memakan airtime jauh lebih lama untuk data yang sama. (d) Kemungkinan lain: bottleneck di uplink AP (link 100 Mbps atau PoE kurang daya sehingga radio berjalan mode terbatas), masalah di jaringan kabel/internet, atau klien hanya mendukung standar lama.
+4. (a) **SNR rendah**: RSSI kuat tetapi noise floor tinggi karena interferensi, sehingga modulasi turun. (b) **Co-channel interference / airtime terbagi**: banyak klien atau AP tetangga di kanal yang sama; setiap perangkat harus antre memakai media (Wi-Fi half duplex). (c) **Satu klien lambat menyeret semua**: klien jauh dengan MCS rendah memakan airtime jauh lebih lama untuk data yang sama. (d) Kemungkinan lain: bottleneck di uplink AP (link 100 Mbps atau PoE kurang daya sehingga radio berjalan mode terbatas), masalah di jaringan kabel/internet, atau klien hanya mendukung standar lama.
 
 5. r = 17,32 × √(8 / (4 × 5,8)) = 17,32 × √(8/23,2) = 17,32 × √0,345 = 17,32 × 0,587 = **10,2 m**.
    Ruang bebas minimum = 60% × 10,2 = **6,1 m** di titik tengah link. Artinya tidak boleh ada pohon, gedung, atau kontur tanah yang masuk dalam radius 6,1 m dari garis pandang di titik tengah.
 
-6. Karena **kanal 160 MHz memakan hampir seluruh spektrum 5 GHz yang tersedia**, sehingga hanya tersisa ~2 kanal non-overlap. Di kantor padat dengan banyak AP, itu berarti AP-AP yang berdekatan **terpaksa memakai kanal yang sama** → co-channel interference berat.
-   Semua perangkat pada kanal yang sama harus **berbagi airtime** dengan CSMA/CA — mereka menunggu giliran. Jadi meskipun kecepatan puncak satu klien lebih tinggi, **throughput agregat seluruh kantor justru turun** karena lebih banyak perangkat berebut media yang sama.
+6. Karena kanal 160 MHz memakan hampir seluruh spektrum 5 GHz yang tersedia, sehingga hanya tersisa ~2 kanal non-overlap. Di kantor padat dengan banyak AP, itu berarti AP-AP yang berdekatan terpaksa memakai kanal yang sama → co-channel interference berat.
+   Semua perangkat pada kanal yang sama harus berbagi airtime dengan CSMA/CA: mereka menunggu giliran. Jadi, meskipun kecepatan puncak satu klien lebih tinggi, **throughput agregat seluruh kantor justru turun** karena lebih banyak perangkat berebut media yang sama.
    Selain itu, kanal 160 MHz hampir pasti mencakup kanal DFS, dengan risiko pemutusan saat radar terdeteksi. Untuk kantor padat, **20 atau 40 MHz** memberi throughput total jauh lebih baik.
 
-7. **Penyebab:** antena omni gain tinggi (9 dBi) memiliki pola radiasi yang **pipih secara vertikal** — energi difokuskan ke arah horizontal untuk mendapatkan gain, dengan konsekuensi cakupan sangat lemah ke atas dan ke bawah. Ditambah redaman lantai beton (20-30 dB), lantai 1 dan 3 hampir tidak menerima sinyal.
-   **Solusi:** (a) **Pasang AP di setiap lantai** — ini solusi yang benar; jangan mengandalkan penetrasi antar-lantai; (b) kalau harus satu AP, gunakan **antena gain lebih rendah (3-5 dBi)** yang polanya lebih membulat; (c) untuk gedung bertingkat, rencanakan **channel reuse vertikal** juga — AP lantai 1, 2, 3 harus di kanal berbeda karena sinyalnya saling menembus sebagian; (d) lakukan **site survey** untuk memverifikasi cakupan aktual per lantai, bukan mengandalkan asumsi.
+7. **Penyebab:** antena omni gain tinggi (9 dBi) memiliki pola radiasi yang pipih secara vertikal. Energinya difokuskan ke arah horizontal untuk mendapatkan gain, akibatnya cakupan ke atas dan ke bawah sangat lemah. Ditambah redaman lantai beton (20-30 dB), lantai 1 dan 3 hampir tidak menerima sinyal.
+   **Solusi:** (a) **Pasang AP di setiap lantai.** Ini solusi yang benar; jangan mengandalkan penetrasi antar-lantai. (b) Kalau harus satu AP, gunakan **antena gain lebih rendah (3-5 dBi)** yang polanya lebih membulat. (c) Untuk gedung bertingkat, rencanakan juga **channel reuse vertikal**: AP lantai 1, 2, 3 harus di kanal berbeda karena sinyalnya saling menembus sebagian. (d) Lakukan **site survey** untuk memverifikasi cakupan aktual per lantai, bukan mengandalkan asumsi.
 
 </details>
 
@@ -528,11 +528,11 @@ PS> netsh wlan show drivers
 
 ## 11. Sumber
 
-- IEEE 802.11-2020 — Wireless LAN MAC and PHY Specifications
+- IEEE 802.11-2020, Wireless LAN MAC and PHY Specifications
 - Cisco, *Wireless LAN Design Guide*
 - Peraturan Menteri Komunikasi dan Informatika RI tentang penggunaan pita frekuensi 2,4 GHz dan 5 GHz
-- CWNA (Certified Wireless Network Administrator) — kurikulum resmi
-- Ekahau — https://www.ekahau.com/resources/
+- CWNA (Certified Wireless Network Administrator), kurikulum resmi
+- Ekahau: https://www.ekahau.com/resources/
 - Cisco CCNA 200-301 v1.1, topik 1.11 (wireless principles: nonoverlapping channels, SSID, RF, encryption)
 
 ---

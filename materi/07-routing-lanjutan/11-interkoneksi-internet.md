@@ -9,20 +9,20 @@ Seorang pelanggan ISP kecil di Bekasi membuka video. Server videonya ada di Jaka
 
 ## 1. Internet Adalah Kumpulan Kontrak
 
-Di modul BGP Anda belajar bahwa internet adalah puluhan ribu **AS** (*Autonomous System*) yang saling bertukar rute. Yang belum dibahas: **kenapa** AS A mau membawa trafik AS B. Jawabannya hampir selalu kontrak bisnis, dan kontrak itu menentukan rute mana yang diiklankan ke siapa.
+Di modul BGP Anda belajar bahwa internet adalah puluhan ribu **AS** (*Autonomous System*) yang saling bertukar rute. Yang belum dibahas: kenapa AS A mau membawa trafik AS B. Jawabannya hampir selalu kontrak bisnis, dan kontrak itu menentukan rute mana yang diiklankan ke siapa.
 
 ### 1.1 Jenis hubungan
 
 | Hubungan | Siapa membayar | Apa yang dipertukarkan | Contoh |
 |---|---|---|---|
-| **Transit** | Pelanggan membayar penyedia | Penyedia mengirim **seluruh tabel internet** (atau default route) ke pelanggan, dan mengiklankan rute pelanggan ke **semua orang** | ISP lokal membeli transit dari operator nasional |
-| **Peering settlement-free** | Tidak ada yang membayar (masing-masing menanggung biaya portnya) | Masing-masing hanya mengiklankan **rute sendiri dan rute pelanggannya** | Dua ISP sekota saling peering di IXP |
+| **Transit** | Pelanggan membayar penyedia | Penyedia mengirim seluruh tabel internet (atau default route) ke pelanggan, dan mengiklankan rute pelanggan ke semua orang | ISP lokal membeli transit dari operator nasional |
+| **Peering settlement-free** | Tidak ada yang membayar (masing-masing menanggung biaya portnya) | Masing-masing hanya mengiklankan rute sendiri dan rute pelanggannya | Dua ISP sekota saling peering di IXP |
 | **Paid peering** | Satu pihak membayar | Sama seperti peering (hanya rute sendiri + pelanggan), tetapi ada biaya karena rasio trafik atau kekuatan tawar timpang | ISP akses membayar ke jaringan besar agar bisa peering langsung |
-| **Partial transit** | Pelanggan membayar | Penyedia mengirim **sebagian** tabel, misalnya rute regional atau rute pelanggan dan peer-nya saja | Transit "Asia saja" yang lebih murah |
+| **Partial transit** | Pelanggan membayar | Penyedia mengirim sebagian tabel, misalnya rute regional atau rute pelanggan dan peer-nya saja | Transit "Asia saja" yang lebih murah |
 | **Remote peering** | Pelanggan membayar penyedia layanan transport L2 | Port IXP Anda dibawa lewat jaringan pihak ketiga, jadi Anda bisa peering di IXP kota lain tanpa router di sana | ISP di Makassar ikut IXP Jakarta |
 
 > [!TIP]
-> **Kuncinya ada di kolom "apa yang dipertukarkan".** Transit memberi Anda jalan ke **mana saja**. Peering hanya memberi jalan ke **jaringan pihak lain dan pelanggannya**, tidak lebih. Peer Anda tidak akan membawa trafik Anda ke peer-nya yang lain.
+> **Bedanya ada di kolom "apa yang dipertukarkan".** Transit memberi Anda jalan ke mana saja. Peering hanya memberi jalan ke jaringan pihak lain dan pelanggannya, tidak lebih. Peer Anda tidak akan membawa trafik Anda ke peer-nya yang lain.
 
 ### 1.2 Tier: label yang longgar
 
@@ -43,9 +43,9 @@ Di modul BGP Anda belajar bahwa internet adalah puluhan ribu **AS** (*Autonomous
 
 Kontrak bisnis di atas bisa diringkas menjadi tiga peran. Penjelasan berikut mengikuti pembagian dalam buku Peterson & Davie (lihat atribusi di bagian Sumber):
 
-- **Penyedia ke pelanggan (provider-customer).** Bisnis penyedia adalah menghubungkan pelanggannya ke seluruh internet. Kebijakannya: **kirim semua rute yang saya tahu ke pelanggan**, dan **iklankan rute dari pelanggan ke semua orang**.
-- **Pelanggan ke penyedia (customer-provider).** Pelanggan ingin trafik ke dirinya (dan ke pelanggannya, kalau punya) dikirim lewat penyedia, dan ingin keluar ke internet lewat penyedia itu. Kebijakannya: **iklankan prefix sendiri dan prefix pelanggan saya ke penyedia**, kirim rute dari penyedia ke pelanggan saya, tetapi **jangan iklankan rute dari satu penyedia ke penyedia lain**. Kalau dilanggar, pelanggan menjadi jalan tembus antara dua penyedianya, padahal dia yang membayar keduanya.
-- **Peer ke peer.** Dua jaringan yang merasa setara saling bertukar akses ke pelanggan masing-masing tanpa membayar penyedia ketiga. Kebijakannya: **iklankan rute pelanggan saya ke peer**, kirim rute dari peer ke pelanggan saya, tetapi **jangan iklankan rute dari peer ke penyedia, atau dari penyedia ke peer**.
+- **Penyedia ke pelanggan (provider-customer).** Bisnis penyedia adalah menghubungkan pelanggannya ke seluruh internet. Kebijakannya: kirim semua rute yang saya tahu ke pelanggan, dan iklankan rute dari pelanggan ke semua orang.
+- **Pelanggan ke penyedia (customer-provider).** Pelanggan ingin trafik ke dirinya (dan ke pelanggannya, kalau punya) dikirim lewat penyedia, dan ingin keluar ke internet lewat penyedia itu. Kebijakannya: iklankan prefix sendiri dan prefix pelanggan saya ke penyedia, kirim rute dari penyedia ke pelanggan saya, tetapi jangan iklankan rute dari satu penyedia ke penyedia lain. Kalau dilanggar, pelanggan menjadi jalan tembus antara dua penyedianya, padahal dia yang membayar keduanya.
+- **Peer ke peer.** Dua jaringan yang merasa setara saling bertukar akses ke pelanggan masing-masing tanpa membayar penyedia ketiga. Kebijakannya: iklankan rute pelanggan saya ke peer, kirim rute dari peer ke pelanggan saya, tetapi jangan iklankan rute dari peer ke penyedia, atau dari penyedia ke peer.
 
 Dalam bentuk tabel (baris = dari mana rute dipelajari, kolom = boleh diiklankan ke siapa):
 
@@ -56,11 +56,11 @@ Dalam bentuk tabel (baris = dari mana rute dipelajari, kolom = boleh diiklankan 
 | Peer | Ya | Tidak | Tidak |
 | Penyedia | Ya | Tidak | Tidak |
 
-Aturan ini dikenal sebagai **aturan Gao-Rexford**, dari dua makalah Lixin Gao dan Jennifer Rexford tahun 2001. Gao menunjukkan bahwa hubungan antar-AS bisa disimpulkan dari pola AS_PATH, dan bersama Rexford membuktikan bahwa kalau semua AS mengikuti aturan ekspor ini **dan** lebih menyukai rute dari pelanggan daripada dari peer atau penyedia (dengan syarat hubungan pelanggan-penyedia tidak membentuk siklus), BGP dijamin konvergen ke keadaan stabil tanpa koordinasi global.
+Aturan ini dikenal sebagai **aturan Gao-Rexford**, dari dua makalah Lixin Gao dan Jennifer Rexford tahun 2001. Gao menunjukkan bahwa hubungan antar-AS bisa disimpulkan dari pola AS_PATH, dan bersama Rexford membuktikan bahwa kalau semua AS mengikuti aturan ekspor ini dan lebih menyukai rute dari pelanggan daripada dari peer atau penyedia (dengan syarat hubungan pelanggan-penyedia tidak membentuk siklus), BGP dijamin konvergen ke keadaan stabil tanpa koordinasi global.
 
 ### 2.2 Jalur valley-free
 
-Akibat aturan ekspor itu, setiap jalur yang sah di internet berbentuk "gunung": naik dari pelanggan ke penyedia, paling banyak **satu** lintasan peer di puncak, lalu turun dari penyedia ke pelanggan.
+Akibat aturan ekspor itu, setiap jalur yang sah di internet berbentuk "gunung": naik dari pelanggan ke penyedia, paling banyak satu lintasan peer di puncak, lalu turun dari penyedia ke pelanggan.
 
 ```
                  [AS1] ======= peer ======= [AS2]
@@ -77,10 +77,10 @@ Garis miring menghubungkan penyedia (atas) dengan pelanggannya (bawah).
 
 | Jalur | Bentuk | Sah? |
 |---|---|---|
-| AS6 → AS3 → AS1 → AS2 → AS5 | naik, naik, peer, turun | ✅ valley-free |
-| AS5 → AS2 → AS1 → AS4 → AS6 | naik, peer, turun, turun | ✅ valley-free |
-| AS3 → AS6 → AS4 | turun, lalu naik | ❌ **lembah**: AS6 menjadi transit bagi dua penyedianya |
-| AS1 → AS2 → (peer AS2 yang lain) | peer, lalu peer lagi | ❌ dua lintasan peer |
+| AS6 → AS3 → AS1 → AS2 → AS5 | naik, naik, peer, turun | Ya, valley-free |
+| AS5 → AS2 → AS1 → AS4 → AS6 | naik, peer, turun, turun | Ya, valley-free |
+| AS3 → AS6 → AS4 | turun, lalu naik | Tidak, **lembah**: AS6 menjadi transit bagi dua penyedianya |
+| AS1 → AS2 → (peer AS2 yang lain) | peer, lalu peer lagi | Tidak, dua lintasan peer |
 
 Pola umumnya bisa ditulis seperti ekspresi reguler: `(naik)* (peer)? (turun)*`.
 
@@ -97,11 +97,11 @@ Rute dari PEER       → berikutnya        (gratis)
 Rute dari PENYEDIA   → paling akhir      (Anda membayar)
 ```
 
-Karena LOCAL_PREF dievaluasi sebelum AS_PATH, cara standar menerapkannya adalah memberi LOCAL_PREF berbeda menurut asal rute, lalu menandai asal itu dengan **community** agar aturan ekspor bisa dijalankan di router mana pun dalam AS.
+Karena LOCAL_PREF dievaluasi sebelum AS_PATH, cara standar menerapkannya adalah memberi LOCAL_PREF berbeda menurut asal rute, lalu menandai asal itu dengan community agar aturan ekspor bisa dijalankan di router mana pun dalam AS.
 
 ### 2.4 Implementasi dengan community (FRR)
 
-Misalkan AS64500 punya upstream (penyedia), peer di IXP, dan satu pelanggan. Polanya: **tandai saat masuk, filter saat keluar.**
+Misalkan AS64500 punya upstream (penyedia), peer di IXP, dan satu pelanggan. Polanya: tandai saat masuk, filter saat keluar.
 
 ```
 ! Penanda asal rute
@@ -144,7 +144,7 @@ Pasang `MASUK-*` sebagai filter `in` dan `KELUAR-*` sebagai filter `out` pada ne
 
 ### 3.1 Fabric L2 dan peering LAN
 
-IXP pada dasarnya adalah **switch Ethernet besar** (sering beberapa switch di beberapa gedung data center yang disambung menjadi satu fabric) yang menjadi satu domain broadcast bersama, disebut **peering LAN**. Setiap anggota mendapat:
+Secara teknis, IXP adalah switch Ethernet besar (sering beberapa switch di beberapa gedung data center yang disambung menjadi satu fabric) yang menjadi satu domain broadcast bersama, disebut **peering LAN**. Setiap anggota mendapat:
 
 - satu port fisik (1G, 10G, 100G, dan seterusnya),
 - satu alamat IPv4 dan satu alamat IPv6 dari prefix peering LAN milik IXP,
@@ -159,7 +159,7 @@ Karena ratusan router berbagi satu domain broadcast, IXP menegakkan aturan ketat
 | Tidak boleh ada proxy-ARP, ICMP redirect, atau Router Advertisement IPv6 | Router Anda jangan sampai menjawab ARP untuk alamat orang lain |
 | MTU sesuai ketentuan IXP (umumnya 1500 di LAN utama) | MTU berbeda menyebabkan sesi BGP hidup tetapi update besar gagal |
 
-Kalau Anda mengganti router atau line card, MAC address berubah. Laporkan ke NOC IXP **sebelum** penggantian, atau port Anda akan diblok oleh port security.
+Kalau Anda mengganti router atau line card, MAC address berubah. Laporkan ke NOC IXP sebelum penggantian, atau port Anda akan diblok oleh port security.
 
 ### 3.2 Bilateral atau multilateral
 
@@ -181,22 +181,22 @@ Dalam praktik keduanya dipakai bersamaan: RS untuk "ekor panjang" anggota kecil,
 
 ### 3.3 Route server: route reflector versi eBGP
 
-Route server diatur oleh **RFC 7947** (perilaku protokol) dan **RFC 7948** (operasi). Sifat terpentingnya:
+Route server diatur oleh RFC 7947 (perilaku protokol) dan RFC 7948 (operasi). Sifat terpentingnya:
 
-1. **Transparan terhadap AS_PATH.** RS **tidak** menambahkan AS-nya sendiri. Anggota A melihat rute anggota B dengan AS_PATH `B`, seolah-olah peering langsung.
-2. **NEXT_HOP tidak diubah.** Rute dari B tetap ber-next-hop alamat B di peering LAN. Akibatnya, **trafik data mengalir langsung dari A ke B lewat switch IXP, tidak melewati RS**. RS hanya bagian control plane.
+1. **Transparan terhadap AS_PATH.** RS tidak menambahkan AS-nya sendiri. Anggota A melihat rute anggota B dengan AS_PATH `B`, seolah-olah peering langsung.
+2. **NEXT_HOP tidak diubah.** Rute dari B tetap ber-next-hop alamat B di peering LAN. Akibatnya, trafik data mengalir langsung dari A ke B lewat switch IXP, tidak melewati RS. RS hanya bagian control plane.
 3. **MED dan community diteruskan** apa adanya (kecuali community kontrol RS yang ditujukan untuk RS itu sendiri).
-4. RS **tidak memasang rute ke kernel**, karena memang tidak meneruskan paket.
+4. RS tidak memasang rute ke kernel, karena memang tidak meneruskan paket.
 
-Konsekuensi poin 1: router anggota yang menegakkan pemeriksaan "AS pertama di AS_PATH harus sama dengan AS neighbor" akan **membuang semua rute dari RS**. Di FRR pemeriksaan ini aktif secara default (`enforce-first-as`) dan harus dimatikan per neighbor RS. Ini kesalahan nomor satu pemula di IXP, dan Anda akan melihatnya sendiri di lab.
+Konsekuensi poin 1: router anggota yang menegakkan pemeriksaan "AS pertama di AS_PATH harus sama dengan AS neighbor" akan membuang semua rute dari RS. Di FRR pemeriksaan ini aktif secara default (`enforce-first-as`) dan harus dimatikan per neighbor RS. Ini kesalahan nomor satu pemula di IXP, dan Anda akan melihatnya sendiri di lab.
 
 **Masalah path hiding.** Kalau dua anggota mengumumkan prefix yang sama dan RS hanya punya satu tabel, RS memilih satu jalur terbaik. Kalau jalur terbaik itu ditolak kebijakan ekspor untuk anggota tertentu, anggota itu tidak menerima apa-apa padahal jalur kedua tersedia. RFC 7947 membahas solusinya: RS menyimpan RIB per klien, atau memakai Add-Path. BIRD menyediakan opsi `secondary` di channel BGP untuk mencoba jalur berikutnya.
 
-**Perangkat lunak.** Dua implementasi yang paling sering dipakai IXP adalah **BIRD** (bird.network.cz, dari CZ.NIC) dan **OpenBGPD** (dari proyek OpenBSD). Konfigurasi RS di IXP besar jarang ditulis tangan: biasanya dihasilkan otomatis dari data anggota, IRR, dan RPKI oleh alat seperti IXP Manager atau arouteserver. Banyak IXP menjalankan dua RS dengan implementasi **berbeda** agar satu bug tidak menjatuhkan keduanya.
+**Perangkat lunak.** Dua implementasi yang paling sering dipakai IXP adalah **BIRD** (bird.network.cz, dari CZ.NIC) dan **OpenBGPD** (dari proyek OpenBSD). Konfigurasi RS di IXP besar jarang ditulis tangan: biasanya dihasilkan otomatis dari data anggota, IRR, dan RPKI oleh alat seperti IXP Manager atau arouteserver. Banyak IXP menjalankan dua RS dengan implementasi berbeda agar satu bug tidak menjatuhkan keduanya.
 
 ### 3.4 Mengendalikan route server dengan community
 
-Karena RS meneruskan rute Anda ke semua anggota, IXP menyediakan community untuk mengendalikannya. Skema persisnya **berbeda di setiap IXP**, jadi selalu baca dokumentasi RS IXP Anda. Pola umum dengan Large Community (RFC 8092), dengan RS = ASN route server:
+Karena RS meneruskan rute Anda ke semua anggota, IXP menyediakan community untuk mengendalikannya. Skema persisnya berbeda di setiap IXP, jadi selalu baca dokumentasi RS IXP Anda. Pola umum dengan Large Community (RFC 8092), dengan RS = ASN route server:
 
 ```
 RS:0:peer-as     jangan kirim rute ini ke peer-as
@@ -205,7 +205,7 @@ RS:0:0           jangan kirim ke siapa pun
 RS:101:peer-as   prepend satu kali ke peer-as
 ```
 
-Banyak RS juga **menambahkan** community informasi pada rute yang diteruskannya, misalnya status RPKI (valid atau not found) atau lokasi masuk. Lab di bagian 11 memakai pola ini.
+Banyak RS juga menambahkan community informasi pada rute yang diteruskannya, misalnya status RPKI (valid atau not found) atau lokasi masuk. Lab di bagian 11 memakai pola ini.
 
 ### 3.5 Kebijakan peering
 
@@ -264,8 +264,8 @@ Cara memakai setiap field:
 
 | Field | Dipakai untuk |
 |---|---|
-| `info_prefixes4`, `info_prefixes6` | Menyetel **maximum-prefix** sesi Anda ke jaringan ini. Ini angka yang dijanjikan pemiliknya; beri ruang sekitar 10 sampai 20 persen |
-| `irr_as_set` | Input `bgpq4` untuk membangun **filter prefix** sesi ini |
+| `info_prefixes4`, `info_prefixes6` | Menyetel maximum-prefix sesi Anda ke jaringan ini. Ini angka yang dijanjikan pemiliknya; beri ruang sekitar 10 sampai 20 persen |
+| `irr_as_set` | Input `bgpq4` untuk membangun filter prefix sesi ini |
 | `policy_general` | Open, Selective, Restrictive, atau No: apakah layak mengirim permintaan peering |
 | `info_type` | NSP, Content, Cable/DSL/ISP, Enterprise, dan seterusnya: memperkirakan arah dan volume trafik |
 
@@ -300,7 +300,7 @@ Setelah punya ASN, record PeeringDB Anda adalah "kartu nama" di depan semua calo
 
 ## 5. Ekonomi Peering
 
-Keputusan "ikut IXP atau tidak" adalah hitungan biaya, latensi, dan risiko. Modul ini sengaja **tidak** mencantumkan harga, karena harga transit dan port IXP di Indonesia berubah cepat, berbeda antarkota, dan sangat bergantung negosiasi. Yang Anda perlukan adalah cara menghitungnya dengan angka kontrak Anda sendiri.
+Keputusan "ikut IXP atau tidak" adalah hitungan biaya, latensi, dan risiko. Modul ini sengaja tidak mencantumkan harga, karena harga transit dan port IXP di Indonesia berubah cepat, berbeda antarkota, dan sangat bergantung negosiasi. Yang Anda perlukan adalah cara menghitungnya dengan angka kontrak Anda sendiri.
 
 ### 5.1 Cara transit ditagih: persentil ke-95
 
@@ -315,7 +315,7 @@ Transit biasanya ditagih per Mbps dengan metode **burstable persentil ke-95 (p95
 5. Biasanya dihitung terpisah untuk arah masuk dan keluar, lalu yang lebih besar yang ditagih.
 ```
 
-Artinya, lonjakan pendek yang totalnya kurang dari sekitar 36 jam sebulan (432 × 5 menit) tidak ikut ditagih, tetapi jam sibuk harian Anda **pasti** ikut. Kontrak juga sering punya **commit**: Anda membayar minimal sekian Mbps walaupun p95 Anda di bawahnya.
+Artinya, lonjakan pendek yang totalnya kurang dari sekitar 36 jam sebulan (432 × 5 menit) tidak ikut ditagih, tetapi jam sibuk harian Anda pasti ikut. Kontrak juga sering punya **commit**: Anda membayar minimal sekian Mbps walaupun p95 Anda di bawahnya.
 
 ### 5.2 Komponen biaya IXP
 
@@ -346,13 +346,13 @@ Contoh dengan satuan biaya hipotetis (ganti dengan angka kontrak Anda): kalau `B
 
 Cara memperkirakan `O`:
 
-1. Ekspor NetFlow/sFlow/IPFIX dari router border, kelompokkan trafik per **AS asal/tujuan**.
+1. Ekspor NetFlow/sFlow/IPFIX dari router border, kelompokkan trafik per AS asal/tujuan.
 2. Ambil daftar anggota IXP calon dari PeeringDB (`netixlan`).
 3. Jumlahkan trafik ke AS yang (a) hadir di IXP itu dan (b) kebijakannya Open atau ikut RS.
 4. Hitung p95 dari jumlah itu, bukan rata-rata.
 
 > [!WARNING]
-> **Dua jebakan perhitungan.** Pertama, memindahkan trafik ke IXP tidak otomatis menurunkan tagihan transit kalau Anda masih di bawah commit. Kedua, Anda tetap butuh kapasitas transit yang cukup untuk menanggung trafik itu **saat IXP bermasalah**. Kalau Anda menurunkan kapasitas transit terlalu jauh, gangguan IXP berubah menjadi gangguan total.
+> **Dua jebakan perhitungan.** Pertama, memindahkan trafik ke IXP tidak otomatis menurunkan tagihan transit kalau Anda masih di bawah commit. Kedua, Anda tetap butuh kapasitas transit yang cukup untuk menanggung trafik itu saat IXP bermasalah. Kalau Anda menurunkan kapasitas transit terlalu jauh, gangguan IXP berubah menjadi gangguan total.
 
 ### 5.4 Manfaat di luar uang
 
@@ -372,7 +372,7 @@ Di jaringan akses (ISP rumah dan seluler), sebagian besar trafik masuk berasal d
 
 ### 6.2 Embedded cache
 
-Jaringan konten besar menawarkan **server cache yang dipasang di dalam jaringan ISP**. Contohnya Netflix Open Connect Appliance (OCA), Google Global Cache (GGC), dan program serupa dari Akamai serta Meta. Netflix, misalnya, menyatakan bahwa appliance embedded diberikan **tanpa biaya** kepada ISP mitra yang memenuhi syarat, yaitu yang punya trafik Netflix "substansial" ke pelanggannya, dan bahwa ISP mengatur sesi BGP dengan appliance itu untuk mengarahkan trafik. Syarat dan prosedur setiap program berbeda; baca halaman resmi masing-masing.
+Jaringan konten besar menawarkan server cache yang dipasang di dalam jaringan ISP. Contohnya Netflix Open Connect Appliance (OCA), Google Global Cache (GGC), dan program serupa dari Akamai serta Meta. Netflix, misalnya, menyatakan bahwa appliance embedded diberikan tanpa biaya kepada ISP mitra yang memenuhi syarat, yaitu yang punya trafik Netflix "substansial" ke pelanggannya, dan bahwa ISP mengatur sesi BGP dengan appliance itu untuk mengarahkan trafik. Syarat dan prosedur setiap program berbeda; baca halaman resmi masing-masing.
 
 Cara kerja umumnya:
 
@@ -391,7 +391,7 @@ Cara kerja umumnya:
 ```
 
 1. ISP menyediakan rak, daya, dan port; penyedia konten mengirim servernya.
-2. ISP membuat sesi BGP ke cache dan **mengiklankan prefix pelanggan** yang boleh dilayani cache itu. Cache tidak mengiklankan rute apa pun ke ISP (atau hanya rute alamat dirinya).
+2. ISP membuat sesi BGP ke cache dan mengiklankan prefix pelanggan yang boleh dilayani cache itu. Cache tidak mengiklankan rute apa pun ke ISP (atau hanya rute alamat dirinya).
 3. Sistem pengarah milik penyedia konten mengarahkan pelanggan dari prefix tersebut ke cache lokal.
 4. Cache mengisi ulang kontennya (*fill*) dari internet, biasanya di luar jam sibuk.
 
@@ -404,9 +404,9 @@ Cara kerja umumnya:
 
 Hal yang perlu dipahami operator:
 
-- "Terdekat" berarti **terdekat menurut BGP**, bukan menurut peta. Pelanggan di Surabaya bisa jatuh ke instans Singapura kalau jalur BGP ke sana lebih pendek atau lebih disukai upstream-nya. Peering lokal sering memperbaiki ini.
+- "Terdekat" berarti terdekat menurut BGP, bukan menurut peta. Pelanggan di Surabaya bisa jatuh ke instans Singapura kalau jalur BGP ke sana lebih pendek atau lebih disukai upstream-nya. Peering lokal sering memperbaiki ini.
 - Wilayah yang jatuh ke satu instans disebut **catchment**. Perubahan routing di mana pun bisa memindahkan catchment, jadi layanan anycast berbasis TCP harus tahan terhadap perpindahan (umumnya aman karena routing jarang berubah di tengah koneksi pendek).
-- Kalau prefix anycast diumumkan dari **beberapa ASN asal**, setiap ASN itu butuh **ROA sendiri**. Tanpa itu, sebagian instans akan RPKI-invalid dan ditolak jaringan yang menerapkan ROV.
+- Kalau prefix anycast diumumkan dari beberapa ASN asal, setiap ASN itu butuh ROA sendiri. Tanpa itu, sebagian instans akan RPKI-invalid dan ditolak jaringan yang menerapkan ROV.
 
 ---
 
@@ -416,25 +416,25 @@ Hal yang perlu dipahami operator:
 
 Indonesia berada di wilayah **APNIC**. Di bawah APNIC, Indonesia punya **NIR** (*National Internet Registry*) bernama **IDNIC**, yang menyebut dirinya "IDNIC - APJII" karena dikelola APJII. Bagi organisasi di Indonesia, jalur yang umum untuk mendapatkan IP dan ASN sendiri adalah menjadi anggota IDNIC.
 
-Ringkasan prosedur menurut halaman IDNIC (diakses 13 Oktober 2026; **selalu periksa ulang di idnic.net**, karena syarat dan tarif bisa berubah):
+Ringkasan prosedur menurut halaman IDNIC (diakses 13 Oktober 2026; selalu periksa ulang di idnic.net, karena syarat dan tarif bisa berubah):
 
 | Tahap | Isi |
 |---|---|
 | Syarat organisasi | Badan hukum terdaftar di Indonesia, atau berencana memakai IP untuk jaringan di Indonesia |
 | Aplikasi keanggotaan | Dokumen legal perusahaan (misalnya NIB dan akta), jenis dokumen bergantung tipe anggota |
-| Aplikasi IP | Identitas pemohon, bukti kewenangan dari direksi, bukti operasional perusahaan, dan **bukti kebutuhan**: profil perusahaan, kontrak dengan penyedia upstream, lisensi ISP kalau Anda ISP, perjanjian peering IXP kalau Anda IXP |
+| Aplikasi IP | Identitas pemohon, bukti kewenangan dari direksi, bukti operasional perusahaan, dan bukti kebutuhan: profil perusahaan, kontrak dengan penyedia upstream, lisensi ISP kalau Anda ISP, perjanjian peering IXP kalau Anda IXP |
 | Evaluasi | Hostmaster IDNIC mengevaluasi sesuai kebijakan APNIC. IDNIC menyatakan bahwa sejak 19 Juli 2024 keputusan diterima atau ditolaknya permohonan IP adalah hasil evaluasi APNIC |
 | Ukuran alokasi | IPv4 dari /24 (256 alamat) sampai maksimal /23 (512 alamat); IPv6 /48 atau /32 bergantung ukuran jaringan |
-| ASN | Diminta **setelah** memiliki alokasi IP, lewat formulir dan email ke hostmaster, dengan diagram jaringan dan bukti perangkat. Estimasi menurut IDNIC: 1 sampai 3 hari kerja setelah data disetujui |
+| ASN | Diminta setelah memiliki alokasi IP, lewat formulir dan email ke hostmaster, dengan diagram jaringan dan bukti perangkat. Estimasi menurut IDNIC: 1 sampai 3 hari kerja setelah data disetujui |
 | Portal anggota | **MyIDNIC**: mengelola sumber daya, kontak, whois, dan sertifikasi sumber daya (RPKI) |
 
 Modul ini sengaja tidak mencantumkan tarif keanggotaan; lihat halaman daftar harga IDNIC. Yang perlu Anda pahami: alokasi IPv4 baru kecil karena IPv4 sudah langka, sedangkan IPv6 cukup besar untuk seluruh rencana jaringan Anda. Rencanakan dual-stack sejak hari pertama (modul `08-ipv6/01-dasar-ipv6`).
 
-IDNIC juga menjalankan **whois dan Routing Registry** yang terintegrasi dengan data alokasi (dibahas di §8), layanan **reverse DNS**, alat cek status ROV, serta kegiatan komunitas seperti Open Policy Meeting dan workshop.
+IDNIC juga menjalankan whois dan Routing Registry yang terintegrasi dengan data alokasi (dibahas di §8), layanan reverse DNS, alat cek status ROV, serta kegiatan komunitas seperti Open Policy Meeting dan workshop.
 
 ### 7.2 IXP di Indonesia
 
-Data dari API PeeringDB yang diambil **13 Oktober 2026**. PeeringDB mencatat **80 IXP** berkode negara ID. Kolom "Jaringan" adalah `net_count` (jumlah jaringan unik yang mencatat kehadirannya); angka ini diisi sendiri oleh anggota dan berubah setiap hari.
+Data dari API PeeringDB yang diambil 13 Oktober 2026. PeeringDB mencatat 80 IXP berkode negara ID. Kolom "Jaringan" adalah `net_count` (jumlah jaringan unik yang mencatat kehadirannya); angka ini diisi sendiri oleh anggota dan berubah setiap hari.
 
 | IXP | Organisasi (menurut PeeringDB) | Kota | Jaringan | Prefix peering LAN |
 |---|---|---|---|---|
@@ -511,13 +511,13 @@ mnt-by:         MAINT-ID-CONTOH
 source:         IDNIC
 ```
 
-Di IRR IDNIC, objek `route` hanya bisa dibuat kalau pemelihara yang mengajukan punya hak di objek `inetnum` (prefix) **dan** di objek `aut-num` (ASN asal), lewat atribut seperti `mnt-routes`. Karena itu IDNIC menyatakan data IRR-nya terlindungi setara dengan data alokasi. Data IRR IDNIC juga dicerminkan ke IRR lain seperti RADB dan RIPE.
+Di IRR IDNIC, objek `route` hanya bisa dibuat kalau pemelihara yang mengajukan punya hak di objek `inetnum` (prefix) dan di objek `aut-num` (ASN asal), lewat atribut seperti `mnt-routes`. Karena itu IDNIC menyatakan data IRR-nya terlindungi setara dengan data alokasi. Data IRR IDNIC juga dicerminkan ke IRR lain seperti RADB dan RIPE.
 
 ### 8.2 Kelemahan IRR
 
 Tidak semua IRR memverifikasi kepemilikan. Di IRR pihak ketiga (misalnya RADB), siapa pun yang punya akun bisa membuat objek `route` untuk prefix apa pun. Contoh nyata hari ini: kueri `whois -h whois.radb.net -- "-i origin AS13335"` mengembalikan objek `route` untuk 1.0.0.0/24 yang dipelihara oleh `MAINT-AS8966`, bukan oleh pemegang prefix. Objek seperti itu bisa sah (dibuat penyedia transit atas nama pelanggan), bisa usang, bisa juga palsu. Filter yang dibangun dari IRR akan meloloskannya.
 
-Itulah sebabnya praktik modern menggabungkan IRR dengan RPKI: IRR menjawab "apakah jaringan ini menyatakan akan mengumumkan prefix ini", RPKI menjawab "apakah **pemegang prefix** mengizinkannya". Sebagian server IRR modern (IRRd) bahkan menandai objek dengan status RPKI-nya; pada hasil kueri RADB di atas tampak atribut `rpki-ov-state: valid`.
+Itulah sebabnya praktik modern menggabungkan IRR dengan RPKI: IRR menjawab "apakah jaringan ini menyatakan akan mengumumkan prefix ini", RPKI menjawab "apakah pemegang prefix mengizinkannya". Sebagian server IRR modern (IRRd) bahkan menandai objek dengan status RPKI-nya; pada hasil kueri RADB di atas tampak atribut `rpki-ov-state: valid`.
 
 ### 8.3 bgpq4: dari IRR ke filter
 
@@ -581,13 +581,13 @@ Aturan praktis saat mengisi ROA:
 |---|---|
 | Anda mengumumkan /22 saja | Satu ROA, prefix /22, **MSA 22**. Jangan memasang MSA 24 "untuk jaga-jaga" (RFC 9319, lihat modul BGP) |
 | Anda juga mengumumkan dua /24 dari /22 itu untuk traffic engineering | Tambahkan ROA terpisah untuk setiap /24 yang benar-benar diumumkan |
-| Penyedia mitigasi DDoS akan mengumumkan prefix Anda dari ASN mereka saat serangan | Buat ROA tambahan untuk ASN penyedia itu, **sebelum** terjadi serangan |
+| Penyedia mitigasi DDoS akan mengumumkan prefix Anda dari ASN mereka saat serangan | Buat ROA tambahan untuk ASN penyedia itu, sebelum terjadi serangan |
 | Prefix anycast dari beberapa ASN | Satu ROA per ASN asal |
 | Blok yang belum diumumkan sama sekali | Pertimbangkan ROA dengan ASN 0 (AS0) agar setiap pengumuman blok itu menjadi invalid |
 | Prefix dialihkan ke pelanggan yang memakai ASN sendiri | ROA untuk ASN pelanggan itu, dengan prefix sepersis yang ia umumkan |
 
 > [!WARNING]
-> **ROA yang salah lebih berbahaya daripada tidak punya ROA.** Tanpa ROA, prefix Anda "not found" dan tetap diterima. Dengan ROA yang salah (ASN keliru, MSA terlalu pendek untuk prefix yang Anda umumkan), prefix Anda **invalid** dan ditolak oleh setiap jaringan yang menerapkan ROV, termasuk sejumlah transit global. Selalu buat ROA baru **sebelum** mengubah pengumuman, bukan sesudahnya.
+> **ROA yang salah lebih berbahaya daripada tidak punya ROA.** Tanpa ROA, prefix Anda "not found" dan tetap diterima. Dengan ROA yang salah (ASN keliru, MSA terlalu pendek untuk prefix yang Anda umumkan), prefix Anda invalid dan ditolak oleh setiap jaringan yang menerapkan ROV, termasuk sejumlah transit global. Selalu buat ROA baru sebelum mengubah pengumuman, bukan sesudahnya.
 
 ### 9.3 Menjalankan validator sendiri
 
@@ -605,7 +605,7 @@ Alternatif yang juga banyak dipakai: **rpki-client** (proyek OpenBSD, tersedia v
 
 Praktik operasional:
 
-- Jalankan **minimal dua validator**, idealnya dengan perangkat lunak berbeda, dan arahkan router ke keduanya.
+- Jalankan minimal dua validator, idealnya dengan perangkat lunak berbeda, dan arahkan router ke keduanya.
 - Pantau kesegaran data. Validator yang macet tetapi tetap melayani RTR akan menyajikan data basi.
 - Jangan biarkan router memakai validator di luar jaringan Anda lewat internet terbuka tanpa perlindungan; RTR tanpa enkripsi tidak punya autentikasi.
 
@@ -624,7 +624,7 @@ Skenario: ISP kecil di Indonesia, saat ini memakai IP dari satu upstream (alamat
 
 ### Langkah 2: Keanggotaan IDNIC, alokasi IP, lalu ASN
 
-- Daftar anggota, ajukan IPv4 dan **IPv6 sekaligus**.
+- Daftar anggota, ajukan IPv4 dan IPv6 sekaligus.
 - Setelah IP disetujui, ajukan ASN.
 - Simpan kredensial MyIDNIC di pengelola kata sandi tim, bukan di laptop satu orang. Kehilangan akses ke portal berarti tidak bisa mengubah ROA saat darurat.
 
@@ -641,7 +641,7 @@ domain      → reverse DNS untuk blok Anda
 
 ### Langkah 4: ROA
 
-Buat ROA untuk setiap prefix yang akan diumumkan, dengan MSA sama dengan panjang prefix (§9.2). Lakukan **sebelum** pengumuman pertama.
+Buat ROA untuk setiap prefix yang akan diumumkan, dengan MSA sama dengan panjang prefix (§9.2). Lakukan sebelum pengumuman pertama.
 
 ### Langkah 5: Record PeeringDB
 
@@ -652,7 +652,7 @@ Buat akun, minta afiliasi ke organisasi Anda, isi record `net`: AS-SET, jumlah p
 | Keputusan | Pilihan umum untuk ISP kecil |
 |---|---|
 | Jumlah router border | Dua, satu per upstream, terhubung iBGP. Satu router menghemat biaya tetapi menjadi titik kegagalan tunggal |
-| Tabel dari upstream | **Default route + rute pelanggan upstream** (partial) jika router terbatas; **full table** jika ingin memilih jalur terbaik per tujuan. Pastikan RAM cukup (lihat catatan MikroTik di modul BGP) |
+| Tabel dari upstream | Default route + rute pelanggan upstream (partial) jika router terbatas; full table jika ingin memilih jalur terbaik per tujuan. Pastikan RAM cukup (lihat catatan MikroTik di modul BGP) |
 | Platform | MikroTik CCR/RouterOS v7, Linux + FRR/BIRD, atau router vendor. Yang penting dukungan RPKI/RTR, prefix-list, dan community |
 | Validator RPKI | Dua instans di jaringan internal (§9.3) |
 | Monitoring | Pemantau pengumuman prefix (misalnya BGPalerter, open-source dari NTT) dan, kalau memungkinkan, BMP ke kolektor |
@@ -676,7 +676,7 @@ MASUK dari setiap upstream:
 
 ### Langkah 8: Umumkan dan verifikasi dari luar
 
-- Cek dari **looking glass** upstream dan pihak ketiga (misalnya bgp.tools, bgp.he.net, RIPEstat): apakah prefix Anda terlihat, dengan AS_PATH yang benar, dan status RPKI valid.
+- Cek dari looking glass upstream dan pihak ketiga (misalnya bgp.tools, bgp.he.net, RIPEstat): apakah prefix Anda terlihat, dengan AS_PATH yang benar, dan status RPKI valid.
 - Uji kegagalan: matikan sesi ke upstream A pada jam sepi, pastikan trafik pindah ke B dalam hitungan detik sampai menit, lalu kembalikan.
 
 ### Langkah 9: Bergabung dengan IXP
@@ -685,12 +685,12 @@ MASUK dari setiap upstream:
 2. Isi formulir dan perjanjian keanggotaan IXP, pesan port dan cross-connect.
 3. Terima alamat IPv4/IPv6 peering LAN, laporkan MAC address router Anda.
 4. Konfigurasi interface: tanpa proxy-ARP, tanpa LLDP/CDP ke arah IXP, MTU sesuai ketentuan.
-5. Bangun sesi ke **kedua** route server. Matikan `enforce-first-as` untuk sesi RS.
+5. Bangun sesi ke kedua route server. Matikan `enforce-first-as` untuk sesi RS.
 6. Tambahkan kehadiran Anda (`netixlan`) di PeeringDB.
 
 ### Langkah 10: Peering bilateral dan kebijakan peering
 
-Setelah RS berjalan, lihat siapa di IXP itu yang **tidak** ikut RS tetapi trafiknya besar ke Anda. Kirim permintaan peering lewat kontak di PeeringDB, sertakan ASN, IP peering LAN, AS-SET, dan perkiraan jumlah prefix Anda. Publikasikan kebijakan peering Anda sendiri.
+Setelah RS berjalan, lihat siapa di IXP itu yang tidak ikut RS tetapi trafiknya besar ke Anda. Kirim permintaan peering lewat kontak di PeeringDB, sertakan ASN, IP peering LAN, AS-SET, dan perkiraan jumlah prefix Anda. Publikasikan kebijakan peering Anda sendiri.
 
 ### Langkah 11: Operasi berkelanjutan
 
@@ -806,7 +806,7 @@ $ rs show route 192.0.2.0/24 all | grep large
 Perhatikan `BGP.as_path: 64501` (tanpa 64510) dan `BGP.next_hop: 10.10.0.12` (alamat ISP-B, bukan RS). Itu dua sifat utama route server dari §3.3.
 
 > [!WARNING]
-> **Perhatikan stempel waktunya.** Di uji coba modul ini, sesi BGP naik sekitar 15 detik **sebelum** sesi RTR. Selama jeda itu tabel `r4` kosong, semua rute berstatus not found, dan hijack sempat lolos ke ISP-A sampai data ROA tiba dan BIRD mengevaluasi ulang. Di produksi, jeda seperti ini terjadi setiap kali route server atau validator di-restart. Itulah alasan menjalankan dua validator dan memantau sesi RTR, bukan hanya sesi BGP.
+> **Perhatikan stempel waktunya.** Di uji coba modul ini, sesi BGP naik sekitar 15 detik sebelum sesi RTR. Selama jeda itu tabel `r4` kosong, semua rute berstatus not found, dan hijack sempat lolos ke ISP-A sampai data ROA tiba dan BIRD mengevaluasi ulang. Di produksi, jeda seperti ini terjadi setiap kali route server atau validator di-restart. Itulah alasan menjalankan dua validator dan memantau sesi RTR, bukan hanya sesi BGP.
 
 ### 11.5 Langkah 3: Dari sisi ISP-A
 
@@ -861,7 +861,7 @@ Routing entry for 198.18.1.0/24
   * 10.10.0.12, via eth1, weight 1
 ```
 
-Inilah pelajaran terpenting lab ini. ISP-A sendiri **menjalankan** validasi RPKI dan tahu rute itu invalid, tetapi route-map-nya masih dalam tahap "logging" (`permit 10` dengan local-preference 50). LOCAL_PREF rendah **tidak menolong sama sekali**, karena 198.18.1.0/24 lebih spesifik daripada 198.18.0.0/22 milik ISP-A, dan forwarding selalu memilih **prefix terpanjang** sebelum melihat atribut BGP. Trafik ISP-A ke seperempat bloknya sendiri kini dikirim ke ISP-B.
+Inilah pelajaran terpenting lab ini. ISP-A sendiri menjalankan validasi RPKI dan tahu rute itu invalid, tetapi route-map-nya masih dalam tahap "logging" (`permit 10` dengan local-preference 50). LOCAL_PREF rendah tidak menolong sama sekali, karena 198.18.1.0/24 lebih spesifik daripada 198.18.0.0/22 milik ISP-A, dan forwarding selalu memilih prefix terpanjang sebelum melihat atribut BGP. Trafik ISP-A ke seperempat bloknya sendiri kini dikirim ke ISP-B.
 
 ### 11.7 Langkah 5: Tutup lubangnya
 
@@ -918,7 +918,7 @@ Hapus lagi dengan `no set large-community` dan soft out.
 | Di vrps.json: ganti ROA ISP-B menjadi `"prefix": "203.0.112.0/23", "maxLength": 23` | 203.0.113.0/24 menjadi INVALID dan masuk `show route filtered` di RS, walaupun ASN-nya benar |
 | Di RS: `rs show protocols all isp_b` | Lihat statistik `Import updates ... filtered`, dan capability `Role: rs_client` dari ISP-B |
 
-Baris ketiga adalah kesalahan ROA yang paling sering di dunia nyata: ROA /23 dengan maxLength 23 **tidak** mengizinkan /24 apa pun di dalamnya, jadi pengumuman /24 yang sah berubah menjadi invalid. Kembalikan berkasnya setelah mencoba.
+Baris ketiga adalah kesalahan ROA yang paling sering di dunia nyata: ROA /23 dengan maxLength 23 tidak mengizinkan /24 apa pun di dalamnya, jadi pengumuman /24 yang sah berubah menjadi invalid. Kembalikan berkasnya setelah mencoba.
 
 ### 11.11 Bongkar
 
@@ -940,7 +940,7 @@ sudo containerlab destroy -t interkoneksi.clab.yml --cleanup
 | Sesi ke RS hanya naik di satu dari dua RS | Alamat RS kedua salah, atau IXP belum mengaktifkan Anda di RS kedua | Cek dokumen IXP dan PeeringDB `ixlan` |
 | Port IXP diblok setelah ganti router | Port security mendeteksi MAC baru | Laporkan MAC baru ke NOC IXP sebelum penggantian |
 | Sesi BGP naik tetapi putus saat tabel besar dikirim | MTU tidak cocok di peering LAN | Samakan MTU dengan ketentuan IXP |
-| Prefix Anda tidak terlihat di sebagian internet setelah mengubah pengumuman | ROA tidak mencakup prefix baru (invalid); atau filter IRR upstream belum diperbarui | Buat ROA dan objek route **sebelum** mengumumkan; minta upstream memperbarui filter |
+| Prefix Anda tidak terlihat di sebagian internet setelah mengubah pengumuman | ROA tidak mencakup prefix baru (invalid); atau filter IRR upstream belum diperbarui | Buat ROA dan objek route sebelum mengumumkan; minta upstream memperbarui filter |
 | Saat serangan DDoS, mitigasi dari penyedia scrubbing tidak bekerja di sebagian jaringan | Penyedia scrubbing mengumumkan prefix Anda dari ASN-nya tanpa ROA | Siapkan ROA untuk ASN penyedia scrubbing jauh hari |
 | Sesi ke peer putus berulang dengan pesan max-prefix | Peer mengumumkan lebih banyak prefix daripada angka di PeeringDB-nya; atau Anda menyetel limit terlalu ketat | Cocokkan dengan PeeringDB, hubungi peer, beri cadangan |
 | Trafik ke satu CDN tetap lewat transit walau CDN hadir di IXP | CDN tidak ikut RS (perlu bilateral), atau rute transit punya LOCAL_PREF lebih tinggi | Cek PeeringDB `is_rs_peer`, minta peering bilateral, cek kebijakan LOCAL_PREF |
@@ -958,7 +958,7 @@ sudo containerlab destroy -t interkoneksi.clab.yml --cleanup
 
 Menurut analisis Dyn Research (Renesys) yang terbit 3 April 2014, pada 2 April 2014 mulai pukul 18:25 UTC Indosat (AS4761) membocorkan lebih dari 320.000 rute bukan miliknya, saat tabel global berisi hampir 500.000 rute, berulang kali selama sekitar dua jam. Sebagian besar rute bocor itu tidak menyebar jauh, tetapi beberapa ratus diterima luas, dan banyak di antaranya milik Akamai. Indosat sendiri ikut terganggu berat.
 
-Dyn mencatat satu pelajaran yang relevan untuk setiap ISP: jaringan yang **memperpanjang AS_PATH-nya dengan prepending berat** termasuk yang paling parah terdampak, karena jalur bocor lewat Indonesia sering lebih pendek daripada jalur sah yang sengaja dipanjangkan.
+Dyn mencatat satu pelajaran yang relevan untuk setiap ISP: jaringan yang memperpanjang AS_PATH-nya dengan prepending berat termasuk yang paling parah terdampak, karena jalur bocor lewat Indonesia sering lebih pendek daripada jalur sah yang sengaja dipanjangkan.
 
 Apa yang akan membatasi dampaknya hari ini:
 
@@ -970,16 +970,16 @@ Apa yang akan membatasi dampaknya hari ini:
 
 ## 13. Ringkasan
 
-- Internet adalah jaringan **kontrak**: transit (bayar, dapat jalan ke mana saja), peering (gratis atau berbayar, hanya rute pihak lain dan pelanggannya), partial transit, remote peering.
-- **Aturan ekspor Gao-Rexford**: rute dari pelanggan ke semua orang; rute dari peer atau penyedia hanya ke pelanggan. Jalur sah berbentuk **valley-free**: naik, paling banyak satu peer, turun. Route leak adalah jalur yang melanggar ini.
-- Preferensi: **pelanggan > peer > penyedia**, diterapkan dengan LOCAL_PREF dan community; RFC 9234 Roles menjadi jaring pengaman kedua.
-- **IXP** adalah fabric L2 bersama dengan aturan ketat (satu MAC, tanpa protokol cerewet). **Route server** (RFC 7947) tidak menambah AS dan tidak mengubah next-hop, jadi trafik data langsung antar-anggota; matikan `enforce-first-as` untuk sesi RS.
+- Internet adalah jaringan kontrak: transit (bayar, dapat jalan ke mana saja), peering (gratis atau berbayar, hanya rute pihak lain dan pelanggannya), partial transit, remote peering.
+- **Aturan ekspor Gao-Rexford**: rute dari pelanggan ke semua orang; rute dari peer atau penyedia hanya ke pelanggan. Jalur sah berbentuk valley-free: naik, paling banyak satu peer, turun. Route leak adalah jalur yang melanggar ini.
+- Preferensi: pelanggan > peer > penyedia, diterapkan dengan LOCAL_PREF dan community; RFC 9234 Roles menjadi jaring pengaman kedua.
+- **IXP** adalah fabric L2 bersama dengan aturan ketat (satu MAC, tanpa protokol cerewet). Route server (RFC 7947) tidak menambah AS dan tidak mengubah next-hop, jadi trafik data langsung antar-anggota; matikan `enforce-first-as` untuk sesi RS.
 - **PeeringDB** adalah sumber AS-SET, jumlah prefix (untuk max-prefix), kebijakan peering, dan kehadiran di IXP; datanya diisi sendiri dan bisa usang.
-- Transit ditagih **p95**; titik impas IXP adalah `B / H`. Tetap sisakan kapasitas transit untuk saat IXP gagal.
+- Transit ditagih p95; titik impas IXP adalah `B / H`. Tetap sisakan kapasitas transit untuk saat IXP gagal.
 - Embedded cache dari penyedia konten diatur lewat BGP: ISP mengiklankan prefix pelanggan ke cache. Anycast memilih lokasi menurut BGP, bukan geografi.
-- Indonesia: **IDNIC-APJII** (NIR di bawah APNIC) untuk IP dan ASN; IXP terbesar menurut PeeringDB (13 Oktober 2026): **JKT-IX, IIX-Jakarta, OpenIXP/NiCE**, ditambah DE-CIX Jakarta, CDIX, dan puluhan lainnya; komunitas **ID-NOG**.
-- **IRR** menyatakan niat routing tetapi autentikasinya bervariasi; **RPKI** membuktikan izin pemegang prefix. ROA dibuat di **MyIDNIC** dengan MSA sama dengan panjang prefix yang diumumkan.
-- Lab membuktikan: tanpa ROV, filter IRR meloloskan hijack, dan **LOCAL_PREF rendah tidak menolong melawan prefix yang lebih spesifik**.
+- Indonesia: IDNIC-APJII (NIR di bawah APNIC) untuk IP dan ASN; IXP terbesar menurut PeeringDB (13 Oktober 2026): JKT-IX, IIX-Jakarta, OpenIXP/NiCE, ditambah DE-CIX Jakarta, CDIX, dan puluhan lainnya; komunitas ID-NOG.
+- **IRR** menyatakan niat routing tetapi autentikasinya bervariasi; RPKI membuktikan izin pemegang prefix. ROA dibuat di MyIDNIC dengan MSA sama dengan panjang prefix yang diumumkan.
+- Lab membuktikan: tanpa ROV, filter IRR meloloskan hijack, dan LOCAL_PREF rendah tidak menolong melawan prefix yang lebih spesifik.
 
 ---
 
@@ -998,23 +998,23 @@ Apa yang akan membatasi dampaknya hari ini:
 <details>
 <summary>Jawaban</summary>
 
-1. Rute itu dipelajari dari **penyedia** (AS64530), jadi menurut aturan ekspor Gao-Rexford hanya boleh diiklankan ke **pelanggan** ISP itu (kalau ada). Tidak boleh ke AS64540 (penyedia lain), karena ISP akan menjadi jalan tembus antara dua penyedianya dan membayar keduanya untuk trafik orang lain. Tidak boleh ke AS64550 (peer), karena peer hanya berhak atas rute milik ISP dan pelanggannya; mengiklankan rute penyedia ke peer berarti memberi peer transit gratis. Di router, ini dijaga dengan filter keluar berbasis prefix sendiri/community pelanggan dan as-path `^$`.
+1. Rute itu dipelajari dari penyedia (AS64530), jadi menurut aturan ekspor Gao-Rexford hanya boleh diiklankan ke pelanggan ISP itu (kalau ada). Tidak boleh ke AS64540 (penyedia lain), karena ISP akan menjadi jalan tembus antara dua penyedianya dan membayar keduanya untuk trafik orang lain. Tidak boleh ke AS64550 (peer), karena peer hanya berhak atas rute milik ISP dan pelanggannya; mengiklankan rute penyedia ke peer berarti memberi peer transit gratis. Di router, ini dijaga dengan filter keluar berbasis prefix sendiri/community pelanggan dan as-path `^$`.
 
-2. Baca dari kanan (asal) ke kiri (pengamat): 64604 → 64603 adalah pelanggan ke penyedia (naik), 64603 → 64602 adalah penyedia ke pelanggan (turun), lalu 64602 → 64601 adalah pelanggan ke penyedia (naik lagi). Pola turun lalu naik membentuk **lembah**, jadi jalur ini **tidak** valley-free. Pembocornya kemungkinan **AS64602**: ia menerima rute dari penyedianya (64603) lalu mengiklankannya ke penyedia lain (64601). Ini persis route leak tipe pelanggan multihomed. Penyedia 64601 juga ikut bersalah karena tidak memfilter rute pelanggannya dengan IRR atau max-prefix. Dengan RFC 9234, 64603 akan memasang OTC dan 64601 (sebagai penyedia dengan role yang dinyatakan) akan menolak rute ber-OTC dari pelanggan.
+2. Baca dari kanan (asal) ke kiri (pengamat): 64604 → 64603 adalah pelanggan ke penyedia (naik), 64603 → 64602 adalah penyedia ke pelanggan (turun), lalu 64602 → 64601 adalah pelanggan ke penyedia (naik lagi). Pola turun lalu naik membentuk lembah, jadi jalur ini tidak valley-free. Pembocornya kemungkinan **AS64602**: ia menerima rute dari penyedianya (64603) lalu mengiklankannya ke penyedia lain (64601). Ini persis route leak tipe pelanggan multihomed. Penyedia 64601 juga ikut bersalah karena tidak memfilter rute pelanggannya dengan IRR atau max-prefix. Dengan RFC 9234, 64603 akan memasang OTC dan 64601 (sebagai penyedia dengan role yang dinyatakan) akan menolak rute ber-OTC dari pelanggan.
 
-3. Route server tidak menambahkan ASN-nya ke AS_PATH, jadi AS pertama di rute yang diterima adalah ASN anggota lain, bukan ASN RS. FRR secara default menegakkan `enforce-first-as` dan membuang setiap update yang AS pertamanya tidak sama dengan ASN neighbor, sehingga semua rute dari RS dibuang. Perbaikan: `router bgp <ASN>` → `no neighbor <IP-RS> enforce-first-as` untuk **kedua** RS, lalu `clear bgp ipv4 unicast <IP-RS>` (atau soft in). Pastikan juga ada route-map masuk, karena dengan default `traditional` FRR menerapkan RFC 8212.
+3. Route server tidak menambahkan ASN-nya ke AS_PATH, jadi AS pertama di rute yang diterima adalah ASN anggota lain, bukan ASN RS. FRR secara default menegakkan `enforce-first-as` dan membuang setiap update yang AS pertamanya tidak sama dengan ASN neighbor, sehingga semua rute dari RS dibuang. Perbaikan: `router bgp <ASN>` → `no neighbor <IP-RS> enforce-first-as` untuk kedua RS, lalu `clear bgp ipv4 unicast <IP-RS>` (atau soft in). Pastikan juga ada route-map masuk, karena dengan default `traditional` FRR menerapkan RFC 8212.
 
-4. Sebulan 30 hari punya 8.640 sampel lima menit; 5% teratas yang dibuang adalah 432 sampel atau 36 jam. Serangan berlangsung 50 jam (600 sampel), jadi setelah 432 sampel tertinggi dibuang, masih tersisa sekitar 168 sampel di level 9 Gbps. Sampel ke-433 berada di dalam periode serangan, sehingga p95 yang ditagih sekitar **9 Gbps**, bukan 2 Gbps. Pelajarannya: p95 hanya memaafkan lonjakan yang totalnya kurang dari sekitar 36 jam per bulan. Serangan panjang bisa melipatgandakan tagihan. Siapkan mitigasi yang memotong trafik serangan **sebelum** melewati port berbayar (RTBH atau scrubbing di upstream, lihat modul serangan L3-L7) dan pelajari klausul kontrak tentang DDoS.
+4. Sebulan 30 hari punya 8.640 sampel lima menit; 5% teratas yang dibuang adalah 432 sampel atau 36 jam. Serangan berlangsung 50 jam (600 sampel), jadi setelah 432 sampel tertinggi dibuang, masih tersisa sekitar 168 sampel di level 9 Gbps. Sampel ke-433 berada di dalam periode serangan, sehingga p95 yang ditagih sekitar **9 Gbps**, bukan 2 Gbps. Pelajarannya: p95 hanya memaafkan lonjakan yang totalnya kurang dari sekitar 36 jam per bulan. Serangan panjang bisa melipatgandakan tagihan. Siapkan mitigasi yang memotong trafik serangan sebelum melewati port berbayar (RTBH atau scrubbing di upstream, lihat modul serangan L3-L7) dan pelajari klausul kontrak tentang DDoS.
 
-5. Kelayakan dihitung dengan trafik yang **benar-benar bisa dipindah sekarang**, yaitu 350 Mbps via RS: layak secara biaya bila `350 × H > B`, atau titik impas `O* = B / H` dibandingkan 350. Sisa 250 Mbps adalah ke AS yang hadir di IXP tetapi tidak ikut RS: cek kebijakan peering mereka di PeeringDB (Open, Selective), lalu ajukan peering bilateral. Kalau berhasil, `O` naik ke 600 Mbps. Jangan masukkan 250 Mbps itu ke perhitungan sebelum ada kesepakatan, dan ingat bahwa penghematan nyata baru terjadi kalau p95 transit Anda turun di atas commit kontrak.
+5. Kelayakan dihitung dengan trafik yang benar-benar bisa dipindah sekarang, yaitu 350 Mbps via RS: layak secara biaya bila `350 × H > B`, atau titik impas `O* = B / H` dibandingkan 350. Sisa 250 Mbps adalah ke AS yang hadir di IXP tetapi tidak ikut RS: cek kebijakan peering mereka di PeeringDB (Open, Selective), lalu ajukan peering bilateral. Kalau berhasil, `O` naik ke 600 Mbps. Jangan masukkan 250 Mbps itu ke perhitungan sebelum ada kesepakatan, dan ingat bahwa penghematan nyata baru terjadi kalau p95 transit Anda turun di atas commit kontrak.
 
-6. Dengan MSA 24, ROA Anda mengizinkan **semua** /23 dan /24 di dalam /22 diumumkan dengan ASN asal Anda, padahal Anda tidak mengumumkannya. Penyerang bisa melakukan **forged-origin sub-prefix hijack**: mengumumkan misalnya 198.18.1.0/24 dengan AS_PATH yang diakhiri ASN Anda. ROV menilainya **valid** (prefix dan origin cocok dengan ROA), dan karena lebih spesifik, rute itu menang di forwarding di mana-mana. Perbaikan sesuai RFC 9319: ubah ROA menjadi 198.18.0.0/22 dengan **MSA 22**. Kalau suatu saat Anda perlu mengumumkan /24 tertentu, buat ROA terpisah untuk /24 itu saja, sebelum mengumumkannya.
+6. Dengan MSA 24, ROA Anda mengizinkan semua /23 dan /24 di dalam /22 diumumkan dengan ASN asal Anda, padahal Anda tidak mengumumkannya. Penyerang bisa melakukan **forged-origin sub-prefix hijack**: mengumumkan misalnya 198.18.1.0/24 dengan AS_PATH yang diakhiri ASN Anda. ROV menilainya valid (prefix dan origin cocok dengan ROA), dan karena lebih spesifik, rute itu menang di forwarding di mana-mana. Perbaikan sesuai RFC 9319: ubah ROA menjadi 198.18.0.0/22 dengan **MSA 22**. Kalau suatu saat Anda perlu mengumumkan /24 tertentu, buat ROA terpisah untuk /24 itu saja, sebelum mengumumkannya.
 
-7. Forwarding memakai **longest prefix match** sebelum atribut BGP berperan. LOCAL_PREF hanya membandingkan jalur untuk **prefix yang sama**. Karena tidak ada jalur lain untuk 198.18.1.0/24, rute invalid itu tetap terbaik untuk prefix tersebut, dan /24 lebih spesifik daripada /22 milik ISP-A, sehingga trafik ke 198.18.1.0/24 dibelokkan. Perbaikan: (1) di ISP-A, ubah route-map menjadi **menolak** RPKI invalid (`route-map RS-IN deny 10` + `match rpki invalid`) lalu soft in; (2) pulihkan ROV di route server (`enable validator`) dan buat validator RS redundan. Sebagai lapisan tambahan, banyak ISP juga menolak prefix miliknya sendiri yang datang dari luar.
+7. Forwarding memakai **longest prefix match** sebelum atribut BGP berperan. LOCAL_PREF hanya membandingkan jalur untuk prefix yang sama. Karena tidak ada jalur lain untuk 198.18.1.0/24, rute invalid itu tetap terbaik untuk prefix tersebut, dan /24 lebih spesifik daripada /22 milik ISP-A, sehingga trafik ke 198.18.1.0/24 dibelokkan. Perbaikan: (1) di ISP-A, ubah route-map menjadi menolak RPKI invalid (`route-map RS-IN deny 10` + `match rpki invalid`) lalu soft in; (2) pulihkan ROV di route server (`enable validator`) dan buat validator RS redundan. Sebagai lapisan tambahan, banyak ISP juga menolak prefix miliknya sendiri yang datang dari luar.
 
-8. ISP mengiklankan ke cache **prefix pelanggan yang boleh dilayani cache itu** (termasuk prefix publik CGNAT dan IPv6 pelanggan), biasanya sesuai ketentuan program. Kesalahan umum: (a) **lupa** memasukkan prefix pelanggan baru (misalnya blok CGNAT atau IPv6 yang baru dialokasikan), sehingga pelanggan dari prefix itu tetap dilayani dari luar dan trafik transit tidak turun; (b) mengiklankan prefix yang **tidak** boleh dilayani, misalnya prefix pelanggan transit atau jaringan pihak ketiga, yang bisa melanggar perjanjian dan membebani cache. Kesalahan ketiga yang sering: filter keluar ke cache tidak ada, sehingga full table ikut terkirim.
+8. ISP mengiklankan ke cache **prefix pelanggan yang boleh dilayani cache itu** (termasuk prefix publik CGNAT dan IPv6 pelanggan), biasanya sesuai ketentuan program. Kesalahan umum: (a) lupa memasukkan prefix pelanggan baru (misalnya blok CGNAT atau IPv6 yang baru dialokasikan), sehingga pelanggan dari prefix itu tetap dilayani dari luar dan trafik transit tidak turun; (b) mengiklankan prefix yang tidak boleh dilayani, misalnya prefix pelanggan transit atau jaringan pihak ketiga, yang bisa melanggar perjanjian dan membebani cache. Kesalahan ketiga yang sering: filter keluar ke cache tidak ada, sehingga full table ikut terkirim.
 
-9. (1) **RPKI**: apakah ada ROA untuk 203.0.113.0/24 dengan ASN pelanggan dan maxLength yang cocok? Kalau blok induknya punya ROA milik pemegang lain (misalnya Anda sebagai pemberi alokasi) tanpa ROA untuk ASN pelanggan, prefix itu **invalid** dan ditolak oleh jaringan yang menerapkan ROV. (2) **IRR**: apakah ada objek `route` untuk prefix itu dengan origin ASN pelanggan, dan apakah ASN pelanggan ada di AS-SET Anda? Upstream dan peer Anda membangun filter dari AS-SET Anda; kalau belum masuk, mereka membuangnya. (3) **Propagasi dan filter Anda sendiri**: periksa di looking glass upstream apakah prefix itu diterima, apakah filter otomatis Anda sudah diperbarui, dan apakah max-prefix pelanggan masih cukup.
+9. (1) **RPKI**: apakah ada ROA untuk 203.0.113.0/24 dengan ASN pelanggan dan maxLength yang cocok? Kalau blok induknya punya ROA milik pemegang lain (misalnya Anda sebagai pemberi alokasi) tanpa ROA untuk ASN pelanggan, prefix itu invalid dan ditolak oleh jaringan yang menerapkan ROV. (2) **IRR**: apakah ada objek `route` untuk prefix itu dengan origin ASN pelanggan, dan apakah ASN pelanggan ada di AS-SET Anda? Upstream dan peer Anda membangun filter dari AS-SET Anda; kalau belum masuk, mereka membuangnya. (3) **Propagasi dan filter Anda sendiri**: periksa di looking glass upstream apakah prefix itu diterima, apakah filter otomatis Anda sudah diperbarui, dan apakah max-prefix pelanggan masih cukup.
 
 </details>
 

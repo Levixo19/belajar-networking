@@ -43,7 +43,7 @@ Paket dari 93.184.216.34:443 → 10.0.0.5:9999 (port berbeda)
 | **new** | Paket pertama dari koneksi baru |
 | **established** | Bagian dari koneksi yang sudah ada |
 | **related** | Koneksi terkait (mis. data FTP, ICMP error untuk koneksi yang ada) |
-| **invalid** | Tidak cocok dengan state mana pun — **selalu buang** |
+| **invalid** | Tidak cocok dengan state mana pun; **selalu buang** |
 | **untracked** | Sengaja dikecualikan dari tracking (untuk kinerja) |
 
 > [!TIP]
@@ -137,7 +137,7 @@ masuk   └─────────────┘         │
 | **filter** | Izinkan/tolak (`accept`, `drop`, `reject`) |
 | **nat** | Terjemahkan alamat (`srcnat`, `dstnat`) |
 | **mangle** | Tandai paket/koneksi/routing (untuk QoS dan PBR) |
-| **raw** | Sebelum connection tracking — untuk membuang trafik volume tinggi secara efisien |
+| **raw** | Sebelum connection tracking, untuk membuang trafik volume tinggi secara efisien |
 
 ### Template Firewall Produksi
 
@@ -192,7 +192,7 @@ add chain=srcnat out-interface-list=WAN action=masquerade comment="NAT keluar"
 ```
 
 > [!WARNING]
-> **`action=fasttrack-connection` sangat menaikkan throughput** dengan melewatkan pemrosesan penuh untuk koneksi yang sudah dikenal. **Tetapi** paket yang di-fasttrack **melewati mangle, queue, dan sebagian besar filter** — sehingga QoS/pembatasan bandwidth tidak berlaku untuknya.
+> **`action=fasttrack-connection` sangat menaikkan throughput** dengan melewatkan pemrosesan penuh untuk koneksi yang sudah dikenal. Tetapi paket yang di-fasttrack **melewati mangle, queue, dan sebagian besar filter**, sehingga QoS/pembatasan bandwidth tidak berlaku untuknya.
 
 > [!TIP]
 > **Kalau Anda memakai Simple Queue atau Queue Tree, JANGAN aktifkan FastTrack** untuk trafik yang ingin dibatasi, atau kecualikan trafik itu:
@@ -233,7 +233,7 @@ add chain=prerouting action=drop src-address-list=ddos-blacklist
 ```
 
 > [!TIP]
-> **Table `raw` memproses paket SEBELUM connection tracking** — sangat efisien untuk membuang trafik serangan volume tinggi tanpa membebani tabel koneksi. Ini pertahanan pertama terhadap DDoS.
+> **Table `raw` memproses paket SEBELUM connection tracking**, sehingga sangat efisien untuk membuang trafik serangan volume tinggi tanpa membebani tabel koneksi. Ini pertahanan pertama terhadap DDoS.
 
 ### Verifikasi
 
@@ -250,7 +250,7 @@ add chain=prerouting action=drop src-address-list=ddos-blacklist
 
 ## 5. Zone-Based Firewall (Cisco IOS)
 
-Pengganti modern untuk ACL + CBAC di Cisco IOS.
+ZBF adalah pengganti modern untuk ACL + CBAC di Cisco IOS.
 
 ```
 # 1. Definisikan zona
@@ -380,7 +380,7 @@ Detail lengkap di `13-linux-networking/03-nftables-firewall.md`.
 **Vendor utama:** Palo Alto, Fortinet FortiGate, Check Point, Cisco Firepower/FTD, Sophos.
 
 > [!WARNING]
-> **NGFW membutuhkan TLS inspection untuk sebagian besar fiturnya** — dengan semua implikasi keamanan dan privasi yang dibahas di `06-aplikasi/04`. Tanpa dekripsi, NGFW hanya melihat SNI dan metadata.
+> **NGFW membutuhkan TLS inspection untuk sebagian besar fiturnya**, lengkap dengan semua implikasi keamanan dan privasi yang dibahas di `06-aplikasi/04`. Tanpa dekripsi, NGFW hanya melihat SNI dan metadata.
 
 ### IDS vs IPS
 
@@ -408,7 +408,7 @@ Reputation      → berdasarkan reputasi IP/domain
 
 ### WAF
 
-Firewall khusus aplikasi web — memeriksa HTTP untuk SQL injection, XSS, dan serangan aplikasi lainnya. Contoh: ModSecurity, Cloudflare WAF, AWS WAF.
+WAF adalah firewall khusus aplikasi web yang memeriksa HTTP untuk SQL injection, XSS, dan serangan aplikasi lainnya. Contoh: ModSecurity, Cloudflare WAF, AWS WAF.
 
 ---
 
@@ -499,9 +499,9 @@ Firewall khusus aplikasi web — memeriksa HTTP untuk SQL injection, XSS, dan se
 - Connection state: **new, established, related, invalid** (selalu buang yang invalid).
 - Prinsip: **default deny**, least privilege, segmentasi. **DMZ → LAN harus ditolak.**
 - **MikroTik chain**: `input` (ke router), `forward` (melewati router), `output` (dari router). Tabel: `filter`, `nat`, `mangle`, `raw`.
-- **MikroTik tidak punya implicit deny** — tambahkan `action=drop` eksplisit di akhir setiap chain.
-- **FastTrack** menaikkan throughput drastis tetapi **melewati queue dan mangle** — jangan pakai untuk trafik yang di-QoS.
-- **Table `raw`** membuang paket sebelum conntrack — pertahanan efisien terhadap DDoS.
+- **MikroTik tidak punya implicit deny**, jadi tambahkan `action=drop` eksplisit di akhir setiap chain.
+- **FastTrack** menaikkan throughput drastis tetapi **melewati queue dan mangle**; jangan pakai untuk trafik yang di-QoS.
+- **Table `raw`** membuang paket sebelum conntrack, sehingga menjadi pertahanan efisien terhadap DDoS.
 - **Address list dinamis** MikroTik memungkinkan blacklist otomatis untuk brute force dan port scan.
 - **Cisco ZBF**: zona + class-map + policy-map + zone-pair; antar-zona ditolak default, dalam zona diizinkan.
 - **IDS out-of-band** (alarm) vs **IPS inline** (blokir). Jalankan IPS baru dalam mode alert-only dulu.
@@ -522,25 +522,25 @@ Firewall khusus aplikasi web — memeriksa HTTP untuk SQL injection, XSS, dan se
 <details>
 <summary>Jawaban</summary>
 
-1. **Stateless** memeriksa setiap paket secara terpisah tanpa konteks. Untuk mengizinkan browsing web, Anda harus membuat **dua** aturan: satu mengizinkan paket keluar ke port 443, dan satu lagi mengizinkan paket masuk dari port 443 ke port ephemeral tinggi (1024-65535). Aturan kedua ini **sangat longgar** — siapa pun yang mengirim dari port 443 ke port tinggi akan lolos.
-   **Stateful** mengingat koneksi dalam tabel. Anda cukup mengizinkan **arah inisiasi** (LAN → internet port 443); ketika balasan datang, firewall mencocokkannya dengan entri yang ada dan mengizinkannya otomatis. Paket dari port 443 yang **tidak** cocok dengan koneksi mana pun akan dibuang. Jauh lebih aman dan jauh lebih sedikit aturan.
+1. **Stateless** memeriksa setiap paket secara terpisah tanpa konteks. Untuk mengizinkan browsing web, Anda harus membuat **dua** aturan: satu mengizinkan paket keluar ke port 443, dan satu lagi mengizinkan paket masuk dari port 443 ke port ephemeral tinggi (1024-65535). Aturan kedua ini **sangat longgar**: siapa pun yang mengirim dari port 443 ke port tinggi akan lolos.
+   **Stateful** mengingat koneksi dalam tabel. Anda cukup mengizinkan **arah inisiasi** (LAN → internet port 443); ketika balasan datang, firewall mencocokkannya dengan entri yang ada dan mengizinkannya otomatis. Paket dari port 443 yang **tidak** cocok dengan koneksi mana pun akan dibuang. Hasilnya jauh lebih aman dengan aturan yang jauh lebih sedikit.
 
 2. Karena **DMZ dirancang dengan asumsi ia akan diretas.** Server di DMZ (web, mail) menerima koneksi langsung dari internet, sehingga permukaan serangannya paling besar. Kalau salah satunya jatuh, penyerang mendapat pijakan di jaringan Anda.
-   Kalau `DMZ → LAN` diizinkan, penyerang bisa **melompat dari server DMZ yang diretas ke jaringan internal** — mengakses file server, database, workstation, dan Active Directory. Seluruh manfaat memisahkan DMZ hilang.
-   Kalau server DMZ **memang perlu** mengakses sesuatu di LAN (mis. database), izinkan **hanya** koneksi spesifik ke host dan port tertentu — bukan akses umum. Lebih baik lagi: tempatkan database di zona ketiga yang terpisah.
+   Kalau `DMZ → LAN` diizinkan, penyerang bisa **melompat dari server DMZ yang diretas ke jaringan internal** dan mengakses file server, database, workstation, dan Active Directory. Seluruh manfaat memisahkan DMZ hilang.
+   Kalau server DMZ **memang perlu** mengakses sesuatu di LAN (mis. database), izinkan **hanya** koneksi spesifik ke host dan port tertentu, bukan akses umum. Lebih baik lagi: tempatkan database di zona ketiga yang terpisah.
 
-3. **FastTrack melewati sebagian besar pemrosesan firewall, termasuk mangle dan queue.** Ketika sebuah koneksi ditandai `fasttrack-connection`, paket-paket berikutnya diteruskan lewat jalur cepat di kernel tanpa melalui rantai mangle — sehingga tidak pernah diberi packet mark, dan Simple Queue/Queue Tree yang bergantung pada mark itu tidak pernah diterapkan. Bahkan Simple Queue berbasis alamat pun terlewati pada banyak versi.
+3. **FastTrack melewati sebagian besar pemrosesan firewall, termasuk mangle dan queue.** Ketika sebuah koneksi ditandai `fasttrack-connection`, paket-paket berikutnya diteruskan lewat jalur cepat di kernel tanpa melalui rantai mangle, sehingga tidak pernah diberi packet mark, dan Simple Queue/Queue Tree yang bergantung pada mark itu tidak pernah diterapkan. Bahkan Simple Queue berbasis alamat pun terlewati pada banyak versi.
    **Solusi:** kecualikan trafik yang perlu di-queue dari FastTrack, mis. tandai koneksi yang perlu QoS lebih dulu dan terima (`accept`) sebelum aturan fasttrack, atau jangan pakai FastTrack sama sekali kalau QoS adalah prioritas. Trade-off-nya nyata: FastTrack bisa melipatgandakan throughput pada perangkat dengan CPU lemah.
 
-4. - **`input`** — trafik yang **ditujukan ke router itu sendiri**. Contoh: SSH/WinBox dari admin ke router, ping ke alamat router, query DNS ke router (kalau router menjadi resolver), permintaan DHCP dari klien, paket routing protocol (OSPF/BGP) yang ditujukan ke router.
-   - **`forward`** — trafik yang **melewati** router dari satu interface ke interface lain. Contoh: PC di LAN membuka situs web, klien mengakses server di DMZ, trafik antar-VLAN.
-   - **`output`** — trafik yang **dihasilkan router sendiri**. Contoh: ping dari CLI router, query DNS yang dilakukan router untuk dirinya sendiri, router mengunduh update, router mengirim log ke syslog server, router mengirim email notifikasi.
+4. - **`input`**: trafik yang **ditujukan ke router itu sendiri**. Contoh: SSH/WinBox dari admin ke router, ping ke alamat router, query DNS ke router (kalau router menjadi resolver), permintaan DHCP dari klien, paket routing protocol (OSPF/BGP) yang ditujukan ke router.
+   - **`forward`**: trafik yang **melewati** router dari satu interface ke interface lain. Contoh: PC di LAN membuka situs web, klien mengakses server di DMZ, trafik antar-VLAN.
+   - **`output`**: trafik yang **dihasilkan router sendiri**. Contoh: ping dari CLI router, query DNS yang dilakukan router untuk dirinya sendiri, router mengunduh update, router mengirim log ke syslog server, router mengirim email notifikasi.
 
-5. Kemungkinan besar **asymmetric routing** — paket pergi melewati satu jalur/firewall, sementara balasan kembali lewat firewall yang berbeda. Firewall kedua tidak memiliki entri koneksi untuk trafik itu (karena tidak pernah melihat paket SYN pergi), sehingga menandainya sebagai `invalid` dan membuangnya.
+5. Kemungkinan besar **asymmetric routing**: paket pergi melewati satu jalur/firewall, sementara balasan kembali lewat firewall yang berbeda. Firewall kedua tidak memiliki entri koneksi untuk trafik itu (karena tidak pernah melihat paket SYN pergi), sehingga menandainya sebagai `invalid` dan membuangnya.
    Kemungkinan lain: (a) **timeout koneksi** terlalu pendek sehingga entri sudah dihapus sebelum balasan datang (umum pada aplikasi dengan idle panjang); (b) **NAT** mengubah alamat sehingga tidak cocok dengan entri; (c) aturan `drop connection-state=invalid` membuang paket yang sebenarnya sah karena firewall kehilangan sinkronisasi (mis. setelah restart firewall di tengah koneksi); (d) firewall cluster tanpa sinkronisasi state, dan trafik berpindah node.
    **Diagnosis:** periksa tabel koneksi (`/ip firewall connection print` atau `conntrack -L`), dan lakukan capture di kedua arah untuk memastikan jalurnya simetris.
 
-6. Gunakan **`raw`** ketika Anda ingin membuang trafik **sebelum connection tracking memprosesnya**. Connection tracking memakan CPU dan memori untuk setiap paket dan setiap entri; pada serangan volume tinggi (DDoS, port scan masif, SYN flood), tabel koneksi bisa penuh dan router lumpuh — bahkan kalau aturan `filter` Anda akan membuang trafik itu.
+6. Gunakan **`raw`** ketika Anda ingin membuang trafik **sebelum connection tracking memprosesnya**. Connection tracking memakan CPU dan memori untuk setiap paket dan setiap entri; pada serangan volume tinggi (DDoS, port scan masif, SYN flood), tabel koneksi bisa penuh dan router lumpuh, bahkan kalau aturan `filter` Anda akan membuang trafik itu.
    Dengan menempatkan aturan drop di `raw/prerouting`, paket dibuang **sebelum** conntrack menyentuhnya, sehingga sangat hemat sumber daya.
    **Kasus penggunaan:** membuang bogon dari WAN, membuang alamat yang sudah di-blacklist DDoS, dan membuang trafik ke port yang jelas tidak dipakai. Untuk trafik normal yang perlu inspeksi state, tetap pakai `filter`. Anda juga bisa memakai `action=notrack` di `raw` untuk trafik volume tinggi yang tidak butuh state (mis. DNS server yang sangat sibuk).
 
@@ -606,11 +606,11 @@ Firewall khusus aplikasi web — memeriksa HTTP untuk SQL injection, XSS, dan se
 
 ## 12. Sumber
 
-- NIST SP 800-41 Rev.1 — Guidelines on Firewalls and Firewall Policy
+- NIST SP 800-41 Rev.1, Guidelines on Firewalls and Firewall Policy
 - Cisco, *Zone-Based Policy Firewall Design and Application Guide*
-- MikroTik — https://help.mikrotik.com/docs/display/ROS/Firewall
-- nftables wiki — https://wiki.nftables.org/
-- Suricata — https://suricata.io/ · Zeek — https://zeek.org/
+- MikroTik: https://help.mikrotik.com/docs/display/ROS/Firewall
+- nftables wiki: https://wiki.nftables.org/
+- Suricata: https://suricata.io/ · Zeek: https://zeek.org/
 - Cisco CCNA 200-301 v1.1, topik 5.1 (key security concepts) dan 5.6 (ACL)
 
 ---

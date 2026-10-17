@@ -17,17 +17,17 @@ Sinyal  : ───────────────────────�
 Penerima: "Ini berapa bit ya? 19? 20? 21?"
 ```
 
-Tanpa penanda, penerima kehilangan **sinkronisasi clock**. Kalau clock pengirim dan penerima berbeda 0,01% saja, setelah ribuan bit posisinya sudah bergeser satu bit penuh — dan seluruh data setelah itu salah.
+Tanpa penanda, penerima kehilangan **sinkronisasi clock**. Kalau clock pengirim dan penerima berbeda 0,01% saja, setelah ribuan bit posisinya sudah bergeser satu bit penuh, dan seluruh data setelah itu salah.
 
 Tiga cara mengatasi:
-1. **Kirim clock terpisah** — butuh kawat tambahan. Tidak praktis untuk jarak jauh.
-2. **Sepakati clock yang sangat akurat** — mahal, dan tetap drift.
-3. **Sisipkan transisi ke dalam data itu sendiri** ← **ini yang dipakai jaringan.**
+1. **Kirim clock terpisah**: butuh kawat tambahan. Tidak praktis untuk jarak jauh.
+2. **Sepakati clock yang sangat akurat**: mahal, dan tetap drift.
+3. **Sisipkan transisi ke dalam data itu sendiri** ← ini yang dipakai jaringan.
 
 Encoding yang baik memenuhi tiga syarat:
-- **Self-clocking** — cukup banyak transisi untuk menjaga sinkronisasi.
-- **DC balance** — jumlah `1` dan `0` seimbang, agar tidak ada tegangan rata-rata (penting untuk kopling transformator dan AC coupling).
-- **Efisien** — overhead sekecil mungkin.
+- **Self-clocking**: cukup banyak transisi untuk menjaga sinkronisasi.
+- **DC balance**: jumlah `1` dan `0` seimbang, agar tidak ada tegangan rata-rata (penting untuk kopling transformator dan AC coupling).
+- **Efisien**: overhead sekecil mungkin.
 
 ---
 
@@ -43,11 +43,11 @@ Bit    :  1     0     1     1     0     0     0
 Sinyal : ┘  └────────┘     └──────────────────
 ```
 
-- **Benar:** Sederhana, efisien (1 bit per simbol).
-- **Hindari:** Tidak self-clocking (deretan panjang bit sama = tidak ada transisi).
-- **Hindari:** Tidak DC balanced.
+- **Kelebihan:** sederhana, efisien (1 bit per simbol).
+- **Kekurangan:** tidak self-clocking (deretan panjang bit sama = tidak ada transisi).
+- **Kekurangan:** tidak DC balanced.
 
-Dipakai sebagai **dasar** di banyak standar, tetapi selalu dikombinasikan dengan scrambling atau block coding.
+Dipakai sebagai dasar di banyak standar, tetapi selalu dikombinasikan dengan scrambling atau block coding.
 
 ### 2.2 NRZ-I (Non-Return to Zero Inverted)
 
@@ -66,7 +66,7 @@ Sinyal : ┘     └─────┘              └────────
 
 ### 2.3 Manchester Encoding
 
-Setiap bit **selalu** punya transisi di tengah:
+Setiap bit selalu punya transisi di tengah:
 - `0` = transisi tinggi→rendah
 - `1` = transisi rendah→tinggi
 
@@ -77,9 +77,9 @@ Sinyal :  │ └─┐ ─┘ │   ─┘ │  ─┘ │
           ┘   └───┐│    ─┐│    ─┐
 ```
 
-- **Sempurna self-clocking** — transisi di setiap bit.
-- **Benar:** DC balanced.
-- **Efisiensi hanya 50%** — butuh baud rate 2× bit rate.
+- **Sempurna self-clocking**: transisi di setiap bit.
+- **DC balanced**.
+- **Efisiensi hanya 50%**: butuh baud rate 2× bit rate.
 
 Dipakai di **10BASE-T** (10 Mbps butuh 20 MHz sinyal) dan Ethernet lama. Tidak dipakai untuk kecepatan tinggi karena boros bandwidth.
 
@@ -105,7 +105,7 @@ Data (4 bit)  →  Kode (5 bit)
    ...
 ```
 
-- **Overhead 25%** — 100 Mbps data butuh 125 Mbaud di kabel.
+- **Overhead 25%**: 100 Mbps data butuh 125 Mbaud di kabel.
 - Kode yang tidak dipakai untuk data dijadikan **simbol kendali** (idle, start, end of stream).
 - Dipakai di **100BASE-TX** (dikombinasikan dengan MLT-3) dan FDDI.
 
@@ -113,14 +113,14 @@ Data (4 bit)  →  Kode (5 bit)
 
 Setiap 8 bit → 10 bit. Menjaga DC balance secara aktif dengan **running disparity** (melacak kelebihan `1` atau `0` dan memilih varian kode yang menyeimbangkan).
 
-- **Overhead 25%** — 1 Gbps data butuh 1,25 Gbaud.
+- **Overhead 25%**: 1 Gbps data butuh 1,25 Gbaud.
 - Dipakai di **1000BASE-X** (fiber gigabit), Fibre Channel, PCIe gen 1/2, SATA, DisplayPort.
 
 ### 3.3 64B/66B
 
 Setiap 64 bit → 66 bit (2 bit sync header + 64 bit data yang di-*scramble*).
 
-- **Overhead hanya 3,125%** — jauh lebih efisien.
+- **Overhead hanya 3,125%**, jauh lebih efisien.
 - Scrambling (bukan tabel lookup) menjamin transisi secara statistik.
 - Dipakai di **10GBASE-R**, 40G, 100G.
 
@@ -144,7 +144,7 @@ Overhead ~0,4%. Dipakai di 200G/400G bersama FEC.
 
 ## 4. Multi-Level Signaling: Lebih Banyak Bit per Simbol
 
-Sampai sini kita masih 1 bit per simbol. Untuk naik lebih cepat tanpa menaikkan frekuensi, gunakan **lebih banyak level tegangan**.
+Sampai sini kita masih 1 bit per simbol. Untuk naik lebih cepat tanpa menaikkan frekuensi, gunakan lebih banyak level tegangan.
 
 ### PAM (Pulse Amplitude Modulation)
 
@@ -179,7 +179,7 @@ Plus: transmisi dua arah bersamaan (echo cancellation)
 Plus: Trellis coding untuk koreksi error
 ```
 
-Ini contoh cemerlang rekayasa: alih-alih menuntut kabel yang lebih baik, kompleksitas dipindahkan ke chip (DSP) yang harganya terus turun.
+Di sini kompleksitas dipindahkan ke chip (DSP) yang harganya terus turun, alih-alih menuntut kabel yang lebih baik.
 
 ### Contoh: 10GBASE-T
 
@@ -189,7 +189,7 @@ PAM16 dengan DSP canggih + LDPC FEC
 Butuh bandwidth 400–500 MHz → karena itu wajib Cat6A
 ```
 
-Ini juga menjelaskan kenapa 10GBASE-T memakan **daya jauh lebih besar** (2-5 W per port) daripada 10G fiber (~1 W): DSP-nya bekerja sangat keras.
+Ini juga menjelaskan kenapa 10GBASE-T memakan daya jauh lebih besar (2-5 W per port) daripada 10G fiber (~1 W): DSP-nya bekerja sangat keras.
 
 ---
 
@@ -207,9 +207,9 @@ PSK (Phase Shift Keying)      — ubah fase
 
 ### QAM (Kombinasi Amplitudo dan Fase)
 
-**QAM** (*Quadrature Amplitude Modulation*) menggabungkan perubahan amplitudo **dan** fase, sehingga satu simbol bisa membawa banyak bit.
+**QAM** (*Quadrature Amplitude Modulation*) menggabungkan perubahan amplitudo dan fase, sehingga satu simbol bisa membawa banyak bit.
 
-Digambarkan sebagai **constellation diagram** — setiap titik = satu kombinasi amplitudo+fase = satu pola bit:
+Digambarkan sebagai **constellation diagram**, dengan setiap titik = satu kombinasi amplitudo+fase = satu pola bit:
 
 ```
    QPSK (4-QAM)          16-QAM                256-QAM
@@ -231,7 +231,7 @@ Digambarkan sebagai **constellation diagram** — setiap titik = satu kombinasi 
 | **1024-QAM** | 10 | ~34 dB | **Wi-Fi 6** (802.11ax) |
 | **4096-QAM** | 12 | ~40+ dB | **Wi-Fi 7** (802.11be) |
 
-**Inilah penjelasan teknis fenomena sehari-hari:**
+Inilah penjelasan teknis untuk fenomena sehari-hari:
 
 > Klien yang dekat AP (SNR tinggi) mendapat 4096-QAM → sangat cepat.
 > Klien yang jauh (SNR rendah) turun ke QPSK → 6× lebih lambat.
@@ -249,17 +249,17 @@ Kanal 20 MHz dengan OFDM: ▌▌▌▌▌▌▌▌▌▌▌▌▌▌▌▌▌▌
 ```
 
 Keunggulan:
-- **Tahan multipath** — setiap subcarrier sempit sehingga pantulan tidak merusaknya (symbol time panjang relatif terhadap delay spread).
-- **Adaptif** — subcarrier yang terganggu bisa dimatikan atau diberi modulasi lebih rendah, sementara yang bersih tetap cepat.
+- **Tahan multipath**: setiap subcarrier sempit sehingga pantulan tidak merusaknya (symbol time panjang relatif terhadap delay spread).
+- **Adaptif**: subcarrier yang terganggu bisa dimatikan atau diberi modulasi lebih rendah, sementara yang bersih tetap cepat.
 - Dipakai di Wi-Fi (sejak 802.11a/g), LTE, 5G, DSL, DOCSIS.
 
-**OFDMA** (Wi-Fi 6 dan seterusnya) melangkah lebih jauh: subcarrier dibagi menjadi **Resource Unit (RU)** yang bisa dialokasikan ke **klien berbeda pada waktu yang sama**. Sebelumnya, satu transmisi = satu klien; dengan OFDMA, satu transmisi bisa melayani beberapa klien sekaligus — sangat efisien untuk banyak perangkat kecil (IoT, ponsel).
+**OFDMA** (Wi-Fi 6 dan seterusnya) melangkah lebih jauh: subcarrier dibagi menjadi **Resource Unit (RU)** yang bisa dialokasikan ke klien berbeda pada waktu yang sama. Sebelumnya, satu transmisi = satu klien; dengan OFDMA, satu transmisi bisa melayani beberapa klien sekaligus. Ini sangat efisien untuk banyak perangkat kecil (IoT, ponsel).
 
 ---
 
 ## 6. FEC (Forward Error Correction)
 
-Pada kecepatan sangat tinggi, error tidak bisa dihindari. Mengirim ulang terlalu lambat. Solusinya: **kirim informasi redundan sehingga penerima bisa memperbaiki error sendiri.**
+Pada kecepatan sangat tinggi, error tidak bisa dihindari, dan mengirim ulang terlalu lambat. Solusinya: kirim informasi redundan sehingga penerima bisa memperbaiki error sendiri.
 
 ```
 Data asli   : 1011
@@ -276,7 +276,7 @@ Jenis FEC yang dipakai:
 | Trellis coding | 1000BASE-T |
 | Convolutional | Wi-Fi lama, satelit |
 
-**Trade-off:** FEC menambah overhead (biasanya 2-7%) dan **latency** (butuh mengumpulkan blok sebelum bisa mendekode). Untuk aplikasi latency-kritis (HFT, beberapa aplikasi AI/HPC), ada mode "FEC bypass" atau FEC ringan.
+**Trade-off:** FEC menambah overhead (biasanya 2-7%) dan latency (butuh mengumpulkan blok sebelum bisa mendekode). Untuk aplikasi latency-kritis (HFT, beberapa aplikasi AI/HPC), ada mode "FEC bypass" atau FEC ringan.
 
 > [!WARNING]
 > **Masalah interoperabilitas nyata:** mode FEC yang tidak cocok antara dua ujung link 25G/100G menyebabkan link tidak naik atau naik dengan error tinggi. Ini penyebab umum masalah 25G di data center.
@@ -334,7 +334,7 @@ Hasil: Switch full duplex, PC half duplex → DUPLEX MISMATCH
 
 **Aturan emas:**
 > **Auto di kedua sisi, ATAU hard-code di kedua sisi. Jangan campur.**
-> Untuk 1000BASE-T ke atas, auto-negotiation adalah **wajib** menurut standar — jangan pernah mematikannya.
+> Untuk 1000BASE-T ke atas, auto-negotiation wajib menurut standar, jadi jangan pernah mematikannya.
 
 Deteksi:
 ```
@@ -362,8 +362,8 @@ SW1# show interfaces gi0/1 | include duplex|collision|error
 | 25GBASE-R | 64B/66B + RS-FEC | NRZ | 25,78 Gbaud |
 | 100GBASE-SR4 | 64B/66B | NRZ, 4 jalur | 25,78 Gbaud × 4 |
 | 400GBASE-DR4 | 256B/257B + RS-FEC | **PAM4**, 4 jalur | 53,125 Gbaud × 4 |
-| Wi-Fi 6 (11ax) | LDPC | OFDMA + 1024-QAM | — |
-| Wi-Fi 7 (11be) | LDPC | OFDMA + 4096-QAM, MLO | — |
+| Wi-Fi 6 (11ax) | LDPC | OFDMA + 1024-QAM | - |
+| Wi-Fi 7 (11be) | LDPC | OFDMA + 4096-QAM, MLO | - |
 
 Pola yang terlihat:
 1. Overhead encoding turun (100% → 25% → 3% → 0,4%)
@@ -423,20 +423,20 @@ SW1# show interfaces counters errors
 > **4. Mengira "link naik = semuanya baik".** Duplex mismatch memberi link yang naik tetapi kinerja hancur.
 
 > [!WARNING]
-> **5. Mengharapkan Wi-Fi mencapai kecepatan maksimum di semua jarak.** Modulasi turun otomatis seiring SNR menurun — ini fitur, bukan bug.
+> **5. Mengharapkan Wi-Fi mencapai kecepatan maksimum di semua jarak.** Modulasi turun otomatis seiring SNR menurun. Ini fitur, bukan bug.
 
 ---
 
 ## 11. Ringkasan
 
-- Encoding harus **self-clocking** dan **DC balanced**, bukan sekadar memetakan 1/0.
+- Selain memetakan 1/0, encoding harus **self-clocking** dan **DC balanced**.
 - Manchester (10BASE-T) boros 100%; block coding jauh lebih efisien: 4B/5B (25%), 8B/10B (25%), **64B/66B (3,1%)**, 256B/257B (0,4%).
-- Multi-level signaling (PAM4/PAM5/PAM16) menaikkan bit per simbol tanpa menaikkan frekuensi — dibatasi SNR.
+- Multi-level signaling (PAM4/PAM5/PAM16) menaikkan bit per simbol tanpa menaikkan frekuensi, dengan batas yang ditentukan SNR.
 - 1000BASE-T: 4 pasang × PAM5 × dua arah + echo cancellation → 1 Gbps di Cat5e.
 - **QAM**: makin banyak titik konstelasi, makin banyak bit/simbol, makin butuh SNR tinggi. Wi-Fi 6 = 1024-QAM, Wi-Fi 7 = 4096-QAM.
 - **OFDM/OFDMA** membagi kanal menjadi subcarrier; tahan multipath dan bisa melayani banyak klien sekaligus.
 - **FEC** memperbaiki error tanpa retransmisi; wajib di 25G ke atas; mismatch FEC = link gagal.
-- **Auto-negotiation**: auto di kedua sisi atau hard-code di kedua sisi — jangan campur. **Late collision = tanda duplex mismatch.**
+- **Auto-negotiation**: auto di kedua sisi atau hard-code di kedua sisi; jangan campur. **Late collision = tanda duplex mismatch.**
 
 ---
 
@@ -453,17 +453,17 @@ SW1# show interfaces counters errors
 <details>
 <summary>Jawaban</summary>
 
-1. Karena efisiensinya hanya 50% — butuh baud rate 2× bit rate. Untuk 1 Gbps berarti 2 Gbaud, yang jauh melampaui bandwidth kabel Cat5e (100 MHz). Encoding modern memakai overhead jauh lebih kecil plus multi-level signaling.
+1. Karena efisiensinya hanya 50%: butuh baud rate 2× bit rate. Untuk 1 Gbps berarti 2 Gbaud, yang jauh melampaui bandwidth kabel Cat5e (100 MHz). Encoding modern memakai overhead jauh lebih kecil plus multi-level signaling.
 
 2. 10 Gbps × (66/64) = **10,3125 Gbaud**. Overhead 64B/66B hanya 3,125%.
 
 3. Tiga teknik digabung: (a) **4 pasang dipakai paralel** → 250 Mbps per pasang; (b) **PAM5** memberi efektif 2 bit per simbol → 125 Mbaud per pasang, masih dalam bandwidth Cat5e; (c) **transmisi dua arah bersamaan** pada setiap pasang menggunakan echo cancellation di DSP. Ditambah Trellis coding untuk koreksi error. Kompleksitasnya ada di chip, bukan di kabel.
 
-4. (a) **SNR rendah walaupun RSSI tinggi** — ada sumber interferensi kuat di kanal yang sama (noise floor tinggi), sehingga modulasi turun ke tingkat rendah. (b) **Co-channel interference / kanal padat** — banyak perangkat berbagi airtime sehingga throughput per klien rendah meski modulasi tinggi. Kemungkinan lain: klien hanya mendukung standar/spatial stream lebih rendah, atau AP kekurangan daya PoE sehingga radio berjalan di mode terbatas.
+4. (a) **SNR rendah walaupun RSSI tinggi**: ada sumber interferensi kuat di kanal yang sama (noise floor tinggi), sehingga modulasi turun ke tingkat rendah. (b) **Co-channel interference / kanal padat**: banyak perangkat berbagi airtime sehingga throughput per klien rendah meski modulasi tinggi. Kemungkinan lain: klien hanya mendukung standar/spatial stream lebih rendah, atau AP kekurangan daya PoE sehingga radio berjalan di mode terbatas.
 
 5. **Duplex mismatch.** Sisi yang half-duplex mendeteksi late collision (karena sisi lain mengirim kapan saja), sedangkan sisi full-duplex melihat frame rusak sebagai CRC error. Perbaikan: set kedua sisi ke auto-negotiation (atau hard-code identik di kedua sisi).
 
-6. Karena 10GBASE-T harus melawan keterbatasan kabel tembaga: PAM16 dengan 16 level tegangan yang sangat rapat, transmisi dua arah pada 4 pasang, echo cancellation, crosstalk cancellation, dan LDPC FEC — semuanya memerlukan **DSP yang bekerja sangat intensif**. 10GBASE-SR di serat hanya perlu NRZ sederhana dengan 64B/66B karena serat jauh lebih "bersih".
+6. Karena 10GBASE-T harus melawan keterbatasan kabel tembaga: PAM16 dengan 16 level tegangan yang sangat rapat, transmisi dua arah pada 4 pasang, echo cancellation, crosstalk cancellation, dan LDPC FEC. Semuanya memerlukan **DSP yang bekerja sangat intensif**. 10GBASE-SR di serat hanya perlu NRZ sederhana dengan 64B/66B karena serat jauh lebih "bersih".
 
 7. **Mode FEC yang tidak cocok.** Pada 25G, ada beberapa mode: RS-FEC (Clause 91), FC-FEC/BASE-R (Clause 74), dan no-FEC. Jika kedua ujung memakai mode berbeda, link tidak akan naik. Periksa dan samakan dengan `show interface ... | include FEC` lalu set eksplisit di kedua sisi. Periksa juga auto-negotiation 25G (Clause 73) yang perilakunya bisa berbeda antar-vendor.
 
@@ -474,8 +474,8 @@ SW1# show interfaces counters errors
 ## 13. Sumber
 
 - IEEE 802.3 Clause 23 (Manchester), 24 (4B/5B), 36 (8B/10B), 49 (64B/66B), 91 (RS-FEC)
-- IEEE 802.3 Clause 28 — Auto-Negotiation
-- IEEE 802.11-2020 — modulasi & OFDM Wi-Fi
+- IEEE 802.3 Clause 28: Auto-Negotiation
+- IEEE 802.11-2020: modulasi & OFDM Wi-Fi
 - Cisco, *Troubleshooting Ethernet Collisions and Duplex Mismatch*
 
 ---

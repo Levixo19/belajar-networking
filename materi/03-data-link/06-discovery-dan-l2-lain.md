@@ -1,6 +1,6 @@
 # 03.6 CDP, LLDP, dan Protokol Layer 2 Lainnya
 
-> **Prasyarat:** `03-data-link/01`–`05`
+> **Prasyarat:** `03-data-link/01`-`05`
 > **Tujuan:** Anda bisa memetakan topologi jaringan dengan CDP/LLDP, memahami risiko keamanannya, dan mengenal protokol L2 warisan yang masih Anda temui.
 
 ---
@@ -10,7 +10,7 @@
 Protocol proprietary Cisco yang membuat perangkat saling mengumumkan identitas ke tetangga langsungnya.
 
 - Dikirim setiap **60 detik** ke MAC multicast `01:00:0C:CC:CC:CC`
-- **Holdtime 180 detik** — informasi tetangga dihapus jika tidak ada CDP selama itu
+- **Holdtime 180 detik**: informasi tetangga dihapus jika tidak ada CDP selama itu
 - Bekerja di layer 2 → **tidak butuh IP address**, berguna saat troubleshooting
 
 ### Informasi yang dibawa
@@ -102,7 +102,7 @@ SW1(config-if)# cdp enable
 
 ## 2. LLDP (Link Layer Discovery Protocol (IEEE 802.1AB))
 
-Setara CDP tetapi **standar terbuka** — bekerja antar-vendor.
+Setara CDP, tetapi berupa standar terbuka yang bekerja antar-vendor.
 
 - MAC multicast `01:80:C2:00:00:0E`
 - Default: kirim setiap **30 detik**, holdtime **120 detik**
@@ -125,15 +125,15 @@ SW1# show lldp interface
 ```
 
 > [!WARNING]
-> Perhatikan `lldp transmit` dan `lldp receive` terpisah — Anda bisa mengaktifkan hanya salah satu. Ini berguna untuk keamanan: terima informasi tetangga tanpa mengungkap milik Anda.
+> Perhatikan bahwa `lldp transmit` dan `lldp receive` terpisah, jadi Anda bisa mengaktifkan hanya salah satu. Ini berguna untuk keamanan: terima informasi tetangga tanpa mengungkap milik Anda.
 
 ### LLDP-MED
 
 Ekstensi LLDP untuk perangkat *Media Endpoint* (telepon IP, kamera, AP). Menambahkan:
-- **Network policy TLV** — memberi tahu endpoint VLAN dan prioritas QoS yang harus dipakai
-- **Extended power via MDI** — negosiasi daya PoE yang lebih presisi daripada klasifikasi hardware
-- **Location identification** — lokasi fisik (penting untuk panggilan darurat E911)
-- **Inventory** — model, serial number, firmware
+- **Network policy TLV**: memberi tahu endpoint VLAN dan prioritas QoS yang harus dipakai
+- **Extended power via MDI**: negosiasi daya PoE yang lebih presisi daripada klasifikasi hardware
+- **Location identification**: lokasi fisik (penting untuk panggilan darurat E911)
+- **Inventory**: model, serial number, firmware
 
 ```
 SW1(config-if)# switchport voice vlan 110
@@ -177,7 +177,7 @@ $ lldpcli show neighbors detail
 ```
 
 > [!TIP]
-> **Sangat berguna untuk server:** administrator server bisa langsung tahu switch dan port mana yang terhubung tanpa menelusuri kabel atau meminta bantuan tim jaringan.
+> **Berguna untuk server:** administrator server bisa langsung tahu switch dan port mana yang terhubung tanpa menelusuri kabel atau meminta bantuan tim jaringan.
 
 ---
 
@@ -215,7 +215,7 @@ Protokol layer 2 untuk link point-to-point (serial WAN, DSL, dial-up). Masih rel
 |---|---|---|
 | Kepanjangan | Password Authentication Protocol | Challenge Handshake Authentication Protocol |
 | Cara kerja | Kirim username & password **plaintext** | Challenge-response dengan hash MD5 |
-| Keamanan | ❌ Buruk (password terlihat) | ✅ Password tidak pernah dikirim |
+| Keamanan | Buruk (password terlihat) | Baik (password tidak pernah dikirim) |
 | Frekuensi | Sekali saat koneksi | Berulang selama koneksi |
 
 **Cara kerja CHAP:**
@@ -240,7 +240,7 @@ R1# debug ppp authentication
 
 ### PPPoE
 
-PPP di atas Ethernet — dipakai oleh ISP DSL/fiber untuk autentikasi pelanggan dan pemberian IP.
+PPPoE adalah PPP di atas Ethernet. ISP DSL/fiber memakainya untuk autentikasi pelanggan dan pemberian IP.
 
 ```
 [PC] ── Ethernet ── [Router] ── PPPoE ── [ISP BRAS]
@@ -255,7 +255,7 @@ R1(config-if)# ip tcp adjust-mss 1452
 
 ### HDLC
 
-Protokol serial sederhana. **Cisco HDLC** adalah varian proprietary yang menambahkan field protokol (agar bisa membawa banyak protokol L3). Default encapsulation pada interface serial Cisco.
+Protokol serial sederhana. **Cisco HDLC** adalah varian proprietary yang menambahkan field protokol (agar bisa membawa banyak protokol L3). Ini adalah encapsulation default pada interface serial Cisco.
 
 > [!WARNING]
 > Cisco HDLC tidak interoperable dengan HDLC vendor lain. Untuk link antar-vendor, gunakan **PPP**.
@@ -269,23 +269,23 @@ Anda tidak akan mengonfigurasinya di jaringan baru, tetapi mungkin menemuinya di
 ### Frame Relay
 
 - Teknologi WAN packet-switched tahun 1990-an, menggantikan leased line yang mahal.
-- Konsep kunci:
-  - **DLCI** (*Data Link Connection Identifier*) — identitas circuit virtual, bermakna **lokal** saja
-  - **PVC** (*Permanent Virtual Circuit*) — jalur virtual permanen antar-lokasi
-  - **CIR** (*Committed Information Rate*) — bandwidth yang dijamin
-  - **LMI** (*Local Management Interface*) — pensinyalan status PVC
-  - **FECN/BECN** — notifikasi congestion
-  - **Inverse ARP** — memetakan DLCI ke alamat IP secara otomatis
+- Istilah yang perlu dikenal:
+  - **DLCI** (*Data Link Connection Identifier*): identitas circuit virtual, bermakna lokal saja
+  - **PVC** (*Permanent Virtual Circuit*): jalur virtual permanen antar-lokasi
+  - **CIR** (*Committed Information Rate*): bandwidth yang dijamin
+  - **LMI** (*Local Management Interface*): pensinyalan status PVC
+  - **FECN/BECN**: notifikasi congestion
+  - **Inverse ARP**: memetakan DLCI ke alamat IP secara otomatis
 - Masalah klasik: **split horizon** pada topologi hub-and-spoke dengan interface multipoint (routing update dari satu spoke tidak diteruskan ke spoke lain) → solusinya subinterface point-to-point.
 
 ### ATM
 
-- *Asynchronous Transfer Mode* — memakai **sel tetap 53 byte** (48 data + 5 header).
+- ATM (*Asynchronous Transfer Mode*) memakai **sel tetap 53 byte** (48 data + 5 header).
 - Dirancang untuk membawa suara, video, dan data dengan QoS ketat.
-- "Cell tax" — overhead ~9% membuatnya tidak efisien untuk data.
+- "Cell tax": overhead ~9% membuatnya tidak efisien untuk data.
 - Kalah dari Ethernet + IP. Masih terpakai di sebagian backbone DSL warisan.
 
-**Pelajaran dari keduanya:** teknologi yang secara teknis lebih canggih bisa kalah oleh yang lebih sederhana dan murah. Ethernet menang lagi.
+Keduanya menunjukkan bahwa teknologi yang secara teknis lebih canggih bisa kalah oleh yang lebih sederhana dan murah, dalam hal ini Ethernet.
 
 ---
 
@@ -300,7 +300,7 @@ Autentikasi di layer 2 sebelum port diizinkan melewatkan trafik.
   (PC/laptop)             (switch)                    (ISE/FreeRADIUS)
 ```
 
-- **EAPOL** (EtherType `0x888E`) — pembawa pesan EAP di Ethernet
+- **EAPOL** (EtherType `0x888E`): pembawa pesan EAP di Ethernet
 - Port tetap tertutup sampai autentikasi berhasil
 - Bisa memberikan VLAN dinamis, dACL, dan SGT berdasarkan identitas pengguna
 
@@ -312,7 +312,7 @@ Enkripsi di layer 2, hop-by-hop antar-perangkat.
 
 - Mengenkripsi seluruh frame (termasuk header L3 ke atas) di kabel
 - Melindungi dari penyadapan fisik pada kabel di antara dua switch
-- Berbeda dari IPsec (L3, end-to-end) — MACsec hanya melindungi satu link
+- Berbeda dari IPsec (L3, end-to-end), MACsec hanya melindungi satu link
 
 ### LLDP-MED, CDP untuk telepon
 Sudah dibahas di §1-2.
@@ -392,7 +392,7 @@ def crawl(ip, username, password, visited=None):
 
 ### MNDP, CDP, dan LLDP
 
-RouterOS punya protokol penemuannya sendiri — **MNDP** (MikroTik Neighbor Discovery Protocol) — dan juga bisa berbicara CDP dan LLDP.
+RouterOS punya protokol penemuannya sendiri, **MNDP** (MikroTik Neighbor Discovery Protocol), dan juga bisa berbicara CDP dan LLDP.
 
 ```
 # Lihat tetangga (menggabungkan MNDP + CDP + LLDP)
@@ -414,7 +414,7 @@ Address    MAC-Address       Identity      Version    Board     Interface
 ```
 
 > [!WARNING]
-> **MNDP/CDP/LLDP membocorkan informasi berharga** — hostname, versi RouterOS (untuk mencari exploit), model perangkat, alamat IP. **Selalu batasi ke interface internal saja.**
+> **MNDP/CDP/LLDP membocorkan informasi berharga**: hostname, versi RouterOS (untuk mencari exploit), model perangkat, alamat IP. Selalu batasi ke interface internal saja.
 
 ### PPPoE
 
@@ -455,7 +455,7 @@ MikroTik sangat sering dipakai sebagai PPPoE server (ISP/RT-RW Net) maupun clien
 ```
 
 > [!TIP]
-> **`rate-limit`** di profile PPP memberi pembatasan bandwidth per pelanggan secara otomatis — inilah alasan MikroTik dominan untuk RT/RW-Net dan ISP kecil di Indonesia. Format: `rx/tx` atau lengkap `rx/tx rx-burst/tx-burst rx-burst-threshold/tx-burst-threshold rx-burst-time/tx-burst-time priority rx-min/tx-min`.
+> **`rate-limit`** di profile PPP memberi pembatasan bandwidth per pelanggan secara otomatis. Inilah alasan MikroTik dominan untuk RT/RW-Net dan ISP kecil di Indonesia. Format: `rx/tx` atau lengkap `rx/tx rx-burst/tx-burst rx-burst-threshold/tx-burst-threshold rx-burst-time/tx-burst-time priority rx-min/tx-min`.
 
 ### EoIP: Ethernet over IP
 
@@ -474,7 +474,7 @@ Tunnel layer 2 khas MikroTik yang membawa frame Ethernet penuh di atas IP.
 Hasilnya: dua LAN yang terpisah secara geografis menjadi **satu broadcast domain**.
 
 > [!WARNING]
-> **EoIP memperluas domain broadcast dan STP lintas WAN** — satu masalah di satu sisi bisa melumpuhkan sisi lain. Gunakan dengan sangat hati-hati, dan **selalu di dalam tunnel terenkripsi** (IPsec atau WireGuard) karena EoIP sendiri tidak terenkripsi.
+> **EoIP memperluas domain broadcast dan STP lintas WAN.** Satu masalah di satu sisi bisa melumpuhkan sisi lain. Gunakan dengan hati-hati, dan selalu di dalam tunnel terenkripsi (IPsec atau WireGuard) karena EoIP sendiri tidak terenkripsi.
 
 ```
 # EoIP dengan IPsec
@@ -498,7 +498,7 @@ Hasilnya: dua LAN yang terpisah secara geografis menjadi **satu broadcast domain
 
 - **CDP** (Cisco, aktif default, 60 s/180 s) dan **LLDP** (IEEE 802.1AB, nonaktif default di Cisco, 30 s/120 s) mengumumkan identitas ke tetangga langsung.
 - Keduanya bekerja di L2 → berguna untuk troubleshooting tanpa IP.
-- Informasi yang dibawa sangat berharga bagi administrator **dan bagi penyerang** — matikan di port yang menghadap pengguna/eksternal.
+- Informasi yang dibawa berharga bagi administrator dan juga bagi penyerang, jadi matikan di port yang menghadap pengguna/eksternal.
 - **LLDP-MED** memberi telepon IP informasi voice VLAN, QoS, daya PoE, dan lokasi.
 - `show cdp/lldp neighbors` di setiap perangkat = peta topologi.
 - **PPP** untuk link point-to-point; **CHAP** lebih aman daripada PAP. **PPPoE** mengurangi MTU ke 1492 → butuh MSS clamping.
@@ -521,15 +521,15 @@ Hasilnya: dua LAN yang terpisah secara geografis menjadi **satu broadcast domain
 
 1. CDP adalah **proprietary Cisco** dan **aktif secara default** di perangkat Cisco; LLDP adalah **standar IEEE 802.1AB** yang bekerja **antar-vendor** tetapi harus diaktifkan manual di Cisco. Gunakan CDP di lingkungan Cisco murni (dan untuk telepon Cisco lama); gunakan LLDP di lingkungan multi-vendor. Di jaringan campuran, aktifkan keduanya.
 
-2. Telepon IP Cisco memakai **CDP** untuk mengetahui voice VLAN dan menegosiasikan daya PoE. Mematikan CDP memutus mekanisme itu. Solusi: (a) aktifkan kembali CDP **hanya** di port telepon, atau (b) aktifkan **LLDP-MED** yang menyediakan fungsi setara secara standar — pastikan telepon mendukungnya. Kombinasi `switchport voice vlan 110` + LLDP-MED bekerja untuk telepon multi-vendor modern.
+2. Telepon IP Cisco memakai **CDP** untuk mengetahui voice VLAN dan menegosiasikan daya PoE. Mematikan CDP memutus mekanisme itu. Solusi: (a) aktifkan kembali CDP hanya di port telepon, atau (b) aktifkan **LLDP-MED** yang menyediakan fungsi setara secara standar (pastikan telepon mendukungnya). Kombinasi `switchport voice vlan 110` + LLDP-MED bekerja untuk telepon multi-vendor modern.
 
-3. **Masalah MTU.** PPPoE menambah 8 byte overhead sehingga MTU efektif 1492, bukan 1500. Situs yang mengirim paket besar dengan bit DF diset akan gagal jika ICMP "Fragmentation Needed" diblokir di suatu tempat (PMTUD gagal) → koneksi terbentuk tetapi transfer menggantung. Perbaikan: **MSS clamping** di router — `ip tcp adjust-mss 1452` pada interface yang menghadap LAN, sehingga TCP menegosiasikan segmen yang muat.
+3. **Masalah MTU.** PPPoE menambah 8 byte overhead sehingga MTU efektif 1492, bukan 1500. Situs yang mengirim paket besar dengan bit DF diset akan gagal jika ICMP "Fragmentation Needed" diblokir di suatu tempat (PMTUD gagal) → koneksi terbentuk tetapi transfer menggantung. Perbaikan: **MSS clamping** di router, yaitu `ip tcp adjust-mss 1452` pada interface yang menghadap LAN, sehingga TCP menegosiasikan segmen yang muat.
 
-4. **PAP** mengirim username dan password dalam **plaintext** — siapa pun yang menyadap link bisa membacanya. **CHAP** tidak pernah mengirim password: server mengirim challenge acak, klien membalas dengan hash MD5(ID + password + challenge). Penyadap hanya melihat hash yang berbeda setiap kali, dan tidak bisa memakainya ulang karena challenge selalu baru. CHAP juga mengulang verifikasi secara berkala selama sesi, sehingga melindungi dari pembajakan sesi.
+4. **PAP** mengirim username dan password dalam plaintext, sehingga siapa pun yang menyadap link bisa membacanya. **CHAP** tidak pernah mengirim password: server mengirim challenge acak, klien membalas dengan hash MD5(ID + password + challenge). Penyadap hanya melihat hash yang berbeda setiap kali, dan tidak bisa memakainya ulang karena challenge selalu baru. CHAP juga mengulang verifikasi secara berkala selama sesi, sehingga melindungi dari pembajakan sesi.
 
-5. CDP/LLDP tidak menunjukkan MAC end device secara langsung, tetapi memberi **peta topologi** yang diperlukan untuk menelusuri. Prosesnya: (a) di switch mana pun, `show mac address-table address <MAC>` menunjukkan port tempat MAC itu terlihat; (b) jika port itu adalah **uplink**, gunakan `show cdp neighbors <port>` untuk mengetahui switch berikutnya; (c) SSH ke switch itu dan ulangi; (d) berhenti ketika MAC terlihat di port **access** — itulah port fisiknya.
+5. CDP/LLDP tidak menunjukkan MAC end device secara langsung, tetapi memberi **peta topologi** yang diperlukan untuk menelusuri. Prosesnya: (a) di switch mana pun, `show mac address-table address <MAC>` menunjukkan port tempat MAC itu terlihat; (b) jika port itu adalah **uplink**, gunakan `show cdp neighbors <port>` untuk mengetahui switch berikutnya; (c) SSH ke switch itu dan ulangi; (d) berhenti ketika MAC terlihat di port access; itulah port fisiknya.
 
-6. Dua alasan utama: (a) **Batas skala** — VLAN ID hanya 12 bit → maksimum 4096 segmen, tidak cukup untuk cloud/data center multi-tenant. VXLAN memakai VNI 24 bit → 16 juta segmen. (b) **Batas topologi** — VLAN memerlukan jalur layer 2 yang bersambung, sehingga memperluas domain STP dan failure domain. VXLAN membawa frame L2 di dalam paket IP, sehingga bisa melintasi jaringan L3 mana pun (termasuk antar-data-center) sambil tetap memakai ECMP dan routing yang stabil, tanpa memperbesar domain STP.
+6. Dua alasan utama: (a) **Batas skala**: VLAN ID hanya 12 bit → maksimum 4096 segmen, tidak cukup untuk cloud/data center multi-tenant. VXLAN memakai VNI 24 bit → 16 juta segmen. (b) **Batas topologi**: VLAN memerlukan jalur layer 2 yang bersambung, sehingga memperluas domain STP dan failure domain. VXLAN membawa frame L2 di dalam paket IP, sehingga bisa melintasi jaringan L3 mana pun (termasuk antar-data-center) sambil tetap memakai ECMP dan routing yang stabil, tanpa memperbesar domain STP.
 
 </details>
 
@@ -537,12 +537,12 @@ Hasilnya: dua LAN yang terpisah secara geografis menjadi **satu broadcast domain
 
 ## 9. Sumber
 
-- IEEE 802.1AB-2016 — Link Layer Discovery Protocol
-- ANSI/TIA-1057 — LLDP-MED
-- RFC 1661 — Point-to-Point Protocol (PPP)
-- RFC 1994 — PPP CHAP
-- RFC 2516 — PPPoE
-- RFC 7348 — VXLAN
+- IEEE 802.1AB-2016: Link Layer Discovery Protocol
+- ANSI/TIA-1057: LLDP-MED
+- RFC 1661: Point-to-Point Protocol (PPP)
+- RFC 1994: PPP CHAP
+- RFC 2516: PPPoE
+- RFC 7348: VXLAN
 - Cisco CCNA 200-301 v1.1, topik 2.3 (Layer 2 discovery protocols: CDP dan LLDP)
 
 ---

@@ -7,7 +7,7 @@
 
 ## 1. Cara Serat Optik Bekerja
 
-Serat optik membawa **cahaya**, bukan listrik. Prinsipnya **total internal reflection** (pemantulan internal sempurna).
+Serat optik membawa cahaya, bukan listrik. Prinsipnya **total internal reflection** (pemantulan internal sempurna).
 
 ```
    Penampang memanjang serat:
@@ -69,21 +69,21 @@ Keluar tersebar:  ▮  ▮  ▮
 
 Pulsa yang tadinya tajam menjadi melebar. Kalau melebar sampai tumpang tindih dengan pulsa berikutnya, penerima tidak bisa membedakan bit. Ini yang membatasi **jarak × bandwidth** MMF.
 
-Pada SMF, core sangat kecil sehingga hanya satu mode yang bisa merambat — tidak ada dispersi modal. Yang tersisa hanya dispersi kromatik (lebih kecil dan bisa dikompensasi).
+Pada SMF, core sangat kecil sehingga hanya satu mode yang bisa merambat, jadi tidak ada dispersi modal. Yang tersisa hanya dispersi kromatik (lebih kecil dan bisa dikompensasi).
 
 ### Kategori MMF (OM = Optical Multimode)
 
 | Kategori | Core | Bandwidth @850 nm | 1 G | 10 G | 40/100 G | Warna |
 |---|---|---|---|---|---|---|
-| **OM1** | 62,5 µm | 200 MHz·km | 275 m | 33 m | — | Oranye |
-| **OM2** | 50 µm | 500 MHz·km | 550 m | 82 m | — | Oranye |
+| **OM1** | 62,5 µm | 200 MHz·km | 275 m | 33 m | - | Oranye |
+| **OM2** | 50 µm | 500 MHz·km | 550 m | 82 m | - | Oranye |
 | **OM3** | 50 µm | 2000 MHz·km | 550 m | **300 m** | 100 m | Aqua |
 | **OM4** | 50 µm | 4700 MHz·km | 550 m | **400 m** | 150 m | Aqua |
 | **OM5** | 50 µm | 4700 MHz·km (+ WDM) | 550 m | 400 m | 150 m | Lime/magenta |
 
 - **OM1/OM2 sudah usang** untuk instalasi baru.
 - **OM3 minimum, OM4 direkomendasikan** untuk data center.
-- **OM5** mendukung SWDM (beberapa panjang gelombang di MMF) — adopsi terbatas.
+- **OM5** mendukung SWDM (beberapa panjang gelombang di MMF), tetapi adopsinya terbatas.
 
 > [!WARNING]
 > **Jangan mencampur OM1 (62,5 µm) dengan OM3/OM4 (50 µm)** dalam satu jalur. Perbedaan diameter core menyebabkan rugi daya besar (terutama arah 62,5 → 50 µm) dan link tidak akan stabil.
@@ -103,7 +103,7 @@ Standar serat SMF yang paling umum: **ITU-T G.652.D** (low water peak, cocok unt
 
 | Konektor | Bentuk | Ukuran | Dipakai untuk |
 |---|---|---|---|
-| **LC** | Latch kecil (seperti RJ45 mini) | Small form factor | **Paling umum** — SFP, SFP+, SFP28 |
+| **LC** | Latch kecil (seperti RJ45 mini) | Small form factor | Paling umum: SFP, SFP+, SFP28 |
 | **SC** | Push-pull kotak | Standar | Perangkat lama, GBIC, ODF, FTTH |
 | **ST** | Bayonet putar (seperti BNC) | Standar | Instalasi lama |
 | **FC** | Ulir | Standar | Alat ukur, telekomunikasi |
@@ -114,20 +114,20 @@ Standar serat SMF yang paling umum: **ITU-T G.652.D** (low water peak, cocok unt
 
 | Tipe | Return loss | Warna konektor | Untuk |
 |---|---|---|---|
-| **PC** (Physical Contact) | ~−35 dB | — | Umum lama |
+| **PC** (Physical Contact) | ~−35 dB | - | Umum lama |
 | **UPC** (Ultra PC) | ~−50 dB | **Biru** | Standar data (Ethernet) |
 | **APC** (Angled PC, 8°) | ~−60 dB | **Hijau** | FTTH, video RF, aplikasi sensitif pantulan |
 
 > [!WARNING]
-> **JANGAN mencolokkan APC ke UPC.** Ujung APC bersudut 8°, ujung UPC datar — menyambungkannya menyebabkan celah udara: rugi daya besar dan bisa merusak permukaan konektor secara permanen. Ingat: **hijau hanya dengan hijau, biru hanya dengan biru.**
+> **JANGAN mencolokkan APC ke UPC.** Ujung APC bersudut 8°, ujung UPC datar. Menyambungkannya menyebabkan celah udara: rugi daya besar dan bisa merusak permukaan konektor secara permanen. Ingat: **hijau hanya dengan hijau, biru hanya dengan biru.**
 
 ### Simplex vs Duplex
 
-- **Simplex** — satu serat, satu arah. Dipakai dengan BiDi transceiver.
-- **Duplex** — dua serat: satu TX, satu RX. Standar untuk kebanyakan Ethernet fiber.
+- **Simplex**: satu serat, satu arah. Dipakai dengan BiDi transceiver.
+- **Duplex**: dua serat, satu TX dan satu RX. Standar untuk kebanyakan Ethernet fiber.
 
 > [!WARNING]
-> **Kesalahan paling umum pada link fiber baru: TX dan RX tertukar.** Gejalanya: link tidak naik sama sekali, dan `show interfaces transceiver` menunjukkan RX power sangat rendah (mis. −40 dBm). Solusinya: balik salah satu ujung. Ini kesalahan yang wajar dan cepat diperbaiki — periksa ini **sebelum** menuduh SFP rusak.
+> **Kesalahan paling umum pada link fiber baru: TX dan RX tertukar.** Gejalanya: link tidak naik sama sekali, dan `show interfaces transceiver` menunjukkan RX power sangat rendah (mis. −40 dBm). Solusinya: balik salah satu ujung. Kesalahan ini wajar dan cepat diperbaiki, jadi periksa ini sebelum menuduh SFP rusak.
 
 ---
 
@@ -175,7 +175,7 @@ Sisi A: TX 1310 nm ──────────► RX 1310 nm : Sisi B
 Sisi A: RX 1490 nm ◄────────── TX 1490 nm : Sisi B
         (satu serat yang sama)
 ```
-Berguna ketika jumlah serat yang tersedia terbatas (sewa dark fiber sering dihitung per serat). **Harus dipasang berpasangan** (satu "U" upstream, satu "D" downstream).
+Berguna ketika jumlah serat yang tersedia terbatas (sewa dark fiber sering dihitung per serat). Harus dipasang berpasangan (satu "U" upstream, satu "D" downstream).
 
 ### Vendor lock & kompatibilitas
 
@@ -273,8 +273,8 @@ Gi1/0/49      34.2        3.30     -5.4      -7.8
 ```
 
 Cara membaca:
-- **Tx Power** — daya yang dikirim transceiver ini. Kalau terlalu rendah → transceiver rusak.
-- **Rx Power** — daya yang diterima dari ujung lain. **Ini metrik terpenting.**
+- **Tx Power**: daya yang dikirim transceiver ini. Kalau terlalu rendah → transceiver rusak.
+- **Rx Power**: daya yang diterima dari ujung lain. Ini metrik terpenting.
 - Bandingkan Rx power dengan sensitivity transceiver. Kalau mendekati batas → jalur bermasalah.
 - **Rx Power < −30 dBm atau "N/A"** biasanya berarti tidak ada cahaya sama sekali → serat putus, TX/RX tertukar, atau ujung lain mati.
 
@@ -302,10 +302,10 @@ Core single-mode berdiameter 9 µm. Satu partikel debu berukuran 5 µm sudah men
 
 ### Aturan kebersihan
 
-1. **Selalu pasang dust cap** saat konektor tidak terpakai — pada konektor **dan** pada port transceiver.
+1. **Selalu pasang dust cap** saat konektor tidak terpakai, baik pada konektor maupun pada port transceiver.
 2. **Bersihkan sebelum setiap koneksi**, bahkan konektor baru dari pabrik (pelumas cetakan sering tertinggal).
 3. Alat: **one-click cleaner** (paling praktis), cleaning cassette, atau lint-free wipe + isopropyl alcohol 99%.
-4. **Inspeksi dengan fiber scope** kalau tersedia — Anda akan terkejut melihat betapa kotornya konektor "bersih".
+4. **Inspeksi dengan fiber scope** kalau tersedia: konektor yang tampak "bersih" sering ternyata kotor.
 5. **Jangan pernah menyentuh ujung serat dengan jari.** Minyak kulit adalah kontaminan yang sulit dibersihkan.
 6. **Jangan melihat langsung ke ujung serat aktif.** Cahaya inframerah tidak terlihat mata tetapi bisa merusak retina. Gunakan detektor atau kartu inframerah.
 
@@ -333,7 +333,7 @@ Serat **bend-insensitive** (G.657.A2/B3) lebih toleran, tetapi tetap ada batasny
 | **Mechanical splice** | 0,1-0,5 dB | Cepat | Murah | Perbaikan sementara/darurat |
 | **Pigtail + fusion** | 0,1 dB | Sedang | Fusion splicer | Terminasi ODF standar |
 | **Field-installable connector** | 0,3-0,75 dB | Cepat | Kit murah | Instalasi kecil |
-| **Pre-terminated** | Terjamin pabrik | Instan | — | Data center (MPO trunk) |
+| **Pre-terminated** | Terjamin pabrik | Instan | - | Data center (MPO trunk) |
 
 **Praktik standar untuk instalasi permanen:** kabel outdoor ditarik ke **ODF** (*Optical Distribution Frame*), lalu setiap serat di-**fusion splice** ke **pigtail** yang sudah punya konektor pabrik. Patch cord menghubungkan ODF ke perangkat.
 
@@ -356,7 +356,7 @@ Serat **bend-insensitive** (G.657.A2/B3) lebih toleran, tetapi tetap ada batasny
 
 **Manfaat praktis:** satu pasang serat yang disewa mahal bisa membawa 40 × 100 Gbps = 4 Tbps. Ini yang membuat penyewaan dark fiber ekonomis.
 
-**Dark fiber** — serat yang disewa tanpa peralatan aktif dari provider; Anda memasang transceiver sendiri di kedua ujung dan sepenuhnya mengendalikan kapasitasnya.
+**Dark fiber** adalah serat yang disewa tanpa peralatan aktif dari provider; Anda memasang transceiver sendiri di kedua ujung dan sepenuhnya mengendalikan kapasitasnya.
 
 ---
 
@@ -364,9 +364,9 @@ Serat **bend-insensitive** (G.657.A2/B3) lebih toleran, tetapi tetap ada batasny
 
 Bagian 8 menunjukkan bahwa DWDM memerlukan laser terkontrol suhu, multiplexer, dan sering amplifier. Secara historis, sinyal DWDM dihasilkan oleh *transponder* terpisah, sebuah perangkat tersendiri yang mengubah port abu-abu dari router menjadi panjang gelombang tertentu. Untuk interkoneksi antar-data-center (**DCI**), itu berarti rak tambahan, daya, dan biaya. **400ZR** adalah *Implementation Agreement* dari **OIF** (Optical Internetworking Forum) yang memadatkan fungsi itu menjadi modul **pluggable** berbentuk QSFP-DD atau OSFP yang dicolok ke port 400GbE router atau switch. Berkat itu, router sendiri memancarkan panjang gelombang DWDM berstandar interoperabel antar-vendor.
 
-Isi spesifikasinya, menurut OIF-400ZR-03.0 (8 Oktober 2024): antarmuka digital koheren yang bekerja sebagai PHY 400GBASE-R, memakai satu pembawa dengan modulasi **DP-16QAM** (*dual-polarization*, 16 level amplitudo-fase, sehingga 4 bit per simbol per polarisasi; modulasi QAM dijelaskan di `02-layer-fisik/04-encoding-modulasi`) dan **C-FEC** (*concatenated FEC*) dengan batas galat sisa setelah FEC di bawah 1E-15. Laju simbolnya 59,84375 GBaud per polarisasi, atau total sekitar 478,75 Gb/s di sisi saluran; selisih dari 400 Gb/s dipakai untuk overhead frame ZR dan FEC. Tiga aplikasi yang dicakup: (1) **amplified**, titik-ke-titik hingga 120 km, DWDM 100 GHz, yang dibatasi derau (*noise limited*) dengan target jangkauan minimal 80 km; (2) **unamplified**, satu panjang gelombang, yang dibatasi redaman (*loss limited*) sehingga jangkauan tergantung daya kirim, sensitivitas penerima, dan loss saluran; (3) amplified dengan spasi 75 GHz.
+Isi spesifikasinya, menurut OIF-400ZR-03.0 (8 Oktober 2024), adalah antarmuka digital koheren yang bekerja sebagai PHY 400GBASE-R. Antarmuka ini memakai satu pembawa dengan modulasi **DP-16QAM** (*dual-polarization*, 16 level amplitudo-fase, sehingga 4 bit per simbol per polarisasi; modulasi QAM dijelaskan di `02-layer-fisik/04-encoding-modulasi`) dan **C-FEC** (*concatenated FEC*) dengan batas galat sisa setelah FEC di bawah 1E-15. Laju simbolnya 59,84375 GBaud per polarisasi, atau total sekitar 478,75 Gb/s di sisi saluran; selisih dari 400 Gb/s dipakai untuk overhead frame ZR dan FEC. Tiga aplikasi yang dicakup: (1) **amplified**, titik-ke-titik hingga 120 km, DWDM 100 GHz, yang dibatasi derau (*noise limited*) dengan target jangkauan minimal 80 km; (2) **unamplified**, satu panjang gelombang, yang dibatasi redaman (*loss limited*) sehingga jangkauan tergantung daya kirim, sensitivitas penerima, dan loss saluran; (3) amplified dengan spasi 75 GHz.
 
-Perbedaan cara menghitung anggaran link penting. Pada optik biasa (bagian 5) Anda menghitung dB redaman terhadap power budget. Pada link amplified 400ZR, jangkauan ditentukan oleh **OSNR** (*optical signal-to-noise ratio*) di penerima, karena setiap amplifier EDFA menambah derau. IA menggambarkan lintasan di antara kedua modul sebagai *black link* dengan sifat spektral tertentu, yaitu semua yang ada di antara modul (multiplexer, amplifier, serat) dianggap satu kotak hitam. Praktisnya, pada aplikasi amplified modul 400ZR dihubungkan ke sistem DWDM berisi mux dan EDFA; pada aplikasi unamplified, dua modul dihubungkan langsung oleh serat pada satu panjang gelombang selama redamannya masih tertampung.
+Cara menghitung anggaran link-nya juga berbeda. Pada optik biasa (bagian 5) Anda menghitung dB redaman terhadap power budget. Pada link amplified 400ZR, jangkauan ditentukan oleh **OSNR** (*optical signal-to-noise ratio*) di penerima, karena setiap amplifier EDFA menambah derau. IA menggambarkan lintasan di antara kedua modul sebagai *black link* dengan sifat spektral tertentu, yaitu semua yang ada di antara modul (multiplexer, amplifier, serat) dianggap satu kotak hitam. Praktisnya, pada aplikasi amplified modul 400ZR dihubungkan ke sistem DWDM berisi mux dan EDFA; pada aplikasi unamplified, dua modul dihubungkan langsung oleh serat pada satu panjang gelombang selama redamannya masih tertampung.
 
 > [!TIP]
 > **400ZR hanya untuk Ethernet 400G, titik-ke-titik, jarak metro.** Jarak lebih jauh, topologi multi-span, atau laju lain ditangani oleh varian dan keluarga lain (misalnya ZR+ atau standar sesudahnya); cek spesifikasi vendor sebelum membeli. Modul koheren juga lebih panas dan lebih haus daya daripada optik LR biasa, jadi periksa anggaran daya dan pendinginan chassis.
@@ -402,14 +402,14 @@ Perbedaan cara menghitung anggaran link penting. Pada optik biasa (bagian 5) And
 ```
 
 > [!WARNING]
-> **Optical overload** — masalah yang sering terlewat: memakai transceiver LR (10 km) untuk link 5 meter di dalam rak. Daya TX terlalu besar untuk penerima → saturasi → error. Solusinya: pasang **attenuator** (5–10 dB) atau gunakan transceiver SR yang sesuai jarak.
+> **Optical overload** adalah masalah yang sering terlewat: memakai transceiver LR (10 km) untuk link 5 meter di dalam rak. Daya TX terlalu besar untuk penerima → saturasi → error. Solusinya: pasang **attenuator** (5-10 dB) atau gunakan transceiver SR yang sesuai jarak.
 
 ### Alat
 
 | Alat | Fungsi |
 |---|---|
 | **VFL** (*Visual Fault Locator*) | Laser merah tampak; menemukan putus/tekukan pada jarak pendek (~5 km). Titik terang di sepanjang kabel = kerusakan |
-| **Optical power meter + light source** | Mengukur rugi total jalur (insertion loss) — pengukuran paling penting |
+| **Optical power meter + light source** | Mengukur rugi total jalur (insertion loss); ini pengukuran paling penting |
 | **OTDR** | Memetakan seluruh jalur: jarak ke setiap splice, konektor, dan lokasi putus. Alat utama untuk jalur panjang |
 | **Fiber inspection scope** | Memeriksa kebersihan permukaan konektor |
 | **Fiber cleaner** | One-click cleaner untuk LC/SC |
@@ -421,12 +421,12 @@ Perbedaan cara menghitung anggaran link penting. Pada optik biasa (bagian 5) And
 - Serat membawa cahaya via total internal reflection: kebal EMI, aman antar-gedung, sulit disadap, jangkauan jauh.
 - **SMF** (core 9 µm, kuning): jauh (10-100+ km), transceiver mahal. **MMF** (core 50 µm, aqua): dekat (≤400 m), transceiver murah.
 - MMF terbatas oleh **dispersi modal**; OM3 minimum, OM4 direkomendasikan.
-- Konektor: **LC** paling umum; MPO untuk 40G+. **UPC biru, APC hijau — jangan dicampur.**
+- Konektor: **LC** paling umum; MPO untuk 40G+. **UPC biru dan APC hijau jangan dicampur.**
 - Transceiver: SFP (1G), SFP+ (10G), SFP28 (25G), QSFP28 (100G), QSFP-DD (400G+). SR=MMF pendek, LR=SMF 10 km.
 - **Power budget = TX power − RX sensitivity.** Kurangi total loss; sisakan margin ≥3 dB.
-- Link 10G/25G di MMF punya budget sempit — kebersihan konektor menjadi kritis.
+- Link 10G/25G di MMF punya budget sempit, sehingga kebersihan konektor menjadi kritis.
 - **TX/RX tertukar** adalah penyebab nomor satu link fiber baru tidak naik.
-- **Optical overload** terjadi saat optik jarak jauh dipakai untuk link pendek — pasang attenuator.
+- **Optical overload** terjadi saat optik jarak jauh dipakai untuk link pendek; solusinya pasang attenuator.
 - Selalu bersihkan konektor sebelum menyambung; selalu pasang dust cap.
 - **400ZR (OIF)** = modul koheren pluggable (QSFP-DD/OSFP) untuk DCI: DP-16QAM, C-FEC, sekitar 478,75 Gb/s di saluran untuk 400GbE, target minimal 80 km pada link amplified DWDM 100 GHz. Link amplified dibatasi **OSNR**, bukan redaman biasa.
 
@@ -446,21 +446,21 @@ Perbedaan cara menghitung anggaran link penting. Pada optik biasa (bagian 5) And
 <details>
 <summary>Jawaban</summary>
 
-1. **Single-mode fiber (OS2)** dengan transceiver **1000BASE-LX** atau **10GBASE-LR** (keduanya mendukung 10 km, jauh melebihi 2,5 km). Multimode tidak memadai — bahkan OM4 hanya sampai ~550 m di 1 G. Gunakan kabel outdoor/armored, dan terminasi lewat ODF di kedua gedung.
+1. **Single-mode fiber (OS2)** dengan transceiver **1000BASE-LX** atau **10GBASE-LR** (keduanya mendukung 10 km, jauh melebihi 2,5 km). Multimode tidak memadai: bahkan OM4 hanya sampai ~550 m di 1 G. Gunakan kabel outdoor/armored, dan terminasi lewat ODF di kedua gedung.
 
 2. **DAC (Direct Attach Copper) SFP28** sepanjang 3 m. Jauh lebih murah daripada dua transceiver optik + patch fiber, konsumsi daya lebih rendah, dan tidak ada risiko konektor kotor.
 
-3. Loss = (8 km × 0,35) + (6 × 0,5) + (3 × 0,1) = 2,8 + 3,0 + 0,3 = **6,1 dB**. Margin = 10,5 − 6,1 = **4,4 dB**. ✅ Di atas ambang 3 dB, jadi dapat diterima — meski tidak longgar. Sebaiknya kurangi jumlah konektor jika memungkinkan.
+3. Loss = (8 km × 0,35) + (6 × 0,5) + (3 × 0,1) = 2,8 + 3,0 + 0,3 = **6,1 dB**. Margin = 10,5 − 6,1 = **4,4 dB**. Angka ini di atas ambang 3 dB, jadi dapat diterima, meski tidak longgar. Sebaiknya kurangi jumlah konektor jika memungkinkan.
 
 4. **TX dan RX tertukar** di salah satu ujung. Rx power −40 dBm berarti praktis tidak ada cahaya yang diterima. Kemungkinan lain: serat putus, patch cord salah, atau ujung lain mati/port shutdown. Periksa yang paling murah dulu: balik salah satu ujung patch cord.
 
 5. Karena diameter core berbeda: OM1 = 62,5 µm, OM3 = 50 µm. Saat cahaya berpindah dari core besar ke core kecil (62,5 → 50), sebagian besar cahaya tidak masuk → rugi daya besar (bisa >3 dB). Arah sebaliknya menyebabkan masalah eksitasi mode. Selain itu karakteristik bandwidth berbeda sehingga jarak maksimum tidak dapat dijamin.
 
-6. **Optical overload** — daya TX dari transceiver ER (dirancang untuk melawan rugi 40 km) jauh melebihi batas maksimum penerima pada jarak 10 m. Akibatnya: saturasi penerima, CRC error tinggi, link tidak stabil, dan bisa merusak penerima dalam jangka panjang. Perbaikan: pasang **attenuator optik** (biasanya 10-15 dB) di sisi RX, atau — lebih baik — ganti dengan transceiver **SR/LR** yang sesuai jarak.
+6. **Optical overload**: daya TX dari transceiver ER (dirancang untuk melawan rugi 40 km) jauh melebihi batas maksimum penerima pada jarak 10 m. Akibatnya: saturasi penerima, CRC error tinggi, link tidak stabil, dan bisa merusak penerima dalam jangka panjang. Perbaikan: pasang **attenuator optik** (biasanya 10-15 dB) di sisi RX, atau (lebih baik) ganti dengan transceiver **SR/LR** yang sesuai jarak.
 
-7. (a) **Isolasi listrik** — mencegah kerusakan akibat perbedaan potensial tanah antar-gedung dan sambaran petir, yang bisa merusak perangkat dan membahayakan orang; (b) **jarak** — tembaga terbatas 100 m, serat bisa kilometer; (c) **kekebalan EMI** — jalur luar ruangan melewati banyak sumber interferensi; (d) tambahan: kapasitas masa depan jauh lebih besar tanpa mengganti kabel.
+7. (a) **Isolasi listrik**: mencegah kerusakan akibat perbedaan potensial tanah antar-gedung dan sambaran petir, yang bisa merusak perangkat dan membahayakan orang; (b) **jarak**: tembaga terbatas 100 m, serat bisa kilometer; (c) **kekebalan EMI**: jalur luar ruangan melewati banyak sumber interferensi; (d) tambahan: kapasitas masa depan jauh lebih besar tanpa mengganti kabel.
 
-8. 16QAM membawa 4 bit per simbol, dan DP berarti dua polarisasi, jadi 59,84375 x 2 x 4 = **478,75 Gb/s**. Ini sekitar 78,75 Gb/s (kurang lebih 19,7%) di atas 400 Gb/s; selisihnya dipakai untuk overhead frame ZR dan **C-FEC**. Pada link amplified yang dibatasi derau, setiap amplifier optik menambah derau, sehingga yang menentukan apakah sinyal bisa didecode adalah **OSNR** di penerima terhadap toleransi OSNR modul, bukan sekadar daya kirim dikurangi redaman serat. Link unamplified, sebaliknya, bersifat loss limited sehingga power budget biasa (daya kirim, sensitivitas, loss) masih relevan.
+8. 16QAM membawa 4 bit per simbol, dan DP berarti dua polarisasi, jadi 59,84375 x 2 x 4 = **478,75 Gb/s**. Ini sekitar 78,75 Gb/s (kurang lebih 19,7%) di atas 400 Gb/s; selisihnya dipakai untuk overhead frame ZR dan **C-FEC**. Pada link amplified yang dibatasi derau, setiap amplifier optik menambah derau, sehingga yang menentukan apakah sinyal bisa didecode adalah **OSNR** di penerima terhadap toleransi OSNR modul; daya kirim dikurangi redaman serat saja tidak cukup. Link unamplified, sebaliknya, bersifat loss limited sehingga power budget biasa (daya kirim, sensitivitas, loss) masih relevan.
 
 </details>
 
@@ -468,10 +468,10 @@ Perbedaan cara menghitung anggaran link penting. Pada optik biasa (bagian 5) And
 
 ## 13. Sumber
 
-- ITU-T G.652 / G.657 — karakteristik serat single-mode
-- TIA-492 / ISO/IEC 11801 — klasifikasi OM1-OM5
-- IEEE 802.3 clause 38, 52, 86 — spesifikasi Ethernet optik
-- IEC 61300-3-35 — standar inspeksi kebersihan konektor serat
+- ITU-T G.652 / G.657: karakteristik serat single-mode
+- TIA-492 / ISO/IEC 11801: klasifikasi OM1-OM5
+- IEEE 802.3 clause 38, 52, 86: spesifikasi Ethernet optik
+- IEC 61300-3-35: standar inspeksi kebersihan konektor serat
 - Cisco *Transceiver Module Compatibility Matrix*
 - OIF, Implementation Agreement OIF-400ZR-03.0 (8 Oktober 2024): https://www.oiforum.com/wp-content/uploads/OIF-400ZR-03.0.1.pdf
 - OIF, What is 400ZR? (ringkasan tujuan dan jangkauan): https://www.oiforum.com/fiercetelecom-what-is-400zr/

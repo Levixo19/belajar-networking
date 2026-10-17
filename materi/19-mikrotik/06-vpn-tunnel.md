@@ -30,7 +30,7 @@ add name=pelanggan01 password=rahasia service=pppoe profile=paket-10mbps
 ```
 
 > [!TIP]
-> **`rate-limit` di PPP profile** otomatis menerapkan batas bandwidth ke pelanggan saat mereka terhubung — tidak perlu queue manual per-pelanggan. Ganti paket pelanggan cukup ubah profil. Ini cara standar RT-RW-Net/ISP mengelola langganan.
+> **`rate-limit` di PPP profile** otomatis menerapkan batas bandwidth ke pelanggan saat mereka terhubung, sehingga tidak perlu queue manual per-pelanggan. Untuk mengganti paket pelanggan, cukup ubah profilnya. Ini cara standar RT-RW-Net/ISP mengelola langganan.
 
 ### PPPoE Client (sisi pelanggan / router yang berlangganan)
 ```routeros
@@ -40,7 +40,7 @@ add name=pppoe-out1 interface=ether1 user=pelanggan01 \
 ```
 
 > [!WARNING]
-> **Integrasi RADIUS** untuk skala besar: alih-alih `/ppp secret` lokal (terbatas & repot untuk ratusan pelanggan), arahkan autentikasi PPPoE ke **RADIUS server** (mis. dengan billing system seperti FreeRADIUS + aplikasi billing). Pusat: manajemen pelanggan, paket, dan penagihan. Lihat `12-keamanan/04`.
+> **Integrasi RADIUS** untuk skala besar: alih-alih `/ppp secret` lokal (terbatas & repot untuk ratusan pelanggan), arahkan autentikasi PPPoE ke **RADIUS server** (mis. dengan billing system seperti FreeRADIUS + aplikasi billing). Manajemen pelanggan, paket, dan penagihan jadi terpusat. Lihat `12-keamanan/04`.
 
 ---
 
@@ -78,7 +78,7 @@ Ini kesalahan paling umum saat setup IPsec di MikroTik. Lihat `09-nat-acl-firewa
 
 ## 3. WireGuard: VPN Modern
 
-**WireGuard** (didukung RouterOS v7+) — VPN modern yang cepat, sederhana, kriptografi kuat (lihat `11-wan-vpn/02`).
+**WireGuard** (didukung RouterOS v7+) adalah VPN modern yang cepat, sederhana, dan berkriptografi kuat (lihat `11-wan-vpn/02`).
 
 ```routeros
 # 1. Buat interface WireGuard (generate key otomatis)
@@ -96,13 +96,13 @@ add interface=wg1 public-key="PUBKEY_PEER..." \
 ```
 
 > [!TIP]
-> **WireGuard jauh lebih sederhana dari IPsec** — konfigurasi minimal (interface + peer + key), performa tinggi, dan cocok untuk remote access maupun site-to-site. Semakin dipilih untuk deployment baru di RouterOS v7. ⚠️ Buka port UDP WireGuard (`listen-port`) di firewall `input`, dan pastikan `allowed-address` mencakup subnet yang ingin dijangkau lewat tunnel.
+> **WireGuard jauh lebih sederhana dari IPsec**: konfigurasi minimal (interface + peer + key), performa tinggi, dan cocok untuk remote access maupun site-to-site. WireGuard semakin dipilih untuk deployment baru di RouterOS v7. Hati-hati: buka port UDP WireGuard (`listen-port`) di firewall `input`, dan pastikan `allowed-address` mencakup subnet yang ingin dijangkau lewat tunnel.
 
 ---
 
 ## 4. EoIP: Ethernet over IP (Bridging Antar-Situs)
 
-**EoIP (Ethernet over IP)** adalah tunnel **proprietary MikroTik** yang membawa **Layer 2 (Ethernet)** melintasi jaringan L3 — mirip konsep VXLAN mini (lihat `16-datacenter-cloud-sdn/02` untuk overlay L2).
+**EoIP (Ethernet over IP)** adalah tunnel proprietary MikroTik yang membawa Layer 2 (Ethernet) melintasi jaringan L3, mirip konsep VXLAN mini (lihat `16-datacenter-cloud-sdn/02` untuk overlay L2).
 
 ```routeros
 /interface eoip
@@ -112,7 +112,7 @@ add name=eoip-B remote-address=203.0.113.2 tunnel-id=100
 ```
 
 > [!TIP]
-> **EoIP membuat dua situs berada di broadcast domain L2 yang sama** melintasi internet — berguna untuk aplikasi yang butuh L2 tembus (mis. bridging jaringan cabang). ⚠️ **EoIP tidak terenkripsi sendiri** — kombinasikan dengan **IPsec** (EoIP over IPsec) untuk keamanan. Dan hati-hati membentangkan broadcast domain besar antar-situs (broadcast/loop bisa menyeberang).
+> **EoIP membuat dua situs berada di broadcast domain L2 yang sama** melintasi internet. Ini berguna untuk aplikasi yang butuh L2 tembus (mis. bridging jaringan cabang). Hati-hati: EoIP tidak terenkripsi sendiri, jadi kombinasikan dengan IPsec (EoIP over IPsec) untuk keamanan. Waspadai juga risiko membentangkan broadcast domain besar antar-situs (broadcast/loop bisa menyeberang).
 
 **Tunnel lain:** GRE (`/interface gre`, standar & interoperabel), IPIP, PPTP/L2TP/SSTP/OVPN (untuk remote access; L2TP+IPsec umum untuk klien).
 
@@ -130,7 +130,7 @@ add name=eoip-B remote-address=203.0.113.2 tunnel-id=100
 | Remote access klien (Windows dll) | **L2TP/IPsec, SSTP, OVPN** | dukungan klien luas |
 
 > [!WARNING]
-> **PPTP sudah tidak aman** (enkripsi MPPE lemah) — hindari untuk data sensitif; gunakan L2TP/IPsec, SSTP, OpenVPN, atau WireGuard.
+> **PPTP sudah tidak aman** (enkripsi MPPE lemah). Hindari untuk data sensitif; gunakan L2TP/IPsec, SSTP, OpenVPN, atau WireGuard.
 
 ---
 
@@ -150,10 +150,10 @@ add name=eoip-B remote-address=203.0.113.2 tunnel-id=100
 ## 7. Ringkasan
 
 - **PPPoE** = inti ISP: **server** (IP pool + PPP profile dengan `rate-limit` + secret/RADIUS) mengautentikasi & memberi bandwidth per-pelanggan; **client** di sisi pelanggan. Skala besar → **RADIUS + billing**.
-- **IPsec** = site-to-site aman (peer + identity + policy). ⚠️ **Kecualikan trafik VPN dari NAT** (accept sebelum masquerade) — kesalahan tersering.
+- **IPsec** = site-to-site aman (peer + identity + policy). Kecualikan trafik VPN dari NAT (accept sebelum masquerade); lupa melakukannya adalah kesalahan tersering.
 - **WireGuard** (v7+) = VPN modern, sederhana, cepat (interface + peer + key). Buka port UDP di firewall.
-- **EoIP** = bridging L2 antar-situs (proprietary MikroTik); ⚠️ tidak terenkripsi → gabung IPsec. GRE = L3 standar.
-- **PPTP tidak aman** — pakai L2TP/IPsec, SSTP, OVPN, atau WireGuard untuk remote access.
+- **EoIP** = bridging L2 antar-situs (proprietary MikroTik); tidak terenkripsi → gabung IPsec. GRE = L3 standar.
+- **PPTP tidak aman**: pakai L2TP/IPsec, SSTP, OVPN, atau WireGuard untuk remote access.
 
 ---
 
@@ -168,9 +168,9 @@ add name=eoip-B remote-address=203.0.113.2 tunnel-id=100
 <details>
 <summary>Jawaban</summary>
 
-1. PPPoE server menerapkan batas bandwidth otomatis melalui **PPP profile**: setiap profil memiliki parameter **`rate-limit`** (format upload/download), dan setiap pelanggan (PPP secret) ditautkan ke sebuah profil sesuai paket langganannya. Ketika pelanggan **terhubung/dial** ke PPPoE server, RouterOS otomatis menerapkan `rate-limit` dari profil mereka pada sesi tersebut (membuat queue dinamis di belakang layar) — sehingga tidak perlu membuat simple queue manual per-pelanggan. Mengubah paket pelanggan cukup dengan memindahkan mereka ke profil lain. **RADIUS dipakai pada skala besar** karena mengelola ratusan/ribuan pelanggan lewat `/ppp secret` lokal di router menjadi tidak praktis (sulit dikelola, tidak terpusat, tidak ada penagihan). Dengan mengarahkan autentikasi PPPoE ke **server RADIUS** (sering terintegrasi dengan sistem billing/manajemen pelanggan seperti FreeRADIUS + aplikasi billing), ISP mendapat: manajemen pelanggan **terpusat** (tambah/hapus/ubah paket dari satu sistem), penerapan atribut (bandwidth, IP, masa aktif) via RADIUS, **penagihan otomatis**, akuntansi penggunaan (accounting), dan kemampuan mengelola banyak router NAS sekaligus. Lihat `12-keamanan/04`.
+1. PPPoE server menerapkan batas bandwidth otomatis melalui **PPP profile**: setiap profil memiliki parameter **`rate-limit`** (format upload/download), dan setiap pelanggan (PPP secret) ditautkan ke sebuah profil sesuai paket langganannya. Ketika pelanggan terhubung/dial ke PPPoE server, RouterOS otomatis menerapkan `rate-limit` dari profil mereka pada sesi tersebut (membuat queue dinamis di belakang layar), sehingga tidak perlu membuat simple queue manual per-pelanggan. Mengubah paket pelanggan cukup dengan memindahkan mereka ke profil lain. **RADIUS dipakai pada skala besar** karena mengelola ratusan/ribuan pelanggan lewat `/ppp secret` lokal di router menjadi tidak praktis (sulit dikelola, tidak terpusat, tidak ada penagihan). Dengan mengarahkan autentikasi PPPoE ke **server RADIUS** (sering terintegrasi dengan sistem billing/manajemen pelanggan seperti FreeRADIUS + aplikasi billing), ISP mendapat: manajemen pelanggan terpusat (tambah/hapus/ubah paket dari satu sistem), penerapan atribut (bandwidth, IP, masa aktif) via RADIUS, penagihan otomatis, akuntansi penggunaan (accounting), dan kemampuan mengelola banyak router NAS sekaligus. Lihat `12-keamanan/04`.
 
-2. Karena **urutan operasi**: jika trafik VPN (mis. dari LAN A `192.168.1.0/24` menuju LAN B `192.168.2.0/24`) terkena aturan **masquerade/src-nat** sebelum diproses IPsec, maka alamat sumbernya **diubah menjadi IP publik router** terlebih dahulu. Akibatnya, saat IPsec memeriksa policy (yang mengharapkan src `192.168.1.0/24`), trafik sudah tidak cocok dengan policy (sumbernya kini IP publik), sehingga **tidak dienkripsi/tidak masuk tunnel** dan VPN gagal — atau trafik keluar ter-NAT dan sisi remote tidak mengenalinya. **Solusinya: kecualikan trafik VPN dari NAT** dengan menempatkan aturan `accept` di chain srcnat **sebelum** aturan masquerade, yang mencocokkan trafik antar-LAN VPN:
+2. Karena urutan operasi: jika trafik VPN (mis. dari LAN A `192.168.1.0/24` menuju LAN B `192.168.2.0/24`) terkena aturan masquerade/src-nat sebelum diproses IPsec, alamat sumbernya diubah menjadi IP publik router terlebih dahulu. Akibatnya, saat IPsec memeriksa policy (yang mengharapkan src `192.168.1.0/24`), trafik sudah tidak cocok dengan policy (sumbernya kini IP publik), sehingga tidak dienkripsi/tidak masuk tunnel dan VPN gagal, atau trafik keluar ter-NAT dan sisi remote tidak mengenalinya. **Solusinya: kecualikan trafik VPN dari NAT** dengan menempatkan aturan `accept` di chain srcnat **sebelum** aturan masquerade, yang mencocokkan trafik antar-LAN VPN:
    ```routeros
    /ip firewall nat
    add chain=srcnat dst-address=192.168.2.0/24 src-address=192.168.1.0/24 action=accept
@@ -178,11 +178,11 @@ add name=eoip-B remote-address=203.0.113.2 tunnel-id=100
    ```
    Karena aturan diproses berurutan (`19.3`), trafik VPN cocok aturan `accept` lebih dulu (tidak di-NAT, alamat asli dipertahankan) sehingga IPsec policy cocok dan mengenkripsinya; trafik internet biasa lanjut ke masquerade. Ini kesalahan tersering saat setup IPsec di MikroTik.
 
-3. Keunggulan WireGuard dibanding IPsec: **(a) Kesederhanaan** — konfigurasi WireGuard minimal (buat interface, beri IP, tambah peer dengan public-key dan allowed-address), sedangkan IPsec memerlukan konfigurasi peer, identity, proposal, dan policy yang lebih kompleks dan rawan salah (mis. mismatch proposal, masalah NAT). **(b) Performa** — WireGuard umumnya lebih cepat dengan overhead lebih rendah, memakai kriptografi modern yang efisien. **(c) Kriptografi modern dan tetap** — WireGuard memakai set algoritma modern terkini (Curve25519, ChaCha20-Poly1305) tanpa negosiasi rumit, mengurangi kesalahan konfigurasi dan permukaan serang. **(d) Basis kode kecil** — lebih mudah diaudit, lebih sedikit bug/celah. **(e) Roaming/mobilitas** yang baik (koneksi bertahan saat IP klien berubah). **(f) Model peer sederhana** yang enak untuk hub-spoke maupun mesh. Karena itu WireGuard semakin dipilih untuk deployment baru di RouterOS v7+. (IPsec tetap unggul dalam **interoperabilitas** dengan perangkat non-MikroTik/vendor lain dan lingkungan yang mewajibkan IPsec.)
+3. Keunggulan WireGuard dibanding IPsec: **(a) Kesederhanaan**: konfigurasi WireGuard minimal (buat interface, beri IP, tambah peer dengan public-key dan allowed-address), sedangkan IPsec memerlukan konfigurasi peer, identity, proposal, dan policy yang lebih kompleks dan rawan salah (mis. mismatch proposal, masalah NAT). **(b) Performa**: WireGuard umumnya lebih cepat dengan overhead lebih rendah, memakai kriptografi modern yang efisien. **(c) Kriptografi modern dan tetap**: WireGuard memakai set algoritma modern terkini (Curve25519, ChaCha20-Poly1305) tanpa negosiasi rumit, mengurangi kesalahan konfigurasi dan permukaan serang. **(d) Basis kode kecil**: lebih mudah diaudit, lebih sedikit bug/celah. **(e) Roaming/mobilitas** yang baik (koneksi bertahan saat IP klien berubah). **(f) Model peer sederhana** yang enak untuk hub-spoke maupun mesh. Karena itu WireGuard semakin dipilih untuk deployment baru di RouterOS v7+. (IPsec tetap unggul dalam **interoperabilitas** dengan perangkat non-MikroTik/vendor lain dan lingkungan yang mewajibkan IPsec.)
 
-4. **EoIP (Ethernet over IP)** adalah tunnel **proprietary MikroTik** yang membawa frame **Layer 2 (Ethernet)** melintasi jaringan Layer 3 (internet/WAN) — secara efektif memperluas satu **broadcast domain L2** ke dua lokasi yang terpisah secara geografis. **Kapan dipakai:** ketika Anda butuh dua situs berada di **segmen L2 yang sama** melintasi internet — misalnya mem-bridge jaringan kantor cabang agar tampak satu LAN, atau aplikasi/protokol yang mengharuskan konektivitas L2 (broadcast, non-IP). Anda mem-bridge interface EoIP dengan LAN lokal di kedua sisi. **Peringatan keamanan:** **EoIP tidak terenkripsi dengan sendirinya** — trafik melintas apa adanya melalui internet, sehingga bisa disadap; karena itu harus **dikombinasikan dengan IPsec** (EoIP over IPsec) bila melewati jaringan tidak tepercaya. Peringatan tambahan: membentangkan broadcast domain L2 besar antar-situs berisiko — **broadcast storm dan loop bisa menyeberang** ke kedua situs, jadi gunakan dengan hati-hati (STP, batasi ukuran domain) dan hanya bila L2 benar-benar diperlukan (seringkali VPN L3 seperti IPsec/WireGuard lebih aman dan cukup).
+4. **EoIP (Ethernet over IP)** adalah tunnel proprietary MikroTik yang membawa frame Layer 2 (Ethernet) melintasi jaringan Layer 3 (internet/WAN), sehingga secara efektif memperluas satu broadcast domain L2 ke dua lokasi yang terpisah secara geografis. **Kapan dipakai:** ketika Anda butuh dua situs berada di segmen L2 yang sama melintasi internet, misalnya mem-bridge jaringan kantor cabang agar tampak satu LAN, atau aplikasi/protokol yang mengharuskan konektivitas L2 (broadcast, non-IP). Anda mem-bridge interface EoIP dengan LAN lokal di kedua sisi. **Peringatan keamanan:** EoIP tidak terenkripsi dengan sendirinya. Trafik melintas apa adanya melalui internet sehingga bisa disadap, jadi harus dikombinasikan dengan IPsec (EoIP over IPsec) bila melewati jaringan tidak tepercaya. Peringatan tambahan: membentangkan broadcast domain L2 besar antar-situs berisiko, karena broadcast storm dan loop bisa menyeberang ke kedua situs. Gunakan dengan hati-hati (STP, batasi ukuran domain) dan hanya bila L2 benar-benar diperlukan (seringkali VPN L3 seperti IPsec/WireGuard lebih aman dan cukup).
 
-5. **PPTP sebaiknya dihindari** karena **enkripsinya lemah dan sudah dapat dibobol**: PPTP mengandalkan MPPE dengan autentikasi MS-CHAPv2 yang memiliki kerentanan kriptografi serius — MS-CHAPv2 dapat dipecahkan (serangan terhadap DES/hash-nya membuat kunci dapat dipulihkan secara praktis), sehingga trafik PPTP dapat didekripsi oleh penyerang yang menangkapnya. Ia tidak lagi memberikan kerahasiaan yang memadai untuk data sensitif. **Alternatifnya:** **L2TP/IPsec** (L2TP untuk tunnel + IPsec untuk enkripsi kuat, dukungan klien luas termasuk Windows/macOS/mobile bawaan), **SSTP** (VPN over TLS, baik untuk menembus firewall karena memakai port 443, terintegrasi di Windows), **OpenVPN (OVPN)** (TLS-based, fleksibel dan aman, lintas platform), atau **WireGuard** (modern, cepat, aman — pilihan terbaik untuk deployment baru di RouterOS v7+). Untuk remote access klien, L2TP/IPsec atau SSTP umum karena dukungan klien bawaan; untuk site-to-site atau klien modern, WireGuard sangat dianjurkan.
+5. **PPTP sebaiknya dihindari** karena enkripsinya lemah dan sudah dapat dibobol: PPTP mengandalkan MPPE dengan autentikasi MS-CHAPv2 yang memiliki kerentanan kriptografi serius. MS-CHAPv2 dapat dipecahkan (serangan terhadap DES/hash-nya membuat kunci dapat dipulihkan secara praktis), sehingga trafik PPTP dapat didekripsi oleh penyerang yang menangkapnya. Ia tidak lagi memberikan kerahasiaan yang memadai untuk data sensitif. **Alternatifnya:** **L2TP/IPsec** (L2TP untuk tunnel + IPsec untuk enkripsi kuat, dukungan klien luas termasuk Windows/macOS/mobile bawaan), **SSTP** (VPN over TLS, baik untuk menembus firewall karena memakai port 443, terintegrasi di Windows), **OpenVPN (OVPN)** (TLS-based, fleksibel dan aman, lintas platform), atau **WireGuard** (modern, cepat, aman; pilihan terbaik untuk deployment baru di RouterOS v7+). Untuk remote access klien, L2TP/IPsec atau SSTP umum karena dukungan klien bawaan; untuk site-to-site atau klien modern, WireGuard sangat dianjurkan.
 
 </details>
 
@@ -190,8 +190,8 @@ add name=eoip-B remote-address=203.0.113.2 tunnel-id=100
 
 ## 9. Sumber
 
-- MikroTik documentation — PPPoE, IPsec, WireGuard, EoIP, Interfaces (help.mikrotik.com)
-- MTCNA outline — Tunnels · MTCUME (PPP/user management) · MTCRE (tunnel lanjutan)
+- MikroTik documentation: PPPoE, IPsec, WireGuard, EoIP, Interfaces (help.mikrotik.com)
+- MTCNA outline: Tunnels · MTCUME (PPP/user management) · MTCRE (tunnel lanjutan)
 - `11-wan-vpn/02` (tunneling & VPN) · `12-keamanan/04` (RADIUS) · `09-nat-acl-firewall/01` (NAT)
 
 ---

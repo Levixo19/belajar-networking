@@ -1,10 +1,10 @@
 # 12.6 Alat Keamanan Jaringan
 
-> **Prasyarat:** `12-keamanan/01`–`05`, `14-monitoring-troubleshooting/02` (akan dibahas)
+> **Prasyarat:** `12-keamanan/01`-`05`, `14-monitoring-troubleshooting/02` (akan dibahas)
 > **Tujuan:** Anda mengenal alat keamanan utama, tahu kapan memakainya, dan memahami batasan hukum serta etikanya.
 
 > > [!WARNING]
-> > **PERINGATAN HUKUM DAN ETIKA (baca dulu):** semua alat di modul ini hanya boleh dipakai pada **sistem yang Anda miliki** atau yang Anda punya **izin tertulis** untuk mengujinya. Di Indonesia, akses tidak sah ke sistem elektronik diatur **UU ITE** (UU No. 11/2008 jo. UU No. 19/2016) dengan ancaman pidana. Pemindaian, pengujian penetrasi, dan analisis trafik terhadap sistem orang lain **tanpa izin adalah tindak pidana** — bahkan jika niatnya baik.
+> > **PERINGATAN HUKUM DAN ETIKA (baca dulu):** semua alat di modul ini hanya boleh dipakai pada sistem yang Anda miliki atau yang Anda punya izin tertulis untuk mengujinya. Di Indonesia, akses tidak sah ke sistem elektronik diatur UU ITE (UU No. 11/2008 jo. UU No. 19/2016) dengan ancaman pidana. Pemindaian, pengujian penetrasi, dan analisis trafik terhadap sistem orang lain tanpa izin adalah tindak pidana, bahkan jika niatnya baik.
 
 ---
 
@@ -83,7 +83,7 @@ $ nmap --script dns-zone-transfer example.com
 ```
 
 > [!WARNING]
-> **Pemindaian tidak "tak terlihat".** IDS/IPS mendeteksinya, dan pemindaian agresif bisa **mengganggu** perangkat rapuh (perangkat IoT, printer, sistem SCADA lama bisa crash). Gunakan timing yang wajar dan hindari sistem produksi kritis.
+> **Pemindaian tidak "tak terlihat".** IDS/IPS mendeteksinya, dan pemindaian agresif bisa mengganggu perangkat rapuh (perangkat IoT, printer, sistem SCADA lama bisa crash). Gunakan timing yang wajar dan hindari sistem produksi kritis.
 
 ### Alat discovery lain
 
@@ -97,7 +97,7 @@ $ theHarvester -d example.com -b all             # OSINT (email, subdomain)
 ```
 
 > [!TIP]
-> **Shodan** (https://shodan.io) memindai seluruh internet — cari apa yang **terekspos dari organisasi Anda sendiri**: `org:"PT Perusahaan"` atau `net:203.0.113.0/24`. Sering mengungkap layanan yang tidak seharusnya publik.
+> **Shodan** (https://shodan.io) memindai seluruh internet. Cari apa yang terekspos dari organisasi Anda sendiri: `org:"PT Perusahaan"` atau `net:203.0.113.0/24`. Pencarian ini sering mengungkap layanan yang tidak seharusnya publik.
 
 ---
 
@@ -124,10 +124,10 @@ $ nikto -h https://example.com
 ```
 
 > [!WARNING]
-> **Vulnerability scanner menghasilkan banyak false positive.** Setiap temuan harus **diverifikasi manual** sebelum ditindaklanjuti. "3.000 kerentanan kritis" sering kali sebagian besar tidak relevan atau tidak dapat dieksploitasi di konteks Anda.
+> **Vulnerability scanner menghasilkan banyak false positive.** Setiap temuan harus diverifikasi manual sebelum ditindaklanjuti. "3.000 kerentanan kritis" sering kali sebagian besar tidak relevan atau tidak dapat dieksploitasi di konteks Anda.
 
 > [!TIP]
-> **Prioritaskan berdasarkan risiko nyata, bukan skor CVSS mentah** — kerentanan CVSS 9.8 pada sistem internal yang tersegmentasi mungkin kurang mendesak daripada CVSS 6.5 pada server yang terekspos internet.
+> **Prioritaskan berdasarkan risiko nyata, bukan skor CVSS mentah.** Kerentanan CVSS 9.8 pada sistem internal yang tersegmentasi mungkin kurang mendesak daripada CVSS 6.5 pada server yang terekspos internet.
 
 ---
 
@@ -169,7 +169,7 @@ Display filter untuk keamanan:
 ```
 
 > [!WARNING]
-> **Menangkap trafik jaringan orang lain adalah penyadapan** — ilegal tanpa izin, bahkan di jaringan yang Anda kelola (ada implikasi privasi karyawan). Punya kebijakan yang jelas dan pemberitahuan.
+> **Menangkap trafik jaringan orang lain adalah penyadapan**, dan ilegal tanpa izin, bahkan di jaringan yang Anda kelola (ada implikasi privasi karyawan). Siapkan kebijakan yang jelas dan pemberitahuan.
 
 ---
 
@@ -190,7 +190,7 @@ $ sudo hping3 -S -p 443 --traceroute example.com
 ```
 
 > [!WARNING]
-> **hping3 juga bisa dipakai untuk SYN flood** — hanya pada sistem Anda sendiri untuk menguji ketahanan.
+> **hping3 juga bisa dipakai untuk SYN flood.** Gunakan hanya pada sistem Anda sendiri untuk menguji ketahanan.
 
 ### iperf3: uji kapasitas dan stress
 
@@ -223,7 +223,7 @@ for p in packets:
 ```
 
 > [!TIP]
-> **Scapy sangat berguna untuk memahami protokol** — Anda bisa membuat paket apa pun dan melihat responsnya. Untuk network engineer, ini alat pembelajaran yang luar biasa.
+> **Scapy sangat berguna untuk memahami protokol:** Anda bisa membuat paket apa pun dan melihat responsnya.
 
 ---
 
@@ -279,7 +279,7 @@ $ cat conn.log http.log dns.log ssl.log
 ```
 
 > [!TIP]
-> **Zeek berbeda dari Snort/Suricata** — ia tidak mencari tanda tangan serangan, melainkan **mencatat semua aktivitas jaringan secara terstruktur** (setiap koneksi, DNS query, sertifikat TLS, transfer file). Ini emas untuk investigasi dan berburu ancaman.
+> **Zeek berbeda dari Snort/Suricata.** Ia tidak mencari tanda tangan serangan, melainkan mencatat semua aktivitas jaringan secara terstruktur (setiap koneksi, DNS query, sertifikat TLS, transfer file). Catatan ini sangat berharga untuk investigasi dan berburu ancaman.
 
 ### Log analysis dan SIEM
 
@@ -298,7 +298,7 @@ Yang dikorelasikan:
 ```
 
 > [!TIP]
-> **Security Onion** adalah distribusi lengkap yang menggabungkan Suricata + Zeek + Wazuh + dashboard — titik awal yang sangat baik untuk network security monitoring.
+> **Security Onion** adalah distribusi lengkap yang menggabungkan Suricata + Zeek + Wazuh + dashboard, cocok sebagai titik awal untuk network security monitoring.
 
 ### Analisis alur: NetFlow
 
@@ -333,7 +333,7 @@ Detail di `14-monitoring-troubleshooting/03`.
 ```
 
 > [!TIP]
-> **Batfish** sangat menarik untuk network engineer — ia mem-parsing konfigurasi router/switch/firewall dan bisa **menjawab pertanyaan tentang jaringan tanpa menyentuh perangkat**: "apakah host A bisa mencapai host B?", "apakah ada ACL yang tumpang tindih?", "apa dampak perubahan ini?". Dipakai dalam pipeline CI/CD jaringan (`15-otomasi`).
+> **Batfish** menarik untuk network engineer karena ia mem-parsing konfigurasi router/switch/firewall dan bisa menjawab pertanyaan tentang jaringan tanpa menyentuh perangkat: "apakah host A bisa mencapai host B?", "apakah ada ACL yang tumpang tindih?", "apa dampak perubahan ini?". Batfish dipakai dalam pipeline CI/CD jaringan (`15-otomasi`).
 
 ---
 
@@ -367,13 +367,13 @@ MikroTik punya banyak alat diagnostik dan keamanan bawaan.
 ```
 
 > [!WARNING]
-> **`/tool sniffer` menangkap trafik** — sama seperti Wireshark, hanya untuk jaringan yang Anda kelola dengan kebijakan yang jelas.
+> **`/tool sniffer` menangkap trafik**, sama seperti Wireshark. Gunakan hanya untuk jaringan yang Anda kelola dengan kebijakan yang jelas.
 
 ---
 
 ## 10. Membangun Lab yang Aman
 
-Untuk berlatih dengan alat serangan **secara legal**, bangun lab terisolasi.
+Untuk berlatih dengan alat serangan secara legal, bangun lab terisolasi.
 
 ```
 Pilihan lab (lihat lab/00-setup-lab.md):
@@ -394,7 +394,7 @@ Aturan lab:
 ```
 
 > [!TIP]
-> **HackTheBox, TryHackMe, dan CTF** memberi lingkungan legal untuk mempraktikkan keterampilan ofensif. Ini cara yang tepat untuk belajar — bukan menyerang sistem orang lain.
+> **HackTheBox, TryHackMe, dan CTF** memberi lingkungan legal untuk mempraktikkan keterampilan ofensif. Ini cara yang tepat untuk belajar, bukan menyerang sistem orang lain.
 
 ---
 
@@ -403,14 +403,14 @@ Aturan lab:
 - **Semua alat ini hanya untuk sistem Anda sendiri atau dengan izin tertulis.** Akses tidak sah = pidana (UU ITE di Indonesia). "Iseng" bukan pembelaan.
 - Sebelum menguji: **izin tertulis, scope, rules of engagement, waktu, kontak darurat**.
 - **nmap** adalah alat discovery utama; **Shodan** untuk melihat apa yang terekspos dari organisasi Anda sendiri.
-- **Vulnerability scanner banyak false positive** — verifikasi manual, prioritaskan berdasarkan risiko nyata bukan skor CVSS mentah.
+- **Vulnerability scanner banyak false positive.** Verifikasi manual, dan prioritaskan berdasarkan risiko nyata, bukan skor CVSS mentah.
 - **tcpdump/Wireshark** untuk analisis trafik; menangkap trafik = penyadapan, butuh kebijakan yang jelas.
 - **hping3, Scapy** untuk pengujian paket kustom; **iperf3** untuk stress test.
-- **Alat serangan (Metasploit, aircrack-ng, Yersinia, dll) hanya untuk lab/CTF/pentest berizin** — tetapi memahaminya membuat Anda pembela yang lebih baik; uji hardening Anda sendiri dengannya.
+- **Alat serangan (Metasploit, aircrack-ng, Yersinia, dll) hanya untuk lab/CTF/pentest berizin**, tetapi memahaminya membuat Anda pembela yang lebih baik. Uji hardening Anda sendiri dengannya.
 - Deteksi: **Suricata/Snort** (signature), **Zeek** (analisis perilaku), **Security Onion** (paket lengkap), **SIEM** untuk korelasi.
 - **Batfish** menganalisis konfigurasi jaringan sebagai kode; **Nipper/Lynis/CIS-CAT** untuk audit.
 - **MikroTik** punya alat bawaan: torch, sniffer, netwatch, DHCP alert, profile, ip-scan.
-- **Berlatih di lab terisolasi** (Containerlab, Metasploitable, DVWA) atau platform legal (HackTheBox, TryHackMe, CTF) — jangan pernah menyerang sistem nyata.
+- **Berlatih di lab terisolasi** (Containerlab, Metasploitable, DVWA) atau platform legal (HackTheBox, TryHackMe, CTF). Jangan pernah menyerang sistem nyata.
 
 ---
 
@@ -428,31 +428,31 @@ Aturan lab:
 <details>
 <summary>Jawaban</summary>
 
-1. **Tidak legal.** Memindai, mencoba masuk, atau menangkap trafik jaringan Wi-Fi tetangga tanpa izin adalah **akses tidak sah ke sistem elektronik** dan **penyadapan** — keduanya diatur UU ITE di Indonesia dengan ancaman pidana. "Penasaran" atau "cuma cek" **bukan pembelaan hukum**. Bahkan menangkap trafik yang tidak terenkripsi dari udara (yang secara teknis mudah) tetap merupakan intersepsi ilegal.
+1. **Tidak legal.** Memindai, mencoba masuk, atau menangkap trafik jaringan Wi-Fi tetangga tanpa izin adalah akses tidak sah ke sistem elektronik dan penyadapan. Keduanya diatur UU ITE di Indonesia dengan ancaman pidana. "Penasaran" atau "cuma cek" bukan pembelaan hukum. Bahkan menangkap trafik yang tidak terenkripsi dari udara (yang secara teknis mudah) tetap merupakan intersepsi ilegal.
    Kalau Anda ingin berlatih audit Wi-Fi, gunakan **jaringan Anda sendiri** atau lab terisolasi dengan AP yang Anda miliki.
 
-2. **Dokumen dan kesepakatan formal:** (a) **izin tertulis** yang ditandatangani pihak yang **berwenang secara hukum** atas sistem itu (bukan sekadar admin IT) — sering disebut "authorization to test" atau "get-out-of-jail-free letter"; (b) **scope** yang eksplisit — alamat IP, domain, dan aplikasi mana yang **boleh** dan **tidak boleh** diuji; (c) **rules of engagement** — teknik apa yang diizinkan (mis. tanpa DoS, tanpa social engineering, tanpa modifikasi data), tingkat agresivitas, dan jam pengujian; (d) **kontak darurat** kedua belah pihak jika terjadi gangguan; (e) **kesepakatan penanganan data** — bagaimana temuan (yang mungkin berisi data sensitif) disimpan, dilaporkan, dan dimusnahkan; (f) **kontrak/NDA** yang mengatur tanggung jawab hukum. Tanpa semua ini, pengujian sebaik apa pun tetap berisiko pidana dan perdata.
+2. **Dokumen dan kesepakatan formal:** (a) **izin tertulis** yang ditandatangani pihak yang berwenang secara hukum atas sistem itu (admin IT saja tidak cukup), sering disebut "authorization to test" atau "get-out-of-jail-free letter"; (b) **scope** yang eksplisit: alamat IP, domain, dan aplikasi mana yang boleh dan tidak boleh diuji; (c) **rules of engagement**: teknik apa yang diizinkan (mis. tanpa DoS, tanpa social engineering, tanpa modifikasi data), tingkat agresivitas, dan jam pengujian; (d) **kontak darurat** kedua belah pihak jika terjadi gangguan; (e) **kesepakatan penanganan data**: bagaimana temuan (yang mungkin berisi data sensitif) disimpan, dilaporkan, dan dimusnahkan; (f) **kontrak/NDA** yang mengatur tanggung jawab hukum. Tanpa semua ini, pengujian sebaik apa pun tetap berisiko pidana dan perdata.
 
-3. Karena **vulnerability scanner menghasilkan banyak false positive** (dan kadang false negative). Ia bekerja dengan mencocokkan versi software, banner, dan pola respons terhadap basis data kerentanan — tetapi: (a) versi yang terdeteksi bisa salah atau sudah di-backport patch-nya oleh distribusi Linux tanpa mengubah nomor versi; (b) kerentanan yang "ditemukan" mungkin **tidak dapat dieksploitasi** di konfigurasi Anda (fitur yang rentan tidak aktif, atau ada mitigasi lain); (c) konteks tidak diperhitungkan — sistem internal yang tersegmentasi ketat berbeda risikonya dengan yang terekspos internet.
-   Karena itu setiap temuan harus **diverifikasi manual**, dan prioritas ditentukan oleh **risiko nyata** (dapat dieksploitasi? terekspos? aset penting?) bukan sekadar skor CVSS mentah. Laporan "3.000 kerentanan kritis" yang tidak diverifikasi lebih membingungkan daripada membantu.
+3. Karena **vulnerability scanner menghasilkan banyak false positive** (dan kadang false negative). Ia bekerja dengan mencocokkan versi software, banner, dan pola respons terhadap basis data kerentanan. Masalahnya: (a) versi yang terdeteksi bisa salah atau sudah di-backport patch-nya oleh distribusi Linux tanpa mengubah nomor versi; (b) kerentanan yang "ditemukan" mungkin tidak dapat dieksploitasi di konfigurasi Anda (fitur yang rentan tidak aktif, atau ada mitigasi lain); (c) konteks tidak diperhitungkan: sistem internal yang tersegmentasi ketat berbeda risikonya dengan yang terekspos internet.
+   Karena itu setiap temuan harus diverifikasi manual, dan prioritas ditentukan oleh risiko nyata (dapat dieksploitasi? terekspos? aset penting?), bukan oleh skor CVSS mentah. Laporan "3.000 kerentanan kritis" yang tidak diverifikasi lebih membingungkan daripada membantu.
 
 4. Lakukan **pemindaian eksternal terhadap rentang alamat publik milik organisasi Anda sendiri**, dari lokasi di luar jaringan (mis. VPS atau koneksi rumah):
    ```
    nmap -sS -sV --top-ports 1000 -Pn <blok-IP-publik-Anda>
    nmap -sU --top-ports 100 <blok-IP-publik-Anda>
    ```
-   Tujuannya melihat **apa yang dilihat penyerang**: layanan apa yang terbuka, versi apa yang terungkap dari banner, dan apakah ada yang tidak seharusnya publik (RDP, panel admin, database, SSH ke perangkat manajemen). Lengkapi dengan **Shodan** (`net:203.0.113.0/24` atau `org:"Nama Organisasi"`) yang sudah memindai internet dan sering mengungkap sistem yang terlupakan. Ini **legal** karena sistemnya milik Anda, dan sangat berharga — banyak pelanggaran dimulai dari layanan terekspos yang tidak disadari.
+   Tujuannya melihat apa yang dilihat penyerang: layanan apa yang terbuka, versi apa yang terungkap dari banner, dan apakah ada yang tidak seharusnya publik (RDP, panel admin, database, SSH ke perangkat manajemen). Lengkapi dengan **Shodan** (`net:203.0.113.0/24` atau `org:"Nama Organisasi"`) yang sudah memindai internet dan sering mengungkap sistem yang terlupakan. Ini legal karena sistemnya milik Anda, dan sangat berharga karena banyak pelanggaran dimulai dari layanan terekspos yang tidak disadari.
 
-5. **Suricata (dan Snort)** memakai pendekatan **signature-based / rule-based** — ia mencocokkan trafik terhadap **tanda tangan serangan yang diketahui** (pola byte, string, perilaku spesifik). Kalau cocok, ia memberi alarm atau memblokir. Kuat untuk mendeteksi serangan yang diketahui secara **akurat dan cepat**, tetapi buta terhadap serangan baru yang belum ada tanda tangannya.
-   **Zeek** memakai pendekatan **network security monitoring / analisis perilaku** — ia **tidak mencari tanda tangan**, melainkan **mencatat semua aktivitas jaringan secara terstruktur**: setiap koneksi (conn.log), setiap query DNS (dns.log), setiap sertifikat TLS (ssl.log), setiap transfer file, dengan metadata kaya. Ini tidak langsung memberi "alarm serangan", tetapi memberi **visibilitas mendalam** untuk investigasi, berburu ancaman, dan mendeteksi anomali (beaconing, eksfiltrasi, domain aneh).
+5. **Suricata (dan Snort)** memakai pendekatan **signature-based / rule-based**: ia mencocokkan trafik terhadap tanda tangan serangan yang diketahui (pola byte, string, perilaku spesifik). Kalau cocok, ia memberi alarm atau memblokir. Pendekatan ini kuat untuk mendeteksi serangan yang diketahui secara akurat dan cepat, tetapi buta terhadap serangan baru yang belum ada tanda tangannya.
+   **Zeek** memakai pendekatan **network security monitoring / analisis perilaku**. Ia tidak mencari tanda tangan, melainkan mencatat semua aktivitas jaringan secara terstruktur: setiap koneksi (conn.log), setiap query DNS (dns.log), setiap sertifikat TLS (ssl.log), setiap transfer file, dengan metadata kaya. Ini tidak langsung memberi "alarm serangan", tetapi memberi visibilitas mendalam untuk investigasi, berburu ancaman, dan mendeteksi anomali (beaconing, eksfiltrasi, domain aneh).
    Keduanya **saling melengkapi**: Suricata menangkap yang diketahui, Zeek memberi konteks dan menangkap yang tidak biasa. Security Onion menggabungkan keduanya.
 
-6. Karena **Anda tidak bisa bertahan dari apa yang tidak Anda pahami**. Memahami cara kerja alat serangan memungkinkan Anda: (a) **memverifikasi bahwa kontrol Anda benar-benar bekerja** — menguji hardening L2 dengan Yersinia (di lab) membuktikan DHCP snooping dan BPDU guard aktif dan efektif, bukan sekadar dikonfigurasi; (b) **mengenali serangan** saat terjadi — Anda tahu seperti apa pola ARP spoofing atau SYN flood di capture; (c) **memprioritaskan pertahanan** — Anda tahu jalan masuk mana yang paling sering dan mudah dipakai penyerang; (d) **berpikir seperti penyerang** saat merancang — mengantisipasi bagaimana sistem Anda bisa disalahgunakan; (e) **berkomunikasi dengan tim keamanan** menggunakan bahasa dan konsep yang sama. Ini prinsip di balik "purple team" — menggabungkan perspektif ofensif dan defensif.
+6. Karena **Anda tidak bisa bertahan dari apa yang tidak Anda pahami**. Memahami cara kerja alat serangan memungkinkan Anda: (a) **memverifikasi bahwa kontrol Anda benar-benar bekerja**: menguji hardening L2 dengan Yersinia (di lab) membuktikan DHCP snooping dan BPDU guard aktif dan efektif, bukan sekadar dikonfigurasi; (b) **mengenali serangan** saat terjadi, karena Anda tahu seperti apa pola ARP spoofing atau SYN flood di capture; (c) **memprioritaskan pertahanan**, karena Anda tahu jalan masuk mana yang paling sering dan mudah dipakai penyerang; (d) **berpikir seperti penyerang** saat merancang, untuk mengantisipasi bagaimana sistem Anda bisa disalahgunakan; (e) **berkomunikasi dengan tim keamanan** menggunakan bahasa dan konsep yang sama. Ini prinsip di balik "purple team": menggabungkan perspektif ofensif dan defensif.
 
-7. Beberapa kekhawatiran serius: (a) **`-T5` (timing agresif) dapat mengganggu atau meng-crash perangkat rapuh** — sistem SCADA/ICS, PLC, perangkat medis, printer, dan IoT lama sering memakai stack jaringan yang lemah dan bisa **berhenti berfungsi** ketika dibanjiri probe. Di lingkungan pabrik, ini bisa berarti **menghentikan produksi atau menciptakan bahaya keselamatan**. (b) **`-A` melakukan OS detection, version scan, dan NSE scripts** — sangat berisik dan invasif; beberapa script bisa memicu perilaku tak terduga. (c) **Sistem SCADA sering tidak boleh disentuh sama sekali** tanpa koordinasi dengan tim OT dan jendela pemeliharaan — ada standar khusus (IEC 62443) yang mengaturnya. (d) Pemindaian produksi tanpa pemberitahuan bisa **memicu respons insiden palsu** dan membuang waktu tim keamanan.
+7. Beberapa kekhawatiran serius: (a) **`-T5` (timing agresif) dapat mengganggu atau meng-crash perangkat rapuh**: sistem SCADA/ICS, PLC, perangkat medis, printer, dan IoT lama sering memakai stack jaringan yang lemah dan bisa berhenti berfungsi ketika dibanjiri probe. Di lingkungan pabrik, ini bisa berarti menghentikan produksi atau menciptakan bahaya keselamatan. (b) **`-A` melakukan OS detection, version scan, dan NSE scripts**, yang sangat berisik dan invasif; beberapa script bisa memicu perilaku tak terduga. (c) **Sistem SCADA sering tidak boleh disentuh sama sekali** tanpa koordinasi dengan tim OT dan jendela pemeliharaan; ada standar khusus (IEC 62443) yang mengaturnya. (d) Pemindaian produksi tanpa pemberitahuan bisa memicu respons insiden palsu dan membuang waktu tim keamanan.
    **Yang seharusnya:** dapatkan otorisasi dan koordinasi dengan tim OT; **kecualikan sistem SCADA/ICS** dari pemindaian aktif (gunakan metode pasif untuk mereka); pakai timing konservatif (`-T2` atau `-T3`); lakukan di jendela pemeliharaan; dan mulai dari subset kecil untuk menguji dampak sebelum memperluas.
 
-8. Pilihan yang **legal dan etis**: (a) **Platform latihan online** — HackTheBox, TryHackMe, PortSwigger Web Security Academy, PentesterLab — menyediakan target yang sengaja rentan dalam lingkungan yang legal dan dirancang untuk belajar. (b) **CTF (Capture The Flag)** — kompetisi keamanan yang legal, dari pemula sampai mahir (CTFtime.org mendaftar banyak event). (c) **Lab lokal terisolasi** — bangun sendiri dengan VirtualBox/KVM/Proxmox, isi dengan target rentan seperti Metasploitable, DVWA, OWASP Juice Shop, atau VulnHub; **isolasi dari jaringan produksi dan internet**. (d) **Bug bounty** — program resmi (HackerOne, Bugcrowd) di mana perusahaan **mengundang** Anda menguji sistem mereka dengan aturan yang jelas dan imbalan. (e) **Sertifikasi praktis** — OSCP, eJPT, PNPT memberi lab dan metodologi. (f) **Jaringan/sistem milik sendiri**. Yang **tidak** boleh: mengarahkan alat apa pun ke sistem yang bukan milik Anda dan tanpa izin — sekalipun untuk "belajar".
+8. Pilihan yang legal dan etis: (a) **Platform latihan online** (HackTheBox, TryHackMe, PortSwigger Web Security Academy, PentesterLab) menyediakan target yang sengaja rentan dalam lingkungan yang legal dan dirancang untuk belajar. (b) **CTF (Capture The Flag)**: kompetisi keamanan yang legal, dari pemula sampai mahir (CTFtime.org mendaftar banyak event). (c) **Lab lokal terisolasi**: bangun sendiri dengan VirtualBox/KVM/Proxmox, isi dengan target rentan seperti Metasploitable, DVWA, OWASP Juice Shop, atau VulnHub, lalu isolasi dari jaringan produksi dan internet. (d) **Bug bounty**: program resmi (HackerOne, Bugcrowd) di mana perusahaan mengundang Anda menguji sistem mereka dengan aturan yang jelas dan imbalan. (e) **Sertifikasi praktis**: OSCP, eJPT, PNPT memberi lab dan metodologi. (f) **Jaringan/sistem milik sendiri**. Yang tidak boleh: mengarahkan alat apa pun ke sistem yang bukan milik Anda dan tanpa izin, sekalipun untuk "belajar".
 
 </details>
 
@@ -460,14 +460,14 @@ Aturan lab:
 
 ## 13. Sumber
 
-- nmap — https://nmap.org/book/
-- Wireshark — https://www.wireshark.org/docs/
-- Suricata — https://suricata.io/ · Zeek — https://zeek.org/ · Security Onion — https://securityonionsolutions.com/
-- Batfish — https://www.batfish.org/
-- OWASP Testing Guide — https://owasp.org/www-project-web-security-testing-guide/
+- nmap: https://nmap.org/book/
+- Wireshark: https://www.wireshark.org/docs/
+- Suricata: https://suricata.io/ · Zeek: https://zeek.org/ · Security Onion: https://securityonionsolutions.com/
+- Batfish: https://www.batfish.org/
+- OWASP Testing Guide: https://owasp.org/www-project-web-security-testing-guide/
 - UU No. 11/2008 jo. UU No. 19/2016 tentang ITE (Indonesia)
 - Cisco CCNA 200-301 v1.1, topik 5.1 dan 5.6
-- MikroTik Tools — https://help.mikrotik.com/docs/display/ROS/Tools
+- MikroTik Tools: https://help.mikrotik.com/docs/display/ROS/Tools
 
 ---
 

@@ -1,7 +1,7 @@
 # 16.5 Jaringan Container & Kubernetes
 
 > **Prasyarat:** `16.3` (container/virtualisasi), `13-linux-networking/02` (veth/bridge/namespace), `06-aplikasi/01` (DNS)
-> **Tujuan:** Anda paham model jaringan Docker dan Kubernetes, CNI, Service, Ingress, dan network policy — jembatan antara networking dan dunia DevOps/cloud-native.
+> **Tujuan:** Anda paham model jaringan Docker dan Kubernetes, CNI, Service, Ingress, dan network policy (jembatan antara networking dan dunia DevOps/cloud-native).
 
 ---
 
@@ -49,7 +49,7 @@ Kubernetes (K8s) mengorkestrasi container dalam **Pod** (unit terkecil, berisi 1
 ```
 
 > [!WARNING]
-> **Model "IP-per-Pod tanpa NAT"** adalah perbedaan besar dari Docker default (yang ber-NAT). Di K8s, Pod adalah "warga kelas satu" jaringan dengan IP routable di dalam cluster — menyederhanakan model tetapi menuntut plugin jaringan (CNI) yang mengimplementasikannya.
+> **Model "IP-per-Pod tanpa NAT"** adalah perbedaan besar dari Docker default (yang ber-NAT). Di K8s, Pod adalah "warga kelas satu" jaringan dengan IP routable di dalam cluster. Model ini lebih sederhana, tetapi menuntut plugin jaringan (CNI) yang mengimplementasikannya.
 
 ```
 Hierarki:
@@ -63,17 +63,17 @@ Hierarki:
 
 ## 3. CNI (Container Network Interface)
 
-**CNI** adalah standar plugin yang mengimplementasikan jaringan Pod. K8s sendiri tidak menyediakan jaringan Pod — ia mendelegasikan ke plugin CNI.
+**CNI** adalah standar plugin yang mengimplementasikan jaringan Pod. K8s sendiri tidak menyediakan jaringan Pod; tugas itu didelegasikan ke plugin CNI.
 
 | CNI | Karakteristik |
 |---|---|
 | **Calico** | Routing L3 (BGP), network policy kuat, populer di enterprise |
-| **Cilium** | Berbasis **eBPF** — performa & observability tinggi, policy L7, tren naik |
+| **Cilium** | Berbasis eBPF: performa & observability tinggi, policy L7, tren naik |
 | **Flannel** | Sederhana, overlay VXLAN, mudah dipakai |
 | **Weave, Antrea, dll** | Alternatif lain |
 
 > [!TIP]
-> **Cilium (eBPF)** adalah tren dominan — eBPF memungkinkan pemrograman datapath kernel Linux secara aman tanpa modul kernel, memberi networking + security + observability berkinerja tinggi. Banyak layanan cloud K8s kini memakainya secara default. (eBPF juga menggantikan iptables untuk load-balancing dan policy.)
+> **Cilium (eBPF)** adalah tren dominan. eBPF memungkinkan pemrograman datapath kernel Linux secara aman tanpa modul kernel, dan memberi networking + security + observability berkinerja tinggi. Banyak layanan cloud K8s kini memakainya secara default. (eBPF juga menggantikan iptables untuk load-balancing dan policy.)
 
 ---
 
@@ -92,16 +92,16 @@ Pod bersifat **fana** (fana = sering mati dan lahir kembali dengan IP baru). **S
 
 | Tipe | Fungsi |
 |---|---|
-| **ClusterIP** (default) | IP virtual internal cluster — hanya diakses dari dalam |
-| **NodePort** | Buka port di setiap Node (30000-32767) — akses dari luar via IP node |
-| **LoadBalancer** | Provisioning load balancer cloud (ELB dsb.) — IP publik |
+| **ClusterIP** (default) | IP virtual internal cluster, hanya diakses dari dalam |
+| **NodePort** | Buka port di setiap Node (30000-32767) untuk akses dari luar via IP node |
+| **LoadBalancer** | Provisioning load balancer cloud (ELB dsb.) dengan IP publik |
 | **ExternalName** | Alias DNS ke layanan eksternal |
-| **Headless** | Tanpa IP virtual — kembalikan IP Pod langsung (untuk stateful/DB) |
+| **Headless** | Tanpa IP virtual; kembalikan IP Pod langsung (untuk stateful/DB) |
 
 **kube-proxy** (atau eBPF di Cilium) mengimplementasikan Service dengan aturan iptables/IPVS/eBPF yang me-load-balance ClusterIP ke Pod yang sehat.
 
 > [!TIP]
-> **DNS internal K8s (CoreDNS)** memungkinkan Pod menghubungi Service dengan nama: `http://web.default.svc.cluster.local` (atau singkat `web` dalam namespace yang sama). Service discovery berbasis DNS — konsep DNS dari `06-aplikasi/01` yang bekerja di dalam cluster.
+> **DNS internal K8s (CoreDNS)** memungkinkan Pod menghubungi Service dengan nama: `http://web.default.svc.cluster.local` (atau singkat `web` dalam namespace yang sama). Ini service discovery berbasis DNS: konsep DNS dari `06-aplikasi/01` yang bekerja di dalam cluster.
 
 ---
 
@@ -133,7 +133,7 @@ Internet
 
 ## 6. Network Policy: Firewall untuk Pod
 
-Secara default, **semua Pod bisa bicara ke semua Pod** (model flat). **NetworkPolicy** menerapkan segmentasi (mikrosegmentasi) — mirip ACL/firewall untuk Pod.
+Secara default, semua Pod bisa bicara ke semua Pod (model flat). **NetworkPolicy** menerapkan segmentasi (mikrosegmentasi), mirip ACL/firewall untuk Pod.
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -154,10 +154,10 @@ spec:
 ```
 
 > [!WARNING]
-> **NetworkPolicy butuh CNI yang mendukungnya** (Calico, Cilium, dll — Flannel dasar tidak). Tanpa policy, cluster "flat dan terbuka" secara internal — masalah keamanan untuk multi-tenant. Ini implementasi **Zero Trust** (lihat `12-keamanan/05`) di level Pod: default deny, izinkan eksplisit.
+> **NetworkPolicy butuh CNI yang mendukungnya** (Calico, Cilium, dll; Flannel dasar tidak). Tanpa policy, cluster "flat dan terbuka" secara internal, dan itu masalah keamanan untuk multi-tenant. Ini implementasi **Zero Trust** (lihat `12-keamanan/05`) di level Pod: default deny, izinkan eksplisit.
 
 > [!TIP]
-> **Cilium** memperluas ini ke **policy L7** (mis. hanya izinkan `GET /api/public`, blokir `POST`) berkat eBPF — jauh lebih granular dari NetworkPolicy standar yang berbasis L3/L4.
+> **Cilium** memperluas ini ke policy L7 (mis. hanya izinkan `GET /api/public`, blokir `POST`) berkat eBPF. Hasilnya jauh lebih granular dari NetworkPolicy standar yang berbasis L3/L4.
 
 ---
 
@@ -178,7 +178,7 @@ Ini menyatukan hampir semua yang Anda pelajari: namespace/veth/bridge (Linux), N
 
 ## 8. Hubble: Observability Jaringan di Cilium
 
-Bagian 6 menunjukkan bahwa NetworkPolicy bekerja diam-diam: paket yang ditolak tidak menghasilkan pesan galat, aplikasi hanya melihat timeout. Di cluster, ditambah Pod yang fana dan IP yang berubah-ubah, `tcpdump` per node tidak lagi praktis untuk menjawab pertanyaan sederhana "siapa yang bicara dengan siapa, dan siapa yang ditolak?". **Hubble** adalah lapisan observability jaringan dan keamanan di atas **Cilium** yang menjawabnya. Karena Cilium sudah memegang jalur paket lewat eBPF, Hubble bisa mencatat alur (*flow*) lengkap dengan identitas Kubernetes (Pod, namespace, label) dan bukan sekadar alamat IP, tanpa mengubah aplikasi atau menambah sidecar.
+Bagian 6 menunjukkan bahwa NetworkPolicy bekerja diam-diam: paket yang ditolak tidak menghasilkan pesan galat, aplikasi hanya melihat timeout. Di cluster, ditambah Pod yang fana dan IP yang berubah-ubah, `tcpdump` per node tidak lagi praktis untuk menjawab pertanyaan sederhana "siapa yang bicara dengan siapa, dan siapa yang ditolak?". **Hubble** adalah lapisan observability jaringan dan keamanan di atas **Cilium** yang menjawabnya. Karena Cilium sudah memegang jalur paket lewat eBPF, Hubble bisa mencatat alur (*flow*) beserta identitas Kubernetes-nya (Pod, namespace, label), selain alamat IP, tanpa mengubah aplikasi atau menambah sidecar.
 
 Hubble punya empat komponen. **Hubble server** hidup di dalam Cilium agent di setiap node dan hanya melihat lalu lintas node itu; ia bisa diakses lewat Unix domain socket lokal. **Hubble CLI** (`hubble`) adalah klien baris perintah untuk bertanya ke API tersebut. **Hubble Relay** mengumpulkan data dari semua node supaya Anda bisa melihat seluruh cluster, bahkan beberapa cluster yang tergabung lewat ClusterMesh. **Hubble UI** menampilkan peta layanan (*service map*) yang menunjukkan ketergantungan antarlayanan pada lapisan L3/L4 dan L7. Metrik jaringan juga bisa diekspor ke sistem monitoring, melanjutkan ide NetFlow dan telemetri di `14-monitoring-troubleshooting/03-observability`, tetapi dengan label yang paham Kubernetes.
 
@@ -210,11 +210,11 @@ Alur kerja untuk kasus klasik "Pod frontend tidak bisa menghubungi api setelah N
 ## 9. Ringkasan
 
 - **Docker** memakai primitif Linux: namespace + veth + bridge (`docker0`) + NAT/port-publish. Mode: bridge, host, none, overlay, macvlan.
-- **Kubernetes**: unit = **Pod** (1+ container berbagi namespace). Aturan: **IP-per-Pod, tanpa NAT, flat**.
+- **Kubernetes**: unit = **Pod** (1+ container berbagi namespace). Aturan: IP-per-Pod, tanpa NAT, flat.
 - **CNI** mengimplementasikan jaringan Pod: **Calico** (BGP/policy), **Cilium** (eBPF, tren), Flannel (sederhana).
-- **Service** = endpoint stabil (IP virtual + DNS) di depan Pod fana. Tipe: **ClusterIP, NodePort, LoadBalancer, ExternalName, Headless**. **CoreDNS** untuk discovery.
+- **Service** = endpoint stabil (IP virtual + DNS) di depan Pod fana. Tipe: ClusterIP, NodePort, LoadBalancer, ExternalName, Headless. **CoreDNS** untuk discovery.
 - **Ingress** = routing HTTP/HTTPS L7 terpusat (Ingress Controller mengimplementasikan); **Gateway API** penerusnya dan pilihan default untuk cluster baru, apalagi sejak Ingress NGINX pensiun (Maret 2026).
-- **NetworkPolicy** = firewall/segmentasi Pod (butuh CNI pendukung) — Zero Trust di level Pod. Cilium menambah policy L7.
+- **NetworkPolicy** = firewall/segmentasi Pod (butuh CNI pendukung), yaitu Zero Trust di level Pod. Cilium menambah policy L7.
 - Semua ini menyatukan konsep: namespace, NAT, DNS, load balancing, VXLAN, BGP, firewall, Zero Trust.
 - **Hubble** = observability jaringan di Cilium (eBPF): server per node, CLI `hubble`, Relay lintas node (port 4244), dan UI peta layanan. `hubble observe --verdict DROPPED` menemukan alur yang ditolak NetworkPolicy; verdict `FORWARDED`, `DROPPED`, `ERROR`, `AUDIT`.
 
@@ -232,15 +232,15 @@ Alur kerja untuk kasus klasik "Pod frontend tidak bisa menghubungi api setelah N
 <details>
 <summary>Jawaban</summary>
 
-1. Docker mode bridge memakai: **network namespace** (setiap container mendapat namespace jaringan terisolasi dengan interface, tabel routing, dan aturan firewall sendiri), **pasangan veth (virtual ethernet)** (satu ujung di dalam namespace container sebagai `eth0`, ujung lain terhubung ke bridge di host), **bridge Linux** (`docker0`, bertindak sebagai switch virtual yang menghubungkan semua container), dan **iptables** (untuk NAT/masquerade agar container bisa keluar, dan DNAT untuk port yang di-publish). Ini persis primitif yang dipelajari di `13-linux-networking/02` — Docker hanya mengorkestrasinya secara otomatis.
+1. Docker mode bridge memakai: **network namespace** (setiap container mendapat namespace jaringan terisolasi dengan interface, tabel routing, dan aturan firewall sendiri), **pasangan veth (virtual ethernet)** (satu ujung di dalam namespace container sebagai `eth0`, ujung lain terhubung ke bridge di host), **bridge Linux** (`docker0`, bertindak sebagai switch virtual yang menghubungkan semua container), dan **iptables** (untuk NAT/masquerade agar container bisa keluar, dan DNAT untuk port yang di-publish). Ini persis primitif yang dipelajari di `13-linux-networking/02`; Docker hanya mengorkestrasinya secara otomatis.
 
-2. Empat aturan: **(1)** setiap Pod punya **IP unik sendiri** (IP-per-Pod); **(2)** semua Pod bisa berkomunikasi satu sama lain **tanpa NAT** (jaringan flat/datar); **(3)** semua Node bisa berkomunikasi dengan semua Pod tanpa NAT; **(4)** IP yang dilihat Pod tentang dirinya sendiri **sama** dengan IP yang dilihat pihak lain tentang Pod itu (tidak ada penerjemahan). **Bedanya dengan Docker default:** Docker mode bridge memberi container IP privat dan menyembunyikannya di balik **NAT** (harus publish port untuk akses dari luar), sedangkan K8s menjadikan setiap Pod punya IP routable langsung di dalam cluster **tanpa NAT** — model yang lebih sederhana dan datar, tetapi menuntut plugin CNI untuk mengimplementasikannya.
+2. Empat aturan: (1) setiap Pod punya IP unik sendiri (IP-per-Pod); (2) semua Pod bisa berkomunikasi satu sama lain tanpa NAT (jaringan flat/datar); (3) semua Node bisa berkomunikasi dengan semua Pod tanpa NAT; (4) IP yang dilihat Pod tentang dirinya sendiri sama dengan IP yang dilihat pihak lain tentang Pod itu (tidak ada penerjemahan). **Bedanya dengan Docker default:** Docker mode bridge memberi container IP privat dan menyembunyikannya di balik NAT (harus publish port untuk akses dari luar), sedangkan K8s menjadikan setiap Pod punya IP routable langsung di dalam cluster tanpa NAT. Model ini lebih sederhana dan datar, tetapi menuntut plugin CNI untuk mengimplementasikannya.
 
-3. **Pod bersifat fana** — ia sering dihentikan dan dibuat ulang (saat scaling, update, atau kegagalan node), dan setiap Pod baru mendapat **IP baru**. Kalau klien menghubungi IP Pod langsung, koneksi putus setiap kali Pod diganti. **Service** memberi **endpoint stabil** (IP virtual/ClusterIP + nama DNS tetap) di depan sekumpulan Pod, dan me-load-balance ke Pod yang sehat — sehingga klien tidak peduli Pod mana yang melayani atau IP-nya berubah. Tiga tipe: **ClusterIP** (IP internal cluster, hanya diakses dari dalam — default); **NodePort** (membuka port statik di setiap node sehingga bisa diakses dari luar via IP node:port); **LoadBalancer** (memprovisikan load balancer cloud dengan IP publik untuk akses eksternal). (Tambahan: ExternalName = alias DNS ke layanan luar; Headless = tanpa IP virtual, kembalikan IP Pod langsung untuk aplikasi stateful.)
+3. Pod bersifat fana: ia sering dihentikan dan dibuat ulang (saat scaling, update, atau kegagalan node), dan setiap Pod baru mendapat IP baru. Kalau klien menghubungi IP Pod langsung, koneksi putus setiap kali Pod diganti. **Service** memberi endpoint stabil (IP virtual/ClusterIP + nama DNS tetap) di depan sekumpulan Pod, dan me-load-balance ke Pod yang sehat, sehingga klien tidak peduli Pod mana yang melayani atau IP-nya berubah. Tiga tipe: **ClusterIP** (default; IP internal cluster, hanya diakses dari dalam); **NodePort** (membuka port statik di setiap node sehingga bisa diakses dari luar via IP node:port); **LoadBalancer** (memprovisikan load balancer cloud dengan IP publik untuk akses eksternal). (Tambahan: ExternalName = alias DNS ke layanan luar; Headless = tanpa IP virtual, kembalikan IP Pod langsung untuk aplikasi stateful.)
 
-4. **Service LoadBalancer** bekerja di **Layer 4** (TCP/UDP) dan biasanya memberi **satu IP publik per service** dengan memprovisikan load balancer cloud — sederhana tetapi bisa mahal kalau punya banyak service, dan tidak paham HTTP. **Ingress** bekerja di **Layer 7** (HTTP/HTTPS) dan menyediakan **satu titik masuk terpusat** yang mengarahkan trafik ke banyak Service berdasarkan **hostname dan/atau path** (mis. `toko.contoh.com` → frontend, `api.contoh.com/v1` → api-v1), serta umumnya menangani **terminasi TLS**. Jadi Ingress lebih hemat dan ekspresif untuk trafik web (banyak aplikasi di balik satu IP), sedangkan LoadBalancer lebih cocok untuk protokol non-HTTP atau ketika butuh IP L4 dedikasi. Ingress butuh **Ingress Controller** untuk mengimplementasikannya. Untuk desain baru, gunakan **Gateway API** sebagai penerus Ingress, karena controller Ingress NGINX yang populer sudah pensiun sejak Maret 2026.
+4. **Service LoadBalancer** bekerja di Layer 4 (TCP/UDP) dan biasanya memberi satu IP publik per service dengan memprovisikan load balancer cloud. Cara ini sederhana tetapi bisa mahal kalau punya banyak service, dan tidak paham HTTP. **Ingress** bekerja di Layer 7 (HTTP/HTTPS) dan menyediakan satu titik masuk terpusat yang mengarahkan trafik ke banyak Service berdasarkan hostname dan/atau path (mis. `toko.contoh.com` → frontend, `api.contoh.com/v1` → api-v1), serta umumnya menangani terminasi TLS. Jadi Ingress lebih hemat dan ekspresif untuk trafik web (banyak aplikasi di balik satu IP), sedangkan LoadBalancer lebih cocok untuk protokol non-HTTP atau ketika butuh IP L4 dedikasi. Ingress butuh Ingress Controller untuk mengimplementasikannya. Untuk desain baru, gunakan Gateway API sebagai penerus Ingress, karena controller Ingress NGINX yang populer sudah pensiun sejak Maret 2026.
 
-5. **NetworkPolicy** mendefinisikan aturan yang mengontrol trafik mana yang boleh masuk (ingress) dan keluar (egress) dari sekelompok Pod (dipilih via label) — pada dasarnya **firewall/ACL untuk Pod**. Ia mewujudkan **Zero Trust** karena: secara default cluster K8s "flat dan terbuka" (semua Pod bisa bicara ke semua Pod), tetapi begitu sebuah NetworkPolicy diterapkan pada Pod, Pod itu menjadi **default-deny** untuk arah yang diatur — hanya trafik yang **secara eksplisit diizinkan** (mis. "database hanya menerima koneksi dari Pod berlabel app=api pada port 5432") yang boleh lewat. Ini persis prinsip Zero Trust: jangan percaya berdasarkan lokasi (berada di cluster yang sama tidak cukup), verifikasi dan izinkan setiap alur secara eksplisit dengan hak paling minimal (mikrosegmentasi). ⚠️ Membutuhkan CNI yang mendukung (Calico, Cilium); Cilium bahkan memperluasnya ke policy L7.
+5. **NetworkPolicy** mendefinisikan aturan yang mengontrol trafik mana yang boleh masuk (ingress) dan keluar (egress) dari sekelompok Pod (dipilih via label). Fungsinya seperti firewall/ACL untuk Pod. Ia mewujudkan Zero Trust karena secara default cluster K8s "flat dan terbuka" (semua Pod bisa bicara ke semua Pod), tetapi begitu sebuah NetworkPolicy diterapkan pada Pod, Pod itu menjadi default-deny untuk arah yang diatur. Hanya trafik yang secara eksplisit diizinkan (mis. "database hanya menerima koneksi dari Pod berlabel app=api pada port 5432") yang boleh lewat. Ini persis prinsip Zero Trust: jangan percaya berdasarkan lokasi (berada di cluster yang sama tidak cukup), verifikasi dan izinkan setiap alur secara eksplisit dengan hak paling minimal (mikrosegmentasi). Catatan: NetworkPolicy membutuhkan CNI yang mendukung (Calico, Cilium); Cilium bahkan memperluasnya ke policy L7.
 
 6. Jalankan `hubble observe --pod frontend --verdict DROPPED` (atau tambahkan `--protocol` untuk menyaring). Baris berverdict `DROPPED` menunjukkan Pod sumber, Pod tujuan, dan port yang ditolak, sehingga terlihat aturan NetworkPolicy mana yang kurang (misalnya ingress di `api` belum mengizinkan label `app=frontend` pada port tujuan). Hubble server pada tiap Cilium agent hanya melihat lalu lintas node-nya sendiri; untuk pandangan seluruh cluster dibutuhkan **Hubble Relay**, dan **Hubble UI** bila ingin peta layanan. Port TCP **4244** harus terbuka di semua node yang menjalankan Cilium. Hubble hanya efektif bila Cilium menjadi CNI.
 
@@ -250,9 +250,9 @@ Alur kerja untuk kasus klasik "Pod frontend tidak bisa menghubungi api setelah N
 
 ## 11. Sumber
 
-- Kubernetes networking documentation — https://kubernetes.io/docs/concepts/services-networking/
+- Kubernetes networking documentation: https://kubernetes.io/docs/concepts/services-networking/
 - CNI spec · Calico, Cilium (eBPF) documentation
-- Gateway API — https://gateway-api.sigs.k8s.io/
+- Gateway API: https://gateway-api.sigs.k8s.io/
 - Kubernetes Blog, "Ingress NGINX Retirement" (11 November 2025): https://kubernetes.io/blog/2025/11/11/ingress-nginx-retirement/
 - *Kubernetes Networking* (O'Reilly)
 - Cilium documentation, Network Observability with Hubble: https://docs.cilium.io/en/stable/observability/hubble/

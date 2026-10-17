@@ -47,11 +47,11 @@ R1(config-if)# ip verify unicast source reachable-via any   ← loose
 
 | Serangan | Mekanisme | Status |
 |---|---|---|
-| **Ping of Death** | Paket ICMP > 65.535 byte → buffer overflow | ❌ Sudah ditambal sejak lama |
-| **Smurf** | Ping ke alamat **broadcast** dengan sumber = korban → semua host membalas ke korban | ❌ Mati (directed broadcast diblokir default) |
-| **ICMP flood** | Membanjiri dengan echo request | ⚠️ Masih relevan |
-| **ICMP redirect abuse** | Mengarahkan trafik korban ke penyerang | ⚠️ Mitigasi: `no ip redirects` |
-| **ICMP tunneling** | Eksfiltrasi data dalam payload ICMP | ⚠️ Sulit dideteksi |
+| **Ping of Death** | Paket ICMP > 65.535 byte → buffer overflow | Sudah ditambal sejak lama |
+| **Smurf** | Ping ke alamat **broadcast** dengan sumber = korban → semua host membalas ke korban | Mati (directed broadcast diblokir default) |
+| **ICMP flood** | Membanjiri dengan echo request | Masih relevan |
+| **ICMP redirect abuse** | Mengarahkan trafik korban ke penyerang | Masih relevan; mitigasi: `no ip redirects` |
+| **ICMP tunneling** | Eksfiltrasi data dalam payload ICMP | Masih relevan, sulit dideteksi |
 
 ```
 R1(config-if)# no ip directed-broadcast    ← default sejak IOS 12.0
@@ -60,7 +60,7 @@ R1(config)# ip icmp rate-limit unreachable 1000
 ```
 
 > [!WARNING]
-> **Jangan blokir ICMP sepenuhnya** — merusak PMTUD, dan **mematikan IPv6** (`04-network-layer/04`).
+> **Jangan blokir ICMP sepenuhnya.** Itu merusak PMTUD dan mematikan IPv6 (`04-network-layer/04`).
 
 ```
 # Rate limit, bukan blokir
@@ -119,7 +119,7 @@ Penyerang di jalur (atau yang bisa menebak sequence number) mengirim paket **RST
 
 ### Session Hijacking
 
-Mengambil alih sesi yang sudah terautentikasi — biasanya dengan mencuri **session cookie**.
+Mengambil alih sesi yang sudah terautentikasi, biasanya dengan mencuri **session cookie**.
 
 **Mitigasi:** HTTPS di semua halaman, cookie dengan `Secure` + `HttpOnly` + `SameSite`, rotasi session ID setelah login, binding sesi ke atribut klien, timeout yang wajar.
 
@@ -127,7 +127,7 @@ Mengambil alih sesi yang sudah terautentikasi — biasanya dengan mencuri **sess
 
 ## 4. Serangan DNS
 
-DNS adalah target favorit karena sangat penting dan sering kurang dilindungi.
+DNS adalah target favorit karena hampir semua layanan bergantung padanya, padahal DNS sering kurang dilindungi.
 
 | Serangan | Mekanisme | Mitigasi |
 |---|---|---|
@@ -176,7 +176,7 @@ CLDAP         : 56–70×
 ```
 
 > [!WARNING]
-> **Ini kesalahan konfigurasi MikroTik yang sangat umum di Indonesia** — `allow-remote-requests=yes` tanpa memfilter WAN membuat router menjadi open resolver yang dipakai untuk menyerang orang lain, dan menghabiskan bandwidth Anda.
+> **Ini kesalahan konfigurasi MikroTik yang sangat umum di Indonesia.** `allow-remote-requests=yes` tanpa memfilter WAN membuat router menjadi open resolver yang dipakai untuk menyerang orang lain, dan menghabiskan bandwidth Anda.
 
 ### DNS Tunneling
 
@@ -246,7 +246,7 @@ DI SISI PROVIDER/CLOUD:
 ```
 
 > [!WARNING]
-> **Serangan volumetrik besar TIDAK BISA dimitigasi di tepi jaringan Anda** — kalau 100 Gbps menghantam link 1 Gbps, link sudah penuh sebelum paket mencapai firewall Anda. **Harus dimitigasi di hulu** oleh ISP atau layanan scrubbing.
+> **Serangan volumetrik besar TIDAK BISA dimitigasi di tepi jaringan Anda.** Kalau 100 Gbps menghantam link 1 Gbps, link sudah penuh sebelum paket mencapai firewall Anda. Serangan seperti ini harus dimitigasi di hulu oleh ISP atau layanan scrubbing.
 
 ### RTBH (Remotely Triggered Black Hole)
 
@@ -258,7 +258,7 @@ DI SISI PROVIDER/CLOUD:
 ```
 
 > [!WARNING]
-> **RTBH menyelesaikan serangan dengan menyelesaikan tujuan penyerang** — layanan itu memang menjadi tidak tersedia. Ia melindungi **sisa** infrastruktur Anda. Untuk melindungi layanan itu sendiri, butuh scrubbing.
+> **RTBH menyelesaikan serangan dengan menyelesaikan tujuan penyerang:** layanan itu memang menjadi tidak tersedia. Ia melindungi sisa infrastruktur Anda. Untuk melindungi layanan itu sendiri, Anda butuh scrubbing.
 
 ```
 # MikroTik — rate limit dan blackhole
@@ -294,13 +294,13 @@ DI SISI PROVIDER/CLOUD:
 5. Seluruh trafik terlihat oleh penyerang
 ```
 
-**Mitigasi: HSTS** — browser **menolak** koneksi HTTP ke domain itu.
+**Mitigasi: HSTS.** Browser menolak koneksi HTTP ke domain itu.
 ```
 Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
 ```
 
 > [!TIP]
-> **HSTS preload list** yang tertanam di browser melindungi bahkan pada kunjungan **pertama** — sebelum header HSTS pernah diterima.
+> **HSTS preload list** yang tertanam di browser melindungi bahkan pada kunjungan pertama, sebelum header HSTS pernah diterima.
 
 ---
 
@@ -320,7 +320,7 @@ Meski ini domain developer, network engineer perlu memahaminya untuk mengonfigur
 | **Deserialization** | Objek berbahaya | Patch, WAF |
 
 > [!WARNING]
-> **SSRF sangat relevan untuk network engineer** — penyerang memaksa server web mengakses `169.254.169.254` (metadata cloud) untuk mencuri kredensial IAM. **Mitigasi jaringan:** blokir akses ke alamat metadata dari aplikasi yang tidak memerlukannya, dan terapkan firewall **egress** yang ketat.
+> **SSRF sangat relevan untuk network engineer.** Penyerang memaksa server web mengakses `169.254.169.254` (metadata cloud) untuk mencuri kredensial IAM. **Mitigasi jaringan:** blokir akses ke alamat metadata dari aplikasi yang tidak memerlukannya, dan terapkan firewall egress yang ketat.
 
 ```
 # Blokir metadata cloud dari container/VM aplikasi
@@ -328,7 +328,7 @@ $ sudo nft add rule inet filter output ip daddr 169.254.169.254 drop
 ```
 
 > [!TIP]
-> **Firewall egress (keluar) sering diabaikan** padahal sangat efektif — membatasi ke mana server boleh terhubung menghentikan C2, eksfiltrasi, dan SSRF sekaligus.
+> **Firewall egress (keluar) sering diabaikan** padahal sangat efektif: membatasi ke mana server boleh terhubung menghentikan C2, eksfiltrasi, dan SSRF sekaligus.
 
 ---
 
@@ -446,7 +446,7 @@ Kanal C2 yang umum:
 ```
 
 > [!TIP]
-> **Firewall egress adalah kontrol yang paling kurang dimanfaatkan.** Sebagian besar organisasi memfilter trafik masuk dengan ketat tetapi mengizinkan semua yang keluar — padahal itulah jalur C2 dan eksfiltrasi.
+> **Firewall egress adalah kontrol yang paling kurang dimanfaatkan.** Sebagian besar organisasi memfilter trafik masuk dengan ketat tetapi mengizinkan semua yang keluar, padahal itulah jalur C2 dan eksfiltrasi.
 
 ---
 
@@ -457,13 +457,13 @@ Kanal C2 yang umum:
 - **SYN flood** → **SYN cookies** + backlog besar + rate limit.
 - **DNS**: cache poisoning (→ DNSSEC), **amplification** (→ jangan jadi open resolver, RRL, BCP 38), **tunneling** (→ monitoring anomali).
 - **Kesalahan MikroTik umum: `allow-remote-requests=yes` tanpa memfilter WAN** → menjadi open resolver.
-- **DDoS**: volumetric (bandwidth), protocol (state), **application L7 (paling sulit — trafik terlihat sah)**.
-- **Serangan volumetrik besar tidak bisa dimitigasi di tepi jaringan Anda** — butuh scrubbing di hulu. **RTBH** melindungi sisa infrastruktur dengan mengorbankan satu alamat.
+- **DDoS**: volumetric (bandwidth), protocol (state), **application L7 (paling sulit karena trafik terlihat sah)**.
+- **Serangan volumetrik besar tidak bisa dimitigasi di tepi jaringan Anda.** Mitigasinya butuh scrubbing di hulu. **RTBH** melindungi sisa infrastruktur dengan mengorbankan satu alamat.
 - **SSL stripping** → **HSTS** dengan preload.
-- **SSRF** sangat relevan bagi network engineer — blokir akses ke metadata cloud dan terapkan **firewall egress**.
+- **SSRF** sangat relevan bagi network engineer: blokir akses ke metadata cloud dan terapkan **firewall egress**.
 - **Pemindaian tanpa izin tertulis adalah ilegal.** Lakukan audit permukaan serangan terhadap diri sendiri secara berkala.
 - **Protokol routing** butuh **autentikasi + passive-interface**; BGP butuh **RPKI, prefix filter, maximum-prefix, GTSM**.
-- **Firewall egress adalah kontrol yang paling kurang dimanfaatkan** — ia menghentikan C2, eksfiltrasi, dan SSRF sekaligus.
+- **Firewall egress adalah kontrol yang paling kurang dimanfaatkan.** Ia menghentikan C2, eksfiltrasi, dan SSRF sekaligus.
 
 ---
 
@@ -481,15 +481,15 @@ Kanal C2 yang umum:
 <details>
 <summary>Jawaban</summary>
 
-1. **DNS amplification** memanfaatkan dua hal: (a) UDP tidak memverifikasi alamat sumber, sehingga penyerang bisa **memalsukan alamat sumber menjadi alamat korban**; (b) respons DNS bisa **jauh lebih besar** daripada query (terutama query ANY atau domain dengan banyak record/DNSSEC). Penyerang mengirim query kecil ke ribuan **open resolver** dengan alamat sumber palsu; semua resolver membalas ke korban.
-   **Perhitungan:** penyerang mengirim 20 Mbps query. Dengan faktor amplifikasi 50×, trafik yang menghantam korban = **20 × 50 = 1.000 Mbps (1 Gbps)**. Kalau penyerang memakai botnet dengan 100 host masing-masing 20 Mbps, hasilnya **100 Gbps** — cukup untuk melumpuhkan sebagian besar organisasi.
+1. **DNS amplification** memanfaatkan dua hal: (a) UDP tidak memverifikasi alamat sumber, sehingga penyerang bisa memalsukan alamat sumber menjadi alamat korban; (b) respons DNS bisa jauh lebih besar daripada query (terutama query ANY atau domain dengan banyak record/DNSSEC). Penyerang mengirim query kecil ke ribuan **open resolver** dengan alamat sumber palsu; semua resolver membalas ke korban.
+   **Perhitungan:** penyerang mengirim 20 Mbps query. Dengan faktor amplifikasi 50×, trafik yang menghantam korban = **20 × 50 = 1.000 Mbps (1 Gbps)**. Kalau penyerang memakai botnet dengan 100 host masing-masing 20 Mbps, hasilnya **100 Gbps**, cukup untuk melumpuhkan sebagian besar organisasi.
    Mitigasi paling fundamental adalah **BCP 38** (mencegah spoofing di sumbernya) dan **tidak menjalankan open resolver**.
 
-2. Karena **trafik serangan L7 terlihat sah**. Serangan volumetric mudah dikenali — lonjakan trafik UDP dari ribuan alamat ke satu tujuan, dengan pola yang jelas tidak normal; scrubbing center dapat memfilternya berdasarkan tanda tangan protokol.
-   Serangan L7 adalah **request HTTP yang valid**: format benar, TLS handshake normal, User-Agent wajar, dan berasal dari alamat yang mungkin sah (botnet perangkat terinfeksi atau proxy residensial). Untuk membedakan "pengguna sah" dan "penyerang", sistem harus memahami **perilaku aplikasi** — request mana yang mahal, pola akses mana yang tidak wajar. Selain itu, volumenya kecil (1.000 rps bisa cukup) sehingga tidak memicu ambang berbasis bandwidth.
-   Mitigasi memerlukan WAF dengan rate limiting per-endpoint, bot detection, CAPTCHA adaptif, dan pemahaman aplikasi — jauh lebih rumit daripada memfilter paket.
+2. Karena **trafik serangan L7 terlihat sah**. Serangan volumetric mudah dikenali: lonjakan trafik UDP dari ribuan alamat ke satu tujuan, dengan pola yang jelas tidak normal. Scrubbing center dapat memfilternya berdasarkan tanda tangan protokol.
+   Serangan L7 adalah **request HTTP yang valid**: format benar, TLS handshake normal, User-Agent wajar, dan berasal dari alamat yang mungkin sah (botnet perangkat terinfeksi atau proxy residensial). Untuk membedakan "pengguna sah" dan "penyerang", sistem harus memahami **perilaku aplikasi**: request mana yang mahal, pola akses mana yang tidak wajar. Selain itu, volumenya kecil (1.000 rps bisa cukup) sehingga tidak memicu ambang berbasis bandwidth.
+   Mitigasi memerlukan WAF dengan rate limiting per-endpoint, bot detection, CAPTCHA adaptif, dan pemahaman aplikasi. Semua itu jauh lebih rumit daripada memfilter paket.
 
-3. **Router menjadi open DNS resolver** — kesalahan konfigurasi MikroTik yang sangat umum. `allow-remote-requests=yes` diaktifkan (agar klien LAN bisa memakai router sebagai DNS) tetapi **port 53 dari WAN tidak difilter**, sehingga siapa pun di internet bisa mengirim query. Penyerang memakainya untuk **DNS amplification** terhadap korban lain, memakai bandwidth Anda.
+3. **Router menjadi open DNS resolver**, kesalahan konfigurasi MikroTik yang sangat umum. `allow-remote-requests=yes` diaktifkan (agar klien LAN bisa memakai router sebagai DNS) tetapi **port 53 dari WAN tidak difilter**, sehingga siapa pun di internet bisa mengirim query. Penyerang memakainya untuk **DNS amplification** terhadap korban lain, memakai bandwidth Anda.
    **Perbaikan:**
    ```
    /ip firewall filter add chain=input in-interface-list=WAN protocol=udp dst-port=53 action=drop
@@ -497,42 +497,42 @@ Kanal C2 yang umum:
    ```
    Periksa juga apakah router menjadi **open NTP server** (`/system ntp server set enabled=no` atau filter UDP 123 dari WAN) dan apakah `/tool bandwidth-server` masih aktif. Verifikasi dengan memindai IP publik Anda dari luar.
 
-4. **Slowloris** membuka banyak koneksi HTTP ke server, lalu **mengirim header sangat lambat** — misalnya satu baris header setiap 10-15 detik — dan **tidak pernah menyelesaikan request**. Server, yang menunggu request lengkap sebelum memprosesnya, **menahan setiap koneksi tetap terbuka**. Ketika connection pool atau worker thread habis, server tidak bisa melayani pengguna sah.
-   **Efektif dengan bandwidth kecil** karena setiap koneksi hanya memerlukan beberapa byte per belasan detik. Dengan beberapa ribu koneksi dan hanya beberapa kbps total, penyerang dapat menghabiskan seluruh kapasitas server — tidak ada lonjakan trafik yang terlihat mencurigakan.
+4. **Slowloris** membuka banyak koneksi HTTP ke server, lalu mengirim header sangat lambat (misalnya satu baris header setiap 10-15 detik) dan tidak pernah menyelesaikan request. Server, yang menunggu request lengkap sebelum memprosesnya, menahan setiap koneksi tetap terbuka. Ketika connection pool atau worker thread habis, server tidak bisa melayani pengguna sah.
+   **Efektif dengan bandwidth kecil** karena setiap koneksi hanya memerlukan beberapa byte per belasan detik. Dengan beberapa ribu koneksi dan hanya beberapa kbps total, penyerang dapat menghabiskan seluruh kapasitas server tanpa lonjakan trafik yang terlihat mencurigakan.
    **Mitigasi:** timeout header yang ketat (`client_header_timeout` di nginx), batasi koneksi per IP, dan **reverse proxy yang menyangga request lengkap** sebelum meneruskan ke backend (nginx melakukannya secara default, sehingga backend terlindungi).
 
-5. **RTBH (Remotely Triggered Black Hole)** adalah mekanisme di mana Anda mengiklankan rute untuk alamat yang sedang diserang (biasanya /32) lewat **BGP ke ISP** dengan **community khusus** (mis. 65535:666). ISP mengenali community itu dan **membuang semua trafik menuju alamat tersebut di jaringan mereka** — jauh di hulu, sebelum mencapai link Anda.
-   **Keterbatasannya:** RTBH **menyelesaikan serangan dengan mencapai tujuan penyerang** — alamat itu memang menjadi tidak dapat dijangkau oleh siapa pun, termasuk pengguna sah. Layanan yang diserang tetap mati.
+5. **RTBH (Remotely Triggered Black Hole)** adalah mekanisme di mana Anda mengiklankan rute untuk alamat yang sedang diserang (biasanya /32) lewat **BGP ke ISP** dengan **community khusus** (mis. 65535:666). ISP mengenali community itu dan membuang semua trafik menuju alamat tersebut di jaringan mereka, jauh di hulu, sebelum mencapai link Anda.
+   **Keterbatasannya:** RTBH menyelesaikan serangan dengan mencapai tujuan penyerang. Alamat itu memang menjadi tidak dapat dijangkau oleh siapa pun, termasuk pengguna sah. Layanan yang diserang tetap mati.
    Nilainya adalah **melindungi sisa infrastruktur**: link Anda tidak jenuh, dan layanan lain di jaringan yang sama tetap berjalan. Untuk melindungi layanan yang diserang itu sendiri, dibutuhkan **scrubbing center** yang memfilter trafik jahat dan meneruskan yang sah, atau **BGP Flowspec** yang memungkinkan filter lebih presisi (berdasarkan port/protokol, bukan seluruh alamat).
 
-6. **Firewall egress membatasi ke mana sistem internal boleh terhubung.** Sebagian besar organisasi memfilter trafik **masuk** dengan sangat ketat tetapi mengizinkan hampir semua trafik **keluar** — padahal setelah penyerang berhasil masuk (lewat phishing, exploit, atau supply chain), seluruh aktivitas berikutnya adalah trafik keluar.
-   **Tiga hal yang dicegahnya:** (a) **Command and Control** — malware tidak bisa menghubungi server penyerang untuk menerima perintah, sehingga infeksi menjadi tidak berguna; (b) **Eksfiltrasi data** — data tidak bisa dikirim keluar ke tujuan yang tidak diizinkan; (c) **SSRF dan lateral movement ke luar** — server yang dipaksa mengakses alamat internal atau metadata cloud akan diblokir.
+6. **Firewall egress membatasi ke mana sistem internal boleh terhubung.** Sebagian besar organisasi memfilter trafik masuk dengan sangat ketat tetapi mengizinkan hampir semua trafik keluar. Padahal, setelah penyerang berhasil masuk (lewat phishing, exploit, atau supply chain), seluruh aktivitas berikutnya adalah trafik keluar.
+   **Tiga hal yang dicegahnya:** (a) **Command and Control**: malware tidak bisa menghubungi server penyerang untuk menerima perintah, sehingga infeksi menjadi tidak berguna; (b) **Eksfiltrasi data**: data tidak bisa dikirim keluar ke tujuan yang tidak diizinkan; (c) **SSRF dan lateral movement ke luar**: server yang dipaksa mengakses alamat internal atau metadata cloud akan diblokir.
    Tambahan: mencegah sistem internal ikut menjadi bagian botnet/DDoS, dan mencegah pemindaian keluar.
-   **Penerapan praktis:** server produksi hanya boleh keluar ke repositori paket tertentu, NTP, DNS internal, dan endpoint API yang diperlukan — bukan ke seluruh internet.
+   **Penerapan praktis:** server produksi hanya boleh keluar ke repositori paket tertentu, NTP, DNS internal, dan endpoint API yang diperlukan, bukan ke seluruh internet.
 
 7. Beberapa lapisan kontrol jaringan yang relevan:
-   (a) **Blokir akses ke alamat metadata cloud** (`169.254.169.254`) dari aplikasi yang tidak memerlukannya — ini yang paling langsung mencegah pencurian kredensial IAM lewat SSRF.
+   (a) **Blokir akses ke alamat metadata cloud** (`169.254.169.254`) dari aplikasi yang tidak memerlukannya. Inilah yang paling langsung mencegah pencurian kredensial IAM lewat SSRF.
    ```
    nft add rule inet filter output ip daddr 169.254.169.254 drop
    ```
    Di cloud modern, gunakan **IMDSv2** (memerlukan token PUT, sehingga SSRF sederhana gagal) dan matikan IMDSv1.
-   (b) **Firewall egress ketat** — server web hanya boleh menghubungi backend dan API yang diperlukan; percobaan koneksi ke alamat internal lain atau internet umum diblokir dan **dicatat**.
-   (c) **Segmentasi** — server DMZ tidak boleh menginisiasi koneksi ke jaringan internal; SSRF yang menargetkan sistem internal gagal.
-   (d) **Monitoring dan alerting** pada percobaan koneksi yang ditolak dari server ke alamat internal — indikator kuat adanya SSRF yang sedang dicoba.
+   (b) **Firewall egress ketat**: server web hanya boleh menghubungi backend dan API yang diperlukan; percobaan koneksi ke alamat internal lain atau internet umum diblokir dan dicatat.
+   (c) **Segmentasi**: server DMZ tidak boleh menginisiasi koneksi ke jaringan internal, sehingga SSRF yang menargetkan sistem internal gagal.
+   (d) **Monitoring dan alerting** pada percobaan koneksi yang ditolak dari server ke alamat internal. Percobaan seperti itu adalah indikator kuat adanya SSRF yang sedang dicoba.
    (e) **WAF** untuk memfilter pola SSRF pada input.
    Perbaikan mendasar tetap ada di aplikasi (validasi dan allowlist URL), tetapi kontrol jaringan memberi lapisan pertahanan yang efektif.
 
 8. Indikator jaringan untuk C2:
-   - **Beaconing** — koneksi keluar berulang dengan **interval sangat teratur** (mis. tepat setiap 60 detik ± jitter kecil), berbeda dari pola manusia yang tidak beraturan.
+   - **Beaconing**: koneksi keluar berulang dengan interval sangat teratur (mis. tepat setiap 60 detik ± jitter kecil), berbeda dari pola manusia yang tidak beraturan.
    - **Volume DNS tidak wajar** dari satu host, terutama query dengan **nama panjang, entropi tinggi, dan banyak subdomain unik** ke satu domain → indikasi DNS tunneling.
    - **Koneksi ke domain yang baru terdaftar** (newly registered domain) atau domain dengan pola **DGA** (nama acak).
    - **Koneksi keluar ke ASN/negara yang tidak biasa** untuk organisasi itu.
    - **User-Agent yang tidak lazim** atau tidak cocok dengan perangkat lunak yang seharusnya berjalan.
    - **Sertifikat TLS self-signed** atau **JA3/JA3S fingerprint** yang dikenal terkait malware.
-   - **Rasio upload/download yang tidak wajar** — host yang mengirim jauh lebih banyak daripada menerima → indikasi eksfiltrasi.
+   - **Rasio upload/download yang tidak wajar**: host yang mengirim jauh lebih banyak daripada menerima → indikasi eksfiltrasi.
    - **Koneksi ke layanan sah yang tidak biasa dipakai** (Telegram API, Discord webhook, pastebin) dari server produksi.
    - **Aktivitas di luar jam kerja** dari host yang biasanya idle.
-   Deteksi terbaik dilakukan dengan **NetFlow/IPFIX + analisis perilaku**, bukan sekadar tanda tangan.
+   Deteksi terbaik memakai **NetFlow/IPFIX + analisis perilaku**; tanda tangan saja tidak cukup.
 
 </details>
 
@@ -540,14 +540,14 @@ Kanal C2 yang umum:
 
 ## 13. Sumber
 
-- RFC 2827 / BCP 38 — Network Ingress Filtering
-- RFC 4987 — TCP SYN Flooding Attacks and Common Mitigations
-- RFC 5358 — Preventing Use of Recursive Nameservers in Reflector Attacks
-- RFC 6528 — Defending against Sequence Number Attacks
-- RFC 6797 — HSTS
-- OWASP Top 10 — https://owasp.org/Top10/
-- MITRE ATT&CK — https://attack.mitre.org
-- UU No. 11 Tahun 2008 jo. UU No. 19 Tahun 2016 (UU ITE) — aspek hukum pemindaian dan akses tidak sah
+- RFC 2827 / BCP 38: Network Ingress Filtering
+- RFC 4987: TCP SYN Flooding Attacks and Common Mitigations
+- RFC 5358: Preventing Use of Recursive Nameservers in Reflector Attacks
+- RFC 6528: Defending against Sequence Number Attacks
+- RFC 6797: HSTS
+- OWASP Top 10: https://owasp.org/Top10/
+- MITRE ATT&CK: https://attack.mitre.org
+- UU No. 11 Tahun 2008 jo. UU No. 19 Tahun 2016 (UU ITE): aspek hukum pemindaian dan akses tidak sah
 - Cisco CCNA 200-301 v1.1, topik 5.1
 
 ---

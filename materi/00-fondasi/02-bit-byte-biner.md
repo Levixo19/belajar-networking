@@ -4,21 +4,21 @@
 > **Tujuan:** Anda bisa mengonversi biner↔desimal↔hex dalam hitungan detik tanpa kalkulator, dan memahami operasi AND yang menjadi dasar seluruh subnetting.
 
 > [!WARNING]
-> **Modul ini adalah fondasi paling kritis di seluruh kurikulum.** Orang yang gagal di subnetting (`04-network-layer/02`) 90% gagal karena melewati modul ini. Jangan lanjut sebelum bisa mengerjakan latihan di bawah tanpa alat bantu.
+> **Modul ini fondasi untuk seluruh kurikulum.** Orang yang gagal di subnetting (`04-network-layer/02`) 90% gagal karena melewati modul ini. Jangan lanjut sebelum bisa mengerjakan latihan di bawah tanpa alat bantu.
 
 ---
 
 ## 1. Kenapa Harus Biner?
 
-Komputer dibangun dari transistor. Satu transistor hanya punya dua keadaan stabil: **ada tegangan** atau **tidak ada tegangan**. Kita sebut itu **1** dan **0**.
+Komputer dibangun dari transistor. Satu transistor hanya punya dua keadaan stabil: ada tegangan atau tidak ada tegangan. Kita sebut itu **1** dan **0**.
 
-Semua yang ada di komputer — teks, gambar, video, alamat IP — pada akhirnya hanyalah barisan 1 dan 0.
+Semua yang ada di komputer (teks, gambar, video, alamat IP) hanyalah barisan 1 dan 0.
 
 Di jaringan, sinyal yang lewat kabel juga hanya dua keadaan (tegangan tinggi/rendah, cahaya nyala/mati). Jadi:
 
-> **Jaringan mengirimkan bit. Titik.** Semua konsep di atasnya adalah cara kita menafsirkan barisan bit itu.
+> **Jaringan hanya mengirimkan bit.** Semua konsep di atasnya adalah cara kita menafsirkan barisan bit itu.
 
-Anda **wajib** nyaman dengan biner karena:
+Anda wajib nyaman dengan biner karena:
 1. **Subnet mask** hanya bisa dipahami dalam biner.
 2. **MAC address** dan **IPv6** ditulis dalam hex.
 3. **Wildcard mask** di ACL adalah operasi bit.
@@ -32,7 +32,7 @@ Anda **wajib** nyaman dengan biner karena:
 | Satuan | Isi | Catatan |
 |---|---|---|
 | **bit** (b) | 1 digit biner: 0 atau 1 | Satuan terkecil |
-| **nibble** | 4 bit | Persis 1 digit hex — penting! |
+| **nibble** | 4 bit | Persis 1 digit hex (penting!) |
 | **byte** (B) | 8 bit | Satuan penyimpanan standar |
 | **octet** | 8 bit | Istilah resmi di dunia jaringan |
 | **word** | 16/32/64 bit | Tergantung arsitektur |
@@ -55,7 +55,7 @@ Ini sumber kebingungan nomor satu bagi pengguna awam:
 100 Mbps ÷ 8 = 12,5 MB/s (teoretis maksimum)
 ```
 
-Ini menjawab keluhan klasik: *"Internet saya 100 Mbps tapi download cuma 12 MB/s!"* — Itu **benar dan normal**. 100 Mbps memang setara ~12,5 MB/s, dan setelah overhead protokol, ~11-12 MB/s adalah hasil yang bagus.
+Ini menjawab keluhan klasik: *"Internet saya 100 Mbps tapi download cuma 12 MB/s!"* Itu benar dan normal. 100 Mbps memang setara ~12,5 MB/s, dan setelah overhead protokol, ~11-12 MB/s adalah hasil yang bagus.
 
 ### Prefiks SI vs biner
 
@@ -122,7 +122,7 @@ NILAI    : 128   64   32   16    8    4    2    1
 | E | 14 | 1110 |
 | F | 15 | 1111 |
 
-**Kenapa hex dipakai?** Karena **1 digit hex = tepat 4 bit (1 nibble)**. Ini membuat konversi jadi trivial dan tulisan jadi pendek.
+Hex dipakai karena 1 digit hex = tepat 4 bit (1 nibble). Konversinya jadi trivial dan tulisannya jadi pendek.
 
 ```
 Biner : 1010 1100 0001 1111   (16 bit, panjang & rawan salah baca)
@@ -238,7 +238,7 @@ Trik hafalan: setiap angka adalah *angka sebelumnya + nilai bit berikutnya*:
 ```
 
 > [!WARNING]
-> Kalau Anda melihat subnet mask `255.255.255.100`, itu **tidak valid** — 100 = `01100100`, bit 1-nya tidak berurutan dari kiri.
+> Kalau Anda melihat subnet mask `255.255.255.100`, itu tidak valid: 100 = `01100100`, bit 1-nya tidak berurutan dari kiri.
 
 ### 4.4 Biner ↔ Hex (paling mudah dari semua)
 
@@ -316,11 +316,11 @@ Dipakai untuk menghitung jumlah subnet dan jumlah host.
 | 8 | 256 | | 24 | 16.777.216 |
 
 Angka-angka ini akan Anda kenali di mana-mana:
-- **256** — jumlah nilai satu oktet (0-255)
-- **1.024** — jumlah VLAN yang praktis dipakai; 4.096 = batas teoretis VLAN 12-bit
-- **65.536** — jumlah port TCP/UDP (0-65535)
-- **16.777.216** — jumlah alamat di /8 (misalnya seluruh 10.0.0.0/8)
-- **4.294.967.296** = 2³² — total alamat IPv4 di dunia
+- **256**: jumlah nilai satu oktet (0-255)
+- **1.024**: jumlah VLAN yang praktis dipakai; 4.096 = batas teoretis VLAN 12-bit
+- **65.536**: jumlah port TCP/UDP (0-65535)
+- **16.777.216**: jumlah alamat di /8 (misalnya seluruh 10.0.0.0/8)
+- **4.294.967.296** = 2³²: total alamat IPv4 di dunia
 
 ---
 
@@ -337,7 +337,7 @@ Hasil 1 hanya jika **kedua** bit 1.
 | 1 | 0 | 0 |
 | 1 | 1 | **1** |
 
-**Inilah operasi yang dilakukan setiap router, setiap kali, untuk setiap paket.**
+Setiap router melakukan operasi ini untuk setiap paket.
 
 Router meng-AND alamat IP tujuan dengan subnet mask untuk mendapatkan **network address**:
 
@@ -392,8 +392,8 @@ Hasil 1 jika bit **berbeda**. Dipakai di checksum, kriptografi, dan RAID parity.
 
 ### 6.5 Shift
 
-- **Left shift** (`<<`) — geser ke kiri, sama dengan mengalikan 2.
-- **Right shift** (`>>`) — geser ke kanan, sama dengan membagi 2 (dibulatkan ke bawah).
+- **Left shift** (`<<`): geser ke kiri, sama dengan mengalikan 2.
+- **Right shift** (`>>`): geser ke kanan, sama dengan membagi 2 (dibulatkan ke bawah).
 
 ```
 00000101 (5) << 1 = 00001010 (10)
@@ -423,12 +423,12 @@ $ python3 -c "import ipaddress; print(ipaddress.ip_network('192.168.10.130/26', 
 
 Sekadar untuk melengkapi gambaran (tidak perlu dihafal):
 
-- **Teks** — setiap karakter dipetakan ke angka. ASCII (7 bit, 128 karakter): `A`=65, `a`=97, `0`=48. UTF-8 (1-4 byte) menampung semua bahasa.
-- **Bilangan** — integer (2's complement untuk negatif), floating point (IEEE 754).
-- **Gambar** — piksel × kanal warna (RGB 3 byte/piksel), lalu dikompres (JPEG/PNG).
-- **Suara** — sampling (44.100 sampel/detik × 16 bit × 2 kanal = 1,4 Mbps untuk audio CD).
+- **Teks**: setiap karakter dipetakan ke angka. ASCII (7 bit, 128 karakter): `A`=65, `a`=97, `0`=48. UTF-8 (1-4 byte) menampung semua bahasa.
+- **Bilangan**: integer (2's complement untuk negatif), floating point (IEEE 754).
+- **Gambar**: piksel × kanal warna (RGB 3 byte/piksel), lalu dikompres (JPEG/PNG).
+- **Suara**: sampling (44.100 sampel/detik × 16 bit × 2 kanal = 1,4 Mbps untuk audio CD).
 
-Kenapa relevan? Karena inilah alasan **ukuran matters di jaringan**: video 4K butuh 25 Mbps, panggilan VoIP butuh 87 kbps. Kebutuhan bandwidth berasal dari sini.
+Ini relevan karena ukuran data menentukan kebutuhan bandwidth: video 4K butuh 25 Mbps, panggilan VoIP butuh 87 kbps.
 
 ```bash
 # Lihat teks menjadi byte
@@ -461,8 +461,8 @@ $ echo -n "Hi" | xxd
 ## 9. Ringkasan
 
 - 1 byte = 8 bit = 2 digit hex. 1 nibble = 4 bit = 1 digit hex.
-- Nilai posisi biner 8 bit: **128 64 32 16 8 4 2 1** — hafalkan.
-- Nilai oktet mask yang valid: **0 128 192 224 240 248 252 254 255** — hafalkan.
+- Hafalkan nilai posisi biner 8 bit: **128 64 32 16 8 4 2 1**.
+- Hafalkan nilai oktet mask yang valid: **0 128 192 224 240 248 252 254 255**.
 - Konversi biner→desimal = jumlahkan posisi yang bernilai 1.
 - Konversi desimal→biner = kurangi dari 128 ke bawah.
 - Biner↔hex = kelompokkan 4 bit.
@@ -474,7 +474,7 @@ $ echo -n "Hi" | xxd
 
 ## 10. Latihan
 
-Kerjakan **tanpa kalkulator**. Target: 10 soal dalam 5 menit.
+Kerjakan tanpa kalkulator. Target: 10 soal dalam 5 menit.
 
 1. `11001101` → desimal
 2. `10000001` → desimal
@@ -487,7 +487,7 @@ Kerjakan **tanpa kalkulator**. Target: 10 soal dalam 5 menit.
 9. Wildcard mask untuk `255.255.240.0`?
 10. `192.168.5.77 AND 255.255.255.240` = ?
 11. Berapa MB/s maksimum teoretis dari link 40 Mbps?
-12. MAC `AC:DE:48:00:11:22` — tulis oktet pertama dalam biner.
+12. Tulis oktet pertama MAC `AC:DE:48:00:11:22` dalam biner.
 
 <details>
 <summary>Jawaban</summary>
@@ -511,10 +511,10 @@ Kerjakan **tanpa kalkulator**. Target: 10 soal dalam 5 menit.
 
 ## 11. Sumber
 
-- RFC 791 (Internet Protocol) — pemakaian istilah "octet"
-- IEC 80000-13 — standar prefiks biner (kibi, mebi, gibi)
-- IEEE 802 — format MAC address dan penulisan hex
-- Python `ipaddress` module — https://docs.python.org/3/library/ipaddress.html
+- RFC 791 (Internet Protocol): pemakaian istilah "octet"
+- IEC 80000-13: standar prefiks biner (kibi, mebi, gibi)
+- IEEE 802: format MAC address dan penulisan hex
+- Python `ipaddress` module: https://docs.python.org/3/library/ipaddress.html
 
 ---
 

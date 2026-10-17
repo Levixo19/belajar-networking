@@ -19,7 +19,7 @@ Dengan QoS: Anda MEMUTUSKAN mana yang lebih penting
 ```
 
 > [!WARNING]
-> **QoS tidak menciptakan bandwidth.** Ia hanya menentukan **siapa yang mengalah saat terjadi kemacetan**. Kalau link Anda selalu penuh, QoS memindahkan masalah, bukan menyelesaikannya — Anda tetap butuh bandwidth lebih.
+> **QoS tidak menciptakan bandwidth.** Ia hanya menentukan siapa yang mengalah saat terjadi kemacetan. Kalau link Anda selalu penuh, QoS memindahkan masalah, bukan menyelesaikannya. Anda tetap butuh bandwidth lebih.
 
 > [!TIP]
 > **QoS paling bernilai untuk trafik yang sensitif waktu** (suara, video, kontrol industri) di link yang **kadang** padat. Kalau link tidak pernah penuh, QoS tidak memberi perbedaan.
@@ -41,13 +41,13 @@ Dengan QoS: Anda MEMUTUSKAN mana yang lebih penting
 | **Video conference** | Sedang (1-4 Mbps) | 3/5 | 3/5 | 2/5 |
 | **Video streaming** | Tinggi (5-25 Mbps) | 1/5 | (buffer besar) (1/5) | 2/5 |
 | **Aplikasi transaksi** | Rendah | 2/5 | 1/5 | 3/5 |
-| **Web browsing** | Sedang | 2/5 | — | 1/5 |
-| **Email** | Rendah | — | — | — |
-| **Backup / file transfer** | Sangat tinggi | — | — | — |
+| **Web browsing** | Sedang | 2/5 | Tidak | 1/5 |
+| **Email** | Rendah | Tidak | Tidak | Tidak |
+| **Backup / file transfer** | Sangat tinggi | Tidak | Tidak | Tidak |
 | **Kontrol industri (SCADA)** | Sangat rendah | 3/5 | 3/5 | 3/5 |
 
 > [!TIP]
-> **Perhatikan: VoIP butuh bandwidth SANGAT KECIL tetapi sangat sensitif delay dan jitter.** Ini kebalikan dari backup yang butuh bandwidth besar tetapi tidak peduli waktu. Justru itulah yang membuat QoS efektif — keduanya bisa dilayani dengan baik jika diprioritaskan dengan benar.
+> **VoIP butuh bandwidth SANGAT KECIL tetapi sangat sensitif delay dan jitter.** Ini kebalikan dari backup yang butuh bandwidth besar tetapi tidak peduli waktu. Karena itu QoS efektif di sini: keduanya bisa dilayani dengan baik jika diprioritaskan dengan benar.
 
 ---
 
@@ -55,11 +55,11 @@ Dengan QoS: Anda MEMUTUSKAN mana yang lebih penting
 
 | Model | Cara kerja | Skalabilitas |
 |---|---|---|
-| **Best Effort** | Tidak ada QoS; semua sama | ✅ Tak terbatas |
+| **Best Effort** | Tidak ada QoS; semua sama | Tak terbatas |
 | **IntServ** | Reservasi bandwidth per aliran (RSVP) | Tidak scalable |
-| **DiffServ** | Klasifikasi ke beberapa kelas, perlakuan per-hop | ✅ **Standar saat ini** |
+| **DiffServ** | Klasifikasi ke beberapa kelas, perlakuan per-hop | **Standar saat ini** |
 
-**DiffServ** [RFC 2474/2475] menang karena router tidak perlu menyimpan state per aliran — cukup melihat **marking** di header dan menerapkan **PHB** (Per-Hop Behavior).
+**DiffServ** [RFC 2474/2475] menang karena router tidak perlu menyimpan state per aliran; router cukup melihat **marking** di header dan menerapkan **PHB** (Per-Hop Behavior).
 
 ---
 
@@ -109,7 +109,7 @@ AF43 : kelas 4, drop precedence tinggi  ← dibuang duluan saat congestion
 ```
 
 > [!TIP]
-> **Model 12-class Cisco** adalah acuan yang baik untuk desain enterprise. Untuk sebagian besar organisasi, **4–6 kelas sudah cukup** dan jauh lebih mudah dikelola.
+> **Model 12-class Cisco** adalah acuan yang baik untuk desain enterprise. Untuk sebagian besar organisasi, **4-6 kelas sudah cukup** dan jauh lebih mudah dikelola.
 
 ### Trust Boundary
 
@@ -158,11 +158,11 @@ SW1(config-if)# mls qos cos override
 | Metode | Cara kerja | Masalah |
 |---|---|---|
 | **FIFO** | First In First Out | Tidak ada prioritas sama sekali |
-| **PQ** (Priority Queuing) | Antrean prioritas dilayani sampai kosong | **Starvation** — antrean rendah bisa tidak pernah dilayani |
+| **PQ** (Priority Queuing) | Antrean prioritas dilayani sampai kosong | **Starvation**: antrean rendah bisa tidak pernah dilayani |
 | **CQ** (Custom Queuing) | Round-robin dengan byte count | Tidak ada prioritas ketat untuk real-time |
 | **WFQ** (Weighted Fair Queuing) | Aliran kecil didahulukan otomatis | Tidak bisa dikontrol manual |
 | **CBWFQ** | Bandwidth minimum per kelas | Tidak ada prioritas ketat |
-| **LLQ** (Low Latency Queuing) | **CBWFQ + priority queue dengan policing** | ✅ **Standar untuk voice** |
+| **LLQ** (Low Latency Queuing) | **CBWFQ + priority queue dengan policing** | **Standar untuk voice** |
 
 ### LLQ: kombinasi yang benar
 
@@ -194,7 +194,7 @@ WRED (Weighted Random Early Detection):
 ```
 
 > [!WARNING]
-> **Jangan pakai WRED pada priority queue (voice)** — membuang paket suara secara acak justru merusak.
+> **Jangan pakai WRED pada priority queue (voice)**, karena membuang paket suara secara acak justru merusak.
 
 ---
 
@@ -236,7 +236,7 @@ SHAPING:
 > **Gunakan shaping di sisi pelanggan, policing di sisi provider.**
 
 > [!WARNING]
-> **Kasus klasik yang membutuhkan shaping:** port fisik 1 Gbps tetapi CIR yang dibeli hanya 20 Mbps. Tanpa shaping, router mengirim burst 1 Gbps; provider mem-policing dan **membuang** kelebihannya — menyebabkan packet loss dan retransmisi. Dengan shaping ke 19 Mbps di sisi Anda, trafik keluar rata dan **tidak ada yang dibuang**.
+> **Kasus klasik yang membutuhkan shaping:** port fisik 1 Gbps tetapi CIR yang dibeli hanya 20 Mbps. Tanpa shaping, router mengirim burst 1 Gbps; provider mem-policing dan membuang kelebihannya, sehingga terjadi packet loss dan retransmisi. Dengan shaping ke 19 Mbps di sisi Anda, trafik keluar rata dan tidak ada yang dibuang.
 
 ```
 # Cisco — shape ke bawah CIR
@@ -248,7 +248,7 @@ policy-map SHAPE-KE-ISP
 
 ### Token Bucket
 
-Mekanisme yang mendasari policing dan shaping.
+Token bucket adalah mekanisme yang mendasari policing dan shaping.
 
 ```
 CIR : Committed Information Rate — laju pengisian token
@@ -321,7 +321,7 @@ show mls qos interface
 ```
 
 > [!WARNING]
-> **`show policy-map interface` adalah perintah diagnostik utama** — menampilkan berapa paket masuk setiap kelas, berapa yang dibuang, dan apakah shaper aktif.
+> **`show policy-map interface` adalah perintah diagnostik utama.** Perintah ini menampilkan berapa paket masuk setiap kelas, berapa yang dibuang, dan apakah shaper aktif.
 
 ### Marking di edge
 
@@ -365,7 +365,7 @@ MikroTik memakai pendekatan berbeda: **mangle** untuk klasifikasi, **queue** unt
 ```
 
 > [!WARNING]
-> **Urutan Simple Queue penting** — diproses dari atas ke bawah, queue pertama yang cocok yang dipakai. Gunakan `/queue simple move`.
+> **Urutan Simple Queue penting**: queue diproses dari atas ke bawah, dan queue pertama yang cocok yang dipakai. Gunakan `/queue simple move`.
 
 ### PCQ (Per Connection Queue (pembagian adil))
 
@@ -384,7 +384,7 @@ Ini fitur unggulan MikroTik untuk membagi bandwidth **secara adil antar-pengguna
 ```
 
 > [!TIP]
-> **`pcq-rate=0` berarti bandwidth dibagi rata secara dinamis.** Kalau 10 pengguna aktif di link 50 Mbps, masing-masing dapat 5 Mbps; kalau hanya 2 yang aktif, masing-masing dapat 25 Mbps. **Ini yang membuat MikroTik populer di RT/RW-Net dan warnet** — tidak ada satu pengguna yang bisa menghabiskan seluruh bandwidth.
+> **`pcq-rate=0` berarti bandwidth dibagi rata secara dinamis.** Kalau 10 pengguna aktif di link 50 Mbps, masing-masing dapat 5 Mbps; kalau hanya 2 yang aktif, masing-masing dapat 25 Mbps. Inilah yang membuat MikroTik populer di RT/RW-Net dan warnet: tidak ada satu pengguna yang bisa menghabiskan seluruh bandwidth.
 
 `pcq-classifier=dst-address` untuk download (membedakan per penerima), `src-address` untuk upload.
 
@@ -453,7 +453,7 @@ $ tc -s class show dev eth0
 ```
 
 > [!TIP]
-> **CAKE menggabungkan shaping, AQM (fq_codel), fair queuing, dan DiffServ dalam satu qdisc** — untuk sebagian besar kasus, satu baris CAKE mengalahkan konfigurasi HTB yang rumit. Ini juga solusi terbaik untuk bufferbloat (`05-transport/04`).
+> **CAKE menggabungkan shaping, AQM (fq_codel), fair queuing, dan DiffServ dalam satu qdisc.** Untuk sebagian besar kasus, satu baris CAKE mengalahkan konfigurasi HTB yang rumit. Ini juga solusi terbaik untuk bufferbloat (`05-transport/04`).
 
 ---
 
@@ -468,13 +468,13 @@ $ tc -s class show dev eth0
 | **AC_BE** | Best Effort | Data umum | Sedang |
 | **AC_BK** | Background | Backup, P2P | Terendah |
 
-Prioritas diwujudkan lewat **AIFS dan contention window yang berbeda** — AC dengan prioritas tinggi menunggu lebih singkat sebelum mengirim.
+Prioritas diwujudkan lewat **AIFS dan contention window yang berbeda**: AC dengan prioritas tinggi menunggu lebih singkat sebelum mengirim.
 
 > [!WARNING]
 > **WMM wajib aktif untuk sertifikasi Wi-Fi 4 ke atas**, dan diperlukan untuk 802.11n/ac/ax bekerja. Jangan pernah menonaktifkannya.
 
 > [!WARNING]
-> **Wi-Fi adalah media bersama** — QoS wireless hanya mengatur **urutan giliran**, bukan bandwidth yang dijamin. Kalau airtime habis, semua terdampak.
+> **Wi-Fi adalah media bersama.** QoS wireless hanya mengatur urutan giliran, bukan bandwidth yang dijamin. Kalau airtime habis, semua terdampak.
 
 ---
 
@@ -530,7 +530,7 @@ Prioritas diwujudkan lewat **AIFS dan contention window yang berbeda** — AC de
 ```
 
 > [!WARNING]
-> **QoS hanya berlaku pada arah KELUAR (egress) dari sebuah interface.** Anda tidak bisa mengontrol apa yang provider kirimkan ke Anda — hanya bisa mem-policing setelah tiba (yang sudah terlambat, bandwidth sudah terpakai). Untuk mengontrol arah masuk, Anda harus meminta provider menerapkan QoS di sisi mereka, atau memakai teknik tidak langsung seperti membatasi TCP window.
+> **QoS hanya berlaku pada arah KELUAR (egress) dari sebuah interface.** Anda tidak bisa mengontrol apa yang provider kirimkan ke Anda; Anda hanya bisa mem-policing setelah tiba (yang sudah terlambat, bandwidth sudah terpakai). Untuk mengontrol arah masuk, Anda harus meminta provider menerapkan QoS di sisi mereka, atau memakai teknik tidak langsung seperti membatasi TCP window.
 
 ---
 
@@ -572,18 +572,18 @@ ip.dsfield.dscp == 46
 
 ## 12. Ringkasan
 
-- **QoS tidak menciptakan bandwidth** — ia menentukan siapa yang mengalah saat macet.
+- **QoS tidak menciptakan bandwidth.** Ia menentukan siapa yang mengalah saat macet.
 - Empat parameter: bandwidth, **delay (<150 ms)**, **jitter (<30 ms)**, **loss (<1%)** untuk VoIP.
 - **DiffServ** adalah standar: klasifikasi ke kelas, perlakuan per-hop (PHB).
 - Marking: **CoS (L2, 3 bit, hanya di frame bertag)**, **DSCP (L3, 6 bit)**. Hafalkan: **EF=46 voice, AF41=34 video, CS3=24 signaling, AF21=18 transaksional, CS1=8 scavenger, BE=0**.
-- **Jangan percayai marking dari perangkat pengguna** — tetapkan **trust boundary** dan re-mark di access port.
+- **Jangan percayai marking dari perangkat pengguna.** Tetapkan **trust boundary** dan re-mark di access port.
 - **LLQ** = priority queue (voice) + CBWFQ. **Priority queue harus di-policing**, maksimal ~33% link.
 - **WRED** mencegah TCP global synchronization; **jangan dipakai pada voice**.
 - **Policing membuang, shaping mem-buffer.** Gunakan **shaping ke 90-95% CIR** di sisi pelanggan.
-- **MikroTik**: mangle untuk klasifikasi, **Simple Queue** untuk sederhana, **PCQ** untuk pembagian adil otomatis, **Queue Tree** untuk kontrol penuh. ⚠️ **FastTrack melewati queue**.
+- **MikroTik**: mangle untuk klasifikasi, **Simple Queue** untuk sederhana, **PCQ** untuk pembagian adil otomatis, **Queue Tree** untuk kontrol penuh. Hati-hati: **FastTrack melewati queue**.
 - **CAKE (Linux)** menggabungkan shaping + AQM + fair queuing + DiffServ dalam satu qdisc.
 - **WMM** memberi empat access category di Wi-Fi; wajib aktif.
-- **QoS hanya berlaku pada arah keluar** — arah masuk harus diatur provider.
+- **QoS hanya berlaku pada arah keluar**; arah masuk harus diatur provider.
 
 ---
 
@@ -601,23 +601,23 @@ ip.dsfield.dscp == 46
 <details>
 <summary>Jawaban</summary>
 
-1. Karena **kebutuhan bandwidth dan sensitivitas waktu adalah dua hal berbeda**. Satu panggilan VoIP G.711 hanya butuh ~87 kbps (termasuk overhead header) — sangat kecil dibanding video atau backup. Tetapi suara adalah **komunikasi real-time**: paket yang terlambat lebih dari 150 ms sudah tidak berguna, dan variasi delay (jitter) membuat suara terputus-putus.
+1. Karena **kebutuhan bandwidth dan sensitivitas waktu adalah dua hal berbeda**. Satu panggilan VoIP G.711 hanya butuh ~87 kbps (termasuk overhead header), sangat kecil dibanding video atau backup. Tetapi suara adalah **komunikasi real-time**: paket yang terlambat lebih dari 150 ms sudah tidak berguna, dan variasi delay (jitter) membuat suara terputus-putus.
    Justru kombinasi inilah yang membuat QoS sangat efektif untuk VoIP: memberi prioritas tertinggi pada trafik yang hanya memakan 5-10% bandwidth **hampir tidak merugikan** aplikasi lain, tetapi menyelamatkan kualitas panggilan sepenuhnya.
 
-2. **Policing** membuang (atau menurunkan marking) paket yang melebihi rate — tidak ada buffer, tidak menambah delay, tetapi menyebabkan **packet loss dan retransmisi TCP** yang boros. Bisa diterapkan pada arah masuk maupun keluar.
-   **Shaping** menahan paket berlebih dalam **buffer** dan mengirimkannya kemudian — meratakan burst, tidak ada paket yang dibuang, tetapi **menambah delay** dan hanya bisa diterapkan pada arah **keluar**.
-   **Gunakan shaping di sisi pelanggan** untuk menyesuaikan trafik keluar dengan CIR yang dibeli, sehingga provider tidak perlu membuang apa pun. **Gunakan policing di sisi provider** untuk menegakkan batas kontrak — provider tidak mau menyediakan buffer untuk pelanggan yang melebihi kesepakatan.
+2. **Policing** membuang (atau menurunkan marking) paket yang melebihi rate. Tidak ada buffer dan tidak ada tambahan delay, tetapi policing menyebabkan packet loss dan retransmisi TCP yang boros. Policing bisa diterapkan pada arah masuk maupun keluar.
+   **Shaping** menahan paket berlebih dalam buffer dan mengirimkannya kemudian. Burst diratakan dan tidak ada paket yang dibuang, tetapi shaping menambah delay dan hanya bisa diterapkan pada arah keluar.
+   **Gunakan shaping di sisi pelanggan** untuk menyesuaikan trafik keluar dengan CIR yang dibeli, sehingga provider tidak perlu membuang apa pun. **Gunakan policing di sisi provider** untuk menegakkan batas kontrak, karena provider tidak mau menyediakan buffer untuk pelanggan yang melebihi kesepakatan.
 
-3. Karena **router akan mengirim burst pada kecepatan port (1 Gbps)**, sementara provider hanya menjamin 50 Mbps dan akan **mem-policing** — membuang semua kelebihan. Setiap burst menyebabkan packet loss, yang memicu retransmisi TCP dan penurunan congestion window; hasilnya throughput efektif **jauh di bawah 50 Mbps** dan latency tidak stabil.
+3. Karena **router akan mengirim burst pada kecepatan port (1 Gbps)**, sementara provider hanya menjamin 50 Mbps dan akan mem-policing, yaitu membuang semua kelebihan. Setiap burst menyebabkan packet loss, yang memicu retransmisi TCP dan penurunan congestion window; hasilnya throughput efektif **jauh di bawah 50 Mbps** dan latency tidak stabil.
    Dengan shaping di sisi Anda, trafik keluar diratakan sehingga **tidak pernah melebihi batas** dan tidak ada yang dibuang.
    **Shape ke 90-95% dari CIR**, yaitu sekitar **45-47 Mbps**. Margin ini penting karena: overhead L2 yang tidak dihitung shaper, ketidaktepatan pengukuran, dan agar antrean terbentuk **di router Anda** (yang punya QoS) alih-alih di perangkat provider.
 
-4. Karena **priority queue dilayani lebih dulu sampai kosong**. Tanpa batas, trafik yang masuk ke priority queue bisa **menghabiskan seluruh bandwidth link**, membuat semua kelas lain **kelaparan (starvation)** — bahkan trafik kritis lain dan protokol routing.
+4. Karena **priority queue dilayani lebih dulu sampai kosong**. Tanpa batas, trafik yang masuk ke priority queue bisa **menghabiskan seluruh bandwidth link**, membuat semua kelas lain **kelaparan (starvation)**, termasuk trafik kritis lain dan protokol routing.
    Ini bisa terjadi karena: kesalahan klasifikasi (trafik besar salah ditandai EF), perangkat pengguna yang memalsukan marking, atau serangan yang sengaja mengirim trafik bertanda EF.
-   **LLQ menambahkan policing implisit pada priority queue** — trafik di atas batas dibuang, sehingga kelas lain terlindungi. Aturan praktis: **priority queue maksimal ~33% bandwidth link**.
+   **LLQ menambahkan policing implisit pada priority queue**: trafik di atas batas dibuang, sehingga kelas lain terlindungi. Aturan praktis: **priority queue maksimal ~33% bandwidth link**.
 
 5. **Trust boundary** adalah titik dalam jaringan di mana Anda mulai **mempercayai marking QoS** yang ada di paket. Di luar batas itu (arah pengguna), marking harus diperiksa ulang: **dipercaya secara kondisional** (mis. telepon IP yang terverifikasi lewat CDP/LLDP-MED), **di-remark** sesuai kebijakan, atau **direset ke 0**.
-   **Kalau diabaikan** — yaitu jika switch access mempercayai marking dari PC pengguna — maka pengguna (atau malware di PC-nya) bisa **menandai semua trafiknya sebagai EF**. Trafik itu akan masuk priority queue dan **mendapat prioritas di atas panggilan telepon yang sesungguhnya**, merusak seluruh kebijakan QoS. Satu pengguna yang mengunduh torrent bertanda EF bisa melumpuhkan sistem telepon perusahaan.
+   **Kalau diabaikan**, yaitu jika switch access mempercayai marking dari PC pengguna, maka pengguna (atau malware di PC-nya) bisa **menandai semua trafiknya sebagai EF**. Trafik itu akan masuk priority queue dan **mendapat prioritas di atas panggilan telepon yang sesungguhnya**, merusak seluruh kebijakan QoS. Satu pengguna yang mengunduh torrent bertanda EF bisa melumpuhkan sistem telepon perusahaan.
 
 6. **FastTrack aktif.** `action=fasttrack-connection` membuat paket dari koneksi yang sudah dikenal diteruskan lewat jalur cepat di kernel yang **melewati mangle dan queue sepenuhnya**. Karena Queue Tree bergantung pada `packet-mark` yang dibuat di mangle, dan mangle tidak pernah dijalankan, tidak ada paket yang masuk ke queue mana pun.
    **Perbaikan:** kecualikan trafik yang perlu di-QoS dari FastTrack dengan menempatkan aturan `accept` sebelum aturan fasttrack:
@@ -677,7 +677,7 @@ ip.dsfield.dscp == 46
    ```
    Tambahan: tetapkan trust boundary di access switch (percayai telepon, reset marking PC), tandai trafik ERP berdasarkan alamat server, dan pantau `show policy-map interface` untuk menyesuaikan alokasi berdasarkan data nyata.
 
-8. Beberapa alasan: (a) **Tidak ada perjanjian antar-AS** tentang arti nilai DSCP — apa yang berarti "prioritas tinggi" bagi Anda bisa berarti hal lain bagi ISP; (b) **ISP me-reset DSCP di titik masuk** (*bleaching*) untuk mencegah pelanggan mendapat prioritas yang tidak dibayar — kalau tidak, semua orang akan menandai trafiknya EF; (c) **Sebagian besar backbone internet tidak menerapkan QoS sama sekali** karena kapasitasnya sengaja dibuat berlebih (overprovisioned), sehingga marking tidak relevan; (d) **Perangkat di jalur mungkin me-remark** untuk kebijakan internal mereka.
+8. Beberapa alasan: (a) **Tidak ada perjanjian antar-AS** tentang arti nilai DSCP: apa yang berarti "prioritas tinggi" bagi Anda bisa berarti hal lain bagi ISP; (b) **ISP me-reset DSCP di titik masuk** (*bleaching*) untuk mencegah pelanggan mendapat prioritas yang tidak dibayar, karena tanpa itu semua orang akan menandai trafiknya EF; (c) **Sebagian besar backbone internet tidak menerapkan QoS sama sekali** karena kapasitasnya sengaja dibuat berlebih (overprovisioned), sehingga marking tidak relevan; (d) **Perangkat di jalur mungkin me-remark** untuk kebijakan internal mereka.
    **Konsekuensinya:** QoS end-to-end hanya dapat dijamin di jaringan yang **Anda kendalikan sepenuhnya** (LAN, WAN privat) atau lewat **MPLS/Metro Ethernet dengan SLA yang secara eksplisit menjamin penghormatan DSCP**. Untuk trafik yang melintasi internet publik, andalkan aplikasi yang adaptif (codec yang bisa menurunkan bitrate) dan bandwidth yang memadai.
 
 </details>
@@ -686,14 +686,14 @@ ip.dsfield.dscp == 46
 
 ## 14. Sumber
 
-- RFC 2474 / 2475 — Differentiated Services
-- RFC 2597 — Assured Forwarding PHB · RFC 3246 — Expedited Forwarding PHB
-- RFC 4594 — Configuration Guidelines for DiffServ Service Classes
-- ITU-T G.114 — One-way transmission time
+- RFC 2474 / 2475: Differentiated Services
+- RFC 2597: Assured Forwarding PHB · RFC 3246: Expedited Forwarding PHB
+- RFC 4594: Configuration Guidelines for DiffServ Service Classes
+- ITU-T G.114: One-way transmission time
 - Cisco, *Enterprise QoS Solution Reference Network Design Guide*
 - Cisco CCNA 200-301 v1.1, topik 4.7 (forwarding per-hop behavior untuk QoS: classification, marking, queuing, congestion, policing, shaping)
-- MikroTik Queues — https://help.mikrotik.com/docs/display/ROS/Queues
+- MikroTik Queues: https://help.mikrotik.com/docs/display/ROS/Queues
 
 ---
 
-**Berikutnya:** `12-keamanan/01-konsep-keamanan.md`. Memasuki tahap keamanan jaringan.
+**Berikutnya:** `11-wan-vpn/04-satelit-antarplanet`. Internet satelit, latensi cahaya, dan jaringan yang menjangkau Mars.

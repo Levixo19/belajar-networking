@@ -7,7 +7,7 @@
 
 ## 1. Analogi
 
-Bayangkan sebuah rumah sakit. Ia tidak hanya punya dokter yang pandai, tetapi juga genset, jadwal piket, prosedur evakuasi yang dilatih berkala, aturan siapa boleh mengubah apa di ruang operasi, dan catatan umur setiap alat. Jaringan yang baik sama: desain yang bagus (modul 17.1 sampai 17.4) baru separuh pekerjaan. Separuhnya lagi adalah disiplin operasi: apa yang terjadi saat sesuatu rusak, bagaimana kita pulih, siapa menyetujui perubahan, dan kapan perangkat tua dipensiunkan.
+Bayangkan sebuah rumah sakit. Selain dokter yang pandai, ia punya genset, jadwal piket, prosedur evakuasi yang dilatih berkala, aturan siapa boleh mengubah apa di ruang operasi, dan catatan umur setiap alat. Jaringan yang baik sama: desain yang bagus (modul 17.1 sampai 17.4) baru separuh pekerjaan. Separuhnya lagi adalah disiplin operasi: apa yang terjadi saat sesuatu rusak, bagaimana kita pulih, siapa menyetujui perubahan, dan kapan perangkat tua dipensiunkan.
 
 Modul ini diuji di CompTIA Network+ N10-009 pada Domain 3.0 (Network Operations): objektif 3.1 (tujuan proses dan prosedur organisasi: dokumentasi, manajemen siklus hidup, manajemen perubahan, manajemen konfigurasi) dan objektif 3.3 (konsep disaster recovery: RPO, RTO, MTTR, MTBF, site cold/warm/hot, active-active/active-passive, pengujian). Ringkasan objektif diperiksa dari halaman resmi CompTIA (lihat Sumber).
 
@@ -47,7 +47,7 @@ Perhitungan 99,9%: 0,1% x 43.200 menit = 43,2 menit per bulan; 0,1% x 525.600 me
 **Susunan seri dan paralel.** Komponen yang harus bekerja semua (seri) mengalikan availability: dua perangkat 99,9% berurutan menjadi 0,999 x 0,999 = 99,80%. Komponen redundan (paralel, salah satu cukup) mengalikan *ketidaktersediaannya*: dua perangkat 99,9% paralel menjadi 1 - (0,001 x 0,001) = 99,9999% secara teori. Angka teoretis ini mengabaikan titik kegagalan bersama (listrik yang sama, perangkat lunak yang sama, kesalahan konfigurasi yang tersalin ke kedua perangkat). Karena itu redundansi di modul 17.1 harus disertai pemisahan fault domain.
 
 > [!WARNING]
-> RTO dan RPO bukan janji teknologi, melainkan keputusan biaya. RPO nol butuh replikasi sinkron; RTO menit butuh site siaga. Tanyakan bisnisnya dulu, jangan menebak.
+> Menetapkan RTO dan RPO adalah keputusan biaya. RPO nol butuh replikasi sinkron; RTO menit butuh site siaga. Tanyakan bisnisnya dulu, jangan menebak.
 
 ---
 
@@ -103,11 +103,11 @@ Contoh hitung: full 500 GB tiap Minggu, perubahan 20 GB per hari. Untuk memulihk
 Rencana DR yang tidak pernah dilatih akan gagal pada saat paling buruk. Tingkat pengujian dari yang paling ringan:
 
 1. **Walkthrough / review dokumen:** tim membaca rencana dan mencari langkah yang usang.
-2. **Tabletop exercise:** tim berkumpul di ruang rapat dan membahas skenario ("kedua link ke DC utama putus dan listrik padam") sambil menjawab: siapa yang dipanggil, keputusan apa, dokumen apa dipakai. Tanpa menyentuh sistem produksi, murah, dan efektif membongkar asumsi.
+2. **Tabletop exercise:** tim berkumpul di ruang rapat dan membahas skenario ("kedua link ke DC utama putus dan listrik padam") sambil menjawab: siapa yang dipanggil, keputusan apa, dokumen apa dipakai. Latihan ini tidak menyentuh sistem produksi, murah, dan efektif membongkar asumsi.
 3. **Uji simulasi / parsial:** memulihkan satu layanan ke site siaga atau lingkungan uji.
 4. **Failover penuh:** memindahkan produksi sungguhan ke site DR, lalu kembali. Paling realistis dan paling berisiko, dijadwalkan di maintenance window.
 
-Hasil uji dicatat terhadap target: apakah RTO dan RPO tercapai? Temuan menjadi tindakan perbaikan bertenggat. Kontak darurat, kredensial break-glass, dan konfigurasi cadangan harus bisa diakses **tanpa** bergantung pada jaringan yang sedang mati (salinan offline atau luar jalur).
+Hasil uji dicatat terhadap target: apakah RTO dan RPO tercapai? Temuan menjadi tindakan perbaikan bertenggat. Kontak darurat, kredensial break-glass, dan konfigurasi cadangan harus bisa diakses tanpa bergantung pada jaringan yang sedang mati (salinan offline atau luar jalur).
 
 ---
 

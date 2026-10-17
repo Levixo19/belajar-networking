@@ -1,6 +1,6 @@
 # Sumber Belajar Lanjutan
 
-> Referensi eksternal untuk memperdalam setiap topik. Prioritaskan sumber **primer** (RFC, dokumentasi vendor, standar) dan sumber yang terus diperbarui.
+> Referensi eksternal untuk memperdalam setiap topik. Prioritaskan sumber primer (RFC, dokumentasi vendor, standar) dan sumber yang terus diperbarui.
 
 Halaman ini daftar pilihan yang ringkas. Daftar lengkapnya (lebih dari seribu tautan, bisa dicari dan disaring per tahap, jenis, bahasa, dan sumber, beserta lisensinya) ada di halaman **Pustaka** aplikasi ini. Setiap modul juga punya bagian "Bacaan lanjutan" untuk tahapnya sendiri.
 
@@ -27,7 +27,7 @@ Halaman ini daftar pilihan yang ringkas. Daftar lengkapnya (lebih dari seribu ta
 
 ## Buku Rekomendasi
 
-Buku yang tidak ditautkan di bawah ini buku berbayar; beli dari penerbitnya atau pinjam di perpustakaan, **jangan dari situs PDF bajakan**.
+Buku yang tidak ditautkan di bawah ini buku berbayar; beli dari penerbitnya atau pinjam di perpustakaan, jangan dari situs PDF bajakan.
 
 **Gratis dan terbuka:**
 - [Computer Networks: A Systems Approach](https://book.systemsapproach.org/) (Peterson dan Davie): edisi daring, CC BY 4.0. Sebagian materi kurikulum ini diadaptasi dari sini (lihat `NOTICE.md`).
@@ -36,7 +36,7 @@ Buku yang tidak ditautkan di bawah ini buku berbayar; beli dari penerbitnya atau
 - [Beej's Guide to Network Programming](https://beej.us/guide/bgnet/): pemrograman socket dengan C.
 
 **Fondasi dan CCNA (berbayar):**
-- "CCNA 200-301 Official Cert Guide", Wendell Odom (Cisco Press). Standar emas CCNA.
+- "CCNA 200-301 Official Cert Guide", Wendell Odom (Cisco Press). Buku rujukan utama CCNA.
 - "Computer Networking: A Top-Down Approach", Kurose dan Ross (Pearson). Penulisnya menyediakan [materi pendamping gratis](https://gaia.cs.umass.edu/kurose_ross/index.php).
 - "TCP/IP Illustrated, Vol. 1", Stevens dan Fall. Pembedahan TCP/IP yang mendalam.
 - "CompTIA Network+ Study Guide" (Sybex) atau buku Mike Meyers.
@@ -75,7 +75,7 @@ Buku yang tidak ditautkan di bawah ini buku berbayar; beli dari penerbitnya atau
 
 ## Video dan Kursus
 
-Video cepat usang. Selalu cek **tanggal unggah** dan cocokkan dengan blueprint atau dokumentasi terbaru.
+Video cepat usang. Selalu cek tanggal unggah dan cocokkan dengan blueprint atau dokumentasi terbaru.
 
 - [Cisco Networking Academy](https://www.netacad.com/): kursus resmi terstruktur.
 - [Jeremy's IT Lab](https://www.youtube.com/@JeremysITLab): CCNA 200-301 v1.1 gratis dan lengkap. Sangat direkomendasikan.
@@ -95,7 +95,7 @@ Video cepat usang. Selalu cek **tanggal unggah** dan cocokkan dengan blueprint a
 
 ## Alat dan Referensi Cepat
 
-- Kalkulator subnet: ada banyak di internet dan di halaman Alat aplikasi ini, tapi **latih manual** untuk ujian.
+- Kalkulator subnet: ada banyak di internet dan di halaman Alat aplikasi ini, tapi latih manual untuk ujian.
 - [Wireshark](https://www.wireshark.org/): analisis paket, wajib dikuasai.
 - [Subnetting Practice](https://subnettingpractice.com/): latihan subnetting berwaktu.
 - BGP looking glass dan analisis routing internet nyata: [bgp.tools](https://bgp.tools/), [RIPEstat](https://stat.ripe.net/), [Hurricane Electric BGP Toolkit](https://bgp.he.net/).
@@ -122,12 +122,12 @@ Video cepat usang. Selalu cek **tanggal unggah** dan cocokkan dengan blueprint a
 
 ## Cara Belajar Efektif (saran)
 
-1. Pahami **konsep** dulu (kurikulum ini). Jangan menghafal perintah tanpa paham.
-2. **Praktik** segera di lab (Packet Tracer, CHR, Linux) dan konfigurasikan sendiri.
-3. **Rusak lalu perbaiki.** Troubleshooting melatih pemahaman paling dalam.
-4. **Dokumentasikan** (blog atau GitHub). Mengajar adalah belajar, sekaligus jadi portofolio.
-5. Baca **sumber primer** untuk hal yang membingungkan (RFC, dokumentasi vendor).
-6. Bergabung dengan **komunitas**. Bertanya dan menjawab mempercepat belajar.
+1. Pahami konsep dulu (kurikulum ini). Jangan menghafal perintah tanpa paham.
+2. Praktik segera di lab (Packet Tracer, CHR, Linux) dan konfigurasikan sendiri.
+3. Rusak lalu perbaiki. Troubleshooting melatih pemahaman paling dalam.
+4. Dokumentasikan (blog atau GitHub). Menjelaskan ke orang lain memperdalam pemahaman, dan tulisannya sekaligus jadi portofolio.
+5. Baca sumber primer untuk hal yang membingungkan (RFC, dokumentasi vendor).
+6. Bergabung dengan komunitas. Bertanya dan menjawab mempercepat belajar.
 7. Ikuti perkembangan. Jaringan terus berevolusi (Wi-Fi 7, SDN, otomasi, cloud).
 
 > [!TIP]

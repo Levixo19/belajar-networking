@@ -1,7 +1,7 @@
 # 19.4 MikroTik: QoS, Queue & Hotspot
 
 > **Prasyarat:** `19-mikrotik/03` (mangle), `11-wan-vpn/03` (QoS), `06-aplikasi/02` (DHCP)
-> **Tujuan:** Anda bisa mengelola bandwidth dengan simple queue dan queue tree (PCQ, burst), dan membangun hotspot dengan voucher — inti kebutuhan ISP/RT-RW-Net.
+> **Tujuan:** Anda bisa mengelola bandwidth dengan simple queue dan queue tree (PCQ, burst), dan membangun hotspot dengan voucher (inti kebutuhan ISP/RT-RW-Net).
 
 ---
 
@@ -35,7 +35,7 @@ add name="paket-5mbps" target=192.168.10.0/24 max-limit=5M/5M
 
 ## 2. PCQ (Pembagian Adil Otomatis)
 
-**PCQ (Per Connection Queue)** membagi bandwidth **secara adil dan dinamis** di antara banyak pengguna/koneksi — tanpa harus membuat queue per-orang.
+**PCQ (Per Connection Queue)** membagi bandwidth secara adil dan dinamis di antara banyak pengguna/koneksi, tanpa harus membuat queue per-orang.
 
 ```
 Masalah: 20 pelanggan berbagi 100Mbps. Tanpa PCQ, satu pengunduh besar
@@ -55,13 +55,13 @@ add name=pcq-upload   kind=pcq pcq-classifier=src-address pcq-rate=0
 ```
 
 > [!TIP]
-> **PCQ dengan `pcq-rate=0`** membagi total bandwidth **rata** ke semua pengguna aktif — solusi klasik agar satu pengguna tidak memonopoli link bersama. `pcq-classifier=dst-address` untuk download (bedakan per-IP tujuan/pelanggan), `src-address` untuk upload. Ini fitur QoS MikroTik yang paling dihargai untuk jaringan berbagi.
+> **PCQ dengan `pcq-rate=0`** membagi total bandwidth rata ke semua pengguna aktif, solusi klasik agar satu pengguna tidak memonopoli link bersama. `pcq-classifier=dst-address` untuk download (bedakan per-IP tujuan/pelanggan), `src-address` untuk upload.
 
 ---
 
 ## 3. Burst: Pengalaman "Cepat"
 
-**Burst** mengizinkan kecepatan **melebihi max-limit sementara** saat trafik baru dimulai — membuat browsing/loading terasa cepat, lalu turun ke limit untuk transfer besar.
+**Burst** mengizinkan kecepatan melebihi max-limit sementara saat trafik baru dimulai. Hasilnya, browsing/loading terasa cepat, lalu kecepatan turun ke limit untuk transfer besar.
 
 ```routeros
 /queue simple
@@ -78,7 +78,7 @@ Efek: buka web / file kecil → dapat sampai 10Mbps (terasa ngebut)
 ```
 
 > [!TIP]
-> **Burst menyeimbangkan "terasa cepat" dengan "batas adil".** Pelanggan merasa koneksi responsif (browsing, buka aplikasi) karena burst, tetapi unduhan besar tetap dibatasi paket mereka. Sangat populer untuk paket ISP retail. ⚠️ Logika burst (threshold vs limit vs time) membingungkan — burst aktif selama **rata-rata pemakaian** dalam `burst-time` masih di bawah `burst-threshold`.
+> **Burst menyeimbangkan "terasa cepat" dengan "batas adil".** Pelanggan merasa koneksi responsif (browsing, buka aplikasi) karena burst, tetapi unduhan besar tetap dibatasi paket mereka. Fitur ini populer untuk paket ISP retail. Hati-hati: logika burst (threshold vs limit vs time) membingungkan. Burst aktif selama rata-rata pemakaian dalam `burst-time` masih di bawah `burst-threshold`.
 
 ---
 
@@ -99,7 +99,7 @@ add name=voip parent=total packet-mark=voip priority=1 limit-at=10M max-limit=20
 add name=lain parent=total packet-mark=no-mark priority=8 max-limit=100M
 ```
 
-- **`priority`** 1 (tertinggi) – 8 (terendah): trafik prioritas tinggi dilayani dulu saat kongesti.
+- **`priority`** 1 (tertinggi) sampai 8 (terendah): trafik prioritas tinggi dilayani dulu saat kongesti.
 - **`limit-at`** = bandwidth terjamin (minimum); **`max-limit`** = maksimum bila tersedia.
 
 > [!TIP]
@@ -340,7 +340,7 @@ Hasil ini sah secara HTB, tetapi mungkin bukan yang Anda inginkan secara bisnis.
 
 ## 6. Hotspot: Login Portal & Voucher
 
-**Hotspot** RouterOS memberi **captive portal**: pengguna harus login (voucher/username) sebelum akses internet. Inti bisnis warnet, kafe, wifi publik, RT-RW-Net voucher.
+**Hotspot** RouterOS memberi **captive portal**: pengguna harus login (voucher/username) sebelum akses internet. Fitur ini menjadi inti bisnis warnet, kafe, wifi publik, dan RT-RW-Net voucher.
 
 ```routeros
 # Setup wizard (cara termudah)
@@ -368,10 +368,10 @@ add name=voucher001 password=abc123 profile="paket-2jam"
 ```
 
 > [!TIP]
-> **Walled garden** penting: izinkan akses ke halaman pembayaran/informasi/DNS tertentu **tanpa login** — agar pengguna bisa membeli voucher atau melihat info sebelum autentikasi. Tanpa ini, portal pembayaran online tidak bisa diakses dari halaman login.
+> **Walled garden** mengizinkan akses ke halaman pembayaran/informasi/DNS tertentu tanpa login, agar pengguna bisa membeli voucher atau melihat info sebelum autentikasi. Tanpa ini, portal pembayaran online tidak bisa diakses dari halaman login.
 
 > [!WARNING]
-> **Hotspot melakukan intersepsi & NAT** — pastikan tidak bentrok dengan aturan firewall/NAT lain. Untuk skala besar (banyak pelanggan/lokasi), integrasikan dengan **RADIUS** eksternal (`19.6`, `12-keamanan/04`) untuk manajemen user & billing terpusat, alih-alih user lokal.
+> **Hotspot melakukan intersepsi & NAT**, jadi pastikan tidak bentrok dengan aturan firewall/NAT lain. Untuk skala besar (banyak pelanggan/lokasi), integrasikan dengan **RADIUS** eksternal (`19.6`, `12-keamanan/04`) untuk manajemen user & billing terpusat, alih-alih user lokal.
 
 ---
 
@@ -400,10 +400,10 @@ Umum:
 
 ## 8. Ringkasan
 
-- **Simple queue** (per-IP/subnet, mudah) vs **queue tree** (hierarkis, butuh mangle mark). ⚠️ `max-limit` format **upload/download**.
-- **PCQ** membagi bandwidth **adil & dinamis** ke banyak pengguna (`pcq-rate=0` = bagi rata; classifier dst/src-address). Solusi anti-monopoli link bersama.
+- **Simple queue** (per-IP/subnet, mudah) vs **queue tree** (hierarkis, butuh mangle mark). Hati-hati: format `max-limit` adalah upload/download.
+- **PCQ** membagi bandwidth adil & dinamis ke banyak pengguna (`pcq-rate=0` = bagi rata; classifier dst/src-address). Solusi anti-monopoli link bersama.
 - **Burst** = kecepatan melebihi limit sementara → browsing terasa cepat, transfer besar tetap dibatasi. Logika: threshold/limit/time.
-- **Queue tree**: `priority` (1 tertinggi), `limit-at` (jaminan) vs `max-limit` (maksimum) — mirip LLQ Cisco.
+- **Queue tree**: `priority` (1 tertinggi), `limit-at` (jaminan) vs `max-limit` (maksimum), mirip LLQ Cisco.
 - **Hotspot**: captive portal + user profile (paket) + voucher + **walled garden** (akses tanpa login untuk pembayaran/info). Skala besar → **RADIUS**.
 - **RT-RW-Net**: PPPoE (langganan tetap) atau hotspot voucher (publik), + PCQ + burst + firewall/NAT + failover + monitoring.
 
@@ -422,15 +422,15 @@ Umum:
 <details>
 <summary>Jawaban</summary>
 
-1. Gunakan **simple queue** untuk **mayoritas kasus yang lugas** — membatasi bandwidth per-IP atau per-subnet (mis. tiap pelanggan RT-RW-Net dapat 10 Mbps). Ia mudah dikonfigurasi (cukup target IP dan max-limit), diproses berurutan, dan cukup untuk sebagian besar kebutuhan. Gunakan **queue tree** untuk **skenario kompleks/hierarkis** — ketika Anda butuh: prioritas antar-jenis trafik (VoIP di atas P2P), pembagian bandwidth berjenjang (total → per-departemen → per-user), atau QoS berbasis penandaan trafik. Queue tree bekerja bersama **mangle** (packet-mark) sehingga bisa membedakan trafik berdasarkan kriteria apa pun (protokol, port, DSCP), dan memberi kontrol `priority` dan `limit-at`/`max-limit` yang lebih halus. Singkatnya: simple queue untuk "batasi si ini sekian", queue tree untuk "atur prioritas dan hierarki bandwidth secara rinci".
+1. Gunakan **simple queue** untuk mayoritas kasus yang lugas, yaitu membatasi bandwidth per-IP atau per-subnet (mis. tiap pelanggan RT-RW-Net dapat 10 Mbps). Ia mudah dikonfigurasi (cukup target IP dan max-limit), diproses berurutan, dan cukup untuk sebagian besar kebutuhan. Gunakan **queue tree** untuk skenario kompleks/hierarkis, ketika Anda butuh: prioritas antar-jenis trafik (VoIP di atas P2P), pembagian bandwidth berjenjang (total → per-departemen → per-user), atau QoS berbasis penandaan trafik. Queue tree bekerja bersama mangle (packet-mark) sehingga bisa membedakan trafik berdasarkan kriteria apa pun (protokol, port, DSCP), dan memberi kontrol `priority` dan `limit-at`/`max-limit` yang lebih halus. Singkatnya: simple queue untuk "batasi si ini sekian", queue tree untuk "atur prioritas dan hierarki bandwidth secara rinci".
 
-2. **Masalah:** ketika banyak pengguna berbagi satu link (mis. 20 pelanggan berbagi 100 Mbps upstream), **satu pengguna yang mengunduh besar (atau banyak koneksi) dapat memonopoli hampir seluruh bandwidth**, membuat pengguna lain lambat — tanpa mekanisme pembagian, tidak ada keadilan. Membuat queue tetap per-pengguna itu merepotkan dan tidak dinamis. **PCQ (Per Connection Queue)** memecahkannya dengan **membagi bandwidth secara adil dan otomatis** di antara pengguna aktif berdasarkan classifier (mis. `dst-address` untuk download membedakan per-IP tujuan). Dengan **`pcq-rate=0`**, PCQ **tidak menetapkan batas tetap per-pengguna**, melainkan **membagi rata total bandwidth yang tersedia ke jumlah pengguna aktif saat itu**: jika 4 pengguna aktif berbagi 100 Mbps, masing-masing mendapat ~25 Mbps; jika 10 aktif, masing-masing ~10 Mbps; jika 1 aktif, ia bisa memakai (hampir) seluruhnya. Pembagian menyesuaikan **dinamis** dengan jumlah pengguna aktif — tidak perlu membuat atau mengubah queue per-orang.
+2. **Masalah:** ketika banyak pengguna berbagi satu link (mis. 20 pelanggan berbagi 100 Mbps upstream), satu pengguna yang mengunduh besar (atau banyak koneksi) dapat memonopoli hampir seluruh bandwidth dan membuat pengguna lain lambat. Tanpa mekanisme pembagian, tidak ada keadilan. Membuat queue tetap per-pengguna itu merepotkan dan tidak dinamis. **PCQ (Per Connection Queue)** memecahkannya dengan membagi bandwidth secara adil dan otomatis di antara pengguna aktif berdasarkan classifier (mis. `dst-address` untuk download membedakan per-IP tujuan). Dengan `pcq-rate=0`, PCQ tidak menetapkan batas tetap per-pengguna, melainkan membagi rata total bandwidth yang tersedia ke jumlah pengguna aktif saat itu: jika 4 pengguna aktif berbagi 100 Mbps, masing-masing mendapat ~25 Mbps; jika 10 aktif, masing-masing ~10 Mbps; jika 1 aktif, ia bisa memakai (hampir) seluruhnya. Pembagian menyesuaikan secara dinamis dengan jumlah pengguna aktif, jadi tidak perlu membuat atau mengubah queue per-orang.
 
-3. **Burst mengizinkan kecepatan melebihi `max-limit` untuk sementara** ketika sebuah koneksi baru dimulai dan pemakaian rata-rata sebelumnya masih rendah. Cara kerjanya: RouterOS memantau **rata-rata pemakaian** dalam jendela `burst-time`; selama rata-rata itu masih **di bawah `burst-threshold`**, target boleh melaju hingga `burst-limit` (lebih tinggi dari max-limit). **Efeknya pada pengalaman:** aktivitas seperti membuka halaman web, memuat aplikasi, atau mengunduh file kecil terjadi dalam **ledakan singkat** — data yang dipindahkan sedikit sehingga rata-rata tetap rendah dan burst aktif, memberi kecepatan tinggi (mis. 10 Mbps pada paket 5 Mbps) → terasa **responsif/ngebut**. Sebaliknya, **unduhan besar yang berkelanjutan** dengan cepat menaikkan rata-rata pemakaian melewati `burst-threshold`, sehingga burst **berhenti** dan kecepatan turun ke `max-limit` paket (5 Mbps) → transfer besar tetap **dibatasi sesuai paket**. Jadi burst memberi kesan cepat untuk pemakaian ringan/berselang tanpa membiarkan pelanggan menikmati kecepatan tinggi terus-menerus.
+3. **Burst mengizinkan kecepatan melebihi `max-limit` untuk sementara** ketika sebuah koneksi baru dimulai dan pemakaian rata-rata sebelumnya masih rendah. Cara kerjanya: RouterOS memantau rata-rata pemakaian dalam jendela `burst-time`; selama rata-rata itu masih di bawah `burst-threshold`, target boleh melaju hingga `burst-limit` (lebih tinggi dari max-limit). **Efeknya pada pengalaman:** aktivitas seperti membuka halaman web, memuat aplikasi, atau mengunduh file kecil terjadi dalam ledakan singkat. Data yang dipindahkan sedikit sehingga rata-rata tetap rendah dan burst aktif, memberi kecepatan tinggi (mis. 10 Mbps pada paket 5 Mbps) → terasa responsif/ngebut. Sebaliknya, unduhan besar yang berkelanjutan dengan cepat menaikkan rata-rata pemakaian melewati `burst-threshold`, sehingga burst berhenti dan kecepatan turun ke `max-limit` paket (5 Mbps) → transfer besar tetap dibatasi sesuai paket. Jadi burst memberi kesan cepat untuk pemakaian ringan/berselang tanpa membiarkan pelanggan menikmati kecepatan tinggi terus-menerus.
 
-4. **`limit-at`** adalah bandwidth **terjamin (minimum)** yang akan selalu didapat sebuah queue **bahkan saat link penuh/kongesti** — ini adalah "hak" yang dijamin. **`max-limit`** adalah bandwidth **maksimum** yang boleh dipakai queue **bila masih ada kapasitas tersedia** (setelah semua jaminan `limit-at` dipenuhi). Contoh: queue VoIP dengan `limit-at=10M max-limit=20M priority=1` **dijamin** selalu mendapat 10 Mbps (kritis agar suara tidak putus meski jaringan sibuk), dan boleh naik hingga 20 Mbps jika bandwidth menganggur. Saat kongesti, RouterOS pertama-tama memenuhi semua `limit-at` (sesuai prioritas), lalu membagi sisa kapasitas hingga `max-limit` masing-masing. Ini setara konsep **bandwidth guarantee vs bandwidth ceiling**, mirip LLQ/CBWFQ Cisco (`11-wan-vpn/03`) di mana kelas prioritas punya jaminan minimum.
+4. **`limit-at`** adalah bandwidth terjamin (minimum) yang akan selalu didapat sebuah queue bahkan saat link penuh/kongesti; ini "hak" yang dijamin. **`max-limit`** adalah bandwidth maksimum yang boleh dipakai queue bila masih ada kapasitas tersedia (setelah semua jaminan `limit-at` dipenuhi). Contoh: queue VoIP dengan `limit-at=10M max-limit=20M priority=1` dijamin selalu mendapat 10 Mbps (agar suara tidak putus meski jaringan sibuk), dan boleh naik hingga 20 Mbps jika bandwidth menganggur. Saat kongesti, RouterOS pertama-tama memenuhi semua `limit-at` (sesuai prioritas), lalu membagi sisa kapasitas hingga `max-limit` masing-masing. Ini setara konsep bandwidth guarantee vs bandwidth ceiling, mirip LLQ/CBWFQ Cisco (`11-wan-vpn/03`) di mana kelas prioritas punya jaminan minimum.
 
-5. **Walled garden** adalah daftar situs/tujuan yang boleh diakses pengguna hotspot **tanpa harus login** terlebih dahulu. **Fungsinya** memberi "taman berpagar" — sebagian kecil akses yang diizinkan sebelum autentikasi. **Penting untuk sistem voucher berbayar** karena: (a) pengguna yang belum punya voucher perlu bisa **mengakses halaman pembayaran/pembelian voucher online, payment gateway, atau halaman informasi** — jika semua akses diblokir sebelum login, mereka tidak akan pernah bisa membeli voucher untuk login (jadi buntu); (b) beberapa layanan pendukung (server DNS tertentu, halaman syarat & ketentuan, logo/gambar di halaman login yang dihosting eksternal) perlu dijangkau agar portal berfungsi; (c) untuk model tertentu, memungkinkan akses ke aplikasi/website mitra secara gratis sebagai promosi. Tanpa walled garden, captive portal akan memblokir bahkan proses yang dibutuhkan untuk membeli akses — walled garden membuka persis jalur yang diperlukan (mis. domain payment gateway) sambil tetap memblokir internet umum sampai pengguna login/membayar.
+5. **Walled garden** adalah daftar situs/tujuan yang boleh diakses pengguna hotspot tanpa harus login terlebih dahulu. Fungsinya memberi "taman berpagar": sebagian kecil akses yang diizinkan sebelum autentikasi. **Penting untuk sistem voucher berbayar** karena: (a) pengguna yang belum punya voucher perlu bisa mengakses halaman pembayaran/pembelian voucher online, payment gateway, atau halaman informasi; jika semua akses diblokir sebelum login, mereka tidak akan pernah bisa membeli voucher untuk login (jadi buntu); (b) beberapa layanan pendukung (server DNS tertentu, halaman syarat & ketentuan, logo/gambar di halaman login yang dihosting eksternal) perlu dijangkau agar portal berfungsi; (c) untuk model tertentu, memungkinkan akses ke aplikasi/website mitra secara gratis sebagai promosi. Tanpa walled garden, captive portal akan memblokir bahkan proses yang dibutuhkan untuk membeli akses. Walled garden membuka persis jalur yang diperlukan (mis. domain payment gateway) sambil tetap memblokir internet umum sampai pengguna login/membayar.
 
 6. **Langkah 1, penuhi jaminan leaf yang aktif:** Game hanya butuh 3M, jadi ia mendapat 3M (jaminan 5M tidak dipakai penuh). Kantor 20M, Tamu 10M. Terpakai 33M. **Langkah 2, bagikan sisa menurut prioritas:** sisa 50 − 33 = 17M. Game sudah terpenuhi, jadi leaf aktif dengan prioritas tertinggi berikutnya adalah Kantor (4), yang mengambil seluruh 17M. **Hasil:** Game 3M, Kantor 37M, Tamu 10M. Bila `limit-at` Tamu dinaikkan menjadi 40M, jumlah jaminan menjadi 3 + 20 + 40 = 63M, melebihi induk 50M. Dokumentasi HTB menyatakan `limit-at` tetap diberikan walaupun melampaui `max-limit` induk, sehingga HTB "berjanji" lebih dari kapasitas antarmuka. Antrean keluaran yang FIFO lalu membagi kapasitas nyata kurang lebih sebanding jaminan (sekitar 3 : 20 : 40), sehingga Kantor turun jauh di bawah 20M dan prioritas tidak lagi bermakna. Itulah sebabnya jumlah `limit-at` anak harus tidak melebihi kapasitas induk.
 
@@ -442,8 +442,8 @@ Umum:
 
 ## 10. Sumber
 
-- MikroTik documentation — Queues, PCQ, Simple Queue, Hotspot (help.mikrotik.com)
-- MTCNA outline — QoS · MTCUME (User Management: hotspot lanjutan)
+- MikroTik documentation: Queues, PCQ, Simple Queue, Hotspot (help.mikrotik.com)
+- MTCNA outline: QoS · MTCUME (User Management: hotspot lanjutan)
 - `11-wan-vpn/03` (QoS konsep) · `12-keamanan/04` (RADIUS)
 - MikroTik, HTB (Hierarchical Token Bucket): https://help.mikrotik.com/docs/spaces/ROS/pages/137986076/HTB+Hierarchical+Token+Bucket
 - MikroTik, Queues: https://help.mikrotik.com/docs/spaces/ROS/pages/328088/Queues

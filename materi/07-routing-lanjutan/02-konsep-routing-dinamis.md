@@ -3,7 +3,7 @@
 > **Prasyarat:** `07-routing-lanjutan/01`
 > **Tujuan:** Anda paham perbedaan mendasar antara distance vector, link state, dan path vector, serta mekanisme pencegahan loop yang dipakai masing-masing.
 
-Modul ini adalah **fondasi konseptual** untuk OSPF, EIGRP, dan BGP. Memahaminya membuat modul-modul berikutnya jauh lebih mudah.
+Modul ini adalah fondasi konseptual untuk OSPF, EIGRP, dan BGP. Memahaminya membuat modul-modul berikutnya jauh lebih mudah.
 
 ---
 
@@ -19,8 +19,8 @@ Empat tugas:
 ```
 
 Manfaat dibanding static:
-- **Adaptif** — otomatis beralih saat jalur gagal
-- **Skalabel** — tidak perlu mengonfigurasi setiap rute manual
+- **Adaptif**: otomatis beralih saat jalur gagal
+- **Skalabel**: tidak perlu mengonfigurasi setiap rute manual
 - **Menemukan jalur optimal** berdasarkan metrik
 
 Biaya:
@@ -37,29 +37,29 @@ Biaya:
 
 | | **IGP** (Interior Gateway Protocol) | **EGP** (Exterior Gateway Protocol) |
 |---|---|---|
-| Cakupan | **Dalam** satu AS | **Antar** AS |
-| Tujuan | Menemukan jalur **terbaik** | Menegakkan **kebijakan** |
-| Contoh | RIP, OSPF, EIGRP, IS-IS | **BGP** |
+| Cakupan | Dalam satu AS | Antar AS |
+| Tujuan | Menemukan jalur terbaik | Menegakkan kebijakan |
+| Contoh | RIP, OSPF, EIGRP, IS-IS | BGP |
 | Metrik | Teknis (bandwidth, delay, hop) | Path attribute (kebijakan bisnis) |
 | Skala | Ribuan rute | Jutaan rute |
-| Konvergensi | Cepat (detik) | Lambat (menit) — sengaja, demi stabilitas |
+| Konvergensi | Cepat (detik) | Lambat (menit), sengaja demi stabilitas |
 
 > [!TIP]
-> **Perbedaan filosofisnya penting:** IGP bertanya *"jalur mana yang tercepat?"* — BGP bertanya *"jalur mana yang ingin saya pakai berdasarkan perjanjian bisnis?"* BGP bisa dengan sengaja memilih jalur yang lebih panjang karena lebih murah.
+> **Perbedaan filosofisnya:** IGP bertanya *"jalur mana yang tercepat?"*, sedangkan BGP bertanya *"jalur mana yang ingin saya pakai berdasarkan perjanjian bisnis?"* BGP bisa dengan sengaja memilih jalur yang lebih panjang karena lebih murah.
 
 ### Berdasarkan algoritma
 
 | | **Distance Vector** | **Link State** | **Path Vector** |
 |---|---|---|---|
-| Yang diketahui router | Jarak & arah ke tujuan | **Peta topologi lengkap** | Daftar AS yang dilalui |
+| Yang diketahui router | Jarak & arah ke tujuan | Peta topologi lengkap | Daftar AS yang dilalui |
 | Yang dibagikan | Seluruh routing table | Status link lokal (LSA) | Prefix + path attributes |
-| Dibagikan ke | **Hanya tetangga** | **Seluruh area** (flooding) | Tetangga BGP |
-| Perhitungan | Bellman-Ford | **Dijkstra (SPF)** | Best path selection |
+| Dibagikan ke | Hanya tetangga | Seluruh area (flooding) | Tetangga BGP |
+| Perhitungan | Bellman-Ford | Dijkstra (SPF) | Best path selection |
 | Kebutuhan CPU/RAM | Rendah | Tinggi | Tinggi |
-| Konvergensi | Lambat | **Cepat** | Lambat |
-| Pencegahan loop | Split horizon, poison reverse, holddown | Topologi lengkap | **AS_PATH** |
-| Contoh | RIP, IGRP | **OSPF, IS-IS** | **BGP** |
-| EIGRP | Advanced DV (hybrid) — DUAL | | |
+| Konvergensi | Lambat | Cepat | Lambat |
+| Pencegahan loop | Split horizon, poison reverse, holddown | Topologi lengkap | AS_PATH |
+| Contoh | RIP, IGRP | OSPF, IS-IS | BGP |
+| EIGRP | Advanced DV (hybrid) dengan DUAL | | |
 
 ---
 
@@ -75,7 +75,7 @@ R3 mencatat: 10.0.0.0/8 lewat R2, jarak 2
 ```
 
 > [!WARNING]
-> **R3 tidak tahu apa pun tentang topologi.** Ia hanya percaya apa yang dikatakan R2 — karena itu disebut *routing by rumor*.
+> **R3 tidak tahu apa pun tentang topologi.** Ia hanya percaya apa yang dikatakan R2. Karena itulah cara ini disebut *routing by rumor*.
 
 ### Masalah: Count to Infinity
 
@@ -182,10 +182,10 @@ Link State      : Anda punya peta lengkap kota.
 
 | Aspek | Keuntungan |
 |---|---|
-| **Konvergensi** | Cepat — perubahan di-flood langsung, tidak menunggu update periodik |
+| **Konvergensi** | Cepat: perubahan di-flood langsung, tidak menunggu update periodik |
 | **Bebas loop** | Setiap router punya topologi lengkap sehingga tidak bisa "tertipu" |
 | **Metrik lebih baik** | Berbasis cost/bandwidth, bukan sekadar hop |
-| **Skalabilitas** | Dengan **area**, LSDB dan SPF bisa dibatasi cakupannya |
+| **Skalabilitas** | Dengan area, LSDB dan SPF bisa dibatasi cakupannya |
 | **Support VLSM/CIDR** | Selalu classless |
 
 ### Biaya
@@ -209,13 +209,13 @@ Link State      : Anda punya peta lengkap kota.
 4. Ulangi sampai semua node permanen.
 ```
 
-**Area** membatasi cakupan flooding dan SPF — inilah kunci skalabilitas OSPF dan IS-IS (`07-routing-lanjutan/04`).
+**Area** membatasi cakupan flooding dan SPF. Dengan area itulah OSPF dan IS-IS bisa berskala besar (`07-routing-lanjutan/04`).
 
 ---
 
 ## 5. Path Vector: BGP
 
-BGP bukan mencari jalur tercepat, melainkan menegakkan **kebijakan**.
+BGP tidak mencari jalur tercepat, melainkan menegakkan kebijakan.
 
 ```
 Alih-alih metrik tunggal, BGP membawa PATH ATTRIBUTES:
@@ -239,7 +239,7 @@ Kalau rute ini kembali ke AS 200:
 ```
 
 > [!WARNING]
-> **iBGP (dalam AS yang sama) tidak menambah AS_PATH**, sehingga mekanisme ini tidak berlaku. Karena itu iBGP butuh aturan berbeda: **router tidak boleh meneruskan rute iBGP ke peer iBGP lain** — yang memaksa **full mesh** atau **route reflector** (`07-routing-lanjutan/06`).
+> **iBGP (dalam AS yang sama) tidak menambah AS_PATH**, sehingga mekanisme ini tidak berlaku. Karena itu iBGP butuh aturan berbeda: router tidak boleh meneruskan rute iBGP ke peer iBGP lain. Aturan inilah yang memaksa **full mesh** atau **route reflector** (`07-routing-lanjutan/06`).
 
 ---
 
@@ -267,7 +267,7 @@ Cost = 100.000.000 / bandwidth
 ```
 
 > [!WARNING]
-> OSPF tidak bisa membedakan 100 Mbps dan 100 Gbps dengan setelan default. **Selalu naikkan reference bandwidth**, dan **samakan di semua router**:
+> OSPF tidak bisa membedakan 100 Mbps dan 100 Gbps dengan setelan default. Selalu naikkan reference bandwidth, dan samakan nilainya di semua router:
 ```
 R1(config-router)# auto-cost reference-bandwidth 100000    ← 100 Gbps
 ```
@@ -286,7 +286,7 @@ Waktu konvergensi = deteksi + propagasi + perhitungan + pemasangan FIB
 
 | Mekanisme | Waktu deteksi |
 |---|---|
-| Link down (fisik) | Milidetik — **tercepat** |
+| Link down (fisik) | Milidetik (tercepat) |
 | **BFD** (Bidirectional Forwarding Detection) | 50-150 ms |
 | Fast hello (OSPF sub-second) | ~1 detik |
 | Hello/dead timer default OSPF | 40 detik |
@@ -294,7 +294,7 @@ Waktu konvergensi = deteksi + propagasi + perhitungan + pemasangan FIB
 | BGP hold timer default | 180 detik |
 
 > [!TIP]
-> **BFD adalah mekanisme deteksi universal** — protokol ringan yang mengirim paket sangat cepat dan memberi tahu protokol routing (OSPF, BGP, EIGRP, static) begitu link mati. Jauh lebih efisien daripada mempercepat hello timer setiap protokol.
+> **BFD adalah mekanisme deteksi universal**: protokol ringan yang mengirim paket sangat cepat dan memberi tahu protokol routing (OSPF, BGP, EIGRP, static) begitu link mati. Cara ini jauh lebih efisien daripada mempercepat hello timer setiap protokol.
 
 ```
 R1(config-if)# bfd interval 50 min_rx 50 multiplier 3
@@ -302,7 +302,7 @@ R1(config-router)# bfd all-interfaces
 ```
 
 > [!WARNING]
-> **Menurunkan hello/dead timer terlalu agresif berbahaya** — beban CPU meningkat, dan link yang sedikit tidak stabil akan menyebabkan **flapping** yang justru lebih merusak daripada konvergensi lambat.
+> **Menurunkan hello/dead timer terlalu agresif berbahaya.** Beban CPU meningkat, dan link yang sedikit tidak stabil akan menyebabkan **flapping** yang justru lebih merusak daripada konvergensi lambat.
 
 ### Mekanisme peredam
 
@@ -349,14 +349,14 @@ Router link-state menjalankan Dijkstra dalam bentuk yang oleh Peterson & Davie d
 
 | Langkah | Confirmed (ditambahkan) | Tentative setelah langkah | Catatan |
 |---|---|---|---|
-| 1 | (JKT,0,–) | (BDG,2,BDG) (SMG,5,SMG) | Baca LSA JKT: tetangga BDG dan SMG |
+| 1 | (JKT,0,-) | (BDG,2,BDG) (SMG,5,SMG) | Baca LSA JKT: tetangga BDG dan SMG |
 | 2 | (BDG,2,BDG) | (SMG,5,SMG) (YOG,9,BDG) | Lewat BDG ke SMG = 2+4 = 6, tidak lebih baik dari 5. Ke YOG = 2+7 = 9 |
 | 3 | (SMG,5,SMG) | (YOG,6,SMG) (SBY,11,SMG) | Lewat SMG ke YOG = 5+1 = 6 < 9: **ganti**. Ke SBY = 5+6 = 11 |
 | 4 | (YOG,6,SMG) | (SBY,9,SMG) (DPS,15,SMG) | Lewat YOG ke SBY = 6+3 = 9 < 11: **ganti**. Ke DPS = 6+9 = 15 |
 | 5 | (SBY,9,SMG) | (DPS,11,SMG) | Lewat SBY ke DPS = 9+2 = 11 < 15: **ganti** |
 | 6 | (DPS,11,SMG) | kosong | Selesai |
 
-Perhatikan bagaimana algoritma tampak "salah jalan" lebih dulu (YOG 9, SBY 11, DPS 15), lalu memperbaikinya. Yang dijamin Dijkstra hanya satu hal: **saat sebuah node dipindah ke Confirmed, cost-nya sudah pasti minimum**, karena semua jalur lain melewati node Tentative yang cost-nya sudah lebih besar dan cost link tidak pernah negatif.
+Perhatikan bagaimana algoritma tampak "salah jalan" lebih dulu (YOG 9, SBY 11, DPS 15), lalu memperbaikinya. Dijkstra hanya menjamin satu hal: saat sebuah node dipindah ke Confirmed, cost-nya sudah pasti minimum, karena semua jalur lain melewati node Tentative yang cost-nya sudah lebih besar dan cost link tidak pernah negatif.
 
 Hasilnya adalah *shortest-path tree* dengan JKT sebagai akar, dan tabel routing JKT:
 
@@ -385,7 +385,7 @@ D_x(y) = min over v ∈ tetangga(x) { c(x,v) + D_v(y) }
  ditambah jarak yang dilaporkan v ke y."
 ```
 
-Setiap router hanya butuh dua hal: biaya ke tetangganya dan vektor jarak yang diumumkan tetangganya. Router tidak perlu peta. Tabel berikut menjalankan persamaan itu pada graf yang sama untuk satu tujuan, **DPS**, secara sinkron (setiap iterasi semua router memakai vektor tetangga dari iterasi sebelumnya):
+Setiap router hanya butuh dua hal: biaya ke tetangganya dan vektor jarak yang diumumkan tetangganya. Router tidak perlu peta. Tabel berikut menjalankan persamaan itu pada graf yang sama untuk satu tujuan, DPS, secara sinkron (setiap iterasi semua router memakai vektor tetangga dari iterasi sebelumnya):
 
 | Iterasi | JKT | BDG | SMG | YOG | SBY | DPS |
 |---|---|---|---|---|---|---|
@@ -396,9 +396,9 @@ Setiap router hanya butuh dua hal: biaya ke tetangganya dan vektor jarak yang di
 | 4 | 11 (via SMG) | 10 (via SMG) | 6 | 5 | 2 | 0 |
 | 5 | tidak berubah, konvergen | | | | | |
 
-Cek dua angka: di iterasi 2, SMG memilih min(6 + D_SBY = 6+2, 1 + D_YOG = 1+9) = min(8, 10) = **8 via SBY**. Di iterasi 3, YOG sudah melaporkan 5, sehingga SMG menghitung ulang min(6+2, 1+5) = **6 via YOG**. Hasil akhir (JKT 11, BDG 10, SMG 6, YOG 5, SBY 2) sama dengan Dijkstra, seperti seharusnya.
+Cek dua angka: di iterasi 2, SMG memilih min(6 + D_SBY = 6+2, 1 + D_YOG = 1+9) = min(8, 10) = 8 via SBY. Di iterasi 3, YOG sudah melaporkan 5, sehingga SMG menghitung ulang min(6+2, 1+5) = 6 via YOG. Hasil akhir (JKT 11, BDG 10, SMG 6, YOG 5, SBY 2) sama dengan Dijkstra, seperti seharusnya.
 
-Kabar baik menyebar cepat: banyaknya iterasi paling banyak sebanding dengan jumlah hop jalur terpendek terpanjang (di sini 4). Masalahnya ada pada **kabar buruk**.
+Kabar baik menyebar cepat: banyaknya iterasi paling banyak sebanding dengan jumlah hop jalur terpendek terpanjang (di sini 4). Masalahnya ada pada kabar buruk.
 
 ### 8.3 Count to infinity, iterasi demi iterasi
 
@@ -429,7 +429,7 @@ Link PKU-MDN putus. Tanpa mekanisme pencegahan, dengan update yang diproses berg
 | 10 | PDG | min(11, 1 + 11) | **11 via MDN** | selesai di PDG |
 | 11 | PKU | 1 + 11 | **12 via PDG** | konvergen |
 
-Sembilan langkah paket ke MDN berputar antara PKU dan PDG, padahal jalur cadangan sudah ada sejak awal. PKU tidak bisa tahu bahwa "2" yang dilaporkan PDG justru melewati PKU sendiri. Semakin mahal jalur cadangannya, semakin lama hitungannya. Kalau MDN terisolasi total (link cadangan juga putus), keduanya menghitung sampai "tak terhingga". Pada RIP (16 = tak terjangkau) dengan update periodik 30 detik dan tanpa triggered update, simulasi sinkron butuh sekitar 15 putaran, atau sekitar **7,5 menit** loop dalam kasus terburuk.
+Sembilan langkah paket ke MDN berputar antara PKU dan PDG, padahal jalur cadangan sudah ada sejak awal. PKU tidak bisa tahu bahwa "2" yang dilaporkan PDG justru melewati PKU sendiri. Semakin mahal jalur cadangannya, semakin lama hitungannya. Kalau MDN terisolasi total (link cadangan juga putus), keduanya menghitung sampai "tak terhingga". Pada RIP (16 = tak terjangkau) dengan update periodik 30 detik dan tanpa triggered update, simulasi sinkron butuh sekitar 15 putaran, atau sekitar 7,5 menit loop dalam kasus terburuk.
 
 **Dengan poison reverse**, PDG yang memakai PKU sebagai next hop memberi tahu PKU "MDN = ∞" sejak awal:
 
@@ -443,7 +443,7 @@ Tiga langkah, tanpa loop.
 
 ### 8.4 Batas split horizon dan poison reverse
 
-Peterson & Davie mencatat kelemahan pentingnya: split horizon dan poison reverse **hanya mencegah loop yang melibatkan dua router**. Contoh segitiga R1, R2, R3 (semua link cost 1), dengan jaringan Z terhubung langsung ke R3. R1 dan R2 sama-sama mencapai Z via R3 dengan cost 1, dan split horizon aktif.
+Peterson & Davie mencatat kelemahan pentingnya: split horizon dan poison reverse hanya mencegah loop yang melibatkan dua router. Contoh segitiga R1, R2, R3 (semua link cost 1), dengan jaringan Z terhubung langsung ke R3. R1 dan R2 sama-sama mencapai Z via R3 dengan cost 1, dan split horizon aktif.
 
 | Langkah | Kejadian | R1 | R2 | R3 |
 |---|---|---|---|---|
@@ -459,7 +459,7 @@ Setiap router mematuhi split horizon terhadap tetangganya sendiri, tetapi loop-n
 
 ### 8.5 Path vector: kenapa BGP tidak menghitung sampai tak terhingga
 
-Akar masalah distance vector: router menerima **angka** tanpa tahu jalurnya. Path vector mengirim **seluruh jalur**, sehingga setiap router bisa memeriksa apakah dirinya sudah ada di dalamnya. Ulangi segitiga di atas dengan path vector: pada langkah 3, R2 mengumumkan ke R3 jalur `[R2, R1, R3]`. R3 melihat namanya sendiri di jalur itu dan **membuangnya**. Loop tidak pernah terbentuk, berapa pun panjang siklusnya. Itulah fungsi AS_PATH pada BGP (bagian 5).
+Akar masalah distance vector: router menerima angka tanpa tahu jalurnya. Path vector mengirim seluruh jalur, sehingga setiap router bisa memeriksa apakah dirinya sudah ada di dalamnya. Ulangi segitiga di atas dengan path vector: pada langkah 3, R2 mengumumkan ke R3 jalur `[R2, R1, R3]`. R3 melihat namanya sendiri di jalur itu dan membuangnya. Loop tidak pernah terbentuk, berapa pun panjang siklusnya. Itulah fungsi AS_PATH pada BGP (bagian 5).
 
 Kenapa antar-AS tidak memakai link-state saja? Ada tiga alasan:
 
@@ -467,7 +467,7 @@ Kenapa antar-AS tidak memakai link-state saja? Ada tiga alasan:
 2. **Kerahasiaan.** Topologi internal dan kebijakan komersial (siapa pelanggan, siapa peer) adalah rahasia bisnis. Path vector hanya mengungkap jalur yang memang diumumkan.
 3. **Metrik tidak bisa dibandingkan.** Cost OSPF di Telkom dan di ISP lain tidak punya arti bersama. Setiap AS memilih berdasarkan kebijakannya sendiri.
 
-Path vector bebas loop, tetapi tidak bebas masalah. Saat sebuah prefix ditarik, router mencoba jalur cadangan yang **sudah basi** satu per satu (*path exploration*). Contoh dengan nomor AS dokumentasi (RFC 5398): AS64496 mengumumkan `203.0.113.0/24` ke AS64497, AS64498, dan AS64499, yang saling terhubung.
+Path vector bebas loop, tetapi tidak bebas masalah. Saat sebuah prefix ditarik, router mencoba jalur cadangan yang sudah basi satu per satu (*path exploration*). Contoh dengan nomor AS dokumentasi (RFC 5398): AS64496 mengumumkan `203.0.113.0/24` ke AS64497, AS64498, dan AS64499, yang saling terhubung.
 
 ```
 Sebelum: AS64497 memakai [64496], cadangan [64498 64496] dan [64499 64496]
@@ -478,13 +478,13 @@ AS64496 putus dari ketiganya:
   ... sampai tidak ada jalur tersisa → withdraw
 ```
 
-Karena BGP membatasi frekuensi pengumuman per tetangga (MRAI, nilai yang disarankan RFC 4271 adalah 30 detik untuk eBGP dan 5 detik untuk iBGP), setiap langkah bisa memakan puluhan detik. Labovitz dkk. (2000) mengukur bahwa konvergensi setelah penarikan prefix di internet sering memakan beberapa menit. Lebih jauh, dengan kebijakan sembarangan, BGP **tidak dijamin konvergen sama sekali** (Griffin, Shepherd, Wilfong, 2002). Jaminan konvergensi datang dari pola kebijakan ekonomi yang wajar, yaitu aturan Gao-Rexford: utamakan rute dari pelanggan, dan jangan meneruskan rute dari peer atau provider ke peer atau provider lain (`07-routing-lanjutan/06`).
+Karena BGP membatasi frekuensi pengumuman per tetangga (MRAI, nilai yang disarankan RFC 4271 adalah 30 detik untuk eBGP dan 5 detik untuk iBGP), setiap langkah bisa memakan puluhan detik. Labovitz dkk. (2000) mengukur bahwa konvergensi setelah penarikan prefix di internet sering memakan beberapa menit. Lebih jauh, dengan kebijakan sembarangan, BGP tidak dijamin konvergen sama sekali (Griffin, Shepherd, Wilfong, 2002). Jaminan konvergensi datang dari pola kebijakan ekonomi yang wajar, yaitu aturan Gao-Rexford: utamakan rute dari pelanggan, dan jangan meneruskan rute dari peer atau provider ke peer atau provider lain (`07-routing-lanjutan/06`).
 
 ### 8.6 Loop transien dan microloop di link-state
 
-Link-state "bebas loop" hanya dalam kondisi stabil. Saat topologi berubah, setiap router memperbarui FIB-nya **pada waktu yang berbeda**: router yang dekat dengan gangguan tahu lebih dulu, router lain menunggu LSA tiba, menunggu timer SPF, lalu menunggu FIB terpasang. Selama jeda itu dua router bisa saling menunjuk. Inilah **microloop**.
+Link-state "bebas loop" hanya dalam kondisi stabil. Saat topologi berubah, setiap router memperbarui FIB-nya pada waktu yang berbeda: router yang dekat dengan gangguan tahu lebih dulu, router lain menunggu LSA tiba, menunggu timer SPF, lalu menunggu FIB terpasang. Selama jeda itu dua router bisa saling menunjuk. Inilah **microloop**.
 
-Kembali ke graf utama. Sebelum gangguan, rute ke DPS adalah: YOG via SBY (3+2 = 5), SBY langsung (2). Sekarang **link SBY-DPS putus**:
+Kembali ke graf utama. Sebelum gangguan, rute ke DPS adalah: YOG via SBY (3+2 = 5), SBY langsung (2). Sekarang link SBY-DPS putus:
 
 ```
 Rute baru ke DPS:  SBY → via YOG (3 + 9 = 12)    YOG → langsung (9)
@@ -531,13 +531,13 @@ Pemasangan FIB: 10.000 prefix × 10 µs        100 ms
 Total                                       ≈ 361 ms
 ```
 
-Perhatikan bahwa komputasi Dijkstra, yang paling banyak dibahas di buku, adalah bagian terkecil. Deteksi dan pemasangan FIB mendominasi, sehingga optimasi nyata di lapangan berfokus pada BFD, urutan pemasangan prefix (prefix penting dipasang lebih dulu), dan jalur cadangan yang dihitung sebelum gangguan terjadi.
+Komputasi Dijkstra, yang paling banyak dibahas di buku, justru bagian terkecil. Deteksi dan pemasangan FIB mendominasi, sehingga optimasi nyata di lapangan berfokus pada BFD, urutan pemasangan prefix (prefix penting dipasang lebih dulu), dan jalur cadangan yang dihitung sebelum gangguan terjadi.
 
 ---
 
 ## 9. Passive Interface
 
-Mencegah protokol routing mengirim hello/update di interface tertentu, tetapi **tetap mengiklankan subnet interface itu**.
+Mencegah protokol routing mengirim hello/update di interface tertentu, tetapi tetap mengiklankan subnet interface itu.
 
 ```
 R1(config-router)# passive-interface gi0/5
@@ -546,21 +546,21 @@ R1(config-router)# no passive-interface gi0/1         ← kecuali yang ini
 ```
 
 **Kenapa penting:**
-1. **Keamanan** — mencegah penyerang di jaringan pengguna membentuk adjacency dan menyuntikkan rute palsu
-2. **Efisiensi** — tidak membuang bandwidth mengirim hello ke jaringan tanpa router
-3. **Kebersihan** — mengurangi noise
+1. **Keamanan**: mencegah penyerang di jaringan pengguna membentuk adjacency dan menyuntikkan rute palsu
+2. **Efisiensi**: tidak membuang bandwidth mengirim hello ke jaringan tanpa router
+3. **Kebersihan**: mengurangi noise
 
 > [!TIP]
 > **Praktik terbaik: `passive-interface default`, lalu aktifkan eksplisit hanya di interface yang menghadap router lain.** Ini pendekatan "deny by default" yang jauh lebih aman.
 
 > [!WARNING]
-> Pada **EIGRP dan OSPF**, passive interface berarti **tidak ada adjacency sama sekali** di interface itu. Pada **RIP**, router masih **menerima** update (hanya tidak mengirim) — perbedaan yang penting.
+> Pada EIGRP dan OSPF, passive interface berarti tidak ada adjacency sama sekali di interface itu. Pada RIP, router masih menerima update (hanya tidak mengirim).
 
 ---
 
 ## 10. Autentikasi Protokol Routing
 
-Tanpa autentikasi, siapa pun yang bisa mengirim paket ke segmen Anda bisa menyuntikkan rute palsu — mengalihkan trafik ke dirinya (MITM) atau ke lubang hitam (DoS).
+Tanpa autentikasi, siapa pun yang bisa mengirim paket ke segmen Anda bisa menyuntikkan rute palsu untuk mengalihkan trafik ke dirinya (MITM) atau ke lubang hitam (DoS).
 
 ```
 # OSPF (MD5 per interface)
@@ -604,24 +604,24 @@ R1(config-router)# neighbor 10.0.0.2 password RahasiaKuat
 | Warisan/lab sederhana | RIP (hindari di produksi) |
 
 > [!TIP]
-> **Tren modern:** BGP semakin dipakai **di dalam** data center (bukan hanya antar-AS), karena skalabilitas, kontrol kebijakan yang eksplisit, dan implementasinya yang sangat matang. Desain "BGP everywhere" dengan eBGP unnumbered kini umum di spine-leaf (`16-datacenter-cloud-sdn/01`).
+> **Tren modern:** BGP semakin dipakai di dalam data center (bukan hanya antar-AS), karena skalabilitas, kontrol kebijakan yang eksplisit, dan implementasinya yang sangat matang. Desain "BGP everywhere" dengan eBGP unnumbered kini umum di spine-leaf (`16-datacenter-cloud-sdn/01`).
 
 ---
 
 ## 12. Ringkasan
 
 - **IGP** (dalam AS, cari jalur terbaik) vs **EGP/BGP** (antar-AS, tegakkan kebijakan).
-- **Distance vector** ("routing by rumor"): hanya tahu jarak & arah dari tetangga; rentan **count to infinity**; ditambal dengan split horizon, route poisoning, poison reverse, holddown, triggered update.
-- **Link state**: setiap router punya **LSDB identik** dan menjalankan **Dijkstra** sendiri; konvergensi cepat dan bebas loop; biayanya CPU/memori. **Area** membatasi cakupan.
-- **Path vector (BGP)**: memakai **AS_PATH** untuk mencegah loop dan **path attributes** untuk kebijakan.
-- **Reference bandwidth OSPF default (100 Mbps) tidak bisa membedakan link ≥100 Mbps** — selalu naikkan dan samakan di semua router.
-- Konvergensi = deteksi + propagasi + perhitungan + FIB. **BFD** memberi deteksi 50-150 ms tanpa membebani timer protokol.
-- Timer yang terlalu agresif menyebabkan **flapping** yang lebih merusak daripada konvergensi lambat.
+- **Distance vector** ("routing by rumor"): hanya tahu jarak & arah dari tetangga; rentan count to infinity; ditambal dengan split horizon, route poisoning, poison reverse, holddown, triggered update.
+- **Link state**: setiap router punya LSDB identik dan menjalankan Dijkstra sendiri; konvergensi cepat dan bebas loop; biayanya CPU/memori. Area membatasi cakupan.
+- **Path vector (BGP)**: memakai AS_PATH untuk mencegah loop dan path attributes untuk kebijakan.
+- Reference bandwidth OSPF default (100 Mbps) tidak bisa membedakan link ≥100 Mbps. Selalu naikkan dan samakan nilainya di semua router.
+- Konvergensi = deteksi + propagasi + perhitungan + FIB. BFD memberi deteksi 50-150 ms tanpa membebani timer protokol.
+- Timer yang terlalu agresif menyebabkan flapping yang lebih merusak daripada konvergensi lambat.
 - **`passive-interface default` + aktifkan eksplisit** adalah praktik keamanan yang benar.
 - **Selalu aktifkan autentikasi** protokol routing di jaringan produksi.
 - **Dijkstra** (forward search, Confirmed/Tentative) memastikan cost node yang dikonfirmasi sudah minimum; kompleksitas O((N+E) log N), jarang menjadi bottleneck konvergensi.
 - **Bellman-Ford**: `D_x(y) = min_v { c(x,v) + D_v(y) }`. Kabar baik cepat, kabar buruk lambat (count to infinity). Split horizon dan poison reverse hanya menolong loop dua router.
-- **Path vector** mencegah loop berapa pun panjangnya dengan memeriksa jalur, tetapi membayar dengan path exploration. **Link-state** bisa mengalami **microloop** saat FIB diperbarui tidak serentak.
+- **Path vector** mencegah loop berapa pun panjangnya dengan memeriksa jalur, tetapi membayar dengan path exploration. Link-state bisa mengalami microloop saat FIB diperbarui tidak serentak.
 
 ---
 
@@ -640,38 +640,38 @@ R1(config-router)# neighbor 10.0.0.2 password RahasiaKuat
 <details>
 <summary>Jawaban</summary>
 
-1. **Distance vector**: router hanya mengetahui **jarak (metrik) dan arah (next hop)** ke setiap tujuan — informasi yang ia terima dari tetangganya. Ia **tidak punya gambaran topologi** dan tidak bisa memverifikasi kebenaran informasi itu; ia hanya percaya. **Link state**: setiap router menerima **LSA dari semua router di area** dan membangun **LSDB yang identik** — peta topologi lengkap. Dari peta itu ia menghitung sendiri jalur terpendek dengan Dijkstra, sehingga tidak bergantung pada penilaian router lain.
+1. **Distance vector**: router hanya mengetahui jarak (metrik) dan arah (next hop) ke setiap tujuan, yaitu informasi yang ia terima dari tetangganya. Ia tidak punya gambaran topologi dan tidak bisa memverifikasi kebenaran informasi itu; ia hanya percaya. **Link state**: setiap router menerima LSA dari semua router di area dan membangun LSDB yang identik (peta topologi lengkap). Dari peta itu ia menghitung sendiri jalur terpendek dengan Dijkstra, sehingga tidak bergantung pada penilaian router lain.
 
 2. **Count to infinity** terjadi ketika sebuah jaringan mati, tetapi informasi lama tentangnya masih beredar di antara router. Dua router saling belajar dari informasi basi masing-masing, sehingga metrik terus meningkat tanpa henti sementara paket berputar di antara mereka.
-   **Mekanisme pencegahan:** (a) **maximum hop count** — RIP mendefinisikan 16 sebagai infinity, membatasi durasi loop; (b) **split horizon** — jangan iklankan rute kembali ke arah asal pembelajarannya; (c) **route poisoning** — saat rute hilang, iklankan dengan metrik infinity alih-alih diam; (d) **poison reverse** — split horizon dengan mengirim metrik infinity secara eksplisit; (e) **holddown timer** — abaikan informasi baru tentang rute yang baru hilang selama periode tertentu; (f) **triggered update** — kirim perubahan segera, jangan menunggu timer periodik.
+   **Mekanisme pencegahan:** (a) **maximum hop count**: RIP mendefinisikan 16 sebagai infinity, sehingga durasi loop terbatas; (b) **split horizon**: jangan iklankan rute kembali ke arah asal pembelajarannya; (c) **route poisoning**: saat rute hilang, iklankan dengan metrik infinity alih-alih diam; (d) **poison reverse**: split horizon dengan mengirim metrik infinity secara eksplisit; (e) **holddown timer**: abaikan informasi baru tentang rute yang baru hilang selama periode tertentu; (f) **triggered update**: kirim perubahan segera, jangan menunggu timer periodik.
 
-3. Karena pada link state **setiap router memiliki peta topologi lengkap yang identik** dan menghitung jalurnya sendiri dari peta itu. Router tidak pernah "percaya" pada kesimpulan router lain — ia hanya menerima **fakta** tentang link (siapa terhubung ke siapa dengan cost berapa), lalu menyimpulkan sendiri. Karena semua router menghitung dari data yang sama, hasilnya konsisten dan tidak mungkin dua router saling menunjuk sebagai jalur ke tujuan yang sama.
-   Distance vector menyebarkan **kesimpulan**, bukan fakta ("saya bisa mencapai X dalam N hop"). Router penerima tidak bisa memverifikasi apakah jalur itu sebenarnya melewati dirinya sendiri — sehingga loop mungkin terjadi, dan seluruh mekanisme tambalan diperlukan untuk mendeteksi serta memutusnya.
+3. Karena pada link state setiap router memiliki peta topologi lengkap yang identik dan menghitung jalurnya sendiri dari peta itu. Router tidak pernah "percaya" pada kesimpulan router lain. Ia hanya menerima fakta tentang link (siapa terhubung ke siapa dengan cost berapa), lalu menyimpulkan sendiri. Karena semua router menghitung dari data yang sama, hasilnya konsisten dan tidak mungkin dua router saling menunjuk sebagai jalur ke tujuan yang sama.
+   Distance vector menyebarkan kesimpulan, bukan fakta ("saya bisa mencapai X dalam N hop"). Router penerima tidak bisa memverifikasi apakah jalur itu sebenarnya melewati dirinya sendiri, sehingga loop mungkin terjadi dan seluruh mekanisme tambalan diperlukan untuk mendeteksi serta memutusnya.
 
-4. Karena **reference bandwidth OSPF default adalah 100 Mbps**, dan cost dihitung `100.000.000 / bandwidth` dengan pembulatan minimum 1. Link 100 Mbps, 1 Gbps, 10 Gbps, dan 100 Gbps semuanya menghasilkan **cost 1** — OSPF tidak bisa membedakannya, sehingga memilih jalur berdasarkan tie-breaker yang tidak relevan.
-   **Perbaikan:** naikkan reference bandwidth, mis. `auto-cost reference-bandwidth 100000` (100 Gbps). Setelah itu: 1 Gbps → cost 100, 10 Gbps → cost 10, 100 Gbps → cost 1. ⚠️ Nilai ini **harus sama di semua router** dalam domain OSPF, atau perhitungan jalur menjadi tidak konsisten dan bisa menyebabkan routing suboptimal atau loop sementara.
+4. Karena reference bandwidth OSPF default adalah 100 Mbps, dan cost dihitung `100.000.000 / bandwidth` dengan pembulatan minimum 1. Link 100 Mbps, 1 Gbps, 10 Gbps, dan 100 Gbps semuanya menghasilkan cost 1. OSPF tidak bisa membedakannya, sehingga memilih jalur berdasarkan tie-breaker yang tidak relevan.
+   **Perbaikan:** naikkan reference bandwidth, mis. `auto-cost reference-bandwidth 100000` (100 Gbps). Setelah itu: 1 Gbps → cost 100, 10 Gbps → cost 10, 100 Gbps → cost 1. Hati-hati: nilai ini harus sama di semua router dalam domain OSPF, atau perhitungan jalur menjadi tidak konsisten dan bisa menyebabkan routing suboptimal atau loop sementara.
 
-5. Karena BGP menyelesaikan masalah yang berbeda. IGP mencari jalur **teknis terbaik** dalam satu organisasi yang punya tujuan seragam. BGP menghubungkan **organisasi yang berbeda** dengan kepentingan bisnis yang berbeda — dan seringkali jalur "terbaik" secara teknis bukan jalur yang ingin dipakai. Contoh: sebuah ISP mungkin memilih jalur yang 2 hop lebih panjang karena melewati peering gratis alih-alih transit berbayar. Karena itu BGP memakai **path attributes** (LOCAL_PREF, AS_PATH, MED, COMMUNITY) yang bisa dimanipulasi untuk mencerminkan kebijakan, dan **algoritma seleksi bertingkat** yang memberi operator kendali penuh atas prioritas kriteria. Metrik tunggal tidak bisa mengekspresikan "lebih murah", "sesuai kontrak", atau "hindari negara tertentu".
+5. Karena BGP menyelesaikan masalah yang berbeda. IGP mencari jalur teknis terbaik dalam satu organisasi yang punya tujuan seragam. BGP menghubungkan organisasi yang berbeda dengan kepentingan bisnis yang berbeda, dan seringkali jalur "terbaik" secara teknis bukan jalur yang ingin dipakai. Contoh: sebuah ISP mungkin memilih jalur yang 2 hop lebih panjang karena melewati peering gratis alih-alih transit berbayar. Karena itu BGP memakai path attributes (LOCAL_PREF, AS_PATH, MED, COMMUNITY) yang bisa dimanipulasi untuk mencerminkan kebijakan, dan algoritma seleksi bertingkat yang memberi operator kendali penuh atas prioritas kriteria. Metrik tunggal tidak bisa mengekspresikan "lebih murah", "sesuai kontrak", atau "hindari negara tertentu".
 
-6. Router akan **mengirim hello/update protokol routing ke jaringan pengguna**. Konsekuensinya: (a) **risiko keamanan serius** — siapa pun yang menancapkan perangkat di jaringan itu bisa membentuk adjacency dan **menyuntikkan rute palsu**, mengalihkan trafik ke dirinya sendiri (MITM) atau ke lubang hitam (DoS); (b) **pemborosan bandwidth dan CPU** — hello dikirim terus-menerus ke segmen yang tidak punya router; (c) pada jaringan multicast, setiap host menerima dan memproses paket itu; (d) informasi topologi jaringan bocor ke pengguna. Perbaikan: `passive-interface default` lalu `no passive-interface` hanya pada interface yang benar-benar menghadap router lain, ditambah **autentikasi** protokol routing.
+6. Router akan mengirim hello/update protokol routing ke jaringan pengguna. Konsekuensinya: (a) **risiko keamanan serius**: siapa pun yang menancapkan perangkat di jaringan itu bisa membentuk adjacency dan menyuntikkan rute palsu untuk mengalihkan trafik ke dirinya sendiri (MITM) atau ke lubang hitam (DoS); (b) **pemborosan bandwidth dan CPU**: hello dikirim terus-menerus ke segmen yang tidak punya router; (c) pada jaringan multicast, setiap host menerima dan memproses paket itu; (d) informasi topologi jaringan bocor ke pengguna. Perbaikan: `passive-interface default` lalu `no passive-interface` hanya pada interface yang benar-benar menghadap router lain, ditambah autentikasi protokol routing.
 
-7. Beberapa situasi: (a) **jaringan stub dengan satu jalan keluar** — sebesar apa pun jaringan internalnya, kalau hanya ada satu uplink maka tidak ada keputusan routing yang perlu dibuat ke luar; default route statis sudah optimal; (b) **batas administratif/keamanan** — Anda tidak ingin bertukar informasi routing dengan pihak lain (mitra, penyedia, DMZ), sehingga static memberi kontrol dan permukaan serangan minimal; (c) **kebijakan eksplisit** — Anda ingin trafik tertentu melewati jalur tertentu terlepas dari metrik; (d) **perangkat dengan sumber daya sangat terbatas**; (e) **backup route** dengan floating static + IP SLA, dikombinasikan dengan protokol dinamis untuk jalur utama. Dalam praktik, jaringan besar sering memakai **kombinasi**: dinamis di inti, statis di tepi.
+7. Beberapa situasi: (a) **jaringan stub dengan satu jalan keluar**: sebesar apa pun jaringan internalnya, kalau hanya ada satu uplink maka tidak ada keputusan routing yang perlu dibuat ke luar; default route statis sudah optimal; (b) **batas administratif/keamanan**: Anda tidak ingin bertukar informasi routing dengan pihak lain (mitra, penyedia, DMZ), sehingga static memberi kontrol dan permukaan serangan minimal; (c) **kebijakan eksplisit**: Anda ingin trafik tertentu melewati jalur tertentu terlepas dari metrik; (d) **perangkat dengan sumber daya sangat terbatas**; (e) **backup route** dengan floating static + IP SLA, dikombinasikan dengan protokol dinamis untuk jalur utama. Dalam praktik, jaringan besar sering memakai kombinasi: dinamis di inti, statis di tepi.
 
 8. Dijkstra dari SBY:
 
    | Langkah | Masuk Confirmed | Tentative setelah langkah | Catatan |
    |---|---|---|---|
-   | 1 | (SBY,0,–) | (DPS,2,DPS) (YOG,3,YOG) (SMG,6,SMG) | Tetangga langsung SBY |
+   | 1 | (SBY,0,-) | (DPS,2,DPS) (YOG,3,YOG) (SMG,6,SMG) | Tetangga langsung SBY |
    | 2 | (DPS,2,DPS) | (YOG,3,YOG) (SMG,6,SMG) | Lewat DPS ke YOG = 2+9 = 11, tidak lebih baik dari 3 |
    | 3 | (YOG,3,YOG) | (SMG,4,YOG) (BDG,10,YOG) | Lewat YOG ke SMG = 3+1 = 4 < 6: ganti. Ke BDG = 3+7 = 10 |
    | 4 | (SMG,4,YOG) | (BDG,8,YOG) (JKT,9,YOG) | Lewat SMG ke BDG = 4+4 = 8 < 10: ganti. Ke JKT = 4+5 = 9 |
    | 5 | (BDG,8,YOG) | (JKT,9,YOG) | Lewat BDG ke JKT = 8+2 = 10, tidak lebih baik dari 9 |
    | 6 | (JKT,9,YOG) | kosong | Selesai |
 
-   Tabel routing SBY: DPS 2 via DPS; YOG 3 via YOG; SMG 4 via YOG; BDG 8 via YOG; JKT 9 via YOG. Perhatikan link langsung SBY-SMG (cost 6) tidak terpakai sama sekali, karena jalur SBY-YOG-SMG hanya bercost 4.
+   Tabel routing SBY: DPS 2 via DPS; YOG 3 via YOG; SMG 4 via YOG; BDG 8 via YOG; JKT 9 via YOG. Link langsung SBY-SMG (cost 6) tidak terpakai sama sekali, karena jalur SBY-YOG-SMG hanya bercost 4.
 
 9. (a) Sebelum putus: YOG ke SMG langsung (1); SBY ke SMG via YOG (3+1 = 4). Sesudah putus: YOG ke SMG via SBY (3+6 = 9, lebih murah dari via BDG 7+4 = 11); SBY ke SMG langsung (6).
-   (b) **YOG** mendeteksi putusnya link sendiri, sehingga biasanya ia memasang FIB baru lebih dulu: SMG via SBY. Selama SBY belum menerima LSA dan memperbarui FIB, SBY masih mengirim trafik ke SMG lewat YOG. Akibatnya paket ke SMG memantul **YOG ↔ SBY** sampai SBY selesai konvergen atau TTL habis.
+   (b) YOG mendeteksi putusnya link sendiri, sehingga biasanya ia memasang FIB baru lebih dulu: SMG via SBY. Selama SBY belum menerima LSA dan memperbarui FIB, SBY masih mengirim trafik ke SMG lewat YOG. Akibatnya paket ke SMG memantul YOG ↔ SBY sampai SBY selesai konvergen atau TTL habis.
    (c) **Tidak.** JKT mencapai SMG lewat link langsung JKT-SMG (cost 5), sebelum dan sesudah gangguan; jalurnya tidak melewati link yang putus maupun pasangan YOG-SBY. Yang terdampak adalah trafik dari YOG, SBY, dan DPS menuju SMG, ditambah trafik lain yang kebetulan memakai link YOG-SBY selama link itu dipenuhi paket yang memantul.
    (d) Contoh: (1) tunda pemasangan FIB di router lokal (YOG) sesaat setelah mendeteksi gangguan, agar SBY memperbarui lebih dulu (prinsip oFIB, RFC 6976); (2) siapkan jalur cadangan yang dijamin bebas loop sebelum gangguan terjadi, misalnya LFA (RFC 5286) atau TI-LFA dengan Segment Routing, sehingga YOG langsung memakai jalur yang tidak kembali ke dirinya; (3) percepat penyebaran informasi (BFD, flooding cepat, timer SPF awal yang kecil) untuk memperpendek jendela microloop.
 
@@ -681,8 +681,8 @@ R1(config-router)# neighbor 10.0.0.2 password RahasiaKuat
 
 ## 14. Sumber
 
-- RFC 1058 / 2453 — RIP · RFC 2328 — OSPFv2 · RFC 7868 — EIGRP · RFC 4271 — BGP-4
-- RFC 5880 — Bidirectional Forwarding Detection (BFD)
+- RFC 1058 / 2453 (RIP) · RFC 2328 (OSPFv2) · RFC 7868 (EIGRP) · RFC 4271 (BGP-4)
+- RFC 5880, Bidirectional Forwarding Detection (BFD)
 - Cisco CCNA 200-301 v1.1, topik 3.2 (bagaimana router mengambil keputusan forwarding)
 - Dijkstra, E. W. (1959), *A Note on Two Problems in Connexion with Graphs*
 - Computer Networks: A Systems Approach, 3.4 Routing (distance vector, link state, forward search): https://book.systemsapproach.org/internetworking/routing.html

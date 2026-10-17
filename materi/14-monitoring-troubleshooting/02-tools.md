@@ -1,10 +1,10 @@
 # 14.2 Alat Troubleshooting dan Cara Menafsirkannya
 
 > **Prasyarat:** `14-monitoring-troubleshooting/01`, `04-network-layer/04`, `05-transport/02`
-> **Tujuan:** Anda menguasai alat diagnostik utama dan — yang lebih penting — bisa **menafsirkan hasilnya dengan benar**.
+> **Tujuan:** Anda menguasai alat diagnostik utama dan, yang lebih penting, bisa **menafsirkan hasilnya dengan benar**.
 
 > > [!NOTE]
-> > **Yang membedakan pemula dan ahli bukan mengetahui perintahnya, tetapi tahu cara MEMBACA hasilnya.** Modul ini fokus pada penafsiran.
+> > **Pemula dan ahli sama-sama tahu perintahnya; bedanya, ahli tahu cara MEMBACA hasilnya.** Modul ini fokus pada penafsiran.
 
 ---
 
@@ -29,13 +29,13 @@ mdev 14.2  → deviasi = indikator JITTER (tinggi = buruk untuk real-time)
 > [!WARNING]
 > **Kesalahan penafsiran ping yang umum:**
 
-1. **"Ping gagal = host mati"** — SALAH. Firewall sering memblokir ICMP; host bisa hidup dan melayani trafik lain. Uji dengan `nc -zv host port` sebagai gantinya.
+1. **"Ping gagal = host mati"**: SALAH. Firewall sering memblokir ICMP; host bisa hidup dan melayani trafik lain. Uji dengan `nc -zv host port` sebagai gantinya.
 
-2. **"Ping tinggi ke router = router bermasalah"** — SALAH. Router sering memberi **prioritas rendah** untuk menjawab ping (control plane) sambil **meneruskan trafik dengan cepat** (data plane). Yang penting latency ke **tujuan akhir**, bukan ke router perantara.
+2. **"Ping tinggi ke router = router bermasalah"**: SALAH. Router sering memberi prioritas rendah untuk menjawab ping (control plane) sambil meneruskan trafik dengan cepat (data plane). Yang penting latency ke tujuan akhir, bukan ke router perantara.
 
-3. **"0% loss = jaringan sehat"** — TIDAK CUKUP. **Bufferbloat** memberi 0% loss dengan latency 2000 ms. Selalu periksa latency **di bawah beban**, bukan hanya saat idle.
+3. **"0% loss = jaringan sehat"**: TIDAK CUKUP. Bufferbloat memberi 0% loss dengan latency 2000 ms. Selalu periksa latency di bawah beban, bukan hanya saat idle.
 
-4. **"Latency stabil"** — periksa `mdev`. Latency rata-rata 20 ms dengan mdev 15 ms (berayun 5-45 ms) jauh lebih buruk untuk VoIP daripada latency stabil 50 ms.
+4. **"Latency stabil"**: periksa dulu `mdev`. Latency rata-rata 20 ms dengan mdev 15 ms (berayun 5-45 ms) jauh lebih buruk untuk VoIP daripada latency stabil 50 ms.
 
 ```bash
 # Opsi penting
@@ -65,10 +65,10 @@ $ traceroute -n 8.8.8.8
 > **Empat kesalahan penafsiran traceroute yang FATAL:**
 
 **1. `* * *` bukan berarti masalah.**
-Router bisa: dikonfigurasi tidak mengirim ICMP Time Exceeded, melakukan rate limiting ICMP, atau berada di dalam MPLS cloud. **Kalau hop SETELAHNYA menjawab normal, jalur baik-baik saja.** Dalam contoh, hop 3 tidak menjawab tetapi hop 4-6 normal → tidak ada masalah.
+Router bisa: dikonfigurasi tidak mengirim ICMP Time Exceeded, melakukan rate limiting ICMP, atau berada di dalam MPLS cloud. Kalau hop SETELAHNYA menjawab normal, jalur baik-baik saja. Dalam contoh, hop 3 tidak menjawab tetapi hop 4-6 normal → tidak ada masalah.
 
 **2. Latency tinggi di hop tengah bukan berarti hop itu bermasalah.**
-Hop 5 menunjukkan 450 ms di kolom pertama tetapi 12,5 ms di kolom lain, dan hop 6 (tujuan) hanya 12,6 ms. Ini **normal** — router hop 5 lambat **menjawab** ICMP (prioritas rendah) tetapi **meneruskan** trafik dengan cepat. **Yang penting latency di hop TERAKHIR.**
+Hop 5 menunjukkan 450 ms di kolom pertama tetapi 12,5 ms di kolom lain, dan hop 6 (tujuan) hanya 12,6 ms. Ini normal: router hop 5 lambat menjawab ICMP (prioritas rendah) tetapi meneruskan trafik dengan cepat. Yang penting latency di hop TERAKHIR.
 
 **3. Latency yang naik dan TETAP tinggi sampai akhir = masalah nyata.**
 ```
@@ -104,7 +104,7 @@ Loss yang PERSISTEN dari satu hop sampai AKHIR = masalah nyata
 ```
 
 > [!TIP]
-> **Aturan emas traceroute/mtr: fokus pada HOP TERAKHIR (tujuan).** Hop perantara sering menampilkan angka yang menyesatkan.
+> **Untuk traceroute/mtr, fokus pada HOP TERAKHIR (tujuan).** Hop perantara sering menampilkan angka yang menyesatkan.
 
 ```bash
 $ traceroute -I 8.8.8.8              # mode ICMP (kalau UDP diblokir)
@@ -136,7 +136,7 @@ REFUSED   → server menolak (bukan otoritatif, rekursi tidak diizinkan)
 ```
 
 > [!WARNING]
-> **`SERVFAIL` paling sering karena kegagalan validasi DNSSEC.** Uji dengan `dig +cd` — kalau berhasil dengan `+cd`, masalahnya di DNSSEC.
+> **`SERVFAIL` paling sering karena kegagalan validasi DNSSEC.** Uji dengan `dig +cd`: kalau berhasil dengan `+cd`, masalahnya di DNSSEC.
 
 Detail di `06-aplikasi/01`.
 
@@ -232,10 +232,10 @@ Capture di B:  apakah paket SAMPAI ke B?
 ```
 
 > [!TIP]
-> **Capture di KEDUA ujung sekaligus** mengungkap di mana paket hilang — teknik diagnosis paling kuat untuk masalah "tidak bisa terhubung".
+> **Capture di KEDUA ujung sekaligus** mengungkap di mana paket hilang. Ini teknik diagnosis paling kuat untuk masalah "tidak bisa terhubung".
 
 > [!WARNING]
-> **Matikan offload sebelum capture untuk analisis akurat** (`ethtool -K eth0 gro off tso off`) — kalau tidak, Anda melihat "paket raksasa" yang sudah digabung NIC, bukan paket sesungguhnya di kabel.
+> **Matikan offload sebelum capture untuk analisis akurat** (`ethtool -K eth0 gro off tso off`). Kalau tidak, Anda melihat "paket raksasa" yang sudah digabung NIC, bukan paket sesungguhnya di kabel.
 
 ---
 
@@ -288,14 +288,14 @@ Follow → TCP/HTTP Stream        → rekonstruksi percakapan
 |---|---|
 | Banyak **retransmission** | Packet loss di jaringan |
 | **Duplicate ACK** (3+) | Loss, segera diikuti fast retransmit |
-| **Zero window** | **Aplikasi PENERIMA lambat** (bukan masalah jaringan) |
+| **Zero window** | Aplikasi PENERIMA lambat (bukan masalah jaringan) |
 | **Out-of-order** | Load balancing per-packet; jalur berbeda; sering bukan masalah |
 | **RST** di tengah sesi | Firewall/IPS memutus; aplikasi crash; timeout NAT/LB |
 | **Previous segment not captured** | Paket hilang sebelum titik capture |
-| Jeda besar sebelum respons | **Server lambat memproses** (bukan jaringan) |
+| Jeda besar sebelum respons | Server lambat memproses (bukan jaringan) |
 
 > [!TIP]
-> **Aturan penting: kalau retransmisi terlihat di KEDUA titik capture, loss ada di ANTARA keduanya.** Kalau hanya di sisi pengirim, loss dekat pengirim.
+> **Kalau retransmisi terlihat di KEDUA titik capture, loss ada di ANTARA keduanya.** Kalau hanya di sisi pengirim, loss dekat pengirim.
 
 > [!WARNING]
 > **Zero window dan jeda sebelum respons menunjuk ke APLIKASI/SERVER, bukan jaringan.** Ini membantu menghentikan "menyalahkan jaringan" yang tidak perlu.
@@ -324,13 +324,13 @@ $ iperf3 -c server -u -b 100M -t 30
 > [!WARNING]
 > **Kesalahan pengukuran throughput:**
 
-1. **Satu stream TCP menyesatkan** — sensitif terhadap loss dan window. Pakai `-P 4` untuk mengukur **kapasitas jalur** yang sebenarnya.
+1. **Satu stream TCP menyesatkan** karena sensitif terhadap loss dan window. Pakai `-P 4` untuk mengukur kapasitas jalur yang sebenarnya.
 
-2. **Uji kedua arah** — banyak link asimetris (`-R` untuk arah balik).
+2. **Uji kedua arah**, karena banyak link asimetris (`-R` untuk arah balik).
 
-3. **941 Mbps di link 1 Gbps adalah NORMAL** — bukan masalah. Overhead protokol membuat maksimum praktis ~94% (lihat `00-fondasi/03`).
+3. **941 Mbps di link 1 Gbps adalah NORMAL**, bukan masalah. Overhead protokol membuat maksimum praktis ~94% (lihat `00-fondasi/03`).
 
-4. **Bottleneck bisa bukan jaringan** — disk lambat, CPU enkripsi, atau aplikasi bisa menjadi batasnya. iperf3 menguji jaringan murni.
+4. **Bottleneck bisa bukan jaringan**: disk lambat, CPU enkripsi, atau aplikasi bisa menjadi batasnya. iperf3 menguji jaringan murni.
 
 ---
 
@@ -380,13 +380,13 @@ monitor session 1 destination interface gi0/24
 ```
 
 > [!WARNING]
-> **Selalu `clear counters` sebelum diagnosis** — counter yang menumpuk selama 2 tahun tidak memberi tahu apakah masalahnya terjadi **sekarang**.
+> **Selalu `clear counters` sebelum diagnosis.** Counter yang menumpuk selama 2 tahun tidak memberi tahu apakah masalahnya terjadi sekarang.
 
 > [!WARNING]
-> **`ping ... source` sangat penting** — tanpa menentukan sumber, router memakai IP interface keluar yang mungkin tidak punya rute balik. Banyak "ping gagal dari router tetapi PC bisa" berasal dari sini.
+> **Tentukan sumber dengan `ping ... source`.** Tanpa itu, router memakai IP interface keluar yang mungkin tidak punya rute balik. Banyak kasus "ping gagal dari router tetapi PC bisa" berasal dari sini.
 
 > [!WARNING]
-> **`debug` bisa melumpuhkan router** — setiap paket diproses CPU dan dicatat. Jangan pernah `debug ip packet` di produksi tanpa ACL pembatas yang sangat sempit, dan selalu siapkan `undebug all`.
+> **`debug` bisa melumpuhkan router**, karena setiap paket diproses CPU dan dicatat. Jangan pernah `debug ip packet` di produksi tanpa ACL pembatas yang sangat sempit, dan selalu siapkan `undebug all`.
 
 ---
 
@@ -433,10 +433,10 @@ monitor session 1 destination interface gi0/24
 ```
 
 > [!TIP]
-> **`/tool torch` adalah alat andalan MikroTik** — menampilkan trafik real-time per alamat/port/protokol, sangat cepat menemukan "siapa yang memakan bandwidth". **`/tool profile`** menemukan proses yang membebani CPU.
+> **`/tool torch` adalah alat andalan MikroTik.** Ia menampilkan trafik real-time per alamat/port/protokol, sehingga "siapa yang memakan bandwidth" cepat ketahuan. **`/tool profile`** menemukan proses yang membebani CPU.
 
 > [!TIP]
-> **`/tool sniffer` dengan streaming** mengirim paket langsung ke Wireshark di komputer Anda (protokol TZSP) — capture penuh tanpa perlu SPAN.
+> **`/tool sniffer` dengan streaming** mengirim paket langsung ke Wireshark di komputer Anda (protokol TZSP), jadi Anda mendapat capture penuh tanpa perlu SPAN.
 
 ---
 
@@ -496,14 +496,14 @@ Observability (14.3):
 
 - **Yang membedakan ahli adalah cara MEMBACA hasil, bukan mengetahui perintah.**
 - **ping**: gagal ≠ host mati (ICMP diblokir); tinggi ke router perantara ≠ masalah; 0% loss ≠ sehat (bufferbloat); periksa `mdev` untuk jitter.
-- **traceroute/mtr**: `* * *` sering normal; **latency/loss hop TENGAH sering menyesatkan** — fokus pada **hop TERAKHIR**; jalur pergi ≠ pulang.
+- **traceroute/mtr**: `* * *` sering normal; latency/loss hop TENGAH sering menyesatkan, jadi fokus pada hop TERAKHIR; jalur pergi ≠ pulang.
 - **`SERVFAIL` sering = DNSSEC gagal** (uji `dig +cd`); "It's always DNS".
-- **nc**: "refused" (host dijangkau, tidak ada aplikasi) vs "timeout" (diblokir/tidak ada jalur) sangat informatif.
-- **ss**: periksa `0.0.0.0` vs `127.0.0.1` — penyebab "jalan tapi tidak bisa diakses dari luar".
-- **tcpdump**: **capture di titik yang tepat** — di kedua ujung untuk menemukan di mana paket hilang; matikan offload untuk akurasi.
-- **Wireshark**: **zero window & jeda sebelum respons = masalah APLIKASI/SERVER**, bukan jaringan; retransmisi di kedua ujung = loss di antara.
+- **nc**: bedakan "refused" (host dijangkau, tidak ada aplikasi) dari "timeout" (diblokir/tidak ada jalur).
+- **ss**: periksa `0.0.0.0` vs `127.0.0.1`; inilah penyebab umum "jalan tapi tidak bisa diakses dari luar".
+- **tcpdump**: capture di titik yang tepat, yaitu di kedua ujung, untuk menemukan di mana paket hilang; matikan offload untuk akurasi.
+- **Wireshark**: zero window & jeda sebelum respons = masalah APLIKASI/SERVER, bukan jaringan; retransmisi di kedua ujung = loss di antara.
 - **iperf3**: pakai `-P 4` untuk kapasitas jalur; uji kedua arah; 941 Mbps di 1 Gbps normal; bottleneck bisa disk/CPU.
-- **Cisco**: `clear counters` dulu; `ping source` penting; **`debug` bisa melumpuhkan** — pakai ACL sempit.
+- **Cisco**: `clear counters` dulu; `ping source` penting; `debug` bisa melumpuhkan, jadi pakai ACL sempit.
 - **MikroTik**: `/tool torch` (trafik real-time), `/tool profile` (CPU), `/tool sniffer` (stream ke Wireshark).
 
 ---
@@ -513,7 +513,7 @@ Observability (14.3):
 1. Ping ke server jauh gagal, tetapi Anda bisa SSH ke server itu. Apa penjelasannya?
 2. Traceroute menunjukkan hop 4 dengan latency 300 ms dan 20% loss, tetapi hop terakhir (tujuan) 15 ms dan 0% loss. Apakah ada masalah?
 3. `nc -zv host 8080` mengembalikan "connection refused". Apa artinya dan di mana masalahnya?
-4. Wireshark menunjukkan banyak "TCP Zero Window" dari server ke klien saat download lambat. Di mana masalahnya?
+4. Wireshark menunjukkan banyak "TCP Zero Window" dari klien ke server saat download lambat. Di mana masalahnya?
 5. iperf3 dengan satu stream memberi 200 Mbps di link 1 Gbps, tetapi dengan `-P 8` memberi 940 Mbps. Apa yang terjadi?
 6. Anda ingin tahu apakah paket dari Server A benar-benar sampai ke Server B. Bagaimana caranya?
 7. Ping dari router Cisco ke tujuan gagal, tetapi PC di LAN yang sama bisa. Apa dugaan Anda?
@@ -522,15 +522,15 @@ Observability (14.3):
 <details>
 <summary>Jawaban</summary>
 
-1. **Firewall (atau host) memblokir ICMP tetapi mengizinkan TCP 22.** Ping memakai ICMP Echo, yang sangat sering diblokir sebagai kebijakan keamanan — terutama di server cloud (security group default sering memblokir ICMP) dan server Windows. Server tetap hidup dan melayani SSH dengan normal. Ini menunjukkan mengapa **ping bukan tes konektivitas yang andal** — selalu uji dengan protokol/port yang sebenarnya Anda butuhkan (`nc -zv host 22`, `curl`). Ping yang gagal hanya berarti "tidak ada balasan ICMP", bukan "host mati".
+1. **Firewall (atau host) memblokir ICMP tetapi mengizinkan TCP 22.** Ping memakai ICMP Echo, yang sangat sering diblokir sebagai kebijakan keamanan, terutama di server cloud (security group default sering memblokir ICMP) dan server Windows. Server tetap hidup dan melayani SSH dengan normal. Karena itu ping bukan tes konektivitas yang andal; selalu uji dengan protokol/port yang sebenarnya Anda butuhkan (`nc -zv host 22`, `curl`). Ping yang gagal hanya berarti "tidak ada balasan ICMP", bukan "host mati".
 
-2. **Tidak ada masalah.** Latency tinggi dan loss di **hop tengah** hampir selalu menyesatkan: router di hop 4 memberi **prioritas rendah untuk menjawab ICMP** (control plane) dan/atau melakukan **rate limiting ICMP**, sementara ia **meneruskan trafik data dengan cepat** (data plane). Bukti bahwa jalur sehat: **hop terakhir (tujuan) menunjukkan 15 ms dan 0% loss** — inilah yang benar-benar penting. Kalau loss atau latency tinggi **muncul di hop 4 DAN berlanjut sampai hop terakhir**, barulah itu masalah nyata. Aturan: fokus pada hop terakhir, abaikan anomali hop perantara kecuali persisten sampai tujuan.
+2. **Tidak ada masalah.** Latency tinggi dan loss di hop tengah hampir selalu menyesatkan: router di hop 4 memberi prioritas rendah untuk menjawab ICMP (control plane) dan/atau melakukan rate limiting ICMP, sementara ia meneruskan trafik data dengan cepat (data plane). Bukti bahwa jalur sehat ada di hop terakhir (tujuan): 15 ms dan 0% loss, dan angka itulah yang menentukan. Kalau loss atau latency tinggi muncul di hop 4 DAN berlanjut sampai hop terakhir, barulah itu masalah nyata. Aturannya: fokus pada hop terakhir, abaikan anomali hop perantara kecuali persisten sampai tujuan.
 
-3. **"Connection refused" berarti paket SYN Anda SAMPAI ke host dan host membalas dengan RST** — artinya jaringan, routing, dan firewall di sepanjang jalur semuanya berfungsi; host dapat dijangkau. Yang tidak ada adalah **aplikasi yang listening di port 8080** (belum dijalankan, crash, atau bind ke alamat lain). Masalahnya **di sisi aplikasi/host tujuan**, bukan di jaringan. Kontras dengan "timeout" yang berarti paket tidak pernah mendapat balasan (diblokir firewall dengan DROP, routing salah, atau host mati). Perbaikan: periksa apakah layanan berjalan (`systemctl status`, `ss -tulnp`) dan bind ke alamat yang benar.
+3. **"Connection refused" berarti paket SYN Anda SAMPAI ke host dan host membalas dengan RST.** Artinya jaringan, routing, dan firewall di sepanjang jalur semuanya berfungsi; host dapat dijangkau. Yang tidak ada adalah aplikasi yang listening di port 8080 (belum dijalankan, crash, atau bind ke alamat lain). Masalahnya di sisi aplikasi/host tujuan, bukan di jaringan. Bandingkan dengan "timeout", yang berarti paket tidak pernah mendapat balasan (diblokir firewall dengan DROP, routing salah, atau host mati). Perbaikan: periksa apakah layanan berjalan (`systemctl status`, `ss -tulnp`) dan bind ke alamat yang benar.
 
-4. **Di aplikasi PENERIMA (klien), bukan di jaringan.** "TCP Zero Window" dari server ke klien berarti **server mengiklankan window = 0** — buffer penerimaan di sisi server penuh karena... tunggu, arahnya penting. Kalau zero window dikirim **oleh server**, artinya buffer server penuh; tetapi dalam skenario download, yang mengunduh adalah klien, jadi window yang relevan adalah **window klien**. Kalau klien mengirim zero window, berarti **aplikasi di klien terlalu lambat membaca data dari socket** (CPU sibuk, disk lambat, thread macet), sehingga buffer penerimaannya penuh dan ia menyuruh server berhenti mengirim. Intinya: **zero window menunjuk ke sisi yang mengirimnya sebagai bottleneck aplikasi** — bukan masalah bandwidth atau jaringan. Menambah bandwidth tidak akan membantu; periksa CPU/disk/aplikasi di sisi yang mengirim zero window.
+4. **Di aplikasi PENERIMA (klien), bukan di jaringan.** Perhatikan arahnya. Field window di header TCP mengiklankan sisa buffer penerimaan milik PENGIRIM segmen itu, jadi "TCP Zero Window" dari klien ke server berarti klien mengiklankan window = 0. Dalam skenario download, klien memang penerima datanya, dan zero window ini berarti aplikasi di klien terlalu lambat membaca data dari socket (CPU sibuk, disk lambat, thread macet), sehingga buffer penerimaannya penuh dan ia menyuruh server berhenti mengirim. Intinya: zero window menunjuk sisi yang mengirimnya sebagai bottleneck aplikasi, bukan masalah bandwidth atau jaringan. Menambah bandwidth tidak akan membantu; periksa CPU/disk/aplikasi di sisi yang mengirim zero window.
 
-5. **Satu stream TCP terbatas oleh window dan sensitif terhadap packet loss/latency**, sehingga tidak mencerminkan kapasitas jalur yang sebenarnya. Kemungkinan besar ada sedikit packet loss atau latency yang cukup tinggi (BDP besar) sehingga satu koneksi TCP tidak bisa mengisi pipa — congestion window-nya turun setiap kali ada loss. Dengan **8 stream paralel (`-P 8`)**, kehilangan pada satu stream tidak memengaruhi yang lain, dan secara agregat mereka mengisi jalur hingga 940 Mbps (mendekati maksimum praktis 1 Gbps setelah overhead). **Kesimpulan: kapasitas JALUR baik (940 Mbps); masalahnya adalah kinerja SATU koneksi TCP** — periksa packet loss (`mtr`), latency/BDP, apakah window scaling aktif (`ss -tin`), dan apakah ada middlebox yang menghapus opsi window scale. Untuk mengukur kapasitas jalur, selalu pakai multi-stream.
+5. **Satu stream TCP terbatas oleh window dan sensitif terhadap packet loss/latency**, sehingga tidak mencerminkan kapasitas jalur yang sebenarnya. Kemungkinan besar ada sedikit packet loss atau latency yang cukup tinggi (BDP besar) sehingga satu koneksi TCP tidak bisa mengisi pipa: congestion window-nya turun setiap kali ada loss. Dengan 8 stream paralel (`-P 8`), kehilangan pada satu stream tidak memengaruhi yang lain, dan secara agregat mereka mengisi jalur hingga 940 Mbps (mendekati maksimum praktis 1 Gbps setelah overhead). Kesimpulannya, kapasitas JALUR baik (940 Mbps); masalahnya adalah kinerja SATU koneksi TCP. Periksa packet loss (`mtr`), latency/BDP, apakah window scaling aktif (`ss -tin`), dan apakah ada middlebox yang menghapus opsi window scale. Untuk mengukur kapasitas jalur, selalu pakai multi-stream.
 
 6. **Capture di kedua ujung secara bersamaan** dengan filter yang sama:
    ```
@@ -544,19 +544,19 @@ Observability (14.3):
    - **Keluar dari A, TIDAK muncul di B** → paket hilang di jalur (firewall di tengah, routing salah, ACL).
    - **Sampai B, B membalas, balasan TIDAK sampai A** → jalur balik bermasalah (asymmetric routing, firewall stateful, NAT).
    - **TIDAK keluar dari A sama sekali** → masalah di A (routing lokal, firewall output, aplikasi tidak mengirim).
-   Ini teknik diagnosis paling kuat untuk "tidak bisa terhubung" — mengubah tebakan menjadi bukti. Ingat matikan offload NIC untuk melihat paket sesungguhnya.
+   Ini teknik diagnosis paling kuat untuk "tidak bisa terhubung", karena mengubah tebakan menjadi bukti. Ingat matikan offload NIC untuk melihat paket sesungguhnya.
 
-7. **Router memakai alamat sumber yang tidak punya rute balik.** Saat Anda menjalankan `ping <tujuan>` dari router tanpa menentukan sumber, router memakai IP dari **interface keluar** menuju tujuan itu. Alamat itu mungkin tidak dikenal atau tidak punya rute balik di sisi tujuan/jalur — sehingga balasan tidak pernah kembali. PC di LAN bisa karena ia memakai alamat LAN yang punya rute balik (mungkin lewat NAT).
-   **Perbaikan/uji:** `ping <tujuan> source <interface-yang-punya-rute-balik>`, mis. `ping 8.8.8.8 source gi0/0` (interface WAN dengan IP publik yang di-NAT) atau `source loopback0` yang diiklankan. Ini adalah salah satu jebakan troubleshooting paling umum di Cisco — **selalu tentukan `source`** saat ping/traceroute dari perangkat jaringan. Kemungkinan lain: firewall di tujuan memblokir alamat interface router tetapi mengizinkan subnet LAN.
+7. **Router memakai alamat sumber yang tidak punya rute balik.** Saat Anda menjalankan `ping <tujuan>` dari router tanpa menentukan sumber, router memakai IP dari interface keluar menuju tujuan itu. Alamat itu mungkin tidak dikenal atau tidak punya rute balik di sisi tujuan/jalur, sehingga balasan tidak pernah kembali. PC di LAN bisa karena ia memakai alamat LAN yang punya rute balik (mungkin lewat NAT).
+   **Perbaikan/uji:** `ping <tujuan> source <interface-yang-punya-rute-balik>`, mis. `ping 8.8.8.8 source gi0/0` (interface WAN dengan IP publik yang di-NAT) atau `source loopback0` yang diiklankan. Ini salah satu jebakan troubleshooting paling umum di Cisco, jadi selalu tentukan `source` saat ping/traceroute dari perangkat jaringan. Kemungkinan lain: firewall di tujuan memblokir alamat interface router tetapi mengizinkan subnet LAN.
 
-8. **Ini adalah bufferbloat.** Alat: **ping/mtr yang berjalan SAAT ada beban**, bukan saat idle.
+8. **Ini adalah bufferbloat.** Alat: ping/mtr yang berjalan SAAT ada beban, bukan saat idle.
    ```
    # Terminal 1: mulai beban (download besar atau iperf3)
    iperf3 -c server -t 60
    # Terminal 2: ukur latency SAAT beban berjalan
    ping 8.8.8.8
    ```
-   Yang dicari: **latency yang melonjak drastis saat ada transfer** (mis. dari 20 ms saat idle menjadi 800-2000 ms saat download), dengan **0% packet loss**. Itu tanda pasti bufferbloat — buffer besar di modem/router ISP terisi penuh sehingga semua paket (termasuk ping) mengantre di belakangnya.
+   Yang dicari: latency yang melonjak drastis saat ada transfer (mis. dari 20 ms saat idle menjadi 800-2000 ms saat download), dengan 0% packet loss. Itu tanda pasti bufferbloat: buffer besar di modem/router ISP terisi penuh sehingga semua paket (termasuk ping) mengantre di belakangnya.
    Alat khusus: **Waveform Bufferbloat Test** atau **DSLReports** (memberi grade A-F). Perbaikan: pasang AQM (fq_codel/CAKE) di router yang Anda kendalikan dan shape ke ~90-95% kapasitas link, sehingga antrean terbentuk di perangkat Anda (yang punya AQM) alih-alih di modem ISP. Lihat `05-transport/04`.
 
 </details>
@@ -566,10 +566,10 @@ Observability (14.3):
 ## 15. Sumber
 
 - `man ping`, `man traceroute`, `man mtr`, `man tcpdump`, `man ss`, `man dig`
-- Wireshark User's Guide — https://www.wireshark.org/docs/
-- iperf3 — https://iperf.fr/
+- Wireshark User's Guide: https://www.wireshark.org/docs/
+- iperf3: https://iperf.fr/
 - Cisco, *Troubleshooting Commands*
-- MikroTik Tools — https://help.mikrotik.com/docs/display/ROS/Tools
+- MikroTik Tools: https://help.mikrotik.com/docs/display/ROS/Tools
 - CompTIA Network+ N10-009, Domain 5.0
 
 ---

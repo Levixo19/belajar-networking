@@ -28,15 +28,15 @@ Ini disebut **NRZ** (*Non-Return to Zero*). Sederhana, tapi punya masalah: kalau
 
 ### Analog vs Digital
 
-- **Analog** — nilai kontinu, bisa apa saja di antara batas. Suara asli, sinyal radio AM/FM.
-- **Digital** — nilai diskrit, hanya level tertentu. Data komputer.
+- **Analog**: nilai kontinu, bisa apa saja di antara batas. Suara asli, sinyal radio AM/FM.
+- **Digital**: nilai diskrit, hanya level tertentu. Data komputer.
 
-Keunggulan digital: **bisa direkonstruksi sempurna.** Sinyal analog yang melemah kehilangan informasi selamanya; sinyal digital yang melemah masih bisa dibaca sebagai 1/0 lalu **dibangkitkan ulang** dengan kualitas asli oleh repeater/switch. Inilah alasan jaringan digital bisa menjangkau seluruh dunia tanpa degradasi kumulatif.
+Keunggulan digital: bisa direkonstruksi sempurna. Sinyal analog yang melemah kehilangan informasi selamanya; sinyal digital yang melemah masih bisa dibaca sebagai 1/0 lalu **dibangkitkan ulang** dengan kualitas asli oleh repeater/switch. Inilah alasan jaringan digital bisa menjangkau seluruh dunia tanpa degradasi kumulatif.
 
 ### Baseband vs Broadband
 
-- **Baseband** — seluruh kapasitas media dipakai satu sinyal digital. Ethernet adalah baseband — itulah arti "BASE" di `1000BASE-T`.
-- **Broadband** — media dibagi menjadi banyak kanal frekuensi yang dipakai bersamaan. TV kabel, DOCSIS, DSL, dan Wi-Fi (OFDM) memakai prinsip ini.
+- **Baseband**: seluruh kapasitas media dipakai satu sinyal digital. Ethernet adalah baseband. Itulah arti "BASE" di `1000BASE-T`.
+- **Broadband**: media dibagi menjadi banyak kanal frekuensi yang dipakai bersamaan. TV kabel, DOCSIS, DSL, dan Wi-Fi (OFDM) memakai prinsip ini.
 
 > [!WARNING]
 > Kata "broadband" dalam iklan ISP artinya berbeda: di sana ia cuma berarti "internet cepat & selalu terhubung". Dalam konteks teknis, arti aslinya adalah pembagian frekuensi.
@@ -54,7 +54,7 @@ Encoding PAM4 (2 bit/simbol) : 1000 baud = 2000 bps
 Encoding 4096-QAM Wi-Fi 7 (12 bit/simbol) : 1000 baud = 12.000 bps
 ```
 
-Ini kunci untuk memahami bagaimana Wi-Fi dan Ethernet terus makin cepat tanpa memperlebar frekuensi: **tiap simbol dipadatkan lebih banyak bit**. Batasnya ditentukan oleh noise.
+Inilah cara Wi-Fi dan Ethernet terus makin cepat tanpa memperlebar frekuensi: tiap simbol dipadatkan lebih banyak bit. Batasnya ditentukan oleh noise.
 
 ### Dua hukum yang membatasi segalanya
 
@@ -64,7 +64,7 @@ Kapasitas maksimum = 2 × B × log₂(M)
    B = bandwidth (Hz), M = jumlah level sinyal
 ```
 
-**Shannon (kanal dengan noise) — hukum yang sebenarnya berlaku:**
+**Shannon (kanal dengan noise), hukum yang sebenarnya berlaku:**
 ```
 C = B × log₂(1 + S/N)
    C = kapasitas (bps), B = bandwidth (Hz), S/N = signal-to-noise ratio
@@ -72,7 +72,7 @@ C = B × log₂(1 + S/N)
 
 Dua konsekuensi praktis yang akan Anda hadapi seumur karier:
 1. **Bandwidth lebih lebar → kapasitas lebih besar** (karena itu Wi-Fi 7 pakai kanal 320 MHz).
-2. **SNR lebih baik → kapasitas lebih besar** (karena itu klien Wi-Fi yang jauh dari AP dapat kecepatan rendah — bukan karena "sinyal kecil", tapi karena SNR rendah memaksa modulasi yang lebih sederhana).
+2. **SNR lebih baik → kapasitas lebih besar** (karena itu klien Wi-Fi yang jauh dari AP dapat kecepatan rendah. Penyebabnya bukan "sinyal kecil", melainkan SNR rendah yang memaksa modulasi lebih sederhana).
 
 ---
 
@@ -89,7 +89,7 @@ Tiga istilah yang sering dipakai bergantian oleh orang awam, padahal berbeda.
 **Analogi jalan raya:**
 - Bandwidth = jumlah lajur × batas kecepatan.
 - Throughput = mobil yang benar-benar lewat per jam (ada macet, ada lampu merah).
-- Goodput = **orang** yang benar-benar sampai tujuan (mobil kosong tidak dihitung).
+- Goodput = orang yang benar-benar sampai tujuan (mobil kosong tidak dihitung).
 
 ### Kenapa throughput selalu < bandwidth?
 
@@ -112,7 +112,7 @@ Efisiensi = 1460 / 1538 = 94,9%
 Goodput maksimum = 1000 Mbps × 0,949 ≈ 949 Mbps
 ```
 
-Itu **batas fisik**, bukan kelemahan. Angka ~940 Mbps saat uji `iperf3` di link 1 Gbps adalah hasil sempurna.
+Itu batas fisik, bukan kelemahan. Angka ~940 Mbps saat uji `iperf3` di link 1 Gbps adalah hasil sempurna.
 
 Kalau frame kecil (misalnya VoIP dengan payload 20 byte), efisiensi jatuh drastis:
 ```
@@ -124,7 +124,7 @@ Inilah kenapa "1000 panggilan VoIP" memakan bandwidth jauh lebih besar daripada 
 ### Faktor yang menurunkan throughput
 
 1. **Overhead protokol** (di atas).
-2. **Congestion** — jalur penuh, paket menunggu di antrean atau dibuang.
+2. **Congestion**: jalur penuh, paket menunggu di antrean atau dibuang.
 3. **Packet loss** → retransmisi → bandwidth terpakai dua kali untuk data yang sama.
 4. **Latency tinggi + window kecil** → TCP tidak bisa mengisi pipa (lihat §5).
 5. **Duplex mismatch** → tabrakan terus-menerus (`03-data-link/01`).
@@ -184,25 +184,25 @@ Link 1 Gbps    : 12.000 / 1.000.000.000  = 0,012 ms (12 µs)
 Link 10 Gbps   : 12.000 / 10.000.000.000 = 1,2 µs
 ```
 
-Pelajaran: **di link lambat, ukuran paket sangat berpengaruh pada delay.** Ini alasan teknis mengapa VoIP memakai paket kecil (20 ms audio per paket), dan mengapa link WAN lambat butuh QoS agar paket besar tidak menahan paket kecil (`11-wan-vpn/03`).
+Pelajarannya: di link lambat, ukuran paket sangat berpengaruh pada delay. Ini alasan teknis mengapa VoIP memakai paket kecil (20 ms audio per paket), dan mengapa link WAN lambat butuh QoS agar paket besar tidak menahan paket kecil (`11-wan-vpn/03`).
 
 ### 3.3 Delay prosesing
 
 Waktu perangkat memeriksa header dan memutuskan ke mana meneruskan.
-- Switch modern (ASIC): **beberapa mikrodetik**.
+- Switch modern (ASIC): beberapa mikrodetik.
 - Router hardware-based (CEF): puluhan mikrodetik.
-- Router yang memproses di CPU (process switching), firewall dengan deep inspection, enkripsi software: bisa **milidetik**.
+- Router yang memproses di CPU (process switching), firewall dengan deep inspection, enkripsi software: bisa milidetik.
 
 ### 3.4 Delay queuing
 
-Waktu paket menunggu dalam antrean karena jalur keluar sedang sibuk. **Ini satu-satunya komponen yang sangat bervariasi** — dari 0 sampai ratusan milidetik. Sumber utama jitter.
+Waktu paket menunggu dalam antrean karena jalur keluar sedang sibuk. Ini satu-satunya komponen yang sangat bervariasi, dari 0 sampai ratusan milidetik, dan menjadi sumber utama jitter.
 
 ```
 Antrean kosong  → queuing delay ≈ 0
 Antrean penuh   → queuing delay besar, lalu paket mulai dibuang (tail drop)
 ```
 
-Fenomena **bufferbloat**: perangkat dengan buffer sangat besar tidak membuang paket, melainkan menunda semuanya — hasilnya latency melonjak dari 20 ms ke 500 ms saat ada download besar, walaupun "tidak ada packet loss". Solusinya AQM (CoDel/FQ-CoDel), dibahas di `05-transport/04`.
+Fenomena **bufferbloat**: perangkat dengan buffer sangat besar tidak membuang paket, melainkan menunda semuanya. Hasilnya, latency melonjak dari 20 ms ke 500 ms saat ada download besar, walaupun "tidak ada packet loss". Solusinya AQM (CoDel/FQ-CoDel), dibahas di `05-transport/04`.
 
 ### Ringkasan komponen
 
@@ -211,7 +211,7 @@ Fenomena **bufferbloat**: perangkat dengan buffer sangat besar tidak membuang pa
 | Propagasi | Jarak fisik | Tidak (tetap) |
 | Transmisi | Ukuran paket & bandwidth | Tidak (deterministik) |
 | Prosesing | Jenis perangkat & fitur aktif | Sedikit |
-| Queuing | Beban jaringan | **Sangat** |
+| Queuing | Beban jaringan | Sangat |
 
 ---
 
@@ -233,11 +233,11 @@ rtt min/avg/max/mdev = 8.21/8.50/9.05/0.32 ms
 ```
 
 Baca hasilnya:
-- `min 8,21` — latency terbaik (mendekati propagasi murni).
-- `avg 8,50` — rata-rata.
-- `max 9,05` — terburuk (ada queuing).
-- `mdev 0,32` — deviasi = indikator **jitter**. Kecil = bagus.
-- `0% packet loss` — bagus.
+- `min 8,21`: latency terbaik (mendekati propagasi murni).
+- `avg 8,50`: rata-rata.
+- `max 9,05`: terburuk (ada queuing).
+- `mdev 0,32`: deviasi = indikator **jitter**. Kecil = bagus.
+- `0% packet loss`: bagus.
 
 > [!WARNING]
 > RTT ≠ 2 × latency satu arah, karena jalur pergi dan balik bisa berbeda (asymmetric routing) dan beban tiap arah berbeda.
@@ -256,9 +256,9 @@ Paket 2: 95 ms   │ jitter besar → suara terputus-putus
 Paket 3: 18 ms   ┘
 ```
 
-Aplikasi real-time (VoIP, video call, game) **lebih terganggu jitter daripada latency tinggi yang stabil.** Panggilan dengan latency stabil 150 ms terdengar jauh lebih baik daripada latency berayun 30-200 ms.
+Aplikasi real-time (VoIP, video call, game) lebih terganggu jitter daripada latency tinggi yang stabil. Panggilan dengan latency stabil 150 ms terdengar jauh lebih baik daripada latency berayun 30-200 ms.
 
-Penerima memakai **jitter buffer** — menahan paket sedikit agar keluar dengan tempo rata. Buffer ini menambah latency, jadi ada trade-off.
+Penerima memakai **jitter buffer**, yang menahan paket sedikit agar keluar dengan tempo rata. Buffer ini menambah latency, jadi ada trade-off.
 
 Target industri untuk VoIP:
 | Metrik | Target |
@@ -270,16 +270,16 @@ Target industri untuk VoIP:
 ### Packet Loss
 
 Paket yang tidak sampai. Penyebab:
-1. **Congestion** — buffer penuh, paket dibuang. Penyebab paling umum.
-2. **Error fisik** — kabel rusak, konektor kotor, interferensi (CRC error).
-3. **Policing** — paket melebihi rate yang diizinkan, sengaja dibuang.
-4. **Firewall/ACL** — sengaja diblokir (bukan "loss" dalam arti masalah).
-5. **Perangkat kelebihan beban** — CPU/buffer habis.
-6. **Wireless** — tabrakan, sinyal lemah, interferensi.
+1. **Congestion**: buffer penuh, paket dibuang. Penyebab paling umum.
+2. **Error fisik**: kabel rusak, konektor kotor, interferensi (CRC error).
+3. **Policing**: paket melebihi rate yang diizinkan, sengaja dibuang.
+4. **Firewall/ACL**: sengaja diblokir (bukan "loss" dalam arti masalah).
+5. **Perangkat kelebihan beban**: CPU/buffer habis.
+6. **Wireless**: tabrakan, sinyal lemah, interferensi.
 
 Dampaknya berbeda per protokol:
-- **TCP** — mendeteksi & mengirim ulang. Data selamat, tapi throughput jatuh (dan bisa jatuh dramatis: loss 1% bisa memotong throughput jauh lebih dari 1%).
-- **UDP** — hilang selamanya kecuali aplikasi menanganinya. VoIP kehilangan potongan suara.
+- **TCP**: mendeteksi & mengirim ulang. Data selamat, tapi throughput jatuh (dan bisa jatuh dramatis: loss 1% bisa memotong throughput jauh lebih dari 1%).
+- **UDP**: hilang selamanya kecuali aplikasi menanganinya. VoIP kehilangan potongan suara.
 
 > [!TIP]
 > Loss 0,1% terlihat "kecil" tapi bisa merusak transfer file besar. Selalu curigai loss saat throughput jauh di bawah bandwidth.
@@ -294,13 +294,13 @@ BDP = berapa banyak data yang bisa "berada di dalam pipa" pada satu saat.
 BDP (bit) = bandwidth (bps) × RTT (detik)
 ```
 
-**Contoh 1 — LAN:**
+**Contoh 1 (LAN):**
 ```
 1 Gbps, RTT 1 ms
 BDP = 1.000.000.000 × 0,001 = 1.000.000 bit = 125 KB
 ```
 
-**Contoh 2 — WAN transkontinental:**
+**Contoh 2 (WAN transkontinental):**
 ```
 1 Gbps, RTT 200 ms
 BDP = 1.000.000.000 × 0,2 = 200.000.000 bit = 25 MB
@@ -315,9 +315,9 @@ Window 64 KB, RTT 200 ms
 Throughput maksimum = 65.536 byte × 8 / 0,2 s = 2,6 Mbps
 ```
 
-**Anda punya link 1 Gbps tapi hanya dapat 2,6 Mbps** — bukan karena jaringan buruk, tapi karena window TCP terlalu kecil untuk BDP sebesar itu. Solusinya **TCP window scaling** ([RFC 7323]) yang memungkinkan window sampai 1 GB. Dibahas tuntas di `05-transport/02`.
+Anda punya link 1 Gbps tapi hanya dapat 2,6 Mbps. Penyebabnya window TCP yang terlalu kecil untuk BDP sebesar itu, bukan jaringan yang buruk. Solusinya **TCP window scaling** ([RFC 7323]) yang memungkinkan window sampai 1 GB. Dibahas tuntas di `05-transport/02`.
 
-Ini disebut jaringan **LFN** (*Long Fat Network*) — bandwidth besar, delay besar. Sering muncul di:
+Ini disebut jaringan **LFN** (*Long Fat Network*): bandwidth besar, delay besar. Sering muncul di:
 - Transfer data antar-benua
 - Replikasi antar-region cloud
 - Backup ke DR site jauh
@@ -334,7 +334,7 @@ Bagian 3.4 menyebut queuing delay sebagai satu-satunya komponen latency yang san
 Ada dua cara membagi satu link ke banyak pengguna.
 
 - **Circuit switching** (dan TDM/FDM): setiap pengguna mendapat jatah tetap (slot waktu atau frekuensi) selama sambungan berlangsung. Jatah itu tetap dipegang walaupun pengguna sedang diam. Telepon PSTN bekerja seperti ini.
-- **Statistical multiplexing** (packet switching): tidak ada jatah tetap. Paket dari siapa pun dikirim saat ada, satu per satu. Kalau hanya satu pengguna yang aktif, ia boleh memakai seluruh link. Kalau banyak yang aktif bersamaan, paket mereka bergantian, dan sisanya **menunggu di antrean**.
+- **Statistical multiplexing** (packet switching): tidak ada jatah tetap. Paket dari siapa pun dikirim saat ada, satu per satu. Kalau hanya satu pengguna yang aktif, ia boleh memakai seluruh link. Kalau banyak yang aktif bersamaan, paket mereka bergantian, dan sisanya menunggu di antrean.
 
 ```
 TDM (jatah tetap):     | A | B | C | D | A | B | C | D |   ← slot B dan D kosong
@@ -346,9 +346,9 @@ Statistical mux:       | A | C | A | A | C | A | C | C |   ← link hanya dipaka
                    saat A dan C datang bersamaan, salah satu antre
 ```
 
-Peterson & Davie merangkumnya begini: statistical multiplexing membagi link dengan granularitas paket, efisien karena tidak ada slot yang menganggur, dan harga yang dibayar adalah dua tantangan, yaitu pembagian yang adil dan penanganan kemacetan saat paket datang lebih cepat daripada kemampuan link mengirimnya.
+Peterson & Davie merangkumnya begini: statistical multiplexing membagi link dengan granularitas paket dan efisien karena tidak ada slot yang menganggur. Harganya ada dua tantangan: pembagian yang adil, dan penanganan kemacetan saat paket datang lebih cepat daripada kemampuan link mengirimnya.
 
-**Contoh hitung: RT/RW-Net di Sleman.** Sebuah ISP lokal punya uplink **100 Mbps**. Setiap pelanggan, ketika sedang aktif, menarik **10 Mbps**, tetapi rata-rata hanya aktif **10% dari waktu** (sebagian besar waktu dipakai membaca, menonton video yang sudah ter-buffer, atau tidur).
+**Contoh hitung: RT/RW-Net di Sleman.** Sebuah ISP lokal punya uplink 100 Mbps. Setiap pelanggan, ketika sedang aktif, menarik 10 Mbps, tetapi rata-rata hanya aktif 10% dari waktu (sebagian besar waktu dipakai membaca, menonton video yang sudah ter-buffer, atau tidur).
 
 ```
 Circuit switching:
@@ -363,7 +363,7 @@ Statistical multiplexing dengan 35 pelanggan:
   P(X > 10) = Σ (k = 11..35) C(35,k) × 0,1^k × 0,9^(35−k) ≈ 0,00042
 ```
 
-Artinya, dengan 35 pelanggan (3,5 kali lipat), peluang permintaan melebihi kapasitas hanya sekitar **0,04%** dari waktu, atau kurang dari 40 detik per hari. Itulah **statistical multiplexing gain**. Tapi keuntungan ini tidak gratis, dan bertambah mahal dengan cepat:
+Artinya, dengan 35 pelanggan (3,5 kali lipat), peluang permintaan melebihi kapasitas hanya sekitar 0,04% dari waktu, atau kurang dari 40 detik per hari. Itulah **statistical multiplexing gain**. Tapi keuntungan ini tidak gratis, dan bertambah mahal dengan cepat:
 
 | Jumlah pelanggan | Rata-rata utilisasi | P(lebih dari 10 aktif) |
 |---|---|---|
@@ -373,7 +373,7 @@ Artinya, dengan 35 pelanggan (3,5 kali lipat), peluang permintaan melebihi kapas
 | 60 | 60% | ≈ 3,4% |
 | 70 | 70% | ≈ 8,7% |
 
-Saat lebih dari 10 pelanggan aktif bersamaan, kelebihannya tidak langsung hilang: ia **ditampung di buffer**, dan di situlah queuing delay lahir. Rasio "berapa pelanggan per kapasitas" (*contention ratio* atau *overbooking*) yang dipakai ISP pada dasarnya adalah keputusan seberapa sering antrean semacam ini boleh terjadi.
+Saat lebih dari 10 pelanggan aktif bersamaan, kelebihannya tidak langsung hilang: ia ditampung di buffer, dan di situlah queuing delay lahir. Rasio "berapa pelanggan per kapasitas" (*contention ratio* atau *overbooking*) yang dipakai ISP adalah keputusan seberapa sering antrean semacam ini boleh terjadi.
 
 ### 6.2 Komponen delay, dilihat dari antrean
 
@@ -391,7 +391,7 @@ Waktu layanan satu paket      S = L / R   (= delay transmisi)
 Dua aturan dasar:
 
 1. **Kalau ρ > 1**, data datang lebih cepat daripada yang bisa dikirim. Antrean tumbuh terus sampai buffer penuh, lalu paket dibuang. Tidak ada jumlah buffer yang menyelamatkan kondisi ini dalam jangka panjang.
-2. **Kalau ρ < 1**, besar antrean bergantung pada **pola kedatangan**, bukan hanya rata-ratanya. Paket yang datang rapi berjarak sama tidak pernah antre. Paket yang datang bergerombol selalu antre.
+2. **Kalau ρ < 1**, besar antrean bergantung pada pola kedatangan, bukan hanya rata-ratanya. Paket yang datang rapi berjarak sama tidak pernah antre. Paket yang datang bergerombol selalu antre.
 
 **Contoh gerombolan.** Sepuluh paket 1.500 byte tiba bersamaan di link 10 Mbps (S = 1,2 ms):
 
@@ -400,11 +400,11 @@ Paket ke-1 menunggu 0 ms, ke-2 menunggu 1,2 ms, ..., ke-10 menunggu 9 × 1,2 = 1
 Rata-rata menunggu = (0 + 1 + ... + 9) × 1,2 / 10 = 45 × 1,2 / 10 = 5,4 ms
 ```
 
-Kalau gerombolan seperti ini datang sekali per detik, utilisasi rata-ratanya hanya 10 × 12.000 / 10.000.000 = 1,2%, tetapi paket terakhir tetap menunggu hampir 11 ms. Utilisasi rata-rata yang rendah **tidak menjamin** antrean pendek.
+Kalau gerombolan seperti ini datang sekali per detik, utilisasi rata-ratanya hanya 10 × 12.000 / 10.000.000 = 1,2%, tetapi paket terakhir tetap menunggu hampir 11 ms. Utilisasi rata-rata yang rendah tidak menjamin antrean pendek.
 
 ### 6.3 Little's Law: satu rumus yang selalu berlaku
 
-John Little membuktikan (1961) hubungan yang mengejutkan sederhana untuk sistem antrean apa pun yang stabil:
+John Little membuktikan (1961) hubungan sederhana yang berlaku untuk sistem antrean apa pun yang stabil:
 
 ```
 N = λ × W
@@ -414,9 +414,9 @@ N = jumlah rata-rata "pelanggan" di dalam sistem
 W = waktu rata-rata satu pelanggan berada di dalam sistem
 ```
 
-Rumus ini **tidak bergantung pada distribusi kedatangan, ukuran paket, atau disiplin antrean**. Ia berlaku untuk buffer router, tabel koneksi firewall, antrean kasir minimarket, dan TCP. Syaratnya hanya sistem stabil (yang masuk pada akhirnya keluar) dan diukur dalam rentang waktu yang cukup panjang.
+Rumus ini tidak bergantung pada distribusi kedatangan, ukuran paket, atau disiplin antrean. Ia berlaku untuk buffer router, tabel koneksi firewall, antrean kasir minimarket, dan TCP. Syaratnya hanya sistem stabil (yang masuk pada akhirnya keluar) dan diukur dalam rentang waktu yang cukup panjang.
 
-**Contoh 1: buffer router.** Router agregasi di POP Surabaya meneruskan rata-rata **80.000 paket/detik** ke uplink. Dari sampling, output queue interface itu rata-rata berisi **40 paket**.
+**Contoh 1: buffer router.** Router agregasi di POP Surabaya meneruskan rata-rata 80.000 paket/detik ke uplink. Dari sampling, output queue interface itu rata-rata berisi 40 paket.
 
 ```
 W = N / λ = 40 / 80.000 = 0,0005 s = 0,5 ms   ← rata-rata queuing delay di hop ini
@@ -424,7 +424,7 @@ W = N / λ = 40 / 80.000 = 0,0005 s = 0,5 ms   ← rata-rata queuing delay di ho
 
 Anda tidak perlu tahu apa pun tentang pola trafiknya. Dua angka yang bisa diukur (panjang antrean dan laju paket) langsung memberi delay rata-rata.
 
-**Contoh 2: versi byte, router rumah.** Little's law juga berlaku dalam satuan byte: delay antrean = isi antrean (byte) / laju pengurasan (byte/detik). Sebuah router rumah dengan upload **20 Mbps** memakai antrean FIFO sepanjang **1.000 paket** (nilai `txqueuelen` bawaan banyak interface Linux). Saat ada upload besar (backup foto ke cloud), antrean terisi penuh:
+**Contoh 2: versi byte, router rumah.** Little's law juga berlaku dalam satuan byte: delay antrean = isi antrean (byte) / laju pengurasan (byte/detik). Sebuah router rumah dengan upload 20 Mbps memakai antrean FIFO sepanjang 1.000 paket (nilai `txqueuelen` bawaan banyak interface Linux). Saat ada upload besar (backup foto ke cloud), antrean terisi penuh:
 
 ```
 Isi antrean  = 1.000 × 1.500 byte × 8 = 12.000.000 bit
@@ -433,7 +433,7 @@ Delay        = 12.000.000 / 20.000.000 = 0,6 s = 600 ms
 
 Setiap paket lain yang lewat, termasuk paket game atau panggilan video, ikut menunggu 600 ms. Inilah mekanisme bufferbloat dalam satu baris hitungan.
 
-**Contoh 3: server saat Harbolnas.** Pada puncak promo 12.12, sebuah toko daring menerima **2.000 koneksi baru per detik**, dan setiap koneksi rata-rata hidup **3 detik**.
+**Contoh 3: server saat Harbolnas.** Pada puncak promo 12.12, sebuah toko daring menerima 2.000 koneksi baru per detik, dan setiap koneksi rata-rata hidup 3 detik.
 
 ```
 Koneksi bersamaan = 2.000 × 3 = 6.000
@@ -446,7 +446,7 @@ Angka ini yang dipakai untuk mengukur kapasitas tabel sesi load balancer, `nf_co
 
 ### 6.4 Model M/M/1 dan kurva utilisasi vs delay
 
-Little's law memberi hubungan, tetapi tidak memberi tahu **berapa** N atau W untuk utilisasi tertentu. Untuk itu kita butuh model. Model paling sederhana adalah **M/M/1**: kedatangan acak (proses Poisson, huruf M pertama), waktu layanan acak berdistribusi eksponensial (M kedua), satu server (angka 1, yaitu satu link keluar), buffer tak terbatas, FIFO.
+Little's law memberi hubungan, tetapi tidak memberi tahu berapa N atau W untuk utilisasi tertentu. Untuk itu kita butuh model. Model paling sederhana adalah **M/M/1**: kedatangan acak (proses Poisson, huruf M pertama), waktu layanan acak berdistribusi eksponensial (M kedua), satu server (angka 1, yaitu satu link keluar), buffer tak terbatas, FIFO.
 
 Hasilnya (tanpa penurunan):
 
@@ -456,9 +456,9 @@ Waktu rata-rata menunggu di antrean saja:    Wq = ρ × S / (1 − ρ)
 Jumlah rata-rata paket di sistem:            N  = ρ / (1 − ρ)
 ```
 
-Perhatikan bahwa `N = λ × T` (cek: λ × S/(1−ρ) = ρ/(1−ρ)). Little's law konsisten dengan model ini.
+Model ini konsisten dengan Little's law: `N = λ × T` (cek: λ × S/(1−ρ) = ρ/(1−ρ)).
 
-**Contoh hitung.** Link 100 Mbps, paket rata-rata 1.250 byte (10.000 bit), sehingga S = 10.000 / 100.000.000 = **0,1 ms** dan kapasitas μ = 10.000 paket/detik.
+**Contoh hitung.** Link 100 Mbps, paket rata-rata 1.250 byte (10.000 bit), sehingga S = 10.000 / 100.000.000 = 0,1 ms dan kapasitas μ = 10.000 paket/detik.
 
 | ρ | T (ms) | N (paket) | T/S |
 |---|---|---|---|
@@ -484,7 +484,7 @@ Delay relatif terhadap waktu layanan (1 kotak = 1 × S)
           └──────────────────────────────►
 ```
 
-**Kenapa link 70-80% mulai terasa lambat?** Lihat seberapa **peka** delay terhadap tambahan beban. Turunan `T = S/(1−ρ)` adalah `S/(1−ρ)²`:
+Link 70-80% mulai terasa lambat karena delay makin peka terhadap tambahan beban. Turunan `T = S/(1−ρ)` adalah `S/(1−ρ)²`:
 
 ```
 ρ = 0,5  → kepekaan  4 S per satuan ρ
@@ -509,16 +509,16 @@ Peterson & Davie dalam *Computer Networks: A Systems Approach* (subbab 6.1 buku 
 
 M/M/1 adalah alat berpikir, bukan alat ukur. Ia meleset dalam beberapa hal penting:
 
-1. **Trafik internet tidak Poisson.** Pengukuran klasik pada LAN Ethernet (Leland dkk., 1994) dan WAN (Paxson & Floyd, 1995) menunjukkan trafik bersifat *bursty* di banyak skala waktu sekaligus (*self-similar*). Pada Poisson, gerombolan "rata" begitu dijumlahkan dalam jendela yang lebih panjang. Pada trafik nyata, gerombolan tetap terlihat. Akibatnya antrean nyata pada ρ yang sama **lebih panjang** daripada prediksi M/M/1.
+1. **Trafik internet tidak Poisson.** Pengukuran klasik pada LAN Ethernet (Leland dkk., 1994) dan WAN (Paxson & Floyd, 1995) menunjukkan trafik bersifat *bursty* di banyak skala waktu sekaligus (*self-similar*). Pada Poisson, gerombolan "rata" begitu dijumlahkan dalam jendela yang lebih panjang. Pada trafik nyata, gerombolan tetap terlihat. Akibatnya antrean nyata pada ρ yang sama lebih panjang daripada prediksi M/M/1.
 2. **Microburst tidak terlihat di grafik SNMP.** Dua port 10 Gbps mengirim ke satu port 10 Gbps selama 1 ms (pola *incast* di data center):
    ```
    Kelebihan = 10 Gbps × 0,001 s = 10 Mbit = 1,25 MB yang harus ditampung buffer
    Kontribusinya ke rata-rata 5 menit = 10 Mbit / (10 Gbps × 300 s) ≈ 0,0003%
    ```
    Kalau buffer port itu lebih kecil dari 1,25 MB, ada drop, padahal grafik utilisasi tampak landai. Penghitung `output drops` lebih jujur daripada grafik utilisasi.
-3. **Ukuran paket tidak acak.** Kalau semua paket berukuran sama (misalnya trunk VoIP), modelnya M/D/1 dan waktu tunggu antrean menjadi **setengah** dari M/M/1: `Wq = ρS / (2(1−ρ))`. Bentuk kurvanya tetap sama: tetap meledak mendekati ρ = 1.
+3. **Ukuran paket tidak acak.** Kalau semua paket berukuran sama (misalnya trunk VoIP), modelnya M/D/1 dan waktu tunggu antrean menjadi setengah dari M/M/1: `Wq = ρS / (2(1−ρ))`. Bentuk kurvanya tetap sama: tetap meledak mendekati ρ = 1.
 4. **Buffer terbatas.** Router nyata tidak punya buffer tak terhingga (model M/M/1/K). Delay jadi berbatas, tetapi gantinya paket dibuang.
-5. **TCP adalah sistem umpan balik.** Ini yang paling penting. M/M/1 menganggap kedatangan tidak peduli pada antrean. TCP justru menaikkan laju kirimnya **sampai terjadi loss**. Satu unduhan besar saja sudah cukup mendorong ρ ke mendekati 1, dan antrean terisi sampai buffer penuh. Pada kondisi ini delay ditentukan oleh **ukuran buffer**, bukan oleh ρ. Rumus M/M/1 tidak berlaku lagi.
+5. **TCP adalah sistem umpan balik.** Ini yang paling penting. M/M/1 menganggap kedatangan tidak peduli pada antrean. TCP justru menaikkan laju kirimnya sampai terjadi loss. Satu unduhan besar saja sudah cukup mendorong ρ ke mendekati 1, dan antrean terisi sampai buffer penuh. Pada kondisi ini delay ditentukan oleh ukuran buffer, bukan oleh ρ. Rumus M/M/1 tidak berlaku lagi.
 
 ### 6.6 Kaitan dengan bufferbloat
 
@@ -535,7 +535,7 @@ Link 10 Gbps, RTT 100 ms:
   Dengan n = 10.000 aliran: 125 MB / √10.000 = 125 / 100 = 1,25 MB
 ```
 
-Masalahnya di sisi lain: di ujung jaringan (router rumah, ONT, modem LTE), hanya ada sedikit aliran dan link-nya lambat, sementara buffer-nya dibuat besar "supaya tidak ada drop". Hasilnya seperti contoh 2 di subbagian 6.3: 600 ms delay saat ada upload. Obatnya bukan memperkecil buffer secara membabi buta, melainkan AQM seperti **FQ-CoDel** (RFC 8290) yang menjaga delay antrean di sekitar target 5 ms dan memisahkan setiap aliran ke antreannya sendiri sehingga paket ping atau VoIP tidak terjebak di belakang unduhan besar.
+Masalahnya di sisi lain: di ujung jaringan (router rumah, ONT, modem LTE), hanya ada sedikit aliran dan link-nya lambat, sementara buffer-nya dibuat besar "supaya tidak ada drop". Hasilnya seperti contoh 2 di subbagian 6.3: 600 ms delay saat ada upload. Obatnya adalah AQM seperti **FQ-CoDel** (RFC 8290), bukan memperkecil buffer secara membabi buta. FQ-CoDel menjaga delay antrean di sekitar target 5 ms dan memisahkan setiap aliran ke antreannya sendiri, sehingga paket ping atau VoIP tidak terjebak di belakang unduhan besar.
 
 **Lihat sendiri dengan network namespace Linux** (butuh `iproute2` dan `iperf3`, jalankan sebagai root):
 
@@ -581,7 +581,7 @@ Link-nya sama, beban dan throughput unggahannya sama. Yang berubah hanya cara an
 | **Full duplex** | Dua arah bersamaan | Telepon, switch Ethernet modern |
 
 - **Half duplex** butuh mekanisme menghindari tabrakan (CSMA/CD di Ethernet lama, CSMA/CA di Wi-Fi).
-- **Full duplex** di Ethernet dimungkinkan karena ada pasangan kabel terpisah untuk kirim dan terima — tidak ada tabrakan, sehingga CSMA/CD dimatikan.
+- **Full duplex** di Ethernet dimungkinkan karena ada pasangan kabel terpisah untuk kirim dan terima. Tidak ada tabrakan, sehingga CSMA/CD dimatikan.
 
 > [!WARNING]
 > **Wi-Fi selalu half duplex.** Radio tidak bisa mengirim dan menerima di frekuensi yang sama pada waktu sama. Karena itu "Wi-Fi 1 Gbps" secara praktis memberikan throughput jauh lebih rendah, dan makin banyak klien makin turun. Detail di `10-wireless/02`.
@@ -617,7 +617,7 @@ Ini inti pelajarannya:
 
 > **Untuk transfer besar, bandwidth menentukan. Untuk banyak transaksi kecil, latency menentukan.**
 
-Karena itu HTTP/2 memakai multiplexing dan HTTP/3 memakai QUIC — mereka mengurangi jumlah round-trip, bukan menambah bandwidth (`06-aplikasi/03`).
+Karena itu HTTP/2 memakai multiplexing dan HTTP/3 memakai QUIC: keduanya mengurangi jumlah round-trip, bukan menambah bandwidth (`06-aplikasi/03`).
 
 ---
 
@@ -628,7 +628,7 @@ Karena itu HTTP/2 memakai multiplexing dan HTTP/3 memakai QUIC — mereka mengur
 - Jumbo frame: 9000 byte (harus didukung semua perangkat di jalur).
 - PPPoE: 1492. Tunnel IPsec/GRE/VXLAN: lebih kecil lagi.
 
-Kenapa penting sekarang: MTU yang tidak konsisten di sepanjang jalur menyebabkan **MTU black hole** — koneksi terbentuk (paket kecil lewat) tapi transfer data besar menggantung. Ini salah satu masalah paling sering di VPN. Dibahas di `04-network-layer/01` dan `05-transport/04`.
+Kenapa penting sekarang: MTU yang tidak konsisten di sepanjang jalur menyebabkan **MTU black hole**: koneksi terbentuk (paket kecil lewat) tapi transfer data besar menggantung. Ini salah satu masalah paling sering di VPN. Dibahas di `04-network-layer/01` dan `05-transport/04`.
 
 ---
 
@@ -700,10 +700,10 @@ $ ping -c 5 -s 1400 8.8.8.8     # paket besar → RTT sedikit lebih tinggi
 ## 12. Ringkasan
 
 - Encoding menerjemahkan bit ke sinyal; digital bisa dibangkitkan ulang tanpa degradasi.
-- Shannon: kapasitas naik dengan bandwidth **dan** SNR.
+- Shannon: kapasitas naik dengan bandwidth dan SNR.
 - Bandwidth = kapasitas; throughput = aktual; goodput = data berguna. Overhead Ethernet+IP+TCP membuat efisiensi maksimum ~95%.
 - Latency = propagasi + transmisi + prosesing + queuing. Hanya queuing yang sangat bervariasi.
-- Propagasi dibatasi kecepatan cahaya — tidak bisa dibeli. Solusinya mendekatkan data (CDN).
+- Propagasi dibatasi kecepatan cahaya dan tidak bisa dibeli. Solusinya mendekatkan data (CDN).
 - Jitter lebih merusak real-time daripada latency stabil.
 - BDP = bandwidth × RTT. Window TCP harus ≥ BDP untuk memakai link penuh.
 - Wi-Fi selalu half duplex; switch Ethernet full duplex.
@@ -737,11 +737,11 @@ $ ping -c 5 -s 1400 8.8.8.8     # paket besar → RTT sedikit lebih tinggi
 
 4. **Jitter.** Latency rata-rata bagus dan tidak ada loss, tapi variasi latency membuat jitter buffer kehabisan/kelebihan paket. Periksa `ping` dengan `mdev` besar, cek antrean/QoS, cek apakah ada trafik bulk yang membanjiri link (bufferbloat).
 
-5. 800 km / 200.000 km/s = 4 ms satu arah → **RTT minimum ≈ 8 ms**. Kenyataannya lebih besar (jalur fiber tidak lurus, ada perangkat perantara) — biasanya 12-20 ms.
+5. 800 km / 200.000 km/s = 4 ms satu arah → **RTT minimum ≈ 8 ms**. Kenyataannya lebih besar, biasanya 12-20 ms, karena jalur fiber tidak lurus dan ada perangkat perantara.
 
 6. Delay transmisi = ukuran/bandwidth. 12.000 bit ÷ 10 Mbps = 1,2 ms; 12.000 bit ÷ 1 Gbps = 12 µs. Bandwidth 100× lebih besar → waktu menuangkan bit ke kabel 100× lebih singkat.
 
-7. **Window TCP terlalu kecil untuk BDP.** BDP = 1e9 × 0,18 / 8 = 22,5 MB. Kalau window ~64 KB, throughput maksimum = 65.536×8/0,18 ≈ 2,9 Mbps — persis gejalanya. Perbaikan: aktifkan **TCP window scaling** dan naikkan buffer (`net.ipv4.tcp_rmem/wmem`, `net.core.rmem_max`), pastikan tidak ada middlebox yang menghapus opsi window scale, atau pakai transfer paralel/protokol yang sadar-BDP.
+7. **Window TCP terlalu kecil untuk BDP.** BDP = 1e9 × 0,18 / 8 = 22,5 MB. Kalau window ~64 KB, throughput maksimum = 65.536×8/0,18 ≈ 2,9 Mbps, persis gejalanya. Perbaikan: aktifkan **TCP window scaling** dan naikkan buffer (`net.ipv4.tcp_rmem/wmem`, `net.core.rmem_max`), pastikan tidak ada middlebox yang menghapus opsi window scale, atau pakai transfer paralel/protokol yang sadar-BDP.
 
 8. Kapasitas dalam paket: μ = 50.000.000 / (1.000 × 8) = **6.250 paket/detik**, sehingga waktu layanan S = 1/6.250 = **0,16 ms**.
    - Beban 40 Mbps: ρ = 40/50 = **0,8**. T = S/(1−ρ) = 0,16/0,2 = **0,8 ms**. N = ρ/(1−ρ) = **4 paket**.
@@ -757,11 +757,11 @@ $ ping -c 5 -s 1400 8.8.8.8     # paket besar → RTT sedikit lebih tinggi
 
 ## 14. Sumber
 
-- RFC 7323 — TCP Extensions for High Performance (window scaling, timestamps)
-- RFC 8290 — FQ-CoDel (mitigasi bufferbloat)
-- ITU-T G.114 — rekomendasi delay satu arah untuk suara (< 150 ms)
+- RFC 7323: TCP Extensions for High Performance (window scaling, timestamps)
+- RFC 8290: FQ-CoDel (mitigasi bufferbloat)
+- ITU-T G.114: rekomendasi delay satu arah untuk suara (< 150 ms)
 - Shannon, C. E. (1948), *A Mathematical Theory of Communication*
-- Bufferbloat project — https://www.bufferbloat.net/
+- Bufferbloat project: https://www.bufferbloat.net/
 - Computer Networks: A Systems Approach, 1.2 Requirements (statistical multiplexing): https://book.systemsapproach.org/foundation/requirements.html
 - Computer Networks: A Systems Approach, 6.1 Issues in Resource Allocation (power, M/M/1): https://book.systemsapproach.org/congestion/issues.html
 - Little, J. D. C. (1961), A Proof for the Queuing Formula L = λW: https://doi.org/10.1287/opre.9.3.383

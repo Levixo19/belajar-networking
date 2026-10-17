@@ -17,7 +17,7 @@
 
 **VERIFIKASI:** `show port-security interface fa0/1`; port shutdown saat pelanggaran.
 
-**KRITERIA SUKSES:** ✅ Port belajar MAC sah, memblokir/shutdown saat MAC asing.
+**KRITERIA SUKSES:** Port belajar MAC sah, memblokir/shutdown saat MAC asing.
 
 <details><summary>Solusi & penjelasan</summary>
 
@@ -29,7 +29,7 @@ SW(config-if)# switchport port-security maximum 1
 SW(config-if)# switchport port-security violation shutdown
 SW(config-if)# switchport port-security mac-address sticky
 ```
-**Sticky** mempelajari MAC pertama & menyimpannya ke running-config. Saat MAC berbeda muncul (mis. hub/switch nakal, MAC spoofing), **violation** memicu aksi: `shutdown` (err-disabled, paling aman), `restrict` (drop+log), atau `protect` (drop diam). Recover: `shutdown` lalu `no shutdown`. Melindungi dari CAM overflow & perangkat tak sah (`12-keamanan/02`). ⚠️ Jangan aktifkan di port trunk/uplink. CCNA 5.7.
+**Sticky** mempelajari MAC pertama & menyimpannya ke running-config. Saat MAC berbeda muncul (mis. hub/switch nakal, MAC spoofing), **violation** memicu aksi: `shutdown` (err-disabled, paling aman), `restrict` (drop+log), atau `protect` (drop diam). Recover: `shutdown` lalu `no shutdown`. Melindungi dari CAM overflow & perangkat tak sah (`12-keamanan/02`). Jangan aktifkan di port trunk/uplink. CCNA 5.7.
 </details>
 
 ---
@@ -45,7 +45,7 @@ SW(config-if)# switchport port-security mac-address sticky
 
 **VERIFIKASI:** `show ip dhcp snooping`; klien hanya dapat IP dari server sah.
 
-**KRITERIA SUKSES:** ✅ Rogue DHCP diblokir; hanya server trusted yang melayani.
+**KRITERIA SUKSES:** Rogue DHCP diblokir; hanya server trusted yang melayani.
 
 <details><summary>Solusi & penjelasan</summary>
 
@@ -56,7 +56,7 @@ SW(config)# interface gi0/1              (port ke DHCP server SAH)
 SW(config-if)# ip dhcp snooping trust
 # port lain tetap untrusted (default) → blokir DHCP server reply
 ```
-DHCP snooping memblokir pesan **DHCP server (OFFER/ACK)** dari port **untrusted** — mencegah **rogue DHCP** (yang bisa memberi gateway/DNS palsu → MITM). Hanya port trusted (ke server sah) boleh mengirim reply DHCP. Ia juga membangun **binding table** (IP-MAC-port) yang dipakai **DAI** (Lab 4.3). Membuktikan `12-keamanan/02`. ⚠️ Uplink ke server/router DHCP harus trusted, kalau tidak DHCP sah ikut terblokir.
+DHCP snooping memblokir pesan DHCP server (OFFER/ACK) dari port untrusted, sehingga rogue DHCP tidak bisa memberi gateway/DNS palsu (→ MITM). Hanya port trusted (ke server sah) boleh mengirim reply DHCP. Ia juga membangun **binding table** (IP-MAC-port) yang dipakai DAI (Lab 4.3). Membuktikan `12-keamanan/02`. Hati-hati: uplink ke server/router DHCP harus trusted. Kalau tidak, DHCP sah ikut terblokir.
 </details>
 
 ---
@@ -72,7 +72,7 @@ DHCP snooping memblokir pesan **DHCP server (OFFER/ACK)** dari port **untrusted*
 
 **VERIFIKASI:** `show ip arp inspection`; ARP tak sah di-drop (counter).
 
-**KRITERIA SUKSES:** ✅ ARP spoofing dicegah; hanya ARP sesuai binding yang diteruskan.
+**KRITERIA SUKSES:** ARP spoofing dicegah; hanya ARP sesuai binding yang diteruskan.
 
 <details><summary>Solusi & penjelasan</summary>
 
@@ -81,7 +81,7 @@ SW(config)# ip arp inspection vlan 10
 SW(config)# interface gi0/1
 SW(config-if)# ip arp inspection trust    (uplink trusted)
 ```
-DAI memeriksa setiap paket ARP di port untrusted terhadap **binding table DHCP snooping** (IP-MAC-port). ARP yang tidak cocok (mis. penyerang mengklaim MAC gateway = **ARP poisoning/MITM**) di-**drop**. Ini menutup salah satu serangan L2 paling berbahaya. Bergantung pada DHCP snooping (karena itu Lab 4.2 dulu). Membuktikan `12-keamanan/02` (CCNA 5.7). ⚠️ Tanpa DHCP snooping, DAI tak punya binding untuk divalidasi.
+DAI memeriksa setiap paket ARP di port untrusted terhadap binding table DHCP snooping (IP-MAC-port). ARP yang tidak cocok (mis. penyerang mengklaim MAC gateway = **ARP poisoning/MITM**) di-drop. Ini menutup salah satu serangan L2 paling berbahaya. Bergantung pada DHCP snooping (karena itu Lab 4.2 dulu). Membuktikan `12-keamanan/02` (CCNA 5.7). Tanpa DHCP snooping, DAI tak punya binding untuk divalidasi.
 </details>
 
 ---
@@ -98,11 +98,11 @@ DAI memeriksa setiap paket ARP di port untrusted terhadap **binding table DHCP s
 
 **VERIFIKASI:** klien terasosiasi ke SSID, mendapat IP, bisa ping gateway.
 
-**KRITERIA SUKSES:** ✅ Klien terhubung via WPA2-PSK & mendapat konektivitas.
+**KRITERIA SUKSES:** Klien terhubung via WPA2-PSK & mendapat konektivitas.
 
 <details><summary>Solusi & penjelasan</summary>
 
-Via **GUI WLC** (browser ke IP manajemen WLC): WLANs → Create New → SSID, lalu Security → Layer 2 → **WPA2 + PSK** (masukkan passphrase). Petakan ke interface/VLAN dengan DHCP. AP mendaftar ke WLC lewat **CAPWAP** (tunnel kontrol+data). Klien terasosiasi → autentikasi PSK → dapat IP dari DHCP VLAN. Ini persis yang diuji CCNA (2.9 & 5.10 — konfigurasi WLAN via GUI dengan WPA2 PSK). Membuktikan `10-wireless/03-04`. ⚠️ AP tak join? Cek AP dapat IP & tahu IP WLC (via DHCP option 43/DNS). Arsitektur controller-based (`16/06`).
+Via GUI WLC (browser ke IP manajemen WLC): WLANs → Create New → SSID, lalu Security → Layer 2 → **WPA2 + PSK** (masukkan passphrase). Petakan ke interface/VLAN dengan DHCP. AP mendaftar ke WLC lewat **CAPWAP** (tunnel kontrol+data). Klien terasosiasi → autentikasi PSK → dapat IP dari DHCP VLAN. Ini persis yang diuji CCNA (2.9 & 5.10: konfigurasi WLAN via GUI dengan WPA2 PSK). Membuktikan `10-wireless/03-04`. Kalau AP tak join, cek apakah AP dapat IP & tahu IP WLC (via DHCP option 43/DNS). Arsitektur controller-based (`16/06`).
 </details>
 
 ---
@@ -119,7 +119,7 @@ Via **GUI WLC** (browser ke IP manajemen WLC): WLANs → Create New → SSID, la
 
 **VERIFIKASI:** `show run` mencerminkan hardening; akses tak sah tertutup.
 
-**KRITERIA SUKSES:** ✅ Perangkat mengikuti baseline keamanan dasar.
+**KRITERIA SUKSES:** Perangkat mengikuti baseline keamanan dasar.
 
 <details><summary>Solusi & penjelasan</summary>
 
@@ -134,7 +134,7 @@ SW(config)# interface range fa0/1-9
 SW(config-if-range)# spanning-tree portfast
 SW(config-if-range)# spanning-tree bpduguard enable
 ```
-Ini menerapkan prinsip hardening (`12-keamanan/05`): kurangi permukaan serang (matikan port/layanan tak perlu), lindungi akses (secret, SSH, banner), amankan L2 (BPDU Guard cegah switch nakal di port access). **PortFast** mempercepat port access ke forwarding (aman karena BPDU Guard mematikannya bila menerima BPDU). ⚠️ `enable secret` (hash kuat) mengungguli `enable password` (lemah). Baseline yang di-audit = golden config.
+Ini menerapkan prinsip hardening (`12-keamanan/05`): kurangi permukaan serang (matikan port/layanan tak perlu), lindungi akses (secret, SSH, banner), amankan L2 (BPDU Guard cegah switch nakal di port access). **PortFast** mempercepat port access ke forwarding (aman karena BPDU Guard mematikannya bila menerima BPDU). `enable secret` (hash kuat) mengungguli `enable password` (lemah). Baseline yang di-audit = golden config.
 </details>
 
 ---

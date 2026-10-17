@@ -7,7 +7,7 @@
 
 ## 1. VLSM (Variable Length Subnet Mask)
 
-Subnetting biasa (**FLSM**, *Fixed Length*) membagi jaringan menjadi potongan **sama besar**. VLSM membagi menjadi potongan **berbeda ukuran** sesuai kebutuhan.
+Subnetting biasa (**FLSM**, *Fixed Length*) membagi jaringan menjadi potongan sama besar. VLSM membagi menjadi potongan berbeda ukuran sesuai kebutuhan.
 
 ### Masalah dengan FLSM
 
@@ -26,7 +26,7 @@ Total          : 191 host
 
 Tersedia: `192.168.1.0/24` (254 alamat).
 
-**Dengan FLSM** — semua subnet harus seukuran subnet terbesar (/25 untuk 100 host):
+**Dengan FLSM**, semua subnet harus seukuran subnet terbesar (/25 untuk 100 host):
 ```
 /25 → hanya ada 2 subnet dalam /24
 → TIDAK CUKUP untuk 7 jaringan ❌
@@ -37,7 +37,7 @@ Kalaupun dipaksa dengan /26 (62 host):
 4 subnet × 62 host = masih tidak cukup untuk kantor pusat (100 host) ❌
 ```
 
-**FLSM gagal total** di sini.
+Di sini FLSM gagal.
 
 ### Dengan VLSM
 
@@ -49,7 +49,7 @@ Cabang C       10 host → butuh /28 (14 host)
 Link WAN ×3     2 host → butuh /30 (2 host) masing-masing
 ```
 
-Total alamat terpakai: 128 + 64 + 32 + 16 + 4 + 4 + 4 = **252 dari 256** ✅
+Total alamat terpakai: 128 + 64 + 32 + 16 + 4 + 4 + 4 = **252 dari 256**, jadi semuanya muat.
 
 ---
 
@@ -60,7 +60,7 @@ Total alamat terpakai: 128 + 64 + 32 + 16 + 4 + 4 + 4 = **252 dari 256** ✅
 
 ### Contoh alokasi lengkap dari `192.168.1.0/24`
 
-**Langkah 1 — Urutkan kebutuhan dari besar ke kecil:**
+**Langkah 1. Urutkan kebutuhan dari besar ke kecil:**
 ```
 1. Kantor Pusat : 100 host → /25 (128 alamat)
 2. Cabang A     :  50 host → /26 (64 alamat)
@@ -71,7 +71,7 @@ Total alamat terpakai: 128 + 64 + 32 + 16 + 4 + 4 + 4 = **252 dari 256** ✅
 7. WAN 3        :   2 host → /30 (4 alamat)
 ```
 
-**Langkah 2 — Alokasikan berurutan:**
+**Langkah 2. Alokasikan berurutan:**
 
 ```
 ┌─ Kantor Pusat ─────────────────────────────────────────────────┐
@@ -168,9 +168,9 @@ P2P ×4      2 → /30 (2 host, 4 alamat) × 4 = 16 alamat
 Total = 512 + 256 + 128 + 64 + 64 + 32 + 16 = **1072 alamat**
 
 > [!WARNING]
-> **1072 > 1024 — TIDAK CUKUP!**
+> **1072 > 1024: tidak cukup!**
 
-Ini pelajaran penting: **selalu jumlahkan dulu sebelum mulai mengalokasikan.**
+Pelajarannya: **selalu jumlahkan dulu sebelum mulai mengalokasikan.**
 
 Opsi perbaikan:
 - (a) Minta blok lebih besar (`/21`)
@@ -218,7 +218,7 @@ Dengan summarization — cukup 1 rute:
 
 Manfaat:
 1. **Routing table lebih kecil** → lookup lebih cepat, memori lebih hemat
-2. **Stabilitas lebih baik** — perubahan di dalam blok tidak menyebar ke luar (mengurangi *route flapping*)
+2. **Stabilitas lebih baik**: perubahan di dalam blok tidak menyebar ke luar (mengurangi *route flapping*)
 3. **Konvergensi lebih cepat**
 4. **Bandwidth control plane lebih hemat**
 
@@ -227,7 +227,7 @@ Manfaat:
 
 ### Cara menghitung summary route
 
-**Metode:** cari bit-bit awal yang **sama** di semua jaringan.
+**Metode:** cari bit-bit awal yang sama di semua jaringan.
 
 **Contoh 1:**
 ```
@@ -256,7 +256,7 @@ SUMMARY = 10.0.0.0/14
 ```
 
 > [!WARNING]
-> **Perhatikan:** `10.0.0.0/14` mencakup `10.0.0.0` – `10.3.255.255` — termasuk **10.0.0.0/16 yang tidak ada dalam daftar**. Ini disebut **over-summarization**.
+> **Perhatikan:** `10.0.0.0/14` mencakup `10.0.0.0` sampai `10.3.255.255`, termasuk 10.0.0.0/16 yang tidak ada dalam daftar. Ini disebut **over-summarization**.
 
 ### Bahaya over-summarization
 
@@ -269,7 +269,7 @@ Paket ke 10.0.5.5 (yang sebenarnya ada di router LAIN):
 → paket DIBUANG (black hole)
 ```
 
-**Aman jika:** Anda benar-benar memiliki seluruh blok, atau ada default route yang menangani sisanya.
+**Aman jika:** Anda memang memiliki seluruh blok, atau ada default route yang menangani sisanya.
 
 **Mitigasi:** buat **null route** untuk blok summary agar paket yang tidak cocok dibuang secara sadar (dan tidak mengikuti default route ke tempat yang salah):
 ```
@@ -317,7 +317,7 @@ R1(config-router)# aggregate-address 192.168.0.0 255.255.252.0 summary-only
 
 ### Desain hierarkis untuk summarization yang rapi
 
-Summarization hanya efektif kalau alokasi alamat **hierarkis sejak awal**.
+Summarization hanya efektif kalau alokasi alamat hierarkis sejak awal.
 
 ```
 Perusahaan: 10.0.0.0/8
@@ -341,7 +341,7 @@ Dengan skema ini, router core cukup menyimpan satu rute per kota, bukan ratusan 
 
 ## 5. Wildcard Mask
 
-Kebalikan dari subnet mask, dipakai di **ACL** dan **OSPF**.
+Wildcard mask adalah kebalikan dari subnet mask, dipakai di ACL dan OSPF.
 
 ```
 Subnet mask  : 1 = harus cocok, 0 = bebas
@@ -408,7 +408,7 @@ access-list 10 permit 192.168.0.0 0.0.254.255
 ```
 
 > [!TIP]
-> Trik ini berguna untuk ACL yang ringkas, tetapi **kurangi pemakaiannya** — sulit dibaca orang lain dan mudah salah. Kejelasan lebih penting daripada keringkasan pada konfigurasi produksi.
+> Trik ini berguna untuk ACL yang ringkas, tetapi kurangi pemakaiannya karena sulit dibaca orang lain dan mudah salah. Pada konfigurasi produksi, kejelasan lebih penting daripada keringkasan.
 
 ---
 
@@ -452,7 +452,7 @@ R2(config-if)# ip address 10.0.0.1 255.255.255.254
 > Beberapa perangkat dan software lama tidak mendukung /31. Uji dulu sebelum menerapkannya luas. Didukung: Cisco IOS/IOS-XE/NX-OS, Juniper, Arista, Linux, FRR.
 
 > [!TIP]
-> **Alternatif modern:** **unnumbered interface** — link P2P tidak diberi alamat sama sekali, meminjam alamat loopback router.
+> **Alternatif modern:** **unnumbered interface**. Link P2P tidak diberi alamat sama sekali dan meminjam alamat loopback router.
 ```
 R1(config-if)# ip unnumbered loopback0
 ```
@@ -525,7 +525,7 @@ print('wildcard:', ipaddress.ip_address(int(ipaddress.ip_address('255.255.255.25
 > **3. Over-summarization.** Mengiklankan blok yang mencakup jaringan milik pihak lain → black hole.
 
 > [!WARNING]
-> **4. Meringkas jaringan yang tidak aligned.** `192.168.1.0`–`.4.0` tidak bisa menjadi satu /22.
+> **4. Meringkas jaringan yang tidak aligned.** `192.168.1.0` sampai `.4.0` tidak bisa menjadi satu /22.
 
 > [!WARNING]
 > **5. Tertukar subnet mask dan wildcard mask** di ACL/OSPF. Cisco menerima keduanya di beberapa konteks, sehingga kesalahan tidak selalu langsung terlihat.
@@ -546,7 +546,7 @@ print('wildcard:', ipaddress.ip_address(int(ipaddress.ip_address('255.255.255.25
 - **CIDR/summarization** menggabungkan rute: tabel lebih kecil, konvergensi lebih cepat, stabilitas lebih baik.
 - Summary prefix = prefix asli − log₂(jumlah jaringan); jaringan harus berurutan dan aligned.
 - **Over-summarization → black hole.** Mitigasi dengan null route.
-- Summarization efektif hanya kalau alokasi alamat **hierarkis sejak awal** — keputusan desain di depan.
+- Summarization efektif hanya kalau alokasi alamat **hierarkis sejak awal**, jadi keputusannya diambil di tahap desain.
 - **Wildcard mask** = 255.255.255.255 − subnet mask; `0` = harus cocok, `1` = bebas. Dipakai di ACL & OSPF.
 - **/31** (RFC 3021) menghemat 50% alamat pada link P2P dibanding /30; unnumbered lebih hemat lagi.
 
@@ -579,7 +579,7 @@ print('wildcard:', ipaddress.ip_address(int(ipaddress.ip_address('255.255.255.25
 2. Empat jaringan /24 berurutan dan aligned (mulai dari .4 yang merupakan kelipatan 4).
    log₂(4) = 2 → 24 − 2 = **/22** → **`172.16.4.0/22`** (mencakup 172.16.4.0-172.16.7.255).
 
-3. **Tidak bisa menjadi satu blok.** Empat jaringan berurutan membutuhkan /14, tetapi batas /14 ada di 10.0, 10.4, 10.8, ... — sehingga 10.1-10.4 tidak aligned.
+3. **Tidak bisa menjadi satu blok.** Empat jaringan berurutan membutuhkan /14, tetapi batas /14 ada di 10.0, 10.4, 10.8, dan seterusnya, sehingga 10.1-10.4 tidak aligned.
    - `10.0.0.0/14` mencakup 10.0-10.3 (memasukkan 10.0 yang tidak dimiliki, dan tidak mencakup 10.4).
    - Ringkasan yang benar: **`10.1.0.0/16` + `10.2.0.0/15` + `10.4.0.0/16`** (tiga rute), atau terima over-summarization `10.0.0.0/13` (10.0-10.7) jika seluruh blok itu memang milik Anda.
 
@@ -587,7 +587,7 @@ print('wildcard:', ipaddress.ip_address(int(ipaddress.ip_address('255.255.255.25
 
 5. /30 = 4 alamat per link → 200 × 4 = 800. /31 = 2 alamat per link → 200 × 2 = 400. **Hemat 400 alamat.**
 
-6. **Over-summarization → black hole.** Cabang itu mengiklankan bahwa ia dapat menjangkau seluruh `10.0.0.0/8` (16,7 juta alamat), padahal hanya memiliki `10.5.0.0/16`. Router lain akan mengirimkan trafik untuk `10.7.x.x`, `10.20.x.x`, dan seterusnya ke cabang tersebut. Cabang tidak punya rute spesifik untuk itu, sehingga paket dibuang — atau lebih buruk, dikirim ke default route-nya dan berputar. Lokasi tujuan yang sebenarnya menjadi tidak terjangkau dari sebagian jaringan. Perbaikan: iklankan hanya `10.5.0.0/16`.
+6. **Over-summarization → black hole.** Cabang itu mengiklankan bahwa ia dapat menjangkau seluruh `10.0.0.0/8` (16,7 juta alamat), padahal hanya memiliki `10.5.0.0/16`. Router lain akan mengirimkan trafik untuk `10.7.x.x`, `10.20.x.x`, dan seterusnya ke cabang tersebut. Cabang tidak punya rute spesifik untuk itu, sehingga paket dibuang, atau lebih buruk lagi, dikirim ke default route-nya dan berputar. Lokasi tujuan yang sebenarnya menjadi tidak terjangkau dari sebagian jaringan. Perbaikan: iklankan hanya `10.5.0.0/16`.
 
 7. Perhitungan kebutuhan: 200 host per lantai → butuh /24 (254 host). 20 lantai × /24 = /24 × 20 → bulatkan ke 32 → gedung butuh **/19** (32 × /24). 8 gedung → bulatkan ke 8 → kota butuh **/16** (8 × /19). 5 kota → bulatkan ke 8 → total **/13** cukup, tetapi untuk kejelasan berikan **/12 per kota** (ruang tumbuh besar).
 
@@ -623,10 +623,10 @@ print('wildcard:', ipaddress.ip_address(int(ipaddress.ip_address('255.255.255.25
 
 ## 11. Sumber
 
-- RFC 1519 & RFC 4632 — Classless Inter-Domain Routing (CIDR)
-- RFC 1878 — Variable Length Subnet Table
-- RFC 3021 — Using 31-Bit Prefixes on IPv4 Point-to-Point Links
-- RFC 5735 / RFC 6890 — Special-Purpose IP Address Registries
+- RFC 1519 & RFC 4632: Classless Inter-Domain Routing (CIDR)
+- RFC 1878: Variable Length Subnet Table
+- RFC 3021: Using 31-Bit Prefixes on IPv4 Point-to-Point Links
+- RFC 5735 / RFC 6890: Special-Purpose IP Address Registries
 - Cisco CCNA 200-301 v1.1, topik 1.6 dan 5.6 (ACL, wildcard mask)
 
 ---

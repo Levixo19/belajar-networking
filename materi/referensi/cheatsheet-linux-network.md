@@ -132,7 +132,7 @@ configure terminal
 > Perubahan `ip`/`sysctl` bersifat **runtime** (hilang saat reboot). Untuk permanen: netplan/NetworkManager (jaringan), `/etc/sysctl.d/` (sysctl), unit systemd (nftables).
 
 > [!TIP]
-> **RouterOS berbasis Linux** — banyak konsep di sini (bridge, veth, netfilter/conntrack) identik dengan yang di balik MikroTik (`19/*`).
+> **RouterOS berbasis Linux**, jadi banyak konsep di sini (bridge, veth, netfilter/conntrack) identik dengan yang ada di balik MikroTik (`19/*`).
 
 ---
 

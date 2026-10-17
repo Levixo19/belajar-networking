@@ -15,13 +15,13 @@ Router-A mati:
   → Meskipun ada Router-B yang sehat di segmen yang sama!
 ```
 
-**Kenapa PC tidak otomatis beralih?** Karena default gateway pada host adalah **konfigurasi statis** — satu alamat IP. Host tidak menjalankan protokol routing dan tidak tahu ada router lain.
+**Kenapa PC tidak otomatis beralih?** Karena default gateway pada host adalah konfigurasi statis, yaitu satu alamat IP. Host tidak menjalankan protokol routing dan tidak tahu ada router lain.
 
 ### Solusi yang tidak memadai
 
 | Solusi | Masalah |
 |---|---|
-| Konfigurasi ulang manual | Butuh menyentuh setiap host — mustahil |
+| Konfigurasi ulang manual | Butuh menyentuh setiap host (mustahil) |
 | Proxy ARP | Lambat (bergantung ARP timeout), tidak dapat diandalkan |
 | ICMP Router Discovery (IRDP) | Dukungan host buruk, konvergensi lambat |
 | DHCP dengan dua gateway | DHCP hanya memberi satu gateway; lease tidak segera diperbarui |
@@ -51,19 +51,19 @@ Router-A mati:
 
 | | **HSRP** | **VRRP** | **GLBP** |
 |---|---|---|---|
-| Standar | Cisco proprietary | **IETF RFC 5798** | Cisco proprietary |
+| Standar | Cisco proprietary | IETF RFC 5798 | Cisco proprietary |
 | Peran | Active / Standby | Master / Backup | AVG / AVF |
-| Load balancing | ❌ (per-VLAN saja) | ❌ (per-VLAN saja) | ✅ **Bawaan** |
-| Multicast | 224.0.0.2 (v1) / **224.0.0.102** (v2) | **224.0.0.18** | 224.0.0.102 |
-| Port | UDP 1985 (v1) / 1985 (v2) | Protokol IP **112** | UDP 3222 |
+| Load balancing | Tidak (per-VLAN saja) | Tidak (per-VLAN saja) | Ya, bawaan |
+| Multicast | 224.0.0.2 (v1) / 224.0.0.102 (v2) | 224.0.0.18 | 224.0.0.102 |
+| Port | UDP 1985 (v1) / 1985 (v2) | Protokol IP 112 | UDP 3222 |
 | Priority default | 100 | 100 | 100 |
-| Preempt default | **Nonaktif** | **Aktif** | Nonaktif |
+| Preempt default | Nonaktif | Aktif | Nonaktif |
 | Virtual MAC | `0000.0C07.ACxx` (v1) / `0000.0C9F.Fxxx` (v2) | `0000.5E00.01xx` | `0007.b400.xxyy` |
 | Timer default | Hello 3 / Hold 10 | Advertise 1 / Down 3 | Hello 3 / Hold 10 |
 | Jumlah grup | 0-255 (v1) / 0-4095 (v2) | 1-255 | 0-1023 |
 
 > [!TIP]
-> **Perbedaan preempt sangat penting:** VRRP secara default akan mengambil alih ketika router dengan priority lebih tinggi kembali online; HSRP **tidak** kecuali dikonfigurasi. Ini sering mengejutkan.
+> **Perbedaan preempt:** VRRP secara default akan mengambil alih ketika router dengan priority lebih tinggi kembali online; HSRP tidak, kecuali dikonfigurasi. Ini sering mengejutkan.
 
 ---
 
@@ -112,30 +112,30 @@ R-B(config-if)# standby 10 authentication md5 key-string RahasiaKuat
 ```
 
 > [!WARNING]
-> **`preempt` harus dikonfigurasi eksplisit di HSRP.** Tanpa itu, setelah router utama pulih dari kegagalan, ia akan tetap menjadi standby — router cadangan terus menjadi active. Ini bisa menyebabkan trafik mengambil jalur yang tidak dioptimalkan tanpa disadari.
+> **`preempt` harus dikonfigurasi eksplisit di HSRP.** Tanpa itu, setelah router utama pulih dari kegagalan, ia akan tetap menjadi standby, sementara router cadangan terus menjadi active. Ini bisa menyebabkan trafik mengambil jalur yang tidak dioptimalkan tanpa disadari.
 
 > [!TIP]
-> **`preempt delay minimum 60`** memberi waktu router yang baru boot untuk menyelesaikan konvergensi routing protocol sebelum mengambil alih. Tanpa delay, router bisa menjadi active sementara ia belum punya rute ke mana pun — menciptakan black hole.
+> **`preempt delay minimum 60`** memberi waktu router yang baru boot untuk menyelesaikan konvergensi routing protocol sebelum mengambil alih. Tanpa delay, router bisa menjadi active sementara ia belum punya rute ke mana pun, sehingga terjadi black hole.
 
 ### HSRP v1 vs v2
 
 | | v1 | v2 |
 |---|---|---|
-| Grup | 0-255 | **0-4095** |
-| Multicast | 224.0.0.2 | **224.0.0.102** |
+| Grup | 0-255 | 0-4095 |
+| Multicast | 224.0.0.2 | 224.0.0.102 |
 | Virtual MAC | 0000.0C07.AC**xx** | 0000.0C9F.F**xxx** |
 | IPv6 | Tidak | Ya |
 | MD5 auth | Tidak | Ya |
 | Timer milidetik | Tidak | Ya |
 
 > [!TIP]
-> **Gunakan v2** kecuali ada perangkat lama yang memaksa v1. Kedua versi **tidak interoperable** — semua router dalam satu grup harus memakai versi yang sama.
+> **Gunakan v2** kecuali ada perangkat lama yang memaksa v1. Kedua versi tidak interoperable: semua router dalam satu grup harus memakai versi yang sama.
 
 ---
 
 ## 4. Interface Tracking: Bagian Terpenting
 
-Tanpa tracking, HSRP hanya bereaksi pada kegagalan router itu sendiri. Tetapi masalah yang lebih umum adalah **uplink router yang mati**.
+Tanpa tracking, HSRP hanya bereaksi pada kegagalan router itu sendiri. Tetapi masalah yang lebih umum adalah uplink router yang mati.
 
 ```
 Skenario tanpa tracking:
@@ -159,7 +159,7 @@ R-A(config-if)# standby 10 track gi0/0 30
 
 ### Tracking dengan object tracking (lebih baik)
 
-Tracking interface hanya mendeteksi interface down. Object tracking bisa mendeteksi kegagalan **end-to-end**.
+Tracking interface hanya mendeteksi interface down. Object tracking bisa mendeteksi kegagalan end-to-end.
 
 ```
 # Uji konektivitas ke internet
@@ -175,7 +175,7 @@ R-A(config)# interface vlan 10
 R-A(config-if)# standby 10 track 1 decrement 30
 ```
 
-Sekarang HSRP bereaksi kalau internet tidak dapat dijangkau — bukan hanya kalau kabel dicabut.
+Sekarang HSRP bereaksi kalau internet tidak dapat dijangkau, bukan hanya kalau kabel dicabut.
 
 ### Tracking beberapa objek
 
@@ -189,7 +189,7 @@ R-A(config-if)# standby 10 track gi0/1 decrement 10  ← link ke core
 
 ## 5. VRRP
 
-Standar terbuka [RFC 5798] — bekerja antar-vendor.
+Standar terbuka [RFC 5798] yang bekerja antar-vendor.
 
 ```
 R-A(config)# interface vlan 10
@@ -206,14 +206,14 @@ R-A# show vrrp brief
 
 ### Perbedaan penting dari HSRP
 
-**1. Preempt aktif secara default** — router dengan priority tertinggi selalu mengambil alih.
+**1. Preempt aktif secara default**: router dengan priority tertinggi selalu mengambil alih.
 
 **2. Bisa memakai alamat IP fisik sebagai virtual IP.**
 ```
 R-A(config-if)# ip address 192.168.10.1 255.255.255.0
 R-A(config-if)# vrrp 10 ip 192.168.10.1        ← SAMA dengan IP fisik
 ```
-Router ini otomatis menjadi **master dengan priority 255** (nilai khusus, tidak bisa dikonfigurasi manual). Ini disebut **IP address owner**.
+Router ini otomatis menjadi master dengan priority 255 (nilai khusus, tidak bisa dikonfigurasi manual). Ini disebut **IP address owner**.
 
 > [!TIP]
 > Keuntungan: menghemat satu alamat IP per subnet. Kerugian: router owner selalu menjadi master (priority 255 tidak bisa dikalahkan), sehingga tracking tidak bisa memaksa failover.
@@ -221,13 +221,13 @@ Router ini otomatis menjadi **master dengan priority 255** (nilai khusus, tidak 
 **3. Berjalan langsung di atas IP (protokol 112)**, bukan UDP.
 
 > [!WARNING]
-> **ACL yang memblokir protokol IP 112 akan mematikan VRRP** — sering terlewat saat hardening.
+> **ACL yang memblokir protokol IP 112 akan mematikan VRRP.** Hal ini sering terlewat saat hardening.
 
 ---
 
 ## 6. GLBP (Load Balancing Bawaan)
 
-Masalah HSRP dan VRRP: hanya **satu router yang aktif**; router lain menganggur sepenuhnya.
+Masalah HSRP dan VRRP: hanya satu router yang aktif; router lain menganggur sepenuhnya.
 
 **GLBP** membagi beban ke semua router sekaligus.
 
@@ -272,11 +272,11 @@ R-A# show glbp brief
 | Metode | Cara kerja |
 |---|---|
 | `round-robin` | Bergiliran per ARP request (default) |
-| `weighted` | Sesuai bobot (`weighting`) — router lebih kuat mendapat lebih banyak |
+| `weighted` | Sesuai bobot (`weighting`): router lebih kuat mendapat lebih banyak |
 | `host-dependent` | Host yang sama selalu mendapat MAC yang sama (konsisten) |
 
 > [!WARNING]
-> **GLBP proprietary Cisco** dan lebih kompleks. Alternatif modern yang lebih umum: **HSRP/VRRP dengan load balancing per-VLAN**, atau **anycast gateway** pada fabric VXLAN/EVPN.
+> **GLBP proprietary Cisco** dan lebih kompleks. Alternatif modern yang lebih umum: HSRP/VRRP dengan load balancing per-VLAN, atau anycast gateway pada fabric VXLAN/EVPN.
 
 ---
 
@@ -314,7 +314,7 @@ R-B(config-if)# standby 20 preempt
 ```
 
 > [!WARNING]
-> **Selaraskan dengan root bridge STP!** Kalau HSRP active untuk VLAN 10 ada di Router-A tetapi STP root untuk VLAN 10 ada di Router-B, trafik akan **memutar** melalui link antar-switch — membuang bandwidth dan menambah latency.
+> **Selaraskan dengan root bridge STP!** Kalau HSRP active untuk VLAN 10 ada di Router-A tetapi STP root untuk VLAN 10 ada di Router-B, trafik akan memutar melalui link antar-switch, sehingga bandwidth terbuang dan latency bertambah.
 
 ```
 # Selaraskan: Router-A menjadi STP root DAN HSRP active untuk VLAN 10
@@ -331,7 +331,7 @@ R-B(config)# spanning-tree vlan 10 root secondary
 
 ## 8. FHRP untuk IPv6
 
-IPv6 sebenarnya sudah punya redundansi gateway bawaan lewat **Router Advertisement** — host bisa mendengar RA dari beberapa router dan beralih otomatis. Tetapi konvergensinya bergantung pada timer RA (bisa lambat).
+IPv6 sebenarnya sudah punya redundansi gateway bawaan lewat **Router Advertisement**: host bisa mendengar RA dari beberapa router dan beralih otomatis. Tetapi konvergensinya bergantung pada timer RA (bisa lambat).
 
 FHRP tetap berguna untuk failover cepat:
 
@@ -387,16 +387,16 @@ R-A# debug standby terse
 
 | Gejala | Penyebab |
 |---|---|
-| **Kedua router Active** (split-brain) | Hello tidak sampai: VLAN tidak melewatkan, ACL memblokir multicast, versi HSRP berbeda, autentikasi berbeda |
-| Router utama tidak mengambil alih setelah pulih | **`preempt` tidak dikonfigurasi** (HSRP default nonaktif) |
-| Failover terjadi tetapi trafik tetap gagal | **Tracking tidak dikonfigurasi** — router active tidak punya uplink |
+| Kedua router Active (split-brain) | Hello tidak sampai: VLAN tidak melewatkan, ACL memblokir multicast, versi HSRP berbeda, autentikasi berbeda |
+| Router utama tidak mengambil alih setelah pulih | `preempt` tidak dikonfigurasi (HSRP default nonaktif) |
+| Failover terjadi tetapi trafik tetap gagal | Tracking tidak dikonfigurasi: router active tidak punya uplink |
 | Failover lambat | Timer default (hello 3/hold 10 = ~10 detik); turunkan atau pakai BFD |
 | Flapping (bolak-balik) | Link tidak stabil; tambahkan `preempt delay` dan `delay down/up` pada track |
-| Trafik memutar antar-switch | **STP root dan HSRP active tidak selaras** |
+| Trafik memutar antar-switch | STP root dan HSRP active tidak selaras |
 | Host tidak beralih setelah failover | Gratuitous ARP tidak sampai; periksa switch dan MAC table |
 
 > [!WARNING]
-> **Split-brain (kedua router Active) adalah kondisi paling berbahaya** — kedua router menjawab ARP untuk IP virtual yang sama, menyebabkan MAC flapping di switch dan trafik yang tidak konsisten. Selalu periksa apakah hello benar-benar sampai:
+> **Split-brain (kedua router Active) adalah kondisi paling berbahaya.** Kedua router menjawab ARP untuk IP virtual yang sama, sehingga terjadi MAC flapping di switch dan trafik menjadi tidak konsisten. Selalu periksa apakah hello benar-benar sampai:
 ```
 R-A# debug standby packets
 R-A# show standby | include Standby router
@@ -422,7 +422,7 @@ R-A(config-if)# bfd interval 50 min_rx 50 multiplier 3
 
 | Teknologi | Cara kerja |
 |---|---|
-| **Anycast Gateway** (EVPN/VXLAN) | **Semua** leaf switch memakai IP dan MAC gateway yang sama; host selalu dilayani switch terdekat. Tidak ada active/standby sama sekali |
+| **Anycast Gateway** (EVPN/VXLAN) | Semua leaf switch memakai IP dan MAC gateway yang sama; host selalu dilayani switch terdekat. Tidak ada active/standby sama sekali |
 | **MLAG / vPC + SVI** | Dua switch tampil sebagai satu; keduanya aktif |
 | **Stacking** | Beberapa switch menjadi satu logis; SVI tunggal |
 | **Routed access** | Tidak ada gateway bersama; setiap access switch merutekan sendiri |
@@ -434,7 +434,7 @@ R-A(config-if)# bfd interval 50 min_rx 50 multiplier 3
 
 ## MikroTik RouterOS
 
-RouterOS mendukung **VRRP** (standar RFC 5798) — tidak ada HSRP atau GLBP karena keduanya proprietary Cisco.
+RouterOS mendukung VRRP (standar RFC 5798). HSRP dan GLBP tidak ada karena keduanya proprietary Cisco.
 
 ```
 # Router A (utama)
@@ -457,7 +457,7 @@ RouterOS mendukung **VRRP** (standar RFC 5798) — tidak ada HSRP atau GLBP kare
 ```
 
 > [!WARNING]
-> **Perhatikan konsep berbeda dari Cisco:** di RouterOS, **alamat IP virtual dipasang pada interface VRRP**, bukan pada interface fisik. Interface fisik (`vlan10`) tetap punya alamat uniknya sendiri.
+> **Perhatikan konsep berbeda dari Cisco:** di RouterOS, alamat IP virtual dipasang pada interface VRRP, bukan pada interface fisik. Interface fisik (`vlan10`) tetap punya alamat uniknya sendiri.
 
 ```
 # Interface fisik — alamat unik per router
@@ -470,7 +470,7 @@ RouterOS mendukung **VRRP** (standar RFC 5798) — tidak ada HSRP atau GLBP kare
 
 ### Tracking dengan Netwatch
 
-RouterOS tidak punya `standby track` bawaan; gunakan **Netwatch** untuk menurunkan priority:
+RouterOS tidak punya `standby track` bawaan; gunakan Netwatch untuk menurunkan priority:
 
 ```
 /tool netwatch add host=8.8.8.8 interval=5s \
@@ -494,7 +494,7 @@ RouterOS tidak punya `standby track` bawaan; gunakan **Netwatch** untuk menurunk
 ```
 
 > [!WARNING]
-> **Selaraskan dengan root bridge STP**, sama seperti di Cisco — kalau tidak, trafik akan memutar lewat link antar-switch.
+> **Selaraskan dengan root bridge STP**, sama seperti di Cisco. Kalau tidak, trafik akan memutar lewat link antar-switch.
 
 ### Padanan istilah
 
@@ -507,21 +507,21 @@ RouterOS tidak punya `standby track` bawaan; gunakan **Netwatch** untuk menurunk
 | `standby 10 track 1 decrement 30` | Netwatch dengan skrip ubah priority |
 | `standby 10 authentication md5` | `authentication=ah password=X` |
 | `show standby brief` | `/interface vrrp print` / `monitor` |
-| HSRP / GLBP | ❌ tidak ada — gunakan VRRP |
+| HSRP / GLBP | Tidak ada; gunakan VRRP |
 
 ---
 
 ## 11. Ringkasan
 
-- FHRP memecahkan masalah **default gateway tunggal** dengan berbagi **IP virtual + MAC virtual**.
-- **HSRP** (Cisco, active/standby, **preempt default OFF**), **VRRP** (RFC 5798, master/backup, **preempt default ON**, protokol IP 112), **GLBP** (Cisco, load balancing bawaan lewat AVG/AVF).
-- Pemilihan: **priority tertinggi**, tie-break dengan **IP tertinggi**.
-- **Tracking adalah bagian terpenting** — tanpa itu, router dengan uplink mati tetap menjadi active dan menciptakan **black hole**.
+- FHRP memecahkan masalah default gateway tunggal dengan berbagi IP virtual + MAC virtual.
+- **HSRP** (Cisco, active/standby, preempt default OFF), **VRRP** (RFC 5798, master/backup, preempt default ON, protokol IP 112), **GLBP** (Cisco, load balancing bawaan lewat AVG/AVF).
+- Pemilihan: priority tertinggi, tie-break dengan IP tertinggi.
+- **Tracking adalah bagian terpenting.** Tanpa itu, router dengan uplink mati tetap menjadi active dan menciptakan black hole.
 - **Object tracking + IP SLA** mendeteksi kegagalan end-to-end, bukan hanya interface down.
 - **`preempt delay minimum`** mencegah router yang baru boot mengambil alih sebelum routing konvergen.
-- **Load balancing per-VLAN** adalah cara paling umum memakai kedua router; **selaraskan dengan STP root**.
-- **Split-brain (kedua Active)** berarti hello tidak sampai — periksa VLAN, ACL multicast, versi, dan autentikasi.
-- Alternatif modern: **anycast gateway** (EVPN), MLAG/vPC, stacking, routed access.
+- **Load balancing per-VLAN** adalah cara paling umum memakai kedua router; selaraskan dengan STP root.
+- **Split-brain (kedua Active)** berarti hello tidak sampai. Periksa VLAN, ACL multicast, versi, dan autentikasi.
+- Alternatif modern: anycast gateway (EVPN), MLAG/vPC, stacking, routed access.
 
 ---
 
@@ -538,29 +538,29 @@ RouterOS tidak punya `standby track` bawaan; gunakan **Netwatch** untuk menurunk
 <details>
 <summary>Jawaban</summary>
 
-1. Karena **default gateway pada host adalah konfigurasi statis** — satu alamat IP yang dimasukkan manual atau lewat DHCP. Host tidak menjalankan protokol routing, tidak mendengarkan pengumuman router, dan tidak punya mekanisme untuk mengetahui bahwa ada router lain yang sehat di segmen yang sama. Ketika gateway-nya mati, host akan terus mengirim paket ke MAC address gateway itu sampai entri ARP kedaluwarsa — dan bahkan setelah itu, ia tetap mencari alamat IP yang sama. (Pada IPv6, Router Advertisement memberi sebagian kemampuan ini, tetapi konvergensinya bergantung pada timer RA.)
+1. Karena default gateway pada host adalah konfigurasi statis: satu alamat IP yang dimasukkan manual atau lewat DHCP. Host tidak menjalankan protokol routing, tidak mendengarkan pengumuman router, dan tidak punya mekanisme untuk mengetahui bahwa ada router lain yang sehat di segmen yang sama. Ketika gateway-nya mati, host akan terus mengirim paket ke MAC address gateway itu sampai entri ARP kedaluwarsa, dan bahkan setelah itu ia tetap mencari alamat IP yang sama. (Pada IPv6, Router Advertisement memberi sebagian kemampuan ini, tetapi konvergensinya bergantung pada timer RA.)
 
-2. **Router-A tetap menjadi HSRP active** karena HSRP hanya memantau interface tempat ia dikonfigurasi (interface LAN/VLAN), bukan uplink. Semua trafik host mengalir ke Router-A, yang tidak punya jalan keluar — **black hole**. Router-B sehat tetapi menganggur.
-   **Perbaikan:** konfigurasikan **tracking**:
+2. **Router-A tetap menjadi HSRP active** karena HSRP hanya memantau interface tempat ia dikonfigurasi (interface LAN/VLAN), bukan uplink. Semua trafik host mengalir ke Router-A, yang tidak punya jalan keluar (black hole). Router-B sehat tetapi menganggur.
+   **Perbaikan:** konfigurasikan tracking:
    ```
    R-A(config-if)# standby 10 track gi0/0 30
    ```
-   Ketika gi0/0 down, priority turun dari 110 ke 80 — di bawah Router-B (100) — sehingga Router-B mengambil alih. **Router-B harus punya `preempt`** agar bisa melakukannya. Lebih baik lagi: pakai IP SLA + object tracking agar failover juga terjadi kalau internet tidak terjangkau meski interface tetap up.
+   Ketika gi0/0 down, priority turun dari 110 ke 80, di bawah Router-B (100), sehingga Router-B mengambil alih. Router-B harus punya `preempt` agar bisa melakukannya. Lebih baik lagi: pakai IP SLA + object tracking agar failover juga terjadi kalau internet tidak terjangkau meski interface tetap up.
 
-3. Karena **`preempt` tidak dikonfigurasi pada Router-A**. HSRP secara default **tidak** mengambil alih peran active dari router yang sedang memegangnya, meskipun priority-nya lebih tinggi — ini disengaja untuk menghindari gangguan berulang.
-   **Perbaikan:** `standby 10 preempt` pada Router-A. Tambahkan `preempt delay minimum 60` agar router yang baru boot menunggu routing protocol konvergen sebelum mengambil alih — tanpa delay, Router-A bisa menjadi active sementara ia belum punya rute, menciptakan outage singkat.
+3. Karena `preempt` tidak dikonfigurasi pada Router-A. HSRP secara default tidak mengambil alih peran active dari router yang sedang memegangnya, meskipun priority-nya lebih tinggi. Perilaku ini disengaja untuk menghindari gangguan berulang.
+   **Perbaikan:** `standby 10 preempt` pada Router-A. Tambahkan `preempt delay minimum 60` agar router yang baru boot menunggu routing protocol konvergen sebelum mengambil alih. Tanpa delay, Router-A bisa menjadi active sementara ia belum punya rute, sehingga terjadi outage singkat.
 
-4. Ini **split-brain** — kondisi berbahaya. Kedua router mengira dirinya satu-satunya yang aktif karena **hello HSRP tidak saling sampai**. Akibatnya keduanya menjawab ARP untuk IP virtual dengan MAC virtual yang sama, menyebabkan **MAC flapping** di switch dan trafik yang tidak konsisten.
-   **Periksa:** (a) apakah VLAN benar-benar melewatkan trafik antara kedua router (`show interfaces trunk`, apakah VLAN diizinkan di semua trunk di jalur); (b) apakah ada ACL yang memblokir multicast 224.0.0.102 (HSRPv2) atau UDP 1985; (c) apakah **versi HSRP sama** di kedua router (v1 dan v2 tidak interoperable); (d) apakah **autentikasi cocok** (key dan mode); (e) apakah nomor grup sama; (f) `debug standby packets` untuk melihat apakah hello benar-benar diterima.
+4. Ini **split-brain**, kondisi yang berbahaya. Kedua router mengira dirinya satu-satunya yang aktif karena hello HSRP tidak saling sampai. Akibatnya keduanya menjawab ARP untuk IP virtual dengan MAC virtual yang sama, sehingga terjadi MAC flapping di switch dan trafik menjadi tidak konsisten.
+   **Periksa:** (a) apakah VLAN benar-benar melewatkan trafik antara kedua router (`show interfaces trunk`, apakah VLAN diizinkan di semua trunk di jalur); (b) apakah ada ACL yang memblokir multicast 224.0.0.102 (HSRPv2) atau UDP 1985; (c) apakah versi HSRP sama di kedua router (v1 dan v2 tidak interoperable); (d) apakah autentikasi cocok (key dan mode); (e) apakah nomor grup sama; (f) `debug standby packets` untuk melihat apakah hello benar-benar diterima.
 
-5. **HSRP: preempt NONAKTIF secara default** — router dengan priority lebih tinggi tidak akan mengambil alih dari router yang sedang active; harus dikonfigurasi eksplisit dengan `standby X preempt`.
-   **VRRP: preempt AKTIF secara default** — master dengan priority tertinggi selalu mengambil alih begitu ia tersedia; untuk menonaktifkannya perlu `no vrrp X preempt`.
+5. **HSRP: preempt NONAKTIF secara default.** Router dengan priority lebih tinggi tidak akan mengambil alih dari router yang sedang active; harus dikonfigurasi eksplisit dengan `standby X preempt`.
+   **VRRP: preempt AKTIF secara default.** Master dengan priority tertinggi selalu mengambil alih begitu ia tersedia; untuk menonaktifkannya perlu `no vrrp X preempt`.
    Perbedaan ini penting saat migrasi antar-protokol atau saat mendiagnosis "kenapa router utama tidak kembali menjadi gateway".
 
-6. Karena kalau tidak selaras, **trafik akan memutar (tromboning)**. Contoh: HSRP active untuk VLAN 10 ada di Router-A, tetapi STP root untuk VLAN 10 ada di Router-B. Access switch mengirim frame ke MAC virtual gateway; STP memblokir uplink langsung ke Router-A dan hanya membuka jalur ke Router-B; frame naik ke Router-B, lalu harus menyeberang link antar-router ke Router-A (yang memegang peran active), baru diproses.
-   Akibatnya: bandwidth link antar-switch terbuang, latency bertambah, dan kapasitas efektif berkurang. **Aturan desain: STP root, HSRP/VRRP active, dan jalur routing utama untuk sebuah VLAN harus berada di perangkat yang sama.**
+6. Karena kalau tidak selaras, trafik akan memutar (tromboning). Contoh: HSRP active untuk VLAN 10 ada di Router-A, tetapi STP root untuk VLAN 10 ada di Router-B. Access switch mengirim frame ke MAC virtual gateway; STP memblokir uplink langsung ke Router-A dan hanya membuka jalur ke Router-B; frame naik ke Router-B, lalu harus menyeberang link antar-router ke Router-A (yang memegang peran active), baru diproses.
+   Akibatnya: bandwidth link antar-switch terbuang, latency bertambah, dan kapasitas efektif berkurang. Aturan desainnya: STP root, HSRP/VRRP active, dan jalur routing utama untuk sebuah VLAN harus berada di perangkat yang sama.
 
-7. Pilih **VRRP** ketika: (a) lingkungan **multi-vendor** — VRRP adalah standar IETF (RFC 5798) yang didukung Cisco, Juniper, Arista, HPE, MikroTik, dan lainnya, sedangkan HSRP hanya Cisco; (b) Anda ingin **preempt aktif secara default** tanpa konfigurasi tambahan; (c) Anda ingin **menghemat alamat IP** dengan memakai alamat fisik router sebagai virtual IP (IP address owner); (d) kebijakan organisasi mengharuskan protokol standar terbuka.
+7. Pilih **VRRP** ketika: (a) lingkungannya multi-vendor, karena VRRP adalah standar IETF (RFC 5798) yang didukung Cisco, Juniper, Arista, HPE, MikroTik, dan lainnya, sedangkan HSRP hanya Cisco; (b) Anda ingin preempt aktif secara default tanpa konfigurasi tambahan; (c) Anda ingin menghemat alamat IP dengan memakai alamat fisik router sebagai virtual IP (IP address owner); (d) kebijakan organisasi mengharuskan protokol standar terbuka.
    Pilih **HSRP** ketika lingkungan sepenuhnya Cisco dan Anda menginginkan integrasi erat dengan fitur Cisco lain, atau ketika sudah ada basis konfigurasi HSRP yang besar.
 
 </details>
@@ -569,7 +569,7 @@ RouterOS tidak punya `standby track` bawaan; gunakan **Netwatch** untuk menurunk
 
 ## 13. Sumber
 
-- RFC 5798 — VRRP Version 3 for IPv4 and IPv6
+- RFC 5798, VRRP Version 3 for IPv4 and IPv6
 - Cisco, *HSRP Configuration Guide* · *GLBP Configuration Guide*
 - Cisco CCNA 200-301 v1.1, topik 3.5 (purpose, functions, and concepts of first hop redundancy protocols)
 - Cisco, *Hot Standby Router Protocol Features and Functionality* (Document ID 9234)

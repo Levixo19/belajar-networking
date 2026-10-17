@@ -1,10 +1,10 @@
 # 14.4 Studi Kasus Troubleshooting Nyata
 
 > **Prasyarat:** seluruh Tahap 14, dan konsep dari tahap-tahap sebelumnya
-> **Tujuan:** Anda bisa menerapkan metodologi pada 15 skenario nyata — masing-masing menautkan gejala ke akar penyebab dengan penalaran lengkap.
+> **Tujuan:** Anda bisa menerapkan metodologi pada 15 skenario nyata; masing-masing menautkan gejala ke akar penyebab dengan penalaran lengkap.
 
 > > [!NOTE]
-> > **Cara memakai modul ini:** baca gejalanya, **berhenti dan pikirkan diagnosis Anda sendiri**, baru buka penyelesaiannya. Ini melatih pola pikir, bukan hafalan.
+> > **Cara memakai modul ini:** baca gejalanya, berhenti dan pikirkan diagnosis Anda sendiri, baru buka penyelesaiannya. Ini melatih pola pikir, bukan hafalan.
 
 ---
 
@@ -15,11 +15,11 @@
 <details>
 <summary>Diagnosis</summary>
 
-**Akar penyebab: Bufferbloat.** Buffer besar di modem/router ISP terisi penuh saat unduhan berjalan, sehingga semua paket (termasuk ping) mengantre di belakangnya. 0% loss justru karena buffer besar — paket ditunda, bukan dibuang.
+**Akar penyebab: Bufferbloat.** Buffer besar di modem/router ISP terisi penuh saat unduhan berjalan, sehingga semua paket (termasuk ping) mengantre di belakangnya. 0% loss justru karena buffer besar: paket ditunda, bukan dibuang.
 
-**Bukti:** latency melonjak **hanya saat ada beban**, dengan 0% loss. Speedtest hanya mengukur throughput, bukan latency di bawah beban.
+**Bukti:** latency melonjak hanya saat ada beban, dengan 0% loss. Speedtest hanya mengukur throughput, bukan latency di bawah beban.
 
-**Solusi:** Pasang AQM (**fq_codel** atau **CAKE**) di router yang Anda kendalikan, dan **shape ke ~90-95% kapasitas link** sehingga antrean terbentuk di router Anda (yang punya AQM), bukan di modem ISP.
+**Solusi:** Pasang AQM (fq_codel atau CAKE) di router yang Anda kendalikan, dan shape ke ~90-95% kapasitas link sehingga antrean terbentuk di router Anda (yang punya AQM), bukan di modem ISP.
 ```bash
 $ sudo tc qdisc replace dev eth0 root cake bandwidth 19Mbit
 ```
@@ -37,7 +37,7 @@ Di MikroTik: Queue dengan PCQ; di OpenWrt: paket SQM. Lihat `05-transport/04`.
 
 **Akar penyebab: MTU black hole.** Overhead tunnel VPN mengurangi MTU efektif. Paket kecil (ping, keystroke SSH) muat; paket besar (halaman web, transfer file) melebihi MTU dan dibuang, sementara ICMP "Fragmentation Needed" diblokir sehingga PMTUD gagal.
 
-**Bukti:** koneksi terbentuk (paket kecil), transfer besar macet — pola klasik MTU.
+**Bukti:** koneksi terbentuk (paket kecil), tetapi transfer besar macet. Ini pola klasik MTU.
 
 **Verifikasi:**
 ```bash
@@ -69,9 +69,9 @@ Lihat `04-network-layer/04`, `11-wan-vpn/02`.
 3. Server DHCP hidup dan pool belum habis? (`show ip dhcp pool`)
 4. DHCP relay (`ip helper-address`) dikonfigurasi jika server di subnet lain?
 5. DHCP snooping memblokir port?
-6. **PortFast aktif?** — tanpa PortFast, port butuh ~30 detik STP sebelum forwarding, dan DHCP timeout lebih dulu → APIPA.
+6. **PortFast aktif?** Tanpa PortFast, port butuh ~30 detik STP sebelum forwarding, dan DHCP timeout lebih dulu → APIPA.
 
-**Solusi:** bergantung temuan. Kalau intermiten setelah PC boot, curigai **PortFast** terlebih dahulu:
+**Solusi:** bergantung temuan. Kalau intermiten setelah PC boot, curigai PortFast terlebih dahulu:
 ```
 SW1(config-if)# spanning-tree portfast
 ```
@@ -87,7 +87,7 @@ Lihat `06-aplikasi/02`, `03-data-link/04`.
 <details>
 <summary>Diagnosis</summary>
 
-**Akar penyebab: DNS.** Konektivitas L1-L3 ke internet baik (ping IP berhasil); hanya resolusi nama yang gagal. **"It's always DNS."**
+**Akar penyebab: DNS.** Konektivitas L1-L3 ke internet baik (ping IP berhasil); hanya resolusi nama yang gagal. "It's always DNS."
 
 **Periksa:**
 ```bash
@@ -110,16 +110,16 @@ $ resolvectl status
 <details>
 <summary>Diagnosis</summary>
 
-**Akar penyebab: Duplex mismatch.** Satu sisi full duplex, sisi lain half duplex — biasanya karena satu sisi auto-negotiation dan sisi lain hard-coded.
+**Akar penyebab: Duplex mismatch.** Satu sisi full duplex dan sisi lain half duplex. Biasanya penyebabnya satu sisi memakai auto-negotiation sementara sisi lain hard-coded.
 
 **Bukti dari counter:**
-- Sisi **full duplex**: banyak **CRC/FCS errors**, **runts**.
-- Sisi **half duplex**: banyak **collisions**, terutama **late collisions**.
+- Sisi **full duplex**: banyak CRC/FCS errors, runts.
+- Sisi **half duplex**: banyak collisions, terutama late collisions.
 
 > [!WARNING]
 > **Late collision adalah tanda paling khas** duplex mismatch (atau kabel terlalu panjang).
 
-**Solusi:** set **kedua sisi** ke auto-negotiation, atau hard-code **identik** di kedua sisi. Untuk gigabit, auto wajib.
+**Solusi:** set kedua sisi ke auto-negotiation, atau hard-code identik di kedua sisi. Untuk gigabit, auto wajib.
 ```
 SW1(config-if)# speed auto
 SW1(config-if)# duplex auto
@@ -141,10 +141,10 @@ Lihat `03-data-link/01`, `02-layer-fisik/04`.
 **Bukti:** log `MACFLAP_NOTIF`, CPU 100%, semua lampu berkedip serempak, jaringan lumpuh.
 
 **Tindakan (urutan penting):**
-1. **Hentikan storm dulu** — akses lewat **console** (SSH tidak responsif).
-2. Identifikasi port dengan trafik ekstrem, **shutdown** port yang mencurigakan (biasanya yang baru dipasang).
+1. **Hentikan storm dulu.** Akses lewat console (SSH tidak responsif).
+2. Identifikasi port dengan trafik ekstrem, shutdown port yang mencurigakan (biasanya yang baru dipasang).
 3. Setelah pulih, investigasi: `show spanning-tree`, `show cdp neighbors`, periksa perubahan kabel.
-4. Perbaiki akar masalah, aktifkan **BPDU Guard** + **storm control** agar tidak terulang.
+4. Perbaiki akar masalah, aktifkan BPDU Guard + storm control agar tidak terulang.
 
 **Pencegahan:** PortFast + BPDU Guard di semua port access, storm control. Lihat `03-data-link/04`.
 </details>
@@ -162,11 +162,11 @@ Lihat `03-data-link/01`, `02-layer-fisik/04`.
 
 **Bukti:** ping (stateless ICMP) berhasil, tetapi TCP (stateful) putus setelah menambah jalur.
 
-**Verifikasi:** capture di kedua firewall — trafik pergi di satu, balasan di lain.
+**Verifikasi:** capture di kedua firewall. Trafik pergi terlihat di satu firewall, balasannya di firewall lain.
 
 **Solusi:**
-- Pastikan trafik **simetris** (perbaiki routing agar pergi dan balik lewat jalur yang sama), atau
-- Firewall cluster dengan **sinkronisasi state**, atau
+- Pastikan trafik simetris (perbaiki routing agar pergi dan balik lewat jalur yang sama), atau
+- Firewall cluster dengan sinkronisasi state, atau
 - Kecualikan jalur tersebut dari inspeksi stateful.
 
 Lihat `04-network-layer/05`, `09-nat-acl-firewall/03`.
@@ -189,7 +189,7 @@ Lihat `04-network-layer/05`, `09-nat-acl-firewall/03`.
 
 **Solusi:**
 - Perbesar pool (subnet lebih besar untuk tamu).
-- **Perpendek lease time** untuk jaringan tamu (mis. 1-2 jam) agar alamat cepat kembali.
+- Perpendek lease time untuk jaringan tamu (mis. 1-2 jam) agar alamat cepat kembali.
 - Periksa DHCP starvation (rate limit + DHCP snooping).
 
 Lihat `06-aplikasi/02`.
@@ -227,11 +227,11 @@ Lihat `10-wireless/04`.
 <details>
 <summary>Diagnosis</summary>
 
-**Akar penyebab: `Active` berarti TCP 179 gagal terbentuk** — nama yang menyesatkan.
+**Akar penyebab: `Active` berarti TCP 179 gagal terbentuk.** Namanya menyesatkan.
 
 **Periksa:**
-1. `ping <peer>` (dengan source yang benar) — apakah peer terjangkau?
-2. `telnet <peer> 179` — apakah TCP 179 terbuka?
+1. `ping <peer>` (dengan source yang benar): apakah peer terjangkau?
+2. `telnet <peer> 179`: apakah TCP 179 terbuka?
 3. ACL memblokir TCP 179?
 4. AS number benar di kedua sisi?
 5. Password BGP cocok? (kalau salah, flap antara IDLE/ACTIVE)
@@ -250,7 +250,7 @@ Lihat `10-wireless/04`.
 <details>
 <summary>Diagnosis</summary>
 
-**Akar penyebab: Port ephemeral habis.** Proxy membuat banyak koneksi keluar ke sedikit backend. Karena IP sumber, IP tujuan, dan port tujuan tetap, hanya port sumber yang bervariasi — dan itu habis (~28.000 di Linux default), diperparah socket TIME_WAIT.
+**Akar penyebab: Port ephemeral habis.** Proxy membuat banyak koneksi keluar ke sedikit backend. Karena IP sumber, IP tujuan, dan port tujuan tetap, hanya port sumber yang bervariasi. Port sumber itulah yang habis (~28.000 di Linux default), diperparah socket TIME_WAIT.
 
 **Bukti:** error `EADDRNOTAVAIL`, banyak socket TIME_WAIT (`ss -s`).
 
@@ -284,9 +284,9 @@ $ echo | openssl s_client -connect app.example.com:443 2>/dev/null \
 notAfter=... (tanggal lampau)
 ```
 
-**Kemungkinan lain:** kalau bukan kedaluwarsa, periksa apakah **jam sistem salah** ("not yet valid" = jam mundur), atau **intermediate tidak dikirim** (berhasil di browser desktop, gagal di mobile/curl).
+**Kemungkinan lain:** kalau bukan kedaluwarsa, periksa apakah jam sistem salah ("not yet valid" = jam mundur), atau intermediate tidak dikirim (berhasil di browser desktop, gagal di mobile/curl).
 
-**Solusi:** perbarui sertifikat. **Otomatisasi dengan ACME/Let's Encrypt** agar tidak terulang — sertifikat 90 hari memaksa otomasi. Pantau kedaluwarsa sertifikat (alert 14 hari sebelumnya). Lihat `06-aplikasi/04`.
+**Solusi:** perbarui sertifikat. Otomatisasi dengan ACME/Let's Encrypt agar tidak terulang, karena sertifikat 90 hari memaksa otomasi. Pantau kedaluwarsa sertifikat (alert 14 hari sebelumnya). Lihat `06-aplikasi/04`.
 </details>
 
 ---
@@ -301,11 +301,11 @@ notAfter=... (tanggal lampau)
 **Akar penyebab: VLAN 30 tidak dilewatkan di trunk, atau tidak ada di salah satu switch.**
 
 **Periksa:**
-1. `show interfaces trunk` — apakah VLAN 30 di "allowed" DAN "active"?
+1. `show interfaces trunk`: apakah VLAN 30 di "allowed" DAN "active"?
    - Di "allowed" tetapi tidak "active" → VLAN 30 belum dibuat di switch ini.
    - Tidak di "allowed" → `switchport trunk allowed vlan` tidak menyertakannya.
-2. `show vlan brief` di **kedua** switch — apakah VLAN 30 ada di keduanya?
-3. `show spanning-tree vlan 30` — apakah STP memblokir jalur?
+2. `show vlan brief` di kedua switch: apakah VLAN 30 ada di keduanya?
+3. `show spanning-tree vlan 30`: apakah STP memblokir jalur?
 4. Native VLAN mismatch?
 
 **Solusi:**
@@ -314,7 +314,7 @@ SW1(config)# vlan 30
 SW1(config-if)# switchport trunk allowed vlan add 30
 ```
 > [!WARNING]
-> Ingat: `switchport trunk allowed vlan 30` **menimpa** daftar — pakai `add`. Lihat `03-data-link/03`.
+> Ingat: `switchport trunk allowed vlan 30` menimpa daftar, jadi pakai `add`. Lihat `03-data-link/03`.
 > </details>
 
 ---
@@ -326,49 +326,49 @@ SW1(config-if)# switchport trunk allowed vlan add 30
 <details>
 <summary>Diagnosis</summary>
 
-**Akar penyebab: bisa beberapa hal — perlu membedakan.**
+**Akar penyebab: bisa beberapa hal, jadi perlu dibedakan.**
 
 **Periksa:**
-1. **Latency di bawah beban** (`mtr` saat aplikasi jalan) — kalau tinggi → bufferbloat/queuing.
-2. **Packet loss** (`mtr`, `iperf3 -u`) — loss kecil (0,1%) sudah merusak TCP throughput.
-3. **Microburst** — utilisasi rata-rata 60% tetapi `output drops` naik → lonjakan singkat melebihi kapasitas.
-4. **Window TCP vs BDP** — link long-fat, window kecil → satu koneksi tidak bisa mengisi pipa.
-5. **Aplikasi chatty** — banyak round-trip kecil, latency-bound bukan bandwidth-bound.
+1. **Latency di bawah beban** (`mtr` saat aplikasi jalan): kalau tinggi → bufferbloat/queuing.
+2. **Packet loss** (`mtr`, `iperf3 -u`): loss kecil (0,1%) sudah merusak TCP throughput.
+3. **Microburst**: utilisasi rata-rata 60% tetapi `output drops` naik → lonjakan singkat melebihi kapasitas.
+4. **Window TCP vs BDP**: link long-fat, window kecil → satu koneksi tidak bisa mengisi pipa.
+5. **Aplikasi chatty**: banyak round-trip kecil, latency-bound bukan bandwidth-bound.
 
-**Bukti kunci:** utilisasi 60% dengan aplikasi lambat sering berarti masalahnya **bukan bandwidth** — melainkan latency, loss, microburst, atau window. Menambah bandwidth tidak akan membantu.
+**Bukti kunci:** utilisasi 60% dengan aplikasi lambat sering berarti masalahnya ada di latency, loss, microburst, atau window, bukan bandwidth. Menambah bandwidth tidak akan membantu.
 
-**Solusi:** bergantung temuan — QoS (bufferbloat/microburst), perbaiki loss, tuning window TCP (BDP), atau optimasi aplikasi. Lihat `05-transport/04`, `11-wan-vpn/03`.
+**Solusi:** bergantung temuan: QoS (bufferbloat/microburst), perbaiki loss, tuning window TCP (BDP), atau optimasi aplikasi. Lihat `05-transport/04`, `11-wan-vpn/03`.
 </details>
 
 ---
 
 ## Kasus 15: "Internet Lambat" Tanpa Gejala Jelas
 
-**Gejala:** Pengguna mengeluh "internet lambat" tetapi semua terlihat normal — utilisasi rendah, tidak ada error, ping bagus.
+**Gejala:** Pengguna mengeluh "internet lambat" tetapi semua terlihat normal: utilisasi rendah, tidak ada error, ping bagus.
 
 <details>
 <summary>Diagnosis</summary>
 
-**Akar penyebab: bisa banyak hal — pendekatan sistematis diperlukan.** Ini kasus tersulit karena gejalanya samar.
+**Akar penyebab: bisa banyak hal, jadi perlu pendekatan sistematis.** Ini kasus tersulit karena gejalanya samar.
 
 **Pendekatan:**
-1. **Reproduksi** — apa persisnya "lambat"? Membuka halaman? Download? Aplikasi tertentu? Semua atau sebagian?
-2. **Scope** — satu pengguna atau semua? Satu aplikasi atau semua? Kapan mulai?
-3. **Ukur objektif** — bukan "terasa lambat" tetapi angka: `curl -w` untuk waktu per fase (DNS, connect, TLS, TTFB).
+1. **Reproduksi**: apa persisnya "lambat"? Membuka halaman? Download? Aplikasi tertentu? Semua atau sebagian?
+2. **Scope**: satu pengguna atau semua? Satu aplikasi atau semua? Kapan mulai?
+3. **Ukur objektif** dengan angka, bukan "terasa lambat": `curl -w` untuk waktu per fase (DNS, connect, TLS, TTFB).
    ```bash
    $ curl -w "dns:%{time_namelookup} connect:%{time_connect} tls:%{time_appconnect} ttfb:%{time_starttransfer} total:%{time_total}\n" -o /dev/null -s https://situs
    ```
-4. **Isolasi fase** — mana yang lambat?
+4. **Isolasi fase**: mana yang lambat?
    - `dns` tinggi → masalah DNS.
    - `connect` tinggi → latency jaringan/routing.
    - `tls` tinggi → masalah TLS/OCSP.
    - `ttfb` tinggi → server lambat memproses.
    - `total` tinggi tetapi lain rendah → transfer/bandwidth.
-5. **Bufferbloat** — ping saat ada beban lain.
-6. **Wi-Fi** — kalau via Wi-Fi, cek SNR, kanal, jumlah klien.
-7. **Baseline** — bandingkan dengan data historis (monitoring).
+5. **Bufferbloat**: ping saat ada beban lain.
+6. **Wi-Fi**: kalau via Wi-Fi, cek SNR, kanal, jumlah klien.
+7. **Baseline**: bandingkan dengan data historis (monitoring).
 
-**Pelajaran:** ubah keluhan subjektif menjadi **angka objektif per fase**, lalu isolasi. Lihat `14-monitoring-troubleshooting/01`, `02`.
+**Pelajaran:** ubah keluhan subjektif menjadi angka objektif per fase, lalu isolasi. Lihat `14-monitoring-troubleshooting/01`, `02`.
 </details>
 
 ---
@@ -418,12 +418,12 @@ Setelah mengerjakan semua kasus, perhatikan pola yang berulang:
 
 ## Ringkasan
 
-- Troubleshooting nyata adalah **menautkan gejala ke akar penyebab dengan penalaran**, bukan hafalan.
-- Pola berulang: **DNS**, **MTU black hole**, **bufferbloat/queuing (bukan bandwidth)**, **layer 2 fatal**, **asymmetric routing + firewall stateful**, **"up tetapi lambat"**, **habisnya sumber daya**, **otomasi yang terlupa**.
-- **Selalu tentukan scope dulu** dan tanyakan **"apa yang berubah?"**.
+- Troubleshooting nyata adalah menautkan gejala ke akar penyebab dengan penalaran, bukan hafalan.
+- Pola berulang: DNS, MTU black hole, bufferbloat/queuing (bukan bandwidth), layer 2 fatal, asymmetric routing + firewall stateful, "up tetapi lambat", habisnya sumber daya, otomasi yang terlupa.
+- **Selalu tentukan scope dulu** dan tanyakan "apa yang berubah?".
 - **Ubah keluhan subjektif menjadi angka objektif** (`curl -w`, `mtr`, `iperf3`) lalu isolasi per fase/lapisan.
-- **"Up" ≠ sehat** — periksa kualitas (latency, loss, jitter) di bawah beban, bukan hanya status.
-- Setelah selesai: **RCA blameless** dan tindakan preventif agar tidak terulang.
+- **"Up" ≠ sehat**: periksa kualitas (latency, loss, jitter) di bawah beban, bukan hanya status.
+- Setelah selesai: RCA blameless dan tindakan preventif agar tidak terulang.
 
 ---
 
@@ -440,15 +440,15 @@ Untuk setiap gejala, tentukan diagnosis dan langkah pertama Anda:
 <details>
 <summary>Jawaban</summary>
 
-1. **Firewall memblokir port 5432, atau layanan database tidak listening/bind salah.** Ping berhasil (L3 OK), tetapi port timeout. Bedakan: "timeout" berarti diblokir (firewall dengan DROP) atau tidak ada jalur balik; "refused" berarti host dijangkau tetapi tidak ada aplikasi. Langkah pertama: `nc -zv <db> 5432` untuk konfirmasi, lalu periksa (a) firewall antara aplikasi dan database (security group, iptables/nftables, firewall zona); (b) apakah database bind ke `0.0.0.0` atau hanya `127.0.0.1` (`ss -tlnp` di server DB — kesalahan sangat umum); (c) apakah layanan berjalan; (d) asymmetric routing jika ada beberapa jalur.
+1. **Firewall memblokir port 5432, atau layanan database tidak listening/bind salah.** Ping berhasil (L3 OK), tetapi port timeout. Bedakan: "timeout" berarti diblokir (firewall dengan DROP) atau tidak ada jalur balik; "refused" berarti host dijangkau tetapi tidak ada aplikasi. Langkah pertama: `nc -zv <db> 5432` untuk konfirmasi, lalu periksa (a) firewall antara aplikasi dan database (security group, iptables/nftables, firewall zona); (b) apakah database bind ke `0.0.0.0` atau hanya `127.0.0.1` (`ss -tlnp` di server DB; ini kesalahan sangat umum); (c) apakah layanan berjalan; (d) asymmetric routing jika ada beberapa jalur.
 
-2. **Kemungkinan besar perubahan konfigurasi/default akibat update firmware** — "apa yang berubah?" langsung menunjuk update. Update sering mereset default (mis. VLAN, spanning-tree mode, atau perilaku port). Langkah pertama: bandingkan konfigurasi sebelum dan sesudah (`show archive config differences` atau diff dari backup), fokus pada server yang terpengaruh — kemungkinan mereka berbagi karakteristik (VLAN sama, fitur sama, port type sama). Periksa VLAN, trunk allowed VLAN, spanning-tree (mungkin port di-blok), MTU, dan apakah ada fitur yang perilakunya berubah. Kalau kritis, pertimbangkan rollback firmware sambil investigasi. Ini menegaskan pentingnya backup konfigurasi dan change management.
+2. **Kemungkinan besar perubahan konfigurasi/default akibat update firmware.** Pertanyaan "apa yang berubah?" langsung menunjuk update. Update sering mereset default (mis. VLAN, spanning-tree mode, atau perilaku port). Langkah pertama: bandingkan konfigurasi sebelum dan sesudah (`show archive config differences` atau diff dari backup), fokus pada server yang terpengaruh, karena kemungkinan mereka berbagi karakteristik (VLAN sama, fitur sama, port type sama). Periksa VLAN, trunk allowed VLAN, spanning-tree (mungkin port di-blok), MTU, dan apakah ada fitur yang perilakunya berubah. Kalau kritis, pertimbangkan rollback firmware sambil investigasi. Kasus ini juga menunjukkan gunanya backup konfigurasi dan change management.
 
-3. **Congestion/kapasitas saat jam sibuk** (jam makan siang = puncak pemakaian). VoIP sensitif terhadap latency, jitter, dan loss; saat link penuh, ketiganya memburuk. Langkah pertama: **ukur latency, jitter, dan loss ke tujuan VoIP saat jam makan siang** (`mtr`, atau IP SLA jitter probe), bandingkan dengan jam sepi. Periksa utilisasi link WAN pada jam itu. Kemungkinan: (a) link jenuh saat puncak → butuh **QoS** untuk memprioritaskan voice (LLQ/EF), atau bandwidth lebih; (b) bufferbloat saat beban → AQM; (c) untuk Wi-Fi: kepadatan klien saat istirahat. Solusi paling mungkin: terapkan QoS agar voice diprioritaskan saat congestion.
+3. **Congestion/kapasitas saat jam sibuk** (jam makan siang = puncak pemakaian). VoIP sensitif terhadap latency, jitter, dan loss; saat link penuh, ketiganya memburuk. Langkah pertama: ukur latency, jitter, dan loss ke tujuan VoIP saat jam makan siang (`mtr`, atau IP SLA jitter probe), bandingkan dengan jam sepi. Periksa utilisasi link WAN pada jam itu. Kemungkinan: (a) link jenuh saat puncak → butuh QoS untuk memprioritaskan voice (LLQ/EF), atau bandwidth lebih; (b) bufferbloat saat beban → AQM; (c) untuk Wi-Fi: kepadatan klien saat istirahat. Solusi paling mungkin: terapkan QoS agar voice diprioritaskan saat congestion.
 
-4. **Masalah di perimeter: NAT/port forwarding, firewall ingress, atau DNS publik.** Bisa dari dalam (langsung ke server internal) tetapi tidak dari luar. Langkah pertama: tentukan mana yang gagal — (a) **DNS publik** salah/tidak menunjuk ke IP publik yang benar (`dig @8.8.8.8 www.perusahaan.com` dari luar); (b) **port forwarding/NAT** tidak dikonfigurasi atau salah (dari luar: `nc -zv <ip-publik> 443`); (c) **firewall perimeter** memblokir; (d) ISP memblokir port; (e) sertifikat (kalau HTTPS gagal tetapi TCP tersambung). Uji dari luar (VPS/ponsel dengan data seluler) dengan `curl -v` untuk melihat di fase mana gagal. Sering: hairpin NAT membuat "dari dalam bisa" padahal "dari luar" sebenarnya juga rusak — uji betul-betul dari luar.
+4. **Masalah di perimeter: NAT/port forwarding, firewall ingress, atau DNS publik.** Bisa dari dalam (langsung ke server internal) tetapi tidak dari luar. Langkah pertama: tentukan mana yang gagal, apakah (a) DNS publik salah/tidak menunjuk ke IP publik yang benar (`dig @8.8.8.8 www.perusahaan.com` dari luar); (b) port forwarding/NAT tidak dikonfigurasi atau salah (dari luar: `nc -zv <ip-publik> 443`); (c) firewall perimeter memblokir; (d) ISP memblokir port; atau (e) sertifikat (kalau HTTPS gagal tetapi TCP tersambung). Uji dari luar (VPS/ponsel dengan data seluler) dengan `curl -v` untuk melihat di fase mana gagal. Hairpin NAT sering membuat "dari dalam bisa" padahal "dari luar" sebenarnya juga rusak, jadi uji betul-betul dari luar.
 
-5. **Masalah spesifik jalur internasional: latency tinggi + window TCP, atau packet loss di jalur panjang.** Cepat ke server lokal (RTT rendah), lambat ke internasional (RTT tinggi). Langkah pertama: `mtr` ke server internasional untuk melihat **latency dan loss per hop** — di mana degradasi mulai (jalur internasional sering punya loss di titik peering/transit). Lalu: (a) **BDP vs window TCP** — RTT tinggi (mis. 200 ms) dengan window kecil membatasi satu koneksi TCP; uji dengan `iperf3 -P 8` (multi-stream) — kalau multi-stream cepat, ini masalah window/BDP satu koneksi; solusi: window scaling, tuning buffer, atau transfer paralel. (b) **Packet loss** di jalur internasional — loss 0,1% saja memotong throughput TCP drastis pada RTT tinggi. (c) Pertimbangkan **CDN** untuk konten internasional — memindahkan data lebih dekat. Ini contoh klasik di mana "lambat" bukan tentang bandwidth lokal Anda, melainkan fisika jarak + perilaku TCP.
+5. **Masalah spesifik jalur internasional: latency tinggi + window TCP, atau packet loss di jalur panjang.** Cepat ke server lokal (RTT rendah), lambat ke internasional (RTT tinggi). Langkah pertama: `mtr` ke server internasional untuk melihat latency dan loss per hop, yaitu di mana degradasi mulai (jalur internasional sering punya loss di titik peering/transit). Lalu: (a) **BDP vs window TCP**: RTT tinggi (mis. 200 ms) dengan window kecil membatasi satu koneksi TCP. Uji dengan `iperf3 -P 8` (multi-stream); kalau multi-stream cepat, ini masalah window/BDP satu koneksi. Solusinya window scaling, tuning buffer, atau transfer paralel. (b) **Packet loss** di jalur internasional: loss 0,1% saja memotong throughput TCP drastis pada RTT tinggi. (c) Pertimbangkan **CDN** untuk konten internasional, yang memindahkan data lebih dekat. Ini contoh klasik ketika "lambat" disebabkan fisika jarak + perilaku TCP, bukan bandwidth lokal Anda.
 
 </details>
 
@@ -457,9 +457,9 @@ Untuk setiap gejala, tentukan diagnosis dan langkah pertama Anda:
 ## Sumber
 
 - Semua modul yang dirujuk dalam kasus (tautan di masing-masing)
-- CompTIA Network+ N10-009, Domain 5.0 — skenario troubleshooting
-- Google SRE Book — studi kasus troubleshooting
-- `referensi/soal-latihan.md` di repositori ini — lebih banyak skenario
+- CompTIA Network+ N10-009, Domain 5.0: skenario troubleshooting
+- Google SRE Book: studi kasus troubleshooting
+- `referensi/soal-latihan.md` di repositori ini, untuk lebih banyak skenario
 
 ---
 

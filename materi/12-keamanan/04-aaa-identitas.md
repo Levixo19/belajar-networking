@@ -14,7 +14,7 @@
 | **Accounting** | **Apa yang Anda lakukan?** | Log perintah, durasi sesi, byte terpakai |
 
 > [!WARNING]
-> **Ketiganya berbeda dan sering tertukar.** Autentikasi berhasil tidak berarti otorisasi diberikan — pengguna bisa terautentikasi tetapi tidak berhak melakukan apa pun.
+> **Ketiganya berbeda dan sering tertukar.** Autentikasi berhasil tidak berarti otorisasi diberikan: pengguna bisa terautentikasi tetapi tidak berhak melakukan apa pun.
 
 ---
 
@@ -31,7 +31,7 @@
 **MFA** (*Multi-Factor Authentication*) memerlukan **minimal dua faktor BERBEDA**.
 
 > [!WARNING]
-> **Password + PIN BUKAN MFA** — keduanya "something you know". Yang benar: password (know) + kode dari ponsel (have).
+> **Password + PIN BUKAN MFA**, karena keduanya "something you know". Yang benar: password (know) + kode dari ponsel (have).
 
 ### Kekuatan metode MFA
 
@@ -40,16 +40,16 @@
 | **SMS OTP** | Lemah (1/5) | SIM swap, SS7 interception, phishing |
 | **Email OTP** | Lemah (1/5) | Email bisa diretas |
 | **TOTP** (Google Auth, Authy) | Baik (3/5) | Phishing real-time (penyerang meneruskan kode) |
-| **Push notification** | Baik (3/5) | **MFA fatigue** — pengguna menyetujui karena lelah |
+| **Push notification** | Baik (3/5) | **MFA fatigue**: pengguna menyetujui karena lelah |
 | **Push + number matching** | 4/5 | Jauh lebih baik |
 | **FIDO2 / WebAuthn / Passkey** | **Terbaik** (5/5) | **Tahan phishing secara desain** |
 | **Sertifikat klien** | 5/5 | Butuh PKI dan manajemen |
 
 > [!TIP]
-> **FIDO2/passkey tahan phishing karena terikat pada domain.** Kunci untuk `bank.com` **tidak akan** dipakai di `bank-verify.com` — browser menolaknya secara otomatis. Ini melindungi bahkan pengguna yang tertipu sepenuhnya.
+> **FIDO2/passkey tahan phishing karena terikat pada domain.** Kunci untuk `bank.com` tidak akan dipakai di `bank-verify.com` karena browser menolaknya secara otomatis. Ini melindungi bahkan pengguna yang tertipu sepenuhnya.
 
 > [!WARNING]
-> **MFA fatigue attack:** penyerang yang sudah punya password membanjiri pengguna dengan prompt push berulang-ulang (bahkan tengah malam) sampai pengguna menyetujuinya karena kesal atau mengira ada kesalahan sistem. **Number matching** memaksa pengguna mengetikkan angka yang ditampilkan di layar login — sehingga persetujuan tidak bisa dilakukan tanpa sadar.
+> **MFA fatigue attack:** penyerang yang sudah punya password membanjiri pengguna dengan prompt push berulang-ulang (bahkan tengah malam) sampai pengguna menyetujuinya karena kesal atau mengira ada kesalahan sistem. **Number matching** memaksa pengguna mengetikkan angka yang ditampilkan di layar login, sehingga persetujuan tidak bisa dilakukan tanpa sadar.
 
 ---
 
@@ -73,7 +73,7 @@
 ```
 
 > [!WARNING]
-> **Ini perubahan besar dari praktik lama.** NIST **tidak lagi merekomendasikan** rotasi password berkala dan aturan komposisi, karena penelitian menunjukkan keduanya **memperburuk** keamanan:
+> **Ini perubahan besar dari praktik lama.** NIST tidak lagi merekomendasikan rotasi password berkala dan aturan komposisi, karena penelitian menunjukkan keduanya memperburuk keamanan:
 
 ```
 Rotasi 90 hari  → pengguna membuat pola: Password1! → Password2! → Password3!
@@ -83,7 +83,7 @@ Aturan rumit    → pengguna membuat: P@ssw0rd! (mudah ditebak, sulit diingat)
 ```
 
 > [!TIP]
-> **Yang benar-benar efektif:** panjang minimum, pemeriksaan terhadap daftar bocor, **MFA**, dan **password manager**. Rotasi hanya dilakukan **saat ada indikasi kompromi**.
+> **Yang efektif:** panjang minimum, pemeriksaan terhadap daftar bocor, MFA, dan password manager. Rotasi hanya dilakukan saat ada indikasi kompromi.
 
 ### Alternatif password
 
@@ -107,8 +107,8 @@ Dua protokol AAA utama untuk perangkat jaringan.
 | Transport | **UDP** 1812/1813 | **TCP** 49 |
 | Enkripsi | **Hanya password** | **SELURUH payload** |
 | AAA | Auth+Authz **digabung** | Auth, Authz, Acct **TERPISAH** |
-| Command authorization | ❌ Terbatas | ✅ **Per-perintah** |
-| Multi-vendor | ✅ **Universal** | Terutama Cisco |
+| Command authorization | Terbatas | **Per-perintah** |
+| Multi-vendor | **Universal** | Terutama Cisco |
 | Untuk | **Akses jaringan** (802.1X, VPN, Wi-Fi) | **Administrasi perangkat** |
 
 > [!TIP]
@@ -119,7 +119,7 @@ RADIUS  → autentikasi pengguna akhir (802.1X, VPN, Wi-Fi)
 ```
 
 > [!WARNING]
-> **RADIUS hanya mengenkripsi field password** — username, atribut, dan hasil otorisasi dikirim **plaintext**. Siapa pun yang menyadap trafik RADIUS bisa melihat siapa login ke mana. **RadSec** (RADIUS over TLS, RFC 6614) memperbaikinya.
+> **RADIUS hanya mengenkripsi field password.** Username, atribut, dan hasil otorisasi dikirim plaintext. Siapa pun yang menyadap trafik RADIUS bisa melihat siapa login ke mana. **RadSec** (RADIUS over TLS, RFC 6614) memperbaikinya.
 
 > [!WARNING]
 > **TACACS+ mengenkripsi seluruh payload**, tetapi memakai algoritma lama berbasis MD5 yang tidak lagi dianggap kuat. Tetap jauh lebih baik daripada RADIUS plaintext.
@@ -165,7 +165,7 @@ line vty 0 15
 ```
 
 > [!WARNING]
-> **`local` di akhir baris `aaa authentication` adalah penyelamat.** Kalau semua server TACACS+ mati dan tidak ada fallback, **Anda tidak bisa login ke perangkat sama sekali** — outage manajemen total. Selalu sediakan akun lokal darurat dengan password kuat yang disimpan di brankas/password manager.
+> **`local` di akhir baris `aaa authentication` adalah penyelamat.** Kalau semua server TACACS+ mati dan tidak ada fallback, Anda tidak bisa login ke perangkat sama sekali. Ini outage manajemen total. Selalu sediakan akun lokal darurat dengan password kuat yang disimpan di brankas/password manager.
 
 ### Konfigurasi Cisco: RADIUS untuk 802.1X
 
@@ -246,7 +246,7 @@ enable secret level 5 RahasiaLevel5
 ```
 
 > [!WARNING]
-> **Privilege level bersifat kumulatif dan kasar** — level 5 mencakup semua level 1. Sulit membuat peran yang presisi.
+> **Privilege level bersifat kumulatif dan kasar:** level 5 mencakup semua level 1, sehingga sulit membuat peran yang presisi.
 
 ### Role-Based CLI (Parser View): lebih baik
 
@@ -266,7 +266,7 @@ username noc-operator view NOC secret RahasiaKuat
 ```
 
 > [!TIP]
-> **Untuk kontrol yang benar-benar presisi, gunakan TACACS+ command authorization** — setiap perintah diverifikasi ke server, sehingga kebijakan dikelola terpusat dan tidak perlu mengonfigurasi setiap perangkat.
+> **Untuk kontrol yang benar-benar presisi, gunakan TACACS+ command authorization.** Setiap perintah diverifikasi ke server, sehingga kebijakan dikelola terpusat dan Anda tidak perlu mengonfigurasi setiap perangkat.
 
 ---
 
@@ -346,7 +346,7 @@ username admin algorithm-type scrypt secret RahasiaKuat
 ```
 
 > [!WARNING]
-> **`service password-encryption` menghasilkan "type 7" yang BUKAN enkripsi** — hanya obfuscation yang dapat dipecahkan dalam hitungan detik oleh alat online mana pun. Selalu gunakan `secret` (type 5/8/9), bukan `password`.
+> **`service password-encryption` menghasilkan "type 7" yang BUKAN enkripsi**, melainkan hanya obfuscation yang dapat dipecahkan dalam hitungan detik oleh alat online mana pun. Selalu gunakan `secret` (type 5/8/9), bukan `password`.
 
 ```
 # MikroTik — password disimpan terenkripsi otomatis
@@ -366,7 +366,7 @@ Prosedur:
 ```
 
 > [!TIP]
-> **Break-glass account adalah kebutuhan operasional, bukan kelemahan** — asalkan dikelola dengan benar. Tanpa itu, kegagalan AAA server berarti Anda tidak bisa memperbaiki jaringan Anda sendiri.
+> **Break-glass account adalah kebutuhan operasional, bukan kelemahan**, asalkan dikelola dengan benar. Tanpa itu, kegagalan AAA server berarti Anda tidak bisa memperbaiki jaringan Anda sendiri.
 
 ---
 
@@ -385,7 +385,7 @@ Prosedur:
 | **SAML 2.0** | SSO web enterprise | XML-based, matang |
 | **OAuth 2.0** | **Otorisasi** (delegasi akses) | Bukan autentikasi! |
 | **OIDC** (OpenID Connect) | **Autentikasi** di atas OAuth 2.0 | Standar modern |
-| **Kerberos** | Windows/AD | ⚠️ Sensitif waktu (toleransi 5 menit) |
+| **Kerberos** | Windows/AD | Sensitif waktu (toleransi 5 menit) |
 | **LDAP** | Direktori pengguna | Sumber identitas |
 
 > [!WARNING]
@@ -407,7 +407,7 @@ Prosedur:
 
 ## 9. Privileged Access Management
 
-Untuk akun dengan hak tinggi, kontrol tambahan diperlukan.
+Akun dengan hak tinggi memerlukan kontrol tambahan.
 
 ```
 ✅ Bastion host / jump server — satu-satunya jalan ke perangkat jaringan
@@ -454,12 +454,12 @@ test aaa group TACACS-GROUP user password legacy
 | Gejala | Penyebab |
 |---|---|
 | Login gagal, semua pengguna | AAA server tidak terjangkau; shared secret salah; **tidak ada fallback lokal** |
-| Login berhasil tetapi tidak bisa apa-apa | **Otorisasi** gagal — atribut/privilege tidak dikirim |
+| Login berhasil tetapi tidak bisa apa-apa | **Otorisasi** gagal: atribut/privilege tidak dikirim |
 | Login lambat (timeout lama) | Server pertama mati; kurangi timeout dan pakai `deadtime` |
 | Sebagian pengguna gagal | Grup/atribut salah di server; sinkronisasi LDAP bermasalah |
-| Terkunci dari perangkat | Tidak ada akun lokal fallback ⚠️ |
+| Terkunci dari perangkat | Tidak ada akun lokal fallback |
 | Accounting tidak tercatat | Konfigurasi accounting kurang; port 1813 diblokir |
-| Kerberos/AD gagal | **Selisih waktu > 5 menit** — periksa NTP |
+| Kerberos/AD gagal | **Selisih waktu > 5 menit**; periksa NTP |
 
 > [!WARNING]
 > **Selalu uji `test aaa` sebelum menerapkan konfigurasi AAA**, dan **selalu buka sesi kedua** sebelum menutup yang pertama.
@@ -474,17 +474,17 @@ User was successfully authenticated.
 
 ## 11. Ringkasan
 
-- **AAA**: Authentication (siapa), Authorization (boleh apa), Accounting (melakukan apa) — ketiganya berbeda.
+- **AAA**: Authentication (siapa), Authorization (boleh apa), Accounting (melakukan apa). Ketiganya berbeda.
 - **MFA butuh dua faktor BERBEDA.** Password + PIN bukan MFA.
 - Kekuatan MFA: SMS/email (lemah) < TOTP/push < **push + number matching** < **FIDO2/passkey (tahan phishing)**.
 - **MFA fatigue** diatasi dengan number matching.
 - **NIST SP 800-63B: JANGAN paksa rotasi berkala dan aturan komposisi rumit.** Yang efektif: panjang ≥12, cek daftar bocor, MFA, password manager.
 - **RADIUS** (UDP 1812/1813, hanya password terenkripsi, auth+authz digabung) untuk **akses jaringan**; **TACACS+** (TCP 49, seluruh payload terenkripsi, AAA terpisah, command authorization) untuk **administrasi perangkat**.
-- **SELALU sediakan fallback lokal** (`... group TACACS-GROUP local`) dan **break-glass account** — tanpa itu, AAA server mati = tidak bisa login sama sekali.
-- **`service password-encryption` (type 7) bukan enkripsi** — pakai `secret` dengan type 8/9 (scrypt/PBKDF2).
+- **SELALU sediakan fallback lokal** (`... group TACACS-GROUP local`) dan **break-glass account**. Tanpa itu, AAA server mati = tidak bisa login sama sekali.
+- **`service password-encryption` (type 7) bukan enkripsi.** Pakai `secret` dengan type 8/9 (scrypt/PBKDF2).
 - **802.1X + RADIUS** memberi VLAN dinamis, dACL, dan audit trail per pengguna. **CoA** mengubah sesi yang berjalan.
-- **OAuth 2.0 adalah otorisasi, bukan autentikasi** — gunakan **OIDC** untuk login.
-- **Kerberos sensitif waktu** (toleransi 5 menit) — periksa NTP saat autentikasi domain gagal.
+- **OAuth 2.0 adalah otorisasi, bukan autentikasi.** Gunakan **OIDC** untuk login.
+- **Kerberos sensitif waktu** (toleransi 5 menit), jadi periksa NTP saat autentikasi domain gagal.
 - **Admin tidak boleh memakai akun istimewa untuk email/browsing.**
 
 ---
@@ -504,37 +504,37 @@ User was successfully authenticated.
 <summary>Jawaban</summary>
 
 1. Skenario: seorang teknisi NOC login ke router untuk memeriksa masalah.
-   - **Authentication**: ia memasukkan username `budi` dan password (+ kode MFA); server memverifikasi bahwa ia benar-benar Budi. Hasilnya: **diterima atau ditolak**.
-   - **Authorization**: setelah terautentikasi, sistem menentukan **apa yang boleh ia lakukan** — misalnya ia berada di grup NOC sehingga hanya boleh menjalankan perintah `show` dan `ping`, tetapi **tidak** boleh masuk mode konfigurasi. Setiap perintah bisa diverifikasi ke server (TACACS+ command authorization).
-   - **Accounting**: setiap perintah yang ia jalankan, waktu login/logout, dan durasi sesi **dicatat** ke server — sehingga ada jejak audit tentang siapa melakukan apa dan kapan.
+   - **Authentication**: ia memasukkan username `budi` dan password (+ kode MFA); server memverifikasi bahwa ia benar-benar Budi. Hasilnya: diterima atau ditolak.
+   - **Authorization**: setelah terautentikasi, sistem menentukan apa yang boleh ia lakukan. Misalnya, ia berada di grup NOC sehingga hanya boleh menjalankan perintah `show` dan `ping`, tetapi tidak boleh masuk mode konfigurasi. Setiap perintah bisa diverifikasi ke server (TACACS+ command authorization).
+   - **Accounting**: setiap perintah yang ia jalankan, waktu login/logout, dan durasi sesi dicatat ke server, sehingga ada jejak audit tentang siapa melakukan apa dan kapan.
 
-2. Karena **MFA mensyaratkan faktor dari KATEGORI YANG BERBEDA**. Password dan PIN keduanya adalah **"something you know"** — keduanya adalah rahasia yang diingat pengguna. Penyerang yang berhasil melakukan phishing, keylogging, atau menemukan catatan pengguna kemungkinan besar mendapat **keduanya sekaligus**, sehingga tidak ada perlindungan tambahan yang berarti.
+2. Karena **MFA mensyaratkan faktor dari KATEGORI YANG BERBEDA**. Password dan PIN keduanya adalah **"something you know"**, yaitu rahasia yang diingat pengguna. Penyerang yang berhasil melakukan phishing, keylogging, atau menemukan catatan pengguna kemungkinan besar mendapat keduanya sekaligus, sehingga tidak ada perlindungan tambahan yang berarti.
    MFA yang benar mengombinasikan kategori berbeda: password (**know**) + kode dari aplikasi authenticator di ponsel (**have**), atau password + sidik jari (**are**). Dengan begitu penyerang harus mengompromikan dua hal yang sifatnya berbeda.
 
 3. **RADIUS** untuk **akses jaringan pengguna akhir**: 802.1X (kabel dan Wi-Fi), VPN, hotspot, PPPoE. Alasannya: standar terbuka yang didukung semua vendor, ringan (UDP), dan menggabungkan auth+authz sehingga cukup satu pertukaran untuk memberikan VLAN/ACL dinamis.
-   **TACACS+** untuk **administrasi perangkat jaringan**: login admin ke router/switch. Alasannya: **memisahkan authorization dari authentication** sehingga bisa melakukan **command authorization per-perintah**, dan **mengenkripsi seluruh payload** (bukan hanya password).
-   **Ya, keduanya bisa dan lazim dipakai bersamaan** — bahkan pada perangkat yang sama. Router memakai TACACS+ untuk login administrator, dan RADIUS untuk mengautentikasi pengguna 802.1X yang terhubung ke port-portnya. Keduanya bisa mengambil identitas dari direktori yang sama (LDAP/AD).
+   **TACACS+** untuk **administrasi perangkat jaringan**: login admin ke router/switch. Alasannya: memisahkan authorization dari authentication sehingga bisa melakukan command authorization per-perintah, dan mengenkripsi seluruh payload (bukan hanya password).
+   **Ya, keduanya bisa dan lazim dipakai bersamaan**, bahkan pada perangkat yang sama. Router memakai TACACS+ untuk login administrator, dan RADIUS untuk mengautentikasi pengguna 802.1X yang terhubung ke port-portnya. Keduanya bisa mengambil identitas dari direktori yang sama (LDAP/AD).
 
-4. **Tidak ada seorang pun yang bisa login ke perangkat** — termasuk Anda. Perangkat mencoba menghubungi AAA server, gagal, dan karena tidak ada metode alternatif yang dikonfigurasi, semua percobaan login ditolak. Ini **outage manajemen total**: jaringan mungkin masih meneruskan trafik, tetapi Anda tidak dapat mengubah apa pun — bahkan untuk memperbaiki masalah yang sedang terjadi. Pemulihan memerlukan **akses fisik** dan prosedur password recovery.
-   **Pencegahan:** (a) selalu tambahkan **`local`** di akhir daftar metode: `aaa authentication login default group TACACS-GROUP local`; (b) buat **akun lokal darurat (break-glass)** dengan password sangat kuat, disimpan di vault, dan penggunaannya memicu alarm; (c) pasang **minimal dua AAA server** di lokasi terpisah; (d) uji skenario kegagalan AAA secara berkala; (e) pastikan akses **out-of-band** (console server) tersedia.
+4. **Tidak ada seorang pun yang bisa login ke perangkat**, termasuk Anda. Perangkat mencoba menghubungi AAA server, gagal, dan karena tidak ada metode alternatif yang dikonfigurasi, semua percobaan login ditolak. Ini **outage manajemen total**: jaringan mungkin masih meneruskan trafik, tetapi Anda tidak dapat mengubah apa pun, bahkan untuk memperbaiki masalah yang sedang terjadi. Pemulihan memerlukan akses fisik dan prosedur password recovery.
+   **Pencegahan:** (a) selalu tambahkan **`local`** di akhir daftar metode: `aaa authentication login default group TACACS-GROUP local`; (b) buat **akun lokal darurat (break-glass)** dengan password sangat kuat, disimpan di vault, dan penggunaannya memicu alarm; (c) pasang minimal dua AAA server di lokasi terpisah; (d) uji skenario kegagalan AAA secara berkala; (e) pastikan akses out-of-band (console server) tersedia.
 
-5. Karena penelitian menunjukkan rotasi berkala **memperburuk** keamanan dalam praktik. Ketika dipaksa mengganti password setiap 90 hari, pengguna: (a) membuat **pola yang mudah ditebak** — `Password1!` → `Password2!` → `Password3!`, sehingga penyerang yang pernah mendapat satu password dapat menebak yang berikutnya; (b) memilih password yang **lebih lemah** karena harus sering diingat ulang; (c) **menuliskannya** di tempat yang tidak aman; (d) memakai password yang sama di banyak layanan agar lebih mudah.
-   Sementara itu, manfaatnya kecil: kalau password sudah bocor, penyerang biasanya memakainya **dalam hitungan jam atau hari** — jauh sebelum rotasi 90 hari berikutnya.
-   **NIST SP 800-63B** karena itu merekomendasikan rotasi **hanya saat ada indikasi kompromi**, dan mengalihkan fokus ke: panjang minimum, pemeriksaan terhadap daftar password bocor, dan **MFA**.
+5. Karena penelitian menunjukkan rotasi berkala memperburuk keamanan dalam praktik. Ketika dipaksa mengganti password setiap 90 hari, pengguna: (a) membuat pola yang mudah ditebak (`Password1!` → `Password2!` → `Password3!`), sehingga penyerang yang pernah mendapat satu password dapat menebak yang berikutnya; (b) memilih password yang lebih lemah karena harus sering diingat ulang; (c) menuliskannya di tempat yang tidak aman; (d) memakai password yang sama di banyak layanan agar lebih mudah.
+   Sementara itu, manfaatnya kecil: kalau password sudah bocor, penyerang biasanya memakainya dalam hitungan jam atau hari, jauh sebelum rotasi 90 hari berikutnya.
+   **NIST SP 800-63B** karena itu merekomendasikan rotasi hanya saat ada indikasi kompromi, dan mengalihkan fokus ke: panjang minimum, pemeriksaan terhadap daftar password bocor, dan MFA.
 
-6. **MFA fatigue** (juga disebut *push bombing* atau *MFA bombing*) terjadi ketika penyerang **sudah memiliki password** korban (dari kebocoran atau phishing) tetapi terhalang MFA berbasis push. Penyerang berulang kali mencoba login, sehingga korban menerima **prompt push terus-menerus** — puluhan kali, sering pada tengah malam. Akhirnya korban menyetujui karena: mengira ada kesalahan sistem, ingin prompt-nya berhenti, atau tidak sadar saat setengah tertidur.
-   **Mitigasi:** (a) **Number matching** — layar login menampilkan angka yang harus diketikkan pengguna di aplikasi; persetujuan tidak bisa dilakukan tanpa melihat layar login yang sah; (b) **beralih ke FIDO2/passkey** yang tahan phishing secara desain; (c) **rate limiting** pada jumlah prompt per periode; (d) **notifikasi konteks** (lokasi, aplikasi) pada prompt; (e) **deteksi dan alarm** pada pola percobaan login berulang yang gagal; (f) **edukasi pengguna** untuk melaporkan prompt yang tidak diminta.
+6. **MFA fatigue** (juga disebut *push bombing* atau *MFA bombing*) terjadi ketika penyerang sudah memiliki password korban (dari kebocoran atau phishing) tetapi terhalang MFA berbasis push. Penyerang berulang kali mencoba login, sehingga korban menerima prompt push terus-menerus, puluhan kali, sering pada tengah malam. Akhirnya korban menyetujui karena: mengira ada kesalahan sistem, ingin prompt-nya berhenti, atau tidak sadar saat setengah tertidur.
+   **Mitigasi:** (a) **Number matching**: layar login menampilkan angka yang harus diketikkan pengguna di aplikasi, sehingga persetujuan tidak bisa dilakukan tanpa melihat layar login yang sah; (b) **beralih ke FIDO2/passkey** yang tahan phishing secara desain; (c) **rate limiting** pada jumlah prompt per periode; (d) **notifikasi konteks** (lokasi, aplikasi) pada prompt; (e) **deteksi dan alarm** pada pola percobaan login berulang yang gagal; (f) **edukasi pengguna** untuk melaporkan prompt yang tidak diminta.
 
-7. **`service password-encryption` menghasilkan "type 7" yang BUKAN enkripsi — hanya obfuscation dengan algoritma Vigenère yang sudah dipublikasikan.** Password type 7 dapat **dipecahkan dalam hitungan detik** oleh alat online mana pun atau skrip beberapa baris. Ia hanya melindungi dari orang yang tidak sengaja melihat layar, bukan dari penyerang.
+7. **`service password-encryption` menghasilkan "type 7" yang BUKAN enkripsi, melainkan hanya obfuscation dengan algoritma Vigenère yang sudah dipublikasikan.** Password type 7 dapat dipecahkan dalam hitungan detik oleh alat online mana pun atau skrip beberapa baris. Ia hanya melindungi dari orang yang tidak sengaja melihat layar, bukan dari penyerang.
    Kalau konfigurasi itu dibagikan (ke vendor, di tiket dukungan, di repositori, atau bocor), **semua password di dalamnya dianggap terekspos sepenuhnya**.
-   **Yang benar:** gunakan `enable secret` dan `username ... secret` yang menghasilkan hash — dan pilih **type 8 (PBKDF2-SHA256)** atau **type 9 (scrypt)** yang tahan terhadap serangan GPU:
+   **Yang benar:** gunakan `enable secret` dan `username ... secret` yang menghasilkan hash, lalu pilih **type 8 (PBKDF2-SHA256)** atau **type 9 (scrypt)** yang tahan terhadap serangan GPU:
    ```
    enable algorithm-type scrypt secret RahasiaKuat
    username admin algorithm-type scrypt secret RahasiaKuat
    ```
    Untuk berbagi konfigurasi, tetap sensor bagian kredensial (`show running-config | redact` atau proses manual), dan **rotasi kredensial** apa pun yang pernah terekspos.
 
-8. **Periksa jam sistem dan sinkronisasi NTP.** Kerberos — yang menjadi dasar autentikasi Active Directory — menyertakan **timestamp** dalam tiketnya untuk mencegah serangan replay, dengan **toleransi default hanya 5 menit**. Kalau jam perangkat, server, atau domain controller di cabang itu bergeser lebih dari 5 menit, **semua autentikasi Kerberos gagal** — pengguna tidak bisa login, mengakses file share, atau membuka aplikasi terintegrasi AD.
+8. **Periksa jam sistem dan sinkronisasi NTP.** Kerberos, yang menjadi dasar autentikasi Active Directory, menyertakan **timestamp** dalam tiketnya untuk mencegah serangan replay, dengan toleransi default hanya 5 menit. Kalau jam perangkat, server, atau domain controller di cabang itu bergeser lebih dari 5 menit, semua autentikasi Kerberos gagal: pengguna tidak bisa login, mengakses file share, atau membuka aplikasi terintegrasi AD.
    Ini penyebab yang sangat sering terjadi setelah: pemadaman listrik (perangkat kehilangan waktu), server NTP tidak terjangkau (link WAN putus, firewall memblokir UDP 123), atau perubahan konfigurasi NTP.
    ```
    R1# show clock detail
@@ -550,11 +550,11 @@ User was successfully authenticated.
 
 ## 13. Sumber
 
-- RFC 2865 / 2866 — RADIUS · RFC 6614 — RadSec (RADIUS over TLS)
-- RFC 8907 — TACACS+ Protocol
-- NIST SP 800-63B — Digital Identity Guidelines: Authentication
-- RFC 6749 — OAuth 2.0 · OpenID Connect Core 1.0
-- FIDO Alliance — https://fidoalliance.org
+- RFC 2865 / 2866: RADIUS · RFC 6614: RadSec (RADIUS over TLS)
+- RFC 8907: TACACS+ Protocol
+- NIST SP 800-63B, Digital Identity Guidelines: Authentication
+- RFC 6749: OAuth 2.0 · OpenID Connect Core 1.0
+- FIDO Alliance: https://fidoalliance.org
 - Cisco CCNA 200-301 v1.1, topik 5.3 (device access control), 5.4 (password policy), 5.8 (AAA concepts)
 
 ---

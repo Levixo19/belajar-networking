@@ -1,7 +1,7 @@
 # 17.4 Studi Kasus Desain End-to-End
 
 > **Prasyarat:** `17.1–17.3` dan seluruh kurikulum
-> **Tujuan:** Menerapkan semua yang dipelajari ke desain jaringan nyata dari kebutuhan sampai implementasi — latihan berpikir seperti arsitek jaringan.
+> **Tujuan:** Menerapkan semua yang dipelajari ke desain jaringan nyata dari kebutuhan sampai implementasi, latihan berpikir seperti arsitek jaringan.
 
 ---
 
@@ -47,11 +47,11 @@ Optimize → tuning, perbaikan berkelanjutan → kembali ke Plan
 ```
 
 **Keputusan arsitektur:**
-- **Kampus pusat**: hierarki (collapsed core untuk hemat — cukup untuk 300 user), atau tiga-tier bila anggaran memungkinkan pertumbuhan.
-- **WAN**: **SD-WAN** atas MPLS (utama, untuk VoIP/ERP dengan SLA) + internet (backup/offload) — redundansi transport.
+- **Kampus pusat**: hierarki (collapsed core untuk hemat, sudah cukup untuk 300 user), atau tiga-tier bila anggaran memungkinkan pertumbuhan.
+- **WAN**: **SD-WAN** atas MPLS (utama, untuk VoIP/ERP dengan SLA) + internet (backup/offload), sehingga ada redundansi transport.
 - **Data center kecil** di pusat: server ERP (bisa beberapa VM di hypervisor + storage). Skala kecil → tidak perlu spine-leaf penuh; cukup pasangan switch redundan.
 - **DMZ** untuk web server publik.
-- **Email**: SaaS (M365) — tidak perlu server mail sendiri.
+- **Email**: SaaS (M365), jadi tidak perlu server mail sendiri.
 
 ### 2.2 Pengalamatan IP (hierarkis)
 
@@ -171,7 +171,7 @@ Saat mendesain, tanyakan berurutan:
 ## 5. Ringkasan
 
 - Gunakan siklus **PPDIOO** (Prepare, Plan, Design, Implement, Operate, Optimize).
-- **Mulai dari requirements, bukan teknologi** — teknologi melayani kebutuhan bisnis/aplikasi.
+- **Mulai dari requirements, bukan teknologi.** Teknologi melayani kebutuhan bisnis/aplikasi.
 - Desain end-to-end menyatukan: topologi (hierarki/SD-WAN/DC kecil), **IP hierarkis summarizable**, VLAN konsisten, routing + failover, **defense in depth** (NGFW/DMZ/segmentasi/802.1X/L2 hardening), wireless (kapasitas + guest terisolasi), **redundansi** (hilangkan SPOF kritis), dan **operasi** (observability, SoT, otomasi, OOB management).
 - Selalu **validasi trade-off**: memenuhi SLA & keamanan **dalam anggaran** dan **dapat dikelola** tim.
 - Gunakan **checklist review** untuk memastikan tidak ada yang terlewat.
@@ -189,13 +189,13 @@ Saat mendesain, tanyakan berurutan:
 <details>
 <summary>Jawaban</summary>
 
-1. **PPDIOO** = **Prepare** (pahami strategi & kebutuhan bisnis, anggaran), **Plan** (analisis kebutuhan detail, audit jaringan yang ada, gap analysis), **Design** (rancang topologi, IP, VLAN, routing, keamanan, redundansi), **Implement** (pasang dan konfigurasi secara bertahap dan teruji), **Operate** (jalankan, pantau, pelihara), **Optimize** (tuning dan perbaikan berkelanjutan, lalu kembali ke Plan) — siklus hidup jaringan Cisco. **"Requirements dulu" ditekankan** karena desain yang dimulai dari teknologi ("saya mau pakai X") cenderung salah sasaran: menghasilkan jaringan yang over-engineered (mahal, kompleks, melebihi kebutuhan) atau under-engineered (tidak memenuhi SLA/keamanan). Dengan memulai dari kebutuhan bisnis dan aplikasi (berapa user, aplikasi kritis dan kebutuhan bandwidth/latensinya, keamanan/kepatuhan, anggaran, pertumbuhan, SLA), setiap keputusan teknologi bisa **dibenarkan** oleh kebutuhan yang dilayaninya, dan trade-off bisa dievaluasi secara objektif.
+1. **PPDIOO** = **Prepare** (pahami strategi & kebutuhan bisnis, anggaran), **Plan** (analisis kebutuhan detail, audit jaringan yang ada, gap analysis), **Design** (rancang topologi, IP, VLAN, routing, keamanan, redundansi), **Implement** (pasang dan konfigurasi secara bertahap dan teruji), **Operate** (jalankan, pantau, pelihara), **Optimize** (tuning dan perbaikan berkelanjutan, lalu kembali ke Plan). Ini siklus hidup jaringan Cisco. **"Requirements dulu" ditekankan** karena desain yang dimulai dari teknologi ("saya mau pakai X") cenderung salah sasaran: menghasilkan jaringan yang over-engineered (mahal, kompleks, melebihi kebutuhan) atau under-engineered (tidak memenuhi SLA/keamanan). Dengan memulai dari kebutuhan bisnis dan aplikasi (berapa user, aplikasi kritis dan kebutuhan bandwidth/latensinya, keamanan/kepatuhan, anggaran, pertumbuhan, SLA), setiap keputusan teknologi bisa dibenarkan oleh kebutuhan yang dilayaninya, dan trade-off bisa dievaluasi secara objektif.
 
-2. Karena **spine-leaf dirancang untuk data center dengan trafik east-west masif** (banyak server saling berkomunikasi), sedangkan pusat PT Nusantara Jaya adalah **jaringan kampus 300 user** dengan trafik terutama **north-south** (user→server ERP, user→internet/cloud) dan hanya **data center kecil** (beberapa VM ERP). Spine-leaf akan **over-engineered** dan **boros anggaran** untuk skala ini — kompleksitas VXLAN/EVPN/BGP tidak sepadan dengan kebutuhan. **Collapsed core (dua-tier)** menggabungkan core dan distribution menjadi sepasang switch redundan — cukup untuk 300 user, hemat, lebih sederhana dikelola, dan sesuai anggaran menengah. (Untuk data center kecilnya, cukup sepasang switch redundan dengan MLAG untuk server dual-homed, bukan fabric spine-leaf.) Ini menerapkan prinsip "jangan over-engineer jaringan kecil".
+2. Karena **spine-leaf dirancang untuk data center dengan trafik east-west masif** (banyak server saling berkomunikasi), sedangkan pusat PT Nusantara Jaya adalah **jaringan kampus 300 user** dengan trafik terutama **north-south** (user→server ERP, user→internet/cloud) dan hanya **data center kecil** (beberapa VM ERP). Spine-leaf akan over-engineered dan boros anggaran untuk skala ini: kompleksitas VXLAN/EVPN/BGP tidak sepadan dengan kebutuhan. **Collapsed core (dua-tier)** menggabungkan core dan distribution menjadi sepasang switch redundan. Desain ini cukup untuk 300 user, hemat, lebih sederhana dikelola, dan sesuai anggaran menengah. (Untuk data center kecilnya, cukup sepasang switch redundan dengan MLAG untuk server dual-homed, bukan fabric spine-leaf.) Ini menerapkan prinsip "jangan over-engineer jaringan kecil".
 
-3. **Email memakai SaaS (Microsoft 365)** karena: (a) menghilangkan kebutuhan membeli, mengonfigurasi, mengamankan, dan memelihara server mail sendiri (Exchange) beserta kompleksitasnya (anti-spam, backup, ketersediaan, patching); (b) skala dan keandalan dikelola vendor; (c) model OpEx sesuai anggaran menengah; (d) email modern menuntut SPF/DKIM/DMARC, reputasi IP, dan uptime tinggi yang sulit dikelola sendiri. **Implikasi jaringan:** (a) tidak perlu server mail di DMZ/DC (mengurangi permukaan serang dan beban), tetapi (b) **ketergantungan pada konektivitas internet** menjadi kritis — email kini "aplikasi cloud", jadi WAN/internet harus **redundan** (yang sudah dipenuhi SD-WAN dua transport); (c) perlu memastikan **DNS** (record MX menunjuk ke M365, plus SPF/DKIM/DMARC di DNS domain) dikonfigurasi benar; (d) trafik email keluar ke internet/cloud, bukan internal — QoS dan firewall harus mengizinkan; (e) pertimbangkan latensi/bandwidth ke region M365 terdekat.
+3. **Email memakai SaaS (Microsoft 365)** karena: (a) menghilangkan kebutuhan membeli, mengonfigurasi, mengamankan, dan memelihara server mail sendiri (Exchange) beserta kompleksitasnya (anti-spam, backup, ketersediaan, patching); (b) skala dan keandalan dikelola vendor; (c) model OpEx sesuai anggaran menengah; (d) email modern menuntut SPF/DKIM/DMARC, reputasi IP, dan uptime tinggi yang sulit dikelola sendiri. **Implikasi jaringan:** (a) tidak perlu server mail di DMZ/DC (mengurangi permukaan serang dan beban), tetapi (b) **ketergantungan pada konektivitas internet** menjadi kritis: email kini "aplikasi cloud", jadi WAN/internet harus **redundan** (yang sudah dipenuhi SD-WAN dua transport); (c) perlu memastikan **DNS** (record MX menunjuk ke M365, plus SPF/DKIM/DMARC di DNS domain) dikonfigurasi benar; (d) trafik email keluar ke internet/cloud, bukan internal, jadi QoS dan firewall harus mengizinkannya; (e) pertimbangkan latensi/bandwidth ke region M365 terdekat.
 
-4. (Contoh) **Segmentasi VLAN:** tempatkan server ERP berisi data pelanggan di **VLAN Server terpisah** (mis. VLAN 50, `10.1.50.0/24`) — bukan bercampur dengan VLAN user. Idealnya pisahkan lagi: **VLAN aplikasi ERP** dan **VLAN database** (data pelanggan di DB), sehingga hanya server aplikasi yang boleh mengakses DB. **Aturan antar-zona (ACL/firewall stateful):** (a) **User (VLAN 10) → ERP-App (VLAN 50)**: izinkan hanya port aplikasi ERP (mis. HTTPS 443) — user tidak boleh langsung ke database; (b) **ERP-App → Database**: izinkan hanya port DB (mis. 1521/1433/5432) dari server aplikasi tertentu; (c) **DB → mana pun**: tolak inisiasi keluar (database tidak boleh memulai koneksi); (d) **Guest (VLAN 30) → Server/DB**: **tolak total** (guest terisolasi); (e) **Voice, Mgmt**: tidak boleh mengakses DB kecuali host manajemen tertentu. **Kontrol tambahan UU PDP:** enkripsi data in-transit (TLS ke ERP) dan at-rest (di DB/storage), **akses least-privilege** dengan 802.1X/NAC dan AAA, **audit trail** (AAA accounting + syslog: siapa mengakses apa, kapan), dokumentasi aliran data pribadi, dan kebijakan retensi. Segmentasi ini memastikan data pelanggan hanya dapat diakses oleh sistem/orang yang berwenang lewat jalur yang terkontrol dan tercatat.
+4. (Contoh) **Segmentasi VLAN:** tempatkan server ERP berisi data pelanggan di **VLAN Server terpisah** (mis. VLAN 50, `10.1.50.0/24`), jangan dicampur dengan VLAN user. Idealnya pisahkan lagi: **VLAN aplikasi ERP** dan **VLAN database** (data pelanggan di DB), sehingga hanya server aplikasi yang boleh mengakses DB. **Aturan antar-zona (ACL/firewall stateful):** (a) **User (VLAN 10) → ERP-App (VLAN 50)**: izinkan hanya port aplikasi ERP (mis. HTTPS 443), karena user tidak boleh langsung ke database; (b) **ERP-App → Database**: izinkan hanya port DB (mis. 1521/1433/5432) dari server aplikasi tertentu; (c) **DB → mana pun**: tolak inisiasi keluar (database tidak boleh memulai koneksi); (d) **Guest (VLAN 30) → Server/DB**: **tolak total** (guest terisolasi); (e) **Voice, Mgmt**: tidak boleh mengakses DB kecuali host manajemen tertentu. **Kontrol tambahan UU PDP:** enkripsi data in-transit (TLS ke ERP) dan at-rest (di DB/storage), **akses least-privilege** dengan 802.1X/NAC dan AAA, **audit trail** (AAA accounting + syslog: siapa mengakses apa, kapan), dokumentasi aliran data pribadi, dan kebijakan retensi. Segmentasi ini memastikan data pelanggan hanya dapat diakses oleh sistem/orang yang berwenang lewat jalur yang terkontrol dan tercatat.
 
 5. **SPOF pada desain awal dan usulan redundansi:**
    - **Core/distribution tunggal di pusat** → **dua switch core/distribution** dengan **HSRP/VRRP** (gateway redundan) dan **EtherChannel/ECMP** antar-lapisan.
@@ -207,7 +207,7 @@ Saat mendesain, tanyakan berurutan:
    - **Storage tunggal** → storage redundan (RAID + kontroler ganda) atau replikasi.
    - **Satu koneksi internet untuk M365/web** → tercakup oleh redundansi WAN dua transport.
    - **Link server ke satu switch** → **dual-homing** ke dua switch dengan MLAG/vPC.
-   **Perhatian:** Prioritaskan menghilangkan SPOF yang **dampaknya paling kritis** (ERP dan VoIP yang butuh uptime tinggi) lebih dulu, dan seimbangkan dengan anggaran — tidak setiap komponen wajib digandakan, tetapi jalur dan perangkat untuk aplikasi kritis harus punya cadangan.
+   **Perhatian:** Prioritaskan menghilangkan SPOF yang **dampaknya paling kritis** (ERP dan VoIP yang butuh uptime tinggi) lebih dulu, dan seimbangkan dengan anggaran. Tidak setiap komponen wajib digandakan, tetapi jalur dan perangkat untuk aplikasi kritis harus punya cadangan.
 
 </details>
 

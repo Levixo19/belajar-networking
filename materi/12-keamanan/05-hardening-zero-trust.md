@@ -1,13 +1,13 @@
 # 12.5 Hardening Perangkat dan Zero Trust
 
-> **Prasyarat:** `12-keamanan/01`–`04`
+> **Prasyarat:** `12-keamanan/01`-`04`
 > **Tujuan:** Anda bisa mengeraskan perangkat jaringan secara menyeluruh dan memahami arsitektur Zero Trust serta SASE.
 
 ---
 
 ## 1. Hardening Perangkat Jaringan
 
-Perangkat jaringan adalah **target bernilai tinggi** — menguasainya berarti menguasai seluruh trafik.
+Perangkat jaringan adalah **target bernilai tinggi**: menguasainya berarti menguasai seluruh trafik.
 
 ### Prinsip
 
@@ -114,7 +114,7 @@ banner motd ^
 ```
 
 > [!WARNING]
-> **Banner login penting secara hukum** di banyak yurisdiksi — tanpa pemberitahuan bahwa sistem dipantau, tindakan hukum terhadap penyusup bisa lebih sulit. Jangan mencantumkan "Welcome" (bisa ditafsirkan sebagai undangan) atau informasi perangkat.
+> **Banner login penting secara hukum** di banyak yurisdiksi. Tanpa pemberitahuan bahwa sistem dipantau, tindakan hukum terhadap penyusup bisa lebih sulit. Jangan mencantumkan "Welcome" (bisa ditafsirkan sebagai undangan) atau informasi perangkat.
 
 > [!WARNING]
 > **`no ip unreachables` merusak PMTUD.** Rekomendasi hardening lama menyarankannya untuk mencegah reconnaissance, tetapi biayanya besar. Lebih baik gunakan rate limit:
@@ -183,7 +183,7 @@ add chain=input action=drop
 ```
 
 > [!WARNING]
-> **RouterOS punya riwayat kerentanan serius** (mis. CVE-2018-14847 yang memungkinkan pengambilalihan penuh lewat WinBox). **Selalu jalankan versi terbaru** dan **jangan pernah mengekspos WinBox (8291), API (8728), atau layanan manajemen lain ke internet.**
+> **RouterOS punya riwayat kerentanan serius** (mis. CVE-2018-14847 yang memungkinkan pengambilalihan penuh lewat WinBox). Selalu jalankan versi terbaru dan jangan pernah mengekspos WinBox (8291), API (8728), atau layanan manajemen lain ke internet.
 
 ---
 
@@ -240,7 +240,7 @@ control-plane
 ```
 
 > [!WARNING]
-> **Hati-hati dengan CoPP.** Salah konfigurasi bisa **memutus routing protocol atau akses manajemen Anda sendiri**. Terapkan bertahap: mulai dengan `conform-action transmit exceed-action transmit` (hanya menghitung), analisis counter, baru aktifkan drop.
+> **Hati-hati dengan CoPP.** Salah konfigurasi bisa memutus routing protocol atau akses manajemen Anda sendiri. Terapkan bertahap: mulai dengan `conform-action transmit exceed-action transmit` (hanya menghitung), analisis counter, baru aktifkan drop.
 
 ```
 R1# show policy-map control-plane
@@ -292,7 +292,7 @@ R1# configure replace tftp://192.168.99.50/configs/R1-golden
 ```
 
 > [!TIP]
-> **`configure replace` memungkinkan rollback ke konfigurasi sebelumnya** tanpa reload — sangat berharga saat perubahan bermasalah.
+> **`configure replace` memungkinkan rollback ke konfigurasi sebelumnya** tanpa reload, yang sangat berguna saat perubahan bermasalah.
 
 ```
 # Cisco — commit dengan timer (rollback otomatis kalau tidak dikonfirmasi)
@@ -303,7 +303,7 @@ R1# configure confirm          ← kalau berhasil; kalau tidak, otomatis rollbac
 ```
 
 > [!WARNING]
-> **Ini setara Safe Mode MikroTik** — gunakan setiap kali mengubah konfigurasi kritis dari jarak jauh.
+> **Ini setara Safe Mode MikroTik.** Gunakan setiap kali mengubah konfigurasi kritis dari jarak jauh.
 
 ```
 # MikroTik — Safe Mode
@@ -361,7 +361,7 @@ ZERO TRUST:
 |---|---|
 | **PE** (Policy Engine) | Membuat keputusan izinkan/tolak berdasarkan kebijakan dan sinyal |
 | **PA** (Policy Administrator) | Membuat/memutus jalur komunikasi, mengeluarkan token |
-| **PEP** (Policy Enforcement Point) | **Menegakkan** keputusan — memblokir atau meneruskan |
+| **PEP** (Policy Enforcement Point) | **Menegakkan** keputusan: memblokir atau meneruskan |
 
 **Sumber sinyal untuk keputusan:**
 ```
@@ -386,7 +386,7 @@ ZERO TRUST:
 ```
 
 > [!WARNING]
-> **Zero Trust bukan produk yang bisa dibeli.** Ia adalah **arsitektur dan pendekatan** yang diterapkan bertahap. Vendor yang menjual "solusi Zero Trust" hanya menyediakan **sebagian** komponennya.
+> **Zero Trust bukan produk yang bisa dibeli.** Ia adalah arsitektur dan pendekatan yang diterapkan bertahap. Vendor yang menjual "solusi Zero Trust" hanya menyediakan sebagian komponennya.
 
 ### Penerapan bertahap yang realistis
 
@@ -455,7 +455,7 @@ Dengan mikrosegmentasi: setiap komunikasi harus diizinkan eksplisit
 ```
 
 > [!WARNING]
-> **Tantangan terbesar mikrosegmentasi adalah menemukan dependensi yang sebenarnya.** Aplikasi sering berkomunikasi dengan cara yang tidak terdokumentasi. **Mulai dengan mode monitor** selama beberapa minggu untuk memetakan alur nyata, baru terapkan enforcement.
+> **Tantangan terbesar mikrosegmentasi adalah menemukan dependensi yang sebenarnya.** Aplikasi sering berkomunikasi dengan cara yang tidak terdokumentasi. Mulai dengan mode monitor selama beberapa minggu untuk memetakan alur nyata, baru terapkan enforcement.
 
 ---
 
@@ -495,11 +495,11 @@ SASE: keamanan dilakukan di POP cloud yang DEKAT dengan pengguna
 | Model kepercayaan | Setelah masuk = dipercaya | Verifikasi setiap permintaan |
 | Visibilitas aplikasi | Terbatas | Penuh |
 | Postur perangkat | Jarang diperiksa | Diperiksa terus-menerus |
-| Aplikasi terekspos? | Ya (setelah VPN) | **Tidak** — tersembunyi sampai diotorisasi |
+| Aplikasi terekspos? | Ya (setelah VPN) | **Tidak**, tersembunyi sampai diotorisasi |
 | Lateral movement | **Mungkin** | Dicegah |
 
 > [!TIP]
-> **Keunggulan terbesar ZTNA: aplikasi tidak terekspos sama sekali** sampai pengguna terverifikasi. Tidak ada port terbuka untuk dipindai penyerang — model "dark cloud".
+> **Keunggulan terbesar ZTNA: aplikasi tidak terekspos sama sekali** sampai pengguna terverifikasi. Tidak ada port terbuka untuk dipindai penyerang; inilah model "dark cloud".
 
 > [!WARNING]
 > **Pertimbangan SASE/ZTNA:**
@@ -549,7 +549,7 @@ TAMU            ❌     ❌      ❌   ❌     ❌     ❌   ❌
 > **Perhatikan baris DMZ dan IoT: keduanya TIDAK boleh menjangkau jaringan internal.** Ini dua sumber kompromi yang paling sering.
 
 > [!TIP]
-> **IoT/OT adalah zona yang paling sering diabaikan.** Kamera CCTV, printer, dan perangkat pintar sering: memakai firmware lama yang tidak pernah di-patch, punya kredensial default, dan tidak dapat menjalankan agen keamanan. **Isolasi ketat adalah satu-satunya kontrol yang efektif.**
+> **IoT/OT adalah zona yang paling sering diabaikan.** Kamera CCTV, printer, dan perangkat pintar sering: memakai firmware lama yang tidak pernah di-patch, punya kredensial default, dan tidak dapat menjalankan agen keamanan. Isolasi ketat adalah satu-satunya kontrol yang efektif.
 
 ---
 
@@ -584,17 +584,17 @@ TAMU            ❌     ❌      ❌   ❌     ❌     ❌   ❌
 
 - Hardening: **matikan yang tidak dipakai**, enkripsi manajemen, **batasi sumber akses**, AAA kuat, log ke luar, lindungi control plane, kelola konfigurasi.
 - **Hanya SSH** (`transport input ssh` / `/ip service disable telnet`); batasi dengan **ACL/address**.
-- **`service password-encryption` (type 7) bukan enkripsi** — pakai `secret` type 8/9.
-- **Banner login penting secara hukum** — jangan tulis "Welcome".
-- **`no ip unreachables` merusak PMTUD** — pakai rate limit sebagai gantinya.
+- **`service password-encryption` (type 7) bukan enkripsi.** Pakai `secret` type 8/9.
+- **Banner login penting secara hukum.** Jangan tulis "Welcome".
+- **`no ip unreachables` merusak PMTUD.** Pakai rate limit sebagai gantinya.
 - **CoPP** melindungi CPU dari banjir trafik control plane. Terapkan bertahap (hitung dulu, baru drop).
-- **RouterOS punya riwayat CVE serius** — selalu update, jangan pernah ekspos WinBox/API ke internet.
+- **RouterOS punya riwayat CVE serius.** Selalu update, dan jangan pernah ekspos WinBox/API ke internet.
 - Manajemen konfigurasi: backup otomatis, **Git**, golden config, **deteksi drift**, change control. Gunakan `configure replace`/`revert timer` (Cisco) atau **Safe Mode** (MikroTik).
-- **Zero Trust (NIST SP 800-207)**: jangan pernah percaya, selalu verifikasi; **PDP/PEP**; akses per-sesi berbasis identitas + postur + konteks. **Bukan produk — arsitektur.**
+- **Zero Trust (NIST SP 800-207)**: jangan pernah percaya, selalu verifikasi; **PDP/PEP**; akses per-sesi berbasis identitas + postur + konteks. **Zero Trust adalah arsitektur, bukan produk.**
 - Penerapan bertahap: **identitas (MFA) → perangkat → jaringan → aplikasi → visibilitas**. Mulai dari MFA dan segmentasi.
 - **Mikrosegmentasi** per-workload; mulai dengan **mode monitor** untuk memetakan dependensi nyata.
 - **SASE/SSE** memindahkan keamanan ke cloud dekat pengguna; **ZTNA menyembunyikan aplikasi** sampai terotorisasi.
-- **DMZ dan IoT tidak boleh menjangkau jaringan internal** — dua sumber kompromi tersering.
+- **DMZ dan IoT tidak boleh menjangkau jaringan internal.** Keduanya sumber kompromi tersering.
 
 ---
 
@@ -612,24 +612,24 @@ TAMU            ❌     ❌      ❌   ❌     ❌     ❌   ❌
 <details>
 <summary>Jawaban</summary>
 
-1. (a) **Ganti semua kredensial default** dan buat akun dengan password kuat (type 8/9), nonaktifkan akun bawaan. (b) **Matikan Telnet dan semua layanan tidak terpakai**; aktifkan SSHv2 saja. (c) **Batasi akses manajemen** dengan ACL/address-list ke subnet manajemen saja, plus `exec-timeout`. (d) **Konfigurasikan NTP dan logging terpusat** dengan timestamp — tanpa waktu yang benar, log tidak berguna untuk forensik. (e) **Backup konfigurasi** dan simpan di luar perangkat. Tambahan penting: perbarui firmware/IOS ke versi terbaru yang stabil, dan aktifkan banner login.
+1. (a) **Ganti semua kredensial default** dan buat akun dengan password kuat (type 8/9), nonaktifkan akun bawaan. (b) **Matikan Telnet dan semua layanan tidak terpakai**; aktifkan SSHv2 saja. (c) **Batasi akses manajemen** dengan ACL/address-list ke subnet manajemen saja, plus `exec-timeout`. (d) **Konfigurasikan NTP dan logging terpusat** dengan timestamp, karena tanpa waktu yang benar, log tidak berguna untuk forensik. (e) **Backup konfigurasi** dan simpan di luar perangkat. Tambahan penting: perbarui firmware/IOS ke versi terbaru yang stabil, dan aktifkan banner login.
 
-2. Karena **ICMP unreachable (khususnya tipe 3 kode 4, "Fragmentation Needed") adalah mekanisme inti Path MTU Discovery**. Ketika router menonaktifkannya, paket yang terlalu besar dengan bit DF diset akan dibuang **tanpa memberi tahu pengirim** — pengirim tidak pernah tahu harus memperkecil paket. Hasilnya **MTU black hole**: koneksi terbentuk (paket kecil lewat) tetapi transfer data besar menggantung tanpa error.
+2. Karena **ICMP unreachable (khususnya tipe 3 kode 4, "Fragmentation Needed") adalah mekanisme inti Path MTU Discovery**. Ketika router menonaktifkannya, paket yang terlalu besar dengan bit DF diset akan dibuang tanpa memberi tahu pengirim, sehingga pengirim tidak pernah tahu harus memperkecil paket. Hasilnya **MTU black hole**: koneksi terbentuk (paket kecil lewat) tetapi transfer data besar menggantung tanpa error.
    Rekomendasi lama itu bertujuan mencegah reconnaissance (penyerang memetakan jaringan dari pesan unreachable) dan mengurangi beban CPU. Namun biayanya jauh lebih besar daripada manfaatnya.
-   **Yang lebih baik:** `ip icmp rate-limit unreachable 1000` — membatasi laju tanpa mematikan fungsinya. Untuk IPv6, mematikan ICMPv6 bahkan **mematikan IPv6 sepenuhnya**.
+   **Yang lebih baik:** `ip icmp rate-limit unreachable 1000`, yang membatasi laju tanpa mematikan fungsinya. Untuk IPv6, mematikan ICMPv6 bahkan mematikan IPv6 sepenuhnya.
 
-3. **CoPP (Control Plane Policing)** menerapkan kebijakan QoS pada trafik yang ditujukan ke **CPU perangkat** — routing protocol, manajemen, ARP, ICMP. Tujuannya melindungi CPU dari banjir trafik yang bisa melumpuhkan perangkat (dan seluruh jaringan yang bergantung padanya) meski bandwidth belum penuh.
-   **Risiko salah konfigurasi:** kalau rate limit terlalu ketat atau klasifikasi salah, CoPP bisa **membuang paket routing protocol** (OSPF/BGP adjacency putus → routing runtuh) atau **memutus akses manajemen Anda sendiri** — sehingga Anda tidak bisa memperbaikinya kecuali lewat console fisik.
+3. **CoPP (Control Plane Policing)** menerapkan kebijakan QoS pada trafik yang ditujukan ke CPU perangkat (routing protocol, manajemen, ARP, ICMP). Tujuannya melindungi CPU dari banjir trafik yang bisa melumpuhkan perangkat (dan seluruh jaringan yang bergantung padanya) meski bandwidth belum penuh.
+   **Risiko salah konfigurasi:** kalau rate limit terlalu ketat atau klasifikasi salah, CoPP bisa membuang paket routing protocol (OSPF/BGP adjacency putus → routing runtuh) atau memutus akses manajemen Anda sendiri, sehingga Anda tidak bisa memperbaikinya kecuali lewat console fisik.
    **Penerapan yang aman:** mulai dengan `conform-action transmit exceed-action transmit` (hanya menghitung, tidak membuang), jalankan beberapa minggu, analisis `show policy-map control-plane` untuk mengetahui laju normal, baru naikkan ke `exceed-action drop` dengan margin yang lapang. Selalu sediakan akses out-of-band.
 
-4. **Castle-and-moat** mengasumsikan ada **batas jelas** antara "dalam" (dipercaya) dan "luar" (tidak dipercaya). Seluruh investasi keamanan difokuskan pada perimeter (firewall, VPN); begitu seseorang berada di dalam, ia relatif bebas bergerak. Model ini runtuh karena: cloud dan SaaS berada di luar perimeter, remote work menghapus batas fisik, BYOD membawa perangkat tidak terkelola ke dalam, dan **insider serta penyerang yang sudah masuk tidak tertangani sama sekali**.
-   **Zero Trust** menghapus konsep "lokasi jaringan sebagai dasar kepercayaan". Setiap permintaan akses — dari mana pun asalnya, termasuk dari dalam kantor — **diverifikasi ulang** berdasarkan identitas pengguna, postur perangkat, dan konteks. Akses diberikan **per-sesi** dan **seminimal mungkin**. Asumsinya: **pelanggaran sudah terjadi**, sehingga arsitektur harus membatasi kerusakan.
+4. **Castle-and-moat** mengasumsikan ada batas jelas antara "dalam" (dipercaya) dan "luar" (tidak dipercaya). Seluruh investasi keamanan difokuskan pada perimeter (firewall, VPN); begitu seseorang berada di dalam, ia relatif bebas bergerak. Model ini runtuh karena: cloud dan SaaS berada di luar perimeter, remote work menghapus batas fisik, BYOD membawa perangkat tidak terkelola ke dalam, dan insider serta penyerang yang sudah masuk tidak tertangani sama sekali.
+   **Zero Trust** menghapus konsep "lokasi jaringan sebagai dasar kepercayaan". Setiap permintaan akses, dari mana pun asalnya (termasuk dari dalam kantor), diverifikasi ulang berdasarkan identitas pengguna, postur perangkat, dan konteks. Akses diberikan per-sesi dan seminimal mungkin. Asumsinya: pelanggaran sudah terjadi, sehingga arsitektur harus membatasi kerusakan.
 
-5. **PDP (Policy Decision Point)** adalah "otak" — ia terdiri dari **Policy Engine** yang membuat keputusan izinkan/tolak dengan mengevaluasi kebijakan terhadap sinyal (identitas, postur perangkat, lokasi, waktu, perilaku, sensitivitas resource), dan **Policy Administrator** yang mengeksekusi keputusan itu dengan membuat/memutus jalur komunikasi dan mengeluarkan token/kredensial sesi.
-   **PEP (Policy Enforcement Point)** adalah "tangan" — komponen yang berada **di jalur trafik** dan benar-benar **menegakkan** keputusan PDP: meneruskan atau memblokir. PEP bisa berupa gateway ZTNA, proxy, firewall, agen di endpoint, atau service mesh sidecar.
+5. **PDP (Policy Decision Point)** adalah "otak". Ia terdiri dari **Policy Engine** yang membuat keputusan izinkan/tolak dengan mengevaluasi kebijakan terhadap sinyal (identitas, postur perangkat, lokasi, waktu, perilaku, sensitivitas resource), dan **Policy Administrator** yang mengeksekusi keputusan itu dengan membuat/memutus jalur komunikasi dan mengeluarkan token/kredensial sesi.
+   **PEP (Policy Enforcement Point)** adalah "tangan", yaitu komponen yang berada di jalur trafik dan benar-benar menegakkan keputusan PDP: meneruskan atau memblokir. PEP bisa berupa gateway ZTNA, proxy, firewall, agen di endpoint, atau service mesh sidecar.
    Pemisahan ini penting: keputusan terpusat dan konsisten (PDP), penegakan terdistribusi dan dekat dengan resource (PEP).
 
-6. Beberapa keunggulan mendasar: (a) **Akses per-aplikasi, bukan per-jaringan** — VPN memberi akses ke seluruh subnet setelah terhubung; ZTNA hanya memberi akses ke aplikasi spesifik yang diotorisasi, sehingga **lateral movement dicegah**. (b) **Aplikasi tidak terekspos** — dengan ZTNA, tidak ada port yang terbuka untuk dipindai; aplikasi "tersembunyi" sampai pengguna terverifikasi (model *dark cloud*). Dengan VPN, gateway VPN itu sendiri adalah target yang terekspos dan sering menjadi jalan masuk (banyak pelanggaran besar dimulai dari VPN appliance yang belum di-patch). (c) **Verifikasi berkelanjutan** — postur perangkat dan konteks diperiksa terus-menerus, bukan hanya saat login. (d) **Visibilitas per-aplikasi** untuk audit dan deteksi. (e) **Pengalaman pengguna lebih baik** — tidak perlu menyalakan/mematikan VPN, dan trafik SaaS tidak memutar.
+6. Beberapa keunggulan mendasar: (a) **Akses per-aplikasi, bukan per-jaringan**: VPN memberi akses ke seluruh subnet setelah terhubung, sedangkan ZTNA hanya memberi akses ke aplikasi spesifik yang diotorisasi, sehingga lateral movement dicegah. (b) **Aplikasi tidak terekspos**: dengan ZTNA, tidak ada port yang terbuka untuk dipindai; aplikasi "tersembunyi" sampai pengguna terverifikasi (model *dark cloud*). Dengan VPN, gateway VPN itu sendiri adalah target yang terekspos dan sering menjadi jalan masuk (banyak pelanggaran besar dimulai dari VPN appliance yang belum di-patch). (c) **Verifikasi berkelanjutan**: postur perangkat dan konteks diperiksa terus-menerus, bukan hanya saat login. (d) **Visibilitas per-aplikasi** untuk audit dan deteksi. (e) **Pengalaman pengguna lebih baik**: tidak perlu menyalakan/mematikan VPN, dan trafik SaaS tidak memutar.
 
 7. Zona: `MGMT`, `SERVER`, `DMZ`, `USER`, `CCTV`, `TAMU`.
    ```
@@ -642,10 +642,10 @@ TAMU            ❌     ❌      ❌   ❌     ❌     ❌   ❌
    TAMU           ❌     ❌      ❌    ❌    ❌    ❌     ✅
    ```
    Keterangan `⚠️` (hanya port/host tertentu):
-   - **USER → SERVER**: hanya port aplikasi yang diperlukan (mis. 445 ke file server, 443 ke aplikasi internal) — bukan RDP/SSH umum.
+   - **USER → SERVER**: hanya port aplikasi yang diperlukan (mis. 445 ke file server, 443 ke aplikasi internal), bukan RDP/SSH umum.
    - **USER → CCTV**: hanya dari workstation tim keamanan ke NVR, port viewer saja.
    - **DMZ → SERVER**: hanya web server ke database, port DB saja.
-   - **SERVER/DMZ → INTERNET**: **firewall egress ketat** — hanya repositori paket, NTP, DNS internal, dan API yang diperlukan.
+   - **SERVER/DMZ → INTERNET**: firewall egress ketat, hanya ke repositori paket, NTP, DNS internal, dan API yang diperlukan.
    - **CCTV → SERVER**: hanya kamera ke NVR/storage.
    - **CCTV → INTERNET**: **ditolak** (kamera tidak butuh internet; ini mencegahnya menjadi bagian botnet).
    - **MGMT → INTERNET**: hanya untuk update firmware, lewat proxy.
@@ -654,10 +654,10 @@ TAMU            ❌     ❌      ❌   ❌     ❌     ❌   ❌
 
 8. **Tiga langkah pertama, diurutkan berdasarkan rasio dampak terhadap biaya:**
    **(1) MFA di semua akses, terutama admin dan remote.** Ini memberi pengurangan risiko terbesar per rupiah. Sebagian besar pelanggaran dimulai dari kredensial yang dicuri atau bocor; MFA menghentikan hampir semuanya. Prioritaskan MFA tahan phishing (FIDO2/passkey) untuk akun istimewa. Tidak memerlukan perubahan arsitektur jaringan.
-   **(2) Segmentasi jaringan.** Zero Trust mensyaratkan hilangnya "trusted internal network". Langkah paling konkret adalah memisahkan zona (server, DMZ, pengguna, IoT, tamu, manajemen) dan menegakkan kebijakan antar-zona — terutama **DMZ dan IoT tidak boleh menjangkau internal**. Ini membatasi lateral movement, yang merupakan inti dari "asumsikan sudah terjadi pelanggaran". Sebagian besar organisasi sudah punya perangkat yang mampu melakukannya.
-   **(3) Inventaris aset dan visibilitas.** Anda tidak bisa melindungi apa yang tidak Anda ketahui. Kumpulkan inventaris perangkat dan aplikasi, aktifkan logging terpusat (syslog/SIEM) dan NetFlow, dan tetapkan baseline perilaku normal. Ini menjadi fondasi untuk semua fase berikutnya (kebijakan dinamis, deteksi anomali, respons otomatis) — dan sering langsung mengungkap perangkat serta alur yang tidak diketahui.
+   **(2) Segmentasi jaringan.** Zero Trust mensyaratkan hilangnya "trusted internal network". Langkah paling konkret adalah memisahkan zona (server, DMZ, pengguna, IoT, tamu, manajemen) dan menegakkan kebijakan antar-zona. Khususnya, DMZ dan IoT tidak boleh menjangkau internal. Ini membatasi lateral movement, yang merupakan inti dari "asumsikan sudah terjadi pelanggaran". Sebagian besar organisasi sudah punya perangkat yang mampu melakukannya.
+   **(3) Inventaris aset dan visibilitas.** Anda tidak bisa melindungi apa yang tidak Anda ketahui. Kumpulkan inventaris perangkat dan aplikasi, aktifkan logging terpusat (syslog/SIEM) dan NetFlow, dan tetapkan baseline perilaku normal. Ini menjadi fondasi untuk semua fase berikutnya (kebijakan dinamis, deteksi anomali, respons otomatis), dan sering langsung mengungkap perangkat serta alur yang tidak diketahui.
 
-   Sampaikan juga bahwa **Zero Trust adalah perjalanan bertahap, bukan proyek satu tahun yang selesai** — dan bahwa membeli "produk Zero Trust" tanpa tiga fondasi ini tidak akan memberi hasil.
+   Sampaikan juga bahwa Zero Trust adalah perjalanan bertahap, bukan proyek satu tahun yang selesai, dan bahwa membeli "produk Zero Trust" tanpa tiga fondasi ini tidak akan memberi hasil.
 
 </details>
 
@@ -665,12 +665,12 @@ TAMU            ❌     ❌      ❌   ❌     ❌     ❌   ❌
 
 ## 11. Sumber
 
-- **NIST SP 800-207 — Zero Trust Architecture**
-- NIST SP 800-53 Rev.5 — Security and Privacy Controls
-- CISA — *Zero Trust Maturity Model v2*
-- CISA — *Journey to Zero Trust Microsegmentation Guidance*
+- **NIST SP 800-207: Zero Trust Architecture**
+- NIST SP 800-53 Rev.5: Security and Privacy Controls
+- CISA, *Zero Trust Maturity Model v2*
+- CISA, *Journey to Zero Trust Microsegmentation Guidance*
 - Cisco, *Network Device Hardening Guide*
-- CIS Benchmarks (Cisco IOS, Linux) — https://www.cisecurity.org/cis-benchmarks
+- CIS Benchmarks (Cisco IOS, Linux): https://www.cisecurity.org/cis-benchmarks
 - Cisco CCNA 200-301 v1.1, topik 5.3 dan 5.4
 
 ---

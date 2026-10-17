@@ -4,7 +4,7 @@
 > **Tujuan:** Anda paham cara memantau jaringan secara proaktif, memilih metode dan alat yang tepat, dan mendesain sistem monitoring yang bermakna.
 
 > > [!NOTE]
-> > **Monitoring mengubah troubleshooting dari reaktif menjadi proaktif** — dari "kenapa ini rusak?" menjadi "ini akan bermasalah dalam seminggu, mari perbaiki sekarang". Tanpa data historis, sebagian besar masalah (terutama intermiten dan tren) tidak dapat didiagnosis.
+> > **Monitoring mengubah troubleshooting dari reaktif menjadi proaktif**: dari "kenapa ini rusak?" menjadi "ini akan bermasalah dalam seminggu, mari perbaiki sekarang". Tanpa data historis, sebagian besar masalah (terutama intermiten dan tren) tidak dapat didiagnosis.
 
 ---
 
@@ -19,10 +19,10 @@
               → "di mana waktu terpakai"
 ```
 
-Untuk jaringan, **metrics dan logs** adalah yang utama.
+Untuk jaringan, metrics dan logs adalah yang utama.
 
 > [!WARNING]
-> **Monitoring ≠ observability.** Monitoring memberi tahu **apakah** sistem sehat (dashboard, alert). Observability memungkinkan Anda **menanyakan pertanyaan baru** tentang perilaku sistem tanpa harus mendeploy ulang instrumentasi. Keduanya penting.
+> **Monitoring ≠ observability.** Monitoring memberi tahu apakah sistem sehat (dashboard, alert). Observability memungkinkan Anda menanyakan pertanyaan baru tentang perilaku sistem tanpa harus mendeploy ulang instrumentasi. Keduanya penting.
 
 ---
 
@@ -51,7 +51,7 @@ cpmCPUTotal5minRev .1.3.6.1.4.1.9.9.109...    CPU Cisco
 ```
 
 > [!WARNING]
-> **WAJIB pakai counter 64-bit (`ifHC*`).** Counter 32-bit **wrap dalam 34 detik** di link 1 Gbps dan **3,4 detik** di 10 Gbps — dengan polling 5 menit, grafik utilisasi Anda akan salah total. Ini kesalahan monitoring paling umum.
+> **WAJIB pakai counter 64-bit (`ifHC*`).** Counter 32-bit wrap dalam 34 detik di link 1 Gbps dan 3,4 detik di 10 Gbps. Dengan polling 5 menit, grafik utilisasi Anda akan salah total. Ini kesalahan monitoring paling umum.
 
 ```bash
 $ snmpwalk -v3 -l authPriv -u monitoring -a SHA -A AuthPass \
@@ -59,7 +59,7 @@ $ snmpwalk -v3 -l authPriv -u monitoring -a SHA -A AuthPass \
 ```
 
 > [!WARNING]
-> **Gunakan SNMPv3.** SNMPv2c mengirim community string plaintext — siapa pun yang menyadap bisa membacanya, dan community RW memungkinkan **mengubah konfigurasi perangkat**.
+> **Gunakan SNMPv3.** SNMPv2c mengirim community string plaintext. Siapa pun yang menyadap bisa membacanya, dan kalau community itu RW, ia bisa mengubah konfigurasi perangkat.
 
 ### Cara utilisasi dihitung
 
@@ -88,8 +88,8 @@ Model PUSH: perangkat MENDORONG data ke collector secara kontinu
 | Model | Poll berkala | Subscribe + push kontinu |
 | Interval | 1-5 menit | Detik atau sub-detik |
 | Beban perangkat | Tinggi (setiap poll = kerja CPU) | Rendah (sekali subscribe) |
-| Granularitas | Kasar | **Halus** — menangkap microburst |
-| Format | ASN.1/BER | **Protobuf/JSON** (gNMI, gRPC) |
+| Granularitas | Kasar | Halus, menangkap microburst |
+| Format | ASN.1/BER | Protobuf/JSON (gNMI, gRPC) |
 | Skalabilitas | Terbatas | Sangat baik |
 | Keamanan | v3 (rumit) | TLS + gRPC |
 
@@ -99,10 +99,10 @@ Model data: OpenConfig, YANG
 ```
 
 > [!TIP]
-> **Streaming telemetry adalah arah masa depan** karena SNMP tidak bisa memberi granularitas detik pada skala besar. gNMI dengan model OpenConfig memungkinkan monitoring yang jauh lebih detail dan real-time — penting untuk mendeteksi microburst dan masalah transien.
+> **Streaming telemetry adalah arah masa depan** karena SNMP tidak bisa memberi granularitas detik pada skala besar. gNMI dengan model OpenConfig memungkinkan monitoring yang jauh lebih detail dan real-time, yang dibutuhkan untuk mendeteksi microburst dan masalah transien.
 
 > [!WARNING]
-> **SNMP masih dominan** karena didukung semua perangkat dan alat monitoring. Realitanya: kebanyakan jaringan memakai SNMP, dan streaming telemetry diadopsi bertahap di perangkat/lingkungan modern.
+> **SNMP masih dominan** karena didukung semua perangkat dan alat monitoring. Kebanyakan jaringan memakai SNMP, dan streaming telemetry diadopsi bertahap di perangkat/lingkungan modern.
 
 Detail gNMI di `15-otomasi/02`.
 
@@ -110,7 +110,7 @@ Detail gNMI di `15-otomasi/02`.
 
 ## 4. Flow-Based Monitoring: NetFlow / IPFIX / sFlow
 
-Monitoring **alur** — siapa berbicara dengan siapa, tanpa membaca isi paket.
+Monitoring **alur** mencatat siapa berbicara dengan siapa, tanpa membaca isi paket.
 
 | | **NetFlow / IPFIX** | **sFlow** |
 |---|---|---|
@@ -134,7 +134,7 @@ Monitoring **alur** — siapa berbicara dengan siapa, tanpa membaca isi paket.
 ```
 
 > [!TIP]
-> **Flow monitoring adalah jembatan antara jaringan dan keamanan** — ia memberi visibilitas ke **pola** trafik tanpa perlu menyimpan payload (yang mahal dan sering terenkripsi). Sangat berharga untuk deteksi C2 dan eksfiltrasi.
+> **Flow monitoring menjembatani jaringan dan keamanan.** Ia memberi visibilitas ke pola trafik tanpa perlu menyimpan payload (yang mahal dan sering terenkripsi), sehingga sangat berguna untuk deteksi C2 dan eksfiltrasi.
 
 ### Field record NetFlow
 
@@ -261,7 +261,7 @@ ip sla 2
 ```
 
 > [!TIP]
-> **Synthetic monitoring menangkap masalah SEBELUM pengguna melaporkannya** — dan memberi baseline objektif ("latency ke DNS naik dari 5 ms ke 200 ms pukul 14:00") yang jauh lebih berguna daripada laporan subjektif ("internet terasa lambat").
+> **Synthetic monitoring menangkap masalah SEBELUM pengguna melaporkannya.** Ia juga memberi baseline objektif ("latency ke DNS naik dari 5 ms ke 200 ms pukul 14:00") yang jauh lebih berguna daripada laporan subjektif ("internet terasa lambat").
 
 ---
 
@@ -321,7 +321,7 @@ The Dude     → gratis dari MikroTik, untuk jaringan MikroTik
 ```
 
 > [!TIP]
-> **Untuk jaringan yang didominasi SNMP, LibreNMS atau Zabbix adalah titik awal yang sangat baik** — auto-discovery, dashboard bawaan, dan alerting tanpa banyak konfigurasi. **The Dude** cocok untuk lingkungan MikroTik.
+> **Untuk jaringan yang didominasi SNMP, LibreNMS atau Zabbix adalah titik awal yang baik**: auto-discovery, dashboard bawaan, dan alerting tanpa banyak konfigurasi. The Dude cocok untuk lingkungan MikroTik.
 
 ---
 
@@ -375,7 +375,7 @@ Prinsip alerting yang baik:
 ```
 
 > [!TIP]
-> **Aturan: setiap alert harus bisa dijawab dengan "apa yang harus saya lakukan sekarang?".** Kalau jawabannya "tidak ada" atau "tunggu saja", itu bukan alert — jadikan dashboard/laporan.
+> **Aturan: setiap alert harus bisa dijawab dengan "apa yang harus saya lakukan sekarang?".** Kalau jawabannya "tidak ada" atau "tunggu saja", itu bukan alert; jadikan dashboard/laporan.
 
 ### SLA, SLO, SLI
 
@@ -396,7 +396,7 @@ Error budget = 100% − SLO
 
 ## 10. Capacity Planning
 
-Monitoring bukan hanya untuk mendeteksi masalah, tetapi **mencegahnya** dengan merencanakan pertumbuhan.
+Monitoring juga bisa mencegah masalah, karena datanya membantu Anda merencanakan pertumbuhan.
 
 ```
 - Trending utilisasi (link mana mendekati jenuh?)
@@ -418,10 +418,10 @@ Metode billing/kapasitas umum:
 ```
 
 > [!WARNING]
-> **95th percentile mengabaikan burst 5% teratas** — berguna untuk billing dan kapasitas normal, tetapi **tidak menangkap microburst** yang menyebabkan drop. Untuk analisis kualitas, lihat juga puncak dan drop.
+> **95th percentile mengabaikan burst 5% teratas.** Metode ini berguna untuk billing dan kapasitas normal, tetapi tidak menangkap microburst yang menyebabkan drop. Untuk analisis kualitas, lihat juga puncak dan drop.
 
 > [!TIP]
-> **Rencanakan upgrade SEBELUM link mencapai jenuh.** Aturan umum: mulai rencanakan upgrade saat utilisasi puncak konsisten melewati 70–80%. Menunggu sampai 100% berarti pengguna sudah menderita sebelum Anda bertindak.
+> **Rencanakan upgrade SEBELUM link mencapai jenuh.** Aturan umum: mulai rencanakan upgrade saat utilisasi puncak konsisten melewati 70-80%. Menunggu sampai 100% berarti pengguna sudah menderita sebelum Anda bertindak.
 
 ---
 
@@ -482,17 +482,17 @@ Integrasi dengan `12-keamanan/06`:
 
 - **Observability** mengubah troubleshooting menjadi proaktif; tanpa data historis, masalah intermiten dan tren tidak dapat didiagnosis.
 - Tiga pilar: **metrics** (angka), **logs** (kejadian), **traces** (jejak). Untuk jaringan, metrics + logs.
-- **SNMP (pull)**: wajib **counter 64-bit (`ifHC*`)** — 32-bit wrap dalam 34 detik di 1 Gbps. Pakai **SNMPv3**.
-- **Streaming telemetry (push, gNMI)** memberi granularitas detik dan menangkap microburst — arah masa depan, tetapi SNMP masih dominan.
-- **Flow monitoring (NetFlow/IPFIX/sFlow)** memberi visibilitas pola trafik tanpa payload — jembatan ke keamanan (deteksi C2, eksfiltrasi).
-- **Syslog terpusat** dengan waktu tersinkronisasi — log lokal hampir tidak berguna.
-- Pantau **per interface** (utilisasi, error, drop), **per perangkat** (CPU, memori, tabel, environmental), dan **per layanan** (latency, loss, DNS, sertifikat).
+- **SNMP (pull)**: wajib counter 64-bit (`ifHC*`), karena 32-bit wrap dalam 34 detik di 1 Gbps. Pakai SNMPv3.
+- **Streaming telemetry (push, gNMI)** memberi granularitas detik dan menangkap microburst. Inilah arah masa depan, tetapi SNMP masih dominan.
+- **Flow monitoring (NetFlow/IPFIX/sFlow)** memberi visibilitas pola trafik tanpa payload dan menjadi jembatan ke keamanan (deteksi C2, eksfiltrasi).
+- **Syslog terpusat** dengan waktu tersinkronisasi; log lokal hampir tidak berguna.
+- Pantau per interface (utilisasi, error, drop), per perangkat (CPU, memori, tabel, environmental), dan per layanan (latency, loss, DNS, sertifikat).
 - **Synthetic monitoring** (IP SLA/Netwatch/blackbox) menangkap masalah sebelum pengguna melapor dan memberi baseline objektif.
-- Stack modern: **Prometheus + Grafana + Alertmanager**; alternatif jaringan: **Zabbix, LibreNMS, The Dude**.
-- **Alert hanya pada yang actionable** — alert fatigue lebih berbahaya daripada tidak ada alert.
+- Stack modern: Prometheus + Grafana + Alertmanager; alternatif jaringan: Zabbix, LibreNMS, The Dude.
+- **Alert hanya pada yang actionable**, karena alert fatigue lebih berbahaya daripada tidak ada alert.
 - **SLI/SLO/SLA + error budget** mengubah keandalan menjadi keputusan berbasis data.
 - **95th percentile** untuk billing/kapasitas (tetapi mengabaikan microburst). Rencanakan upgrade di ~70-80% utilisasi.
-- **Pantau LAYANAN, bukan hanya perangkat** — dan jangan lupa **sertifikat TLS**.
+- **Pantau LAYANAN, bukan hanya perangkat**, dan jangan lupa sertifikat TLS.
 
 ---
 
@@ -510,26 +510,26 @@ Integrasi dengan `12-keamanan/06`:
 <details>
 <summary>Jawaban</summary>
 
-1. Karena counter 32-bit maksimal `2^32` byte (~4,3 GB), dan pada link 10 Gbps ia terisi penuh (**wrap** kembali ke nol) dalam **~3,4 detik**. Sistem monitoring menghitung rate dari selisih dua polling; dengan interval polling 5 menit (300 detik), counter sudah wrap **puluhan kali** di antara dua polling. Sistem tidak tahu berapa kali wrap terjadi, sehingga selisih yang dihitung salah — menghasilkan grafik utilisasi yang **kacau, terlalu rendah, atau bahkan negatif**. Perbaikan: gunakan **counter 64-bit `ifHCInOctets`/`ifHCOutOctets`** (`.1.3.6.1.2.1.31.1.1.1.6` dan `.10`) yang tersedia sejak SNMPv2c dan butuh ratusan tahun untuk wrap di 10 Gbps. Pastikan perangkat memakai SNMP v2c/v3 (bukan v1 yang hanya punya counter 32-bit) dan sistem monitoring dikonfigurasi memakai HC counter.
+1. Karena counter 32-bit maksimal `2^32` byte (~4,3 GB), dan pada link 10 Gbps ia terisi penuh (wrap kembali ke nol) dalam ~3,4 detik. Sistem monitoring menghitung rate dari selisih dua polling; dengan interval polling 5 menit (300 detik), counter sudah wrap puluhan kali di antara dua polling. Sistem tidak tahu berapa kali wrap terjadi, sehingga selisih yang dihitung salah dan grafik utilisasi menjadi kacau, terlalu rendah, atau bahkan negatif. Perbaikan: gunakan counter 64-bit `ifHCInOctets`/`ifHCOutOctets` (`.1.3.6.1.2.1.31.1.1.1.6` dan `.10`) yang tersedia sejak SNMPv2c dan butuh ratusan tahun untuk wrap di 10 Gbps. Pastikan perangkat memakai SNMP v2c/v3 (bukan v1 yang hanya punya counter 32-bit) dan sistem monitoring dikonfigurasi memakai HC counter.
 
 2. **Pull (SNMP):** sistem monitoring **meminta** data dari perangkat pada interval tetap (mis. setiap 5 menit). Sederhana, didukung universal, tetapi setiap poll membebani CPU perangkat, dan granularitasnya kasar (rata-rata interval). **Push (streaming telemetry/gNMI):** perangkat **mendorong** data ke collector secara kontinu setelah sekali subscribe, pada interval detik atau sub-detik. Beban perangkat rendah, granularitas halus (menangkap microburst dan transien), dan sangat scalable.
    **Pull unggul** untuk: kompatibilitas luas (perangkat lama, semua vendor), kesederhanaan, dan monitoring tradisional yang tidak butuh granularitas tinggi. **Push unggul** untuk: skala besar (ribuan perangkat, ribuan metrik), monitoring real-time, deteksi microburst/transien, dan lingkungan modern dengan otomasi. Dalam praktik, kebanyakan jaringan memakai SNMP dan mengadopsi streaming telemetry bertahap di perangkat baru.
 
-3. **Microburst.** Grafik utilisasi dihitung dari rata-rata interval polling (mis. 5 menit). Trafik yang datang dalam **lonjakan sangat singkat** (mikrodetik hingga milidetik) yang melebihi kapasitas port keluar akan mengisi buffer dan menyebabkan **drop**, tetapi ketika dirata-ratakan selama 5 menit, terlihat hanya 20%. Yang diperiksa: (a) counter **`output drops`/`ifOutDiscards`** pada interface — kalau naik padahal utilisasi rata-rata rendah, itu tanda microburst; (b) polling dengan **interval jauh lebih pendek** (streaming telemetry, atau SNMP interval detik) untuk melihat lonjakan sesungguhnya; (c) pola trafik yang menyebabkannya (incast dari banyak server ke satu, atau aplikasi bursty). Perbaikan: perbesar buffer kalau memungkinkan, terapkan QoS, tingkatkan kecepatan uplink, atau distribusikan beban.
+3. **Microburst.** Grafik utilisasi dihitung dari rata-rata interval polling (mis. 5 menit). Trafik yang datang dalam lonjakan sangat singkat (mikrodetik hingga milidetik) dan melebihi kapasitas port keluar akan mengisi buffer dan menyebabkan drop, tetapi ketika dirata-ratakan selama 5 menit, terlihat hanya 20%. Yang diperiksa: (a) counter `output drops`/`ifOutDiscards` pada interface: kalau naik padahal utilisasi rata-rata rendah, itu tanda microburst; (b) polling dengan interval jauh lebih pendek (streaming telemetry, atau SNMP interval detik) untuk melihat lonjakan sesungguhnya; (c) pola trafik yang menyebabkannya (incast dari banyak server ke satu, atau aplikasi bursty). Perbaikan: perbesar buffer kalau memungkinkan, terapkan QoS, tingkatkan kecepatan uplink, atau distribusikan beban.
 
-4. **Terpusat:** log lokal di perangkat (a) **hilang atau tidak dapat diakses saat perangkat crash, di-reboot, atau diretas** — persis saat Anda paling membutuhkannya; (b) buffer lokal kecil dan menimpa log lama dengan cepat; (c) **mustahil dicari lintas puluhan perangkat** saat outage — Anda tidak punya waktu login ke setiap perangkat. Server terpusat menyimpan log dengan andal, retensi panjang, dan pencarian cepat.
-   **Waktu tersinkronisasi (NTP):** untuk **korelasi**. Kalau jam antar-perangkat berbeda-beda, Anda tidak bisa menyusun kronologi kejadian — "interface down di switch A pukul 14:03:22, adjacency BGP putus di router B pukul 14:03:25" hanya bermakna kalau kedua jam akurat. Tanpa waktu sinkron, investigasi insiden dan forensik menjadi tebakan. (NTP yang salah juga merusak TLS dan Kerberos — lihat modul terkait.)
+4. **Terpusat:** log lokal di perangkat (a) hilang atau tidak dapat diakses saat perangkat crash, di-reboot, atau diretas, persis saat Anda paling membutuhkannya; (b) buffer lokal kecil dan menimpa log lama dengan cepat; (c) mustahil dicari lintas puluhan perangkat saat outage, karena Anda tidak punya waktu login ke setiap perangkat. Server terpusat menyimpan log dengan andal, retensi panjang, dan pencarian cepat.
+   **Waktu tersinkronisasi (NTP):** untuk korelasi. Kalau jam antar-perangkat berbeda-beda, Anda tidak bisa menyusun kronologi kejadian: "interface down di switch A pukul 14:03:22, adjacency BGP putus di router B pukul 14:03:25" hanya bermakna kalau kedua jam akurat. Tanpa waktu sinkron, investigasi insiden dan forensik menjadi tebakan. (NTP yang salah juga merusak TLS dan Kerberos; lihat modul terkait.)
 
-5. **Alert fatigue** terjadi ketika sistem menghasilkan terlalu banyak alert — terutama yang **tidak actionable, palsu, atau berulang** — sehingga operator menjadi kebal dan mulai **mengabaikan semua alert**, termasuk yang benar-benar penting. Ini lebih berbahaya daripada tidak ada alerting sama sekali, karena memberi rasa aman palsu dan menyembunyikan masalah nyata di tengah kebisingan.
-   **Pencegahan:** (a) alert hanya pada yang **actionable** — setiap alert harus bisa dijawab "apa yang harus saya lakukan sekarang?"; kalau jawabannya "tidak ada", jadikan dashboard/laporan, bukan alert; (b) berbasis **gejala yang memengaruhi pengguna** (latency layanan tinggi), bukan setiap metrik mentah (CPU 60%); (c) **threshold wajar + durasi** (`for: 5m`) untuk menghindari flapping dan lonjakan sesaat; (d) **deduplikasi dan grouping** — satu outage = satu alert, bukan 100; (e) **prioritas jelas** (P1 sampai P4) dengan rute berbeda; (f) **runbook terhubung** dan escalation; (g) **review berkala** — matikan alert yang selalu palsu atau tidak pernah ditindaklanjuti.
+5. **Alert fatigue** terjadi ketika sistem menghasilkan terlalu banyak alert (terutama yang tidak actionable, palsu, atau berulang), sehingga operator menjadi kebal dan mulai mengabaikan semua alert, termasuk yang benar-benar penting. Ini lebih berbahaya daripada tidak ada alerting sama sekali, karena memberi rasa aman palsu dan menyembunyikan masalah nyata di tengah kebisingan.
+   **Pencegahan:** (a) Alert hanya pada yang actionable: setiap alert harus bisa dijawab "apa yang harus saya lakukan sekarang?". Kalau jawabannya "tidak ada", jadikan dashboard/laporan, bukan alert. (b) Berbasis gejala yang memengaruhi pengguna (latency layanan tinggi), bukan setiap metrik mentah (CPU 60%). (c) Threshold wajar + durasi (`for: 5m`) untuk menghindari flapping dan lonjakan sesaat. (d) Deduplikasi dan grouping: satu outage = satu alert, bukan 100. (e) Prioritas jelas (P1 sampai P4) dengan rute berbeda. (f) Runbook terhubung dan escalation. (g) Review berkala: matikan alert yang selalu palsu atau tidak pernah ditindaklanjuti.
 
-6. **Error budget** = `100% − SLO`. Kalau SLO (target keandalan internal) adalah 99,9%, maka error budget adalah 0,1% — yaitu **berapa banyak "kegagalan" yang boleh terjadi** dalam periode tertentu (untuk 99,9%: ~43 menit downtime per bulan). Ini mengubah keandalan dari tujuan absolut "sebanyak mungkin" menjadi **anggaran yang dapat dikelola**.
-   **Cara memandu keputusan:** kalau error budget masih **banyak tersisa**, tim boleh mengambil risiko — merilis fitur baru, melakukan perubahan, bereksperimen — karena ada ruang untuk kegagalan. Kalau error budget **hampir habis** (mis. sudah 40 dari 43 menit terpakai bulan ini), tim harus **membekukan perubahan berisiko** dan fokus pada stabilitas sampai periode berikutnya. Ini menyeimbangkan **inovasi vs keandalan** secara objektif berbasis data, alih-alih perdebatan subjektif. Konsep ini berasal dari Google SRE.
+6. **Error budget** = `100% − SLO`. Kalau SLO (target keandalan internal) adalah 99,9%, maka error budget adalah 0,1%, yaitu berapa banyak "kegagalan" yang boleh terjadi dalam periode tertentu (untuk 99,9%: ~43 menit downtime per bulan). Ini mengubah keandalan dari tujuan absolut "sebanyak mungkin" menjadi anggaran yang dapat dikelola.
+   **Cara memandu keputusan:** kalau error budget masih banyak tersisa, tim boleh mengambil risiko (merilis fitur baru, melakukan perubahan, bereksperimen) karena ada ruang untuk kegagalan. Kalau error budget hampir habis (mis. sudah 40 dari 43 menit terpakai bulan ini), tim harus membekukan perubahan berisiko dan fokus pada stabilitas sampai periode berikutnya. Ini menyeimbangkan inovasi vs keandalan secara objektif berbasis data, alih-alih perdebatan subjektif. Konsep ini berasal dari Google SRE.
 
-7. Flow monitoring memberi visibilitas ke **POLA dan HUBUNGAN trafik** — siapa berbicara dengan siapa, kapan, berapa banyak, protokol/port apa — yang tidak diberikan SNMP. SNMP hanya memberi **agregat per interface** (total byte masuk/keluar, error), tanpa tahu **percakapan individual**. Yang bisa dideteksi flow tetapi tidak SNMP: (a) **top talkers** — host mana yang memakai bandwidth terbanyak; (b) **beaconing** — koneksi berkala teratur ke satu tujuan (indikasi C2 malware); (c) **port scan** — satu sumber menghubungi banyak port/host; (d) **eksfiltrasi** — volume upload tidak wajar ke tujuan eksternal; (e) **DDoS** — banyak sumber ke satu tujuan; (f) **lateral movement** — koneksi antar-host internal yang tidak biasa; (g) **distribusi aplikasi** — berapa banyak trafik web vs backup vs VoIP. Ini menjadikan flow monitoring jembatan penting antara operasi jaringan dan keamanan, tanpa perlu menyimpan payload.
+7. Flow monitoring memberi visibilitas ke POLA dan HUBUNGAN trafik (siapa berbicara dengan siapa, kapan, berapa banyak, protokol/port apa) yang tidak diberikan SNMP. SNMP hanya memberi agregat per interface (total byte masuk/keluar, error), tanpa tahu percakapan individual. Yang bisa dideteksi flow tetapi tidak SNMP: (a) **top talkers**: host mana yang memakai bandwidth terbanyak; (b) **beaconing**: koneksi berkala teratur ke satu tujuan (indikasi C2 malware); (c) **port scan**: satu sumber menghubungi banyak port/host; (d) **eksfiltrasi**: volume upload tidak wajar ke tujuan eksternal; (e) **DDoS**: banyak sumber ke satu tujuan; (f) **lateral movement**: koneksi antar-host internal yang tidak biasa; (g) **distribusi aplikasi**: berapa banyak trafik web vs backup vs VoIP. Karena itu flow monitoring menjadi jembatan antara operasi jaringan dan keamanan, tanpa perlu menyimpan payload.
 
-8. **Monitoring "up/down" hanya menangkap KETERSEDIAAN, bukan KUALITAS/KINERJA.** Perangkat bisa "up" (menjawab SNMP/ping) sementara layanan yang dilewatkannya **terdegradasi** — latency tinggi, packet loss, jitter, DNS lambat, atau congestion. Semua indikator biner "hijau", tetapi pengalaman pengguna buruk.
-   Yang kurang: (a) **monitoring end-to-end/synthetic** yang mengukur **latency, loss, dan jitter** ke tujuan penting, bukan hanya "hidup atau mati"; (b) **monitoring LAYANAN**, bukan perangkat — waktu respons aplikasi, waktu resolusi DNS, waktu muat halaman, dari sudut pandang pengguna; (c) **baseline dan threshold pada metrik kualitas** — alert saat latency naik dari 20 ms ke 200 ms, bukan hanya saat interface mati; (d) mungkin juga **bufferbloat monitoring** (latency di bawah beban) dan **microburst detection** (`output drops`). Perbaikan: tambahkan probe synthetic (IP SLA, blackbox_exporter, atau layanan monitoring eksternal) yang mengukur pengalaman nyata, dan buat dashboard/alert berbasis metrik kualitas, bukan hanya status up/down.
+8. **Monitoring "up/down" hanya menangkap KETERSEDIAAN, bukan KUALITAS/KINERJA.** Perangkat bisa "up" (menjawab SNMP/ping) sementara layanan yang dilewatkannya terdegradasi: latency tinggi, packet loss, jitter, DNS lambat, atau congestion. Semua indikator biner "hijau", tetapi pengalaman pengguna buruk.
+   Yang kurang: (a) monitoring end-to-end/synthetic yang mengukur latency, loss, dan jitter ke tujuan penting, bukan hanya "hidup atau mati"; (b) monitoring LAYANAN, bukan perangkat: waktu respons aplikasi, waktu resolusi DNS, waktu muat halaman, dari sudut pandang pengguna; (c) baseline dan threshold pada metrik kualitas, misalnya alert saat latency naik dari 20 ms ke 200 ms, bukan hanya saat interface mati; (d) mungkin juga bufferbloat monitoring (latency di bawah beban) dan microburst detection (`output drops`). Perbaikan: tambahkan probe synthetic (IP SLA, blackbox_exporter, atau layanan monitoring eksternal) yang mengukur pengalaman nyata, dan buat dashboard/alert berbasis metrik kualitas, bukan hanya status up/down.
 
 </details>
 
@@ -537,11 +537,11 @@ Integrasi dengan `12-keamanan/06`:
 
 ## 15. Sumber
 
-- RFC 3411-3418 — SNMPv3 · RFC 7011 — IPFIX · RFC 3176 — sFlow
-- gNMI / OpenConfig — https://www.openconfig.net/
-- Prometheus — https://prometheus.io/docs/ · Grafana — https://grafana.com/docs/
-- Zabbix — https://www.zabbix.com/documentation · LibreNMS — https://docs.librenms.org/
-- Google SRE Book — *Monitoring Distributed Systems*, *Service Level Objectives*
+- RFC 3411-3418 (SNMPv3) · RFC 7011 (IPFIX) · RFC 3176 (sFlow)
+- gNMI / OpenConfig: https://www.openconfig.net/
+- Prometheus: https://prometheus.io/docs/ · Grafana: https://grafana.com/docs/
+- Zabbix: https://www.zabbix.com/documentation · LibreNMS: https://docs.librenms.org/
+- Google SRE Book: *Monitoring Distributed Systems*, *Service Level Objectives*
 - Cisco, *IP SLAs Configuration Guide*
 
 ---

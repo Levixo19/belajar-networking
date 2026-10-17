@@ -56,7 +56,7 @@ ETag: "a1b2c3"
 | **PATCH** | Ubah sebagian resource | Tidak | Tidak | Ya |
 | **DELETE** | Hapus resource | Ya | Tidak | Kadang |
 | **OPTIONS** | Tanya kemampuan (dipakai CORS preflight) | Ya | Ya | Tidak |
-| **CONNECT** | Buat tunnel (proxy HTTPS) | Tidak | Tidak | — |
+| **CONNECT** | Buat tunnel (proxy HTTPS) | Tidak | Tidak | - |
 | **TRACE** | Echo request (sebaiknya dimatikan) | Ya | Ya | Tidak |
 
 **Aman (safe)** = tidak mengubah state server.
@@ -73,25 +73,25 @@ ETag: "a1b2c3"
 | **5xx** | Kesalahan **server** | `500 Internal Server Error`, `502 Bad Gateway`, `503 Service Unavailable`, `504 Gateway Timeout` |
 
 > [!WARNING]
-> **Yang paling penting untuk network engineer:**
+> **Yang perlu dikuasai network engineer:**
 
 | Kode | Artinya bagi Anda |
 |---|---|
 | **401** | Belum terautentikasi (kirim kredensial) |
 | **403** | Sudah terautentikasi tetapi **tidak berhak** |
-| **429** | Rate limit — periksa header `Retry-After` |
+| **429** | Rate limit; periksa header `Retry-After` |
 | **502 Bad Gateway** | Proxy/LB tidak bisa mencapai **backend** |
 | **503 Service Unavailable** | Backend ada tetapi menolak (overload/maintenance) |
 | **504 Gateway Timeout** | Backend **terlalu lambat** menjawab |
 
 > [!TIP]
-> **502/504 hampir selalu masalah di sisi backend atau jaringan antara LB dan backend**, bukan di klien. Ini pembeda diagnosis yang penting.
+> **502/504 hampir selalu masalah di sisi backend atau jaringan antara LB dan backend**, bukan di klien.
 
 ### Header yang wajib dikenal
 
 | Header | Fungsi |
 |---|---|
-| **Host** | Nama virtual host — **wajib** di HTTP/1.1 |
+| **Host** | Nama virtual host; **wajib** di HTTP/1.1 |
 | **Content-Type** | Tipe MIME body |
 | **Content-Length** | Panjang body |
 | **Transfer-Encoding: chunked** | Body dikirim bertahap tanpa panjang yang diketahui di awal |
@@ -104,7 +104,7 @@ ETag: "a1b2c3"
 | **Location** | Tujuan redirect |
 | **X-Forwarded-For / Forwarded** | IP klien asli di balik proxy |
 | **X-Forwarded-Proto** | Skema asli (http/https) di balik proxy TLS-terminating |
-| **Strict-Transport-Security** | HSTS — paksa HTTPS |
+| **Strict-Transport-Security** | HSTS: paksa HTTPS |
 | **Alt-Svc** | Iklankan HTTP/3 |
 | **Retry-After** | Kapan boleh mencoba lagi (dengan 429/503) |
 
@@ -116,24 +116,24 @@ ETag: "a1b2c3"
 ## 2. Evolusi HTTP
 
 ### HTTP/1.0 (1996)
-- Satu koneksi TCP per request — sangat boros
+- Satu koneksi TCP per request, sangat boros
 - Tidak ada header `Host` → satu IP hanya bisa melayani satu situs
 
 ### HTTP/1.1 (1997, diperbarui RFC 9110-9112 pada 2022)
 - **`Host` wajib** → virtual hosting (banyak situs di satu IP)
 - **Keep-alive** default → koneksi dipakai ulang
 - **Chunked transfer encoding** → streaming
-- **Pipelining** — mengirim beberapa request tanpa menunggu; **gagal dalam praktik** karena head-of-line blocking dan dukungan proxy yang buruk. Praktis tidak dipakai.
+- **Pipelining**: mengirim beberapa request tanpa menunggu. Fitur ini **gagal dalam praktik** karena head-of-line blocking dan dukungan proxy yang buruk, sehingga praktis tidak dipakai.
 
 > [!WARNING]
-> **Head-of-line blocking HTTP/1.1:** dalam satu koneksi, response harus dikirim **berurutan**. Request lambat menahan semua request setelahnya. Solusi browser: buka **6 koneksi paralel per host** — boros dan tetap terbatas.
+> **Head-of-line blocking HTTP/1.1:** dalam satu koneksi, response harus dikirim **berurutan**. Request lambat menahan semua request setelahnya. Solusi browser: buka **6 koneksi paralel per host**, yang boros dan tetap terbatas.
 
 ### HTTP/2 (2015, RFC 9113)
 - **Biner**, bukan teks
-- **Multiplexing** — banyak stream dalam satu koneksi TCP, tanpa urutan
-- **HPACK** — kompresi header (header berulang seperti cookie sangat besar di HTTP/1.1)
+- **Multiplexing**: banyak stream dalam satu koneksi TCP, tanpa urutan
+- **HPACK**: kompresi header (header berulang seperti cookie sangat besar di HTTP/1.1)
 - **Stream priority**
-- **Server push** — ⚠️ **sudah dicabut** dari Chrome karena jarang bermanfaat dan sering merugikan
+- **Server push**: **sudah dicabut** dari Chrome karena jarang bermanfaat dan sering merugikan
 
 > [!WARNING]
 > **Head-of-line blocking berpindah ke TCP.** Satu paket TCP hilang → semua stream berhenti. Di jaringan dengan loss, HTTP/2 bisa lebih lambat daripada HTTP/1.1 dengan 6 koneksi.
@@ -215,7 +215,7 @@ Cache-Control: no-cache                      ← simpan, tapi validasi dulu tiap
 Cache-Control: immutable, max-age=31536000   ← untuk aset ber-hash (app.a1b2c3.js)
 ```
 
-**Validasi cache** menghemat bandwidth besar:
+**Validasi cache** menghemat banyak bandwidth:
 ```
 Klien : GET /style.css
         If-None-Match: "a1b2c3"
@@ -240,8 +240,8 @@ Ini bagian yang **wajib** untuk `15-otomasi` dan untuk CCNA topik 6.5-6.7.
 | **Delete** | DELETE | `DELETE /api/interfaces/gi0-1` | 204 No Content |
 
 Ciri REST:
-- **Stateless** — setiap request membawa semua informasi yang dibutuhkan
-- **Resource-oriented** — URL menunjuk objek, bukan aksi
+- **Stateless**: setiap request membawa semua informasi yang dibutuhkan
+- **Resource-oriented**: URL menunjuk objek, bukan aksi
 - Memakai status code HTTP secara semantik
 - Representasi biasanya **JSON** (dulu XML)
 
@@ -311,13 +311,13 @@ interfaces:
 ```
 
 > [!WARNING]
-> **YAML sensitif terhadap indentasi** dan **tidak boleh memakai tab** — hanya spasi.
+> **YAML sensitif terhadap indentasi** dan **tidak boleh memakai tab**; pakai spasi saja.
 
 ### Autentikasi API
 
 | Metode | Cara | Catatan |
 |---|---|---|
-| **Basic** | `Authorization: Basic base64(user:pass)` | ⚠️ Base64 **bukan enkripsi** — wajib HTTPS |
+| **Basic** | `Authorization: Basic base64(user:pass)` | Hati-hati: Base64 **bukan enkripsi**, jadi wajib HTTPS |
 | **Bearer token** | `Authorization: Bearer <token>` | Umum; token dari login/OAuth |
 | **API key** | Header khusus (`X-API-Key`) atau query param | Sederhana; jangan taruh di URL (tercatat di log) |
 | **OAuth 2.0** | Alur token dengan refresh | Untuk delegasi akses |
@@ -371,7 +371,7 @@ Detail lengkap otomasi di `15-otomasi/02` dan `15-otomasi/03`.
 | **Long polling** | Simulasi push | HTTP biasa | Fallback lama |
 
 > [!TIP]
-> **gRPC penting untuk network engineer** karena **gNMI** (gRPC Network Management Interface) adalah standar modern untuk **streaming telemetry** — perangkat mendorong data secara kontinu alih-alih di-poll SNMP (`14-monitoring-troubleshooting/03`, `15-otomasi/02`).
+> **gRPC penting untuk network engineer** karena **gNMI** (gRPC Network Management Interface) adalah standar modern untuk **streaming telemetry**: perangkat mendorong data secara kontinu alih-alih di-poll SNMP (`14-monitoring-troubleshooting/03`, `15-otomasi/02`).
 
 ---
 
@@ -482,11 +482,11 @@ Dengan CDN: Pengguna Jakarta → edge Jakarta → RTT 5 ms
 Manfaat: latency jauh lebih rendah, beban origin berkurang drastis, mitigasi DDoS, TLS termination di edge.
 
 **Konsep penting:**
-- **Origin** — server asal
-- **Edge / PoP** — node cache terdekat pengguna
-- **Cache hit ratio** — persentase permintaan yang dilayani dari cache
-- **Purge / invalidation** — menghapus konten dari cache
-- **Origin shield** — lapisan cache perantara untuk melindungi origin
+- **Origin**: server asal
+- **Edge / PoP**: node cache terdekat pengguna
+- **Cache hit ratio**: persentase permintaan yang dilayani dari cache
+- **Purge / invalidation**: menghapus konten dari cache
+- **Origin shield**: lapisan cache perantara untuk melindungi origin
 
 ---
 
@@ -565,7 +565,7 @@ tls.handshake.extensions_server_name == "example.com"   ← SNI
 ```
 
 > [!WARNING]
-> HTTPS terenkripsi — Wireshark hanya melihat **SNI** (nama host di ClientHello) kecuali Anda punya kunci sesi (`SSLKEYLOGFILE`).
+> HTTPS terenkripsi, sehingga Wireshark hanya melihat **SNI** (nama host di ClientHello) kecuali Anda punya kunci sesi (`SSLKEYLOGFILE`).
 
 ---
 
@@ -573,7 +573,7 @@ tls.handshake.extensions_server_name == "example.com"   ← SNI
 
 Sebagian besar video yang ditonton lewat internet hari ini bukan aliran RTP real-time, melainkan **adaptive bitrate streaming (ABR)** di atas HTTP biasa. Prinsipnya sederhana. Penyedia mengodekan satu video ke beberapa bitrate dan resolusi (misalnya 0,5; 1,2; 2,5; 5 Mbps), memotong masing-masing menjadi **segmen** pendek berdurasi beberapa detik, dan menyimpannya sebagai berkas yang disajikan server web atau CDN. Pemutar mengunduh daftar varian lalu mengunduh segmen satu per satu; sambil jalan ia mengukur kecepatan unduh dan isi buffer, dan memilih varian untuk segmen berikutnya. Kalau throughput turun, ia pindah ke bitrate lebih rendah alih-alih berhenti.
 
-Dua format yang dominan. **HLS (HTTP Live Streaming)** dijelaskan di RFC 8216 (Agustus 2017, kategori Informational). Ada **Master (Multivariant) Playlist** yang memuat daftar varian dengan tag `EXT-X-STREAM-INF`; atribut `BANDWIDTH` wajib dan berisi bitrate puncak segmen dalam bit per detik. Setiap varian menunjuk ke **Media Playlist** berisi urutan segmen, dengan `EXT-X-TARGETDURATION` sebagai batas atas durasi segmen. Segmen berformat MPEG-2 Transport Stream atau fragmented MP4. Pada siaran langsung, pemutar memuat ulang Media Playlist secara berkala untuk menemukan segmen baru. **MPEG-DASH** (ISO/IEC 23009-1) memakai ide yang sama dengan manifest XML bernama **MPD (Media Presentation Description)**, dan segmen berbasis ISO Base Media File Format atau MPEG-2 TS.
+Ada dua format yang dominan. **HLS (HTTP Live Streaming)** dijelaskan di RFC 8216 (Agustus 2017, kategori Informational). Ada **Master (Multivariant) Playlist** yang memuat daftar varian dengan tag `EXT-X-STREAM-INF`; atribut `BANDWIDTH` wajib dan berisi bitrate puncak segmen dalam bit per detik. Setiap varian menunjuk ke **Media Playlist** berisi urutan segmen, dengan `EXT-X-TARGETDURATION` sebagai batas atas durasi segmen. Segmen berformat MPEG-2 Transport Stream atau fragmented MP4. Pada siaran langsung, pemutar memuat ulang Media Playlist secara berkala untuk menemukan segmen baru. **MPEG-DASH** (ISO/IEC 23009-1) memakai ide yang sama dengan manifest XML bernama **MPD (Media Presentation Description)**, dan segmen berbasis ISO Base Media File Format atau MPEG-2 TS.
 
 ```
 #EXTM3U
@@ -610,7 +610,7 @@ Untuk troubleshooting, periksa dari sisi klien dengan `curl`: ambil master playl
 > **6. Menaruh API key di query string.** Tercatat di log akses, riwayat browser, dan Referer header.
 
 > [!WARNING]
-> **7. Mengira Base64 pada Basic Auth adalah enkripsi.** Itu hanya encoding — wajib HTTPS.
+> **7. Mengira Base64 pada Basic Auth adalah enkripsi.** Itu hanya encoding, jadi tetap wajib HTTPS.
 
 ---
 
@@ -625,7 +625,7 @@ Untuk troubleshooting, periksa dari sisi klien dengan `curl`: ambil master playl
 - **JSON**: 6 tipe (string, number, boolean, null, object, array); tanda kutip ganda, tanpa trailing comma, tanpa komentar.
 - Autentikasi API: Basic (butuh HTTPS), **Bearer token**, API key, OAuth 2.0, mTLS.
 - **gRPC/HTTP2** adalah dasar **gNMI** untuk streaming telemetry.
-- Load balancer **L4** (IP+port, cepat) vs **L7** (URL/header, kaya fitur). **Health check L7 sangat penting.**
+- Load balancer **L4** (IP+port, cepat) vs **L7** (URL/header, kaya fitur). **Gunakan health check L7.**
 - **CDN** memangkas latency dengan mendekatkan konten; memakai anycast/GeoDNS.
 - **ABR (HLS/DASH)** = video dipotong jadi segmen HTTP berbitrate banyak (RFC 8216: master playlist + media playlist, `BANDWIDTH` = puncak bitrate), pemutar memilih varian per segmen. Trafiknya elastis, berbuffer, bergelombang, dan sangat cocok dengan **CDN**; tidak perlu priority queue seperti VoIP.
 
@@ -646,11 +646,11 @@ Untuk troubleshooting, periksa dari sisi klien dengan `curl`: ambil master playl
 <details>
 <summary>Jawaban</summary>
 
-1. **401 Unauthorized** berarti klien **belum terautentikasi** — kredensial tidak ada, salah, atau kedaluwarsa. Klien harus mengirimkan kredensial (respons biasanya menyertakan header `WWW-Authenticate`). **403 Forbidden** berarti klien **sudah teridentifikasi tetapi tidak berhak** mengakses resource itu. Mengirim ulang kredensial yang sama tidak akan membantu; klien perlu izin yang berbeda.
+1. **401 Unauthorized** berarti klien **belum terautentikasi**: kredensial tidak ada, salah, atau kedaluwarsa. Klien harus mengirimkan kredensial (respons biasanya menyertakan header `WWW-Authenticate`). **403 Forbidden** berarti klien **sudah teridentifikasi tetapi tidak berhak** mengakses resource itu. Mengirim ulang kredensial yang sama tidak akan membantu; klien perlu izin yang berbeda.
 
 2. **502 berarti proxy/load balancer tidak bisa mendapat respons yang sah dari backend.** Mulai dari sisi LB ke belakang: (a) apakah proses backend berjalan? (`systemctl status`, `ss -tulnp`); (b) apakah LB bisa mencapai backend? (`curl` dari LB ke IP backend, cek firewall/security group/routing); (c) apakah backend crash atau kehabisan resource? (log aplikasi, OOM killer, koneksi database); (d) apakah health check menandai semua backend down? (e) apakah backend mengirim respons yang tidak valid? Klien dan jaringan internet **bukan** tempat memulai.
 
-3. HTTP/2 memultipleks **semua** stream dalam **satu koneksi TCP**. TCP menjamin urutan byte untuk seluruh koneksi, sehingga satu paket yang hilang menahan **semua** stream sampai retransmisi tiba (head-of-line blocking di TCP). HTTP/1.1 membuka **6 koneksi TCP paralel** per host; kehilangan paket di satu koneksi hanya memblokir 1/6 trafik, sementara 5 koneksi lain terus mengalir. Karena itu pada jaringan dengan loss tinggi (seluler buruk, Wi-Fi padat), HTTP/1.1 kadang terasa lebih responsif. HTTP/3 menyelesaikan ini dengan loss recovery per stream di QUIC.
+3. HTTP/2 memultipleks semua stream dalam **satu koneksi TCP**. TCP menjamin urutan byte untuk seluruh koneksi, sehingga satu paket yang hilang menahan semua stream sampai retransmisi tiba (head-of-line blocking di TCP). HTTP/1.1 membuka **6 koneksi TCP paralel** per host; kehilangan paket di satu koneksi hanya memblokir 1/6 trafik, sementara 5 koneksi lain terus mengalir. Karena itu pada jaringan dengan loss tinggi (seluler buruk, Wi-Fi padat), HTTP/1.1 kadang terasa lebih responsif. HTTP/3 menyelesaikan ini dengan loss recovery per stream di QUIC.
 
 4. ```json
    {"device": "sw1", "vlans": [10, 20], "enabled": true}
@@ -658,12 +658,12 @@ Untuk troubleshooting, periksa dari sisi klien dengan `curl`: ambil master playl
    Perbaikan: tanda kutip tunggal → ganda; trailing comma setelah `20` dan setelah `True` dihapus; key `enabled` diberi tanda kutip; `True` → `true` (huruf kecil).
 
 5. **Idempoten: GET, HEAD, PUT, DELETE, OPTIONS, TRACE.** **Tidak idempoten: POST, PATCH.**
-   Ini penting karena ketika klien mengalami **timeout**, ia tidak tahu apakah request sudah diproses server atau hilang di jalan. Untuk method idempoten, klien **aman mengulangnya** — hasil akhirnya sama. Untuk POST, mengulang bisa membuat dua resource duplikat (mis. dua pesanan). Karena itu API yang baik menyediakan **idempotency key** untuk POST, dan proxy/LB hanya boleh melakukan retry otomatis pada method idempoten.
+   Ini penting karena ketika klien mengalami **timeout**, ia tidak tahu apakah request sudah diproses server atau hilang di jalan. Untuk method idempoten, klien **aman mengulangnya** karena hasil akhirnya sama. Untuk POST, mengulang bisa membuat dua resource duplikat (mis. dua pesanan). Karena itu API yang baik menyediakan **idempotency key** untuk POST, dan proxy/LB hanya boleh melakukan retry otomatis pada method idempoten.
 
-6. Health check L3 (ping) hanya memverifikasi bahwa **host dan stack IP-nya hidup** — bukan bahwa aplikasinya berfungsi. Load balancer akan terus mengirim trafik ke server itu, dan setiap request akan gagal (500/503), sehingga sebagian pengguna mengalami error meski server lain sehat.
-   **Perbaikan:** gunakan health check **L7** yang memanggil endpoint khusus (mis. `GET /healthz`) yang **memeriksa dependensi kritis** — koneksi database, cache, antrean. Endpoint mengembalikan 200 hanya jika aplikasi benar-benar siap melayani. Tambahkan juga `max_fails`/`fail_timeout` agar backend yang gagal segera dikeluarkan dari rotasi.
+6. Health check L3 (ping) hanya memverifikasi bahwa **host dan stack IP-nya hidup**, bukan bahwa aplikasinya berfungsi. Load balancer akan terus mengirim trafik ke server itu, dan setiap request akan gagal (500/503), sehingga sebagian pengguna mengalami error meski server lain sehat.
+   **Perbaikan:** gunakan health check **L7** yang memanggil endpoint khusus (mis. `GET /healthz`) yang **memeriksa dependensi kritis**: koneksi database, cache, antrean. Endpoint mengembalikan 200 hanya jika aplikasi benar-benar siap melayani. Tambahkan juga `max_fails`/`fail_timeout` agar backend yang gagal segera dikeluarkan dari rotasi.
 
-7. Kombinasi itu akan berarti "izinkan **situs mana pun** membaca respons ini **beserta cookie/kredensial pengguna**" — artinya situs jahat mana pun bisa membuat request terautentikasi atas nama pengguna dan **membaca hasilnya**, mencuri data pribadi. Karena bahayanya, **spesifikasi CORS melarang** kombinasi ini: browser akan menolak respons dengan `Allow-Origin: *` jika `Allow-Credentials: true`. Yang benar: sebutkan origin secara eksplisit (`Access-Control-Allow-Origin: https://app.example.com`) dan validasi origin di sisi server terhadap daftar putih.
+7. Kombinasi itu akan berarti "izinkan **situs mana pun** membaca respons ini **beserta cookie/kredensial pengguna**". Artinya, situs jahat mana pun bisa membuat request terautentikasi atas nama pengguna dan **membaca hasilnya**, mencuri data pribadi. Karena bahayanya, **spesifikasi CORS melarang** kombinasi ini: browser akan menolak respons dengan `Allow-Origin: *` jika `Allow-Credentials: true`. Yang benar: sebutkan origin secara eksplisit (`Access-Control-Allow-Origin: https://app.example.com`) dan validasi origin di sisi server terhadap daftar putih.
 
 8. Dua cara:
    ```bash
@@ -683,16 +683,16 @@ Untuk troubleshooting, periksa dari sisi klien dengan `curl`: ambil master playl
 
 ## 12. Sumber
 
-- RFC 9110 — HTTP Semantics · RFC 9111 — HTTP Caching · RFC 9112 — HTTP/1.1
-- RFC 9113 — HTTP/2 · RFC 9114 — HTTP/3 · RFC 9204 — QPACK
-- RFC 6265bis — Cookies (SameSite)
-- RFC 8259 — JSON
-- RFC 8040 — RESTCONF
+- RFC 9110, HTTP Semantics · RFC 9111, HTTP Caching · RFC 9112, HTTP/1.1
+- RFC 9113, HTTP/2 · RFC 9114, HTTP/3 · RFC 9204, QPACK
+- RFC 6265bis, Cookies (SameSite)
+- RFC 8259, JSON
+- RFC 8040, RESTCONF
 - Cisco CCNA 200-301 v1.1, topik 6.5 (REST API: authentication, CRUD, HTTP verbs, data encoding) dan 6.7 (komponen JSON)
-- MDN Web Docs — https://developer.mozilla.org/en-US/docs/Web/HTTP
+- MDN Web Docs: https://developer.mozilla.org/en-US/docs/Web/HTTP
 - RFC 8216, HTTP Live Streaming (Agustus 2017, Informational): https://www.rfc-editor.org/rfc/rfc8216
 - ISO/IEC 23009-1, Dynamic adaptive streaming over HTTP (DASH), Part 1: Media presentation description and segment formats: https://www.iso.org/standard/89027.html
 
 ---
 
-**Berikutnya:** `06-aplikasi/04-tls-pki.md` — bagaimana komunikasi diamankan.
+**Berikutnya:** `06-aplikasi/04-tls-pki.md`. Bagaimana komunikasi diamankan.

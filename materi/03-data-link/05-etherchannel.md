@@ -29,23 +29,23 @@ Hasil: bandwidth agregat 2 Gbps, kedua kabel terpakai.
 
 ### Manfaat
 
-1. **Bandwidth agregat** — sampai 8 link aktif (16 dikonfigurasi pada beberapa platform).
-2. **Redundansi otomatis** — satu kabel putus, sisanya terus bekerja tanpa konvergensi STP.
-3. **STP melihat satu link logis** — tidak ada blocking, tidak ada waktu konvergensi saat satu anggota gagal.
-4. **Failover sub-detik** — jauh lebih cepat daripada STP.
+1. **Bandwidth agregat**: sampai 8 link aktif (16 dikonfigurasi pada beberapa platform).
+2. **Redundansi otomatis**: satu kabel putus, sisanya terus bekerja tanpa konvergensi STP.
+3. **STP melihat satu link logis**: tidak ada blocking, tidak ada waktu konvergensi saat satu anggota gagal.
+4. **Failover sub-detik**: jauh lebih cepat daripada STP.
 
 Nama lain untuk hal yang sama:
 - **EtherChannel** (Cisco)
 - **Port Channel** (Cisco, nama interface logisnya)
 - **LAG** (*Link Aggregation Group*, istilah umum)
 - **Bonding / Teaming** (Linux/Windows)
-- **Trunk** (HP/Aruba — ⚠️ berbeda arti dengan trunk VLAN Cisco!)
+- **Trunk** (HP/Aruba; hati-hati, artinya berbeda dengan trunk VLAN Cisco)
 
 ---
 
 ## 2. Batasan Penting: Satu Aliran = Satu Link
 
-Ini konsep yang **paling sering disalahpahami**.
+Konsep ini paling sering disalahpahami.
 
 > **EtherChannel tidak membagi satu aliran data ke banyak link.** Ia mendistribusikan **aliran yang berbeda** ke link yang berbeda.
 
@@ -59,10 +59,10 @@ Empat transfer dari server berbeda ke tujuan berbeda:
   → bisa mencapai 4 Gbps total (jika hash mendistribusikan dengan baik)
 ```
 
-**Kenapa begitu?** Kalau satu aliran TCP dipecah ke beberapa link, paket bisa tiba **tidak berurutan** (karena link punya latency sedikit berbeda). TCP akan menafsirkan out-of-order sebagai kehilangan paket → fast retransmit → throughput justru **turun drastis**. Jadi EtherChannel sengaja menjaga setiap aliran tetap di satu link.
+**Kenapa begitu?** Kalau satu aliran TCP dipecah ke beberapa link, paket bisa tiba tidak berurutan (karena link punya latency sedikit berbeda). TCP akan menafsirkan out-of-order sebagai kehilangan paket → fast retransmit → throughput justru turun drastis. Jadi EtherChannel sengaja menjaga setiap aliran tetap di satu link.
 
 > [!WARNING]
-> **Konsekuensi praktis:** kalau Anda perlu satu aliran 10 Gbps, EtherChannel 10 × 1 Gbps **tidak akan membantu**. Anda butuh link fisik 10 Gbps.
+> **Konsekuensi praktis:** kalau Anda perlu satu aliran 10 Gbps, EtherChannel 10 × 1 Gbps tidak akan membantu. Anda butuh link fisik 10 Gbps.
 
 ---
 
@@ -108,7 +108,7 @@ Kalau hash memakai dst-mac saja → semua trafik masuk ke SATU link!
 Solusi: gunakan hash berbasis IP atau IP+port, yang jauh lebih bervariasi.
 
 > [!WARNING]
-> **Skenario kedua:** hanya ada beberapa aliran besar (mis. dua server melakukan replikasi). Berapa pun metode hash-nya, dua aliran hanya bisa menempati dua link. Distribusi merata butuh **banyak aliran yang beragam**.
+> **Skenario kedua:** hanya ada beberapa aliran besar (mis. dua server melakukan replikasi). Berapa pun metode hash-nya, dua aliran hanya bisa menempati dua link. Distribusi merata butuh banyak aliran yang beragam.
 
 > [!WARNING]
 > **Jumlah link idealnya pangkat 2** (2, 4, 8). Dengan 3 link, hash mod 3 mendistribusikan tidak merata pada banyak implementasi (beberapa link mendapat porsi lebih besar). Ini keterbatasan hardware pada sebagian platform.
@@ -138,11 +138,11 @@ Protokol terbuka; bekerja antar-vendor.
 
 | | active | passive |
 |---|---|---|
-| **active** | ✅ Terbentuk | ✅ Terbentuk |
-| **passive** | ✅ Terbentuk | ❌ **Tidak terbentuk** |
+| **active** | Terbentuk | Terbentuk |
+| **passive** | Terbentuk | **Tidak terbentuk** |
 
 > [!WARNING]
-> Dua sisi `passive` tidak akan membentuk channel — sama seperti dua `dynamic auto` pada DTP.
+> Dua sisi `passive` tidak akan membentuk channel, sama seperti dua `dynamic auto` pada DTP.
 
 ```
 SW1(config)# interface range gi0/1-2
@@ -154,15 +154,15 @@ SW1(config-if)# switchport trunk allowed vlan 10,20,30
 ```
 
 Fitur tambahan LACP:
-- **LACP fast rate** — mengirim PDU setiap 1 detik (bukan 30) → deteksi kegagalan lebih cepat.
+- **LACP fast rate**: mengirim PDU setiap 1 detik (bukan 30) → deteksi kegagalan lebih cepat.
   ```
   SW1(config-if)# lacp rate fast
   ```
-- **Max bundle** — membatasi jumlah link aktif; sisanya menjadi hot standby.
+- **Max bundle**: membatasi jumlah link aktif; sisanya menjadi hot standby.
   ```
   SW1(config-if)# lacp max-bundle 4
   ```
-- **System priority & port priority** — menentukan link mana yang aktif jika melebihi max-bundle.
+- **System priority & port priority**: menentukan link mana yang aktif jika melebihi max-bundle.
 
 ### PAgP (proprietary Cisco)
 
@@ -187,7 +187,7 @@ SW1(config-if-range)# channel-group 1 mode on
 ```
 
 > [!WARNING]
-> **Berisiko.** Tidak ada verifikasi apa pun. Kalau satu sisi `on` dan sisi lain tidak dikonfigurasi (atau salah), tidak ada mekanisme yang mencegahnya → **loop**. Hanya gunakan jika perangkat lawan tidak mendukung LACP.
+> **Berisiko.** Tidak ada verifikasi apa pun. Kalau satu sisi `on` dan sisi lain tidak dikonfigurasi (atau salah), tidak ada mekanisme yang mencegahnya → loop. Hanya gunakan jika perangkat lawan tidak mendukung LACP.
 
 ### Matriks kompatibilitas
 
@@ -205,7 +205,7 @@ SW1(config-if-range)# channel-group 1 mode on
 
 ## 5. Syarat Konsistensi
 
-Semua port anggota **harus identik** dalam hal:
+Semua port anggota harus identik dalam hal:
 
 ```
 ✓ Kecepatan (semua 1 G atau semua 10 G — tidak boleh campur)
@@ -272,7 +272,7 @@ SW1(config-if)# ip address 10.0.0.1 255.255.255.252
 ```
 
 > [!WARNING]
-> Urutan penting: `no switchport` harus dilakukan pada port fisik **sebelum** memasukkannya ke channel-group, atau channel akan terbentuk sebagai L2.
+> Urutan penting: `no switchport` harus dilakukan pada port fisik sebelum memasukkannya ke channel-group, atau channel akan terbentuk sebagai L2.
 
 L3 EtherChannel dipakai untuk link antar-switch core/distribution dalam desain routed.
 
@@ -301,7 +301,7 @@ Group  Port-channel  Protocol    Ports
 1      Po1(SU)         LACP      Gi0/1(P)  Gi0/2(P)
 ```
 
-**Membaca flag** — ini keterampilan diagnostik utama:
+**Membaca flag** adalah keterampilan diagnostik utama:
 ```
 Po1(SU)  → S = Layer 2, U = in Use  ✅ SEHAT
 Po1(SD)  → D = Down                 ❌ channel mati
@@ -334,7 +334,7 @@ SW1# show interfaces port-channel 1 etherchannel
 | Channel `(SD)` down | Semua anggota down | Periksa layer 1 |
 | Channel terbentuk tapi trafik timpang | Metode hash tidak cocok dengan pola trafik | Ubah `port-channel load-balance` |
 | Loop terjadi setelah konfigurasi | Mode `on` di satu sisi, sisi lain tidak siap | Gunakan LACP, bukan `on` |
-| `%EC-5-CANNOT_BUNDLE2` di log | Ketidakcocokan konfigurasi spesifik | Baca pesan log — biasanya menyebut field yang berbeda |
+| `%EC-5-CANNOT_BUNDLE2` di log | Ketidakcocokan konfigurasi spesifik | Baca pesan log, yang biasanya menyebut field yang berbeda |
 
 **Pesan log yang informatif:**
 ```
@@ -355,7 +355,7 @@ Jika switch mendeteksi BPDU yang tidak konsisten dari anggota channel (tanda kon
 
 ## 9. MLAG / vPC / VSS / Stacking: Agregasi Lintas Chassis
 
-EtherChannel biasa hanya bisa antara **dua perangkat**. Bagaimana kalau ingin redundansi terhadap kegagalan **switch**?
+EtherChannel biasa hanya bisa antara dua perangkat. Bagaimana kalau ingin redundansi terhadap kegagalan switch?
 
 ```
 Masalah:
@@ -398,7 +398,7 @@ consistency check: memastikan konfigurasi kedua switch cocok
 ```
 
 > [!WARNING]
-> **Split-brain** — jika peer-link putus tetapi kedua switch masih hidup, keduanya bisa mengira yang lain mati dan mengambil alih peran yang sama → duplikasi trafik dan MAC flapping. Peer-keepalive di jalur **terpisah** ada untuk mencegah ini.
+> **Split-brain** terjadi jika peer-link putus tetapi kedua switch masih hidup. Keduanya bisa mengira yang lain mati dan mengambil alih peran yang sama → duplikasi trafik dan MAC flapping. Peer-keepalive di jalur terpisah ada untuk mencegah ini.
 
 ---
 
@@ -428,10 +428,10 @@ $ ip -d link show bond0
 ```
 
 > [!TIP]
-> **Mode 1 (active-backup) tidak memerlukan konfigurasi apa pun di switch** — berguna kalau Anda tidak mengendalikan switch, atau kalau kedua NIC terhubung ke switch berbeda tanpa MLAG. Mode 4 (LACP) memberi bandwidth agregat tetapi **harus** dipasangkan dengan EtherChannel di switch (atau MLAG jika ke dua switch berbeda).
+> **Mode 1 (active-backup) tidak memerlukan konfigurasi apa pun di switch.** Mode ini berguna kalau Anda tidak mengendalikan switch, atau kalau kedua NIC terhubung ke switch berbeda tanpa MLAG. Mode 4 (LACP) memberi bandwidth agregat tetapi harus dipasangkan dengan EtherChannel di switch (atau MLAG jika ke dua switch berbeda).
 
 > [!WARNING]
-> Mode 0 (balance-rr) memecah satu aliran ke banyak link → paket out-of-order → kinerja TCP bisa **lebih buruk** daripada satu link. Hindari kecuali untuk kasus khusus.
+> Mode 0 (balance-rr) memecah satu aliran ke banyak link → paket out-of-order → kinerja TCP bisa lebih buruk daripada satu link. Hindari kecuali untuk kasus khusus.
 
 ---
 
@@ -475,7 +475,7 @@ Link aggregation di RouterOS disebut **bonding**.
 > **`mode=802.3ad` memerlukan LACP dikonfigurasi di sisi lawan.** Kalau lawan tidak mendukung, gunakan `active-backup` (tidak butuh dukungan switch) atau `balance-xor` (butuh static LAG).
 
 > [!WARNING]
-> Sama seperti EtherChannel, **satu aliran tetap di satu link**. Bonding 2×1 Gbps tidak memberi 2 Gbps untuk satu transfer.
+> Sama seperti EtherChannel, satu aliran tetap di satu link. Bonding 2×1 Gbps tidak memberi 2 Gbps untuk satu transfer.
 
 ### Padanan istilah
 
@@ -495,11 +495,11 @@ Link aggregation di RouterOS disebut **bonding**.
 - **Satu aliran tetap di satu link.** EtherChannel 4×1 G tidak memberi 4 Gbps untuk satu transfer.
 - Distribusi ditentukan **hash**; pilih metode yang sesuai pola trafik (`src-dst-ip` atau IP+port biasanya terbaik).
 - Jumlah link idealnya pangkat 2 (2, 4, 8).
-- **LACP (802.3ad)** adalah standar terbuka — gunakan ini. `active`+`passive` atau `active`+`active` membentuk channel; `passive`+`passive` tidak.
-- Mode `on` berisiko loop — hindari.
+- **LACP (802.3ad)** adalah standar terbuka; gunakan ini. `active`+`passive` atau `active`+`active` membentuk channel; `passive`+`passive` tidak.
+- Mode `on` berisiko loop, jadi hindari.
 - Semua anggota harus **konsisten**: speed, duplex, mode switchport, VLAN.
 - Konfigurasikan **Port-channel interface**, bukan port fisik. Shutdown anggota saat mengonfigurasi.
-- Baca `show etherchannel summary` — flag `(P)` bundled sehat, `(I)` stand-alone, `(s)` suspended.
+- Baca `show etherchannel summary`: flag `(P)` bundled sehat, `(I)` stand-alone, `(s)` suspended.
 - **MLAG/vPC/stacking** memungkinkan EtherChannel ke dua switch berbeda; waspadai split-brain (peer-keepalive terpisah).
 
 ---
@@ -517,19 +517,19 @@ Link aggregation di RouterOS disebut **bonding**.
 <details>
 <summary>Jawaban</summary>
 
-1. **Bukan bug — ini perilaku yang benar.** EtherChannel mendistribusikan **aliran**, bukan memecah satu aliran. Satu sesi TCP selalu di-hash ke satu link agar paket tidak tiba out-of-order (yang justru akan merusak kinerja TCP). Untuk mendapat 4 Gbps, dibutuhkan banyak aliran paralel, atau link fisik berkecepatan lebih tinggi (mis. 10 G).
+1. **Bukan bug. Ini perilaku yang benar.** EtherChannel mendistribusikan aliran, bukan memecah satu aliran. Satu sesi TCP selalu di-hash ke satu link agar paket tidak tiba out-of-order (yang justru akan merusak kinerja TCP). Untuk mendapat 4 Gbps, dibutuhkan banyak aliran paralel, atau link fisik berkecepatan lebih tinggi (mis. 10 G).
 
 2. **Tidak.** Mode `passive` hanya merespons LACP PDU, tidak pernah memulai. Minimal satu sisi harus `active`.
 
-3. `(s)` = **suspended** — port tidak dimasukkan ke bundle karena **konfigurasinya tidak konsisten** dengan anggota lain. Periksa: kecepatan, duplex, mode switchport (access/trunk), VLAN access, allowed VLAN dan native VLAN pada trunk, serta trunk encapsulation. Log biasanya menyebutkan penyebab spesifik (`%EC-5-CANNOT_BUNDLE2: ... vlan mask is different`).
+3. `(s)` = **suspended**: port tidak dimasukkan ke bundle karena konfigurasinya tidak konsisten dengan anggota lain. Periksa: kecepatan, duplex, mode switchport (access/trunk), VLAN access, allowed VLAN dan native VLAN pada trunk, serta trunk encapsulation. Log biasanya menyebutkan penyebab spesifik (`%EC-5-CANNOT_BUNDLE2: ... vlan mask is different`).
 
-4. Kemungkinan besar metode hash memakai **MAC address tujuan** (`dst-mac` atau `src-dst-mac`). Semua trafik menuju internet punya MAC tujuan yang sama — MAC router — sehingga selalu menghasilkan hash yang sama dan masuk ke satu link. Perbaikan: ubah ke hash berbasis IP atau IP+port yang jauh lebih bervariasi: `port-channel load-balance src-dst-ip` atau `src-dst-mixed-ip-port`.
+4. Kemungkinan besar metode hash memakai **MAC address tujuan** (`dst-mac` atau `src-dst-mac`). Semua trafik menuju internet punya MAC tujuan yang sama (MAC router), sehingga selalu menghasilkan hash yang sama dan masuk ke satu link. Perbaikan: ubah ke hash berbasis IP atau IP+port yang jauh lebih bervariasi: `port-channel load-balance src-dst-ip` atau `src-dst-mixed-ip-port`.
 
-5. Mode `on` **tidak melakukan negosiasi atau verifikasi apa pun**. Jika satu sisi dikonfigurasi `on` sementara sisi lain belum siap (atau salah konfigurasi), switch tetap memperlakukan link-link itu sebagai satu bundle — sementara sisi lain memperlakukannya sebagai link terpisah. STP hanya melihat satu link logis, sehingga tidak memblokir apa pun → **loop terbentuk**. LACP mencegah ini karena channel hanya terbentuk setelah kedua sisi saling mengonfirmasi.
+5. Mode `on` **tidak melakukan negosiasi atau verifikasi apa pun**. Jika satu sisi dikonfigurasi `on` sementara sisi lain belum siap (atau salah konfigurasi), switch tetap memperlakukan link-link itu sebagai satu bundle, sedangkan sisi lain memperlakukannya sebagai link terpisah. STP hanya melihat satu link logis, sehingga tidak memblokir apa pun → loop terbentuk. LACP mencegah ini karena channel hanya terbentuk setelah kedua sisi saling mengonfirmasi.
 
 6. **Mode 1 (active-backup)**. Mode ini tidak memerlukan dukungan agregasi dari switch, sehingga aman digunakan saat kedua NIC menuju switch yang berbeda dan tidak ada MLAG/vPC. Hanya satu NIC aktif pada satu waktu (tidak ada bandwidth agregat), tetapi failover otomatis jika satu switch atau kabel mati. Alternatif: mode 5/6 (balance-tlb/alb) memberi sedikit load balancing tanpa dukungan switch, tetapi lebih rumit dan punya keterbatasan.
 
-7. **Split-brain** terjadi ketika **peer-link** antara dua switch vPC putus sementara kedua switch masih hidup. Tanpa mekanisme lain, keduanya akan mengira peer-nya mati dan sama-sama mengambil peran aktif penuh — menyebabkan duplikasi frame, MAC flapping, dan trafik yang berputar. Pencegahannya: **peer-keepalive link** yang berjalan di jalur **terpisah** (biasanya lewat interface manajemen out-of-band). Jika peer-link putus tetapi keepalive masih hidup, switch tahu peer-nya masih ada, sehingga switch sekunder menonaktifkan port vPC-nya (suspend) untuk mencegah duplikasi.
+7. **Split-brain** terjadi ketika **peer-link** antara dua switch vPC putus sementara kedua switch masih hidup. Tanpa mekanisme lain, keduanya akan mengira peer-nya mati dan sama-sama mengambil peran aktif penuh. Akibatnya terjadi duplikasi frame, MAC flapping, dan trafik yang berputar. Pencegahannya: **peer-keepalive link** yang berjalan di jalur terpisah (biasanya lewat interface manajemen out-of-band). Jika peer-link putus tetapi keepalive masih hidup, switch tahu peer-nya masih ada, sehingga switch sekunder menonaktifkan port vPC-nya (suspend) untuk mencegah duplikasi.
 
 </details>
 
@@ -537,10 +537,10 @@ Link aggregation di RouterOS disebut **bonding**.
 
 ## 13. Sumber
 
-- IEEE 802.1AX-2020 (sebelumnya 802.3ad) — Link Aggregation
-- Cisco CCNA 200-301 v1.1, topik 2.4 (Configure and verify Layer 2/Layer 3 EtherChannel — LACP)
+- IEEE 802.1AX-2020 (sebelumnya 802.3ad): Link Aggregation
+- Cisco CCNA 200-301 v1.1, topik 2.4 (Configure and verify Layer 2/Layer 3 EtherChannel: LACP)
 - Cisco, *EtherChannel Load Balancing Configuration Guide*
-- Linux kernel documentation — `Documentation/networking/bonding.rst`
+- Linux kernel documentation: `Documentation/networking/bonding.rst`
 
 ---
 

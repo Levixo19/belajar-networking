@@ -12,22 +12,22 @@
 
 | Aspek | Nilai |
 |---|---|
-| Jenis | **Link state** |
-| Algoritma | **Dijkstra SPF** |
-| Metrik | **Cost** = reference_bandwidth / bandwidth |
-| Administrative Distance | **110** |
-| Transport | **Langsung di atas IP, protokol 89** (bukan TCP/UDP) |
-| Multicast | **224.0.0.5** (AllSPFRouters), **224.0.0.6** (AllDRouters) |
-| Versi | OSPFv2 (IPv4), **OSPFv3** (IPv6 dan IPv4) |
+| Jenis | Link state |
+| Algoritma | Dijkstra SPF |
+| Metrik | Cost = reference_bandwidth / bandwidth |
+| Administrative Distance | 110 |
+| Transport | Langsung di atas IP, protokol 89 (bukan TCP/UDP) |
+| Multicast | 224.0.0.5 (AllSPFRouters), 224.0.0.6 (AllDRouters) |
+| Versi | OSPFv2 (IPv4), OSPFv3 (IPv6 dan IPv4) |
 | Standar | RFC 2328 (v2), RFC 5340 (v3) |
-| Classless | ✅ VLSM & CIDR |
-| Hierarki | **Area** |
+| Classless | Ya (VLSM & CIDR) |
+| Hierarki | Area |
 
 ---
 
 ## 2. Router ID
 
-Setiap router OSPF membutuhkan **Router ID (RID)** — pengenal unik 32 bit berformat seperti alamat IP.
+Setiap router OSPF membutuhkan **Router ID (RID)**, yaitu pengenal unik 32 bit berformat seperti alamat IP.
 
 **Urutan pemilihan:**
 ```
@@ -44,7 +44,7 @@ R1# clear ip ospf process          ← perlu untuk menerapkan RID baru
 
 > [!TIP]
 > **Praktik terbaik: selalu set RID eksplisit** dan gunakan skema yang bermakna (mis. `1.1.1.1` untuk R1). Alasannya:
-- RID yang berasal dari interface fisik bisa **berubah** kalau interface itu down → memicu rekalkulasi dan gangguan
+- RID yang berasal dari interface fisik bisa berubah kalau interface itu down → memicu rekalkulasi dan gangguan
 - RID yang bermakna sangat memudahkan troubleshooting
 - Loopback selalu up, sehingga stabil
 
@@ -54,7 +54,7 @@ R1(config-if)# ip address 1.1.1.1 255.255.255.255
 ```
 
 > [!WARNING]
-> **Perubahan RID tidak berlaku sampai proses OSPF di-restart** (`clear ip ospf process`) — dan itu memutus semua adjacency sementara. Rencanakan di jendela pemeliharaan.
+> **Perubahan RID tidak berlaku sampai proses OSPF di-restart** (`clear ip ospf process`), dan restart itu memutus semua adjacency sementara. Rencanakan di jendela pemeliharaan.
 
 ---
 
@@ -76,7 +76,7 @@ FULL       → LSDB identik → adjacency lengkap ✅
 ```
 
 > [!WARNING]
-> **Pada jaringan broadcast, tidak semua router mencapai FULL satu sama lain.** Router non-DR/BDR hanya mencapai **2-WAY** dengan sesama router non-DR — dan itu **normal**. Mereka mencapai FULL hanya dengan DR dan BDR.
+> **Pada jaringan broadcast, tidak semua router mencapai FULL satu sama lain.** Router non-DR/BDR hanya mencapai 2-WAY dengan sesama router non-DR, dan itu normal. Mereka mencapai FULL hanya dengan DR dan BDR.
 
 ```
 R1# show ip ospf neighbor
@@ -88,7 +88,7 @@ Neighbor ID     Pri   State           Dead Time   Address       Interface
 
 ### Syarat pembentukan adjacency
 
-Semua ini **harus cocok**, atau adjacency tidak terbentuk:
+Semua ini harus cocok, atau adjacency tidak terbentuk:
 
 ```
 ✓ Area ID sama
@@ -119,11 +119,11 @@ R1(config-if)# ip ospf mtu-ignore
 
 | Tipe | Default pada | DR/BDR? | Hello/Dead | Neighbor |
 |---|---|---|---|---|
-| **Broadcast** | Ethernet | Ya | **10/40** | Otomatis (multicast) |
-| **Point-to-Point** | Serial (PPP/HDLC), subinterface P2P | Tidak | **10/40** | Otomatis |
-| **Non-Broadcast (NBMA)** | Frame Relay | Ya | **30/120** | Manual |
-| **Point-to-Multipoint** | — (harus diset) | Tidak | 30/120 | Otomatis |
-| **Loopback** | Interface loopback | — | — | Diiklankan sebagai /32 |
+| **Broadcast** | Ethernet | Ya | 10/40 | Otomatis (multicast) |
+| **Point-to-Point** | Serial (PPP/HDLC), subinterface P2P | Tidak | 10/40 | Otomatis |
+| **Non-Broadcast (NBMA)** | Frame Relay | Ya | 30/120 | Manual |
+| **Point-to-Multipoint** | Tidak ada (harus diset) | Tidak | 30/120 | Otomatis |
+| **Loopback** | Interface loopback | - | - | Diiklankan sebagai /32 |
 
 ```
 R1(config-if)# ip ospf network point-to-point
@@ -168,7 +168,7 @@ Pada segmen broadcast dengan N router, full mesh adjacency membutuhkan `N(N−1)
 ```
 
 > [!WARNING]
-> **DR bersifat NON-PREEMPTIVE.** Kalau router dengan priority lebih tinggi muncul **setelah** DR terpilih, ia **tidak** mengambil alih. DR baru hanya dipilih jika DR lama mati. Ini disengaja — untuk mencegah gangguan berulang.
+> **DR bersifat NON-PREEMPTIVE.** Kalau router dengan priority lebih tinggi muncul setelah DR terpilih, ia tidak mengambil alih. DR baru hanya dipilih jika DR lama mati. Perilaku ini disengaja untuk mencegah gangguan berulang.
 
 ```
 R1(config-if)# ip ospf priority 255      ← paksa menjadi DR
@@ -177,7 +177,7 @@ R3(config-if)# ip ospf priority 0        ← TIDAK PERNAH jadi DR/BDR
 ```
 
 > [!TIP]
-> **Praktik terbaik:** set priority secara sengaja — DR sebaiknya router yang paling stabil dan kuat (biasanya switch distribution/core), bukan hasil kebetulan RID tertinggi.
+> **Praktik terbaik:** set priority secara sengaja. DR sebaiknya router yang paling stabil dan kuat (biasanya switch distribution/core), bukan hasil kebetulan RID tertinggi.
 
 ### Multicast address
 
@@ -202,30 +202,32 @@ Default reference bandwidth = 100 Mbps (100.000.000 bps)
 | 1,544 Mbps (T1) | 64 | 64.766 |
 | 10 Mbps | 10 | 10.000 |
 | 100 Mbps | 1 | 1.000 |
-| **1 Gbps** | **1** ⚠️ | 100 |
-| **10 Gbps** | **1** ⚠️ | 10 |
-| **100 Gbps** | **1** ⚠️ | 1 |
+| 1 Gbps | 1 (tak terbedakan) | 100 |
+| 10 Gbps | 1 (tak terbedakan) | 10 |
+| 100 Gbps | 1 (tak terbedakan) | 1 |
 
 > [!WARNING]
-> **Dengan setelan default, semua link ≥100 Mbps punya cost 1** — OSPF tidak bisa membedakannya.
+> **Dengan setelan default, semua link ≥100 Mbps punya cost 1**, sehingga OSPF tidak bisa membedakannya.
 
 ```
 R1(config-router)# auto-cost reference-bandwidth 100000    ← 100 Gbps
 ```
 
 > [!WARNING]
-> **Harus SAMA di semua router** dalam domain OSPF, atau perhitungan jalur menjadi tidak konsisten. IOS akan menampilkan peringatan.
+> **Nilai ini harus SAMA di semua router** dalam domain OSPF, atau perhitungan jalur menjadi tidak konsisten. IOS akan menampilkan peringatan.
 
 **Cost manual per interface:**
 ```
 R1(config-if)# ip ospf cost 50           ← menimpa perhitungan otomatis
 ```
 
-**Cost dijumlahkan pada interface MASUK sepanjang jalur:**
+**Cost jalur = jumlah cost interface KELUAR di sepanjang jalur, dilihat dari arah trafik menuju tujuan:**
 ```
 R1 --cost 10--> R2 --cost 5--> R3 --cost 20--> Tujuan
 Total cost dari R1 = 10 + 5 + 20 = 35
 ```
+
+Setiap angka adalah cost interface keluar milik router di sebelah kirinya: R1 keluar ke R2 (10), R2 keluar ke R3 (5), dan R3 keluar ke jaringan tujuan (20). Ungkapan yang sering beredar, "cost dijumlahkan pada interface masuk", memakai sudut pandang LSA: router menambahkan cost interface tempat informasi rute itu diterima, dan bagi trafik menuju tujuan itu, interface tersebut justru interface keluar. Karena cost dipasang per interface, cost dua arah sebuah link bisa berbeda, sehingga jalur pergi dan jalur pulang bisa tidak sama.
 
 ---
 
@@ -277,7 +279,7 @@ R1(config-if)# ip ospf 1 area 0
 ```
 
 > [!TIP]
-> Metode ini **lebih disukai di jaringan modern** karena eksplisit dan tidak ada kejutan dari wildcard mask.
+> Metode ini lebih disukai di jaringan modern karena eksplisit dan tidak ada kejutan dari wildcard mask.
 
 ### Default route
 
@@ -320,7 +322,7 @@ Tanpa area, seluruh domain OSPF berbagi satu LSDB:
 ❌ Tidak bisa melakukan summarization
 ```
 
-**Area memecah domain**: flooding LSA tipe 1/2 **berhenti di batas area**, dan SPF hanya dijalankan untuk area sendiri.
+**Area memecah domain**: flooding LSA tipe 1/2 berhenti di batas area, dan SPF hanya dijalankan untuk area sendiri.
 
 ### Aturan area
 
@@ -343,7 +345,7 @@ Tanpa area, seluruh domain OSPF berbagi satu LSDB:
 |---|---|
 | **Internal Router** | Semua interface di satu area |
 | **Backbone Router** | Punya minimal satu interface di area 0 |
-| **ABR** (Area Border Router) | Menghubungkan dua area atau lebih; **wajib punya interface di area 0** |
+| **ABR** (Area Border Router) | Menghubungkan dua area atau lebih; wajib punya interface di area 0 |
 | **ASBR** (AS Boundary Router) | Menyuntikkan rute dari luar OSPF (redistribusi) |
 
 ### Konfigurasi multi-area
@@ -370,21 +372,19 @@ R3(config-router)# summary-address 172.16.0.0 255.255.0.0
 ```
 
 > [!TIP]
-> Summarization sangat penting karena: menyembunyikan flapping di dalam area (perubahan di area 1 tidak memicu SPF di area 0), mengecilkan LSDB, dan mempercepat konvergensi.
+> Summarization menyembunyikan flapping di dalam area (perubahan di area 1 tidak memicu SPF di area 0), mengecilkan LSDB, dan mempercepat konvergensi.
 
 ---
 
 ## 9. LSA Types
 
-Ini yang membedakan pemahaman dangkal dan mendalam tentang OSPF.
-
 | Tipe | Nama | Dibuat oleh | Cakupan flooding | Isi |
 |---|---|---|---|---|
-| **1** | Router LSA | **Setiap** router | **Dalam area saja** | Link & cost router itu |
-| **2** | Network LSA | **DR** | Dalam area saja | Router yang terhubung ke segmen multi-access |
-| **3** | Summary LSA | **ABR** | Antar-area | Rute dari area lain |
+| **1** | Router LSA | Setiap router | Dalam area saja | Link & cost router itu |
+| **2** | Network LSA | DR | Dalam area saja | Router yang terhubung ke segmen multi-access |
+| **3** | Summary LSA | ABR | Antar-area | Rute dari area lain |
 | **4** | ASBR Summary | ABR | Antar-area | Cara mencapai ASBR |
-| **5** | AS External | **ASBR** | **Seluruh domain** (kecuali stub) | Rute dari luar OSPF |
+| **5** | AS External | ASBR | Seluruh domain (kecuali stub) | Rute dari luar OSPF |
 | **7** | NSSA External | ASBR di NSSA | Dalam NSSA, dikonversi jadi tipe 5 di ABR | Rute eksternal di NSSA |
 
 ```
@@ -406,11 +406,11 @@ O N1 / O N2        → NSSA external
 ```
 
 > [!WARNING]
-> **Perbedaan E1 dan E2 penting:**
+> **Perbedaan E1 dan E2:**
 - **E2 (default)**: metrik tidak berubah saat menyebar. Semua router melihat cost yang sama, sehingga pemilihan ASBR terdekat tidak otomatis.
-- **E1**: metrik eksternal **ditambah** cost internal ke ASBR. Router otomatis memilih ASBR terdekat.
+- **E1**: metrik eksternal ditambah cost internal ke ASBR. Router otomatis memilih ASBR terdekat.
 
-Kalau ada beberapa ASBR yang menyuntikkan rute yang sama, gunakan **E1** agar setiap router memilih pintu keluar terdekat:
+Kalau ada beberapa ASBR yang menyuntikkan rute yang sama, gunakan E1 agar setiap router memilih pintu keluar terdekat:
 ```
 R1(config-router)# redistribute static subnets metric-type 1
 ```
@@ -423,11 +423,11 @@ Tujuannya mengurangi ukuran LSDB pada area yang tidak butuh detail penuh.
 
 | Tipe area | LSA 1,2 | LSA 3 | LSA 4,5 | LSA 7 | Default route |
 |---|---|---|---|---|---|
-| **Standard** | Ya | Ya | Ya | — | Opsional |
-| **Stub** | Ya | Ya | Tidak | Tidak | ✅ Otomatis dari ABR |
-| **Totally Stubby** | Ya | Tidak | Tidak | Tidak | ✅ Otomatis |
+| **Standard** | Ya | Ya | Ya | Tidak | Opsional |
+| **Stub** | Ya | Ya | Tidak | Tidak | Otomatis dari ABR |
+| **Totally Stubby** | Ya | Tidak | Tidak | Tidak | Otomatis |
 | **NSSA** | Ya | Ya | Tidak | Ya | Opsional |
-| **Totally NSSA** | Ya | Tidak | Tidak | Ya | ✅ Otomatis |
+| **Totally NSSA** | Ya | Tidak | Tidak | Ya | Otomatis |
 
 ```
 # Stub (di SEMUA router dalam area itu)
@@ -444,7 +444,7 @@ R2(config-router)# area 1 nssa no-summary
 ```
 
 > [!WARNING]
-> **Semua router dalam satu area harus sepakat tipe area-nya.** Kalau tidak, adjacency **tidak akan terbentuk** (stub flag adalah bagian dari hello).
+> **Semua router dalam satu area harus sepakat tipe area-nya.** Kalau tidak, adjacency tidak akan terbentuk (stub flag adalah bagian dari hello).
 
 > [!TIP]
 > **Kapan memakai apa:**
@@ -515,12 +515,12 @@ R1# show ipv6 route ospf
 **Perbedaan OSPFv3 dari OSPFv2:**
 | Aspek | OSPFv2 | OSPFv3 |
 |---|---|---|
-| Diaktifkan | Perintah `network` atau per interface | **Selalu per interface** |
-| Router ID | Bisa otomatis dari IP | **Wajib dikonfigurasi manual** |
-| Autentikasi | Bawaan (MD5/SHA) | Memakai **IPsec** (atau auth trailer di RFC 7166) |
-| Alamat multicast | 224.0.0.5/6 | **FF02::5 / FF02::6** |
-| Adjacency | Berdasarkan alamat IPv4 | Berdasarkan **link-local** |
-| Address family | IPv4 saja | IPv4 **dan** IPv6 (dengan AF) |
+| Diaktifkan | Perintah `network` atau per interface | Selalu per interface |
+| Router ID | Bisa otomatis dari IP | Wajib dikonfigurasi manual |
+| Autentikasi | Bawaan (MD5/SHA) | Memakai IPsec (atau auth trailer di RFC 7166) |
+| Alamat multicast | 224.0.0.5/6 | FF02::5 / FF02::6 |
+| Adjacency | Berdasarkan alamat IPv4 | Berdasarkan link-local |
+| Address family | IPv4 saja | IPv4 dan IPv6 (dengan AF) |
 
 > [!WARNING]
 > **OSPFv3 membentuk adjacency memakai alamat link-local**, sehingga interface tidak perlu punya alamat global IPv6 untuk membentuk tetangga.
@@ -601,7 +601,7 @@ GigabitEthernet0/1 is up, line protocol is up
   Message digest authentication enabled
 ```
 
-Semua parameter yang harus cocok terlihat di sini: **Area, Network Type, Hello, Dead, dan autentikasi**.
+Semua parameter yang harus cocok terlihat di sini: Area, Network Type, Hello, Dead, dan autentikasi.
 
 ---
 
@@ -654,16 +654,16 @@ Semua parameter yang harus cocok terlihat di sini: **Area, Network Type, Hello, 
 | Konsep | MikroTik |
 |---|---|
 | `network-type=broadcast` | default pada Ethernet; ada DR/BDR |
-| `network-type=ptp` | **sangat disarankan** untuk link antar-router; tanpa DR, konvergensi lebih cepat |
+| `network-type=ptp` | sangat disarankan untuk link antar-router; tanpa DR, konvergensi lebih cepat |
 | `priority=0` | tidak pernah menjadi DR/BDR |
 | `cost` | dihitung otomatis dari bandwidth, atau set manual |
-| Reference bandwidth | ⚠️ RouterOS memakai perhitungan berbeda; **set cost manual** untuk konsistensi dengan Cisco |
+| Reference bandwidth | Hati-hati: RouterOS memakai perhitungan berbeda; set cost manual untuk konsistensi dengan Cisco |
 
 > [!WARNING]
-> **Interoperabilitas MikroTik ↔ Cisco:** OSPF adalah standar terbuka dan bekerja dengan baik antar-vendor, **tetapi** perhatikan:
-- **MTU harus cocok** — MikroTik dan Cisco menghitung MTU sedikit berbeda; kalau adjacency macet di ExStart, samakan MTU atau set `/routing ospf interface-template set ... ` dengan MTU yang sesuai
-- **Cost tidak dihitung dengan formula yang sama** — set manual di kedua sisi untuk hasil yang dapat diprediksi
-- **Autentikasi** — pastikan tipe dan key identik
+> **Interoperabilitas MikroTik ↔ Cisco:** OSPF adalah standar terbuka dan bekerja dengan baik antar-vendor, tetapi perhatikan:
+- **MTU harus cocok**: MikroTik dan Cisco menghitung MTU sedikit berbeda; kalau adjacency macet di ExStart, samakan MTU atau set `/routing ospf interface-template set ... ` dengan MTU yang sesuai
+- **Cost tidak dihitung dengan formula yang sama**: set manual di kedua sisi untuk hasil yang dapat diprediksi
+- **Autentikasi**: pastikan tipe dan key identik
 
 ### Padanan istilah
 
@@ -685,18 +685,18 @@ Semua parameter yang harus cocok terlihat di sini: **Area, Network Type, Hello, 
 
 ## 15. Ringkasan
 
-- OSPF: link state, Dijkstra SPF, **AD 110**, protokol IP **89**, multicast **224.0.0.5/6**.
-- **Router ID**: eksplisit > loopback tertinggi > interface fisik tertinggi. **Selalu set eksplisit** dan pakai loopback.
-- State adjacency: DOWN → INIT → 2-WAY → EXSTART → EXCHANGE → LOADING → **FULL**. Pada broadcast, DROTHER berhenti di **2-WAY** — itu normal.
-- Yang **harus cocok**: area, subnet/mask, hello, dead, autentikasi, stub flag, **MTU**.
+- OSPF: link state, Dijkstra SPF, AD 110, protokol IP 89, multicast 224.0.0.5/6.
+- **Router ID**: eksplisit > loopback tertinggi > interface fisik tertinggi. Selalu set eksplisit dan pakai loopback.
+- State adjacency: DOWN → INIT → 2-WAY → EXSTART → EXCHANGE → LOADING → FULL. Pada broadcast, DROTHER berhenti di 2-WAY, dan itu normal.
+- Yang harus cocok: area, subnet/mask, hello, dead, autentikasi, stub flag, MTU.
 - **MTU mismatch → stuck di EXSTART/EXCHANGE.** Penyebab klasik.
 - **Network type**: broadcast (DR/BDR, 10/40) vs point-to-point (tanpa DR, 10/40). Ubah link Ethernet P2P menjadi `point-to-point` untuk konvergensi lebih cepat.
 - **DR/BDR non-preemptive**; priority 0 = tidak pernah jadi DR/BDR.
-- **Reference bandwidth default 100 Mbps tidak memadai** — naikkan dan samakan di semua router.
-- **Area 0 wajib**; semua area harus terhubung ke area 0. Summarization hanya di **ABR/ASBR**.
+- **Reference bandwidth default 100 Mbps tidak memadai.** Naikkan dan samakan nilainya di semua router.
+- **Area 0 wajib**; semua area harus terhubung ke area 0. Summarization hanya di ABR/ASBR.
 - **LSA**: 1 (router), 2 (network/DR), 3 (summary/ABR), 4 (ASBR summary), 5 (external/ASBR), 7 (NSSA).
-- **E1 menambahkan cost internal** (pilih ASBR terdekat); **E2 (default) tidak**.
-- Area **stub/totally stubby/NSSA** mengecilkan LSDB; semua router dalam area harus sepakat tipenya.
+- **E1 menambahkan cost internal** (pilih ASBR terdekat); E2 (default) tidak.
+- Area stub/totally stubby/NSSA mengecilkan LSDB; semua router dalam area harus sepakat tipenya.
 - **OSPFv3**: per interface, RID wajib manual, adjacency lewat link-local, FF02::5/6.
 
 ---
@@ -715,34 +715,34 @@ Semua parameter yang harus cocok terlihat di sini: **Area, Network Type, Hello, 
 <details>
 <summary>Jawaban</summary>
 
-1. **10.10.10.10.** Urutan pemilihan RID: (1) perintah `router-id` eksplisit — tidak ada di sini; (2) **alamat tertinggi dari interface loopback aktif** — 10.10.10.10; (3) alamat tertinggi dari interface fisik. Karena ada loopback aktif, ia menang tanpa memandang nilai numeriknya dibanding interface fisik.
+1. **10.10.10.10.** Urutan pemilihan RID: (1) perintah `router-id` eksplisit (tidak ada di sini); (2) alamat tertinggi dari interface loopback aktif, yaitu 10.10.10.10; (3) alamat tertinggi dari interface fisik. Karena ada loopback aktif, ia menang tanpa memandang nilai numeriknya dibanding interface fisik.
 
 2. **MTU mismatch.** Selama fase Database Description (EXSTART/EXCHANGE), kedua router menukar nilai MTU interface; jika berbeda, salah satu menolak melanjutkan dan adjacency macet.
    **Verifikasi:** `show ip ospf interface gi0/1` di kedua router dan bandingkan nilai MTU, atau `show interfaces gi0/1 | include MTU`. `debug ip ospf adj` akan menampilkan pesan seperti "Nbr ... has larger interface MTU".
    **Perbaikan:** samakan MTU di kedua sisi. Penyebab umum: satu sisi memakai jumbo frame, atau ada subinterface/tunnel dengan MTU berbeda. `ip ospf mtu-ignore` hanya menyembunyikan gejala dan bisa menyebabkan masalah lain.
 
-3. **Tidak, ini normal** pada jaringan broadcast dengan lebih dari dua router. Router non-DR/non-BDR (**DROTHER**) hanya membentuk FULL adjacency dengan **DR dan BDR**; dengan sesama DROTHER mereka berhenti di 2-WAY karena tidak perlu bertukar LSDB langsung — semua flooding melewati DR. Ini justru desain yang menghemat adjacency.
-   Masalah hanya terjadi kalau **semua** router di segmen itu berstatus DROTHER — artinya tidak ada DR yang terpilih (mis. semua priority 0), sehingga tidak ada yang mencapai FULL dan rute tidak dipertukarkan.
+3. **Tidak, ini normal** pada jaringan broadcast dengan lebih dari dua router. Router non-DR/non-BDR (DROTHER) hanya membentuk FULL adjacency dengan DR dan BDR; dengan sesama DROTHER mereka berhenti di 2-WAY karena tidak perlu bertukar LSDB langsung (semua flooding melewati DR). Ini justru desain yang menghemat adjacency.
+   Masalah hanya terjadi kalau semua router di segmen itu berstatus DROTHER, artinya tidak ada DR yang terpilih (mis. semua priority 0), sehingga tidak ada yang mencapai FULL dan rute tidak dipertukarkan.
 
 4. **Reference bandwidth default OSPF adalah 100 Mbps**, dan cost = ref/bandwidth dengan minimum 1. Baik 1 Gbps maupun 10 Gbps menghasilkan cost 1, sehingga OSPF tidak bisa membedakannya dan memilih jalur berdasarkan tie-breaker yang tidak relevan.
-   **Perbaikan:** `auto-cost reference-bandwidth 100000` (100 Gbps) → 1 Gbps menjadi cost 100, 10 Gbps menjadi cost 10. Nilai ini **wajib sama di semua router** dalam domain OSPF; ketidakkonsistenan menyebabkan perhitungan jalur berbeda antar-router dan bisa menghasilkan routing suboptimal atau loop sementara.
+   **Perbaikan:** `auto-cost reference-bandwidth 100000` (100 Gbps) → 1 Gbps menjadi cost 100, 10 Gbps menjadi cost 10. Nilai ini wajib sama di semua router dalam domain OSPF; ketidakkonsistenan menyebabkan perhitungan jalur berbeda antar-router dan bisa menghasilkan routing suboptimal atau loop sementara.
 
-5. **`O IA`** = *Inter-Area* — rute berasal dari **area OSPF lain**, dipelajari lewat LSA tipe 3 dari ABR. **`O E1`** = *External Type 1* — rute dari **luar domain OSPF** (redistribusi), dan metriknya = cost eksternal **+ cost internal** untuk mencapai ASBR, sehingga setiap router otomatis memilih ASBR terdekat. **`O E2`** = *External Type 2* (default) — rute eksternal yang metriknya **tetap** (hanya cost eksternal) di seluruh domain; berguna untuk konsistensi, tetapi tidak membedakan jarak ke ASBR sehingga bisa menghasilkan pilihan suboptimal ketika ada beberapa ASBR.
+5. **`O IA`** = *Inter-Area*: rute berasal dari area OSPF lain, dipelajari lewat LSA tipe 3 dari ABR. **`O E1`** = *External Type 1*: rute dari luar domain OSPF (redistribusi), dan metriknya = cost eksternal + cost internal untuk mencapai ASBR, sehingga setiap router otomatis memilih ASBR terdekat. **`O E2`** = *External Type 2* (default): rute eksternal yang metriknya tetap (hanya cost eksternal) di seluruh domain; berguna untuk konsistensi, tetapi tidak membedakan jarak ke ASBR sehingga bisa menghasilkan pilihan suboptimal ketika ada beberapa ASBR.
 
 6. **NSSA** (*Not-So-Stubby Area*), atau **Totally NSSA** jika juga ingin memblokir LSA tipe 3.
-   Alasannya: area itu **tidak perlu menerima** rute eksternal dari area lain (LSA tipe 5 diblokir → LSDB kecil), tetapi **perlu menyuntikkan** rute eksternalnya sendiri dari link ke mitra. Area *stub* biasa tidak mengizinkan ASBR sama sekali. NSSA menyelesaikan ini dengan **LSA tipe 7** yang hanya beredar dalam NSSA, lalu **dikonversi menjadi tipe 5 oleh ABR** saat masuk ke area 0.
+   Alasannya: area itu tidak perlu menerima rute eksternal dari area lain (LSA tipe 5 diblokir → LSDB kecil), tetapi perlu menyuntikkan rute eksternalnya sendiri dari link ke mitra. Area *stub* biasa tidak mengizinkan ASBR sama sekali. NSSA menyelesaikan ini dengan LSA tipe 7 yang hanya beredar dalam NSSA, lalu dikonversi menjadi tipe 5 oleh ABR saat masuk ke area 0.
    ```
    R2(config-router)# area 1 nssa
    ```
 
-7. Karena **summarization mengubah informasi topologi**, dan link state mensyaratkan semua router dalam satu area memiliki **LSDB yang identik**. Router internal hanya membanjiri (flood) LSA tipe 1/2 apa adanya — kalau ia meringkasnya, LSDB router lain di area yang sama menjadi berbeda, dan perhitungan SPF akan menghasilkan jalur yang tidak konsisten atau loop.
-   ABR dan ASBR berada di **batas** informasi: ABR menerjemahkan topologi area menjadi LSA tipe 3 (yang sudah berupa "rute", bukan "topologi"), dan ASBR memperkenalkan rute eksternal sebagai tipe 5. Pada titik konversi inilah peringkasan aman dilakukan, karena tidak ada router lain yang bergantung pada detail topologi aslinya.
+7. Karena summarization mengubah informasi topologi, dan link state mensyaratkan semua router dalam satu area memiliki LSDB yang identik. Router internal hanya membanjiri (flood) LSA tipe 1/2 apa adanya. Kalau ia meringkasnya, LSDB router lain di area yang sama menjadi berbeda, dan perhitungan SPF akan menghasilkan jalur yang tidak konsisten atau loop.
+   ABR dan ASBR berada di batas informasi: ABR menerjemahkan topologi area menjadi LSA tipe 3 (yang sudah berupa "rute", bukan "topologi"), dan ASBR memperkenalkan rute eksternal sebagai tipe 5. Pada titik konversi inilah peringkasan aman dilakukan, karena tidak ada router lain yang bergantung pada detail topologi aslinya.
 
-8. Karena **Router ID hanya dievaluasi saat proses OSPF dimulai**. Mengubah `router-id` pada proses yang sudah berjalan tidak berlaku sampai proses di-restart:
+8. Karena Router ID hanya dievaluasi saat proses OSPF dimulai. Mengubah `router-id` pada proses yang sudah berjalan tidak berlaku sampai proses di-restart:
    ```
    R1# clear ip ospf process
    ```
-   **Perhatian:** Perintah ini **memutus semua adjacency OSPF sementara** dan memicu rekalkulasi di seluruh area — lakukan di jendela pemeliharaan. Alternatif untuk router yang belum produksi: `reload`.
+   **Perhatian:** Perintah ini memutus semua adjacency OSPF sementara dan memicu rekalkulasi di seluruh area, jadi lakukan di jendela pemeliharaan. Alternatif untuk router yang belum produksi: `reload`.
 
 </details>
 
@@ -750,10 +750,10 @@ Semua parameter yang harus cocok terlihat di sini: **Area, Network Type, Hello, 
 
 ## 17. Sumber
 
-- RFC 2328 — OSPF Version 2
-- RFC 5340 — OSPF for IPv6 (OSPFv3)
-- RFC 3101 — NSSA Option
-- RFC 5709 / 7474 — OSPFv2 HMAC-SHA Cryptographic Authentication
+- RFC 2328, OSPF Version 2
+- RFC 5340, OSPF for IPv6 (OSPFv3)
+- RFC 3101, NSSA Option
+- RFC 5709 / 7474, OSPFv2 HMAC-SHA Cryptographic Authentication
 - Cisco CCNA 200-301 v1.1, topik 3.4 (single area OSPFv2: neighbor adjacencies, point-to-point, broadcast/DR-BDR, router ID)
 - Cisco, *OSPF Design Guide* (Document ID 7039)
 

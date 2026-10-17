@@ -17,7 +17,7 @@ Semua konfigurasi dan keluaran di modul ini diuji pada **CHR RouterOS 7.24.5**. 
 
 Halaman MPLS Overview di dokumentasi resmi mendaftar fitur yang didukung: penerusan MPLS dengan PHP, label statis, LDP (RFC 5036 dan RFC 7552 untuk IPv6) dengan mode *downstream unsolicited*, *independent control*, dan *liberal retention*, sesi targeted, ECMP, VPLS bersinyal LDP (RFC 4762) dan BGP (RFC 4761), pseudowire statis gaya Cisco, fragmentasi pseudowire (RFC 4623), tunnel RSVP-TE dengan jalur eksplisit dan CSPF, L3VPN dengan MP-BGP, serta OSPF dan RIP sebagai protokol CE-PE.
 
-Halaman yang sama juga jujur menyebut apa yang **belum** ada:
+Halaman yang sama juga menyebut apa yang **belum** ada:
 
 - LDP: mode *downstream on demand*, *ordered control*, dan *conservative retention*.
 - TE: fast reroute (proteksi link dan node).

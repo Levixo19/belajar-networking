@@ -4,7 +4,7 @@
 > **Tujuan:** Anda paham seluruh alur resolusi DNS, bisa membaca semua record type, mendiagnosis dengan `dig`, dan membangun resolver sendiri.
 
 > > [!TIP]
-> > **Aturan lapangan:** *"It's always DNS."* Ketika ada masalah jaringan yang tidak jelas penyebabnya, DNS adalah tersangka nomor satu. Modul ini panjang karena DNS memang sepenting itu.
+> > **Aturan lapangan:** *"It's always DNS."* Ketika ada masalah jaringan yang tidak jelas penyebabnya, DNS adalah tersangka nomor satu. Karena itu modul ini panjang.
 
 ---
 
@@ -90,7 +90,7 @@ Ini penyebab masalah yang membingungkan ketika search domain salah dikonfigurasi
 |---|---|
 | **Stub resolver** | Pustaka di OS/aplikasi. Mengirim query ke recursive resolver. Tidak melakukan resolusi sendiri |
 | **Recursive resolver** | Melakukan seluruh proses pencarian atas nama klien. Menyimpan cache. Contoh: 8.8.8.8, 1.1.1.1, resolver ISP |
-| **Root server** | 13 nama server (`a.root-servers.net` – `m`), ratusan instance **anycast**. Menunjuk ke TLD |
+| **Root server** | 13 nama server (`a.root-servers.net` sampai `m`), ratusan instance **anycast**. Menunjuk ke TLD |
 | **TLD server** | Otoritatif untuk `.com`, `.id`, dst. Menunjuk ke authoritative server domain |
 | **Authoritative server** | Menyimpan data zona sesungguhnya. Jawabannya adalah kebenaran |
 | **Forwarder** | Meneruskan query ke resolver lain alih-alih melakukan rekursi sendiri |
@@ -172,7 +172,7 @@ TTL 86400  (1 hari)    → beban rendah; perubahan lambat menyebar
 > [!TIP]
 > **Praktik saat migrasi:** turunkan TTL ke 300 detik **beberapa hari sebelum** perubahan, lakukan perubahan, verifikasi, lalu naikkan lagi. Kalau Anda menurunkan TTL bersamaan dengan perubahan, resolver masih memegang nilai TTL lama yang panjang.
 
-**Negative caching** [RFC 2308] — jawaban NXDOMAIN juga di-cache, dengan durasi dari field **minimum** di record SOA.
+**Negative caching** [RFC 2308]: jawaban NXDOMAIN juga di-cache, dengan durasi dari field **minimum** di record SOA.
 
 ---
 
@@ -195,11 +195,11 @@ www.example.com.  3600  IN     A      93.184.216.34
 | **MX** | Mail exchanger (+ priority) | `@  IN MX 10  mail.example.com.` |
 | **NS** | Name server otoritatif untuk zona | `@  IN NS  ns1.example.com.` |
 | **PTR** | IP → nama (reverse DNS) | `34.216.184.93.in-addr.arpa. IN PTR www.example.com.` |
-| **SOA** | Start of Authority — metadata zona | lihat di bawah |
+| **SOA** | Start of Authority: metadata zona | lihat di bawah |
 | **TXT** | Teks bebas (SPF, DKIM, verifikasi domain) | `@  IN TXT  "v=spf1 mx -all"` |
 | **SRV** | Lokasi layanan (protokol, port, prioritas) | `_sip._tcp  IN SRV 10 60 5060 sipserver.example.com.` |
 | **CAA** | CA mana yang boleh menerbitkan sertifikat | `@  IN CAA 0 issue "letsencrypt.org"` |
-| **DNSKEY/DS/RRSIG/NSEC** | DNSSEC | — |
+| **DNSKEY/DS/RRSIG/NSEC** | DNSSEC | lihat di bawah |
 | **SVCB/HTTPS** | Parameter layanan (ALPN, ECH, IP hint) | `@  IN HTTPS 1 . alpn="h3,h2"` |
 
 ### SOA (Start of Authority)
@@ -245,7 +245,7 @@ example.com.  3600  IN  SOA  ns1.example.com. admin.example.com. (
 ```
 Karena apex **wajib** punya record SOA dan NS, sementara CNAME melarang record lain berdampingan.
 
-**Solusi:** banyak penyedia DNS menawarkan **ALIAS**, **ANAME**, atau **CNAME flattening** — record proprietary yang berperilaku seperti CNAME di apex tetapi diselesaikan di sisi server menjadi A/AAAA.
+**Solusi:** banyak penyedia DNS menawarkan **ALIAS**, **ANAME**, atau **CNAME flattening**, yaitu record proprietary yang berperilaku seperti CNAME di apex tetapi diselesaikan di sisi server menjadi A/AAAA.
 
 > [!WARNING]
 > **3. Rantai CNAME memperlambat resolusi.** Setiap hop adalah lookup tambahan. Batasi maksimal satu tingkat.
@@ -261,12 +261,12 @@ IPv6: 2001:db8::1
 ```
 
 **Kegunaan PTR:**
-- **Reputasi email** — banyak server mail menolak koneksi dari IP tanpa PTR yang cocok (forward-confirmed reverse DNS)
+- **Reputasi email**: banyak server mail menolak koneksi dari IP tanpa PTR yang cocok (forward-confirmed reverse DNS)
 - Logging dan audit yang mudah dibaca
 - Beberapa layanan memverifikasinya
 
 > [!WARNING]
-> **PTR dikelola oleh pemilik blok IP** (ISP/RIR), bukan pemilik domain. Untuk mengubahnya, Anda harus meminta ke ISP — kecuali Anda memiliki blok IP sendiri.
+> **PTR dikelola oleh pemilik blok IP** (ISP/RIR), bukan pemilik domain. Untuk mengubahnya, Anda harus meminta ke ISP, kecuali Anda memiliki blok IP sendiri.
 
 ---
 
@@ -306,7 +306,7 @@ Amankan dengan **TSIG** (shared secret) atau ACL berbasis IP.
 
 ## 7. DNSSEC
 
-DNS asli tidak punya autentikasi — jawaban apa pun yang tiba dianggap benar. Ini memungkinkan **cache poisoning**.
+DNS asli tidak punya autentikasi: jawaban apa pun yang tiba dianggap benar. Celah ini memungkinkan **cache poisoning**.
 
 **DNSSEC** menambahkan tanda tangan digital sehingga resolver bisa memverifikasi bahwa jawaban benar-benar berasal dari pemilik zona dan tidak diubah.
 
@@ -316,7 +316,7 @@ DNS asli tidak punya autentikasi — jawaban apa pun yang tiba dianggap benar. I
 |---|---|
 | **DNSKEY** | Kunci publik zona (ZSK untuk record, KSK untuk menandatangani ZSK) |
 | **RRSIG** | Tanda tangan untuk satu set record |
-| **DS** (*Delegation Signer*) | Hash dari DNSKEY anak, **disimpan di zona induk** — inilah yang membentuk rantai |
+| **DS** (*Delegation Signer*) | Hash dari DNSKEY anak, **disimpan di zona induk**; inilah yang membentuk rantai |
 | **NSEC / NSEC3** | Membuktikan bahwa sebuah nama **tidak ada** (authenticated denial) |
 
 ### Chain of Trust
@@ -338,7 +338,7 @@ www.example.com A 93.184.216.34   ← TERVERIFIKASI ✅
 > **DNSSEC hanya menjamin integritas dan autentisitas, BUKAN kerahasiaan.** Query dan jawaban tetap dikirim dalam plaintext. Untuk privasi, butuh DoT/DoH/DoQ.
 
 > [!WARNING]
-> **DNSSEC menaikkan risiko operasional.** Kunci yang kedaluwarsa atau DS yang tidak sinkron akan membuat domain **hilang total** dari internet — bukan sekadar "peringatan". Otomasi rollover kunci sangat penting.
+> **DNSSEC menaikkan risiko operasional.** Kunci yang kedaluwarsa atau DS yang tidak sinkron langsung membuat domain **hilang total** dari internet, tanpa tahap "peringatan". Karena itu, rollover kunci perlu diotomasi.
 
 ```bash
 $ dig +dnssec example.com
@@ -350,7 +350,7 @@ $ delv example.com          # validasi DNSSEC dengan penjelasan
 
 ## 8. DNS Terenkripsi
 
-DNS tradisional dikirim **plaintext** di UDP/TCP 53 — siapa pun di jalur bisa melihat dan memodifikasinya.
+DNS tradisional dikirim **plaintext** di UDP/TCP 53, sehingga siapa pun di jalur bisa melihat dan memodifikasinya.
 
 | Protokol | Port | Transport | Catatan |
 |---|---|---|---|
@@ -452,7 +452,7 @@ example.com.		3600	IN	A	93.184.216.34
 |---|---|
 | `NOERROR` | Berhasil (walau ANSWER bisa 0 = nama ada tetapi tipe record itu tidak ada) |
 | `NXDOMAIN` | **Nama tidak ada sama sekali** |
-| `SERVFAIL` | Server gagal — sering karena **DNSSEC gagal validasi**, atau upstream tidak menjawab |
+| `SERVFAIL` | Server gagal, sering karena **DNSSEC gagal validasi** atau upstream tidak menjawab |
 | `REFUSED` | Server menolak menjawab (biasanya bukan otoritatif & tidak mengizinkan rekursi dari Anda) |
 | `NOTIMP` | Tipe query tidak didukung |
 
@@ -460,14 +460,14 @@ example.com.		3600	IN	A	93.184.216.34
 | Flag | Arti |
 |---|---|
 | `qr` | Ini adalah **response** (bukan query) |
-| `aa` | **Authoritative answer** — dari server otoritatif |
-| `rd` | **Recursion desired** — klien meminta rekursi |
-| `ra` | **Recursion available** — server menyediakan rekursi |
-| `ad` | **Authenticated data** — tervalidasi DNSSEC |
-| `tc` | **Truncated** — jawaban terpotong, harus diulang lewat TCP |
+| `aa` | **Authoritative answer**: dari server otoritatif |
+| `rd` | **Recursion desired**: klien meminta rekursi |
+| `ra` | **Recursion available**: server menyediakan rekursi |
+| `ad` | **Authenticated data**: tervalidasi DNSSEC |
+| `tc` | **Truncated**: jawaban terpotong, harus diulang lewat TCP |
 
 > [!WARNING]
-> **`SERVFAIL` yang paling sering** disebabkan kegagalan validasi DNSSEC. Uji dengan `dig +cd` (checking disabled) — kalau berhasil dengan `+cd`, masalahnya di DNSSEC.
+> **`SERVFAIL` yang paling sering** disebabkan kegagalan validasi DNSSEC. Uji dengan `dig +cd` (checking disabled). Kalau berhasil dengan `+cd`, masalahnya di DNSSEC.
 
 ---
 
@@ -648,7 +648,7 @@ Kegunaan: menghindari hairpin NAT, menyembunyikan topologi internal, mempercepat
 Jawaban berbeda berdasarkan lokasi geografis penanya. Dipakai CDN untuk mengarahkan pengguna ke edge terdekat.
 
 > [!WARNING]
-> Tidak selalu akurat karena resolver mungkin jauh dari pengguna. **EDNS Client Subnet (ECS)** mengirimkan sebagian prefix klien untuk memperbaiki akurasi — dengan biaya privasi.
+> GeoDNS tidak selalu akurat karena resolver mungkin jauh dari pengguna. **EDNS Client Subnet (ECS)** mengirimkan sebagian prefix klien untuk memperbaiki akurasi, dengan mengorbankan privasi.
 
 ### DNS Load Balancing (Round Robin)
 
@@ -796,7 +796,7 @@ chrome://net-internals/#dns
 Ini teknik umum di hotspot dan jaringan sekolah untuk menegakkan filtering DNS.
 
 > [!WARNING]
-> Teknik ini **tidak menghentikan DoH** — browser yang memakai DNS over HTTPS akan melewatinya. Untuk itu perlu memblokir IP resolver DoH yang dikenal.
+> Teknik ini **tidak menghentikan DoH**: browser yang memakai DNS over HTTPS akan melewatinya. Untuk itu perlu memblokir IP resolver DoH yang dikenal.
 
 ### Address list dinamis dari DNS
 
@@ -807,7 +807,7 @@ Ini teknik umum di hotspot dan jaringan sekolah untuk menegakkan filtering DNS.
 ```
 
 > [!TIP]
-> Fitur ini sangat berguna untuk memblokir atau memprioritaskan layanan berdasarkan **nama domain**, bukan IP — yang berubah-ubah pada layanan besar.
+> Fitur ini berguna untuk memblokir atau memprioritaskan layanan berdasarkan **nama domain**, bukan IP (yang berubah-ubah pada layanan besar).
 
 ### Padanan istilah
 
@@ -833,7 +833,7 @@ Ini teknik umum di hotspot dan jaringan sekolah untuk menegakkan filtering DNS.
 - **DNSSEC** memberi integritas & autentisitas (bukan kerahasiaan); kunci kedaluwarsa = domain hilang total.
 - **DoT (853)**, **DoH (443)**, **DoQ** memberi kerahasiaan; DoH menyulitkan kontrol jaringan perusahaan.
 - `dig +trace`, `dig +short`, `dig @server`, `dig +cd` adalah alat diagnostik utama.
-- **`SERVFAIL` sering berarti DNSSEC gagal** — uji dengan `+cd`.
+- **`SERVFAIL` sering berarti DNSSEC gagal**; uji dengan `+cd`.
 - Bangun resolver dengan **Unbound** (validating recursive) atau **dnsmasq** (ringan); **BIND9** untuk authoritative.
 
 ---
@@ -852,23 +852,23 @@ Ini teknik umum di hotspot dan jaringan sekolah untuk menegakkan filtering DNS.
 <details>
 <summary>Jawaban</summary>
 
-1. (a) Browser cek cache internalnya; (b) OS cek cache dan `/etc/hosts`; (c) stub resolver mengirim query **rekursif** ke recursive resolver; (d) resolver cek cache — kosong; (e) resolver query **iteratif** ke **root** → root membalas referral ke server `.id`; (f) resolver query ke server `.id` → referral ke server `.co.id`; (g) query ke `.co.id` → referral ke authoritative `example.co.id`; (h) query ke authoritative → jawaban `A` dengan TTL; (i) resolver menyimpan di cache selama TTL dan mengembalikan jawaban ke klien.
+1. (a) Browser cek cache internalnya; (b) OS cek cache dan `/etc/hosts`; (c) stub resolver mengirim query **rekursif** ke recursive resolver; (d) resolver cek cache, yang ternyata kosong; (e) resolver query **iteratif** ke **root** → root membalas referral ke server `.id`; (f) resolver query ke server `.id` → referral ke server `.co.id`; (g) query ke `.co.id` → referral ke authoritative `example.co.id`; (h) query ke authoritative → jawaban `A` dengan TTL; (i) resolver menyimpan di cache selama TTL dan mengembalikan jawaban ke klien.
 
-2. Karena apex zona **wajib** memiliki record **SOA** dan **NS**, sedangkan aturan DNS melarang CNAME berdampingan dengan record lain untuk nama yang sama. Solusi: gunakan record proprietary **ALIAS / ANAME** atau fitur **CNAME flattening** yang ditawarkan banyak penyedia DNS — record ini berperilaku seperti CNAME bagi pengguna tetapi diselesaikan di sisi server menjadi A/AAAA sehingga tidak melanggar standar. Alternatif: pakai A/AAAA statis, atau layanan yang memberi alamat anycast tetap.
+2. Karena apex zona wajib memiliki record **SOA** dan **NS**, sedangkan aturan DNS melarang CNAME berdampingan dengan record lain untuk nama yang sama. Solusi: gunakan record proprietary **ALIAS / ANAME** atau fitur **CNAME flattening** yang ditawarkan banyak penyedia DNS. Record ini berperilaku seperti CNAME bagi pengguna tetapi diselesaikan di sisi server menjadi A/AAAA sehingga tidak melanggar standar. Alternatif: pakai A/AAAA statis, atau layanan yang memberi alamat anycast tetap.
 
-3. Karena **TTL** — resolver di seluruh dunia masih menyimpan jawaban lama di cache sampai TTL-nya habis. Tidak ada cara memaksa mereka membuangnya.
-   **Sebelum perubahan berikutnya:** turunkan TTL record itu ke nilai kecil (mis. 300 detik) **beberapa hari sebelumnya** — cukup lama agar TTL lama yang panjang sudah kedaluwarsa di semua cache. Lakukan perubahan, verifikasi propagasinya, lalu naikkan TTL kembali ke nilai normal.
+3. Karena **TTL**: resolver di seluruh dunia masih menyimpan jawaban lama di cache sampai TTL-nya habis. Tidak ada cara memaksa mereka membuangnya.
+   **Sebelum perubahan berikutnya:** turunkan TTL record itu ke nilai kecil (mis. 300 detik) **beberapa hari sebelumnya**, cukup lama agar TTL lama yang panjang sudah kedaluwarsa di semua cache. Lakukan perubahan, verifikasi propagasinya, lalu naikkan TTL kembali ke nilai normal.
 
-4. (a) **Validasi DNSSEC gagal** (tanda tangan kedaluwarsa, DS tidak sinkron) — uji dengan `dig +cd example.com`; kalau berhasil dengan `+cd`, inilah penyebabnya. (b) **Server otoritatif tidak menjawab** — uji dengan `dig +trace` untuk melihat di mana rantai putus, dan query langsung ke NS-nya. (c) **Masalah pada resolver itu sendiri** (upstream mati, konfigurasi rusak) — uji dengan resolver lain (`dig @1.1.1.1`); kalau resolver lain berhasil, masalahnya lokal. (d) Zona rusak atau melebihi batas (mis. rantai CNAME terlalu panjang).
+4. (a) **Validasi DNSSEC gagal** (tanda tangan kedaluwarsa, DS tidak sinkron). Uji dengan `dig +cd example.com`; kalau berhasil dengan `+cd`, inilah penyebabnya. (b) **Server otoritatif tidak menjawab**. Uji dengan `dig +trace` untuk melihat di mana rantai putus, dan query langsung ke NS-nya. (c) **Masalah pada resolver itu sendiri** (upstream mati, konfigurasi rusak). Uji dengan resolver lain (`dig @1.1.1.1`); kalau resolver lain berhasil, masalahnya lokal. (d) Zona rusak atau melebihi batas (mis. rantai CNAME terlalu panjang).
 
-5. Batas 13 berasal dari ukuran maksimum respons DNS **512 byte** pada UDP (sebelum EDNS0) — 13 nama server beserta alamatnya adalah jumlah terbanyak yang muat dalam satu paket priming response. Namun 13 itu adalah **nama**, bukan mesin: setiap nama diumumkan lewat **anycast** dari ratusan lokasi di seluruh dunia (total lebih dari 1.500 instance), sehingga kapasitas dan ketahanannya sangat besar. Pengguna selalu mencapai instance terdekat secara topologis.
+5. Batas 13 berasal dari ukuran maksimum respons DNS **512 byte** pada UDP (sebelum EDNS0): 13 nama server beserta alamatnya adalah jumlah terbanyak yang muat dalam satu paket priming response. Namun 13 itu adalah **nama**, bukan mesin: setiap nama diumumkan lewat **anycast** dari ratusan lokasi di seluruh dunia (total lebih dari 1.500 instance), sehingga kapasitas dan ketahanannya sangat besar. Pengguna selalu mencapai instance terdekat secara topologis.
 
-6. **DNSSEC** memberi **integritas dan autentisitas**: memastikan jawaban benar-benar berasal dari pemilik zona dan tidak diubah di jalan. Ia **tidak mengenkripsi** — siapa pun di jalur tetap bisa membaca query dan jawabannya.
-   **DoH/DoT** memberi **kerahasiaan dan integritas transport**: mengenkripsi jalur antara klien dan resolver sehingga penyadap tidak tahu apa yang Anda tanyakan. Ia **tidak memverifikasi** bahwa data zona itu asli — resolver yang jahat tetap bisa berbohong.
+6. **DNSSEC** memberi **integritas dan autentisitas**: memastikan jawaban benar-benar berasal dari pemilik zona dan tidak diubah di jalan. Ia **tidak mengenkripsi**, sehingga siapa pun di jalur tetap bisa membaca query dan jawabannya.
+   **DoH/DoT** memberi **kerahasiaan dan integritas transport**: mengenkripsi jalur antara klien dan resolver sehingga penyadap tidak tahu apa yang Anda tanyakan. Ia **tidak memverifikasi** bahwa data zona itu asli; resolver yang jahat tetap bisa berbohong.
    Keduanya **saling melengkapi, bukan menggantikan**: DoH melindungi jalur klien→resolver; DNSSEC melindungi keaslian data dari zona sampai resolver. Konfigurasi terbaik memakai keduanya.
 
 7. **Penyebab:** DoH di browser mengabaikan setelan DNS sistem dan mengirim query langsung ke resolver publik (mis. Cloudflare/Google). Resolver publik tidak mengetahui zona internal perusahaan, sehingga nama aplikasi internal mengembalikan NXDOMAIN atau alamat publik yang salah (pada split-horizon).
-   **Solusi:** (a) sediakan **canary domain** — pastikan `use-application-dns.net` mengembalikan NXDOMAIN dari resolver perusahaan; Firefox akan otomatis menonaktifkan DoH; (b) terapkan kebijakan lewat **Group Policy/MDM** untuk menonaktifkan DoH di browser terkelola, atau mengarahkannya ke resolver DoH internal; (c) jalankan **DoH server internal** sendiri dan konfigurasikan browser memakainya — enkripsi tetap ada, kendali tetap di organisasi; (d) blokir IP resolver DoH publik yang dikenal di firewall (efektif tetapi memerlukan pemeliharaan daftar).
+   **Solusi:** (a) sediakan **canary domain**: pastikan `use-application-dns.net` mengembalikan NXDOMAIN dari resolver perusahaan, sehingga Firefox otomatis menonaktifkan DoH; (b) terapkan kebijakan lewat **Group Policy/MDM** untuk menonaktifkan DoH di browser terkelola, atau mengarahkannya ke resolver DoH internal; (c) jalankan **DoH server internal** sendiri dan konfigurasikan browser memakainya, sehingga enkripsi tetap ada dan kendali tetap di organisasi; (d) blokir IP resolver DoH publik yang dikenal di firewall (efektif tetapi memerlukan pemeliharaan daftar).
 
 8. **Serial number di record SOA tidak dinaikkan.** Secondary memeriksa serial primary; jika serialnya tidak berubah, secondary menyimpulkan zona tidak berubah dan tidak menarik data baru. Perbaikan: naikkan serial (konvensi `YYYYMMDDNN`), reload zona, dan verifikasi dengan `dig @secondary example.com SOA`. Kemungkinan lain: NOTIFY tidak terkirim/diblokir, `allow-transfer` tidak mengizinkan IP secondary, atau zone transfer diblokir firewall di TCP 53.
 
@@ -878,15 +878,15 @@ Ini teknik umum di hotspot dan jaringan sekolah untuk menegakkan filtering DNS.
 
 ## 15. Sumber
 
-- RFC 1034 & 1035 — Domain Names: Concepts, Facilities, Implementation
-- RFC 9499 — DNS Terminology (menggantikan RFC 8499)
-- RFC 2308 — Negative Caching of DNS Queries
-- RFC 4033/4034/4035 — DNSSEC
-- RFC 7858 — DNS over TLS · RFC 8484 — DNS over HTTPS · RFC 9250 — DNS over QUIC
-- RFC 7816 — QNAME Minimisation
+- RFC 1034 & 1035, Domain Names: Concepts, Facilities, Implementation
+- RFC 9499, DNS Terminology (menggantikan RFC 8499)
+- RFC 2308, Negative Caching of DNS Queries
+- RFC 4033/4034/4035, DNSSEC
+- RFC 7858, DNS over TLS · RFC 8484, DNS over HTTPS · RFC 9250, DNS over QUIC
+- RFC 7816, QNAME Minimisation
 - Cisco CCNA 200-301 v1.1, topik 4.3 (peran DHCP dan DNS)
-- Unbound — https://nlnetlabs.nl/documentation/unbound/
-- BIND 9 ARM — https://bind9.readthedocs.io/
+- Unbound: https://nlnetlabs.nl/documentation/unbound/
+- BIND 9 ARM: https://bind9.readthedocs.io/
 
 ---
 

@@ -7,7 +7,7 @@
 
 ## 1. Masalah yang Dipecahkan
 
-Tanpa DHCP, setiap perangkat harus dikonfigurasi manual dengan: alamat IP, subnet mask, default gateway, dan server DNS. Untuk 500 perangkat, ini mustahil dikelola — dan setiap perangkat yang berpindah harus dikonfigurasi ulang.
+Tanpa DHCP, setiap perangkat harus dikonfigurasi manual dengan: alamat IP, subnet mask, default gateway, dan server DNS. Untuk 500 perangkat, cara ini mustahil dikelola, apalagi setiap perangkat yang berpindah harus dikonfigurasi ulang.
 
 **DHCP** [RFC 2131] mengotomasi seluruhnya.
 
@@ -39,7 +39,7 @@ Klien (belum punya IP)                       Server DHCP
         │  alamat itu belum dipakai (conflict detection)
 ```
 
-Mnemonic: **DORA** — Discover, Offer, Request, Acknowledge.
+Mnemonic: **DORA** (Discover, Offer, Request, Acknowledge).
 
 ### Kenapa REQUEST dikirim sebagai broadcast?
 
@@ -96,7 +96,7 @@ T2 = 87,5% lease (7 jam) → jika T1 gagal, klien BROADCAST REQUEST
 
 ## 4. Opsi DHCP
 
-Server tidak hanya memberi IP — ia memberi seluruh konfigurasi jaringan.
+Selain IP, server memberi seluruh konfigurasi jaringan lewat opsi.
 
 | Opsi | Nama | Isi |
 |---|---|---|
@@ -118,14 +118,14 @@ Server tidak hanya memberi IP — ia memberi seluruh konfigurasi jaringan.
 | **67** | Bootfile Name | Nama file boot (PXE) |
 | **82** | Relay Agent Information | Info dari relay: circuit ID, remote ID |
 | **119** | Domain Search List | Daftar search domain |
-| **121** | Classless Static Route | **Rute statis tambahan** — sangat berguna |
+| **121** | Classless Static Route | Rute statis tambahan |
 | **150** | TFTP Server (Cisco) | Untuk telepon IP Cisco |
 
 > [!TIP]
-> **Opsi 121** memungkinkan mendorong rute statis ke klien tanpa mengubah gateway — berguna untuk mengarahkan subnet tertentu lewat VPN atau firewall khusus.
+> **Opsi 121** memungkinkan mendorong rute statis ke klien tanpa mengubah gateway. Ini berguna untuk mengarahkan subnet tertentu lewat VPN atau firewall khusus.
 
 > [!WARNING]
-> **Opsi 82** ditambahkan oleh **DHCP relay**, berisi identitas port switch tempat klien terhubung. Ini memungkinkan server memberikan alamat berdasarkan lokasi fisik — dan menjadi bagian penting **DHCP snooping**.
+> **Opsi 82** ditambahkan oleh **DHCP relay**, berisi identitas port switch tempat klien terhubung. Dengan opsi ini, server bisa memberikan alamat berdasarkan lokasi fisik. Opsi ini juga merupakan bagian dari **DHCP snooping**.
 
 ---
 
@@ -144,7 +144,7 @@ Masalah: DHCP DISCOVER adalah **broadcast**, dan **router tidak meneruskan broad
                               interface-nya di VLAN 20
 ```
 
-**Field `giaddr` (gateway IP address)** sangat penting: dari sinilah server tahu **subnet mana** yang harus dipakai untuk memilih pool.
+Dari **field `giaddr` (gateway IP address)** inilah server tahu subnet mana yang harus dipakai untuk memilih pool.
 
 ```
 R1(config)# interface vlan 20
@@ -329,7 +329,7 @@ PS> Get-NetIPConfiguration
 
 ## 7. Redundansi DHCP
 
-Server DHCP adalah **single point of failure** — kalau mati, perangkat baru tidak bisa terhubung sama sekali.
+Server DHCP adalah **single point of failure**: kalau mati, perangkat baru tidak bisa terhubung sama sekali.
 
 | Pendekatan | Cara kerja | Catatan |
 |---|---|---|
@@ -351,16 +351,16 @@ R2(config)# ip dhcp excluded-address 192.168.10.100 192.168.10.179
 
 ## 8. DHCPv6
 
-Berbeda dari DHCPv4 dalam beberapa hal fundamental.
+Protokol ini berbeda dari DHCPv4 dalam beberapa hal mendasar.
 
 | | DHCPv4 | DHCPv6 |
 |---|---|---|
 | Port | 67/68 | **546 (klien) / 547 (server)** |
 | Alamat tujuan | Broadcast `255.255.255.255` | Multicast `ff02::1:2` (all DHCP relay agents & servers) |
-| Default gateway | Opsi 3 | **TIDAK ADA** — selalu dari Router Advertisement |
+| Default gateway | Opsi 3 | **TIDAK ADA** (selalu dari Router Advertisement) |
 | Mode | Selalu stateful | **Stateful** atau **stateless** |
 | Identitas klien | MAC | **DUID** (DHCP Unique Identifier) |
-| Prefix delegation | Tidak ada | **IA_PD** — memberi seluruh prefix ke router pelanggan |
+| Prefix delegation | Tidak ada | **IA_PD**: memberi seluruh prefix ke router pelanggan |
 
 ### Stateful vs Stateless
 
@@ -373,7 +373,7 @@ Kedua flag = 0          → SLAAC murni (alamat dibentuk sendiri)
 ```
 
 > [!WARNING]
-> **Default gateway IPv6 SELALU berasal dari Router Advertisement**, tidak pernah dari DHCPv6. Ini perbedaan konseptual penting yang sering membingungkan.
+> **Default gateway IPv6 SELALU berasal dari Router Advertisement**, tidak pernah dari DHCPv6. Perbedaan konseptual ini sering membingungkan.
 
 ### Prefix Delegation (IA_PD)
 
@@ -387,7 +387,7 @@ Router → membagi menjadi:
            2001:db8:1234:5602::/64  (IoT)
 ```
 
-Ini sesuatu yang tidak ada padanannya di IPv4 — dan menjadi alasan penting mengapa IPv6 lebih baik untuk jaringan rumah/kantor.
+Mekanisme ini tidak ada padanannya di IPv4, dan menjadi salah satu alasan IPv6 lebih baik untuk jaringan rumah/kantor.
 
 Detail lengkap IPv6 di `08-ipv6/02`.
 
@@ -438,8 +438,8 @@ SW1# show ip dhcp snooping binding
 ```
 
 **Binding table** yang dibangun DHCP snooping (MAC ↔ IP ↔ VLAN ↔ port) menjadi dasar untuk fitur keamanan lain:
-- **Dynamic ARP Inspection (DAI)** — memverifikasi ARP terhadap binding table
-- **IP Source Guard** — memblokir paket dengan IP sumber yang tidak sesuai binding
+- **Dynamic ARP Inspection (DAI)**: memverifikasi ARP terhadap binding table
+- **IP Source Guard**: memblokir paket dengan IP sumber yang tidak sesuai binding
 
 Detail lengkap di `12-keamanan/02`.
 
@@ -491,13 +491,13 @@ Ini berarti **DHCP gagal total**. Urutan pemeriksaan:
 
 | Gejala | Kemungkinan penyebab |
 |---|---|
-| `169.254.x.x` (APIPA) | DHCP gagal total — lihat alur di atas |
+| `169.254.x.x` (APIPA) | DHCP gagal total; lihat alur di atas |
 | Mendapat IP dari subnet yang **salah** | VLAN salah di port; **rogue DHCP server**; `giaddr` salah |
 | Mendapat IP tetapi tidak ada internet | Opsi 3 (gateway) atau opsi 6 (DNS) salah/tidak ada |
 | IP berubah-ubah | Lease terlalu pendek; klien berpindah antar-server (split scope) |
 | Beberapa perangkat konflik IP | Pool tumpang tindih dengan alamat statis; excluded-address tidak lengkap |
 | Hanya sebagian klien gagal | Pool habis; rate limit DHCP snooping; MAC randomization vs reservasi |
-| Berhasil setelah beberapa kali coba | **PortFast tidak aktif** — port butuh 30 detik STP sebelum forwarding, DHCP timeout duluan |
+| Berhasil setelah beberapa kali coba | **PortFast tidak aktif**: port butuh 30 detik STP sebelum forwarding, sehingga DHCP timeout duluan |
 
 > [!WARNING]
 > **PortFast adalah penyebab yang sering terlewat.** Tanpa PortFast, port access butuh ~30 detik melewati listening dan learning sebelum meneruskan trafik. Klien mengirim DISCOVER selama masa itu, tidak mendapat jawaban, dan menyerah ke APIPA.
@@ -569,7 +569,7 @@ bootp.option.dhcp == 5       ← ACK
 ```
 
 > [!TIP]
-> **`add-arp=yes`** membuat DHCP server otomatis menambahkan entri ARP statis. Dikombinasikan dengan `arp=reply-only` di interface, ini **mencegah pengguna memasang IP statis sendiri** — teknik keamanan yang sangat umum di RT/RW-Net dan hotspot Indonesia.
+> **`add-arp=yes`** membuat DHCP server otomatis menambahkan entri ARP statis. Dikombinasikan dengan `arp=reply-only` di interface, ini **mencegah pengguna memasang IP statis sendiri**. Teknik keamanan ini sangat umum di RT/RW-Net dan hotspot Indonesia.
 
 ### DHCP Client
 
@@ -602,7 +602,7 @@ bootp.option.dhcp == 5       ← ACK
 ```
 
 > [!WARNING]
-> **`/ip dhcp-server alert` adalah fitur khas MikroTik yang sangat berguna** — mendeteksi DHCP server tidak sah di jaringan dan menjalankan skrip. Tidak ada padanan langsung di Cisco.
+> **`/ip dhcp-server alert` adalah fitur khas MikroTik**: ia mendeteksi DHCP server tidak sah di jaringan dan menjalankan skrip. Tidak ada padanan langsung di Cisco.
 
 ### Padanan istilah
 
@@ -628,7 +628,7 @@ bootp.option.dhcp == 5       ← ACK
 - **Lease** diperbarui pada **T1 (50%, unicast)** dan **T2 (87,5%, broadcast)**; habis → DORA ulang.
 - Opsi penting: **1** mask, **3** gateway, **6** DNS, **15** domain, **51** lease, **66/67/150** boot, **82** relay info, **121** rute statis.
 - **DHCP Relay** (`ip helper-address`) mengubah broadcast menjadi unicast dan mengisi **`giaddr`** yang menentukan pool.
-- `ip helper-address` meneruskan **beberapa protokol UDP lain juga** — batasi dengan `no ip forward-protocol udp <x>`.
+- `ip helper-address` meneruskan **beberapa protokol UDP lain juga**; batasi dengan `no ip forward-protocol udp <x>`.
 - Redundansi: split scope 80/20, atau **DHCP failover**. Selalu konfigurasikan beberapa helper-address.
 - **DHCPv6**: port 546/547, multicast, **default gateway selalu dari RA** (bukan DHCPv6), mendukung **prefix delegation**.
 - Ancaman: **rogue DHCP** (MITM) dan **starvation** (DoS) → mitigasi dengan **DHCP snooping** + trusted port + rate limit.
@@ -651,9 +651,9 @@ bootp.option.dhcp == 5       ← ACK
 <details>
 <summary>Jawaban</summary>
 
-1. (a) **DISCOVER** — klien → **broadcast** `255.255.255.255:67` dari `0.0.0.0:68`, mencari server. (b) **OFFER** — server → klien, dikirim broadcast atau unicast (bergantung flag broadcast dari klien), berisi alamat yang ditawarkan beserta opsi. (c) **REQUEST** — klien → **broadcast**, menyatakan menerima tawaran dari server tertentu (disebutkan di opsi 54). (d) **ACK** — server → klien, konfirmasi final. Setelahnya klien melakukan ARP untuk mendeteksi konflik.
+1. (a) **DISCOVER**: klien → **broadcast** `255.255.255.255:67` dari `0.0.0.0:68`, mencari server. (b) **OFFER**: server → klien, dikirim broadcast atau unicast (bergantung flag broadcast dari klien), berisi alamat yang ditawarkan beserta opsi. (c) **REQUEST**: klien → **broadcast**, menyatakan menerima tawaran dari server tertentu (disebutkan di opsi 54). (d) **ACK**: server → klien, konfirmasi final. Setelahnya klien melakukan ARP untuk mendeteksi konflik.
 
-2. Karena mungkin ada **beberapa server DHCP** yang semuanya mengirim OFFER. Dengan mengirim REQUEST secara broadcast dan menyebutkan server mana yang dipilih (opsi 54 Server Identifier), server-server **yang tidak dipilih** mengetahui bahwa tawaran mereka ditolak dan **mengembalikan alamat itu ke pool**. Kalau REQUEST dikirim unicast, server lain akan menahan alamat yang ditawarkan sampai timeout — memboroskan pool.
+2. Karena mungkin ada **beberapa server DHCP** yang semuanya mengirim OFFER. Dengan mengirim REQUEST secara broadcast dan menyebutkan server mana yang dipilih (opsi 54 Server Identifier), server-server **yang tidak dipilih** mengetahui bahwa tawaran mereka ditolak dan **mengembalikan alamat itu ke pool**. Kalau REQUEST dikirim unicast, server lain akan menahan alamat yang ditawarkan sampai timeout, sehingga pool terbuang percuma.
 
 3. Kemungkinan besar **DHCP relay (`ip helper-address`) belum dikonfigurasi** pada interface VLAN 30. Karena router tidak meneruskan broadcast, DISCOVER dari VLAN 30 tidak pernah mencapai server di VLAN 10.
    ```
@@ -662,17 +662,17 @@ bootp.option.dhcp == 5       ← ACK
    ```
    Periksa juga: apakah server punya pool untuk subnet VLAN 30, apakah routing antara VLAN 30 dan VLAN 10 bekerja, dan apakah ACL memblokir UDP 67.
 
-4. **Rogue DHCP server** di jaringan — bisa berupa serangan, tetapi paling sering router Wi-Fi rumahan yang dicolokkan karyawan (dengan port LAN, bukan WAN, ke jaringan kantor). Kemungkinan lain: port switch berada di **VLAN yang salah** sehingga klien mendapat alamat dari pool VLAN lain. Deteksi: `nmap --script broadcast-dhcp-discover` untuk melihat berapa server yang menjawab; `show ip dhcp snooping binding` bila snooping aktif. Pencegahan: aktifkan **DHCP snooping** dengan trusted port hanya ke arah server sah.
+4. **Rogue DHCP server** di jaringan. Ini bisa berupa serangan, tetapi paling sering router Wi-Fi rumahan yang dicolokkan karyawan (dengan port LAN, bukan WAN, ke jaringan kantor). Kemungkinan lain: port switch berada di **VLAN yang salah** sehingga klien mendapat alamat dari pool VLAN lain. Deteksi: `nmap --script broadcast-dhcp-discover` untuk melihat berapa server yang menjawab; `show ip dhcp snooping binding` bila snooping aktif. Pencegahan: aktifkan **DHCP snooping** dengan trusted port hanya ke arah server sah.
 
 5. **`giaddr` (gateway IP address)** diisi oleh **DHCP relay agent** (router/L3 switch) dengan alamat interface tempat DISCOVER diterima. Fungsinya dua: (a) memberi tahu server **subnet mana** klien berada, sehingga server memilih pool yang benar; (b) memberi tahu server **ke mana** harus mengirim balasan (unicast ke relay, yang kemudian meneruskannya ke klien).
 
-6. **Stateful DHCPv6** (flag `M=1` di RA): server DHCPv6 memberikan alamat IPv6 dan mencatat siapa yang memakainya — mirip DHCPv4. **Stateless** (flag `M=0, O=1`): klien membentuk alamatnya sendiri lewat **SLAAC** dari prefix di RA, dan hanya memakai DHCPv6 untuk mendapat opsi tambahan (DNS, domain search, NTP) tanpa server mencatat lease.
-   **Default gateway IPv6 selalu berasal dari Router Advertisement**, tidak pernah dari DHCPv6 — tidak ada opsi router di DHCPv6 sama sekali. Ini berarti RA wajib ada agar IPv6 berfungsi, apa pun mode DHCPv6-nya.
+6. **Stateful DHCPv6** (flag `M=1` di RA): server DHCPv6 memberikan alamat IPv6 dan mencatat siapa yang memakainya (mirip DHCPv4). **Stateless** (flag `M=0, O=1`): klien membentuk alamatnya sendiri lewat **SLAAC** dari prefix di RA, dan hanya memakai DHCPv6 untuk mendapat opsi tambahan (DNS, domain search, NTP) tanpa server mencatat lease.
+   **Default gateway IPv6 selalu berasal dari Router Advertisement**, tidak pernah dari DHCPv6; DHCPv6 sama sekali tidak punya opsi router. Ini berarti RA wajib ada agar IPv6 berfungsi, apa pun mode DHCPv6-nya.
 
-7. **PortFast tidak aktif** pada port access. Tanpa PortFast, port harus melewati state STP listening (15 detik) dan learning (15 detik) sebelum forwarding — total ~30 detik. Klien mengirim DISCOVER selama masa itu, tidak mendapat jawaban karena port belum meneruskan trafik, dan menyerah ke APIPA. Setelah beberapa saat klien mencoba lagi dan berhasil karena port sudah forwarding.
+7. **PortFast tidak aktif** pada port access. Tanpa PortFast, port harus melewati state STP listening (15 detik) dan learning (15 detik) sebelum forwarding, total ~30 detik. Klien mengirim DISCOVER selama masa itu, tidak mendapat jawaban karena port belum meneruskan trafik, dan menyerah ke APIPA. Setelah beberapa saat klien mencoba lagi dan berhasil karena port sudah forwarding.
    Perbaikan: `spanning-tree portfast` pada semua port access (plus `spanning-tree bpduguard enable` untuk keamanan). Kemungkinan lain: negosiasi kecepatan lambat, atau 802.1X yang membutuhkan waktu autentikasi.
 
-8. **DHCP snooping** membagi port switch menjadi **trusted** dan **untrusted**. Pesan **OFFER, ACK, dan NAK** — yang hanya boleh datang dari server sah — akan **dibuang** jika tiba dari port untrusted. Karena port pengguna bersifat untrusted secara default, rogue DHCP server yang dicolokkan pengguna tidak akan pernah bisa menjawab klien lain.
+8. **DHCP snooping** membagi port switch menjadi **trusted** dan **untrusted**. Pesan **OFFER, ACK, dan NAK** (yang hanya boleh datang dari server sah) akan dibuang jika tiba dari port untrusted. Karena port pengguna bersifat untrusted secara default, rogue DHCP server yang dicolokkan pengguna tidak akan pernah bisa menjawab klien lain.
    **Konfigurasi:**
    ```
    SW1(config)# ip dhcp snooping
@@ -690,13 +690,13 @@ bootp.option.dhcp == 5       ← ACK
 
 ## 13. Sumber
 
-- RFC 2131 — Dynamic Host Configuration Protocol
-- RFC 2132 — DHCP Options and BOOTP Vendor Extensions
-- RFC 3046 — DHCP Relay Agent Information Option (option 82)
-- RFC 3442 — Classless Static Route Option (option 121)
-- RFC 8415 — DHCPv6
+- RFC 2131, Dynamic Host Configuration Protocol
+- RFC 2132, DHCP Options and BOOTP Vendor Extensions
+- RFC 3046, DHCP Relay Agent Information Option (option 82)
+- RFC 3442, Classless Static Route Option (option 121)
+- RFC 8415, DHCPv6
 - Cisco CCNA 200-301 v1.1, topik 4.3 (peran DHCP & DNS), 4.6 (configure DHCP client & relay), 5.7 (DHCP snooping)
-- ISC Kea — https://kea.readthedocs.io/
+- ISC Kea: https://kea.readthedocs.io/
 
 ---
 

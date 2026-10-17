@@ -18,7 +18,7 @@ Plaintext + Kunci K → Ciphertext
 Ciphertext + Kunci K → Plaintext
 ```
 
-- **Cepat** — bisa mengenkripsi gigabytes per detik (dengan AES-NI di CPU modern).
+- **Cepat**: bisa mengenkripsi gigabytes per detik (dengan AES-NI di CPU modern).
 - **Masalah:** bagaimana kedua pihak menyepakati kunci K tanpa ada yang menyadapnya?
 
 Algoritma: **AES** (128/256 bit), **ChaCha20**.
@@ -32,7 +32,7 @@ Enkripsi dengan kunci PUBLIK → hanya kunci PRIVAT yang bisa membuka
 Tanda tangan dengan kunci PRIVAT → siapa pun bisa verifikasi dengan kunci PUBLIK
 ```
 
-- **Lambat** — ribuan kali lebih lambat daripada simetris.
+- **Lambat**: ribuan kali lebih lambat daripada simetris.
 - Dipakai untuk: pertukaran kunci dan tanda tangan digital, **bukan** untuk mengenkripsi data besar.
 
 Algoritma: **RSA** (2048/4096 bit), **ECDSA** (P-256/P-384), **Ed25519**.
@@ -50,15 +50,15 @@ SHA-256("halo") = 5eb63bbbe01eeed093cb22bb8f5acdc3...  (selalu 256 bit)
 
 Sifat: satu arah (tidak bisa dibalik), deterministik, perubahan 1 bit input mengubah output total (*avalanche effect*), tahan tabrakan.
 
-Algoritma: **SHA-256/384/512**, SHA-3. ⚠️ **MD5 dan SHA-1 sudah rusak** — jangan dipakai untuk keamanan.
+Algoritma: **SHA-256/384/512**, SHA-3. Hati-hati: **MD5 dan SHA-1 sudah rusak**, jadi jangan dipakai untuk keamanan.
 
 ### HMAC dan AEAD
 
-- **HMAC** — hash dengan kunci; membuktikan pesan tidak diubah **dan** berasal dari pemegang kunci.
-- **AEAD** (*Authenticated Encryption with Associated Data*) — mengenkripsi **dan** mengautentikasi dalam satu operasi. Contoh: **AES-GCM**, **ChaCha20-Poly1305**.
+- **HMAC**: hash dengan kunci; membuktikan pesan tidak diubah **dan** berasal dari pemegang kunci.
+- **AEAD** (*Authenticated Encryption with Associated Data*): mengenkripsi **dan** mengautentikasi dalam satu operasi. Contoh: **AES-GCM**, **ChaCha20-Poly1305**.
 
 > [!TIP]
-> TLS 1.3 **hanya mengizinkan AEAD** — menghilangkan seluruh kelas kerentanan yang berasal dari kombinasi enkripsi dan MAC yang salah.
+> TLS 1.3 **hanya mengizinkan AEAD**, sehingga seluruh kelas kerentanan yang berasal dari kombinasi enkripsi dan MAC yang salah ikut hilang.
 
 ### Diffie-Hellman dan Forward Secrecy
 
@@ -72,13 +72,13 @@ Keduanya menghitung g^(ab) mod p = kunci bersama
 Penyadap melihat g^a dan g^b, tetapi tidak bisa menghitung g^(ab)
 ```
 
-**Ephemeral DH (DHE/ECDHE)** — kunci DH baru untuk **setiap sesi**, lalu dibuang.
+**Ephemeral DH (DHE/ECDHE)**: kunci DH baru untuk **setiap sesi**, lalu dibuang.
 
 Ini memberi **Perfect Forward Secrecy (PFS)**:
-> Kalau kunci privat server dicuri **besok**, penyerang **tidak bisa** mendekripsi trafik yang direkam **hari ini** — karena kunci sesinya sudah dibuang dan tidak pernah diturunkan dari kunci privat server.
+> Kalau kunci privat server dicuri **besok**, penyerang tidak bisa mendekripsi trafik yang direkam **hari ini**, karena kunci sesinya sudah dibuang dan tidak pernah diturunkan dari kunci privat server.
 
 > [!WARNING]
-> Ini alasan penting mengapa cipher suite tanpa forward secrecy (RSA key exchange) sudah dihapus dari TLS 1.3.
+> Inilah alasan cipher suite tanpa forward secrecy (RSA key exchange) sudah dihapus dari TLS 1.3.
 
 ---
 
@@ -112,11 +112,11 @@ Klien                                          Server
 ```
 
 **Perbaikan TLS 1.3 dibanding 1.2:**
-1. **1 RTT** (bukan 2) — klien menebak parameter kunci di ClientHello
+1. **1 RTT** (bukan 2): klien menebak parameter kunci di ClientHello
 2. **0-RTT** untuk koneksi berulang (dengan risiko replay)
-3. **Sertifikat dienkripsi** — penyadap tidak melihat identitas server (kecuali SNI)
-4. **Hanya AEAD** — cipher lemah dihapus total
-5. **Forward secrecy wajib** — tidak ada lagi RSA key exchange
+3. **Sertifikat dienkripsi**: penyadap tidak melihat identitas server (kecuali SNI)
+4. **Hanya AEAD**: cipher lemah dihapus total
+5. **Forward secrecy wajib**: tidak ada lagi RSA key exchange
 6. **Cipher suite disederhanakan** dari puluhan menjadi 5
 
 ### TLS 1.2: 2 RTT
@@ -140,7 +140,7 @@ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
  └── protokol
 ```
 
-**TLS 1.3** (jauh lebih sederhana — hanya AEAD + hash):
+**TLS 1.3** (jauh lebih sederhana, hanya AEAD + hash):
 ```
 TLS_AES_256_GCM_SHA384
 TLS_AES_128_GCM_SHA256
@@ -169,12 +169,12 @@ CBC mode (TLS 1.2)    ← rentan berbagai serangan (Lucky13, dll)
 |---|---|
 | **SNI** (*Server Name Indication*) | Nama host di ClientHello → satu IP bisa melayani banyak sertifikat |
 | **ALPN** | Negosiasi protokol aplikasi (h2, http/1.1, h3) dalam handshake |
-| **ECH** (*Encrypted Client Hello*) | Mengenkripsi SNI — menghilangkan kebocoran nama host |
+| **ECH** (*Encrypted Client Hello*) | Mengenkripsi SNI sehingga nama host tidak bocor |
 | **OCSP stapling** | Server melampirkan bukti sertifikat masih valid |
 | **Session resumption** | PSK/session ticket → handshake lebih cepat |
 
 > [!WARNING]
-> **SNI dikirim dalam plaintext** (kecuali dengan ECH). Karena itu firewall dan ISP bisa melihat situs apa yang Anda kunjungi walaupun isinya terenkripsi — dan inilah dasar pemblokiran berbasis SNI. **ECH** mengubah ini, dan sedang menimbulkan diskusi besar di kalangan operator jaringan.
+> **SNI dikirim dalam plaintext** (kecuali dengan ECH). Karena itu firewall dan ISP bisa melihat situs apa yang Anda kunjungi walaupun isinya terenkripsi. Inilah dasar pemblokiran berbasis SNI. **ECH** mengubah ini, dan sedang menimbulkan diskusi besar di kalangan operator jaringan.
 
 ---
 
@@ -230,7 +230,7 @@ Intermediate CA            ← dikirim server bersama sertifikatnya
 Server certificate         ← untuk example.com
 ```
 
-**Kenapa ada intermediate?** Kunci privat root CA disimpan **offline** di HSM dalam brankas — sangat aman tetapi tidak praktis untuk penandatanganan harian. Intermediate menjadi perantara yang bisa dicabut kalau bocor, tanpa harus mencabut root.
+**Kenapa ada intermediate?** Kunci privat root CA disimpan **offline** di HSM dalam brankas. Cara ini sangat aman tetapi tidak praktis untuk penandatanganan harian. Intermediate menjadi perantara yang bisa dicabut kalau bocor, tanpa harus mencabut root.
 
 > [!WARNING]
 > **Kesalahan konfigurasi paling umum: intermediate certificate tidak dikirim.** Gejalanya menipu:
@@ -331,7 +331,7 @@ $ sudo certbot renew --dry-run
 | **TLS-ALPN-01** | Respons TLS khusus di port 443 | Tidak butuh port 80 |
 
 > [!TIP]
-> **Masa berlaku 90 hari disengaja** — memaksa otomasi. Sertifikat yang diperbarui manual pasti akan terlupa suatu hari. Industri bergerak ke masa berlaku lebih pendek lagi (rencana 47 hari pada 2029).
+> **Masa berlaku 90 hari disengaja** untuk memaksa otomasi. Sertifikat yang diperbarui manual pasti akan terlupa suatu hari. Industri bergerak ke masa berlaku lebih pendek lagi (rencana 47 hari pada 2029).
 
 ### Revocation
 
@@ -341,12 +341,12 @@ Bagaimana membatalkan sertifikat yang kunci privatnya bocor?
 |---|---|---|
 | **CRL** (Certificate Revocation List) | Daftar serial yang dicabut, diunduh klien | Besar, jarang diperbarui |
 | **OCSP** | Klien bertanya ke CA per sertifikat | Lambat, bocor privasi (CA tahu situs yang Anda kunjungi) |
-| **OCSP Stapling** | **Server** melampirkan bukti OCSP terbaru | ✅ Cepat, tidak bocor privasi |
+| **OCSP Stapling** | **Server** melampirkan bukti OCSP terbaru | Tidak ada; cepat dan tidak bocor privasi |
 | **CRLite / CRLSets** | Browser menyematkan ringkasan kompak | Dipakai Firefox/Chrome |
 | **Short-lived certs** | Sertifikat berumur pendek → tidak perlu revocation | Arah masa depan |
 
 > [!WARNING]
-> **Revocation pada dasarnya rapuh.** Banyak klien melakukan *soft-fail*: kalau pengecekan OCSP gagal, mereka tetap melanjutkan koneksi — sehingga penyerang yang bisa memblokir OCSP bisa memakai sertifikat yang sudah dicabut. Inilah alasan industri beralih ke **sertifikat berumur pendek**.
+> **Revocation itu rapuh.** Banyak klien melakukan *soft-fail*: kalau pengecekan OCSP gagal, mereka tetap melanjutkan koneksi, sehingga penyerang yang bisa memblokir OCSP bisa memakai sertifikat yang sudah dicabut. Inilah alasan industri beralih ke **sertifikat berumur pendek**.
 
 ```nginx
 # Aktifkan OCSP stapling
@@ -358,7 +358,7 @@ resolver 1.1.1.1 8.8.8.8 valid=300s;
 
 ### mTLS (Mutual TLS)
 
-Kedua pihak menunjukkan sertifikat — **server memverifikasi klien juga**.
+Kedua pihak menunjukkan sertifikat: **server memverifikasi klien juga**.
 
 ```
 Klien → sertifikat klien → Server memverifikasi
@@ -375,7 +375,7 @@ ssl_verify_depth 2;
 
 ### Certificate Pinning
 
-Aplikasi menyematkan sertifikat/kunci publik tertentu dan menolak yang lain — bahkan jika ditandatangani CA yang sah.
+Aplikasi menyematkan sertifikat/kunci publik tertentu dan menolak yang lain, bahkan jika ditandatangani CA yang sah.
 
 > [!WARNING]
 > **Berisiko:** kalau kunci berubah (rotasi, insiden) dan aplikasi belum diperbarui, layanan **mati total**. HPKP (versi HTTP header) sudah **dihapus** dari browser karena terlalu berbahaya. Pinning masih dipakai di aplikasi mobile dengan mekanisme cadangan yang hati-hati.
@@ -498,7 +498,7 @@ Firewall menerbitkan sertifikat "palsu" untuk setiap situs, ditandatangani CA in
 ### Masalah dan batasan
 
 > [!WARNING]
-> **1. Melemahkan keamanan.** Firewall menjadi titik tunggal yang melihat **semua** trafik terdekripsi organisasi — target bernilai sangat tinggi.
+> **1. Melemahkan keamanan.** Firewall menjadi titik tunggal yang melihat **semua** trafik terdekripsi organisasi, sehingga ia menjadi target bernilai sangat tinggi.
 
 > [!WARNING]
 > **2. Merusak certificate pinning.** Aplikasi mobile perbankan, Windows Update, banyak aplikasi native akan **gagal total**.
@@ -510,7 +510,7 @@ Firewall menerbitkan sertifikat "palsu" untuk setiap situs, ditandatangani CA in
 > **4. QUIC/HTTP3 sering tidak didukung** oleh perangkat inspeksi → harus memblokir UDP/443 agar klien fallback ke TCP.
 
 > [!WARNING]
-> **5. ECH akan menyulitkan lebih jauh** — SNI yang selama ini terlihat akan terenkripsi.
+> **5. ECH akan menyulitkan lebih jauh**, karena SNI yang selama ini terlihat akan terenkripsi.
 
 **Praktik yang bertanggung jawab:**
 ```
@@ -563,7 +563,7 @@ server {
 ```
 Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
 ```
-Browser akan **menolak** koneksi HTTP ke domain ini selama masa itu — mencegah SSL stripping.
+Browser akan **menolak** koneksi HTTP ke domain ini selama masa itu. Ini mencegah SSL stripping.
 
 > [!WARNING]
 > **Hati-hati dengan `includeSubDomains` dan `preload`.** Kalau ada subdomain yang belum siap HTTPS, ia akan **tidak bisa diakses**. `preload` sulit dibatalkan (butuh berbulan-bulan).
@@ -573,7 +573,7 @@ Browser akan **menolak** koneksi HTTP ke domain ini selama masa itu — mencegah
 ## 8. Ringkasan
 
 - Kripto: **simetris** (cepat, untuk data) + **asimetris** (lambat, untuk pertukaran kunci & tanda tangan) + **hash** + **AEAD**.
-- **Ephemeral DH (ECDHE)** memberi **forward secrecy** — kunci privat yang bocor besok tidak membuka trafik hari ini.
+- **Ephemeral DH (ECDHE)** memberi **forward secrecy**: kunci privat yang bocor besok tidak membuka trafik hari ini.
 - **TLS 1.3**: 1 RTT, sertifikat terenkripsi, hanya AEAD, forward secrecy wajib, 5 cipher suite.
 - Nonaktifkan SSLv2/3, TLS 1.0/1.1, RC4/3DES, MD5/SHA-1, dan RSA key exchange.
 - **SNI plaintext** memungkinkan pemblokiran berbasis nama host; **ECH** akan mengenkripsinya.
@@ -600,25 +600,25 @@ Browser akan **menolak** koneksi HTTP ke domain ini selama masa itu — mencegah
 <details>
 <summary>Jawaban</summary>
 
-1. Karena keduanya punya kekuatan yang saling melengkapi. **Asimetris** memecahkan masalah **pertukaran kunci** — dua pihak yang belum pernah bertemu bisa menyepakati rahasia bersama lewat saluran publik, dan bisa memverifikasi identitas lewat tanda tangan. Tetapi asimetris **ribuan kali lebih lambat** sehingga tidak praktis untuk mengenkripsi data besar. **Simetris** sangat cepat (dengan AES-NI bisa gigabytes/detik) tetapi memerlukan kunci bersama yang sudah disepakati. TLS menggabungkan keduanya: asimetris/ECDHE untuk menyepakati kunci sesi, lalu simetris (AES-GCM/ChaCha20) untuk seluruh data.
+1. Karena keduanya punya kekuatan yang saling melengkapi. **Asimetris** memecahkan masalah **pertukaran kunci**: dua pihak yang belum pernah bertemu bisa menyepakati rahasia bersama lewat saluran publik, dan bisa memverifikasi identitas lewat tanda tangan. Tetapi asimetris **ribuan kali lebih lambat** sehingga tidak praktis untuk mengenkripsi data besar. **Simetris** sangat cepat (dengan AES-NI bisa gigabytes/detik) tetapi memerlukan kunci bersama yang sudah disepakati. TLS menggabungkan keduanya: asimetris/ECDHE untuk menyepakati kunci sesi, lalu simetris (AES-GCM/ChaCha20) untuk seluruh data.
 
-2. **Forward secrecy** berarti kunci sesi diturunkan dari pertukaran **Diffie-Hellman ephemeral** yang unik untuk setiap sesi dan dibuang setelahnya — tidak pernah diturunkan dari kunci privat jangka panjang server. Akibatnya, jika penyerang merekam trafik terenkripsi hari ini dan **mencuri kunci privat server setahun kemudian**, ia tetap **tidak bisa mendekripsi** rekaman itu. Tanpa forward secrecy (mis. RSA key exchange lama), satu kunci privat yang bocor membuka seluruh riwayat komunikasi. Karena itu TLS 1.3 mewajibkannya.
+2. **Forward secrecy** berarti kunci sesi diturunkan dari pertukaran **Diffie-Hellman ephemeral** yang unik untuk setiap sesi dan dibuang setelahnya. Kunci sesi tidak pernah diturunkan dari kunci privat jangka panjang server. Akibatnya, jika penyerang merekam trafik terenkripsi hari ini dan mencuri kunci privat server setahun kemudian, ia tetap tidak bisa mendekripsi rekaman itu. Tanpa forward secrecy (mis. RSA key exchange lama), satu kunci privat yang bocor membuka seluruh riwayat komunikasi. Karena itu TLS 1.3 mewajibkannya.
 
-3. **Server tidak mengirim intermediate certificate.** Chrome desktop berhasil karena ia sudah punya intermediate itu di cache dari kunjungan ke situs lain yang memakai CA yang sama (dan bisa mengambilnya lewat AIA fetching). Klien lain — aplikasi mobile, `curl`, Java, skrip — tidak punya cache itu dan tidak selalu melakukan AIA fetching, sehingga tidak bisa membangun rantai ke root yang dipercaya.
+3. **Server tidak mengirim intermediate certificate.** Chrome desktop berhasil karena ia sudah punya intermediate itu di cache dari kunjungan ke situs lain yang memakai CA yang sama (dan bisa mengambilnya lewat AIA fetching). Klien lain (aplikasi mobile, `curl`, Java, skrip) tidak punya cache itu dan tidak selalu melakukan AIA fetching, sehingga tidak bisa membangun rantai ke root yang dipercaya.
    **Perbaikan:** konfigurasikan server memakai **fullchain** (sertifikat server + intermediate, tanpa root). Verifikasi dengan `openssl s_client -showcerts` dari mesin yang belum pernah mengunjungi situs itu.
 
-4. **Jam sistem klien (atau server).** Error itu berarti waktu saat ini lebih awal daripada `notBefore` di sertifikat. Penyebab paling umum: NTP tidak berjalan, VM baru di-restore dengan jam lama, perangkat embedded tanpa baterai RTC, atau zona waktu salah. Periksa `date`/`timedatectl` dan status NTP terlebih dahulu — jauh lebih sering ini daripada sertifikat yang benar-benar salah.
+4. **Jam sistem klien (atau server).** Error itu berarti waktu saat ini lebih awal daripada `notBefore` di sertifikat. Penyebab paling umum: NTP tidak berjalan, VM baru di-restore dengan jam lama, perangkat embedded tanpa baterai RTC, atau zona waktu salah. Periksa `date`/`timedatectl` dan status NTP terlebih dahulu; penyebab ini jauh lebih sering daripada sertifikat yang benar-benar salah.
 
 5. **HTTP-01**: CA memverifikasi kepemilikan dengan meminta file di `http://domain/.well-known/acme-challenge/<token>`. Butuh **port 80 terbuka dari internet** dan **tidak bisa menerbitkan wildcard**.
    **DNS-01**: CA memverifikasi dengan memeriksa TXT record `_acme-challenge.domain`. **Bisa menerbitkan wildcard** (`*.example.com`), dan **server tidak perlu terekspos ke internet sama sekali**.
    Gunakan **DNS-01** ketika: (a) Anda butuh sertifikat wildcard; (b) server berada di jaringan internal tanpa akses masuk dari internet; (c) port 80 diblokir kebijakan; (d) Anda ingin menerbitkan sertifikat secara terpusat lalu mendistribusikannya. Syaratnya: penyedia DNS Anda punya API agar prosesnya bisa diotomasi.
 
-6. **Session ticket** menyimpan state sesi dalam blob terenkripsi yang dipegang klien, dienkripsi dengan **STEK** (Session Ticket Encryption Key) di server. Kalau STEK tidak dirotasi secara berkala (banyak server memakai satu kunci sampai restart), maka **forward secrecy hilang**: penyerang yang mencuri STEK dapat mendekripsi semua sesi yang memakai ticket tersebut, termasuk yang direkam sebelumnya. Karena banyak deployment tidak merotasi STEK dengan benar, `ssl_session_tickets off` (mengandalkan session cache sisi server saja) adalah pilihan yang lebih aman — dengan biaya resumption lintas server menjadi lebih sulit di kluster.
+6. **Session ticket** menyimpan state sesi dalam blob terenkripsi yang dipegang klien, dienkripsi dengan **STEK** (Session Ticket Encryption Key) di server. Kalau STEK tidak dirotasi secara berkala (banyak server memakai satu kunci sampai restart), maka **forward secrecy hilang**: penyerang yang mencuri STEK dapat mendekripsi semua sesi yang memakai ticket tersebut, termasuk yang direkam sebelumnya. Karena banyak deployment tidak merotasi STEK dengan benar, `ssl_session_tickets off` (mengandalkan session cache sisi server saja) adalah pilihan yang lebih aman. Biayanya, resumption lintas server menjadi lebih sulit di kluster.
 
-7. **Penyebab: certificate pinning.** Aplikasi mobile banking menyematkan sertifikat atau kunci publik server aslinya. TLS inspection mengganti sertifikat server dengan sertifikat yang diterbitkan CA internal perusahaan — pin tidak cocok, sehingga aplikasi **sengaja menolak** koneksi. Ini bekerja persis sebagaimana dirancang; pinning memang bertujuan menggagalkan man-in-the-middle, dan inspeksi TLS secara teknis adalah man-in-the-middle.
-   **Solusi:** buat **daftar bypass** — kecualikan domain perbankan (dan kategori sensitif lain: kesehatan, HR) dari inspeksi TLS. Sebagian besar NGFW punya kategori bawaan untuk ini. Selain menyelesaikan masalah teknis, ini juga praktik yang tepat secara privasi dan hukum.
+7. **Penyebab: certificate pinning.** Aplikasi mobile banking menyematkan sertifikat atau kunci publik server aslinya. TLS inspection mengganti sertifikat server dengan sertifikat yang diterbitkan CA internal perusahaan. Pin tidak cocok, sehingga aplikasi **sengaja menolak** koneksi. Ini bekerja persis sebagaimana dirancang; pinning memang bertujuan menggagalkan man-in-the-middle, dan inspeksi TLS secara teknis adalah man-in-the-middle.
+   **Solusi:** buat **daftar bypass** yang mengecualikan domain perbankan (dan kategori sensitif lain: kesehatan, HR) dari inspeksi TLS. Sebagian besar NGFW punya kategori bawaan untuk ini. Selain menyelesaikan masalah teknis, ini juga praktik yang tepat secara privasi dan hukum.
 
-8. **Tidak.** Wildcard `*.example.com` hanya mencakup **satu tingkat** label: `api.example.com` ✅, `www.example.com` ✅, tetapi `api.v2.example.com` ❌ (dua tingkat). Untuk mencakupnya, Anda perlu wildcard tambahan `*.v2.example.com` di SAN yang sama, atau sertifikat multi-domain yang menyebutkan nama itu secara eksplisit. Perhatikan juga bahwa `*.example.com` **tidak mencakup** apex `example.com` itu sendiri — apex harus ditambahkan terpisah ke SAN.
+8. **Tidak.** Wildcard `*.example.com` hanya mencakup **satu tingkat** label: `api.example.com` dan `www.example.com` tercakup, tetapi `api.v2.example.com` tidak (dua tingkat). Untuk mencakupnya, Anda perlu wildcard tambahan `*.v2.example.com` di SAN yang sama, atau sertifikat multi-domain yang menyebutkan nama itu secara eksplisit. Perhatikan juga bahwa `*.example.com` **tidak mencakup** apex `example.com` itu sendiri; apex harus ditambahkan terpisah ke SAN.
 
 </details>
 
@@ -626,14 +626,14 @@ Browser akan **menolak** koneksi HTTP ke domain ini selama masa itu — mencegah
 
 ## 10. Sumber
 
-- RFC 8446 — TLS 1.3
-- RFC 5280 — X.509 PKI Certificate and CRL Profile
-- RFC 6960 — OCSP · RFC 6961 — OCSP Multi-Stapling
-- RFC 8555 — ACME
-- RFC 6797 — HSTS
-- Mozilla SSL Configuration Generator — https://ssl-config.mozilla.org/
-- SSL Labs Server Test — https://www.ssllabs.com/ssltest/
-- Let's Encrypt — https://letsencrypt.org/docs/
+- RFC 8446, TLS 1.3
+- RFC 5280, X.509 PKI Certificate and CRL Profile
+- RFC 6960, OCSP · RFC 6961, OCSP Multi-Stapling
+- RFC 8555, ACME
+- RFC 6797, HSTS
+- Mozilla SSL Configuration Generator: https://ssl-config.mozilla.org/
+- SSL Labs Server Test: https://www.ssllabs.com/ssltest/
+- Let's Encrypt: https://letsencrypt.org/docs/
 
 ---
 

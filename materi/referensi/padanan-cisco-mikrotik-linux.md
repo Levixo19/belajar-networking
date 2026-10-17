@@ -1,6 +1,6 @@
 # Padanan Istilah & Perintah: Cisco ↔ MikroTik ↔ Linux
 
-> Tabel padanan lintas-platform untuk memahami bahwa **konsep jaringan universal** — hanya sintaks & istilah yang berbeda. Inti pendekatan tiga-platform kurikulum ini.
+> Tabel padanan lintas-platform ini menunjukkan bahwa konsep jaringan bersifat universal; yang berbeda hanya sintaks & istilahnya. Itulah inti pendekatan tiga-platform di kurikulum ini.
 
 ---
 
@@ -109,7 +109,7 @@
 | Pembagian adil | WFQ | **PCQ** | fq_codel/CAKE |
 
 > [!TIP]
-> **Pelajaran utama:** setiap "fitur vendor" adalah implementasi dari **konsep universal**. Kalau Anda paham konsepnya (VLAN, routing, NAT, stateful firewall, QoS), Anda bisa menerapkannya di platform mana pun hanya dengan mencari sintaksnya. Inilah kenapa kurikulum ini mengajarkan konsep dulu, lalu tiga platform.
+> **Pelajaran utama:** setiap "fitur vendor" adalah implementasi dari konsep universal. Kalau Anda paham konsepnya (VLAN, routing, NAT, stateful firewall, QoS), Anda bisa menerapkannya di platform mana pun hanya dengan mencari sintaksnya. Inilah kenapa kurikulum ini mengajarkan konsep dulu, lalu tiga platform.
 
 ---
 

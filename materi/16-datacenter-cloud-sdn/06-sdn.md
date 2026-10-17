@@ -1,7 +1,7 @@
 # 16.6 SDN & Controller-Based Networking
 
 > **Prasyarat:** `15-otomasi/01–02`, `16.1`, `07-routing-lanjutan/02` (control plane)
-> **Tujuan:** Anda paham pemisahan control/data plane, jaringan berbasis controller, northbound/southbound API, dan AI/ML dalam operasi jaringan — sesuai CCNA 6.2, 6.3, dan 6.4.
+> **Tujuan:** Anda paham pemisahan control/data plane, jaringan berbasis controller, northbound/southbound API, dan AI/ML dalam operasi jaringan (sesuai CCNA 6.2, 6.3, dan 6.4).
 
 ---
 
@@ -25,13 +25,13 @@ Setiap perangkat punya otak sendiri      Satu controller = otak; perangkat = oto
 | Konsistensi | Rawan salah/drift | Terjamin |
 
 > [!TIP]
-> **CCNA 6.2** meminta membandingkan keduanya. Intinya: jaringan tradisional mengelola perangkat **satu per satu** dengan control plane di masing-masing; jaringan berbasis controller **memusatkan kecerdasan** sehingga Anda mengelola seluruh jaringan sebagai **satu sistem** lewat controller.
+> **CCNA 6.2** meminta membandingkan keduanya. Jaringan tradisional mengelola perangkat satu per satu dengan control plane di masing-masing; jaringan berbasis controller memusatkan kecerdasan sehingga Anda mengelola seluruh jaringan sebagai satu sistem lewat controller.
 
 ---
 
 ## 2. Pemisahan Control Plane & Data Plane (CCNA 6.3.a)
 
-Ide inti SDN adalah **memisahkan** dua fungsi yang di router tradisional menyatu:
+Ide inti SDN adalah memisahkan dua fungsi yang di router tradisional menyatu:
 
 ```
 CONTROL PLANE (otak): memutuskan KE MANA trafik pergi
@@ -40,13 +40,13 @@ DATA PLANE (otot): benar-benar MENERUSKAN paket
   - forwarding berkecepatan tinggi berdasar tabel dari control plane
 ```
 
-- **Tradisional:** control plane + data plane ada **di setiap perangkat**.
-- **SDN:** control plane **dipindah ke controller terpusat**; perangkat menyisakan data plane yang menerima instruksi forwarding dari controller.
+- **Tradisional:** control plane + data plane ada di setiap perangkat.
+- **SDN:** control plane dipindah ke controller terpusat; perangkat menyisakan data plane yang menerima instruksi forwarding dari controller.
 
 Kaitkan dengan `07-routing-lanjutan/02`: RIB dibangun control plane, FIB dipakai data plane. SDN memindahkan "pembangunan RIB" ke controller.
 
 > [!WARNING]
-> **Pemisahan ini adalah definisi inti SDN** dan pasti muncul di ujian CCNA. Perangkat SDN "murni" tidak berpikir sendiri — ia meneruskan sesuai instruksi controller. (Dalam praktik, banyak solusi bersifat *hibrida* — perangkat tetap punya sebagian control plane demi ketahanan bila controller putus.)
+> **Pemisahan ini adalah definisi inti SDN** dan pasti muncul di ujian CCNA. Perangkat SDN "murni" tidak berpikir sendiri; ia meneruskan sesuai instruksi controller. (Dalam praktik, banyak solusi bersifat *hibrida*: perangkat tetap punya sebagian control plane demi ketahanan bila controller putus.)
 
 ---
 
@@ -61,7 +61,7 @@ OVERLAY  = jaringan virtual/logis di atas underlay (mis. VXLAN tunnel yang
            dikelola controller berdasarkan kebijakan)
 ```
 
-Contoh: **Cisco SD-Access** — fabric kampus dengan controller **Catalyst Center** (dulu DNA Center), underlay IS-IS, overlay VXLAN, kebijakan berbasis grup (SGT). **Cisco ACI** — versi data center (`16.1`).
+Contoh: **Cisco SD-Access** adalah fabric kampus dengan controller **Catalyst Center** (dulu DNA Center), underlay IS-IS, overlay VXLAN, dan kebijakan berbasis grup (SGT). **Cisco ACI** adalah versinya untuk data center (`16.1`).
 
 ---
 
@@ -83,7 +83,7 @@ Controller berkomunikasi ke dua arah:
 | **Southbound (SBI)** | Ke bawah | Controller ↔ perangkat | **NETCONF, OpenFlow, gNMI, CLI** |
 
 > [!TIP]
-> **Cara mengingat:** **Northbound menghadap aplikasi/manusia** (biasanya REST API yang ramah developer — Anda menulis skrip yang bicara ke controller lewat sini). **Southbound menghadap perangkat** (protokol yang controller pakai untuk memerintah switch/router — NETCONF, OpenFlow). "North = ke atas ke software, South = ke bawah ke hardware."
+> **Cara mengingat:** Northbound menghadap aplikasi/manusia (biasanya REST API yang ramah developer; Anda menulis skrip yang bicara ke controller lewat sini). Southbound menghadap perangkat (protokol yang controller pakai untuk memerintah switch/router, seperti NETCONF dan OpenFlow). "North = ke atas ke software, South = ke bawah ke hardware."
 
 > [!WARNING]
 > **OpenFlow** adalah protokol southbound SDN klasik (memprogram tabel forwarding switch langsung), tetapi dalam praktik enterprise modern **NETCONF/gNMI** lebih umum sebagai southbound. CCNA fokus pada konsep NBI/SBI, bukan protokol spesifik.
@@ -102,13 +102,13 @@ Controller berkomunikasi ke dua arah:
 | **OpenDaylight, ONOS** | Controller open-source |
 
 > [!TIP]
-> **Cloud-managed** (Meraki) adalah bentuk controller-based di mana controllernya **di cloud vendor** — Anda kelola lewat dashboard web, perangkat "menelepon pulang" ke cloud. CCNA 2.8 menyebut "cloud managed" sebagai salah satu metode akses/manajemen perangkat.
+> **Cloud-managed** (Meraki) adalah bentuk controller-based yang controllernya berada di cloud vendor. Anda mengelolanya lewat dashboard web, dan perangkat "menelepon pulang" ke cloud. CCNA 2.8 menyebut "cloud managed" sebagai salah satu metode akses/manajemen perangkat.
 
 ---
 
 ## 6. AI/ML dalam Operasi Jaringan (CCNA 6.4)
 
-CCNA v1.1 menambahkan topik AI/ML — dua kategori:
+CCNA v1.1 menambahkan topik AI/ML, yang terbagi dua kategori:
 
 ```
 PREDICTIVE AI/ML          →  memprediksi & mendeteksi dari data historis
@@ -123,13 +123,13 @@ GENERATIVE AI            →  menghasilkan konten/bantuan
   - bantuan troubleshooting berbahasa alami
 ```
 
-**AIOps** = penerapan AI/ML untuk operasi IT/jaringan: mengumpulkan telemetri masif (lihat `14-monitoring-troubleshooting/03`), mendeteksi pola, dan sering **bertindak otomatis** atau memberi rekomendasi.
+**AIOps** = penerapan AI/ML untuk operasi IT/jaringan: mengumpulkan telemetri masif (lihat `14-monitoring-troubleshooting/03`), mendeteksi pola, dan sering bertindak otomatis atau memberi rekomendasi.
 
 > [!WARNING]
-> **AI/ML di jaringan mengandalkan telemetri berkualitas** (streaming telemetry/gNMI, flow data). "Sampah masuk, sampah keluar" — model hanya sebaik data yang dikumpulkan. Ini menghubungkan kembali ke observability (`14.3`) dan otomasi (`15`).
+> **AI/ML di jaringan mengandalkan telemetri berkualitas** (streaming telemetry/gNMI, flow data). "Sampah masuk, sampah keluar": model hanya sebaik data yang dikumpulkan. Topik ini terkait dengan observability (`14.3`) dan otomasi (`15`).
 
 > [!TIP]
-> Untuk CCNA, cukup **memahami peran** AI prediktif (deteksi anomali, prediksi) vs generatif (asisten, ringkasan) dalam operasi jaringan — bukan detail algoritma. Ini topik konseptual (6.4).
+> Untuk CCNA, cukup pahami peran AI prediktif (deteksi anomali, prediksi) vs generatif (asisten, ringkasan) dalam operasi jaringan, tanpa detail algoritma. Ini topik konseptual (6.4).
 
 ---
 
@@ -149,16 +149,16 @@ SDN/controller-based menjawab:
   ✅ Respons cepat & berbasis niat (intent-based networking)
 ```
 
-**Intent-Based Networking (IBN):** Anda menyatakan **niat** ("segmen A tak boleh akses segmen B", "prioritaskan suara") dan controller menerjemahkannya menjadi konfigurasi perangkat, lalu terus **memverifikasi** bahwa niat terpenuhi. Puncak dari controller-based + otomasi + AI.
+**Intent-Based Networking (IBN):** Anda menyatakan **niat** ("segmen A tak boleh akses segmen B", "prioritaskan suara") dan controller menerjemahkannya menjadi konfigurasi perangkat, lalu terus memverifikasi bahwa niat terpenuhi. IBN adalah gabungan controller-based, otomasi, dan AI.
 
 ---
 
 ## 8. Ringkasan
 
-- **Tradisional** (control plane terdistribusi, kelola per-perangkat) vs **berbasis controller** (control plane terpusat, kelola sebagai satu sistem) — CCNA 6.2.
-- Inti SDN: **pisahkan control plane (otak: memutuskan ke mana) dari data plane (otot: meneruskan)** — control plane pindah ke **controller** (CCNA 6.3.a).
-- **Fabric** = seluruh SDN dikelola sebagai satu; **underlay** = fisik; **overlay** = virtual (VXLAN) — CCNA 6.3.
-- **Northbound API** (REST) menghadap **aplikasi/manusia**; **Southbound API** (NETCONF/OpenFlow/gNMI) menghadap **perangkat** (CCNA 6.3.b). "North = ke software, South = ke hardware."
+- **Tradisional** (control plane terdistribusi, kelola per-perangkat) vs **berbasis controller** (control plane terpusat, kelola sebagai satu sistem). Topik CCNA 6.2.
+- Inti SDN: pisahkan control plane (otak: memutuskan ke mana) dari data plane (otot: meneruskan). Control plane pindah ke **controller** (CCNA 6.3.a).
+- **Fabric** = seluruh SDN dikelola sebagai satu; **underlay** = fisik; **overlay** = virtual (VXLAN). Topik CCNA 6.3.
+- **Northbound API** (REST) menghadap aplikasi/manusia; **Southbound API** (NETCONF/OpenFlow/gNMI) menghadap perangkat (CCNA 6.3.b). "North = ke software, South = ke hardware."
 - Platform: Catalyst Center (SD-Access), ACI/APIC (DC), SD-WAN/vManage, Meraki (cloud-managed), NSX.
 - **AI/ML** (CCNA 6.4): **prediktif** (deteksi anomali, prediksi kapasitas) vs **generatif** (asisten config, ringkasan). Mengandalkan telemetri berkualitas (AIOps).
 - **IBN (Intent-Based Networking)**: nyatakan niat → controller menerjemahkan & memverifikasi.
@@ -176,15 +176,15 @@ SDN/controller-based menjawab:
 <details>
 <summary>Jawaban</summary>
 
-1. **Control plane** adalah "otak" yang **memutuskan ke mana trafik harus pergi** — menjalankan protokol routing, membangun tabel routing/kebijakan, memproses topologi. **Data plane** adalah "otot" yang **benar-benar meneruskan paket** dengan kecepatan tinggi berdasarkan keputusan/tabel yang dibuat control plane. Di jaringan **tradisional**, kedua plane ini berada **di setiap perangkat** (setiap router/switch berpikir sendiri dan meneruskan sendiri). **SDN memisahkannya**: control plane dipindahkan ke **controller terpusat** yang membuat keputusan untuk seluruh jaringan, sementara perangkat menyisakan **data plane** yang meneruskan paket sesuai instruksi dari controller. Ini memusatkan kecerdasan dan memungkinkan pengelolaan seluruh jaringan sebagai satu sistem.
+1. **Control plane** adalah "otak" yang memutuskan ke mana trafik harus pergi: menjalankan protokol routing, membangun tabel routing/kebijakan, memproses topologi. **Data plane** adalah "otot" yang benar-benar meneruskan paket dengan kecepatan tinggi berdasarkan keputusan/tabel yang dibuat control plane. Di jaringan tradisional, kedua plane ini berada di setiap perangkat (setiap router/switch berpikir sendiri dan meneruskan sendiri). SDN memisahkannya: control plane dipindahkan ke controller terpusat yang membuat keputusan untuk seluruh jaringan, sementara perangkat menyisakan data plane yang meneruskan paket sesuai instruksi dari controller. Ini memusatkan kecerdasan dan memungkinkan pengelolaan seluruh jaringan sebagai satu sistem.
 
 2. (Tiga dari) **Control plane:** tradisional terdistribusi di tiap perangkat; berbasis controller terpusat. **Konfigurasi:** tradisional per-perangkat via CLI (satu per satu); berbasis controller terpusat via GUI/API dan disebar otomatis. **Kebijakan:** tradisional harus diterapkan manual di setiap perangkat (rawan tidak konsisten); berbasis controller didefinisikan sekali dan didorong konsisten ke semua. **Visibilitas:** tradisional terpecah (harus cek tiap perangkat); berbasis controller menyeluruh dari satu tempat. **Konsistensi/kesalahan:** tradisional rawan drift dan human error; berbasis controller lebih konsisten dan dapat diverifikasi.
 
-3. **Northbound API (NBI)** menghubungkan controller **ke atas** — ke aplikasi, skrip otomasi, dan antarmuka manusia/GUI. Umumnya **REST API** (berbasis HTTP/JSON) yang ramah developer; Anda menulis program yang memberi tahu controller *apa* yang Anda inginkan. **Southbound API (SBI)** menghubungkan controller **ke bawah** — ke perangkat jaringan (switch/router/AP). Controller memakainya untuk *mengimplementasikan* keputusan pada perangkat. Contoh southbound: **NETCONF, OpenFlow, gNMI**, bahkan CLI. Cara mengingat: North menghadap software/manusia, South menghadap hardware/perangkat.
+3. **Northbound API (NBI)** menghubungkan controller ke atas: ke aplikasi, skrip otomasi, dan antarmuka manusia/GUI. Umumnya REST API (berbasis HTTP/JSON) yang ramah developer; Anda menulis program yang memberi tahu controller *apa* yang Anda inginkan. **Southbound API (SBI)** menghubungkan controller ke bawah, ke perangkat jaringan (switch/router/AP). Controller memakainya untuk *mengimplementasikan* keputusan pada perangkat. Contoh southbound: NETCONF, OpenFlow, gNMI, bahkan CLI. Cara mengingat: North menghadap software/manusia, South menghadap hardware/perangkat.
 
-4. **Fabric** adalah keseluruhan infrastruktur SDN — kumpulan perangkat, underlay, dan overlay — yang dikelola dan diperlakukan **sebagai satu kesatuan** oleh controller. **Underlay** adalah **jaringan fisik**: perangkat, kabel, dan IP routing dasar (mis. IS-IS/OSPF) yang tugasnya menyediakan konektivitas dasar antar-perangkat. **Overlay** adalah **jaringan virtual/logis** yang dibangun di atas underlay (mis. tunnel VXLAN) tempat kebijakan dan segmentasi sebenarnya diterapkan oleh controller. Underlay menyediakan "jalan"; overlay membentuk topologi logis dan layanan di atasnya; fabric adalah keduanya dikelola bersama.
+4. **Fabric** adalah keseluruhan infrastruktur SDN (kumpulan perangkat, underlay, dan overlay) yang dikelola dan diperlakukan sebagai satu kesatuan oleh controller. **Underlay** adalah jaringan fisik: perangkat, kabel, dan IP routing dasar (mis. IS-IS/OSPF) yang tugasnya menyediakan konektivitas dasar antar-perangkat. **Overlay** adalah jaringan virtual/logis yang dibangun di atas underlay (mis. tunnel VXLAN) tempat kebijakan dan segmentasi sebenarnya diterapkan oleh controller. Underlay menyediakan "jalan"; overlay membentuk topologi logis dan layanan di atasnya; fabric adalah keduanya dikelola bersama.
 
-5. **AI prediktif** menganalisis data historis dan real-time untuk **memprediksi dan mendeteksi**: menemukan **anomali** (pola trafik tak biasa yang menandakan serangan atau kegagalan), **memprediksi kapasitas** (kapan sebuah link akan jenuh), **pemeliharaan prediktif** (perangkat yang cenderung gagal), dan membangun **baseline** untuk alert yang lebih cerdas (mengurangi false positive). Fokusnya: analisis dan peringatan. **AI generatif** **menghasilkan konten dan bantuan**: membuat draf konfigurasi dari deskripsi bahasa alami ("buatkan config VLAN untuk..."), **meringkas** log/insiden, menjelaskan masalah, dan membantu troubleshooting secara interaktif. Fokusnya: menghasilkan/menjelaskan. Keduanya bagian dari AIOps dan mengandalkan telemetri berkualitas; untuk CCNA cukup memahami peran masing-masing, bukan algoritmanya.
+5. **AI prediktif** menganalisis data historis dan real-time untuk memprediksi dan mendeteksi: menemukan anomali (pola trafik tak biasa yang menandakan serangan atau kegagalan), memprediksi kapasitas (kapan sebuah link akan jenuh), pemeliharaan prediktif (perangkat yang cenderung gagal), dan membangun baseline untuk alert yang lebih cerdas (mengurangi false positive). Fokusnya: analisis dan peringatan. **AI generatif** menghasilkan konten dan bantuan: membuat draf konfigurasi dari deskripsi bahasa alami ("buatkan config VLAN untuk..."), meringkas log/insiden, menjelaskan masalah, dan membantu troubleshooting secara interaktif. Fokusnya: menghasilkan/menjelaskan. Keduanya bagian dari AIOps dan mengandalkan telemetri berkualitas; untuk CCNA cukup memahami peran masing-masing, bukan algoritmanya.
 
 </details>
 
@@ -192,7 +192,7 @@ SDN/controller-based menjawab:
 
 ## 10. Sumber
 
-- Cisco CCNA 200-301 v1.1 — topik 6.1 (dampak otomasi), 6.2 (tradisional vs controller), 6.3 (SDN/overlay/underlay/fabric/NBI-SBI), 6.4 (AI/ML)
+- Cisco CCNA 200-301 v1.1, topik 6.1 (dampak otomasi), 6.2 (tradisional vs controller), 6.3 (SDN/overlay/underlay/fabric/NBI-SBI), 6.4 (AI/ML)
 - Cisco SD-Access, ACI, SD-WAN design guides
 - ONF OpenFlow spec · OpenDaylight/ONOS docs
 - *Software Defined Networks* (O'Reilly)

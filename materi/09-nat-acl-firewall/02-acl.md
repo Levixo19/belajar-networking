@@ -23,7 +23,7 @@
 ```
 
 > [!TIP]
-> **ACL sering dipakai sebagai "pemilih trafik" (traffic selector), bukan hanya sebagai firewall.** Ini konsep yang membedakan penggunaan pemula dan profesional.
+> **ACL sering dipakai sebagai "pemilih trafik" (traffic selector), bukan hanya sebagai firewall.**
 
 ---
 
@@ -45,7 +45,7 @@ IMPLICIT DENY ANY  ← selalu ada di akhir, tidak terlihat
 > [!WARNING]
 > **Dua aturan yang menyebabkan 90% kesalahan ACL:**
 
-**1. Urutan sangat penting.** Aturan pertama yang cocok yang menang.
+**1. Urutan menentukan hasil.** Aturan pertama yang cocok yang menang.
 ```
 ❌ SALAH:
 access-list 101 permit ip any any              ← cocok dengan SEMUA
@@ -91,7 +91,7 @@ R1(config-std-nacl)# deny any log
 ```
 
 > [!WARNING]
-> **Standard ACL hanya melihat alamat SUMBER.** Karena itu ia harus ditempatkan **sedekat mungkin dengan TUJUAN** — kalau ditempatkan dekat sumber, ia akan memblokir trafik ke semua tujuan, bukan hanya yang dimaksud.
+> **Standard ACL hanya melihat alamat SUMBER.** Karena itu ia harus ditempatkan **sedekat mungkin dengan TUJUAN**. Kalau ditempatkan dekat sumber, ia akan memblokir trafik ke semua tujuan, bukan hanya yang dimaksud.
 
 ### Extended ACL
 
@@ -151,7 +151,7 @@ R1(config-ext-nacl)# deny ip any any log
 ```
 
 > [!TIP]
-> **Selalu pakai named ACL** — lebih mudah dibaca, lebih mudah diedit, dan tidak membuang nomor.
+> **Selalu pakai named ACL**: lebih mudah dibaca, lebih mudah diedit, dan tidak membuang nomor.
 
 ---
 
@@ -182,7 +182,7 @@ R1(config-if)# ip access-group 101 out    ← periksa SETELAH routing
 | Trafik yang dihasilkan router | Tidak diperiksa | Tidak diperiksa |
 
 > [!TIP]
-> **Umumnya pilih `in`** — lebih efisien dan lebih intuitif.
+> **Umumnya pilih `in`**, karena lebih efisien dan lebih intuitif.
 
 > [!WARNING]
 > **ACL tidak memfilter trafik yang dihasilkan router itu sendiri.** Ping, SSH, atau routing update dari router tidak melewati ACL interface. Untuk itu gunakan Control Plane Policing (CoPP).
@@ -236,7 +236,7 @@ R1(config)# ip access-list resequence DARI-LAN 10 10
 ```
 
 > [!WARNING]
-> **JANGAN memakai `no access-list 101` pada ACL bernomor yang sedang terpasang** — ini **menghapus seluruh ACL sekaligus**, dan karena ACL kosong berarti implicit deny, **seluruh trafik langsung diblokir**. Outage instan.
+> **JANGAN memakai `no access-list 101` pada ACL bernomor yang sedang terpasang.** Perintah ini **menghapus seluruh ACL sekaligus**, dan karena ACL kosong berarti implicit deny, **seluruh trafik langsung diblokir**. Hasilnya outage instan.
 
 > [!TIP]
 > **Cara aman mengganti ACL produksi:**
@@ -264,22 +264,22 @@ R1(config-if)# ipv6 traffic-filter DARI-LAN-V6 in
 > **Perbedaan penting dari IPv4:**
 
 1. **Perintahnya `ipv6 traffic-filter`**, bukan `ipv6 access-group`.
-2. **JANGAN blokir ICMPv6** — ia membawa NDP (pengganti ARP), RA, DAD. Memblokirnya mematikan IPv6 total.
+2. **JANGAN blokir ICMPv6**, karena ia membawa NDP (pengganti ARP), RA, dan DAD. Memblokirnya mematikan IPv6 total.
 3. IPv6 ACL punya **implicit permit** untuk NDP sebelum implicit deny:
    ```
    permit icmp any any nd-na
    permit icmp any any nd-ns
    deny ipv6 any any
    ```
-   **Perhatian:** Tetapi kalau Anda menambahkan `deny ipv6 any any` **eksplisit**, kedua permit implisit itu **hilang** — dan IPv6 berhenti bekerja. Selalu tambahkan permit NDP secara eksplisit kalau memakai deny eksplisit.
+   **Perhatian:** kalau Anda menambahkan `deny ipv6 any any` **eksplisit**, kedua permit implisit itu **hilang**, dan IPv6 berhenti bekerja. Selalu tambahkan permit NDP secara eksplisit kalau memakai deny eksplisit.
 
-4. **Tidak ada wildcard mask** — memakai prefix length.
+4. **Tidak ada wildcard mask**; yang dipakai adalah prefix length.
 
 ---
 
 ## 8. ACL di MikroTik RouterOS
 
-MikroTik tidak punya "ACL" terpisah — semuanya dilakukan lewat **firewall filter** dan **address list**.
+MikroTik tidak punya "ACL" terpisah. Semuanya dilakukan lewat **firewall filter** dan **address list**.
 
 ```
 # Setara standard ACL: address list
@@ -308,7 +308,7 @@ MikroTik tidak punya "ACL" terpisah — semuanya dilakukan lewat **firewall filt
 ```
 
 > [!WARNING]
-> **Sama seperti Cisco, urutan sangat penting di MikroTik** — aturan diproses dari atas ke bawah. Gunakan `/ip firewall filter move` untuk mengurutkannya, dan **selalu beri `comment`** agar bisa dicari dengan `[find comment=...]`.
+> **Sama seperti Cisco, urutan menentukan hasil di MikroTik**: aturan diproses dari atas ke bawah. Gunakan `/ip firewall filter move` untuk mengurutkannya, dan **selalu beri `comment`** agar bisa dicari dengan `[find comment=...]`.
 
 > [!WARNING]
 > **Berbeda dari Cisco, MikroTik TIDAK punya implicit deny.** Kalau tidak ada aturan yang cocok, paket **diterima**. Anda harus menambahkan aturan `drop` di akhir secara eksplisit.
@@ -330,7 +330,7 @@ MikroTik tidak punya "ACL" terpisah — semuanya dilakukan lewat **firewall filt
 ```
 
 > [!TIP]
-> **Address list dinamis dengan timeout adalah salah satu fitur terkuat MikroTik** — memungkinkan blacklist otomatis, deteksi port scan, dan brute force protection tanpa perangkat tambahan. Tidak ada padanan sesederhana ini di Cisco IOS.
+> **Address list dinamis dengan timeout adalah salah satu fitur terkuat MikroTik.** Fitur ini memungkinkan blacklist otomatis, deteksi port scan, dan brute force protection tanpa perangkat tambahan. Tidak ada padanan sesederhana ini di Cisco IOS.
 
 ---
 
@@ -393,7 +393,7 @@ R1# debug ip packet 101 detail        ⚠️ SANGAT berbahaya di produksi!
 ```
 
 > [!WARNING]
-> **Kesalahan nomor satu: lupa trafik balik.** ACL standar bersifat **stateless** — mengizinkan paket keluar tidak otomatis mengizinkan balasannya masuk.
+> **Kesalahan nomor satu: lupa trafik balik.** ACL standar bersifat **stateless**: mengizinkan paket keluar tidak otomatis mengizinkan balasannya masuk.
 
 ```
 # Solusi 1: kata kunci established (hanya TCP)
@@ -447,8 +447,8 @@ R1(config-ext-nacl)# deny ip any any
 - **`access-class` untuk VTY**, `ip access-group` untuk interface.
 - **`no access-list 101` menghapus seluruh ACL → outage instan.** Buat ACL baru, ganti binding, baru hapus yang lama.
 - **IPv6: `ipv6 traffic-filter`**, jangan blokir ICMPv6, dan `deny ipv6 any any` eksplisit menghapus permit NDP implisit.
-- **MikroTik tidak punya implicit deny** — tambahkan `action=drop` eksplisit di akhir. **Address list dinamis** adalah fitur unggulannya.
-- ACL bersifat **stateless** — selalu pertimbangkan trafik balik (`established`, reflexive, atau pakai firewall stateful).
+- **MikroTik tidak punya implicit deny**, jadi tambahkan `action=drop` eksplisit di akhir. **Address list dinamis** adalah fitur unggulannya.
+- ACL bersifat **stateless**; selalu pertimbangkan trafik balik (`established`, reflexive, atau pakai firewall stateful).
 
 ---
 
@@ -465,8 +465,8 @@ R1(config-ext-nacl)# deny ip any any
 <details>
 <summary>Jawaban</summary>
 
-1. **Standard ACL hanya memeriksa alamat sumber.** Kalau ditempatkan dekat sumber, ia akan memblokir trafik dari host itu ke **semua tujuan** — termasuk tujuan yang seharusnya boleh diakses. Menempatkannya dekat tujuan membatasi dampaknya hanya pada jalur menuju tujuan yang dimaksud.
-   **Extended ACL memeriksa sumber, tujuan, protokol, dan port** sehingga bisa sangat spesifik. Menempatkannya dekat sumber **menghemat bandwidth** — paket yang akan ditolak dibuang sedini mungkin, tidak membebani link di sepanjang jalur.
+1. **Standard ACL hanya memeriksa alamat sumber.** Kalau ditempatkan dekat sumber, ia akan memblokir trafik dari host itu ke **semua tujuan**, termasuk tujuan yang seharusnya boleh diakses. Menempatkannya dekat tujuan membatasi dampaknya hanya pada jalur menuju tujuan yang dimaksud.
+   **Extended ACL memeriksa sumber, tujuan, protokol, dan port** sehingga bisa sangat spesifik. Menempatkannya dekat sumber **menghemat bandwidth**: paket yang akan ditolak dibuang sedini mungkin dan tidak membebani link di sepanjang jalur.
 
 2. ```
    ip access-list extended LAN10-KELUAR
@@ -483,9 +483,9 @@ R1(config-ext-nacl)# deny ip any any
    interface gi0/1
     ip access-group LAN10-KELUAR in
    ```
-   Catatan: `permit icmp any any packet-too-big` penting agar Path MTU Discovery tetap bekerja — tanpa itu, transfer besar bisa menggantung.
+   Catatan: `permit icmp any any packet-too-big` penting agar Path MTU Discovery tetap bekerja. Tanpa itu, transfer besar bisa menggantung.
 
-3. **`no access-list 101` menghapus SELURUH ACL sekaligus.** Karena ACL tersebut masih terpasang di interface dengan `ip access-group 101 in`, dan **ACL kosong berarti hanya ada implicit deny**, maka **seluruh trafik langsung diblokir** — outage instan. Kalau Anda melakukannya dari jarak jauh, Anda juga terkunci.
+3. **`no access-list 101` menghapus SELURUH ACL sekaligus.** Karena ACL tersebut masih terpasang di interface dengan `ip access-group 101 in`, dan **ACL kosong berarti hanya ada implicit deny**, maka **seluruh trafik langsung diblokir** dan outage terjadi seketika. Kalau Anda melakukannya dari jarak jauh, Anda juga terkunci.
    **Yang seharusnya:** (a) gunakan **named ACL** yang bisa diedit per-baris dengan sequence number; atau (b) buat ACL **baru** dengan nama/nomor berbeda, uji, lalu ganti binding-nya (`ip access-group ACL-BARU in`), baru hapus yang lama setelah terverifikasi.
 
 4. Karena **ACL IPv6 punya dua aturan permit implisit untuk NDP** sebelum implicit deny:
@@ -494,7 +494,7 @@ R1(config-ext-nacl)# deny ip any any
    permit icmp any any nd-ns
    deny ipv6 any any
    ```
-   Ketika Anda menambahkan **`deny ipv6 any any` secara eksplisit**, kedua permit implisit itu **tidak lagi diterapkan** — NDP (Neighbor Solicitation/Advertisement) diblokir. Tanpa NDP, host tidak bisa me-resolve alamat IPv6 ke MAC, sehingga **tidak ada komunikasi IPv6 sama sekali**. Router Advertisement juga terblokir sehingga host kehilangan gateway.
+   Ketika Anda menambahkan **`deny ipv6 any any` secara eksplisit**, kedua permit implisit itu **tidak lagi diterapkan**, sehingga NDP (Neighbor Solicitation/Advertisement) diblokir. Tanpa NDP, host tidak bisa me-resolve alamat IPv6 ke MAC, sehingga **tidak ada komunikasi IPv6 sama sekali**. Router Advertisement juga terblokir sehingga host kehilangan gateway.
    **Perbaikan:** tambahkan permit ICMPv6 secara eksplisit sebelum deny:
    ```
    permit icmp any any nd-na
@@ -504,15 +504,15 @@ R1(config-ext-nacl)# deny ip any any
    deny ipv6 any any log
    ```
 
-5. (a) **Kata kunci `established`** — mengizinkan segmen TCP yang punya bit ACK/RST diset (artinya bagian dari koneksi yang sudah ada). Terbatas: **hanya untuk TCP**, dan bisa dipalsukan.
-   (b) **Reflexive ACL** — membuat entri sementara secara otomatis saat trafik keluar, dan mengizinkan balasan yang cocok. Bekerja untuk TCP dan UDP, tetapi terbatas dan kikuk.
-   (c) **Firewall stateful** — Zone-Based Firewall (Cisco IOS), ASA/FTD, atau MikroTik `connection-state=established,related`. Ini solusi yang **benar**: firewall melacak state koneksi dan otomatis mengizinkan balasan yang sah. Untuk perimeter, selalu pakai ini alih-alih ACL stateless.
+5. (a) **Kata kunci `established`**: mengizinkan segmen TCP yang punya bit ACK/RST diset (artinya bagian dari koneksi yang sudah ada). Terbatas: **hanya untuk TCP**, dan bisa dipalsukan.
+   (b) **Reflexive ACL**: membuat entri sementara secara otomatis saat trafik keluar, dan mengizinkan balasan yang cocok. Bekerja untuk TCP dan UDP, tetapi terbatas dan kikuk.
+   (c) **Firewall stateful**: Zone-Based Firewall (Cisco IOS), ASA/FTD, atau MikroTik `connection-state=established,related`. Ini solusi yang **benar**: firewall melacak state koneksi dan otomatis mengizinkan balasan yang sah. Untuk perimeter, selalu pakai ini alih-alih ACL stateless.
 
-6. **Cisco ACL punya `implicit deny any` di akhir** — kalau tidak ada aturan yang cocok, paket **dibuang**. Ini pendekatan "default deny" yang aman, tetapi berarti Anda harus mengizinkan semua yang diperlukan secara eksplisit — termasuk hal-hal yang mudah terlupa.
-   **MikroTik firewall filter TIDAK punya implicit deny** — kalau tidak ada aturan yang cocok, paket **diterima**. Ini pendekatan "default permit" yang lebih permisif dan berbahaya kalau Anda mengiranya sama dengan Cisco.
+6. **Cisco ACL punya `implicit deny any` di akhir.** Kalau tidak ada aturan yang cocok, paket **dibuang**. Ini pendekatan "default deny" yang aman, tetapi berarti Anda harus mengizinkan semua yang diperlukan secara eksplisit, termasuk hal-hal yang mudah terlupa.
+   **MikroTik firewall filter TIDAK punya implicit deny.** Kalau tidak ada aturan yang cocok, paket **diterima**. Ini pendekatan "default permit" yang lebih permisif dan berbahaya kalau Anda mengiranya sama dengan Cisco.
    **Konsekuensi praktis:** di MikroTik Anda **wajib menambahkan aturan `action=drop` di akhir setiap chain** yang ingin Anda amankan. Banyak router MikroTik di lapangan terekspos karena administratornya mengira perilakunya sama dengan Cisco.
 
-7. Teknik bertingkat dengan address list dinamis — pendekatan standar MikroTik:
+7. Teknik bertingkat dengan address list dinamis, yaitu pendekatan standar MikroTik:
    ```
    /ip firewall filter
    # Tahap 3: yang sudah di tahap 3 dan mencoba lagi → BLACKLIST 10 hari
@@ -540,7 +540,7 @@ R1(config-ext-nacl)# deny ip any any
    add chain=input protocol=tcp dst-port=22 src-address-list=ssh-blacklist \
        action=drop comment="Drop SSH blacklist"
    ```
-   ⚠️ **Urutan penting:** aturan `drop` untuk blacklist harus berada **di atas** semua aturan tahap, atau penyerang yang sudah di-blacklist akan terus memicu aturan tahap alih-alih langsung ditolak. Gunakan `/ip firewall filter move` untuk mengaturnya.
+   **Urutan penting:** aturan `drop` untuk blacklist harus berada **di atas** semua aturan tahap, atau penyerang yang sudah di-blacklist akan terus memicu aturan tahap alih-alih langsung ditolak. Gunakan `/ip firewall filter move` untuk mengaturnya.
    Cara kerjanya: empat percobaan koneksi baru dalam waktu singkat akan menaikkan alamat dari stage1 → stage2 → stage3 → blacklist, lalu diblokir selama 10 hari. Alamat yang hanya salah ketik sekali akan kedaluwarsa dari stage1 dalam 1 menit tanpa konsekuensi.
 
 </details>
@@ -551,9 +551,9 @@ R1(config-ext-nacl)# deny ip any any
 
 - Cisco CCNA 200-301 v1.1, topik 5.6 (Configure and verify access control lists)
 - Cisco, *Configuring IP Access Lists* (Document ID 23602)
-- RFC 4890 — Recommendations for Filtering ICMPv6 Messages
-- MikroTik — https://help.mikrotik.com/docs/display/ROS/Filter
+- RFC 4890, Recommendations for Filtering ICMPv6 Messages
+- MikroTik: https://help.mikrotik.com/docs/display/ROS/Filter
 
 ---
 
-**Berikutnya:** `09-nat-acl-firewall/03-firewall.md` — dari filter paket ke firewall stateful dan NGFW.
+**Berikutnya:** `09-nat-acl-firewall/03-firewall.md`. Dari filter paket ke firewall stateful dan NGFW.

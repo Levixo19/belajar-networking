@@ -221,10 +221,10 @@ show logging                       buffer log
 ```
 
 > [!TIP]
-> **Perintah tersering CCNA:** `show ip interface brief`, `show ip route`, `show vlan brief`, `show interfaces trunk`, `show spanning-tree`, `show ip ospf neighbor`, `show running-config`. Hafalkan `no shutdown` — interface router default mati.
+> **Perintah tersering CCNA:** `show ip interface brief`, `show ip route`, `show vlan brief`, `show interfaces trunk`, `show spanning-tree`, `show ip ospf neighbor`, `show running-config`. Hafalkan `no shutdown`, karena interface router secara default mati.
 
 > [!WARNING]
-> **Selalu `copy run start`** setelah konfigurasi — perubahan di RAM hilang saat reload bila belum disimpan.
+> **Selalu `copy run start`** setelah konfigurasi. Perubahan di RAM hilang saat reload bila belum disimpan.
 
 ---
 

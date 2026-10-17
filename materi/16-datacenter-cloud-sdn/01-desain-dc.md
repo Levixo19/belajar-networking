@@ -1,7 +1,7 @@
 # 16.1 Desain Data Center & Arsitektur Spine-Leaf
 
 > **Prasyarat:** `03-data-link/04` (STP), `07-routing-lanjutan/04` (OSPF), `00-fondasi/05` (topologi)
-> **Tujuan:** Anda paham kenapa data center modern beralih dari desain tiga-tier ke spine-leaf, dan konsep underlay/overlay — sesuai CCNA 1.2.c dan 6.3.
+> **Tujuan:** Anda paham kenapa data center modern beralih dari desain tiga-tier ke spine-leaf, dan konsep underlay/overlay (sesuai CCNA 1.2.c dan 6.3).
 
 ---
 
@@ -19,7 +19,7 @@ NORTH-SOUTH (kampus lama)          EAST-WEST (DC modern)
 ```
 
 > [!WARNING]
-> **Desain tiga-tier klasik (access-distribution-core) buruk untuk trafik east-west.** Dua server di rak berbeda mungkin harus naik ke distribution/core lalu turun lagi — banyak hop, latensi tak konsisten, dan **STP memblokir setengah link** sehingga bandwidth terbuang.
+> **Desain tiga-tier klasik (access-distribution-core) buruk untuk trafik east-west.** Dua server di rak berbeda mungkin harus naik ke distribution/core lalu turun lagi: banyak hop, latensi tak konsisten, dan STP memblokir setengah link sehingga bandwidth terbuang.
 
 ---
 
@@ -35,7 +35,7 @@ Dengan STP:
 > [!WARNING]
 > **STP hanya menyisakan satu jalur aktif** dan memblokir sisanya. Di DC yang butuh semua bandwidth dan banyak jalur setara, ini pemborosan besar. Konvergensi STP juga lambat untuk skala DC.
 
-**Solusi:** hilangkan STP sebagai mekanisme utama. Gunakan **routing (Layer 3) di antara switch** dengan **ECMP (Equal-Cost Multi-Path)** — semua jalur aktif sekaligus.
+**Solusi:** hilangkan STP sebagai mekanisme utama. Gunakan routing (Layer 3) di antara switch dengan **ECMP (Equal-Cost Multi-Path)**, sehingga semua jalur aktif sekaligus.
 
 ---
 
@@ -51,26 +51,26 @@ Dengan STP:
 ```
 
 **Aturan spine-leaf:**
-- Setiap **leaf** terhubung ke **setiap spine** (full mesh bipartit).
-- **Leaf tidak terhubung ke leaf.** **Spine tidak terhubung ke spine.**
-- Server hanya terhubung ke leaf (disebut juga **ToR — Top of Rack**).
-- Spine hanya menghubungkan leaf — tidak ada server di spine.
+- Setiap **leaf** terhubung ke setiap **spine** (full mesh bipartit).
+- Leaf tidak terhubung ke leaf, dan spine tidak terhubung ke spine.
+- Server hanya terhubung ke leaf (disebut juga **ToR**, Top of Rack).
+- Spine hanya menghubungkan leaf. Tidak ada server di spine.
 
 **Keunggulan:**
 
 | Sifat | Manfaat |
 |---|---|
-| **Hop konsisten** | Server mana pun ke server mana pun = tepat **2 hop** (leaf→spine→leaf) — latensi prediktabel |
+| **Hop konsisten** | Server mana pun ke server mana pun = tepat 2 hop (leaf→spine→leaf), jadi latensi prediktabel |
 | **ECMP** | Semua uplink aktif; bandwidth = jumlah semua link (tak ada yang diblok STP) |
-| **Skala horizontal** | Butuh bandwidth lebih? Tambah spine. Butuh port lebih? Tambah leaf |
+| **Skala horizontal** | Tambah spine untuk bandwidth, tambah leaf untuk port |
 | **Non-blocking** | Dengan rasio oversubscription tepat, tak ada bottleneck |
 | **Fault domain kecil** | Satu spine mati → hanya kehilangan 1/N bandwidth, bukan setengah |
 
 > [!TIP]
-> **"Setiap server 2 hop dari server lain"** adalah inti spine-leaf. Latensi dan bandwidth jadi prediktabel — kritis untuk aplikasi terdistribusi. Bandingkan tiga-tier di mana jumlah hop bergantung posisi.
+> **"Setiap server 2 hop dari server lain"** adalah inti spine-leaf. Latensi dan bandwidth jadi prediktabel, hal yang dibutuhkan aplikasi terdistribusi. Bandingkan dengan tiga-tier, yang jumlah hop-nya bergantung posisi.
 
 > [!WARNING]
-> **Oversubscription ratio** adalah rasio bandwidth downlink (ke server) terhadap uplink (ke spine). Mis. leaf dengan 48×25G ke server dan 6×100G ke spine → 1200G:600G = **2:1**. Rasio 3:1 umum; 1:1 (non-blocking) mahal. Rasio terlalu tinggi = bottleneck saat trafik east-west padat.
+> **Oversubscription ratio** adalah rasio bandwidth downlink (ke server) terhadap uplink (ke spine). Mis. leaf dengan 48×25G ke server dan 6×100G ke spine → 1200G:600G = 2:1. Rasio 3:1 umum; 1:1 (non-blocking) mahal. Rasio terlalu tinggi = bottleneck saat trafik east-west padat.
 
 ---
 
@@ -124,24 +124,24 @@ DC SANGAT BESAR (multi-pod):
 
 Vendor menawarkan fabric spine-leaf yang dikelola secara terpusat oleh **controller** (bagian dari SDN, lihat `16.6`):
 
-- **Cisco ACI (Application Centric Infrastructure)** — spine-leaf Nexus 9000 dikelola oleh controller **APIC**. Kebijakan berbasis aplikasi (endpoint group/EPG, contract).
+- **Cisco ACI (Application Centric Infrastructure)**: spine-leaf Nexus 9000 yang dikelola controller **APIC**. Kebijakannya berbasis aplikasi (endpoint group/EPG, contract).
 - **Arista, Juniper, dll.** menawarkan pendekatan serupa (sering berbasis EVPN-VXLAN standar terbuka).
 
 > [!TIP]
-> **Controller memisahkan control plane (otak) dari data plane (switch),** memungkinkan Anda mengelola ratusan switch sebagai satu sistem lewat GUI/API. Ini konsep SDN yang diuji CCNA 6.2/6.3 — dibahas di `16.6`.
+> **Controller memisahkan control plane (otak) dari data plane (switch)**, sehingga Anda bisa mengelola ratusan switch sebagai satu sistem lewat GUI/API. Ini konsep SDN yang diuji CCNA 6.2/6.3 dan dibahas di `16.6`.
 
 ---
 
 ## 7. Ringkasan
 
-- Data center modern didominasi trafik **east-west** (server↔server), bukan north-south — mengubah kebutuhan desain.
+- Data center modern didominasi trafik **east-west** (server↔server), bukan north-south, dan itu mengubah kebutuhan desain.
 - **STP buruk untuk DC**: memblokir link redundan (buang bandwidth) dan lambat konvergen.
 - **Spine-leaf** (CCNA 1.2.c): setiap leaf ke setiap spine; leaf tak ke leaf, spine tak ke spine. Server di leaf (ToR).
-- Keunggulan: **2 hop konsisten**, **ECMP** (semua link aktif), skala horizontal, fault domain kecil.
+- Keunggulan: 2 hop konsisten, ECMP (semua link aktif), skala horizontal, fault domain kecil.
 - **Oversubscription ratio** (downlink:uplink) menentukan potensi bottleneck; 3:1 umum, 1:1 non-blocking (mahal).
 - **Underlay** = routing L3 fisik (OSPF/BGP + ECMP); **Overlay** = jaringan virtual (VXLAN) di atasnya (CCNA 6.3).
 - Istilah: ToR, fabric, pod, superspine (multi-pod).
-- **Fabric terkelola** (Cisco ACI + APIC) memakai controller SDN — otak (control plane) terpisah dari switch (data plane).
+- **Fabric terkelola** (Cisco ACI + APIC) memakai controller SDN: otak (control plane) terpisah dari switch (data plane).
 
 ---
 
@@ -156,15 +156,15 @@ Vendor menawarkan fabric spine-leaf yang dikelola secara terpusat oleh **control
 <details>
 <summary>Jawaban</summary>
 
-1. Trafik **east-west** berarti server banyak berkomunikasi satu sama lain (microservices, replikasi DB, storage terdistribusi). Dalam desain tiga-tier, dua server di rak/access-switch berbeda harus mengirim trafik **naik** ke distribution lalu core, lalu **turun** lagi ke rak tujuan — banyak hop, dan jumlah hop **bergantung posisi** (server di rak berdekatan vs berjauhan berbeda latensinya). Selain itu STP memblokir jalur redundan sehingga bandwidth agregat terbatas. Untuk aplikasi terdistribusi yang butuh latensi rendah dan konsisten serta bandwidth east-west besar, ini tidak memadai.
+1. Trafik **east-west** berarti server banyak berkomunikasi satu sama lain (microservices, replikasi DB, storage terdistribusi). Dalam desain tiga-tier, dua server di rak/access-switch berbeda harus mengirim trafik naik ke distribution lalu core, lalu turun lagi ke rak tujuan. Hop-nya banyak, dan jumlahnya bergantung posisi (server di rak berdekatan vs berjauhan berbeda latensinya). Selain itu STP memblokir jalur redundan sehingga bandwidth agregat terbatas. Untuk aplikasi terdistribusi yang butuh latensi rendah dan konsisten serta bandwidth east-west besar, ini tidak memadai.
 
-2. **STP mencegah loop dengan memblokir semua jalur redundan kecuali satu** — sehingga setengah (atau lebih) link antar-switch tidak dipakai, membuang bandwidth mahal, dan konvergensi STP relatif lambat untuk skala DC. **Spine-leaf mengatasinya dengan memakai routing Layer 3 (OSPF/BGP) di antara switch alih-alih switching L2 + STP.** Karena setiap jalur leaf→spine adalah rute L3 yang setara, **ECMP** membuat **semua** uplink aktif sekaligus (tak ada yang diblok), dan tak ada loop L2 untuk dicegah. Bandwidth agregat = jumlah semua link.
+2. STP mencegah loop dengan memblokir semua jalur redundan kecuali satu. Akibatnya setengah (atau lebih) link antar-switch tidak dipakai, bandwidth mahal terbuang, dan konvergensi STP relatif lambat untuk skala DC. Spine-leaf mengatasinya dengan memakai routing Layer 3 (OSPF/BGP) di antara switch alih-alih switching L2 + STP. Karena setiap jalur leaf→spine adalah rute L3 yang setara, ECMP membuat semua uplink aktif sekaligus (tak ada yang diblok), dan tak ada loop L2 untuk dicegah. Bandwidth agregat = jumlah semua link.
 
-3. Tepat **2 hop**: server → leaf sumber → spine (mana pun) → leaf tujuan → server. Ini penting karena **latensi menjadi prediktabel dan seragam** — server mana pun ke server mana pun punya jarak yang sama. Aplikasi terdistribusi (database cluster, microservices, AI training) sangat sensitif terhadap latensi yang tidak konsisten; spine-leaf menjaminnya tetap rata.
+3. Tepat **2 hop**: server → leaf sumber → spine (mana pun) → leaf tujuan → server. Ini penting karena latensi menjadi prediktabel dan seragam: server mana pun ke server mana pun punya jarak yang sama. Aplikasi terdistribusi (database cluster, microservices, AI training) peka terhadap latensi yang tidak konsisten, dan spine-leaf menjaga latensinya tetap rata.
 
-4. Downlink (ke server) = 48 × 25G = **1200G**. Uplink (ke spine) = 8 × 100G = **800G**. Rasio = 1200:800 = **1.5:1**. Artinya untuk setiap 1.5 Gbps trafik dari server, tersedia 1 Gbps uplink — cukup baik (lebih rendah dari 3:1 yang umum), bottleneck hanya terjadi kalau lebih dari ~67% trafik server serentak keluar rak.
+4. Downlink (ke server) = 48 × 25G = 1200G. Uplink (ke spine) = 8 × 100G = 800G. Rasio = 1200:800 = **1.5:1**. Artinya untuk setiap 1.5 Gbps trafik dari server, tersedia 1 Gbps uplink. Itu cukup baik (lebih rendah dari 3:1 yang umum): bottleneck hanya terjadi kalau lebih dari ~67% trafik server serentak keluar rak.
 
-5. (Contoh jawaban) **Underlay** ibarat jaringan pipa air fisik di sebuah kota — pipa, katup, pompa yang nyata dan jarang berubah. **Overlay** ibarat kontrak layanan air ke tiap pelanggan: Anda bisa menambah, memindah, atau menghapus pelanggan dan mengatur siapa terhubung ke siapa **tanpa menggali dan memasang pipa baru**. Underlay (routing IP fisik + ECMP) hanya bertugas mengantar paket antar-leaf secepatnya; overlay (VXLAN) membangun ribuan jaringan virtual di atasnya, membuat VM di rak berbeda seolah bertetangga di satu segmen — semua tanpa mengubah kabel fisik.
+5. (Contoh jawaban) **Underlay** ibarat jaringan pipa air fisik di sebuah kota (pipa, katup, dan pompa yang nyata dan jarang berubah). **Overlay** ibarat kontrak layanan air ke tiap pelanggan: Anda bisa menambah, memindah, atau menghapus pelanggan dan mengatur siapa terhubung ke siapa tanpa menggali dan memasang pipa baru. Underlay (routing IP fisik + ECMP) hanya bertugas mengantar paket antar-leaf secepatnya. Overlay (VXLAN) membangun ribuan jaringan virtual di atasnya, sehingga VM di rak berbeda seolah bertetangga di satu segmen, semuanya tanpa mengubah kabel fisik.
 
 </details>
 
@@ -172,9 +172,9 @@ Vendor menawarkan fabric spine-leaf yang dikelola secara terpusat oleh **control
 
 ## 9. Sumber
 
-- Cisco CCNA 200-301 v1.1 — topik 1.2.c (spine-leaf), 6.3 (overlay/underlay/fabric)
+- Cisco CCNA 200-301 v1.1, topik 1.2.c (spine-leaf) dan 6.3 (overlay/underlay/fabric)
 - Cisco *Data Center Fundamentals* / ACI docs
-- RFC 7348 — VXLAN
+- RFC 7348: VXLAN
 - *BGP in the Data Center* (O'Reilly, Dinesh Dutta)
 
 ---

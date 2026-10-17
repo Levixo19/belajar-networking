@@ -7,11 +7,11 @@
 
 ## 1. Kapan Static Route Adalah Pilihan yang Tepat
 
-Static routing sering dianggap "primitif", padahal dalam banyak situasi justru **pilihan yang benar**.
+Static routing sering dianggap "primitif", padahal dalam banyak situasi justru pilihan yang benar.
 
 | Situasi | Kenapa static lebih baik |
 |---|---|
-| **Stub network** (hanya satu jalan keluar) | Tidak ada keputusan yang perlu dibuat — protokol dinamis hanya menambah overhead |
+| **Stub network** (hanya satu jalan keluar) | Tidak ada keputusan yang perlu dibuat, jadi protokol dinamis hanya menambah overhead |
 | **Default route ke ISP** | Tujuan selalu sama |
 | Jaringan sangat kecil (< 5 router) | Kompleksitas protokol dinamis tidak sepadan |
 | **Kontrol eksplisit** | Anda ingin jalur tertentu, bukan yang dipilih algoritma |
@@ -77,7 +77,7 @@ R1(config)# ip route 192.168.10.0 255.255.255.0 10.0.0.2 permanent
 
 ## 3. Recursive Lookup: Konsep yang Harus Dipahami
 
-Ketika static route hanya menyebut **next hop**, router harus mencari **dua kali**.
+Ketika static route hanya menyebut next hop, router harus mencari dua kali.
 
 ```
 R1(config)# ip route 192.168.10.0 255.255.255.0 10.0.0.2
@@ -132,7 +132,7 @@ Routing entry for 192.168.10.0/24
 R1(config)# ip route 192.168.10.0 255.255.255.0 gi0/1
 ```
 
-Pada link **point-to-point** (serial, PPP, tunnel), ini baik — hanya ada satu tetangga.
+Pada link **point-to-point** (serial, PPP, tunnel), cara ini baik karena hanya ada satu tetangga.
 
 Pada link **Ethernet**, ini bermasalah:
 
@@ -165,7 +165,7 @@ R1(config)# ip route 192.168.10.0 255.255.255.0 gi0/1 10.0.0.2
 R1(config)# ip route 0.0.0.0 0.0.0.0 203.0.113.1
 ```
 
-`0.0.0.0/0` cocok dengan **semua** alamat, tetapi karena prefix-nya paling pendek (0 bit), ia hanya dipakai jika **tidak ada rute lain yang cocok** (longest prefix match).
+`0.0.0.0/0` cocok dengan semua alamat, tetapi karena prefix-nya paling pendek (0 bit), ia hanya dipakai jika tidak ada rute lain yang cocok (longest prefix match).
 
 Disebut juga **gateway of last resort**:
 ```
@@ -193,13 +193,13 @@ R1(config-router-af)# neighbor 10.0.0.2 default-originate
 ```
 
 > [!WARNING]
-> **`always` berbahaya** — router akan mengiklankan default route walaupun ia sendiri tidak punya jalan keluar, menciptakan black hole.
+> **`always` berbahaya.** Router akan mengiklankan default route walaupun ia sendiri tidak punya jalan keluar, sehingga terjadi black hole.
 
 ---
 
 ## 6. Floating Static Route: Failover Otomatis
 
-Static route dengan **AD lebih tinggi** hanya dipasang jika rute utama hilang.
+Static route dengan AD lebih tinggi hanya dipasang jika rute utama hilang.
 
 ```
 # Jalur utama: lewat MPLS (dipelajari OSPF, AD 110)
@@ -230,7 +230,7 @@ R1(config)# ip route 0.0.0.0 0.0.0.0 198.51.100.1 10
 ```
 
 > [!WARNING]
-> **Masalah besar:** static route hanya hilang kalau **interface fisik down**. Kalau interface tetap up tetapi ISP di seberang bermasalah (kabel putus lebih jauh, router ISP mati, BGP ISP bermasalah), rute utama **tetap terpasang** dan trafik dibuang ke lubang hitam.
+> **Masalah besar:** static route hanya hilang kalau interface fisik down. Kalau interface tetap up tetapi ISP di seberang bermasalah (kabel putus lebih jauh, router ISP mati, BGP ISP bermasalah), rute utama tetap terpasang dan trafik dibuang ke lubang hitam.
 
 Solusinya: **IP SLA tracking**.
 
@@ -265,7 +265,7 @@ R1(config)# ip route 0.0.0.0 0.0.0.0 203.0.113.1 track 1
 R1(config)# ip route 0.0.0.0 0.0.0.0 198.51.100.1 10
 ```
 
-Sekarang: jika ping ke 8.8.8.8 lewat ISP utama gagal, rute utama **dihapus dari routing table**, dan rute cadangan (AD 10) otomatis masuk.
+Sekarang, jika ping ke 8.8.8.8 lewat ISP utama gagal, rute utama dihapus dari routing table dan rute cadangan (AD 10) otomatis masuk.
 
 ### Verifikasi
 
@@ -294,7 +294,7 @@ R1# show ip sla configuration 1
 ### Pilihan target IP SLA
 
 > [!WARNING]
-> **Jangan ping alamat gateway ISP.** Kalau ISP punya masalah di hulu, gateway lokalnya tetap menjawab — pengujian lolos padahal internet mati.
+> **Jangan ping alamat gateway ISP.** Kalau ISP punya masalah di hulu, gateway lokalnya tetap menjawab, sehingga pengujian lolos padahal internet mati.
 
 ```
 ❌ icmp-echo 203.0.113.1              ← gateway ISP; terlalu dekat
@@ -318,7 +318,7 @@ R1(config-track)# object 1
 R1(config-track)# object 2
 R1(config)# ip route 0.0.0.0 0.0.0.0 203.0.113.1 track 10
 ```
-Rute utama hanya dihapus kalau **kedua** target tidak terjangkau.
+Rute utama hanya dihapus kalau kedua target tidak terjangkau.
 
 > [!WARNING]
 > Pastikan rute ke alamat SLA melewati ISP yang sedang diuji. Kalau tidak, tambahkan host route:
@@ -479,15 +479,15 @@ R1# debug ip routing              ← lihat perubahan tabel secara langsung
 
 ### Failover: tiga tingkat kecanggihan
 
-**Tingkat 1 — `check-gateway` (paling sederhana):**
+**Tingkat 1 (paling sederhana): `check-gateway`**
 ```
 /ip route add dst-address=0.0.0.0/0 gateway=203.0.113.9 distance=1 check-gateway=ping
 /ip route add dst-address=0.0.0.0/0 gateway=198.51.100.9 distance=10
 ```
 > [!WARNING]
-> Hanya menguji gateway langsung — tidak mendeteksi kegagalan di hulu ISP.
+> Cara ini hanya menguji gateway langsung, sehingga kegagalan di hulu ISP tidak terdeteksi.
 
-**Tingkat 2 — Recursive route (menguji end-to-end):**
+**Tingkat 2 (menguji end-to-end): recursive route**
 ```
 # Paksa probe melewati ISP-A
 /ip route add dst-address=8.8.8.8/32 gateway=203.0.113.9 scope=10
@@ -496,9 +496,9 @@ R1# debug ip routing              ← lihat perubahan tabel secara langsung
     distance=1 check-gateway=ping comment="ISP-A"
 /ip route add dst-address=0.0.0.0/0 gateway=198.51.100.9 distance=10 comment="ISP-B"
 ```
-Ini setara **IP SLA + floating static** di Cisco.
+Ini setara IP SLA + floating static di Cisco.
 
-**Tingkat 3 — Netwatch dengan skrip (paling fleksibel):**
+**Tingkat 3 (paling fleksibel): Netwatch dengan skrip**
 ```
 /tool netwatch add host=8.8.8.8 interval=10s timeout=1s \
   up-script={
@@ -516,7 +516,7 @@ Ini setara **IP SLA + floating static** di Cisco.
 ```
 
 > [!TIP]
-> **Netwatch memungkinkan aksi apa pun** — mengaktifkan/menonaktifkan rute, mengganti NAT, mengirim email/Telegram, menjalankan skrip. Ini gabungan **IP SLA + EEM** Cisco dalam satu fitur yang jauh lebih mudah.
+> **Netwatch bisa menjalankan aksi apa pun:** mengaktifkan/menonaktifkan rute, mengganti NAT, mengirim email/Telegram, menjalankan skrip. Ini gabungan IP SLA + EEM Cisco dalam satu fitur yang jauh lebih mudah dipakai.
 
 > [!WARNING]
 > **Jangan lupa NAT saat failover.** Kalau memakai `masquerade` dengan `out-interface`, ia otomatis mengikuti rute aktif. Kalau memakai `src-nat` dengan alamat tetap, Anda harus membuat aturan terpisah per ISP:
@@ -543,13 +543,13 @@ Ini setara **IP SLA + floating static** di Cisco.
 
 - Static route tepat untuk: stub network, default ke ISP, jaringan kecil, kontrol eksplisit, dan backup.
 - Sintaks: `ip route <net> <mask> {next-hop | interface} [AD] [name X] [track N]`.
-- **Recursive lookup**: kalau next hop tidak dapat diselesaikan, rute **tidak dipasang** — penyebab utama "static route tidak muncul".
-- Pada Ethernet, **sebutkan interface + next hop**; exit interface saja menyebabkan ARP berlebihan.
+- **Recursive lookup**: kalau next hop tidak dapat diselesaikan, rute tidak dipasang. Inilah penyebab utama "static route tidak muncul".
+- Pada Ethernet, sebutkan interface + next hop; exit interface saja menyebabkan ARP berlebihan.
 - Default route `0.0.0.0/0` = gateway of last resort; dipakai terakhir karena prefix terpendek.
-- **Floating static** (AD lebih tinggi) memberi failover otomatis — tetapi hanya bereaksi pada interface down.
-- **IP SLA + track** membuat failover bereaksi pada kegagalan end-to-end. Pilih target **di luar** ISP, dan gunakan `delay down/up` untuk mencegah flapping.
-- IPv6 butuh **`ipv6 unicast-routing`**; next hop link-local wajib disertai exit interface.
-- **Selalu periksa rute balik** — kesalahan static routing paling umum.
+- **Floating static** (AD lebih tinggi) memberi failover otomatis, tetapi hanya bereaksi pada interface down.
+- **IP SLA + track** membuat failover bereaksi pada kegagalan end-to-end. Pilih target di luar ISP, dan gunakan `delay down/up` untuk mencegah flapping.
+- IPv6 butuh `ipv6 unicast-routing`; next hop link-local wajib disertai exit interface.
+- Selalu periksa rute balik. Melupakannya adalah kesalahan static routing paling umum.
 
 ---
 
@@ -566,9 +566,9 @@ Ini setara **IP SLA + floating static** di Cisco.
 <details>
 <summary>Jawaban</summary>
 
-1. (a) **Recursive lookup gagal** — router tidak punya rute apa pun ke `172.16.99.1`, sehingga next hop tidak dapat diselesaikan; (b) **interface menuju next hop down** — kalau interface yang menghubungkan ke 172.16.99.1 dalam keadaan down, rute connected-nya hilang sehingga rekursi gagal; (c) ada **rute lain dengan AD lebih rendah** untuk prefix `10.5.0.0/16` (mis. dari OSPF) yang memenangkan seleksi; (d) rute diikat ke **track object yang down**; (e) salah ketik pada alamat atau mask; (f) rute berada di **VRF berbeda** dari yang Anda periksa.
+1. (a) **Recursive lookup gagal**: router tidak punya rute apa pun ke `172.16.99.1`, sehingga next hop tidak dapat diselesaikan; (b) **interface menuju next hop down**: kalau interface yang menghubungkan ke 172.16.99.1 dalam keadaan down, rute connected-nya hilang sehingga rekursi gagal; (c) ada **rute lain dengan AD lebih rendah** untuk prefix `10.5.0.0/16` (mis. dari OSPF) yang memenangkan seleksi; (d) rute diikat ke **track object yang down**; (e) salah ketik pada alamat atau mask; (f) rute berada di **VRF berbeda** dari yang Anda periksa.
 
-2. Router memperlakukan **seluruh subnet tujuan** sebagai "terhubung langsung" di interface itu. Pada link Ethernet yang multi-access, ini berarti router akan mengirim **ARP request untuk setiap alamat tujuan yang berbeda** — bukan satu ARP untuk next hop. Akibatnya: banjir ARP, ARP table membengkak, CPU meningkat, dan ketergantungan pada Proxy ARP di router tetangga (yang sering dimatikan, sehingga rute gagal total). Pada link point-to-point hal ini tidak terjadi karena hanya ada satu tetangga.
+2. Router memperlakukan **seluruh subnet tujuan** sebagai "terhubung langsung" di interface itu. Pada link Ethernet yang multi-access, ini berarti router akan mengirim ARP request untuk setiap alamat tujuan yang berbeda, bukan satu ARP untuk next hop. Akibatnya: banjir ARP, ARP table membengkak, CPU meningkat, dan ketergantungan pada Proxy ARP di router tetangga (yang sering dimatikan, sehingga rute gagal total). Pada link point-to-point hal ini tidak terjadi karena hanya ada satu tetangga.
 
 3. ```
    ! Pastikan probe melewati ISP yang diuji
@@ -603,14 +603,14 @@ Ini setara **IP SLA + floating static** di Cisco.
    ```
    Tambahan: konfigurasikan NAT agar mengikuti interface aktif, dan pertimbangkan `ip nat inside source route-map` agar translasi mengikuti jalur yang dipakai.
 
-4. `always` memerintahkan OSPF **selalu** mengiklankan default route, **bahkan ketika router itu sendiri tidak punya rute default yang valid** (mis. link ISP mati). Router-router lain akan terus mengirim seluruh trafik internet ke router ini, yang lalu **membuangnya** karena tidak punya jalan keluar — **black hole**. Tanpa `always`, iklan default otomatis berhenti ketika rute default lokal hilang, sehingga jaringan bisa beralih ke jalur lain. Gunakan `always` hanya jika Anda punya mekanisme lain yang menjamin konektivitas keluar.
+4. `always` memerintahkan OSPF selalu mengiklankan default route, bahkan ketika router itu sendiri tidak punya rute default yang valid (mis. link ISP mati). Router-router lain akan terus mengirim seluruh trafik internet ke router ini, yang lalu membuangnya karena tidak punya jalan keluar (black hole). Tanpa `always`, iklan default otomatis berhenti ketika rute default lokal hilang, sehingga jaringan bisa beralih ke jalur lain. Gunakan `always` hanya jika Anda punya mekanisme lain yang menjamin konektivitas keluar.
 
 5. **Rute balik di R2/router tujuan.** Paket ICMP echo request mungkin sampai ke 192.168.20.5, tetapi host itu (atau router di jalurnya) tidak tahu cara mengirim balasan ke alamat sumber ping Anda. Periksa `show ip route` di router tujuan untuk subnet sumber. Selanjutnya periksa: (b) ACL di sepanjang jalur yang memblokir ICMP; (c) NAT yang mengubah alamat; (d) firewall di host tujuan; (e) jalankan `traceroute` untuk melihat di hop mana paket berhenti; (f) coba `ping ... source <interface>` dengan sumber yang jelas punya rute balik.
 
-6. Karena gateway ISP berada **terlalu dekat** — ia adalah perangkat pertama di luar router Anda. Kalau kegagalan terjadi di **hulu** ISP (router core ISP mati, upstream transit putus, BGP ISP bermasalah), gateway lokal ISP **tetap hidup dan menjawab ping**. Pengujian lolos sementara internet sebenarnya tidak dapat dijangkau — failover tidak pernah terpicu. Target yang benar adalah alamat **di luar jaringan ISP** (mis. 8.8.8.8, 1.1.1.1) sehingga probe menguji konektivitas end-to-end yang sesungguhnya.
+6. Karena gateway ISP berada terlalu dekat: ia adalah perangkat pertama di luar router Anda. Kalau kegagalan terjadi di hulu ISP (router core ISP mati, upstream transit putus, BGP ISP bermasalah), gateway lokal ISP tetap hidup dan menjawab ping. Pengujian lolos padahal internet sebenarnya tidak dapat dijangkau, sehingga failover tidak pernah terpicu. Target yang benar adalah alamat di luar jaringan ISP (mis. 8.8.8.8, 1.1.1.1), agar probe menguji konektivitas end-to-end yang sesungguhnya.
 
-7. **`permanent`**: rute **tetap dipasang di routing table** walaupun interface keluar down atau next hop tidak terjangkau. Router akan terus mengirim paket ke jalur mati — paket hilang tanpa pemberitahuan, dan rute cadangan **tidak pernah** aktif. Berguna hanya dalam kasus khusus (mis. mencegah flapping rute pada link yang naik-turun singkat, dengan pemahaman penuh atas risikonya).
-   **`track N`**: rute dipasang **hanya jika** track object dalam keadaan up. Ketika pengujian aktif (IP SLA) gagal, rute **dihapus** dari tabel, sehingga rute cadangan dengan AD lebih tinggi otomatis masuk. Ini perilaku yang diinginkan untuk failover.
+7. **`permanent`**: rute tetap dipasang di routing table walaupun interface keluar down atau next hop tidak terjangkau. Router akan terus mengirim paket ke jalur mati. Paket hilang tanpa pemberitahuan, dan rute cadangan tidak pernah aktif. Berguna hanya dalam kasus khusus (mis. mencegah flapping rute pada link yang naik-turun singkat, dengan pemahaman penuh atas risikonya).
+   **`track N`**: rute dipasang hanya jika track object dalam keadaan up. Ketika pengujian aktif (IP SLA) gagal, rute dihapus dari tabel, sehingga rute cadangan dengan AD lebih tinggi otomatis masuk. Ini perilaku yang diinginkan untuk failover.
 
 </details>
 
@@ -621,8 +621,8 @@ Ini setara **IP SLA + floating static** di Cisco.
 - Cisco CCNA 200-301 v1.1, topik 3.3 (Configure and verify IPv4 and IPv6 static routing: default route, network route, host route, floating static)
 - Cisco, *IP SLAs Configuration Guide*
 - Cisco, *Configuring Enhanced Object Tracking*
-- RFC 4632 — CIDR (longest prefix match)
+- RFC 4632: CIDR (longest prefix match)
 
 ---
 
-**Berikutnya:** `07-routing-lanjutan/02-konsep-routing-dinamis.md` — dasar sebelum masuk ke OSPF, EIGRP, dan BGP.
+**Berikutnya:** `07-routing-lanjutan/02-konsep-routing-dinamis.md`. Dasar sebelum masuk ke OSPF, EIGRP, dan BGP.

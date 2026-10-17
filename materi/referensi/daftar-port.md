@@ -1,6 +1,6 @@
 # Daftar Port & Protokol Penting
 
-> Port yang wajib dihafal untuk CCNA/Network+ dan operasi sehari-hari. Rentang: well-known 0-1023, registered 1024-49151, dynamic/ephemeral 49152-65535.
+> Port yang wajib dihafal untuk CCNA/Network+ dan operasi sehari-hari. Rentang: well-known 0-1023, registered 1024-49151, dynamic/ephemeral 49152-65535. Tanda ★ menandai port dan protokol yang paling sering Anda temui di pekerjaan, jadi hafalkan yang ini lebih dulu.
 
 ---
 
@@ -10,7 +10,7 @@
 |---|---|---|---|
 | **20/21** | TCP | FTP (data/kontrol) | 21 kontrol, 20 data (aktif); plaintext |
 | **22** | TCP | SSH / SCP / SFTP | remote aman ★ |
-| **23** | TCP | Telnet | ⚠️ plaintext — hindari |
+| **23** | TCP | Telnet | plaintext, hindari |
 | **25** | TCP | SMTP | kirim email |
 | **53** | TCP/UDP | DNS | UDP query, TCP zone transfer/besar ★ |
 | **67/68** | UDP | DHCP (server/client) | 67 server, 68 client ★ |
@@ -32,12 +32,12 @@
 
 | Port | Layanan | Enkripsi |
 |---|---|---|
-| 25 | SMTP (relay antar-server) | — / STARTTLS |
+| 25 | SMTP (relay antar-server) | tidak ada / STARTTLS |
 | 587 | SMTP submission (klien kirim) | STARTTLS ★ |
 | 465 | SMTPS | TLS langsung |
-| 110 | POP3 | — |
+| 110 | POP3 | tidak ada |
 | 995 | POP3S | TLS |
-| 143 | IMAP | — |
+| 143 | IMAP | tidak ada |
 | 993 | IMAPS | TLS ★ |
 
 ## Autentikasi & Keamanan
@@ -49,7 +49,7 @@
 | 500 | UDP | IKE (IPsec fase 1) |
 | 4500 | UDP | IPsec NAT-T |
 | 1701 | UDP | L2TP |
-| 1723 | TCP | PPTP (⚠️ usang/tak aman) |
+| 1723 | TCP | PPTP (usang/tak aman) |
 | 51820 | UDP | WireGuard (default) |
 
 ## Database & Aplikasi (umum)
@@ -100,10 +100,10 @@ HTTP/3    → UDP 443 (QUIC) ★ berbasis UDP!
 | VRRP | 112 | redundansi gateway |
 
 > [!WARNING]
-> **ESP (50), AH (51), GRE (47), OSPF (89) bukan TCP/UDP** — mereka protokol IP tersendiri. Firewall harus mengizinkan **nomor protokol IP**, bukan port, untuk IPsec/GRE/OSPF. Ini gotcha umum: "kenapa IPsec/GRE diblokir?" → firewall hanya mengizinkan TCP/UDP.
+> **ESP (50), AH (51), GRE (47), OSPF (89) bukan TCP/UDP**, melainkan protokol IP tersendiri. Untuk IPsec/GRE/OSPF, firewall harus mengizinkan nomor protokol IP, bukan port. Ini gotcha umum: "kenapa IPsec/GRE diblokir?" → firewall hanya mengizinkan TCP/UDP.
 
 > [!TIP]
-> **ICMP tidak punya port** — ia protokol L3 sendiri. Karena itu "buka port untuk ping" salah; yang benar mengizinkan protokol ICMP (tipe echo-request/reply).
+> **ICMP tidak punya port** karena ia protokol L3 sendiri. Jadi "buka port untuk ping" itu keliru; yang benar adalah mengizinkan protokol ICMP (tipe echo-request/reply).
 
 ---
 
@@ -126,7 +126,7 @@ Aman vs tidak (pola +TLS):
 ```
 
 > [!WARNING]
-> **UDP untuk yang cepat/toleran-loss:** DNS(53), DHCP(67/68), NTP(123), SNMP(161), Syslog(514), TFTP(69), **HTTP/3/QUIC(443)**. **TCP untuk yang andal:** HTTP(S), SSH, email, BGP.
+> **UDP untuk yang cepat/toleran-loss:** DNS(53), DHCP(67/68), NTP(123), SNMP(161), Syslog(514), TFTP(69), HTTP/3/QUIC(443). **TCP untuk yang andal:** HTTP(S), SSH, email, BGP.
 
 ---
 

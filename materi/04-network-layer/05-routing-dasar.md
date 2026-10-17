@@ -1,6 +1,6 @@
 # 04.5 Routing: Konsep Dasar
 
-> **Prasyarat:** `04-network-layer/01`–`04`
+> **Prasyarat:** `04-network-layer/01`-`04`
 > **Tujuan:** Anda bisa membaca routing table baris demi baris, memprediksi keputusan forwarding router, dan memahami pemisahan control plane/data plane.
 
 ---
@@ -124,7 +124,7 @@ Paket ke 8.8.8.8:
 ```
 
 > [!WARNING]
-> **Longest prefix match diperiksa SEBELUM administrative distance dan metric.** Rute /25 dari RIP (AD 120) akan mengalahkan rute /24 dari OSPF (AD 110) untuk tujuan yang cocok keduanya — karena /25 lebih spesifik.
+> **Longest prefix match diperiksa sebelum administrative distance dan metric.** Rute /25 dari RIP (AD 120) akan mengalahkan rute /24 dari OSPF (AD 110) untuk tujuan yang cocok dengan keduanya, karena /25 lebih spesifik.
 
 **Urutan keputusan router:**
 ```
@@ -143,8 +143,8 @@ Dipakai ketika **beberapa protokol** mengiklankan **prefix yang sama**.
 
 | Sumber | AD | Alasan |
 |---|---|---|
-| Connected | **0** | Router melihatnya sendiri — pasti benar |
-| Static | **1** | Administrator menetapkannya — dianggap disengaja |
+| Connected | **0** | Router melihatnya sendiri, jadi pasti benar |
+| Static | **1** | Administrator menetapkannya, jadi dianggap disengaja |
 | EIGRP summary | 5 | |
 | eBGP | **20** | Dari AS lain; lebih dipercaya daripada IGP untuk rute eksternal |
 | **EIGRP internal** | **90** | Cepat konvergen, metrik kaya |
@@ -170,11 +170,11 @@ Router menerima rute 192.168.10.0/24 dari:
 ```
 
 > [!WARNING]
-> **Metric TIDAK dibandingkan antar-protokol.** Metric OSPF (cost) dan metric EIGRP (composite) memakai skala yang sama sekali berbeda — membandingkannya tidak bermakna. Karena itu AD dipakai sebagai pemisah tingkat pertama.
+> **Metric tidak dibandingkan antar-protokol.** Metric OSPF (cost) dan metric EIGRP (composite) memakai skala yang sama sekali berbeda, sehingga membandingkannya tidak bermakna. Karena itu AD dipakai sebagai pemisah tingkat pertama.
 
 ### Mengubah AD
 
-**Floating static route** — static route dengan AD lebih tinggi, sehingga hanya dipakai jika rute utama hilang:
+**Floating static route** adalah static route dengan AD lebih tinggi, sehingga hanya dipakai jika rute utama hilang:
 ```
 R1(config)# ip route 192.168.10.0 255.255.255.0 10.1.1.2         ← AD 1, utama
 R1(config)# ip route 192.168.10.0 255.255.255.0 10.1.1.9 130     ← AD 130, cadangan
@@ -195,7 +195,7 @@ Ukuran "biaya" jalur **dalam satu protokol**.
 | **OSPF** | Cost = ref_bw / bandwidth | 1-65535 |
 | **EIGRP** | Composite: bandwidth + delay (+ reliability, load, MTU jika K diubah) | Besar (mis. 30720) |
 | **IS-IS** | Cost | 1-16777215 (wide metric) |
-| **BGP** | Path attributes (bukan metric tunggal) | — |
+| **BGP** | Path attributes (bukan metric tunggal) | - |
 
 ### Contoh perbedaan filosofi
 
@@ -223,7 +223,7 @@ R1(config-if)# no shutdown
 → L 10.1.1.1/32 is directly connected, GigabitEthernet0/0
 ```
 > [!WARNING]
-> Kalau interface `down`, rute connected **hilang** dari tabel.
+> Kalau interface `down`, rute connected hilang dari tabel.
 
 ### Static Route
 ```
@@ -244,7 +244,7 @@ R1(config)# ip route 192.168.10.0 255.255.255.0 10.1.1.9 130
 ```
 R1(config)# ip route 0.0.0.0 0.0.0.0 203.0.113.1
 ```
-`0.0.0.0/0` cocok dengan **semua** alamat, tetapi karena prefix-nya paling pendek, ia hanya dipakai jika tidak ada rute lain yang cocok. Disebut juga **gateway of last resort**.
+`0.0.0.0/0` cocok dengan semua alamat, tetapi karena prefix-nya paling pendek, ia hanya dipakai jika tidak ada rute lain yang cocok. Disebut juga **gateway of last resort**.
 
 ### Host Route
 ```
@@ -261,7 +261,7 @@ R1(config)# ip route 192.168.0.0 255.255.252.0 10.1.1.2
 ```
 R1(config)# ip route 192.168.99.0 255.255.255.0 null0
 ```
-Paket yang cocok akan **dibuang secara sadar**. Dipakai untuk:
+Paket yang cocok akan dibuang secara sadar. Dipakai untuk:
 - Mencegah loop pada summary route
 - **RTBH** (*Remotely Triggered Black Hole*) untuk mitigasi DDoS
 - Memblokir tujuan tertentu tanpa ACL
@@ -270,7 +270,7 @@ Paket yang cocok akan **dibuang secara sadar**. Dipakai untuk:
 
 ## 7. Static Route dengan Next Hop vs Exit Interface
 
-Ini punya konsekuensi praktis yang penting.
+Pilihannya punya konsekuensi praktis.
 
 ### Next hop saja
 ```
@@ -284,14 +284,14 @@ Router harus melakukan **recursive lookup**:
 ```
 
 > [!WARNING]
-> Kalau rute ke `10.1.1.2` hilang, rute ini menjadi **tidak dapat dipakai** dan dihapus dari tabel.
+> Kalau rute ke `10.1.1.2` hilang, rute ini menjadi tidak dapat dipakai dan dihapus dari tabel.
 
 ### Exit interface saja
 ```
 R1(config)# ip route 192.168.10.0 255.255.255.0 gi0/1
 ```
-- Pada link **point-to-point** (serial, PPP): baik — hanya ada satu tetangga.
-- Pada link **multi-access** (Ethernet): ⚠️ **bermasalah**. Router menganggap semua tujuan di jaringan itu "directly connected" dan akan ber-ARP untuk **setiap alamat tujuan** — membanjiri jaringan dengan ARP request dan membengkakkan ARP table.
+- Pada link **point-to-point** (serial, PPP): baik, karena hanya ada satu tetangga.
+- Pada link **multi-access** (Ethernet): bermasalah. Router menganggap semua tujuan di jaringan itu "directly connected" dan akan ber-ARP untuk setiap alamat tujuan, sehingga jaringan banjir ARP request dan ARP table membengkak.
 
 ### Keduanya (direkomendasikan untuk Ethernet)
 ```
@@ -303,7 +303,7 @@ Tidak perlu recursive lookup, dan next hop jelas → satu ARP untuk `10.1.1.2` s
 
 ## 8. Control Plane, Data Plane, Management Plane
 
-Pemisahan konseptual yang penting untuk memahami kinerja dan keamanan perangkat.
+Pemisahan konseptual ini membantu memahami kinerja dan keamanan perangkat.
 
 ```
 ┌────────────────────────────────────────────────────────────┐
@@ -349,7 +349,7 @@ R1# show ip cef exact-route 10.1.1.10 10.2.2.20   ← jalur nyata untuk aliran t
 | **CEF** (*Cisco Express Forwarding*) | FIB dibangun di awal; semua paket diteruskan hardware | **Sangat cepat** ← default |
 
 > [!WARNING]
-> **"Punting to CPU"** — beberapa paket harus diproses CPU walaupun CEF aktif:
+> **"Punting to CPU"**: beberapa paket harus diproses CPU walaupun CEF aktif:
 - Paket dengan IP options
 - Paket yang butuh fragmentasi
 - Paket untuk router itu sendiri (SSH, routing protocol)
@@ -371,7 +371,7 @@ R1# show platform hardware ...   (bergantung platform)
 
 ## 9. Di Dalam Router: Lookup, Fabric, dan Antrean
 
-Bagian 8 memisahkan control plane dan data plane. Bagian ini membuka kotak data plane: apa yang terjadi pada sebuah paket dalam beberapa nanodetik antara masuk dan keluar router, dan kenapa batas-batas fisik di dalamnya (memori, TCAM, fabric, antrean) menentukan harga router, jumlah rute yang muat, dan perilaku QoS.
+Bagian 8 memisahkan control plane dan data plane. Bagian ini membuka kotak data plane: apa yang terjadi pada sebuah paket dalam beberapa nanodetik antara masuk dan keluar router. Batas-batas fisik di dalamnya (memori, TCAM, fabric, antrean) menentukan harga router, jumlah rute yang muat, dan perilaku QoS.
 
 ```
               CONTROL PLANE (CPU, DRAM besar, lambat tapi pintar)
@@ -450,7 +450,7 @@ Alamat 0110: root(*) → 0(0*) → 01 → cabang 1 tidak ada            → port
 Alamat 1000: root(*) → 1 → cabang 0 tidak ada                      → port 1
 ```
 
-Masalahnya: untuk IPv4 kedalaman trie bisa 32, berarti sampai 32 akses memori berurutan per paket. Dengan anggaran 6,72 ns per paket, mustahil.
+Masalahnya: untuk IPv4 kedalaman trie bisa 32, berarti sampai 32 akses memori berurutan per paket. Dengan anggaran 6,72 ns per paket, itu mustahil.
 
 **Trie multibit** memeriksa beberapa bit sekaligus (*stride*). Prefix yang panjangnya tidak pas dengan batas stride "dikembangkan" (*controlled prefix expansion*). Contoh tabel di atas dengan stride 2 bit:
 
@@ -495,7 +495,7 @@ Kenapa tidak semua memori dibuat TCAM?
 - **Daya dan panas.** Setiap lookup menyalakan pembanding di seluruh entri secara bersamaan. Konsumsi daya naik sebanding dengan jumlah entri dikali laju lookup. TCAM besar adalah salah satu penyumbang utama panas dan harga line card.
 - **Kapasitas terbatas dan dibagi.** TCAM yang sama sering dipakai bersama untuk rute IPv4, IPv6, ACL, QoS, dan MPLS. Entri IPv6 yang lebih lebar biasanya memakan dua atau empat kali ruang entri IPv4, bergantung platform.
 
-**Tabel internet penuh tidak lagi kecil.** Menurut CIDR Report per 7 Oktober 2026, tabel BGP global berisi sekitar **1,08 juta prefix IPv4** dan **257 ribu prefix IPv6**, dan terus bertambah. Sejarah sudah memberi peringatan: pada **12 Agustus 2014** ("512K day") tabel IPv4 melewati 512 ribu entri. Banyak router Cisco Catalyst 6500/7600 yang alokasi TCAM bawaannya 512 ribu entri IPv4 kehabisan ruang. Rute yang tidak muat diproses di CPU, dan sejumlah jaringan di berbagai negara mengalami gangguan. Perbaikannya adalah mengubah pembagian TCAM (`mls cef maximum-routes ip 1000` pada platform itu) lalu reboot, yang tentu harus dijadwalkan.
+**Tabel internet penuh tidak lagi kecil.** Menurut CIDR Report per 7 Oktober 2026, tabel BGP global berisi sekitar **1,08 juta prefix IPv4** dan **257 ribu prefix IPv6**, dan terus bertambah. Masalah ini pernah terjadi: pada **12 Agustus 2014** ("512K day") tabel IPv4 melewati 512 ribu entri. Banyak router Cisco Catalyst 6500/7600 yang alokasi TCAM bawaannya 512 ribu entri IPv4 kehabisan ruang. Rute yang tidak muat diproses di CPU, dan sejumlah jaringan di berbagai negara mengalami gangguan. Perbaikannya adalah mengubah pembagian TCAM (`mls cef maximum-routes ip 1000` pada platform itu) lalu reboot, yang tentu harus dijadwalkan.
 
 Pelajaran desain untuk ISP dan enterprise di Indonesia:
 
@@ -657,7 +657,7 @@ Deteksi: `traceroute` menunjukkan alamat yang sama berulang.
 
 ### Black Hole
 
-Paket masuk tetapi tidak pernah keluar — hilang tanpa pesan error.
+Paket masuk tetapi tidak pernah keluar, hilang tanpa pesan error.
 Penyebab: null route yang salah, over-summarization, ACL yang diam-diam membuang, MTU black hole.
 
 ### Asymmetric Routing
@@ -668,10 +668,10 @@ A → B lewat Router 1
 B → A lewat Router 2
 ```
 **Normal di internet**, tetapi bermasalah dengan:
-- **Firewall stateful** — melihat trafik balasan tanpa pernah melihat trafik pergi → dibuang
-- **NAT** — mapping tidak ditemukan
-- **IPS/DPI** — hanya melihat separuh percakapan
-- **uRPF strict mode** — paket dari interface yang "salah" dibuang
+- **Firewall stateful**: melihat trafik balasan tanpa pernah melihat trafik pergi → dibuang
+- **NAT**: mapping tidak ditemukan
+- **IPS/DPI**: hanya melihat separuh percakapan
+- **uRPF strict mode**: paket dari interface yang "salah" dibuang
 
 ### Suboptimal Routing
 
@@ -701,8 +701,8 @@ O    10.2.2.0/24 [110/20] via 10.1.1.2, 00:05:12, GigabitEthernet0/0
 Dua jalur dengan metric sama → trafik dibagi.
 
 **Cara pembagian:**
-- **Per-destination** (default CEF) — hash dari src/dst IP menentukan jalur. Aliran yang sama selalu di jalur yang sama → tidak ada out-of-order. ✅
-- **Per-packet** — bergantian setiap paket. Bandwidth terbagi merata, tetapi paket bisa tiba tidak berurutan → merusak TCP. ⚠️ Hindari.
+- **Per-destination** (default CEF): hash dari src/dst IP menentukan jalur. Aliran yang sama selalu di jalur yang sama → tidak ada out-of-order. Disarankan.
+- **Per-packet**: bergantian setiap paket. Bandwidth terbagi merata, tetapi paket bisa tiba tidak berurutan → merusak TCP. Hindari.
 
 ```
 R1(config-if)# ip load-sharing per-destination    ← default, disarankan
@@ -791,7 +791,7 @@ PS> New-NetRoute -DestinationPrefix 10.0.0.0/8 -NextHop 192.168.1.254 -Interface
 > **3. Memakai exit interface saja pada link Ethernet.** Menyebabkan ARP berlebihan.
 
 > [!WARNING]
-> **4. Lupa rute balik.** Paket sampai, tetapi balasan tidak bisa kembali. **Selalu periksa routing di KEDUA arah.**
+> **4. Lupa rute balik.** Paket sampai, tetapi balasan tidak bisa kembali. Selalu periksa routing di kedua arah.
 
 > [!WARNING]
 > **5. Lupa mengaktifkan `ip routing` pada multilayer switch.**
@@ -848,7 +848,7 @@ Flags: X - disabled, A - active, D - dynamic, C - connect, S - static,
 ```
 
 > [!WARNING]
-> **`check-gateway=ping` hanya menguji GATEWAY, bukan konektivitas internet.** Kalau gateway ISP hidup tetapi upstream-nya mati, rute tetap aktif. Untuk pengujian end-to-end, gunakan **recursive route**:
+> **`check-gateway=ping` hanya menguji gateway, bukan konektivitas internet.** Kalau gateway ISP hidup tetapi upstream-nya mati, rute tetap aktif. Untuk pengujian end-to-end, gunakan **recursive route**:
 
 ```
 # Probe ke 8.8.8.8 dipaksa lewat ISP-A
@@ -902,7 +902,7 @@ Flags: X - disabled, A - active, D - dynamic, C - connect, S - static,
 ## 15. Ringkasan
 
 - Router: dekapsulasi L2 → cek TTL → **longest prefix match** → enkapsulasi L2 baru.
-- **Longest prefix match adalah aturan pertama** — lebih spesifik selalu menang, sebelum AD dan metric.
+- **Longest prefix match adalah aturan pertama**: yang lebih spesifik selalu menang, sebelum AD dan metric.
 - **AD** = tingkat kepercayaan sumber rute (Connected 0, Static 1, eBGP 20, EIGRP 90, OSPF 110, RIP 120, iBGP 200). Dipakai hanya untuk prefix identik dari sumber berbeda.
 - **Metric** = biaya dalam satu protokol; tidak bisa dibandingkan antar-protokol.
 - Jenis rute: connected (C), local (L, /32), static (S), default (0.0.0.0/0), host (/32), summary, null.
@@ -934,22 +934,22 @@ Flags: X - disabled, A - active, D - dynamic, C - connect, S - static,
 <details>
 <summary>Jawaban</summary>
 
-1. Cocok dengan `/8` (10.x.x.x ✓), `/16` (10.1.x.x ✓), dan `/0`. Tidak cocok dengan `/24` (10.1.1.x — tujuan 10.1.5.7 bukan 10.1.1.x). Prefix terpanjang yang cocok adalah **/16 → dikirim ke B**.
+1. Cocok dengan `/8` (10.x.x.x ✓), `/16` (10.1.x.x ✓), dan `/0`. Tidak cocok dengan `/24` (10.1.1.x; tujuan 10.1.5.7 bukan 10.1.1.x). Prefix terpanjang yang cocok adalah **/16 → dikirim ke B**.
 
 2. **OSPF menang.** AD OSPF = 110, AD RIP = 120; AD yang lebih kecil lebih dipercaya. Metric tidak dibandingkan karena berasal dari protokol berbeda dengan skala yang tidak sebanding. Rute RIP tetap disimpan di database RIP dan akan menggantikan jika rute OSPF hilang.
 
 3. **C** (connected) adalah rute untuk seluruh **subnet** yang terhubung langsung ke interface (mis. `10.1.1.0/24`). **L** (local) adalah rute **/32** untuk alamat IP interface router itu sendiri (mis. `10.1.1.1/32`). Rute L memungkinkan router mengenali secara efisien paket yang ditujukan kepada dirinya sendiri, memisahkannya dari paket yang harus diteruskan.
 
-4. (a) **Recursive lookup gagal** — router tidak punya rute ke alamat next hop yang disebut; (b) **interface keluar down** — jika static memakai exit interface dan interface itu down, rute tidak dipasang; (c) ada rute lain untuk prefix yang sama dengan **AD lebih rendah** yang menang; (d) salah ketik pada alamat/mask; (e) VRF yang berbeda dari yang dilihat.
+4. (a) **Recursive lookup gagal**: router tidak punya rute ke alamat next hop yang disebut; (b) **interface keluar down**: jika static memakai exit interface dan interface itu down, rute tidak dipasang; (c) ada rute lain untuk prefix yang sama dengan **AD lebih rendah** yang menang; (d) salah ketik pada alamat/mask; (e) VRF yang berbeda dari yang dilihat.
 
-5. **Floating static route** adalah static route yang diberi **administrative distance lebih tinggi** daripada rute utama, sehingga tidak dipasang ke routing table selama rute utama masih ada. Ketika rute utama hilang (interface down, protokol routing kehilangan tetangga, atau IP SLA tracking gagal), floating static otomatis masuk dan trafik beralih ke jalur cadangan. Dipakai untuk backup link — misalnya jalur utama MPLS lewat OSPF (AD 110) dan cadangan lewat VPN internet sebagai static dengan AD 130.
+5. **Floating static route** adalah static route yang diberi **administrative distance lebih tinggi** daripada rute utama, sehingga tidak dipasang ke routing table selama rute utama masih ada. Ketika rute utama hilang (interface down, protokol routing kehilangan tetangga, atau IP SLA tracking gagal), floating static otomatis masuk dan trafik beralih ke jalur cadangan. Floating static dipakai untuk backup link, misalnya jalur utama MPLS lewat OSPF (AD 110) dan cadangan lewat VPN internet sebagai static dengan AD 130.
 
 6. Pada link **multi-access** seperti Ethernet, ada banyak tetangga yang mungkin di segmen itu. Dengan hanya menyebut exit interface, router menganggap **semua alamat tujuan** dalam rute tersebut "terhubung langsung" di interface itu, sehingga ia akan mengirim **ARP request untuk setiap alamat tujuan** yang berbeda. Akibatnya: ARP request membanjiri jaringan, ARP table membengkak, dan CPU meningkat. Pada link point-to-point hal ini tidak terjadi karena hanya ada satu tetangga. Solusi: sebutkan **interface + next hop**.
 
 7. **Asymmetric routing.** Trafik pergi melewati satu jalur (tidak melalui firewall, atau melalui firewall lain), sedangkan trafik balasan melewati firewall ini. Firewall stateful tidak memiliki entri sesi untuk trafik balasan tersebut (karena tidak pernah melihat paket SYN pergi), sehingga menganggapnya trafik tidak sah dan membuangnya. Perbaikan: pastikan trafik simetris (perbaiki routing atau desain), atau gunakan firewall cluster dengan sinkronisasi state, atau kecualikan jalur tersebut dari inspeksi stateful.
 
 8. **RIB** (`show ip route`) berisi **semua** rute yang diketahui router dari semua sumber, lengkap dengan metadata (AD, metric, sumber, umur). Ia dikelola oleh **control plane (CPU)** dan dioptimalkan untuk kelengkapan dan pengambilan keputusan.
-   **FIB** (`show ip cef`) berisi hanya **rute terbaik yang sudah diputuskan**, dalam format yang dioptimalkan untuk lookup cepat oleh **hardware (ASIC)** — termasuk MAC next hop yang sudah di-resolve dan header L2 yang siap dipasang.
+   **FIB** (`show ip cef`) berisi hanya **rute terbaik yang sudah diputuskan**, dalam format yang dioptimalkan untuk lookup cepat oleh **hardware (ASIC)**, termasuk MAC next hop yang sudah di-resolve dan header L2 yang siap dipasang.
    Pemisahan ini penting karena: control plane bisa lambat dan kompleks (menjalankan SPF, memproses ribuan update BGP) tanpa memengaruhi kecepatan forwarding; sementara data plane bisa meneruskan jutaan paket per detik di hardware tanpa melibatkan CPU sama sekali.
 
 9. (a) `10.20.17.5` cocok dengan /0, /8, /16, /20 (10.20.16.0-10.20.31.255), dan /24 (10.20.17.x). Terpanjang **/24 → D**. `10.20.18.9` cocok /0, /8, /16, /20, tetapi bukan /24. Terpanjang **/20 → C**. `10.21.0.1` cocok /0 dan /8 saja (bukan 10.20.x.x). Terpanjang **/8 → A**.
@@ -966,8 +966,8 @@ Flags: X - disabled, A - active, D - dynamic, C - connect, S - static,
 
 ## 17. Sumber
 
-- RFC 1812 — Requirements for IP Version 4 Routers
-- RFC 4632 — CIDR (longest prefix match)
+- RFC 1812: Requirements for IP Version 4 Routers
+- RFC 4632: CIDR (longest prefix match)
 - Cisco CCNA 200-301 v1.1, topik 3.1 (komponen routing table) dan 3.2 (keputusan forwarding: longest prefix match, AD, metric)
 - Cisco, *Cisco Express Forwarding Overview*
 - Cisco, *Route Selection in Cisco Routers* (Document ID 8651)

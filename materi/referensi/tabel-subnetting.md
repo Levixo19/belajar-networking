@@ -1,6 +1,6 @@
 # Tabel Subnetting & Referensi Cepat
 
-> Rujukan untuk subnetting cepat — kritis untuk CCNA (soal berwaktu). Latih sampai otomatis. Lihat `04-network-layer/02-03`.
+> Rujukan untuk subnetting cepat, karena soal CCNA berwaktu. Latih sampai otomatis. Lihat `04-network-layer/02-03`.
 
 ---
 
@@ -91,7 +91,7 @@ LAN-C (25 host)  → butuh /27 (30 host)  → 192.168.1.192/27 (.192-.223)
 P2P (2 host)     → butuh /30 (2 host)   → 192.168.1.224/30 (.224-.227)
 ```
 > [!WARNING]
-> **Selalu alokasikan dari kebutuhan TERBESAR ke terkecil** untuk menghindari fragmentasi. Pilih prefix terkecil yang **cukup** menampung host (bulatkan ke atas ke kekuatan 2).
+> **Selalu alokasikan dari kebutuhan TERBESAR ke terkecil** untuk menghindari fragmentasi. Pilih prefix terkecil yang cukup menampung host (bulatkan ke atas ke kekuatan 2).
 
 ---
 

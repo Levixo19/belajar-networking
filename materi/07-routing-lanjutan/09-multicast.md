@@ -50,15 +50,15 @@ Multicast : server mengirim 1 × 5 = 5 Mbps ✅
 
 ## 2. Alamat Multicast
 
-Rentang: **224.0.0.0-239.255.255.255** (`224.0.0.0/4`, kelas D).
+Rentang: 224.0.0.0-239.255.255.255 (`224.0.0.0/4`, kelas D).
 
 | Blok | Nama | Kegunaan |
 |---|---|---|
-| **224.0.0.0/24** | **Link-local** | Protokol jaringan; **TTL 1, tidak dirutekan** |
+| 224.0.0.0/24 | Link-local | Protokol jaringan; TTL 1, tidak dirutekan |
 | 224.0.1.0-238.255.255.255 | Globally scoped | Aplikasi internet |
-| 232.0.0.0/8 | **SSM** (Source-Specific Multicast) | Satu sumber spesifik |
+| 232.0.0.0/8 | SSM (Source-Specific Multicast) | Satu sumber spesifik |
 | 233.0.0.0/8 | GLOP | Berdasarkan nomor AS |
-| **239.0.0.0/8** | **Administratively scoped** | **Privat dalam organisasi** (setara RFC 1918) |
+| 239.0.0.0/8 | Administratively scoped | Privat dalam organisasi (setara RFC 1918) |
 
 ### Alamat link-local yang wajib dikenal
 
@@ -78,7 +78,7 @@ Rentang: **224.0.0.0-239.255.255.255** (`224.0.0.0/4`, kelas D).
 ```
 
 > [!TIP]
-> **Gunakan `239.0.0.0/8` untuk aplikasi internal organisasi Anda** — ini setara RFC 1918 untuk multicast dan tidak akan bocor ke internet.
+> **Gunakan `239.0.0.0/8` untuk aplikasi internal organisasi Anda.** Blok ini setara RFC 1918 untuk multicast dan tidak akan bocor ke internet.
 
 ### Pemetaan ke MAC Multicast
 
@@ -95,14 +95,14 @@ Aturan: 23 BIT TERENDAH dari IP disalin ke MAC
 ```
 
 > [!WARNING]
-> **Ada overlap 32:1.** Karena hanya 23 dari 28 bit alamat multicast yang dipetakan, **32 alamat IP multicast berbeda memetakan ke MAC yang sama**:
+> **Ada overlap 32:1.** Karena hanya 23 dari 28 bit alamat multicast yang dipetakan, 32 alamat IP multicast berbeda memetakan ke MAC yang sama:
 ```
 224.1.1.1, 224.129.1.1, 225.1.1.1, 225.129.1.1, ...
    semuanya → 01:00:5E:01:01:01
 ```
 Konsekuensi: host bisa menerima trafik multicast yang tidak diinginkan di layer 2, dan harus memfilternya di layer 3 (memakai CPU). Pilih alamat grup dengan hati-hati untuk menghindari overlap.
 
-**IPv6:** MAC multicast = `33:33:` + **32 bit terendah** alamat IPv6 → jauh lebih sedikit overlap.
+**IPv6:** MAC multicast = `33:33:` + 32 bit terendah alamat IPv6 → jauh lebih sedikit overlap.
 
 ---
 
@@ -115,8 +115,8 @@ Konsekuensi: host bisa menerima trafik multicast yang tidak diinginkan di layer 
 | Versi | RFC | Fitur |
 |---|---|---|
 | **IGMPv1** | 1112 | Join saja; leave lewat timeout (lambat) |
-| **IGMPv2** | 2236 | **Leave Group message** (cepat), querier election, group-specific query |
-| **IGMPv3** | 3376 | **Source filtering** (INCLUDE/EXCLUDE) → mendukung **SSM** |
+| **IGMPv2** | 2236 | Leave Group message (cepat), querier election, group-specific query |
+| **IGMPv3** | 3376 | Source filtering (INCLUDE/EXCLUDE) → mendukung SSM |
 
 ### Cara kerja IGMPv2
 
@@ -137,17 +137,17 @@ Konsekuensi: host bisa menerima trafik multicast yang tidak diinginkan di layer 
    → kalau tidak ada jawaban, hentikan aliran ke segmen itu
 ```
 
-**Querier election:** kalau ada beberapa router di segmen, yang beralamat IP **terendah** menjadi querier.
+**Querier election:** kalau ada beberapa router di segmen, yang beralamat IP terendah menjadi querier.
 
 ### IGMPv3 dan SSM
 
-IGMPv3 memungkinkan host menyebut **sumber mana** yang diinginkan:
+IGMPv3 memungkinkan host menyebut sumber mana yang diinginkan:
 ```
 INCLUDE (S,G) → "saya mau grup G, TAPI hanya dari sumber S"
 EXCLUDE (S,G) → "saya mau grup G, KECUALI dari sumber S"
 ```
 
-Ini memungkinkan **SSM** (*Source-Specific Multicast*) di `232.0.0.0/8` — model yang jauh lebih sederhana karena tidak butuh RP (lihat §5).
+Ini memungkinkan **SSM** (*Source-Specific Multicast*) di `232.0.0.0/8`, model yang jauh lebih sederhana karena tidak butuh RP (lihat §5).
 
 ---
 
@@ -155,7 +155,7 @@ Ini memungkinkan **SSM** (*Source-Specific Multicast*) di `232.0.0.0/8` — mode
 
 ### Masalah tanpa snooping
 
-Switch adalah perangkat layer 2 dan **tidak memahami IGMP**. Bagi switch, frame dengan MAC multicast bukan unicast yang dikenal, sehingga ia **membanjirinya ke semua port** dalam VLAN — persis seperti broadcast.
+Switch adalah perangkat layer 2 dan tidak memahami IGMP. Bagi switch, frame dengan MAC multicast bukan unicast yang dikenal, sehingga ia membanjirinya ke semua port dalam VLAN, persis seperti broadcast.
 
 ```
 Tanpa IGMP snooping:
@@ -168,7 +168,7 @@ Tanpa IGMP snooping:
 
 ### Solusi: IGMP Snooping
 
-Switch "menguping" pesan IGMP yang lewat dan membangun tabel: **port mana yang meminta grup mana**.
+Switch "menguping" pesan IGMP yang lewat dan membangun tabel: port mana yang meminta grup mana.
 
 ```
 SW1(config)# ip igmp snooping                          ← global (biasanya default ON)
@@ -185,7 +185,7 @@ SW1# show ip igmp snooping mrouter
 ```
 
 > [!WARNING]
-> **IGMP snooping membutuhkan QUERIER.** Tanpa ada yang mengirim query secara berkala, snooping table akan kedaluwarsa dan switch kembali membanjiri. Kalau tidak ada router multicast di VLAN, **aktifkan snooping querier di switch**.
+> **IGMP snooping membutuhkan QUERIER.** Tanpa ada yang mengirim query secara berkala, snooping table akan kedaluwarsa dan switch kembali membanjiri. Kalau tidak ada router multicast di VLAN, aktifkan snooping querier di switch.
 
 > [!TIP]
 > **Gejala klasik "multicast bekerja beberapa menit lalu berhenti"**: tidak ada querier. Tabel snooping kedaluwarsa, dan tanpa query berkala tidak ada yang memperbaruinya.
@@ -198,7 +198,7 @@ SW1# show ip igmp snooping mrouter
 
 ### RPF (Reverse Path Forwarding)
 
-Konsep kunci untuk mencegah loop multicast.
+RPF adalah mekanisme utama untuk mencegah loop multicast.
 
 ```
 Ketika paket multicast tiba, router bertanya:
@@ -221,11 +221,11 @@ RPF information for ? (192.168.1.100)
 ```
 
 > [!WARNING]
-> **RPF failure adalah penyebab masalah multicast nomor satu.** Sering terjadi pada **routing asimetris** — jalur unicast ke sumber berbeda dari jalur multicast yang sebenarnya.
+> **RPF failure adalah penyebab masalah multicast nomor satu.** Kegagalan ini sering terjadi pada routing asimetris, yaitu ketika jalur unicast ke sumber berbeda dari jalur multicast yang sebenarnya.
 
 ### Mode PIM
 
-**PIM Dense Mode (PIM-DM)** — "flood and prune"
+**PIM Dense Mode (PIM-DM)**: "flood and prune"
 ```
 1. Banjiri multicast ke SEMUA interface
 2. Router yang tidak punya penerima mengirim PRUNE
@@ -237,7 +237,7 @@ RPF information for ? (192.168.1.100)
 → Praktis TIDAK DIPAKAI lagi
 ```
 
-**PIM Sparse Mode (PIM-SM)** — "explicit join" (standar)
+**PIM Sparse Mode (PIM-SM)**: "explicit join" (standar)
 ```
 1. Tidak ada yang dikirim sampai ada yang MEMINTA
 2. Penerima mengirim JOIN ke arah RENDEZVOUS POINT (RP)
@@ -250,7 +250,7 @@ RPF information for ? (192.168.1.100)
 → STANDAR untuk hampir semua deployment
 ```
 
-**PIM-SSM** — Source-Specific
+**PIM-SSM**: Source-Specific
 ```
 Penerima menyebut (Sumber, Grup) secara eksplisit lewat IGMPv3
 → TIDAK BUTUH RP sama sekali
@@ -259,7 +259,7 @@ Penerima menyebut (Sumber, Grup) secara eksplisit lewat IGMPv3
 → Ideal untuk IPTV dan aplikasi satu-sumber
 ```
 
-**Bidirectional PIM (Bidir-PIM)** — untuk aplikasi many-to-many (mis. konferensi), semua trafik lewat shared tree.
+**Bidirectional PIM (Bidir-PIM)**: untuk aplikasi many-to-many (mis. konferensi), semua trafik lewat shared tree.
 
 ### Rendezvous Point (RP)
 
@@ -277,7 +277,7 @@ RP menghubungkan keduanya
 | **Static RP** | Dikonfigurasi manual di setiap router | Sederhana, tetapi harus konsisten di semua router |
 | **Auto-RP** | Cisco proprietary; RP mengumumkan dirinya | Memakai 224.0.1.39/40 |
 | **BSR** (Bootstrap Router) | Standar PIMv2 | Multi-vendor |
-| **Anycast RP** | Beberapa RP dengan IP sama + MSDP | **Redundansi terbaik** |
+| **Anycast RP** | Beberapa RP dengan IP sama + MSDP | Redundansi terbaik |
 
 ```
 # Static RP (paling umum di jaringan enterprise)
@@ -313,7 +313,7 @@ R1(config)# ip pim ssm default        ← mengaktifkan SSM untuk 232.0.0.0/8
 ```
 
 > [!WARNING]
-> **`ip pim sparse-mode` harus ada di SETIAP interface** yang membawa multicast — termasuk interface yang menghadap host. Interface tanpa PIM tidak akan meneruskan multicast.
+> **`ip pim sparse-mode` harus ada di SETIAP interface** yang membawa multicast, termasuk interface yang menghadap host. Interface tanpa PIM tidak akan meneruskan multicast.
 
 ---
 
@@ -338,10 +338,10 @@ Flags: D - Dense, S - Sparse, B - Bidir Group, s - SSM Group,
 ```
 
 **Membaca entri:**
-- **`(*, G)`** — shared tree; "sumber mana pun" untuk grup G
-- **`(S, G)`** — source tree; sumber spesifik ke grup G
-- **Incoming interface** — arah RPF (menuju sumber/RP)
-- **Outgoing interface list (OIL)** — ke mana diteruskan. **OIL kosong = tidak ada penerima**
+- **`(*, G)`**: shared tree; "sumber mana pun" untuk grup G
+- **`(S, G)`**: source tree; sumber spesifik ke grup G
+- **Incoming interface**: arah RPF (menuju sumber/RP)
+- **Outgoing interface list (OIL)**: ke mana diteruskan. OIL kosong = tidak ada penerima
 
 ### Perintah lain
 
@@ -391,8 +391,8 @@ R1# debug ip igmp
 
 | Gejala | Penyebab |
 |---|---|
-| Multicast membanjiri seluruh VLAN | **IGMP snooping mati** atau **tidak ada querier** |
-| Bekerja beberapa menit lalu berhenti | **Tidak ada querier** — tabel snooping kedaluwarsa |
+| Multicast membanjiri seluruh VLAN | IGMP snooping mati atau tidak ada querier |
+| Bekerja beberapa menit lalu berhenti | Tidak ada querier: tabel snooping kedaluwarsa |
 | Tidak melewati router | PIM tidak aktif di interface; TTL=1; `ip multicast-routing` belum diaktifkan |
 | RPF failure | Routing unicast asimetris; tidak ada rute ke sumber |
 | Bekerja di satu VLAN, tidak di VLAN lain | Interface VLAN itu tidak punya `ip pim sparse-mode` |
@@ -431,16 +431,16 @@ $ iperf -c 239.1.1.1 -u -T 5 -t 30 -i 1  # pengirim (T = TTL)
 
 ## 8. Ringkasan
 
-- Multicast mengirim **satu aliran** yang digandakan jaringan hanya di titik percabangan — jauh lebih efisien daripada unicast untuk banyak penerima.
-- Rentang **224.0.0.0/4**; **224.0.0.0/24 link-local (TTL 1, tidak dirutekan)**; **239.0.0.0/8 untuk internal organisasi**.
-- Pemetaan IP→MAC memakai **23 bit terendah** → **overlap 32:1** pada IPv4.
-- **IGMP** = host berlangganan. v2 punya Leave message; **v3 mendukung source filtering (SSM)**.
-- **IGMP snooping wajib di switch** — tanpa itu multicast dibanjiri seperti broadcast. **Butuh querier**, kalau tidak tabel kedaluwarsa.
-- **PIM** membangun distribution tree memakai routing unicast. **RPF check** mencegah loop.
-- **PIM-SM (sparse)** adalah standar; dense mode praktis usang; **SSM paling sederhana** (tanpa RP).
-- **RP** = titik pertemuan pada PIM-SM. Static RP paling umum; **Anycast RP** untuk redundansi.
-- `ip multicast-routing` global + **`ip pim sparse-mode` di SETIAP interface** di jalur.
-- `(*, G)` = shared tree; `(S, G)` = source tree; **OIL kosong = tidak ada penerima**.
+- Multicast mengirim satu aliran yang digandakan jaringan hanya di titik percabangan, sehingga jauh lebih efisien daripada unicast untuk banyak penerima.
+- Rentang 224.0.0.0/4; 224.0.0.0/24 link-local (TTL 1, tidak dirutekan); 239.0.0.0/8 untuk internal organisasi.
+- Pemetaan IP→MAC memakai 23 bit terendah → overlap 32:1 pada IPv4.
+- **IGMP** = host berlangganan. v2 punya Leave message; v3 mendukung source filtering (SSM).
+- **IGMP snooping wajib di switch.** Tanpa itu multicast dibanjiri seperti broadcast. Snooping butuh querier; kalau tidak, tabel kedaluwarsa.
+- **PIM** membangun distribution tree memakai routing unicast. RPF check mencegah loop.
+- **PIM-SM (sparse)** adalah standar; dense mode praktis usang; SSM paling sederhana (tanpa RP).
+- **RP** = titik pertemuan pada PIM-SM. Static RP paling umum; Anycast RP untuk redundansi.
+- `ip multicast-routing` global + `ip pim sparse-mode` di SETIAP interface di jalur.
+- `(*, G)` = shared tree; `(S, G)` = source tree; OIL kosong = tidak ada penerima.
 - **RPF failure dan tidak adanya querier** adalah dua penyebab masalah multicast paling umum.
 
 ---
@@ -458,25 +458,25 @@ $ iperf -c 239.1.1.1 -u -T 5 -t 30 -i 1  # pengirim (T = TTL)
 <details>
 <summary>Jawaban</summary>
 
-1. **Unicast:** server harus mengirim 250 salinan → 250 × 8 Mbps = **2.000 Mbps (2 Gbps)** dari server. **Multicast:** server mengirim **satu** aliran 8 Mbps; jaringan menggandakannya hanya di titik percabangan, sehingga setiap link membawa maksimal 8 Mbps per grup. **Penghematan di sisi server: 1.992 Mbps (99,6%).** Selain bandwidth, beban CPU server juga turun drastis karena hanya satu socket yang dikelola.
+1. **Unicast:** server harus mengirim 250 salinan → 250 × 8 Mbps = 2.000 Mbps (2 Gbps) dari server. **Multicast:** server mengirim satu aliran 8 Mbps; jaringan menggandakannya hanya di titik percabangan, sehingga setiap link membawa maksimal 8 Mbps per grup. **Penghematan di sisi server: 1.992 Mbps (99,6%).** Selain bandwidth, beban CPU server juga turun drastis karena hanya satu socket yang dikelola.
 
-2. Karena `224.0.0.0/24` adalah blok **link-local**, dan paket ke alamat dalam blok ini **wajib dikirim dengan TTL = 1** menurut spesifikasi. Router mengurangi TTL menjadi 0 dan membuang paket. Ini disengaja: alamat-alamat itu (OSPF 224.0.0.5, EIGRP 224.0.0.10, VRRP 224.0.0.18, dsb.) hanya bermakna dalam satu segmen — protokol tetangga tidak boleh bocor ke jaringan lain.
+2. Karena `224.0.0.0/24` adalah blok link-local, dan paket ke alamat dalam blok ini wajib dikirim dengan TTL = 1 menurut spesifikasi. Router mengurangi TTL menjadi 0 dan membuang paket. Ini disengaja: alamat-alamat itu (OSPF 224.0.0.5, EIGRP 224.0.0.10, VRRP 224.0.0.18, dsb.) hanya bermakna dalam satu segmen, dan protokol tetangga tidak boleh bocor ke jaringan lain.
 
-3. **Tidak ada IGMP querier.** IGMP snooping membangun tabel berdasarkan membership report yang dikirim host **sebagai jawaban atas query**. Kalau tidak ada perangkat yang mengirim general query secara berkala, entri di tabel snooping kedaluwarsa (biasanya ~260 detik). Setelah itu switch tidak lagi tahu port mana yang berlangganan.
-   Perilaku setelahnya bergantung implementasi: sebagian switch kembali membanjiri (multicast tetap sampai tetapi boros), sebagian **berhenti meneruskan sama sekali** (multicast mati) — inilah yang terjadi di sini.
-   **Perbaikan:** aktifkan querier — di router multicast (`ip pim sparse-mode` pada SVI) atau di switch (`ip igmp snooping querier`).
+3. **Tidak ada IGMP querier.** IGMP snooping membangun tabel berdasarkan membership report yang dikirim host sebagai jawaban atas query. Kalau tidak ada perangkat yang mengirim general query secara berkala, entri di tabel snooping kedaluwarsa (biasanya ~260 detik). Setelah itu switch tidak lagi tahu port mana yang berlangganan.
+   Perilaku setelahnya bergantung implementasi: sebagian switch kembali membanjiri (multicast tetap sampai tetapi boros), sebagian berhenti meneruskan sama sekali (multicast mati). Yang kedua inilah yang terjadi di sini.
+   **Perbaikan:** aktifkan querier, di router multicast (`ip pim sparse-mode` pada SVI) atau di switch (`ip igmp snooping querier`).
 
-4. **RPF (Reverse Path Forwarding) check**: ketika paket multicast tiba, router memeriksa apakah paket itu masuk lewat interface yang **akan ia gunakan untuk mengirim unicast ke alamat sumber** paket tersebut. Kalau ya, paket diteruskan; kalau tidak, **dibuang**. Ini menjamin paket hanya mengalir menjauh dari sumber, sehingga tidak mungkin terbentuk loop multicast.
-   **Routing asimetris merusaknya** karena RPF bergantung sepenuhnya pada **routing table unicast**. Kalau jalur unicast ke sumber melewati interface A, tetapi multicast sebenarnya tiba lewat interface B (misalnya karena kebijakan routing, PBR, atau topologi dengan biaya tidak simetris), RPF check gagal dan paket dibuang — meski jalurnya sah. Perbaikan: samakan jalur unicast dan multicast, atau gunakan **static mroute** (`ip mroute`) untuk memberi tahu RPF jalur yang benar.
+4. **RPF (Reverse Path Forwarding) check**: ketika paket multicast tiba, router memeriksa apakah paket itu masuk lewat interface yang akan ia gunakan untuk mengirim unicast ke alamat sumber paket tersebut. Kalau ya, paket diteruskan; kalau tidak, dibuang. Ini menjamin paket hanya mengalir menjauh dari sumber, sehingga tidak mungkin terbentuk loop multicast.
+   **Routing asimetris merusaknya** karena RPF bergantung sepenuhnya pada routing table unicast. Kalau jalur unicast ke sumber melewati interface A, tetapi multicast sebenarnya tiba lewat interface B (misalnya karena kebijakan routing, PBR, atau topologi dengan biaya tidak simetris), RPF check gagal dan paket dibuang, meski jalurnya sah. Perbaikan: samakan jalur unicast dan multicast, atau gunakan static mroute (`ip mroute`) untuk memberi tahu RPF jalur yang benar.
 
-5. **SSM (Source-Specific Multicast)** memungkinkan penerima menyebut **(Sumber, Grup)** secara eksplisit lewat IGMPv3, bukan sekadar "grup G dari sumber mana pun".
-   Keunggulannya: (a) **tidak butuh RP sama sekali** — menghilangkan seluruh kompleksitas Auto-RP/BSR/Anycast RP dan single point of failure-nya; (b) **langsung membangun SPT** (shortest path tree) tanpa melewati shared tree, sehingga jalur optimal sejak awal; (c) **jauh lebih aman** — sumber jahat tidak bisa menyuntikkan trafik ke grup yang sudah dipakai, karena penerima hanya menerima dari sumber yang disebutkannya; (d) konfigurasi dan troubleshooting jauh lebih sederhana.
-   Cocok untuk aplikasi satu-sumber seperti IPTV, market data, dan streaming — yang mencakup mayoritas kasus multicast nyata.
+5. **SSM (Source-Specific Multicast)** memungkinkan penerima menyebut (Sumber, Grup) secara eksplisit lewat IGMPv3, bukan sekadar "grup G dari sumber mana pun".
+   Keunggulannya: (a) **tidak butuh RP sama sekali**, sehingga seluruh kompleksitas Auto-RP/BSR/Anycast RP dan single point of failure-nya hilang; (b) **langsung membangun SPT** (shortest path tree) tanpa melewati shared tree, sehingga jalur optimal sejak awal; (c) **jauh lebih aman**: sumber jahat tidak bisa menyuntikkan trafik ke grup yang sudah dipakai, karena penerima hanya menerima dari sumber yang disebutkannya; (d) konfigurasi dan troubleshooting jauh lebih sederhana.
+   Cocok untuk aplikasi satu-sumber seperti IPTV, market data, dan streaming, yang mencakup mayoritas kasus multicast nyata.
 
-6. (a) Apakah snooping **aktif untuk VLAN itu** secara spesifik — `show ip igmp snooping vlan 10`; (b) apakah ada **querier** — `show ip igmp snooping querier`; tanpa querier tabel kosong dan switch membanjiri; (c) apakah trafik itu memakai alamat **link-local `224.0.0.0/24`** — trafik ke blok ini **selalu dibanjiri** secara sengaja dan tidak di-snoop; (d) apakah ada port yang terdeteksi sebagai **mrouter port** yang menerima semua grup — `show ip igmp snooping mrouter`; (e) apakah versi IGMP host dan switch cocok (host IGMPv3 dengan switch yang hanya mendukung snooping v2); (f) apakah ada fitur seperti **flood unknown multicast** yang aktif pada platform tersebut.
+6. (a) Apakah snooping aktif untuk VLAN itu secara spesifik (`show ip igmp snooping vlan 10`); (b) apakah ada querier (`show ip igmp snooping querier`); tanpa querier tabel kosong dan switch membanjiri; (c) apakah trafik itu memakai alamat link-local `224.0.0.0/24`, karena trafik ke blok ini selalu dibanjiri secara sengaja dan tidak di-snoop; (d) apakah ada port yang terdeteksi sebagai mrouter port yang menerima semua grup (`show ip igmp snooping mrouter`); (e) apakah versi IGMP host dan switch cocok (host IGMPv3 dengan switch yang hanya mendukung snooping v2); (f) apakah ada fitur seperti flood unknown multicast yang aktif pada platform tersebut.
 
-7. **`(*, G)` dengan OIL (Outgoing Interface List) kosong berarti router mengetahui grup itu tetapi TIDAK ADA PENERIMA yang terdaftar di bawahnya** — sehingga tidak ada trafik yang diteruskan ke mana pun.
-   Penyebab yang perlu diperiksa: (a) tidak ada host yang benar-benar melakukan IGMP join — cek `show ip igmp groups`; (b) IGMP tidak sampai ke router (VLAN salah, `ip pim sparse-mode` tidak ada di SVI, IGMP snooping menahan report); (c) host mengirim join tetapi aplikasinya sudah berhenti; (d) join terjadi di router lain di jalur, bukan di router ini. Kalau memang tidak ada penerima, ini adalah kondisi **normal** — multicast bekerja sesuai desain dengan tidak mengirimkan apa pun.
+7. `(*, G)` dengan OIL (Outgoing Interface List) kosong berarti router mengetahui grup itu tetapi TIDAK ADA PENERIMA yang terdaftar di bawahnya, sehingga tidak ada trafik yang diteruskan ke mana pun.
+   Penyebab yang perlu diperiksa: (a) tidak ada host yang benar-benar melakukan IGMP join (cek `show ip igmp groups`); (b) IGMP tidak sampai ke router (VLAN salah, `ip pim sparse-mode` tidak ada di SVI, IGMP snooping menahan report); (c) host mengirim join tetapi aplikasinya sudah berhenti; (d) join terjadi di router lain di jalur, bukan di router ini. Kalau memang tidak ada penerima, ini kondisi normal: multicast bekerja sesuai desain dengan tidak mengirimkan apa pun.
 
 </details>
 
@@ -484,11 +484,11 @@ $ iperf -c 239.1.1.1 -u -T 5 -t 30 -i 1  # pengirim (T = TTL)
 
 ## 10. Sumber
 
-- RFC 1112 — Host Extensions for IP Multicasting
-- RFC 2236 — IGMPv2 · RFC 3376 — IGMPv3
-- RFC 7761 — PIM Sparse Mode (PIM-SM)
-- RFC 4607 — Source-Specific Multicast
-- RFC 5771 — IANA Guidelines for IPv4 Multicast Address Assignments
+- RFC 1112, Host Extensions for IP Multicasting
+- RFC 2236 (IGMPv2) · RFC 3376 (IGMPv3)
+- RFC 7761, PIM Sparse Mode (PIM-SM)
+- RFC 4607, Source-Specific Multicast
+- RFC 5771, IANA Guidelines for IPv4 Multicast Address Assignments
 - Cisco, *IP Multicast Technology Overview*
 
 ---

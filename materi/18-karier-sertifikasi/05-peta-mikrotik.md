@@ -1,16 +1,16 @@
 # 18.5 Jalur Sertifikasi MikroTik (MTCNA & Lanjutan)
 
 > **Prasyarat:** `19-mikrotik/01` (pengenalan RouterOS) membantu
-> **Tujuan:** Anda paham jalur sertifikasi MikroTik, isi MTCNA, dan bagaimana kurikulum ini mempersiapkannya — relevan khusus untuk pasar ISP/RT-RW-Net Indonesia.
+> **Tujuan:** Anda paham jalur sertifikasi MikroTik, isi MTCNA, dan bagaimana kurikulum ini mempersiapkannya (relevan khusus untuk pasar ISP/RT-RW-Net Indonesia).
 
 ---
 
 ## 1. Kenapa MikroTik Penting di Indonesia
 
 MikroTik (RouterOS) sangat dominan di segmen tertentu di Indonesia:
-- **ISP kecil-menengah & RT-RW-Net** — perangkat murah, fitur lengkap (routing, firewall, hotspot, PPPoE, bandwidth management).
-- **Warnet, kafe, hotel** — hotspot & voucher.
-- **UKM & kampus** — router/firewall terjangkau.
+- **ISP kecil-menengah & RT-RW-Net**: perangkat murah, fitur lengkap (routing, firewall, hotspot, PPPoE, bandwidth management).
+- **Warnet, kafe, hotel**: hotspot & voucher.
+- **UKM & kampus**: router/firewall terjangkau.
 
 ```
 Kekuatan MikroTik untuk pasar ini:
@@ -41,14 +41,14 @@ MTCNA (Network Associate) ★ : WAJIB, pintu masuk ke semua sertifikasi level Ad
    └── MTCRE ──► MTCINE (Inter-networking) ★★   : BGP, MPLS (level Extended, prasyaratnya MTCRE)
 ```
 
-- **MTCNA** adalah **prasyarat** untuk semua sertifikasi level Advanced (MTCRE, MTCWE, MTCTCE, MTCUME, MTCIPv6E, MTCSE, MTCSWE, MTCEWE). **MTCINE** (level Extended) menuntut **MTCRE**. Sertifikat MTCNA boleh sudah kedaluwarsa saat mengikuti kursus engineer pertama, tetapi Anda harus pernah memilikinya.
-- Sertifikasi engineer (MTCRE, MTCWE, dll.) adalah **spesialisasi** yang bisa diambil sesuai kebutuhan.
+- **MTCNA** adalah prasyarat untuk semua sertifikasi level Advanced (MTCRE, MTCWE, MTCTCE, MTCUME, MTCIPv6E, MTCSE, MTCSWE, MTCEWE). **MTCINE** (level Extended) menuntut **MTCRE**. Sertifikat MTCNA boleh sudah kedaluwarsa saat mengikuti kursus engineer pertama, tetapi Anda harus pernah memilikinya.
+- Sertifikasi engineer (MTCRE, MTCWE, dll.) adalah spesialisasi yang bisa diambil sesuai kebutuhan.
 - **MTCINE** (BGP/MPLS) adalah puncak jalur ISP/backbone (level Extended). Konfigurasi MPLS di RouterOS (LDP, VPLS, VRF/L3VPN, RSVP-TE) dibahas di `19-mikrotik/09-mpls-routeros`, dengan konsep multi-vendornya di Tahap 22 (`22-service-provider/01-mpls-ldp` dan seterusnya).
 
 > [!WARNING]
 > **Outline resmi lebih tua dari RouterOS v7.** Outline pelatihan yang ditautkan di halaman resmi MikroTik bertanggal 2011 sampai 2020 (misalnya MTCRE terakhir disunting 2015, MTCTCE dan MTCUME 2011, MTCSWE dan MTCEWE 2020), jadi semuanya ditulis sebelum RouterOS v7. Sintaks v7 untuk OSPF, BGP, routing table, dan wifi berbeda dari materi lama. Sebelum mendaftar, periksa outline dan jadwal terbaru di [mikrotik.com/training](https://mikrotik.com/training/about) dan tanyakan ke trainer versi RouterOS yang dipakai di kelas.
 
-**Seberapa jauh kurikulum ini menyiapkan jalur lanjutan?** Jujur saja, baru MTCNA yang tercakup penuh. Jalur di atasnya baru didukung sebagian:
+**Seberapa jauh kurikulum ini menyiapkan jalur lanjutan?** Baru MTCNA yang tercakup penuh. Jalur di atasnya baru didukung sebagian:
 
 | Sertifikasi | Status di kurikulum ini | Yang sudah ada | Yang belum |
 |---|---|---|---|
@@ -84,7 +84,7 @@ Silabus MTCNA (garis besar) dan modul kurikulum ini yang menyiapkannya:
 | **Tunnels** (PPPoE, PPTP, dasar) | `11/02`, `19-mikrotik/06` |
 
 > [!TIP]
-> **Kurikulum ini mengajarkan setiap konsep MTCNA secara mendalam** (bukan hanya "cara klik di Winbox"), lalu **Tahap 19** memberi implementasi RouterOS spesifik. Anda akan memahami **kenapa**, bukan hanya **bagaimana** — keunggulan besar dibanding belajar MikroTik dari tutorial klik-klik saja.
+> **Kurikulum ini mengajarkan setiap konsep MTCNA secara mendalam**, lalu Tahap 19 memberi implementasi RouterOS spesifik. Tutorial klik-klik biasanya hanya menunjukkan "cara klik di Winbox"; di sini Anda juga belajar kenapa konfigurasi itu bekerja.
 
 ---
 
@@ -121,19 +121,19 @@ Proyek portofolio yang relevan dengan pasar lokal (bangun di CHR/hardware murah)
 ```
 
 > [!WARNING]
-> **Kepatuhan hukum**: penyelenggara jasa internet (termasuk RT-RW-Net komersial) di Indonesia idealnya memperhatikan regulasi — RT-RW-Net yang menjual ulang bandwidth secara komersial secara ketat perlu bermitra dengan ISP berizin/berlisensi (aturan Komdigi/Kominfo). Detail lisensi ada di ranah regulasi, tetapi penting disadari saat membangun bisnis, bukan sekadar teknis.
+> **Kepatuhan hukum**: penyelenggara jasa internet (termasuk RT-RW-Net komersial) di Indonesia idealnya memperhatikan regulasi. RT-RW-Net yang menjual ulang bandwidth secara komersial wajib bermitra dengan ISP berizin/berlisensi (aturan Komdigi/Kominfo). Detail lisensi ada di ranah regulasi, tetapi soal ini penting disadari saat membangun bisnis, di luar urusan teknis.
 
 ---
 
 ## 5. Detail MikroTik di Kurikulum Ini
 
-Ingat bahwa **MikroTik terintegrasi di seluruh kurikulum**, bukan hanya Tahap 19:
+MikroTik terintegrasi di seluruh kurikulum, tidak terbatas pada Tahap 19:
 - Hampir setiap modul teknis punya bagian **"MikroTik RouterOS"** dengan perintah `/ip ...` dan **tabel padanan istilah** (Cisco ↔ MikroTik ↔ Linux).
 - **Tahap 19** adalah jalur khusus mendalam: RouterOS, bridge/VLAN, firewall/NAT, QoS/queue/hotspot, wireless, VPN/tunnel, monitoring/scripting.
 - **`referensi/cheatsheet-mikrotik.md`** dan **`referensi/padanan-cisco-mikrotik-linux.md`** untuk rujukan cepat.
 
 > [!TIP]
-> Pendekatan **tiga platform** (Cisco IOS + MikroTik RouterOS + Linux) di kurikulum ini membuat Anda memahami **konsep universal** yang berlaku di semua vendor — sehingga MTCNA, CCNA, dan bahkan Linux networking saling memperkuat, bukan dipelajari terpisah.
+> Pendekatan tiga platform (Cisco IOS + MikroTik RouterOS + Linux) di kurikulum ini membuat Anda memahami konsep universal yang berlaku di semua vendor, sehingga MTCNA, CCNA, dan bahkan Linux networking saling memperkuat alih-alih dipelajari terpisah.
 
 ---
 
@@ -142,12 +142,12 @@ Ingat bahwa **MikroTik terintegrasi di seluruh kurikulum**, bukan hanya Tahap 19
 - **MikroTik dominan** di ISP kecil-menengah, RT-RW-Net, warnet/hotel di Indonesia (murah, fitur ISP lengkap).
 - Jalur: **MTCNA** (wajib, pintu masuk) → spesialisasi (MTCRE routing, MTCWE/MTCEWE wireless, MTCSWE switching, MTCTCE traffic, MTCUME user, dll.) → **MTCINE** (BGP/MPLS, puncak ISP; prasyarat MTCRE).
 - Kurikulum ini menyiapkan MTCNA secara penuh dan sebagian besar jalur lanjutan (MTCRE, MTCINE, MTCUME, MTCSWE, MTCTCE lewat `19/03` sampai `19/11`). Outline resmi lebih tua dari RouterOS v7, jadi cek mikrotik.com/training sebelum ujian.
-- **MTCNA** mencakup: RouterOS, DHCP, bridging, routing, wireless, firewall, QoS, network management, tunnels — semua **dipetakan ke modul kurikulum ini**.
-- Kurikulum mengajarkan **kenapa** (konsep mendalam), Tahap 19 memberi **bagaimana** (RouterOS) — lebih kuat dari tutorial klik-klik.
-- Skenario lokal: **PPPoE server, hotspot voucher, bandwidth management (queue/PCQ/burst), firewall/NAT, failover 2 ISP, monitoring**.
-- MikroTik **terintegrasi di seluruh kurikulum** (bagian MikroTik + tabel padanan) plus **Tahap 19** khusus dan cheatsheet.
+- **MTCNA** mencakup: RouterOS, DHCP, bridging, routing, wireless, firewall, QoS, network management, tunnels. Semuanya dipetakan ke modul kurikulum ini.
+- Kurikulum mengajarkan kenapa (konsep mendalam), Tahap 19 memberi bagaimana (RouterOS); kombinasi ini lebih kuat dari tutorial klik-klik.
+- Skenario lokal: PPPoE server, hotspot voucher, bandwidth management (queue/PCQ/burst), firewall/NAT, failover 2 ISP, monitoring.
+- MikroTik terintegrasi di seluruh kurikulum (bagian MikroTik + tabel padanan) plus Tahap 19 khusus dan cheatsheet.
 - Untuk karier ISP Indonesia: **MTCNA + CCNA** = kombinasi kuat (keterampilan alat + fondasi konsep).
-- **Perhatian:** Perhatikan **regulasi** saat membangun RT-RW-Net komersial.
+- **Perhatian:** cek regulasi saat membangun RT-RW-Net komersial.
 
 ---
 
@@ -162,15 +162,15 @@ Ingat bahwa **MikroTik terintegrasi di seluruh kurikulum**, bukan hanya Tahap 19
 <details>
 <summary>Jawaban</summary>
 
-1. Karena MikroTik menawarkan **kombinasi harga murah dan fitur ISP yang lengkap** yang sangat cocok untuk segmen dengan anggaran terbatas: perangkat dan lisensinya jauh lebih murah daripada Cisco/Juniper, namun RouterOS menyediakan hampir semua yang dibutuhkan operator kecil dalam satu perangkat — routing (termasuk BGP/OSPF), firewall/NAT, **PPPoE server** (untuk autentikasi pelanggan), **hotspot** (login voucher untuk warnet/wifi publik), **bandwidth management** (queue), dan VPN. RouterOS juga berjalan di hardware murah maupun sebagai VM gratis (**CHR**), sehingga mudah dipelajari dan di-deploy. Ditambah **komunitas dan materi berbahasa Indonesia yang melimpah**, MikroTik menjadi pilihan de-facto untuk ISP kecil-menengah, RT-RW-Net, warnet, kafe, dan hotel di Indonesia. Untuk operator yang perlu menjalankan layanan internet komersial dengan modal terbatas, MikroTik memberi rasio fitur-terhadap-biaya yang sulit ditandingi.
+1. Karena MikroTik menawarkan kombinasi harga murah dan fitur ISP yang lengkap, yang sangat cocok untuk segmen dengan anggaran terbatas. Perangkat dan lisensinya jauh lebih murah daripada Cisco/Juniper, namun RouterOS menyediakan hampir semua yang dibutuhkan operator kecil dalam satu perangkat: routing (termasuk BGP/OSPF), firewall/NAT, PPPoE server (untuk autentikasi pelanggan), hotspot (login voucher untuk warnet/wifi publik), bandwidth management (queue), dan VPN. RouterOS juga berjalan di hardware murah maupun sebagai VM gratis (CHR), sehingga mudah dipelajari dan di-deploy. Ditambah komunitas dan materi berbahasa Indonesia yang melimpah, MikroTik menjadi pilihan de-facto untuk ISP kecil-menengah, RT-RW-Net, warnet, kafe, dan hotel di Indonesia. Untuk operator yang perlu menjalankan layanan internet komersial dengan modal terbatas, MikroTik memberi rasio fitur-terhadap-biaya yang sulit ditandingi.
 
-2. **MTCNA (MikroTik Certified Network Associate)** adalah sertifikasi **fondasi dan prasyarat wajib** — ia menjadi **pintu masuk untuk semua sertifikasi MikroTik lain**. Anda tidak bisa mengambil sertifikasi engineer level Advanced (MTCRE, MTCWE, MTCEWE, MTCSWE, MTCTCE, MTCUME, MTCSE, MTCIPv6E) tanpa terlebih dahulu memiliki MTCNA, dan MTCINE menuntut MTCRE. MTCNA memvalidasi kemampuan dasar mengelola RouterOS: akses/manajemen, DHCP, bridging, routing dasar, wireless dasar, firewall/NAT dasar, QoS dasar, dan tunnel dasar. Setelah MTCNA, seseorang memilih **spesialisasi** sesuai kebutuhan (routing, wireless, switching, traffic control, user management, keamanan, IPv6), dengan **MTCINE** (BGP/MPLS) sebagai puncak untuk engineer ISP/backbone.
+2. **MTCNA (MikroTik Certified Network Associate)** adalah sertifikasi fondasi dan prasyarat wajib: ia menjadi pintu masuk untuk semua sertifikasi MikroTik lain. Anda tidak bisa mengambil sertifikasi engineer level Advanced (MTCRE, MTCWE, MTCEWE, MTCSWE, MTCTCE, MTCUME, MTCSE, MTCIPv6E) tanpa terlebih dahulu memiliki MTCNA, dan MTCINE menuntut MTCRE. MTCNA memvalidasi kemampuan dasar mengelola RouterOS: akses/manajemen, DHCP, bridging, routing dasar, wireless dasar, firewall/NAT dasar, QoS dasar, dan tunnel dasar. Setelah MTCNA, seseorang memilih spesialisasi sesuai kebutuhan (routing, wireless, switching, traffic control, user management, keamanan, IPv6), dengan **MTCINE** (BGP/MPLS) sebagai puncak untuk engineer ISP/backbone.
 
 3. (Lima dari) **Introduction to RouterOS** (akses, backup, user) → `19-mikrotik/01`; **DHCP** (server/client/relay) → `06-aplikasi/02` + bagian MikroTik; **Bridging** → `03-data-link/02` dan `19-mikrotik/02`; **Routing** (static, konsep) → `04-network-layer/05`, `07-routing-lanjutan/01` + MikroTik; **Firewall** (filter, NAT, connection tracking, address-list) → `09-nat-acl-firewall/01-03`, `12-keamanan/*`, dan `19-mikrotik/03`; **QoS** (simple queue, queue tree, burst) → `11-wan-vpn/03` dan `19-mikrotik/04`; **Wireless** → `10-wireless/01-03` dan `19-mikrotik/05`; **Tunnels** (PPPoE/PPTP) → `11-wan-vpn/02` dan `19-mikrotik/06`; **Network Management** (tools, DNS, NTP, monitoring) → `06/*`, `14-monitoring-troubleshooting/02`, dan `19-mikrotik/07`.
 
-4. (Contoh) Untuk RT-RW-Net ~50 pelanggan, fitur MikroTik yang dibutuhkan: **(1) PPPoE server** untuk autentikasi tiap pelanggan (username/password per rumah) dengan **profil bandwidth per-paket** (mis. paket 5 Mbps, 10 Mbps); alternatif/pelengkap: **hotspot** bila memakai model voucher. **(2) Bandwidth management** — **simple queue** per-pelanggan atau **queue tree + PCQ** untuk pembagian adil, dengan **burst** agar browsing terasa responsif. **(3) NAT (masquerade)** agar pelanggan (IP privat) bisa keluar ke internet lewat IP publik dari ISP upstream. **(4) Firewall filter** untuk melindungi router dan pelanggan (blokir akses tidak sah ke router, filter dasar), plus **address-list** untuk blokir/izinkan tertentu. **(5) DHCP server** (bila tidak PPPoE) atau pengalamatan via PPPoE. **(6) DNS** (cache lokal untuk mempercepat & mengurangi beban upstream) dan **NTP**. **(7) Failover dua ISP** (opsional tetapi disarankan) dengan backup route/recursive gateway atau **PCC load balancing** bila punya dua uplink. **(8) Monitoring** — netwatch, SNMP/The Dude, dan **backup terjadwal via scripting**. **(9) Manajemen pelanggan** — untuk 50 pelanggan bisa lokal (secret PPP), atau **RADIUS** bila ingin sistem billing terintegrasi. ⚠️ Perhatikan aspek **legalitas/lisensi** menjual ulang bandwidth (kemitraan dengan ISP berizin).
+4. (Contoh) Untuk RT-RW-Net ~50 pelanggan, fitur MikroTik yang dibutuhkan: **(1) PPPoE server** untuk autentikasi tiap pelanggan (username/password per rumah) dengan profil bandwidth per-paket (mis. paket 5 Mbps, 10 Mbps); alternatif/pelengkap: hotspot bila memakai model voucher. **(2) Bandwidth management**: simple queue per-pelanggan atau queue tree + PCQ untuk pembagian adil, dengan burst agar browsing terasa responsif. **(3) NAT (masquerade)** agar pelanggan (IP privat) bisa keluar ke internet lewat IP publik dari ISP upstream. **(4) Firewall filter** untuk melindungi router dan pelanggan (blokir akses tidak sah ke router, filter dasar), plus address-list untuk blokir/izinkan tertentu. **(5) DHCP server** (bila tidak PPPoE) atau pengalamatan via PPPoE. **(6) DNS** (cache lokal untuk mempercepat & mengurangi beban upstream) dan NTP. **(7) Failover dua ISP** (opsional tetapi disarankan) dengan backup route/recursive gateway atau PCC load balancing bila punya dua uplink. **(8) Monitoring**: netwatch, SNMP/The Dude, dan backup terjadwal via scripting. **(9) Manajemen pelanggan**: untuk 50 pelanggan bisa lokal (secret PPP), atau RADIUS bila ingin sistem billing terintegrasi. Perhatikan juga aspek legalitas/lisensi menjual ulang bandwidth (kemitraan dengan ISP berizin).
 
-5. Karena memahami **konsep ("kenapa")** membuat pengetahuan Anda **transferable, adaptif, dan tahan terhadap masalah baru**, sedangkan hanya menghafal **prosedur ("bagaimana klik di Winbox")** membuat Anda rapuh. Contoh: jika Anda hanya hafal "klik di sini untuk buat queue" tanpa memahami cara kerja QoS (bagaimana antrean, PCQ, dan burst benar-benar membagi bandwidth), maka saat pembagian bandwidth tidak adil atau ada bottleneck, Anda tidak tahu **kenapa** atau **bagaimana memperbaikinya** — Anda hanya bisa mengulang langkah yang sama. Jika Anda paham konsepnya, Anda bisa **mendiagnosis** ("PCQ rate saya salah karena...", "queue parent tidak membatasi karena..."), **mengadaptasi** ke skenario yang berbeda dari tutorial, dan **memindahkan** pemahaman itu ke vendor lain (Cisco, Linux tc) karena konsep QoS universal. Selain itu, ujian MTCNA (dan wawancara kerja) menguji pemahaman, bukan hafalan klik. Karena itu kurikulum ini mengajarkan konsep mendalam lebih dulu (Tahap 1-17) lalu implementasi RouterOS (Tahap 19) — sehingga Anda menguasai **kenapa dan bagaimana** sekaligus.
+5. Karena memahami konsep ("kenapa") membuat pengetahuan Anda transferable, adaptif, dan tahan terhadap masalah baru, sedangkan hanya menghafal prosedur ("bagaimana klik di Winbox") membuat Anda rapuh. Contoh: jika Anda hanya hafal "klik di sini untuk buat queue" tanpa memahami cara kerja QoS (bagaimana antrean, PCQ, dan burst benar-benar membagi bandwidth), maka saat pembagian bandwidth tidak adil atau ada bottleneck, Anda tidak tahu kenapa atau bagaimana memperbaikinya; Anda hanya bisa mengulang langkah yang sama. Jika Anda paham konsepnya, Anda bisa mendiagnosis ("PCQ rate saya salah karena...", "queue parent tidak membatasi karena..."), mengadaptasi ke skenario yang berbeda dari tutorial, dan memindahkan pemahaman itu ke vendor lain (Cisco, Linux tc) karena konsep QoS universal. Selain itu, ujian MTCNA (dan wawancara kerja) menguji pemahaman, bukan hafalan klik. Karena itu kurikulum ini mengajarkan konsep mendalam lebih dulu (Tahap 1-17) lalu implementasi RouterOS (Tahap 19), sehingga Anda menguasai kenapa dan bagaimana sekaligus.
 
 </details>
 
@@ -178,7 +178,7 @@ Ingat bahwa **MikroTik terintegrasi di seluruh kurikulum**, bukan hanya Tahap 19
 
 ## 8. Sumber
 
-- MikroTik Training & Certification — https://mikrotik.com/training/certificates
+- MikroTik Training & Certification: https://mikrotik.com/training/certificates
 - Halaman pelatihan dan outline resmi MikroTik (termasuk MTCSWE dan MTCEWE): https://mikrotik.com/training/about
 - MikroTik documentation (help.mikrotik.com) & RouterOS manual
 - `19-mikrotik/*` (jalur MikroTik kurikulum ini) · `referensi/cheatsheet-mikrotik.md`

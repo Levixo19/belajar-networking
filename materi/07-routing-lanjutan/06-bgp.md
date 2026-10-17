@@ -12,20 +12,20 @@
 
 | Aspek | Nilai |
 |---|---|
-| Jenis | **Path vector** |
-| Transport | **TCP port 179** ← satu-satunya protokol routing yang memakai TCP |
-| AD | **20** (eBGP), **200** (iBGP) |
+| Jenis | Path vector |
+| Transport | TCP port 179 ← satu-satunya protokol routing yang memakai TCP |
+| AD | 20 (eBGP), 200 (iBGP) |
 | Standar | RFC 4271 (BGP-4) |
-| Metrik | **Tidak ada metrik tunggal** — path attributes + algoritma seleksi |
-| Update | **Inkremental** (hanya perubahan), keep-alive setiap 60 detik |
-| Skala | **>1 juta rute** di tabel internet global |
+| Metrik | Tidak ada metrik tunggal: path attributes + algoritma seleksi |
+| Update | Inkremental (hanya perubahan), keep-alive setiap 60 detik |
+| Skala | >1 juta rute di tabel internet global |
 
 ### Kenapa TCP?
 
 BGP memakai TCP agar tidak perlu mengimplementasikan sendiri: keandalan, pengurutan, flow control, dan fragmentasi. Dengan jutaan rute yang harus dipertukarkan, ini keputusan desain yang tepat.
 
 > [!WARNING]
-> **Konsekuensinya:** BGP membutuhkan **konektivitas IP terlebih dahulu** sebelum bisa membentuk sesi. Anda tidak bisa memakai BGP untuk membangun konektivitas dasar — harus ada rute (connected, static, atau IGP) ke alamat peer.
+> **Konsekuensinya:** BGP membutuhkan konektivitas IP terlebih dahulu sebelum bisa membentuk sesi. Anda tidak bisa memakai BGP untuk membangun konektivitas dasar: harus ada rute (connected, static, atau IGP) ke alamat peer.
 
 ---
 
@@ -33,18 +33,18 @@ BGP memakai TCP agar tidak perlu mengimplementasikan sendiri: keandalan, penguru
 
 | | **eBGP** (external) | **iBGP** (internal) |
 |---|---|---|
-| Antara | AS **berbeda** | AS **sama** |
+| Antara | AS berbeda | AS sama |
 | AD | 20 | 200 |
-| TTL default | **1** (harus bertetangga langsung) | 255 |
-| AS_PATH | **Ditambahkan** nomor AS sendiri | **Tidak** diubah |
-| NEXT_HOP | Diubah menjadi diri sendiri | **Tidak** diubah (default) |
-| Meneruskan rute | Ke semua peer | ⚠️ **Tidak ke sesama iBGP peer** |
+| TTL default | 1 (harus bertetangga langsung) | 255 |
+| AS_PATH | Ditambahkan nomor AS sendiri | Tidak diubah |
+| NEXT_HOP | Diubah menjadi diri sendiri | Tidak diubah (default) |
+| Meneruskan rute | Ke semua peer | Tidak ke sesama iBGP peer |
 
 ### Aturan iBGP yang krusial
 
 > **Router tidak boleh meneruskan rute yang dipelajari dari iBGP peer ke iBGP peer lain.**
 
-Kenapa? Karena iBGP tidak menambahkan AS_PATH, sehingga tidak ada mekanisme deteksi loop. Aturan ini mencegah loop, tetapi menimbulkan konsekuensi:
+Alasannya: iBGP tidak menambahkan AS_PATH, sehingga tidak ada mekanisme deteksi loop. Aturan ini mencegah loop, tetapi menimbulkan konsekuensi:
 
 > [!WARNING]
 > **Semua router iBGP harus terhubung FULL MESH.**
@@ -55,7 +55,7 @@ n router → n(n−1)/2 sesi
 50 router → 1.225 sesi   ← tidak dapat dikelola
 ```
 
-**Solusinya:** **Route Reflector** atau **Confederation** (lihat §7).
+**Solusinya:** Route Reflector atau Confederation (lihat §7).
 
 ---
 
@@ -71,7 +71,7 @@ ESTABLISHED  → sesi aktif, siap bertukar UPDATE ✅
 ```
 
 > [!WARNING]
-> **`ACTIVE` bukan berarti "aktif dan sehat"** — justru sebaliknya. `ACTIVE` berarti BGP **gagal** membuka koneksi TCP dan sedang mencoba lagi. Nama yang menyesatkan.
+> **`ACTIVE` bukan berarti "aktif dan sehat"**, justru sebaliknya. `ACTIVE` berarti BGP gagal membuka koneksi TCP dan sedang mencoba lagi. Namanya memang menyesatkan.
 
 **Diagnosis dari state:**
 ```
@@ -89,55 +89,55 @@ IDLE (berulang) → password salah, capability mismatch, hold timer habis
 | **OPEN** | Membuka sesi: versi, AS number, hold time, RID, capabilities |
 | **UPDATE** | Mengiklankan atau menarik rute |
 | **KEEPALIVE** | Menjaga sesi hidup (default setiap 60 detik) |
-| **NOTIFICATION** | Melaporkan error dan **menutup sesi** |
+| **NOTIFICATION** | Melaporkan error dan menutup sesi |
 | **ROUTE-REFRESH** | Minta peer mengirim ulang seluruh rute (tanpa memutus sesi) |
 
-**Timer:** Keepalive 60 detik, **Hold 180 detik** (3× keepalive). Kalau tidak ada pesan dalam hold time, sesi ditutup.
+**Timer:** Keepalive 60 detik, Hold 180 detik (3× keepalive). Kalau tidak ada pesan dalam hold time, sesi ditutup.
 
 ---
 
 ## 4. Path Attributes
 
-BGP tidak punya metrik tunggal. Ia membawa **atribut** yang dipakai untuk kebijakan.
+BGP tidak punya metrik tunggal. Ia membawa atribut yang dipakai untuk kebijakan.
 
 | Atribut | Kategori | Fungsi | Arah pengaruh |
 |---|---|---|---|
 | **AS_PATH** | Well-known mandatory | Daftar AS yang dilalui | Deteksi loop + panjang jalur |
-| **NEXT_HOP** | Well-known mandatory | IP router berikutnya | — |
+| **NEXT_HOP** | Well-known mandatory | IP router berikutnya | - |
 | **ORIGIN** | Well-known mandatory | Asal rute: IGP(i) / EGP(e) / Incomplete(?) | Tie-breaker |
-| **LOCAL_PREF** | Well-known discretionary | Preferensi keluar | **Dalam AS sendiri** |
-| **ATOMIC_AGGREGATE** | Well-known discretionary | Menandai agregasi | — |
-| **MED** | Optional non-transitive | Saran preferensi masuk | **Ke AS tetangga** |
+| **LOCAL_PREF** | Well-known discretionary | Preferensi keluar | Dalam AS sendiri |
+| **ATOMIC_AGGREGATE** | Well-known discretionary | Menandai agregasi | - |
+| **MED** | Optional non-transitive | Saran preferensi masuk | Ke AS tetangga |
 | **COMMUNITY** | Optional transitive | Tag untuk kebijakan | Fleksibel |
-| **AGGREGATOR** | Optional transitive | Siapa yang mengagregasi | — |
-| **WEIGHT** | Cisco proprietary | Preferensi lokal router | **Router itu saja** |
+| **AGGREGATOR** | Optional transitive | Siapa yang mengagregasi | - |
+| **WEIGHT** | Cisco proprietary | Preferensi lokal router | Router itu saja |
 
 ### Empat atribut yang paling sering dipakai
 
-**WEIGHT** (Cisco, lokal router saja, **lebih besar menang**, default 0)
+**WEIGHT** (Cisco, lokal router saja, lebih besar menang, default 0)
 ```
 R1(config-router)# neighbor 10.0.0.2 weight 200
 ```
 Tidak diiklankan ke mana pun. Hanya memengaruhi router ini.
 
-**LOCAL_PREF** (dalam AS, **lebih besar menang**, default 100)
+**LOCAL_PREF** (dalam AS, lebih besar menang, default 100)
 ```
 R1(config-router)# bgp default local-preference 200
 ```
-Diiklankan ke semua iBGP peer → **cara standar mengendalikan trafik KELUAR** dari AS Anda.
+Diiklankan ke semua iBGP peer → cara standar mengendalikan trafik KELUAR dari AS Anda.
 
-**AS_PATH prepending** (**lebih pendek menang**)
+**AS_PATH prepending** (lebih pendek menang)
 ```
 route-map PREPEND permit 10
  set as-path prepend 65001 65001 65001
 ```
-Membuat jalur tampak lebih panjang → **cara standar memengaruhi trafik MASUK**.
+Membuat jalur tampak lebih panjang → cara standar memengaruhi trafik MASUK.
 
-**MED** (**lebih kecil menang**, default 0)
+**MED** (lebih kecil menang, default 0)
 ```
 R1(config-router)# neighbor 203.0.113.1 route-map SET-MED out
 ```
-Saran ke AS tetangga tentang pintu masuk mana yang disukai. ⚠️ Hanya dibandingkan **antar-jalur dari AS yang sama**, dan tetangga **boleh mengabaikannya**.
+Saran ke AS tetangga tentang pintu masuk mana yang disukai. Hati-hati: MED hanya dibandingkan antar-jalur dari AS yang sama, dan tetangga boleh mengabaikannya.
 
 ### Ringkasan arah pengaruh
 
@@ -153,7 +153,7 @@ Memengaruhi trafik MASUK ke AS Anda       → AS_PATH prepending, MED, community
 
 ## 5. Best Path Selection Algorithm
 
-Urutan ini **wajib dihafal** untuk memahami keputusan BGP.
+Urutan ini wajib dihafal untuk memahami keputusan BGP.
 
 ```
 0. Next hop harus REACHABLE (kalau tidak, rute tidak dipertimbangkan sama sekali)
@@ -177,7 +177,7 @@ Urutan ini **wajib dihafal** untuk memahami keputusan BGP.
 > (Weight, LOCAL_PREF, Originate, AS_PATH, ORIGIN, MED, Paths eBGP/iBGP, RID/Router ID)
 
 > [!TIP]
-> **Dalam praktik, 95% keputusan berhenti di langkah 1–4.** Kalau Anda ingin memengaruhi pilihan BGP, gunakan LOCAL_PREF (keluar) atau AS_PATH prepending (masuk).
+> **Dalam praktik, 95% keputusan berhenti di langkah 1-4.** Kalau Anda ingin memengaruhi pilihan BGP, gunakan LOCAL_PREF (keluar) atau AS_PATH prepending (masuk).
 
 ```
 R1# show ip bgp 192.168.10.0
@@ -217,7 +217,7 @@ R1(config-router-af)# neighbor 203.0.113.2 maximum-prefix 100000 90 restart 15
 ```
 
 > [!WARNING]
-> **Perintah `network` di BGP BERBEDA dari IGP.** Ia **tidak** mengaktifkan BGP di interface — ia berarti: *"iklankan prefix ini, JIKA prefix ini ada di routing table."* Kalau prefix tidak ada di routing table, ia tidak akan diiklankan.
+> **Perintah `network` di BGP BERBEDA dari IGP.** Ia tidak mengaktifkan BGP di interface. Artinya: *"iklankan prefix ini, JIKA prefix ini ada di routing table."* Kalau prefix tidak ada di routing table, ia tidak akan diiklankan.
 
 ```
 R1(config-router-af)# network 192.168.0.0 mask 255.255.252.0
@@ -235,10 +235,10 @@ R1(config-router)# neighbor 10.0.0.2 next-hop-self            ← PENTING!
 ```
 
 > [!TIP]
-> **`update-source loopback0`** — sesi iBGP dibangun dari loopback ke loopback, sehingga tetap hidup selama ada **jalur mana pun** antar-router (IGP menyediakan redundansi). Kalau memakai interface fisik, sesi putus saat interface itu down walau ada jalur alternatif.
+> **`update-source loopback0`**: sesi iBGP dibangun dari loopback ke loopback, sehingga tetap hidup selama ada jalur mana pun antar-router (IGP menyediakan redundansi). Kalau memakai interface fisik, sesi putus saat interface itu down walau ada jalur alternatif.
 
 > [!TIP]
-> **`next-hop-self`** — router border mengubah NEXT_HOP menjadi dirinya sendiri sebelum meneruskan rute eBGP ke iBGP peer. Tanpa ini, router internal menerima NEXT_HOP berupa alamat router ISP yang **tidak ada di IGP mereka** → rute dianggap tidak reachable dan tidak dipasang.
+> **`next-hop-self`**: router border mengubah NEXT_HOP menjadi dirinya sendiri sebelum meneruskan rute eBGP ke iBGP peer. Tanpa ini, router internal menerima NEXT_HOP berupa alamat router ISP yang tidak ada di IGP mereka → rute dianggap tidak reachable dan tidak dipasang.
 
 ### eBGP multihop
 
@@ -256,7 +256,7 @@ Solusi untuk masalah full mesh iBGP.
 
 ### Route Reflector (RR)
 
-Satu router diizinkan **meneruskan** rute iBGP ke iBGP peer lain.
+Satu router diizinkan meneruskan rute iBGP ke iBGP peer lain.
 
 ```
         [RR]
@@ -281,7 +281,7 @@ Dari eBGP        → refleksikan ke semua
 **Pencegahan loop:** atribut `ORIGINATOR_ID` (RID pembuat asli) dan `CLUSTER_LIST` (daftar RR yang dilalui). Router membuang rute yang `ORIGINATOR_ID`-nya adalah dirinya sendiri, atau yang `CLUSTER_LIST`-nya berisi cluster-ID-nya.
 
 > [!TIP]
-> **Selalu pasang minimal dua RR** untuk redundansi — RR adalah single point of failure untuk distribusi rute.
+> **Selalu pasang minimal dua RR** untuk redundansi, karena RR adalah single point of failure untuk distribusi rute.
 
 ### Confederation
 
@@ -292,7 +292,7 @@ Memecah satu AS besar menjadi beberapa **sub-AS**. Di dalam sub-AS tetap butuh f
 ## 8. Filtering dan Route-Map
 
 > [!WARNING]
-> **Filtering di BGP bukan opsional — ia wajib.** Tanpa filter, Anda bisa secara tidak sengaja menjadi transit untuk seluruh internet (route leak), atau menerima rute palsu.
+> **Filtering di BGP wajib.** Tanpa filter, Anda bisa secara tidak sengaja menjadi transit untuk seluruh internet (route leak), atau menerima rute palsu.
 
 ### Prefix-list
 
@@ -346,7 +346,7 @@ R1(config-router-af)# neighbor 203.0.113.2 route-map ISP-A-IN in
 ```
 
 > [!WARNING]
-> **Route-map punya implicit deny di akhir.** Kalau Anda membuat route-map dengan hanya satu `permit 10` yang cocok sebagian rute, sisanya akan **dibuang diam-diam**. Selalu akhiri dengan `permit` kosong kalau ingin melewatkan sisanya.
+> **Route-map punya implicit deny di akhir.** Kalau Anda membuat route-map dengan hanya satu `permit 10` yang cocok sebagian rute, sisanya akan dibuang diam-diam. Selalu akhiri dengan `permit` kosong kalau ingin melewatkan sisanya.
 
 ### Menerapkan perubahan filter
 
@@ -375,9 +375,9 @@ R1# clear ip bgp *                         ⚠️ HARD RESET — memutus semua s
 ```
 
 **Kebutuhan:**
-1. Redundansi — kalau satu ISP mati, tetap terhubung
-2. Kontrol jalur — trafik penting lewat ISP yang lebih baik
-3. **Jangan menjadi transit** antara ISP A dan B
+1. Redundansi: kalau satu ISP mati, tetap terhubung
+2. Kontrol jalur: trafik penting lewat ISP yang lebih baik
+3. Jangan menjadi transit antara ISP A dan B
 
 ### Mengendalikan trafik KELUAR (LOCAL_PREF)
 
@@ -404,7 +404,7 @@ R1(config-router-af)# neighbor 198.51.100.2 route-map PREPEND-ISP-B out
 ```
 
 > [!WARNING]
-> **Prepending tidak selalu efektif.** AS lain bisa punya LOCAL_PREF yang mengalahkan panjang AS_PATH. Alternatif yang lebih presisi: **BGP community** yang disediakan ISP (mis. "kurangi LOCAL_PREF Anda untuk rute saya").
+> **Prepending tidak selalu efektif.** AS lain bisa punya LOCAL_PREF yang mengalahkan panjang AS_PATH. Alternatif yang lebih presisi: BGP community yang disediakan ISP (mis. "kurangi LOCAL_PREF Anda untuk rute saya").
 
 ### Mencegah menjadi transit
 
@@ -442,13 +442,13 @@ R1(config-router)# neighbor 203.0.113.2 password RahasiaKuat
 
 ### Ancaman
 
-**BGP Hijacking** — AS mengumumkan prefix yang bukan miliknya.
+**BGP Hijacking**: AS mengumumkan prefix yang bukan miliknya.
 ```
 Contoh nyata: Pakistan Telecom mengumumkan prefix YouTube (2008)
               → YouTube tidak dapat diakses secara global selama ~2 jam
 ```
 
-**Route Leak** — AS meneruskan rute yang seharusnya tidak diteruskan.
+**Route Leak**: AS meneruskan rute yang seharusnya tidak diteruskan.
 ```
 Contoh: pelanggan meneruskan rute dari ISP A ke ISP B
         → seluruh trafik internet mencoba lewat pelanggan kecil
@@ -464,7 +464,7 @@ ROA (Route Origin Authorization):
   "Prefix 192.168.0.0/22 boleh diumumkan oleh AS 65001, maxLength /24"
 ```
 
-**ROV** (*Route Origin Validation*) — router memeriksa rute terhadap ROA:
+**ROV** (*Route Origin Validation*) berarti router memeriksa rute terhadap ROA:
 ```
 VALID    → ada ROA dan cocok         → terima, beri preferensi
 INVALID  → ada ROA tetapi TIDAK cocok → TOLAK (kemungkinan hijack)
@@ -514,7 +514,7 @@ $ bgpq4 -F "ip prefix-list PEER-X permit %n/%l\n" AS-CUSTOMER
 
 ## 11. BGP di Data Center
 
-Tren modern: memakai **eBGP sebagai IGP** di dalam data center spine-leaf.
+Tren modern: memakai eBGP sebagai IGP di dalam data center spine-leaf.
 
 ```
 Setiap switch punya AS number sendiri (private ASN)
@@ -529,7 +529,7 @@ Tidak ada IGP sama sekali
 - ECMP alami
 - Implementasi sangat matang di semua vendor
 
-**BGP Unnumbered** — peering memakai IPv6 link-local, tanpa mengonfigurasi alamat IP pada link sama sekali:
+**BGP Unnumbered** memakai IPv6 link-local untuk peering, tanpa mengonfigurasi alamat IP pada link sama sekali:
 ```
 # FRRouting
 interface swp1
@@ -602,7 +602,7 @@ Connect             → sedang mencoba TCP
 ```
 
 > [!WARNING]
-> **"Rute ada di `show ip bgp` tetapi tidak di `show ip route`"** hampir selalu berarti **NEXT_HOP tidak reachable**. Pada iBGP, solusinya `next-hop-self` di router border.
+> **"Rute ada di `show ip bgp` tetapi tidak di `show ip route`"** hampir selalu berarti NEXT_HOP tidak reachable. Pada iBGP, solusinya `next-hop-self` di router border.
 
 ---
 
@@ -698,7 +698,7 @@ Sintaks di bawah ini diuji di RouterOS 7.24.5 (stable, Oktober 2026). Beberapa n
 | `clear ip bgp X soft` | `/routing bgp session refresh [find]` |
 
 > [!TIP]
-> **MikroTik sering dipakai sebagai router BGP untuk ISP kecil di Indonesia** karena CCR bisa menangani tabel internet penuh dengan harga jauh di bawah router setara dari vendor lain. Pastikan RAM cukup: **full table IPv4 + IPv6 butuh minimal 4 GB**.
+> **MikroTik sering dipakai sebagai router BGP untuk ISP kecil di Indonesia** karena CCR bisa menangani tabel internet penuh dengan harga jauh di bawah router setara dari vendor lain. Pastikan RAM cukup: full table IPv4 + IPv6 butuh minimal 4 GB.
 
 > [!WARNING]
 > **Selalu pasang `maximum-prefix`** dan filter keluar `^$`-equivalent agar tidak menjadi transit tidak sengaja:
@@ -726,7 +726,7 @@ Artinya: sesi eBGP yang belum diberi kebijakan masuk tidak menerima apa-apa, dan
 |---|---|
 | FRR | `bgp ebgp-requires-policy` aktif secara default pada profil `frr defaults traditional`. Gejalanya di `show bgp summary`: kolom PfxRcd atau PfxSnt berisi `(Policy)` |
 | BIRD 2 | Untuk eBGP tidak ada default `import all`/`export all`; kebijakan harus ditulis eksplisit di channel |
-| Platform lain | Tidak semua menerapkannya secara default. Periksa dokumentasi versi Anda, dan **selalu** pasang kebijakan eksplisit di kedua arah apa pun default-nya |
+| Platform lain | Tidak semua menerapkannya secara default. Periksa dokumentasi versi Anda, dan selalu pasang kebijakan eksplisit di kedua arah apa pun default-nya |
 
 ```
 isp-b# show bgp summary
@@ -756,7 +756,7 @@ Saat MENGIRIM rute:
   2. Rute sudah ber-OTC                                         → JANGAN kirim ke Provider, Peer, atau RS
 ```
 
-Hasilnya dua lapis: pencegahan di AS Anda sendiri (rute dari peer atau provider tidak akan naik lagi), dan **deteksi beberapa hop jauhnya**: kalau pelanggan di ujung lain dunia membocorkan rute yang membawa OTC, provider-nya yang patuh RFC 9234 akan melihat OTC dari arah pelanggan dan menolaknya.
+Hasilnya dua lapis: pencegahan di AS Anda sendiri (rute dari peer atau provider tidak akan naik lagi), dan deteksi beberapa hop jauhnya: kalau pelanggan di ujung lain dunia membocorkan rute yang membawa OTC, provider-nya yang patuh RFC 9234 akan melihat OTC dari arah pelanggan dan menolaknya.
 
 Konfigurasi (contoh: Anda pelanggan dari upstream 203.0.113.1):
 
@@ -791,31 +791,31 @@ isp-a# show bgp ipv4 unicast 203.0.113.0/24
 ```
 
 > [!TIP]
-> **Roles tidak menggantikan filter.** Ia hanya tahu hubungan bisnis, bukan prefix mana milik siapa. Pasang roles **di samping** prefix-list, as-path filter, max-prefix, dan ROV.
+> **Roles tidak menggantikan filter.** Ia hanya tahu hubungan bisnis, bukan prefix mana milik siapa. Pasang roles di samping prefix-list, as-path filter, max-prefix, dan ROV.
 
 ### 13.3 ROA yang benar: maxLength (RFC 9319), profil ROA (RFC 9582), satu prefix per ROA (RFC 9455)
 
-**Masalah maxLength.** ROA "198.18.0.0/22, maxLength 24, AS64500" mengizinkan /22, kedua /23, dan keempat /24 di dalamnya. Kalau Anda hanya mengumumkan /22, penyerang bisa mengumumkan 198.18.1.0/24 dengan AS_PATH palsu yang **diakhiri AS64500**. ROV menilainya **valid** (prefix dan origin cocok), dan karena lebih spesifik, ia menang di forwarding. Serangan ini disebut **forged-origin sub-prefix hijack**.
+**Masalah maxLength.** ROA "198.18.0.0/22, maxLength 24, AS64500" mengizinkan /22, kedua /23, dan keempat /24 di dalamnya. Kalau Anda hanya mengumumkan /22, penyerang bisa mengumumkan 198.18.1.0/24 dengan AS_PATH palsu yang diakhiri AS64500. ROV menilainya valid (prefix dan origin cocok), dan karena lebih spesifik, ia menang di forwarding. Serangan ini disebut **forged-origin sub-prefix hijack**.
 
-RFC 9319 (BCP, Oktober 2022) merekomendasikan **ROA minimal**: operator "SHOULD use 'minimal ROAs' that authorize only those IP prefixes that are actually originated in BGP", dan secara umum "SHOULD avoid using the maxLength attribute". Pengecualiannya sempit: ketika **semua** prefix lebih spesifik yang diizinkan maxLength memang diumumkan. RFC yang sama juga membahas ROA untuk layanan mitigasi DDoS: kalau penyedia scrubbing akan mengumumkan prefix Anda dari ASN-nya, siapkan ROA untuk ASN itu.
+RFC 9319 (BCP, Oktober 2022) merekomendasikan **ROA minimal**: operator "SHOULD use 'minimal ROAs' that authorize only those IP prefixes that are actually originated in BGP", dan secara umum "SHOULD avoid using the maxLength attribute". Pengecualiannya sempit: ketika semua prefix lebih spesifik yang diizinkan maxLength memang diumumkan. RFC yang sama juga membahas ROA untuk layanan mitigasi DDoS: kalau penyedia scrubbing akan mengumumkan prefix Anda dari ASN-nya, siapkan ROA untuk ASN itu.
 
 **RFC 9582** (Mei 2024) adalah profil standar objek ROA dan menggantikan RFC 6482. Bagi operator, dampak langsungnya kecil: portal RIR/NIR dan validator yang menangani format. Yang perlu Anda ingat adalah isinya: satu ASN, satu atau lebih prefix, maxLength opsional per prefix.
 
-**RFC 9455** (BCP, Agustus 2023) merekomendasikan **satu prefix per ROA**. ROA yang memuat banyak prefix menjadi satu titik kegagalan: kalau objeknya tidak valid (misalnya salah satu prefix sudah tidak lagi Anda pegang), semua prefix di dalamnya ikut kehilangan perlindungan.
+**RFC 9455** (BCP, Agustus 2023) merekomendasikan satu prefix per ROA. ROA yang memuat banyak prefix menjadi satu titik kegagalan: kalau objeknya tidak valid (misalnya salah satu prefix sudah tidak lagi Anda pegang), semua prefix di dalamnya ikut kehilangan perlindungan.
 
 ### 13.4 ASPA: memvalidasi jalur, bukan hanya asal (masih draft)
 
-ROV hanya memeriksa **origin**. Ia tidak mendeteksi route leak (origin-nya benar) dan tidak mendeteksi pembajak yang memalsukan origin seperti pada 13.3. **ASPA** (*Autonomous System Provider Authorization*) menambahkan objek RPKI baru: setiap AS menandatangani daftar **AS penyedianya**. Dengan data itu, router bisa memeriksa apakah setiap lompatan "naik" di AS_PATH memang ke penyedia yang diakui, lalu menilai apakah jalur berbentuk valley-free. Ada dua algoritma: untuk rute dari pelanggan atau peer (*upstream*, lebih ketat) dan dari provider (*downstream*).
+ROV hanya memeriksa origin. Ia tidak mendeteksi route leak (origin-nya benar) dan tidak mendeteksi pembajak yang memalsukan origin seperti pada 13.3. **ASPA** (*Autonomous System Provider Authorization*) menambahkan objek RPKI baru: setiap AS menandatangani daftar AS penyedianya. Dengan data itu, router bisa memeriksa apakah setiap lompatan "naik" di AS_PATH memang ke penyedia yang diakui, lalu menilai apakah jalur berbentuk valley-free. Ada dua algoritma: untuk rute dari pelanggan atau peer (*upstream*, lebih ketat) dan dari provider (*downstream*).
 
 **Status per Oktober 2026: belum RFC.** Di IETF datatracker, `draft-ietf-sidrops-aspa-verification` berada di revisi 28 dan `draft-ietf-sidrops-aspa-profile` di revisi 29. Penyebaran ASPA ke router juga butuh RTR versi 2 (`draft-ietf-sidrops-8210bis`, revisi 27), yang juga masih draft. Sebagian implementasi sudah bereksperimen; BIRD 2, misalnya, mendokumentasikan tabel `aspa` dan fungsi `aspa_check_upstream()`/`aspa_check_downstream()` dengan catatan bahwa algoritmanya mengikuti draft.
 
-Sikap yang masuk akal sekarang: pahami konsepnya, coba di lab, pantau apakah portal RIR/NIR Anda sudah menyediakan pembuatan objek ASPA, tetapi **jangan** membangun kebijakan produksi yang bergantung padanya sampai standarnya terbit dan implementasinya matang.
+Sikap yang masuk akal sekarang: pahami konsepnya, coba di lab, pantau apakah portal RIR/NIR Anda sudah menyediakan pembuatan objek ASPA, tetapi jangan membangun kebijakan produksi yang bergantung padanya sampai standarnya terbit dan implementasinya matang.
 
 ### 13.5 Large Communities (RFC 8092)
 
 Community klasik (RFC 1997) berukuran 32 bit dan ditulis `ASN:nilai` dengan masing-masing 16 bit. ASN 4-byte (di atas 65535) tidak muat. **Large Community** (RFC 8092, Februari 2017) berukuran 96 bit: `ASN:fungsi:parameter`, masing-masing 32 bit, sehingga pemilik ASN 4-byte bisa memakai ASN-nya sendiri sebagai bagian pertama.
 
-Konvensi yang lazim: bagian pertama ASN yang **mendefinisikan** arti community itu, bagian kedua jenis tindakan atau informasi, bagian ketiga parameternya.
+Konvensi yang lazim: bagian pertama ASN yang mendefinisikan arti community itu, bagian kedua jenis tindakan atau informasi, bagian ketiga parameternya.
 
 ```
 64500:100:1        "rute ini dipelajari dari pelanggan" (informasi, AS64500)
@@ -847,13 +847,13 @@ Langkah praktis: jangan pakai kata kunci `as-set` pada `aggregate-address`, peri
 
 ### 13.7 BMP: melihat apa yang dikirim peer, sebelum filter (RFC 7854)
 
-`show ip bgp neighbors X received-routes` hanya menunjukkan keadaan **sekarang**, di **satu** router, dan butuh soft-reconfiguration. **BMP** (*BGP Monitoring Protocol*, RFC 7854, Juni 2016) membuat router mengalirkan informasi BGP ke kolektor lewat TCP:
+`show ip bgp neighbors X received-routes` hanya menunjukkan keadaan sekarang, di satu router, dan butuh soft-reconfiguration. **BMP** (*BGP Monitoring Protocol*, RFC 7854, Juni 2016) membuat router mengalirkan informasi BGP ke kolektor lewat TCP:
 
 - **Route Monitoring**: Adj-RIB-In **pre-policy** (apa yang dikirim peer sebelum filter Anda) dan **post-policy**; Loc-RIB ditambahkan RFC 9069.
 - **Peer Up/Down** beserta alasan sesi turun.
 - **Statistics**: jumlah prefix ditolak, duplikat, dan sebagainya.
 
-Dengan BMP, Anda bisa menjawab "kapan tepatnya peer X mulai mengirim prefix aneh ini" atau "berapa rute yang ditolak filter RPKI minggu ini" dari satu basis data, tanpa masuk ke setiap router. Kolektor open-source yang aktif dikembangkan antara lain **pmacct** (yang juga menangani NetFlow/IPFIX dan RPKI).
+Dengan BMP, Anda bisa menjawab "kapan tepatnya peer X mulai mengirim prefix aneh ini" atau "berapa rute yang ditolak filter RPKI minggu ini" dari satu basis data, tanpa masuk ke setiap router. Kolektor open-source yang aktif dikembangkan antara lain pmacct (yang juga menangani NetFlow/IPFIX dan RPKI).
 
 ```
 # FRR: bgpd harus dijalankan dengan modul bmp, mis. di /etc/frr/daemons:
@@ -868,7 +868,7 @@ router bgp 64500
 ```
 
 > [!WARNING]
-> Dokumentasi BIRD 2 menyebut implementasi BMP-nya masih pendahuluan dan **belum siap produksi** (tidak dikompilasi secara default). Untuk router BIRD, andalkan dulu log, `show route filtered`, dan ekspor tabel.
+> Dokumentasi BIRD 2 menyebut implementasi BMP-nya masih pendahuluan dan belum siap produksi (tidak dikompilasi secara default). Untuk router BIRD, andalkan dulu log, `show route filtered`, dan ekspor tabel.
 
 ### 13.8 Validator RPKI dan RTR: konfigurasi multi-platform
 
@@ -967,7 +967,7 @@ show ip bgp rpki table
 ```
 
 > [!WARNING]
-> **Perilaku default IOS XE berbeda dari platform lain.** Menurut dokumentasi Cisco, begitu `bgp rpki server` dipasang, rute **invalid tidak dipilih sebagai best path** dan tidak diiklankan, tanpa perlu route-map. Kalau Anda ingin tahap "logging dulu", pasang `bgp bestpath prefix-validate allow-invalid` sebelum menambahkan server, lalu hapus setelah yakin.
+> **Perilaku default IOS XE berbeda dari platform lain.** Menurut dokumentasi Cisco, begitu `bgp rpki server` dipasang, rute invalid tidak dipilih sebagai best path dan tidak diiklankan, tanpa perlu route-map. Kalau Anda ingin tahap "logging dulu", pasang `bgp bestpath prefix-validate allow-invalid` sebelum menambahkan server, lalu hapus setelah yakin.
 
 **Juniper Junos**:
 
@@ -1002,19 +1002,19 @@ show validation database
 
 ## 14. Ringkasan
 
-- BGP: **path vector**, **TCP 179**, AD **20** (eBGP) / **200** (iBGP), skala >1 juta rute.
-- **iBGP tidak meneruskan rute ke sesama iBGP peer** → butuh **full mesh** atau **Route Reflector**.
-- State: IDLE → CONNECT → **ACTIVE (artinya GAGAL, bukan sehat)** → OPENSENT → OPENCONFIRM → **ESTABLISHED**.
-- Atribut kunci: **AS_PATH** (loop + panjang), **NEXT_HOP**, **LOCAL_PREF** (keluar), **MED** (masuk), **WEIGHT** (lokal), **COMMUNITY**.
-- Best path: **Weight → LOCAL_PREF → Originate → AS_PATH → ORIGIN → MED → eBGP>iBGP → IGP metric → oldest → RID**.
-- **Kendalikan trafik keluar dengan LOCAL_PREF; pengaruhi trafik masuk dengan AS_PATH prepending** — masuk hanya bisa "disarankan".
+- BGP: path vector, TCP 179, AD 20 (eBGP) / 200 (iBGP), skala >1 juta rute.
+- **iBGP tidak meneruskan rute ke sesama iBGP peer** → butuh full mesh atau Route Reflector.
+- State: IDLE → CONNECT → ACTIVE (artinya GAGAL, bukan sehat) → OPENSENT → OPENCONFIRM → ESTABLISHED.
+- Atribut utama: AS_PATH (loop + panjang), NEXT_HOP, LOCAL_PREF (keluar), MED (masuk), WEIGHT (lokal), COMMUNITY.
+- Best path: Weight → LOCAL_PREF → Originate → AS_PATH → ORIGIN → MED → eBGP>iBGP → IGP metric → oldest → RID.
+- Kendalikan trafik keluar dengan LOCAL_PREF; pengaruhi trafik masuk dengan AS_PATH prepending. Trafik masuk hanya bisa "disarankan".
 - `network` di BGP berarti "iklankan jika ada di routing table", bukan mengaktifkan interface.
-- iBGP wajib: **`update-source loopback`** dan **`next-hop-self`** di router border.
-- **Filtering wajib**: prefix-list, `^$` as-path filter untuk mencegah menjadi transit, bogon filter, **`maximum-prefix`**.
-- Gunakan **`clear ip bgp ... soft`**, jangan hard reset.
-- Keamanan: **RPKI/ROV** (valid/invalid/notfound), **MANRS** (filtering, anti-spoofing, koordinasi, validasi global).
-- "Ada di `show ip bgp` tapi tidak di routing table" = **NEXT_HOP tidak reachable**.
-- Higiene 2026: **RFC 8212** (eBGP tanpa kebijakan = diam), **RFC 9234** Roles + OTC melawan route leak, ROA **minimal** tanpa maxLength longgar (**RFC 9319**), satu prefix per ROA, **AS_SET dilarang** (RFC 9774), **Large Communities** untuk ASN 4-byte, **BMP** untuk pemantauan, minimal dua validator RPKI lewat RTR. **ASPA masih draft.**
+- iBGP wajib: `update-source loopback` dan `next-hop-self` di router border.
+- **Filtering wajib**: prefix-list, `^$` as-path filter untuk mencegah menjadi transit, bogon filter, `maximum-prefix`.
+- Gunakan `clear ip bgp ... soft`, jangan hard reset.
+- Keamanan: RPKI/ROV (valid/invalid/notfound), MANRS (filtering, anti-spoofing, koordinasi, validasi global).
+- "Ada di `show ip bgp` tapi tidak di routing table" = NEXT_HOP tidak reachable.
+- Higiene 2026: RFC 8212 (eBGP tanpa kebijakan = diam), RFC 9234 Roles + OTC melawan route leak, ROA minimal tanpa maxLength longgar (RFC 9319), satu prefix per ROA, AS_SET dilarang (RFC 9774), Large Communities untuk ASN 4-byte, BMP untuk pemantauan, minimal dua validator RPKI lewat RTR. ASPA masih draft.
 
 ---
 
@@ -1034,12 +1034,12 @@ show validation database
 <details>
 <summary>Jawaban</summary>
 
-1. BGP memakai **TCP port 179** agar tidak perlu mengimplementasikan sendiri keandalan, pengurutan, acknowledgment, flow control, dan fragmentasi — hal yang krusial ketika harus mempertukarkan jutaan rute secara andal.
-   **Konsekuensinya:** BGP **membutuhkan konektivitas IP terlebih dahulu** — harus sudah ada rute (connected, static, atau lewat IGP) ke alamat peer sebelum sesi bisa terbentuk. BGP tidak bisa dipakai untuk membangun konektivitas dasar. Ini juga berarti masalah pada IGP atau ACL yang memblokir TCP 179 akan langsung memutus BGP.
+1. BGP memakai TCP port 179 agar tidak perlu mengimplementasikan sendiri keandalan, pengurutan, acknowledgment, flow control, dan fragmentasi. Semua itu dibutuhkan ketika harus mempertukarkan jutaan rute secara andal.
+   **Konsekuensinya:** BGP membutuhkan konektivitas IP terlebih dahulu: harus sudah ada rute (connected, static, atau lewat IGP) ke alamat peer sebelum sesi bisa terbentuk. BGP tidak bisa dipakai untuk membangun konektivitas dasar. Ini juga berarti masalah pada IGP atau ACL yang memblokir TCP 179 akan langsung memutus BGP.
 
-2. **`Active` berarti BGP GAGAL membuka koneksi TCP** ke peer dan sedang mencoba lagi — nama yang menyesatkan. Periksa: (a) apakah alamat peer dapat di-`ping` (dengan source interface yang benar)? (b) apakah `telnet <peer> 179` berhasil — kalau tidak, ada yang memblokir; (c) ACL/firewall yang memblokir TCP 179; (d) apakah alamat neighbor yang dikonfigurasi benar dan cocok dengan `update-source` di sisi peer; (e) apakah peer sudah mengonfigurasi Anda sebagai neighbor; (f) untuk iBGP: apakah ada rute ke loopback peer.
+2. **`Active` berarti BGP GAGAL membuka koneksi TCP** ke peer dan sedang mencoba lagi; namanya menyesatkan. Periksa: (a) apakah alamat peer dapat di-`ping` (dengan source interface yang benar)? (b) apakah `telnet <peer> 179` berhasil (kalau tidak, ada yang memblokir); (c) ACL/firewall yang memblokir TCP 179; (d) apakah alamat neighbor yang dikonfigurasi benar dan cocok dengan `update-source` di sisi peer; (e) apakah peer sudah mengonfigurasi Anda sebagai neighbor; (f) untuk iBGP: apakah ada rute ke loopback peer.
 
-3. **NEXT_HOP tidak reachable.** Ketika router border menerima rute dari eBGP, NEXT_HOP-nya adalah alamat router ISP. Router border meneruskan rute itu ke iBGP peer **tanpa mengubah NEXT_HOP** (perilaku default iBGP). Router internal tidak punya rute ke alamat ISP itu di IGP-nya, sehingga BGP menandai rute sebagai tidak valid dan tidak memasangnya.
+3. **NEXT_HOP tidak reachable.** Ketika router border menerima rute dari eBGP, NEXT_HOP-nya adalah alamat router ISP. Router border meneruskan rute itu ke iBGP peer tanpa mengubah NEXT_HOP (perilaku default iBGP). Router internal tidak punya rute ke alamat ISP itu di IGP-nya, sehingga BGP menandai rute sebagai tidak valid dan tidak memasangnya.
    **Perbaikan:** `neighbor <ibgp-peer> next-hop-self` pada router border, sehingga ia mengganti NEXT_HOP dengan alamat dirinya sendiri (yang dikenal IGP). Alternatif: redistribusikan subnet link eBGP ke IGP (kurang disukai).
 
 4. Terapkan **LOCAL_PREF lebih tinggi** pada rute yang diterima dari ISP-A:
@@ -1051,7 +1051,7 @@ show validation database
      neighbor 203.0.113.2 route-map PREFER-ISP-A in    ! ISP-A
      ! ISP-B dibiarkan default (100)
    ```
-   LOCAL_PREF dievaluasi di langkah 2 algoritma seleksi (setelah WEIGHT), dan **diiklankan ke semua iBGP peer** — sehingga seluruh AS Anda konsisten memilih ISP-A untuk trafik keluar. Terapkan dengan `clear ip bgp 203.0.113.2 soft in`.
+   LOCAL_PREF dievaluasi di langkah 2 algoritma seleksi (setelah WEIGHT), dan diiklankan ke semua iBGP peer, sehingga seluruh AS Anda konsisten memilih ISP-A untuk trafik keluar. Terapkan dengan `clear ip bgp 203.0.113.2 soft in`.
 
 5. Cara paling sederhana dan efektif: **as-path filter `^$`** yang hanya mengizinkan rute dengan AS_PATH kosong (= rute yang berasal dari AS Anda sendiri) untuk diiklankan keluar.
    ```
@@ -1066,26 +1066,26 @@ show validation database
    ip prefix-list MILIK-SENDIRI permit 192.168.0.0/22
    neighbor 203.0.113.2 prefix-list MILIK-SENDIRI out
    ```
-   Praktik terbaik: pakai **keduanya**.
+   Praktik terbaik: pakai keduanya.
 
 6. (1) **WEIGHT tertinggi** (Cisco, lokal router saja); (2) **LOCAL_PREF tertinggi** (berlaku dalam AS); (3) **rute yang dihasilkan lokal** (network/aggregate/redistribute) lebih disukai; (4) **AS_PATH terpendek**; (5) **ORIGIN terendah** (IGP < EGP < Incomplete).
-   Sebelum semua itu, ada prasyarat: **NEXT_HOP harus reachable**, kalau tidak rute tidak dipertimbangkan sama sekali.
+   Sebelum semua itu, ada prasyarat: NEXT_HOP harus reachable, kalau tidak rute tidak dipertimbangkan sama sekali.
 
-7. **`INVALID`** berarti **ada ROA** untuk prefix tersebut, tetapi pengumumannya **tidak cocok** — AS asal salah, atau panjang prefix melebihi `maxLength`. Ini indikasi kuat **hijacking** atau salah konfigurasi. Router sebaiknya **menolak** rute ini.
-   **`NOTFOUND`** berarti **tidak ada ROA** yang mencakup prefix tersebut — pemiliknya belum mendaftarkan RPKI. Ini bukan indikasi masalah; masih banyak prefix di internet tanpa ROA. Router harus **menerima** rute ini secara normal (kalau menolaknya, Anda akan kehilangan konektivitas ke sebagian besar internet).
-   **Perhatian:** Sesuai rekomendasi MANRS, terapkan RPKI dengan **logging terlebih dahulu** sebelum mengaktifkan penolakan INVALID — untuk memastikan validator berfungsi dan tidak ada ROA salah yang memutus trafik sah.
+7. **`INVALID`** berarti ada ROA untuk prefix tersebut, tetapi pengumumannya tidak cocok: AS asal salah, atau panjang prefix melebihi `maxLength`. Ini indikasi kuat hijacking atau salah konfigurasi. Router sebaiknya menolak rute ini.
+   **`NOTFOUND`** berarti tidak ada ROA yang mencakup prefix tersebut; pemiliknya belum mendaftarkan RPKI. Ini bukan indikasi masalah; masih banyak prefix di internet tanpa ROA. Router harus menerima rute ini secara normal (kalau menolaknya, Anda akan kehilangan konektivitas ke sebagian besar internet).
+   **Perhatian:** Sesuai rekomendasi MANRS, terapkan RPKI dengan logging terlebih dahulu sebelum mengaktifkan penolakan INVALID, untuk memastikan validator berfungsi dan tidak ada ROA salah yang memutus trafik sah.
 
-8. **`clear ip bgp *` melakukan HARD RESET** — memutus semua sesi TCP BGP, sehingga: seluruh rute yang dipelajari **dihapus dari routing table**, terjadi **outage total** selama sesi dibangun ulang, dan pada router dengan tabel internet penuh (>1 juta rute) proses ini bisa memakan **beberapa menit** dengan CPU mendekati 100%. Selain itu ia memicu churn di seluruh jaringan Anda dan bahkan ke peer.
-   **Alternatif:** **soft reset**, yang menerapkan ulang kebijakan tanpa memutus sesi:
+8. **`clear ip bgp *` melakukan HARD RESET**: semua sesi TCP BGP diputus, sehingga seluruh rute yang dipelajari dihapus dari routing table, terjadi outage total selama sesi dibangun ulang, dan pada router dengan tabel internet penuh (>1 juta rute) proses ini bisa memakan beberapa menit dengan CPU mendekati 100%. Selain itu ia memicu churn di seluruh jaringan Anda dan bahkan ke peer.
+   **Alternatif:** soft reset, yang menerapkan ulang kebijakan tanpa memutus sesi:
    ```
    R1# clear ip bgp 203.0.113.2 soft in     ! terapkan ulang filter masuk
    R1# clear ip bgp 203.0.113.2 soft out    ! kirim ulang rute keluar
    ```
-   Soft reset inbound memerlukan **route refresh capability** (didukung semua implementasi modern) atau `neighbor X soft-reconfiguration inbound` (yang memakan memori karena menyimpan salinan rute mentah).
+   Soft reset inbound memerlukan route refresh capability (didukung semua implementasi modern) atau `neighbor X soft-reconfiguration inbound` (yang memakan memori karena menyimpan salinan rute mentah).
 
-9. Di IOS XE, begitu `bgp rpki server` dipasang, router mulai memvalidasi setiap jalur dan, menurut dokumentasi Cisco, **rute INVALID tidak dipilih sebagai best path dan tidak diiklankan**, tanpa route-map apa pun. Jadi Anda tidak sedang "logging", Anda sudah memfilter. Situs yang tidak bisa diakses kemungkinan punya ROA yang salah (ASN keliru atau maxLength terlalu pendek), sehingga prefix sahnya invalid. Untuk benar-benar mulai dengan logging: pasang `bgp bestpath prefix-validate allow-invalid` (atau `disable`) **sebelum** menambahkan server, amati `show ip bgp rpki table` dan rute ber-status invalid (misalnya dengan route-map `match rpki invalid` yang hanya menurunkan local-preference), hubungi pemilik prefix yang ROA-nya salah, lalu hapus `allow-invalid` setelah yakin. Pelajaran umumnya: pahami perilaku default platform sebelum menyalin rencana dari platform lain.
+9. Di IOS XE, begitu `bgp rpki server` dipasang, router mulai memvalidasi setiap jalur dan, menurut dokumentasi Cisco, rute INVALID tidak dipilih sebagai best path dan tidak diiklankan, tanpa route-map apa pun. Jadi Anda tidak sedang "logging", Anda sudah memfilter. Situs yang tidak bisa diakses kemungkinan punya ROA yang salah (ASN keliru atau maxLength terlalu pendek), sehingga prefix sahnya invalid. Untuk benar-benar mulai dengan logging: pasang `bgp bestpath prefix-validate allow-invalid` (atau `disable`) sebelum menambahkan server, amati `show ip bgp rpki table` dan rute ber-status invalid (misalnya dengan route-map `match rpki invalid` yang hanya menurunkan local-preference), hubungi pemilik prefix yang ROA-nya salah, lalu hapus `allow-invalid` setelah yakin. Pelajaran umumnya: pahami perilaku default platform sebelum menyalin rencana dari platform lain.
 
-10. Rute yang pelanggan terima dari penyedia lainnya: kalau penyedia itu patuh RFC 9234, rute tersebut sudah membawa atribut **OTC** saat dikirim ke pelanggan (dipasang penyedia saat egress ke customer, atau dipasang pelanggan saat ingress dari provider). Ketika rute ber-OTC itu sampai ke Anda dari sesi ber-role **customer**, aturan ingress nomor 1 berlaku: rute dengan OTC dari Customer adalah route leak dan **ditolak**. Yang **lolos**: rute bocor yang tidak membawa OTC, misalnya karena penyedia lain dan pelanggan sama-sama belum menerapkan role, atau karena pelanggan menghapus atributnya. Karena itu tetap pasang lapisan klasik: **prefix-list dari IRR/AS-SET pelanggan** (hanya prefix pelanggan yang diterima), **maximum-prefix** yang ketat dan sesuai PeeringDB pelanggan (ribuan rute akan memutus sesi sebelum menyebar), dan **ROV** (yang menolak rute bocor yang origin-nya tidak cocok ROA). Pertimbangkan juga `strict-mode` agar sesi tidak naik kalau pelanggan menghapus konfigurasi role-nya.
+10. Rute yang pelanggan terima dari penyedia lainnya: kalau penyedia itu patuh RFC 9234, rute tersebut sudah membawa atribut OTC saat dikirim ke pelanggan (dipasang penyedia saat egress ke customer, atau dipasang pelanggan saat ingress dari provider). Ketika rute ber-OTC itu sampai ke Anda dari sesi ber-role customer, aturan ingress nomor 1 berlaku: rute dengan OTC dari Customer adalah route leak dan ditolak. Yang lolos: rute bocor yang tidak membawa OTC, misalnya karena penyedia lain dan pelanggan sama-sama belum menerapkan role, atau karena pelanggan menghapus atributnya. Karena itu tetap pasang lapisan klasik: prefix-list dari IRR/AS-SET pelanggan (hanya prefix pelanggan yang diterima), maximum-prefix yang ketat dan sesuai PeeringDB pelanggan (ribuan rute akan memutus sesi sebelum menyebar), dan ROV (yang menolak rute bocor yang origin-nya tidak cocok ROA). Pertimbangkan juga `strict-mode` agar sesi tidak naik kalau pelanggan menghapus konfigurasi role-nya.
 
 </details>
 
@@ -1093,13 +1093,13 @@ show validation database
 
 ## 16. Sumber
 
-- RFC 4271 — BGP-4 · RFC 4456 — Route Reflection · RFC 5065 — Confederations
-- RFC 6811 — BGP Prefix Origin Validation (ROV) · RFC 6480 — RPKI Architecture
-- RFC 7454 / BCP 194 — BGP Operations and Security
-- RFC 8212 — Default External BGP Route Propagation Behavior Without Policies
-- MANRS — https://www.manrs.org
+- RFC 4271 (BGP-4) · RFC 4456 (Route Reflection) · RFC 5065 (Confederations)
+- RFC 6811, BGP Prefix Origin Validation (ROV) · RFC 6480, RPKI Architecture
+- RFC 7454 / BCP 194, BGP Operations and Security
+- RFC 8212, Default External BGP Route Propagation Behavior Without Policies
+- MANRS: https://www.manrs.org
 - Cisco, *BGP Best Path Selection Algorithm* (Document ID 13753)
-- bgpq4 — https://github.com/bgp/bgpq4
+- bgpq4: https://github.com/bgp/bgpq4
 - RFC 9234, Route Leak Prevention and Detection Using Roles in UPDATE and OPEN Messages: https://www.rfc-editor.org/rfc/rfc9234
 - RFC 9319, The Use of maxLength in the RPKI: https://www.rfc-editor.org/rfc/rfc9319
 - RFC 9582, A Profile for Route Origin Authorizations: https://www.rfc-editor.org/rfc/rfc9582

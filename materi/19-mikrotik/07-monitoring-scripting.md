@@ -7,7 +7,7 @@
 
 ## 1. Tools Monitoring & Diagnostik Bawaan
 
-RouterOS punya banyak tools diagnostik (setara `ping`/`traceroute`/`tcpdump` — lihat `14-monitoring-troubleshooting/02`):
+RouterOS punya banyak tools diagnostik (setara `ping`/`traceroute`/`tcpdump`; lihat `14-monitoring-troubleshooting/02`):
 
 ```routeros
 # Konektivitas dasar
@@ -31,16 +31,16 @@ RouterOS punya banyak tools diagnostik (setara `ping`/`traceroute`/`tcpdump` —
 ```
 
 > [!TIP]
-> **Torch** adalah salah satu tools paling berguna — menampilkan **trafik real-time** per-interface dipecah per src/dst/protokol/port. Saat "internet lambat", torch langsung menunjukkan **siapa/apa yang memakan bandwidth** — jauh lebih cepat daripada menebak. Setara analisis flow tetapi instan.
+> **Torch** menampilkan trafik real-time per-interface, dipecah per src/dst/protokol/port. Saat "internet lambat", torch langsung menunjukkan siapa/apa yang memakan bandwidth, jauh lebih cepat daripada menebak. Hasilnya setara analisis flow, tetapi instan.
 
 > [!WARNING]
-> **Bandwidth-test membebani CPU/link** — jangan jalankan di jam sibuk pada router produksi; ia bisa menjenuhkan link dan CPU. Gunakan untuk uji terkontrol saja.
+> **Bandwidth-test membebani CPU/link.** Jangan jalankan di jam sibuk pada router produksi; ia bisa menjenuhkan link dan CPU. Gunakan untuk uji terkontrol saja.
 
 ---
 
 ## 2. Netwatch: Pemantauan Otomatis
 
-**Netwatch** memantau host dan menjalankan **aksi** saat status berubah (up/down) — dasar untuk failover, alert, dan otomasi reaktif.
+**Netwatch** memantau host dan menjalankan aksi saat status berubah (up/down). Fitur ini menjadi dasar untuk failover, alert, dan otomasi reaktif.
 
 ```routeros
 /tool netwatch
@@ -50,7 +50,7 @@ add host=8.8.8.8 interval=10s \
 ```
 
 > [!TIP]
-> **Netwatch untuk failover WAN**: pantau gateway ISP utama; bila **down**, jalankan skrip yang mengaktifkan rute backup (atau ubah distance). Bila **up** lagi, kembalikan. Ini pola failover populer di RouterOS (selain recursive routing/route with check-gateway). Bisa juga trigger notifikasi (email/Telegram via API).
+> **Netwatch untuk failover WAN**: pantau gateway ISP utama; bila down, jalankan skrip yang mengaktifkan rute backup (atau ubah distance). Bila up lagi, kembalikan. Ini pola failover populer di RouterOS (selain recursive routing/route with check-gateway). Bisa juga trigger notifikasi (email/Telegram via API).
 
 ---
 
@@ -69,7 +69,7 @@ add topics=info,error,warning action=remote
 ```
 
 > [!WARNING]
-> **Sentralisasi log ke syslog server** (`14-monitoring-troubleshooting/03`) penting — memori log lokal RouterOS terbatas dan hilang saat reboot. Untuk audit, troubleshooting historis, dan korelasi antar-perangkat, kirim ke collector terpusat (dan pastikan **NTP sinkron** agar timestamp akurat).
+> **Sentralisasi log ke syslog server** (`14-monitoring-troubleshooting/03`) penting karena memori log lokal RouterOS terbatas dan hilang saat reboot. Untuk audit, troubleshooting historis, dan korelasi antar-perangkat, kirim ke collector terpusat (dan pastikan NTP sinkron agar timestamp akurat).
 
 ---
 
@@ -118,7 +118,7 @@ add name=backup-harian source={
 ```
 
 > [!TIP]
-> **Backup ada dua jenis**: `/system backup` (binary, lengkap, hanya restore ke perangkat sama) dan `/export` (teks, dapat dibaca/di-diff/di-versi di Git, portabel sebagian). Untuk **version control** (`15-otomasi/04`), `/export` yang berbasis teks lebih berguna — bisa disimpan di Git dan di-diff.
+> **Backup ada dua jenis**: `/system backup` (binary, lengkap, hanya restore ke perangkat sama) dan `/export` (teks, dapat dibaca/di-diff/di-versi di Git, portabel sebagian). Untuk version control (`15-otomasi/04`), `/export` yang berbasis teks lebih berguna karena bisa disimpan di Git dan di-diff.
 
 ---
 
@@ -135,7 +135,7 @@ add name=backup-tiap-hari interval=1d start-time=02:00:00 \
 ```
 
 > [!TIP]
-> **Scheduler + script** = otomasi asli RouterOS: backup terjadwal, pembersihan, update daftar blokir, cek & failover, notifikasi. Untuk otomasi **multi-perangkat** dan **version control**, gabungkan dengan pendekatan eksternal (Ansible `community.routeros`, atau skrip Python via API/SSH — `15-otomasi/03-04`).
+> **Scheduler + script** = otomasi asli RouterOS: backup terjadwal, pembersihan, update daftar blokir, cek & failover, notifikasi. Untuk otomasi multi-perangkat dan version control, gabungkan dengan pendekatan eksternal (Ansible `community.routeros`, atau skrip Python via API/SSH; lihat `15-otomasi/03-04`).
 
 ---
 
@@ -162,7 +162,7 @@ with ConnectHandler(**dev) as conn:
 ```
 
 > [!TIP]
-> **Untuk ISP dengan banyak router**, otomasi eksternal (Python/Ansible + Git + NetBox — Tahap 15) mengalahkan scripting per-perangkat: konfigurasi konsisten, backup terpusat ter-versi, dan perubahan massal aman. Scripting internal RouterOS untuk tugas **lokal/reaktif** (failover netwatch, backup lokal); otomasi eksternal untuk **manajemen armada**.
+> **Untuk ISP dengan banyak router**, otomasi eksternal (Python/Ansible + Git + NetBox, lihat Tahap 15) mengalahkan scripting per-perangkat: konfigurasi konsisten, backup terpusat ter-versi, dan perubahan massal aman. Scripting internal RouterOS untuk tugas lokal/reaktif (failover netwatch, backup lokal); otomasi eksternal untuk manajemen armada.
 
 ---
 
@@ -174,7 +174,7 @@ with ConnectHandler(**dev) as conn:
 | Packet capture | EPC/SPAN | `/tool sniffer` | tcpdump |
 | Pantau host + aksi | IP SLA + track | **Netwatch** | monitoring script |
 | SNMP | `snmp-server` | `/snmp` | snmpd |
-| NMS gratis | — | **The Dude** | LibreNMS/Zabbix |
+| NMS gratis | - | **The Dude** | LibreNMS/Zabbix |
 | Backup teks | `show run`/archive | **`/export`** | (config files) |
 | Terjadwal | kron / EEM | **scheduler** | cron |
 | Otomasi eksternal | NETCONF/Ansible | API/REST/Ansible | SSH/Ansible |
@@ -183,12 +183,12 @@ with ConnectHandler(**dev) as conn:
 
 ## 9. Ringkasan
 
-- Tools bawaan: `/ping`, `/tool traceroute`, **`/tool torch`** (trafik live per-interface — siapa makan bandwidth), `/tool sniffer` (≈tcpdump), `/tool bandwidth-test` (⚠️ jangan di jam sibuk), `/interface monitor-traffic`.
-- **Netwatch** pantau host + jalankan **up/down-script** → dasar **failover WAN** & alert otomatis.
-- **Logging**: sentralisasi ke **syslog server** (memori lokal terbatas/hilang saat reboot); NTP sinkron.
+- Tools bawaan: `/ping`, `/tool traceroute`, **`/tool torch`** (trafik live per-interface: siapa makan bandwidth), `/tool sniffer` (≈tcpdump), `/tool bandwidth-test` (jangan di jam sibuk), `/interface monitor-traffic`.
+- **Netwatch** pantau host + jalankan up/down-script → dasar failover WAN & alert otomatis.
+- **Logging**: sentralisasi ke syslog server (memori lokal terbatas/hilang saat reboot); NTP sinkron.
 - **SNMP** untuk NMS; **The Dude** = NMS gratis MikroTik (peta, grafik, alert); atau ekspor ke Prometheus/Grafana.
 - **Scripting** RouterOS (`:local`, `:if`, `:foreach`, `:log`, `[find]`) + **scheduler** (≈cron) = otomasi lokal (backup, failover, notifikasi). **`/export`** (teks) lebih baik dari `/system backup` (binary) untuk Git.
-- **Otomasi eksternal** (API/REST/SSH/**Ansible `community.routeros`** — Tahap 15) untuk **manajemen armada** banyak router: konsisten, ter-versi, perubahan massal aman.
+- **Otomasi eksternal** (API/REST/SSH/Ansible `community.routeros`, Tahap 15) untuk manajemen armada banyak router: konsisten, ter-versi, perubahan massal aman.
 
 ---
 
@@ -203,15 +203,15 @@ with ConnectHandler(**dev) as conn:
 <details>
 <summary>Jawaban</summary>
 
-1. **Torch (`/tool torch`)** menampilkan **trafik real-time yang melewati sebuah interface**, dipecah berdasarkan alamat sumber/tujuan, protokol, dan port. Saat pelanggan mengeluh internet lambat, alih-alih menebak, Anda menjalankan torch pada interface yang relevan (mis. interface ke pelanggan atau uplink WAN) dan **langsung melihat siapa/apa yang mengonsumsi bandwidth** — misalnya satu IP sedang mengunduh besar, banyak koneksi ke port tertentu (P2P/torrent), atau lonjakan trafik dari/ke host tertentu (mungkin tanda perangkat terinfeksi atau serangan). Dengan informasi itu Anda bisa mengambil tindakan tepat: menerapkan/menyesuaikan queue (`19.4`), memblokir/membatasi trafik tertentu (`19.3`), atau mengidentifikasi anomali. Torch mengubah "internet lambat" dari tebakan menjadi diagnosis berbasis data secara **instan** (tanpa perlu setup flow export atau tools eksternal) — salah satu alasan ia sangat dihargai untuk troubleshooting cepat.
+1. **Torch (`/tool torch`)** menampilkan trafik real-time yang melewati sebuah interface, dipecah berdasarkan alamat sumber/tujuan, protokol, dan port. Saat pelanggan mengeluh internet lambat, alih-alih menebak, Anda menjalankan torch pada interface yang relevan (mis. interface ke pelanggan atau uplink WAN) dan langsung melihat siapa/apa yang mengonsumsi bandwidth, misalnya satu IP sedang mengunduh besar, banyak koneksi ke port tertentu (P2P/torrent), atau lonjakan trafik dari/ke host tertentu (mungkin tanda perangkat terinfeksi atau serangan). Dengan informasi itu Anda bisa mengambil tindakan tepat: menerapkan/menyesuaikan queue (`19.4`), memblokir/membatasi trafik tertentu (`19.3`), atau mengidentifikasi anomali. Torch mengubah "internet lambat" dari tebakan menjadi diagnosis berbasis data secara instan (tanpa perlu setup flow export atau tools eksternal).
 
-2. **Netwatch** memantau sebuah host (mis. gateway ISP utama atau alamat andal seperti 8.8.8.8 lewat jalur utama) pada interval tertentu, dan menjalankan **`down-script`** ketika host tidak lagi merespons serta **`up-script`** ketika kembali merespons. Untuk **failover WAN otomatis**: konfigurasikan netwatch memantau gateway/target melalui ISP utama; pada **`down-script`**, jalankan perintah yang **mengalihkan trafik ke ISP backup** — misalnya mengaktifkan/menurunkan distance rute backup, mengubah default route, atau mengaktifkan rute yang tadinya nonaktif; pada **`up-script`**, kembalikan trafik ke ISP utama (aktifkan lagi rute utama). Dengan begitu, ketika ISP utama putus, router **otomatis beralih** ke backup dalam hitungan detik tanpa intervensi manual, dan kembali normal saat utama pulih. (Alternatif lain: recursive routing dengan `check-gateway`, tetapi netwatch memberi fleksibilitas menjalankan skrip apa pun, termasuk notifikasi.) Netwatch juga bisa sekaligus mengirim **alert** (mis. via email/Telegram lewat API) saat status berubah.
+2. **Netwatch** memantau sebuah host (mis. gateway ISP utama atau alamat andal seperti 8.8.8.8 lewat jalur utama) pada interval tertentu, dan menjalankan `down-script` ketika host tidak lagi merespons serta `up-script` ketika kembali merespons. Untuk **failover WAN otomatis**: konfigurasikan netwatch memantau gateway/target melalui ISP utama; pada `down-script`, jalankan perintah yang mengalihkan trafik ke ISP backup, misalnya mengaktifkan/menurunkan distance rute backup, mengubah default route, atau mengaktifkan rute yang tadinya nonaktif; pada `up-script`, kembalikan trafik ke ISP utama (aktifkan lagi rute utama). Dengan begitu, ketika ISP utama putus, router otomatis beralih ke backup dalam hitungan detik tanpa intervensi manual, dan kembali normal saat utama pulih. (Alternatif lain: recursive routing dengan `check-gateway`, tetapi netwatch memberi fleksibilitas menjalankan skrip apa pun, termasuk notifikasi.) Netwatch juga bisa sekaligus mengirim alert (mis. via email/Telegram lewat API) saat status berubah.
 
-3. **Sentralisasi log ke syslog server** penting karena: (a) **memori log lokal RouterOS terbatas** — hanya menyimpan sejumlah entri terakhir, sehingga log lama tertimpa; (b) **log lokal hilang saat reboot** (kecuali dikonfigurasi ke disk, yang tetap terbatas), sehingga bukti penting bisa lenyap; (c) untuk **troubleshooting historis dan audit** (mis. investigasi insiden keamanan atau menelusuri kapan masalah mulai) Anda butuh riwayat log yang bertahan; (d) untuk **korelasi antar-perangkat** — melihat log dari banyak router/switch di satu tempat memungkinkan memahami peristiwa yang melibatkan beberapa perangkat; (e) untuk **kepatuhan** yang mensyaratkan retensi log. **NTP penting** karena korelasi dan analisis log bergantung pada **timestamp yang akurat dan konsisten** di semua perangkat: jika jam antar-perangkat tidak sinkron, urutan peristiwa menjadi kacau dan mustahil mengaitkan kejadian di satu perangkat dengan perangkat lain secara tepat. Dengan NTP tersinkron, timestamp seluruh perangkat selaras sehingga log terpusat dapat diurutkan dan dikorelasikan dengan benar. Lihat `14-monitoring-troubleshooting/03`.
+3. **Sentralisasi log ke syslog server** penting karena: (a) memori log lokal RouterOS terbatas: hanya menyimpan sejumlah entri terakhir, sehingga log lama tertimpa; (b) log lokal hilang saat reboot (kecuali dikonfigurasi ke disk, yang tetap terbatas), sehingga bukti penting bisa lenyap; (c) untuk troubleshooting historis dan audit (mis. investigasi insiden keamanan atau menelusuri kapan masalah mulai) Anda butuh riwayat log yang bertahan; (d) untuk korelasi antar-perangkat, karena melihat log dari banyak router/switch di satu tempat memungkinkan memahami peristiwa yang melibatkan beberapa perangkat; (e) untuk kepatuhan yang mensyaratkan retensi log. **NTP penting** karena korelasi dan analisis log bergantung pada timestamp yang akurat dan konsisten di semua perangkat: jika jam antar-perangkat tidak sinkron, urutan peristiwa menjadi kacau dan mustahil mengaitkan kejadian di satu perangkat dengan perangkat lain secara tepat. Dengan NTP tersinkron, timestamp seluruh perangkat selaras sehingga log terpusat dapat diurutkan dan dikorelasikan dengan benar. Lihat `14-monitoring-troubleshooting/03`.
 
-4. **`/system backup`** menghasilkan file **biner lengkap** yang berisi **seluruh** konfigurasi dan state perangkat (termasuk password, sertifikat) — ia memulihkan perangkat ke keadaan **persis** seperti saat backup, tetapi **hanya bisa di-restore ke perangkat yang sama/serupa** (versi RouterOS dan sering hardware yang cocok) dan **tidak dapat dibaca/diedit manusia**. **`/export`** menghasilkan file **teks** berisi perintah-perintah konfigurasi (script `.rsc`) yang **dapat dibaca, diedit, dan di-diff** manusia; ia bisa diterapkan sebagian atau ke perangkat lain (dengan penyesuaian), meski tidak menyertakan beberapa hal sensitif secara default (mis. password tidak selalu ikut). **Untuk version control (`15-otomasi/04`), `/export` jauh lebih baik** karena berbasis teks: dapat disimpan di **Git**, di-**diff** (melihat persis apa yang berubah antar-versi — deteksi drift), di-review lewat pull request, dan dikelola sebagai kode. File biner `/system backup` tidak bisa di-diff secara bermakna dan tidak cocok untuk Git. Praktik umum: gunakan `/export` untuk versioning/audit konfigurasi, dan `/system backup` untuk pemulihan cepat perangkat yang sama (mis. sebelum upgrade).
+4. **`/system backup`** menghasilkan file biner lengkap yang berisi seluruh konfigurasi dan state perangkat (termasuk password, sertifikat). File ini memulihkan perangkat ke keadaan persis seperti saat backup, tetapi hanya bisa di-restore ke perangkat yang sama/serupa (versi RouterOS dan sering hardware yang cocok) dan tidak dapat dibaca/diedit manusia. **`/export`** menghasilkan file teks berisi perintah-perintah konfigurasi (script `.rsc`) yang dapat dibaca, diedit, dan di-diff manusia; ia bisa diterapkan sebagian atau ke perangkat lain (dengan penyesuaian), meski tidak menyertakan beberapa hal sensitif secara default (mis. password tidak selalu ikut). **Untuk version control (`15-otomasi/04`), `/export` jauh lebih baik** karena berbasis teks: dapat disimpan di Git, di-diff (melihat persis apa yang berubah antar-versi, untuk deteksi drift), di-review lewat pull request, dan dikelola sebagai kode. File biner `/system backup` tidak bisa di-diff secara bermakna dan tidak cocok untuk Git. Praktik umum: gunakan `/export` untuk versioning/audit konfigurasi, dan `/system backup` untuk pemulihan cepat perangkat yang sama (mis. sebelum upgrade).
 
-5. Gunakan **scripting internal RouterOS + scheduler** untuk tugas yang bersifat **lokal, reaktif, dan spesifik-perangkat**: failover berbasis netwatch, backup lokal terjadwal, pembersihan/rotasi, pembaruan address-list dinamis, reboot terjadwal, notifikasi berdasarkan event di perangkat itu. Ini berjalan **di dalam** router, tidak bergantung sistem luar, dan ideal untuk reaksi cepat terhadap kondisi lokal. Gunakan **otomasi eksternal (Python via API/SSH, atau Ansible `community.routeros`)** untuk **manajemen armada (banyak perangkat)** dan hal yang menuntut **konsistensi, versioning, dan perubahan massal**: mengonfigurasi/memperbarui puluhan-ratusan router secara seragam, backup terpusat yang ter-versi di Git, audit kepatuhan lintas-perangkat, provisioning pelanggan/perangkat baru dari source of truth (NetBox), dan pipeline CI/CD (`15-otomasi/04`). Otomasi eksternal memberi kontrol terpusat, idempotensi, review perubahan, dan integrasi dengan alat/proses yang sama untuk semua vendor — keunggulan yang tidak dimiliki scripting per-perangkat. Aturan praktis: **scripting internal untuk otomasi lokal/reaktif satu perangkat; otomasi eksternal untuk mengelola banyak perangkat secara konsisten dan ter-versi**. Keduanya saling melengkapi.
+5. Gunakan **scripting internal RouterOS + scheduler** untuk tugas yang bersifat lokal, reaktif, dan spesifik-perangkat: failover berbasis netwatch, backup lokal terjadwal, pembersihan/rotasi, pembaruan address-list dinamis, reboot terjadwal, notifikasi berdasarkan event di perangkat itu. Ini berjalan di dalam router, tidak bergantung sistem luar, dan ideal untuk reaksi cepat terhadap kondisi lokal. Gunakan **otomasi eksternal (Python via API/SSH, atau Ansible `community.routeros`)** untuk manajemen armada (banyak perangkat) dan hal yang menuntut konsistensi, versioning, dan perubahan massal: mengonfigurasi/memperbarui puluhan-ratusan router secara seragam, backup terpusat yang ter-versi di Git, audit kepatuhan lintas-perangkat, provisioning pelanggan/perangkat baru dari source of truth (NetBox), dan pipeline CI/CD (`15-otomasi/04`). Otomasi eksternal memberi kontrol terpusat, idempotensi, review perubahan, dan integrasi dengan alat/proses yang sama untuk semua vendor, sesuatu yang tidak dimiliki scripting per-perangkat. Aturan praktis: scripting internal untuk otomasi lokal/reaktif satu perangkat; otomasi eksternal untuk mengelola banyak perangkat secara konsisten dan ter-versi. Keduanya saling melengkapi.
 
 </details>
 
@@ -219,8 +219,8 @@ with ConnectHandler(**dev) as conn:
 
 ## 11. Sumber
 
-- MikroTik documentation — Tools (Torch, Netwatch, Sniffer), Scripting, Scheduler, SNMP, The Dude, REST API (help.mikrotik.com)
-- MTCNA outline — Network Management & Tools
+- MikroTik documentation: Tools (Torch, Netwatch, Sniffer), Scripting, Scheduler, SNMP, The Dude, REST API (help.mikrotik.com)
+- MTCNA outline: Network Management & Tools
 - `14-monitoring-troubleshooting/02-03` (tools & observability) · `15-otomasi/03-04` (Python & Ansible)
 
 ---

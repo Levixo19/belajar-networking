@@ -1,6 +1,6 @@
 # 07.7 Redistribusi dan Routing Policy
 
-> **Prasyarat:** `07-routing-lanjutan/04`–`06`
+> **Prasyarat:** `07-routing-lanjutan/04`-`06`
 > **Tujuan:** Anda bisa meredistribusikan rute antar-protokol dengan aman, mencegah routing loop, dan menerapkan kebijakan dengan route-map dan PBR.
 
 ---
@@ -46,24 +46,24 @@ R1(config-router)# redistribute bgp 65001 subnets
 ```
 
 > [!WARNING]
-> **`subnets` wajib untuk OSPF.** Tanpa kata kunci ini, OSPF **hanya** meredistribusikan rute classful (/8, /16, /24) dan mengabaikan sisanya secara diam-diam. Ini kesalahan yang sangat sering terjadi.
+> **`subnets` wajib untuk OSPF.** Tanpa kata kunci ini, OSPF hanya meredistribusikan rute classful (/8, /16, /24) dan mengabaikan sisanya secara diam-diam. Ini kesalahan yang sangat sering terjadi.
 
 ---
 
 ## 3. Seed Metric
 
-Setiap protokol punya sistem metrik yang berbeda dan **tidak sebanding**. Saat redistribusi, metrik asal harus diganti dengan **seed metric**.
+Setiap protokol punya sistem metrik yang berbeda dan tidak sebanding. Saat redistribusi, metrik asal harus diganti dengan **seed metric**.
 
 | Protokol tujuan | Seed metric default | Konsekuensi |
 |---|---|---|
 | **OSPF** | 20 (E2), atau 1 dari BGP | Rute masuk dengan cost tetap |
-| **EIGRP** | **Infinity** ⚠️ | **Rute TIDAK diiklankan** kalau metrik tidak diset! |
-| **RIP** | **Infinity** ⚠️ | Sama |
+| **EIGRP** | Infinity | Rute TIDAK diiklankan kalau metrik tidak diset! |
+| **RIP** | Infinity | Sama |
 | **BGP** | Metrik IGP → MED | |
 | **IS-IS** | 0 | |
 
 > [!WARNING]
-> **EIGRP dan RIP memerlukan metrik eksplisit.** Tanpa itu, redistribusi tampak berhasil di konfigurasi tetapi tidak ada rute yang benar-benar diiklankan — gejala yang sangat membingungkan.
+> **EIGRP dan RIP memerlukan metrik eksplisit.** Tanpa itu, redistribusi tampak berhasil di konfigurasi tetapi tidak ada rute yang benar-benar diiklankan. Gejala ini sangat membingungkan.
 
 ```
 # EIGRP: bandwidth delay reliability load MTU
@@ -144,7 +144,7 @@ redistribute bgp 65001 into OSPF
 ```
 
 > [!WARNING]
-> **JANGAN PERNAH meredistribusi tabel BGP penuh ke IGP.** Kalau butuh konektivitas internet dari internal, gunakan **default route**.
+> **JANGAN PERNAH meredistribusi tabel BGP penuh ke IGP.** Kalau butuh konektivitas internet dari internal, gunakan default route.
 
 ---
 
@@ -174,7 +174,7 @@ R2(config-router)# redistribute ospf 1 route-map OSPF-TO-EIGRP metric 10000 100 
 ```
 
 > [!TIP]
-> **Tagging adalah teknik terbaik** karena bekerja otomatis tanpa harus mendaftar setiap prefix. Terapkan tag di **semua** titik redistribusi.
+> **Tagging adalah teknik terbaik** karena bekerja otomatis tanpa harus mendaftar setiap prefix. Terapkan tag di semua titik redistribusi.
 
 ### Teknik 2: Filtering dengan Prefix-List
 
@@ -196,7 +196,7 @@ R1(config-router)# distance 200 10.0.0.2 0.0.0.0 PREFIX-LIST-NAME
 ```
 
 > [!WARNING]
-> Manipulasi AD kuat tetapi **sulit dipahami orang lain**. Dokumentasikan dengan sangat jelas.
+> Manipulasi AD kuat tetapi sulit dipahami orang lain. Dokumentasikan dengan sangat jelas.
 
 ### Teknik 4: Distribute-List
 
@@ -229,7 +229,7 @@ R1(config-router)# redistribute static metric 10000 100 255 1 1500
 ```
 
 > [!TIP]
-> **Kalau Anda harus melakukan mutual redistribution di lebih dari satu titik**, tagging menjadi **wajib**, bukan opsional.
+> **Kalau Anda harus melakukan mutual redistribution di lebih dari satu titik**, tagging menjadi wajib.
 
 ---
 
@@ -254,7 +254,7 @@ route-map NAMA {permit | deny} SEQ
 ```
 
 > [!WARNING]
-> **Implicit deny di akhir route-map** adalah sumber masalah nomor satu. Kalau Anda hanya menulis satu `permit 10` untuk memberi tag pada sebagian rute, **sisanya akan dibuang diam-diam**.
+> **Implicit deny di akhir route-map** adalah sumber masalah nomor satu. Kalau Anda hanya menulis satu `permit 10` untuk memberi tag pada sebagian rute, sisanya akan dibuang diam-diam.
 
 ```
 ❌ SALAH — rute selain 10.1.0.0/16 hilang:
@@ -311,13 +311,13 @@ route-map CONTOH permit 10
  match metric 100                   ← AND (kategori berbeda)
 ```
 
-Aturannya: **match dalam kategori yang sama = OR; kategori berbeda = AND.**
+Aturannya: match dalam kategori yang sama = OR; kategori berbeda = AND.
 
 ---
 
 ## 8. Policy-Based Routing (PBR)
 
-Routing normal hanya melihat **alamat tujuan**. PBR memungkinkan keputusan berdasarkan **alamat sumber, protokol, port, ukuran paket**, dan lainnya.
+Routing normal hanya melihat alamat tujuan. PBR memungkinkan keputusan berdasarkan alamat sumber, protokol, port, ukuran paket, dan lainnya.
 
 ### Kasus penggunaan
 
@@ -380,7 +380,7 @@ R1# debug ip policy
 
 ## 9. VRF-Lite
 
-**VRF** (*Virtual Routing and Forwarding*) memungkinkan satu router memiliki **beberapa routing table yang terpisah total**.
+**VRF** (*Virtual Routing and Forwarding*) memungkinkan satu router memiliki beberapa routing table yang terpisah total.
 
 ```
               ┌─────────── ROUTER FISIK ───────────┐
@@ -395,10 +395,10 @@ R1# debug ip policy
 
 ### Kegunaan
 
-- **Multi-tenancy** — beberapa pelanggan/departemen dengan isolasi penuh
-- **Alamat tumpang tindih** — dua entitas memakai 192.168.1.0/24 yang sama
-- **Segmentasi keamanan** — pemisahan pada layer 3 (lebih kuat daripada VLAN)
-- **Manajemen out-of-band** — VRF `Mgmt-vrf` terpisah dari trafik produksi
+- **Multi-tenancy**: beberapa pelanggan/departemen dengan isolasi penuh
+- **Alamat tumpang tindih**: dua entitas memakai 192.168.1.0/24 yang sama
+- **Segmentasi keamanan**: pemisahan pada layer 3 (lebih kuat daripada VLAN)
+- **Manajemen out-of-band**: VRF `Mgmt-vrf` terpisah dari trafik produksi
 
 ### Konfigurasi VRF-Lite
 
@@ -447,17 +447,17 @@ Membutuhkan MP-BGP. Untuk kasus sederhana, bisa memakai static route antar-VRF.
 
 ## 10. Ringkasan
 
-- Redistribusi memindahkan rute antar-protokol; **berbahaya** dan bisa menyebabkan loop, black hole, dan suboptimal routing.
-- **`subnets` wajib untuk OSPF** — tanpa itu hanya rute classful yang diredistribusi.
-- **EIGRP dan RIP butuh seed metric eksplisit** — tanpa itu metriknya infinity dan rute tidak diiklankan sama sekali.
-- **OSPF E1** menambahkan cost internal (pilih ASBR terdekat); **E2 (default)** tidak.
-- **JANGAN meredistribusi tabel BGP penuh ke IGP** — pakai default route.
-- Mitigasi loop: **route tagging** (terbaik), filtering, manipulasi AD, distribute-list.
+- Redistribusi memindahkan rute antar-protokol; berbahaya dan bisa menyebabkan loop, black hole, dan suboptimal routing.
+- **`subnets` wajib untuk OSPF.** Tanpa itu hanya rute classful yang diredistribusi.
+- **EIGRP dan RIP butuh seed metric eksplisit.** Tanpa itu metriknya infinity dan rute tidak diiklankan sama sekali.
+- **OSPF E1** menambahkan cost internal (pilih ASBR terdekat); E2 (default) tidak.
+- **JANGAN meredistribusi tabel BGP penuh ke IGP**; pakai default route.
+- Mitigasi loop: route tagging (terbaik), filtering, manipulasi AD, distribute-list.
 - **Redistribusi satu arah + default route balik** jauh lebih aman daripada mutual redistribution.
-- **Route-map punya implicit deny** — selalu akhiri dengan `permit` kosong bila ingin melewatkan sisanya.
+- **Route-map punya implicit deny**, jadi selalu akhiri dengan `permit` kosong bila ingin melewatkan sisanya.
 - Match dalam kategori sama = OR; kategori berbeda = AND.
-- **PBR** merutekan berdasarkan sumber/protokol/port; diterapkan pada interface **ingress**; periksa dukungan hardware.
-- **VRF** memberi routing table terpisah dalam satu perangkat — untuk multi-tenancy, alamat tumpang tindih, dan isolasi keamanan.
+- **PBR** merutekan berdasarkan sumber/protokol/port; diterapkan pada interface ingress; periksa dukungan hardware.
+- **VRF** memberi routing table terpisah dalam satu perangkat, dipakai untuk multi-tenancy, alamat tumpang tindih, dan isolasi keamanan.
 
 ---
 
@@ -474,26 +474,26 @@ Membutuhkan MP-BGP. Untuk kasus sederhana, bisa memakai static route antar-VRF.
 <details>
 <summary>Jawaban</summary>
 
-1. **Seed metric tidak diset.** EIGRP memberikan metrik **infinity** untuk rute yang diredistribusi tanpa metrik eksplisit, sehingga rute dianggap tidak terjangkau dan **tidak pernah diiklankan**. Perbaikan:
+1. **Seed metric tidak diset.** EIGRP memberikan metrik infinity untuk rute yang diredistribusi tanpa metrik eksplisit, sehingga rute dianggap tidak terjangkau dan tidak pernah diiklankan. Perbaikan:
    ```
    redistribute ospf 1 metric 10000 100 255 1 1500
    ```
    atau set sekali: `default-metric 10000 100 255 1 1500`. Hal yang sama berlaku untuk RIP (`metric 5`).
 
-2. **Kata kunci `subnets` tidak disertakan.** Tanpa `subnets`, OSPF hanya meredistribusikan rute yang merupakan **jaringan classful** (/8, /16, /24 tepat pada batas kelas) dan mengabaikan semua subnet lainnya secara diam-diam. Perbaikan: `redistribute eigrp 100 subnets`.
+2. **Kata kunci `subnets` tidak disertakan.** Tanpa `subnets`, OSPF hanya meredistribusikan rute yang merupakan jaringan classful (/8, /16, /24 tepat pada batas kelas) dan mengabaikan semua subnet lainnya secara diam-diam. Perbaikan: `redistribute eigrp 100 subnets`.
 
-3. **Route tagging** memberi "cap" pada rute saat pertama kali diredistribusi. Misalnya semua rute EIGRP yang masuk ke OSPF diberi `tag 100`. Ketika rute itu menyebar melalui OSPF dan sampai ke router kedua yang juga melakukan redistribusi balik ke EIGRP, router tersebut memeriksa tag: rute bertag 100 **ditolak** (`route-map ... deny 10 / match tag 100`), karena artinya rute itu **memang berasal dari EIGRP**. Dengan demikian rute tidak pernah kembali ke domain asalnya, dan loop dicegah — tanpa perlu mendaftar setiap prefix secara manual. Terapkan tag di **semua** titik redistribusi agar konsisten.
+3. **Route tagging** memberi "cap" pada rute saat pertama kali diredistribusi. Misalnya semua rute EIGRP yang masuk ke OSPF diberi `tag 100`. Ketika rute itu menyebar melalui OSPF dan sampai ke router kedua yang juga melakukan redistribusi balik ke EIGRP, router tersebut memeriksa tag: rute bertag 100 ditolak (`route-map ... deny 10 / match tag 100`), karena artinya rute itu memang berasal dari EIGRP. Dengan demikian rute tidak pernah kembali ke domain asalnya, dan loop dicegah tanpa perlu mendaftar setiap prefix secara manual. Terapkan tag di semua titik redistribusi agar konsisten.
 
-4. Karena **route-map punya implicit deny di akhir**. Route-map dengan hanya satu `permit 10` yang cocok dengan subnet 10.1.0.0/16 akan **menolak semua rute lain** yang tidak cocok dengan match itu. Perbaikan: tambahkan sequence permit kosong di akhir:
+4. Karena route-map punya implicit deny di akhir. Route-map dengan hanya satu `permit 10` yang cocok dengan subnet 10.1.0.0/16 akan menolak semua rute lain yang tidak cocok dengan match itu. Perbaikan: tambahkan sequence permit kosong di akhir:
    ```
    route-map SET-TAG permit 20
    ```
    Sequence tanpa `match` cocok dengan semua rute dan melewatkannya tanpa perubahan.
 
-5. Pilih **E1** ketika ada **beberapa ASBR** yang meredistribusikan rute eksternal yang sama. E1 menambahkan cost internal (jarak ke ASBR) ke metrik eksternal, sehingga setiap router otomatis memilih **ASBR terdekat** — menghasilkan routing optimal. Dengan E2 (default), semua router melihat metrik yang sama tanpa memandang jarak ke ASBR, sehingga tie-breaker berikutnya (cost ke ASBR) baru dipakai — dan pada topologi tertentu ini bisa menghasilkan pilihan yang tidak intuitif. E2 tetap berguna kalau Anda ingin metrik eksternal konsisten di seluruh domain (mis. untuk membedakan kualitas rute eksternal itu sendiri).
+5. Pilih **E1** ketika ada beberapa ASBR yang meredistribusikan rute eksternal yang sama. E1 menambahkan cost internal (jarak ke ASBR) ke metrik eksternal, sehingga setiap router otomatis memilih ASBR terdekat dan routing menjadi optimal. Dengan E2 (default), semua router melihat metrik yang sama tanpa memandang jarak ke ASBR, sehingga tie-breaker berikutnya (cost ke ASBR) baru dipakai. Pada topologi tertentu, hasilnya bisa berupa pilihan yang tidak intuitif. E2 tetap berguna kalau Anda ingin metrik eksternal konsisten di seluruh domain (mis. untuk membedakan kualitas rute eksternal itu sendiri).
 
-6. **VLAN** memisahkan pada **Layer 2** — memisahkan broadcast domain. Perangkat di VLAN berbeda tetap bisa berkomunikasi begitu ada routing di antara mereka, dan semuanya berbagi **satu routing table**. Alamat IP harus unik di seluruh perangkat.
-   **VRF** memisahkan pada **Layer 3** — memberi **routing table yang sepenuhnya terpisah**. Dua VRF bisa memakai **rentang alamat IP yang identik** tanpa konflik, dan trafik **tidak bisa** berpindah antar-VRF kecuali dikonfigurasi eksplisit (route leaking). Isolasi VRF jauh lebih kuat: bahkan router itu sendiri memperlakukan keduanya sebagai jaringan yang berbeda sama sekali.
+6. **VLAN** memisahkan pada Layer 2, yaitu memisahkan broadcast domain. Perangkat di VLAN berbeda tetap bisa berkomunikasi begitu ada routing di antara mereka, dan semuanya berbagi satu routing table. Alamat IP harus unik di seluruh perangkat.
+   **VRF** memisahkan pada Layer 3 dengan memberi routing table yang sepenuhnya terpisah. Dua VRF bisa memakai rentang alamat IP yang identik tanpa konflik, dan trafik tidak bisa berpindah antar-VRF kecuali dikonfigurasi eksplisit (route leaking). Isolasi VRF jauh lebih kuat: bahkan router itu sendiri memperlakukan keduanya sebagai jaringan yang berbeda sama sekali.
 
 7. **Policy-Based Routing:**
    ```
@@ -511,7 +511,7 @@ Membutuhkan MP-BGP. Untuk kasus sederhana, bisa memakai static route antar-VRF.
    interface vlan 30
     ip policy route-map PBR-VLAN30
    ```
-   Catatan: sequence `permit 20` yang kosong **wajib** — tanpa itu, trafik yang tidak cocok dengan ACL 130 akan dibuang. Gunakan `verify-availability` + tracking agar trafik jatuh kembali ke routing normal bila ISP-B mati. Verifikasi dukungan PBR di hardware pada platform Anda.
+   Catatan: sequence `permit 20` yang kosong wajib ada. Tanpa itu, trafik yang tidak cocok dengan ACL 130 akan dibuang. Gunakan `verify-availability` + tracking agar trafik jatuh kembali ke routing normal bila ISP-B mati. Verifikasi dukungan PBR di hardware pada platform Anda.
 
 </details>
 
@@ -522,7 +522,7 @@ Membutuhkan MP-BGP. Untuk kasus sederhana, bisa memakai static route antar-VRF.
 - Cisco, *Route Redistribution* (Document ID 8606)
 - Cisco, *Policy-Based Routing Configuration Guide*
 - Cisco, *VRF-lite Configuration Guide*
-- RFC 4364 — BGP/MPLS IP VPNs (konsep VRF & route target)
+- RFC 4364, BGP/MPLS IP VPNs (konsep VRF & route target)
 
 ---
 

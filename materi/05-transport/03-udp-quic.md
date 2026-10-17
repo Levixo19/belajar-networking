@@ -41,12 +41,12 @@ Bandingkan dengan TCP yang minimal 20 byte dan bisa 60 byte.
 ❌ Tidak ada congestion control → bisa membanjiri jaringan
 ```
 
-Ini terdengar seperti daftar kelemahan. Tetapi justru inilah kekuatannya.
+Kedengarannya seperti daftar kelemahan, tetapi ketiadaan fitur-fitur itulah yang membuat UDP dipilih.
 
 ### Kenapa memilih UDP
 
 **1. Latency lebih rendah**
-Tidak ada handshake (hemat 1 RTT), tidak ada menunggu retransmisi.
+Tidak ada handshake (hemat 1 RTT) dan tidak perlu menunggu retransmisi.
 
 **2. Untuk data real-time, terlambat = tidak berguna**
 ```
@@ -68,13 +68,13 @@ TCP hanya bisa unicast (butuh koneksi). UDP bisa dikirim ke banyak penerima seka
 DNS query cukup satu paket pergi dan satu paket balik. Membangun koneksi TCP untuk itu adalah pemborosan 1 RTT penuh.
 
 **6. Kontrol penuh di aplikasi**
-Aplikasi bisa membangun mekanisme keandalannya sendiri yang lebih cocok — inilah yang dilakukan QUIC.
+Aplikasi bisa membangun mekanisme keandalannya sendiri yang lebih cocok. Itulah yang dilakukan QUIC.
 
 ### Yang memakai UDP
 
 | Aplikasi | Kenapa UDP |
 |---|---|
-| **DNS** (53) | Satu query, satu jawaban — TCP terlalu mahal |
+| **DNS** (53) | Satu query, satu jawaban; TCP terlalu mahal |
 | **DHCP** (67/68) | Broadcast; klien belum punya IP |
 | **NTP** (123) | Satu pertukaran; keterlambatan merusak akurasi |
 | **SNMP** (161/162) | Banyak query kecil; kehilangan bisa ditoleransi |
@@ -84,7 +84,7 @@ Aplikasi bisa membangun mekanisme keandalannya sendiri yang lebih cocok — inil
 | **VoIP** | Sama |
 | **Video streaming langsung** | Sama |
 | **Game online** | Latency kritis; posisi lama tidak berguna |
-| **VXLAN** (4789) | Tunneling — keandalan ditangani payload |
+| **VXLAN** (4789) | Tunneling; keandalan ditangani payload |
 | **IPsec NAT-T** (4500) | Enkapsulasi |
 | **WireGuard** (51820) | Enkapsulasi VPN |
 | **QUIC / HTTP3** (443) | Membangun keandalan sendiri di atas UDP |
@@ -106,13 +106,13 @@ Aplikasi bisa membangun mekanisme keandalannya sendiri yang lebih cocok — inil
 | Analogi | Surat tercatat | Kartu pos |
 
 > [!TIP]
-> **UDP menjaga batas pesan** — satu `sendto()` = satu `recvfrom()`. Ini keuntungan yang sering dilupakan; dengan TCP, aplikasi harus membuat framingnya sendiri.
+> **UDP menjaga batas pesan**: satu `sendto()` = satu `recvfrom()`. Ini keuntungan yang sering dilupakan; dengan TCP, aplikasi harus membuat framingnya sendiri.
 
 ---
 
 ## 2. Bahaya UDP: Amplification Attack
 
-Karena UDP tidak ada handshake, **alamat sumber mudah dipalsukan** (spoofing). Ini dieksploitasi untuk serangan DDoS.
+Karena UDP tidak punya handshake, **alamat sumber mudah dipalsukan** (spoofing). Ini dieksploitasi untuk serangan DDoS.
 
 ```
 Penyerang mengirim query kecil dengan IP sumber PALSU (= korban)
@@ -129,20 +129,20 @@ Amplification factor:
 Penyerang dengan 1 Mbps bisa menghasilkan 50 Gbps trafik ke korban lewat memcached.
 
 **Mitigasi:**
-1. **BCP 38 / uRPF** — ISP memfilter paket dengan alamat sumber palsu di sumbernya (`12-keamanan/03`).
+1. **BCP 38 / uRPF**: ISP memfilter paket dengan alamat sumber palsu di sumbernya (`12-keamanan/03`).
 2. **Rate limiting** pada layanan UDP publik.
 3. **Nonaktifkan fitur berisiko** (NTP `monlist`, DNS `ANY`, memcached dari internet).
 4. **DNS Response Rate Limiting (RRL)**.
 5. Jangan pernah mengekspos memcached/Redis ke internet.
 
 > [!WARNING]
-> Ini alasan penting mengapa **UDP sering dibatasi ketat di firewall perusahaan** — dan sebabnya QUIC kadang diblokir.
+> Inilah salah satu alasan **UDP sering dibatasi ketat di firewall perusahaan**, dan sebab QUIC kadang diblokir.
 
 ---
 
 ## 3. QUIC (Transport Modern)
 
-**QUIC** [RFC 9000] adalah protokol transport yang berjalan **di atas UDP**, tetapi menyediakan semua yang TCP berikan — plus lebih banyak.
+**QUIC** [RFC 9000] adalah protokol transport yang berjalan **di atas UDP**, tetapi menyediakan semua yang diberikan TCP, ditambah fitur yang tidak dimiliki TCP.
 
 ### Mengapa QUIC dibuat
 
@@ -202,7 +202,7 @@ vs TCP+TLS 1.3 = 2 RTT, TCP+TLS 1.2 = 3 RTT
 ```
 
 > [!WARNING]
-> 0-RTT punya risiko **replay attack** — data 0-RTT bisa diputar ulang penyerang. Karena itu hanya boleh untuk request idempoten (GET), bukan POST yang mengubah state.
+> 0-RTT punya risiko **replay attack**: data 0-RTT bisa diputar ulang penyerang. Karena itu hanya boleh untuk request idempoten (GET), bukan POST yang mengubah state.
 
 **2. Tidak ada head-of-line blocking antar-stream**
 ```
@@ -224,7 +224,7 @@ Ini keunggulan besar untuk perangkat bergerak.
 Hampir seluruh header QUIC dienkripsi (bukan hanya payload). Middlebox tidak bisa membaca atau memodifikasinya → mencegah **ossification** dan memungkinkan protokol berevolusi.
 
 **5. Diimplementasikan di user space**
-Bukan di kernel. Browser dan server bisa memperbarui QUIC dengan update aplikasi biasa — iterasi jauh lebih cepat.
+QUIC tidak berjalan di kernel. Browser dan server bisa memperbaruinya dengan update aplikasi biasa, sehingga iterasinya jauh lebih cepat.
 
 **6. Loss recovery yang lebih baik**
 Nomor paket QUIC **selalu bertambah** (tidak dipakai ulang saat retransmisi), sehingga tidak ada ambiguitas RTT seperti pada TCP (yang butuh Karn's algorithm).
@@ -235,7 +235,7 @@ Nomor paket QUIC **selalu bertambah** (tidak dipakai ulang saat retransmisi), se
 > **1. Konsumsi CPU lebih tinggi.** Karena berjalan di user space dan mengenkripsi lebih banyak, QUIC memakai CPU lebih besar daripada TCP yang dioptimasi kernel (walaupun terus membaik dengan offload dan optimasi).
 
 > [!WARNING]
-> **2. Diblokir sebagian jaringan.** Banyak firewall perusahaan memblokir UDP/443. Klien akan **fallback ke TCP** — tetapi itu berarti percobaan yang terbuang dan latency tambahan.
+> **2. Diblokir sebagian jaringan.** Banyak firewall perusahaan memblokir UDP/443. Klien akan **fallback ke TCP**, tetapi itu berarti ada percobaan yang terbuang dan latency tambahan.
 
 > [!WARNING]
 > **3. Sulit di-troubleshoot.** Trafiknya terenkripsi hampir seluruhnya; tidak bisa dianalisis dengan cara yang sama seperti TCP. Butuh kunci sesi (`SSLKEYLOGFILE`) untuk dekripsi di Wireshark.
@@ -284,7 +284,7 @@ HTTP/3 adalah HTTP yang berjalan di atas QUIC.
 4. Kalau QUIC gagal (diblokir), fallback ke TCP
 ```
 
-Beberapa klien memakai **Happy Eyeballs untuk QUIC** — mencoba QUIC dan TCP secara paralel, memakai yang lebih dulu berhasil.
+Beberapa klien memakai **Happy Eyeballs untuk QUIC**: mencoba QUIC dan TCP secara paralel, lalu memakai yang lebih dulu berhasil.
 
 ### Implikasi untuk network engineer
 
@@ -292,14 +292,14 @@ Beberapa klien memakai **Happy Eyeballs untuk QUIC** — mencoba QUIC dan TCP se
 > **Ini yang harus Anda putuskan di jaringan perusahaan:**
 
 **Kalau mengizinkan UDP/443:**
-- **Benar:** Pengguna mendapat kinerja lebih baik
-- **Hindari:** Tidak bisa melakukan TLS inspection dengan perangkat lama (banyak yang belum mendukung QUIC)
-- **Hindari:** Visibilitas berkurang untuk DLP/IPS
+- **Kelebihan:** Pengguna mendapat kinerja lebih baik
+- **Kekurangan:** Tidak bisa melakukan TLS inspection dengan perangkat lama (banyak yang belum mendukung QUIC)
+- **Kekurangan:** Visibilitas berkurang untuk DLP/IPS
 
 **Kalau memblokir UDP/443:**
-- **Benar:** Semua trafik web kembali ke TCP → bisa diinspeksi seperti biasa
-- **Hindari:** Latency sedikit lebih tinggi
-- **Hindari:** Ada delay saat browser mencoba QUIC lalu fallback
+- **Kelebihan:** Semua trafik web kembali ke TCP → bisa diinspeksi seperti biasa
+- **Kekurangan:** Latency sedikit lebih tinggi
+- **Kekurangan:** Ada delay saat browser mencoba QUIC lalu fallback
 
 > [!TIP]
 > **Praktik yang lazim saat ini:** blokir UDP/443 di jaringan yang membutuhkan inspeksi mendalam, izinkan di jaringan tamu/umum. Tetapi ini akan berubah seiring perangkat keamanan mendukung QUIC.
@@ -393,7 +393,7 @@ Membuat protokol tunneling                     → UDP (enkapsulasi sederhana)
 
 - **UDP** hanya menambahkan port + checksum (8 byte). Tanpa handshake, keandalan, urutan, atau kontrol apa pun.
 - UDP dipilih karena: **latency rendah**, overhead kecil, mendukung broadcast/multicast, menjaga **batas pesan**, dan memberi kontrol penuh ke aplikasi.
-- Untuk real-time, **data yang terlambat tidak berguna** — retransmisi TCP justru merugikan.
+- Untuk real-time, **data yang terlambat tidak berguna**, sehingga retransmisi TCP justru merugikan.
 - **Perhatian:** UDP rentan **spoofing dan amplification attack** (DNS 54×, NTP 556×, memcached 51.000×). Mitigasi: BCP 38/uRPF, rate limiting, nonaktifkan fitur berisiko.
 - **QUIC** (RFC 9000) berjalan di atas UDP dan menyediakan keandalan + TLS 1.3 + multiplexing.
 - Keunggulan QUIC: **1 RTT / 0-RTT**, **tanpa head-of-line blocking antar-stream**, **connection migration** (Connection ID), enkripsi menyeluruh (anti-ossification), di user space (mudah diperbarui).
@@ -415,24 +415,24 @@ Membuat protokol tunneling                     → UDP (enkapsulasi sederhana)
 <details>
 <summary>Jawaban</summary>
 
-1. Karena kebanyakan query DNS **cukup satu paket pergi dan satu paket balik**. Membangun koneksi TCP memerlukan 1 RTT tambahan hanya untuk handshake — menggandakan latency resolusi nama yang terjadi sangat sering. Keandalan ditangani di tingkat aplikasi: jika tidak ada jawaban dalam timeout, resolver cukup mengulang query (dan biasanya mencoba server DNS lain). Untuk kasus di mana UDP tidak memadai — jawaban >512 byte tanpa EDNS0, DNSSEC, atau zone transfer — DNS beralih ke **TCP 53**.
+1. Karena kebanyakan query DNS **cukup satu paket pergi dan satu paket balik**. Membangun koneksi TCP memerlukan 1 RTT tambahan hanya untuk handshake, sehingga latency resolusi nama menjadi dua kali lipat, padahal resolusi nama terjadi sangat sering. Keandalan ditangani di tingkat aplikasi: jika tidak ada jawaban dalam timeout, resolver cukup mengulang query (dan biasanya mencoba server DNS lain). Untuk kasus yang tidak bisa ditangani UDP (jawaban >512 byte tanpa EDNS0, DNSSEC, atau zone transfer), DNS beralih ke **TCP 53**.
 
-2. Paket suara punya **relevansi waktu**. Jika paket untuk detik ke-5 hilang dan TCP mengirim ulangnya, paket itu tiba pada detik ke-5,3 — saat percakapan sudah lewat, sehingga **tidak berguna**. Lebih buruk lagi, TCP menjaga urutan: seluruh paket suara setelahnya **ditahan** di buffer sampai paket yang hilang tiba (head-of-line blocking) — sehingga satu kehilangan kecil menyebabkan jeda yang jauh lebih panjang. Dengan UDP, paket hilang cukup diabaikan dan codec melakukan *packet loss concealment* (interpolasi), menghasilkan gangguan sangat singkat.
+2. Paket suara punya **relevansi waktu**. Jika paket untuk detik ke-5 hilang dan TCP mengirim ulangnya, paket itu baru tiba pada detik ke-5,3. Saat itu percakapan sudah lewat, sehingga paketnya **tidak berguna**. Lebih buruk lagi, TCP menjaga urutan: seluruh paket suara setelahnya **ditahan** di buffer sampai paket yang hilang tiba (head-of-line blocking). Akibatnya, satu kehilangan kecil menyebabkan jeda yang jauh lebih panjang. Dengan UDP, paket hilang cukup diabaikan dan codec melakukan *packet loss concealment* (interpolasi), menghasilkan gangguan sangat singkat.
 
-3. **Amplification attack**: penyerang mengirim query kecil ke server publik dengan **alamat sumber dipalsukan** menjadi alamat korban; server membalas dengan respons **jauh lebih besar** ke korban. UDP rentan karena **tidak ada handshake**, sehingga server tidak pernah memverifikasi bahwa pengirim benar-benar berada di alamat sumber yang diklaim.
-   **Mitigasi:** (a) **BCP 38 / uRPF** — operator jaringan memfilter paket keluar dengan alamat sumber yang tidak sah, menghentikan spoofing di sumbernya; (b) **rate limiting** pada layanan UDP publik (mis. DNS Response Rate Limiting); (c) nonaktifkan fitur berisiko (NTP `monlist`, DNS `ANY`); (d) jangan mengekspos memcached/Redis ke internet.
+3. **Amplification attack**: penyerang mengirim query kecil ke server publik dengan **alamat sumber dipalsukan** menjadi alamat korban; server membalas dengan respons yang jauh lebih besar ke korban. UDP rentan karena **tidak ada handshake**, sehingga server tidak pernah memverifikasi bahwa pengirim benar-benar berada di alamat sumber yang diklaim.
+   **Mitigasi:** (a) **BCP 38 / uRPF**: operator jaringan memfilter paket keluar dengan alamat sumber yang tidak sah, sehingga spoofing berhenti di sumbernya; (b) **rate limiting** pada layanan UDP publik (mis. DNS Response Rate Limiting); (c) nonaktifkan fitur berisiko (NTP `monlist`, DNS `ANY`); (d) jangan mengekspos memcached/Redis ke internet.
 
-4. **HTTP/2** memultipleks banyak stream dalam **satu koneksi TCP**. TCP menjamin urutan byte untuk seluruh koneksi, sehingga ketika satu paket hilang, TCP menahan **semua** data setelahnya — termasuk data milik stream lain yang sudah tiba lengkap — sampai paket yang hilang dikirim ulang. Akibatnya satu kehilangan memblokir semua stream.
+4. **HTTP/2** memultipleks banyak stream dalam **satu koneksi TCP**. TCP menjamin urutan byte untuk seluruh koneksi, sehingga ketika satu paket hilang, TCP menahan **semua** data setelahnya (termasuk data milik stream lain yang sudah tiba lengkap) sampai paket yang hilang dikirim ulang. Akibatnya satu kehilangan memblokir semua stream.
    **QUIC** mengelola loss recovery **per stream**. Setiap stream punya ruang urutannya sendiri, sehingga kehilangan pada stream 3 hanya menahan stream 3; stream lain terus dikirim ke aplikasi.
 
-5. Koneksi TCP diidentifikasi oleh **5-tuple** (protokol, IP src, port src, IP dst, port dst). Jika salah satu berubah — misalnya ponsel berpindah dari Wi-Fi ke jaringan seluler sehingga IP sumbernya berubah — koneksi **putus** dan harus dibangun ulang lengkap dengan handshake TLS.
-   QUIC mengidentifikasi koneksi dengan **Connection ID** yang independen dari alamat. Saat IP/port berubah, koneksi **berlanjut** tanpa terputus (connection migration) — unduhan, video call, dan sesi tetap berjalan. Ini keunggulan besar untuk perangkat bergerak.
+5. Koneksi TCP diidentifikasi oleh **5-tuple** (protokol, IP src, port src, IP dst, port dst). Jika salah satu berubah (misalnya ponsel berpindah dari Wi-Fi ke jaringan seluler sehingga IP sumbernya berubah), koneksi **putus** dan harus dibangun ulang lengkap dengan handshake TLS.
+   QUIC mengidentifikasi koneksi dengan **Connection ID** yang independen dari alamat. Saat IP/port berubah, koneksi **berlanjut** tanpa terputus (connection migration). Unduhan, video call, dan sesi tetap berjalan. Ini keunggulan besar untuk perangkat bergerak.
 
-6. **Dampak bagi pengguna:** browser akan mencoba QUIC, gagal, lalu **fallback ke TCP** — menambah sedikit delay pada koneksi pertama ke setiap situs; pengguna kehilangan manfaat 0-RTT, connection migration, dan bebas HOL blocking. Pada jaringan dengan loss atau latency tinggi, perbedaannya terasa.
+6. **Dampak bagi pengguna:** browser akan mencoba QUIC, gagal, lalu **fallback ke TCP**. Ini menambah sedikit delay pada koneksi pertama ke setiap situs, dan pengguna kehilangan manfaat 0-RTT, connection migration, dan bebas HOL blocking. Pada jaringan dengan loss atau latency tinggi, perbedaannya terasa.
    **Alasan sah kebijakan itu:** organisasi perlu **inspeksi TLS** untuk DLP, IPS, filtering konten, dan audit kepatuhan. Banyak perangkat keamanan (proxy, NGFW) belum bisa mendekripsi atau menganalisis QUIC, sehingga trafik QUIC menjadi "titik buta". Memaksa fallback ke TCP mengembalikan visibilitas. Kebijakan ini bersifat sementara dan akan berubah seiring dukungan QUIC di perangkat keamanan matang.
 
-7. Karena TCP yang berada di **kernel** ternyata sangat sulit diubah: memperbarui TCP berarti memperbarui sistem operasi di miliaran perangkat, dan **middlebox** (firewall, NAT, proxy lama) sering membuang atau merusak opsi TCP yang tidak mereka kenali — fenomena yang disebut **ossification**. Akibatnya perbaikan TCP macet selama puluhan tahun.
-   Dengan menempatkan QUIC di **user space** di atas UDP (yang sudah pasti dilewatkan middlebox) dan **mengenkripsi hampir seluruh header** (sehingga middlebox tidak bisa "membantu" atau merusaknya), QUIC bisa diperbarui lewat update browser/server biasa — iterasi dalam hitungan minggu, bukan dekade.
+7. Karena TCP yang berada di **kernel** ternyata sangat sulit diubah: memperbarui TCP berarti memperbarui sistem operasi di miliaran perangkat, dan **middlebox** (firewall, NAT, proxy lama) sering membuang atau merusak opsi TCP yang tidak mereka kenali. Fenomena ini disebut **ossification**. Akibatnya perbaikan TCP macet selama puluhan tahun.
+   Dengan menempatkan QUIC di **user space** di atas UDP (yang sudah pasti dilewatkan middlebox) dan **mengenkripsi hampir seluruh header** (sehingga middlebox tidak bisa "membantu" atau merusaknya), QUIC bisa diperbarui lewat update browser/server biasa, dengan iterasi dalam hitungan minggu, bukan dekade.
 
 </details>
 
@@ -440,14 +440,14 @@ Membuat protokol tunneling                     → UDP (enkapsulasi sederhana)
 
 ## 9. Sumber
 
-- RFC 768 — User Datagram Protocol
-- RFC 9000 — QUIC: A UDP-Based Multiplexed and Secure Transport
-- RFC 9001 — Using TLS to Secure QUIC
-- RFC 9002 — QUIC Loss Detection and Congestion Control
-- RFC 9114 — HTTP/3
-- RFC 9204 — QPACK
-- RFC 2827 / BCP 38 — Network Ingress Filtering
-- Cloudflare, *The Road to QUIC* — https://blog.cloudflare.com/the-road-to-quic/
+- RFC 768, User Datagram Protocol
+- RFC 9000, QUIC: A UDP-Based Multiplexed and Secure Transport
+- RFC 9001, Using TLS to Secure QUIC
+- RFC 9002, QUIC Loss Detection and Congestion Control
+- RFC 9114, HTTP/3
+- RFC 9204, QPACK
+- RFC 2827 / BCP 38, Network Ingress Filtering
+- Cloudflare, *The Road to QUIC*: https://blog.cloudflare.com/the-road-to-quic/
 - Cisco CCNA 200-301 v1.1, topik 1.5
 
 ---

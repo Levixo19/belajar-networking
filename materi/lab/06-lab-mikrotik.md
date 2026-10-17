@@ -19,7 +19,7 @@
 
 **VERIFIKASI:** `/ip service print`, `/ip firewall filter print`; router hanya bisa diakses dari LAN.
 
-**KRITERIA SUKSES:** ✅ Router ter-hardening; akses manajemen terbatas.
+**KRITERIA SUKSES:** Router ter-hardening; akses manajemen terbatas.
 
 <details><summary>Solusi & penjelasan</summary>
 
@@ -37,7 +37,7 @@ add chain=input action=drop
 /ip service set ftp disabled=yes
 /ip service set winbox address=192.168.88.0/24
 ```
-Ini menerapkan hardening `19/03` & `19/01`: firewall input default-deny (terima established/related dulu, lalu spesifik, drop sisanya), matikan layanan tak terpakai, batasi Winbox. ⚠️ Router MikroTik terekspos internet tanpa ini cepat diserang. Uji dari luar subnet LAN → akses ditolak.
+Ini menerapkan hardening `19/03` & `19/01`: firewall input default-deny (terima established/related dulu, lalu spesifik, drop sisanya), matikan layanan tak terpakai, batasi Winbox. Router MikroTik yang terekspos ke internet tanpa pengamanan ini cepat diserang. Uji dari luar subnet LAN → akses ditolak.
 </details>
 
 ---
@@ -52,7 +52,7 @@ Ini menerapkan hardening `19/03` & `19/01`: firewall input default-deny (terima 
 
 **VERIFIKASI:** `/interface bridge vlan print`; host VLAN dapat gateway; inter-VLAN sesuai kebijakan.
 
-**KRITERIA SUKSES:** ✅ VLAN terisolasi, inter-VLAN routing terkontrol.
+**KRITERIA SUKSES:** VLAN terisolasi, inter-VLAN routing terkontrol.
 
 <details><summary>Solusi & penjelasan</summary>
 
@@ -69,7 +69,7 @@ Ini menerapkan hardening `19/03` & `19/01`: firewall input default-deny (terima 
 /interface bridge set bridge1 vlan-filtering=yes     (AKTIFKAN TERAKHIR!)
 ```
 > [!WARNING]
-> **Aktifkan `vlan-filtering=yes` paling akhir** setelah semua benar — salah bisa mengunci Anda keluar (`19/02`). VLAN interface = gateway (≈SVI). Kontrol trafik antar-VLAN dengan firewall `forward` (mis. tamu tak boleh ke staff). Membuktikan `19/02`.
+> **Aktifkan `vlan-filtering=yes` paling akhir**, setelah semua benar. Kalau ada yang salah, Anda bisa terkunci di luar router (`19/02`). VLAN interface = gateway (≈SVI). Kontrol trafik antar-VLAN dengan firewall `forward` (mis. tamu tak boleh ke staff). Membuktikan `19/02`.
 > </details>
 
 ---
@@ -84,7 +84,7 @@ Ini menerapkan hardening `19/03` & `19/01`: firewall input default-deny (terima 
 
 **VERIFIKASI:** klien dapat lease; `/ip firewall nat print`; klien ping internet.
 
-**KRITERIA SUKSES:** ✅ Klien DHCP + akses internet via NAT.
+**KRITERIA SUKSES:** Klien DHCP + akses internet via NAT.
 
 <details><summary>Solusi & penjelasan</summary>
 
@@ -95,7 +95,7 @@ Ini menerapkan hardening `19/03` & `19/01`: firewall input default-deny (terima 
 /ip dns set servers=8.8.8.8 allow-remote-requests=yes
 /ip firewall nat add chain=srcnat out-interface=ether1 action=masquerade
 ```
-`allow-remote-requests=yes` menjadikan router **DNS cache** untuk klien (mempercepat, mengurangi beban upstream — `06/01`). **Masquerade** = PAT keluar (`19/03`) — banyak klien berbagi IP WAN. Klien set ke DHCP → dapat IP, gateway, DNS otomatis. ⚠️ Pastikan firewall `forward` mengizinkan LAN→WAN. Membuktikan `19/03` + `06/02`.
+`allow-remote-requests=yes` menjadikan router **DNS cache** untuk klien (mempercepat dan mengurangi beban upstream, lihat `06/01`). **Masquerade** = PAT keluar (`19/03`): banyak klien berbagi IP WAN. Klien set ke DHCP → dapat IP, gateway, DNS otomatis. Pastikan firewall `forward` mengizinkan LAN→WAN. Membuktikan `19/03` + `06/02`.
 </details>
 
 ---
@@ -110,7 +110,7 @@ Ini menerapkan hardening `19/03` & `19/01`: firewall input default-deny (terima 
 
 **VERIFIKASI:** `/queue simple print` (traffic terlihat dibatasi); burst terlihat di awal transfer.
 
-**KRITERIA SUKSES:** ✅ Bandwidth dibatasi sesuai paket; burst & pembagian adil berfungsi.
+**KRITERIA SUKSES:** Bandwidth dibatasi sesuai paket; burst & pembagian adil berfungsi.
 
 <details><summary>Solusi & penjelasan</summary>
 
@@ -123,7 +123,7 @@ Ini menerapkan hardening `19/03` & `19/01`: firewall input default-deny (terima 
 /queue type add name=pcq-dl kind=pcq pcq-classifier=dst-address pcq-rate=0
 /queue type add name=pcq-ul kind=pcq pcq-classifier=src-address pcq-rate=0
 ```
-`max-limit` format **upload/download** (⚠️ jangan terbalik — `19/04`). **Burst** membuat browsing terasa cepat (sampai 10M) tapi unduhan besar turun ke 5M. **PCQ `pcq-rate=0`** membagi bandwidth rata ke semua klien aktif (anti-monopoli). Untuk RT-RW-Net, kombinasikan dengan PPPoE profile agar limit ikut paket pelanggan otomatis. Membuktikan `19/04`.
+`max-limit` berformat upload/download (hati-hati jangan terbalik, lihat `19/04`). **Burst** membuat browsing terasa cepat (sampai 10M) tapi unduhan besar turun ke 5M. **PCQ `pcq-rate=0`** membagi bandwidth rata ke semua klien aktif (anti-monopoli). Untuk RT-RW-Net, kombinasikan dengan PPPoE profile agar limit ikut paket pelanggan otomatis. Membuktikan `19/04`.
 </details>
 
 ---
@@ -138,7 +138,7 @@ Ini menerapkan hardening `19/03` & `19/01`: firewall input default-deny (terima 
 
 **VERIFIKASI:** `/ppp active print` (pelanggan terhubung); klien dapat IP & bandwidth profil.
 
-**KRITERIA SUKSES:** ✅ Pelanggan terautentikasi via PPPoE & bandwidth ikut paket otomatis.
+**KRITERIA SUKSES:** Pelanggan terautentikasi via PPPoE & bandwidth ikut paket otomatis.
 
 <details><summary>Solusi & penjelasan</summary>
 
@@ -153,7 +153,7 @@ Ini menerapkan hardening `19/03` & `19/01`: firewall input default-deny (terima 
 ```routeros
 /interface pppoe-client add name=wan-pppoe interface=ether1 user=budi password=rahasia add-default-route=yes use-peer-dns=yes disabled=no
 ```
-`rate-limit` di **profil** otomatis membatasi bandwidth pelanggan saat connect — tak perlu queue manual (`19/06`). Ini cara ISP/RT-RW-Net mengelola langganan; ganti paket = ganti profil. Skala besar → RADIUS. ⚠️ Butuh dua CHR (server+client) untuk uji penuh. `/ppp active print` menunjukkan sesi aktif.
+`rate-limit` di profil otomatis membatasi bandwidth pelanggan saat connect, jadi tak perlu queue manual (`19/06`). Ini cara ISP/RT-RW-Net mengelola langganan; ganti paket = ganti profil. Skala besar → RADIUS. Uji penuh butuh dua CHR (server+client). `/ppp active print` menunjukkan sesi aktif.
 </details>
 
 ---
@@ -168,7 +168,7 @@ Ini menerapkan hardening `19/03` & `19/01`: firewall input default-deny (terima 
 
 **VERIFIKASI:** klien tak bisa akses internet sebelum login; bisa setelah voucher valid.
 
-**KRITERIA SUKSES:** ✅ Captive portal & voucher berfungsi; walled garden benar.
+**KRITERIA SUKSES:** Captive portal & voucher berfungsi; walled garden benar.
 
 <details><summary>Solusi & penjelasan</summary>
 
@@ -178,7 +178,7 @@ Ini menerapkan hardening `19/03` & `19/01`: firewall input default-deny (terima 
 /ip hotspot user add name=voucher001 password=abc123 profile=paket-2jam
 /ip hotspot walled-garden add dst-host=*.pembayaran.example action=allow
 ```
-Hotspot membuat **captive portal**: klien di-redirect ke halaman login sebelum akses. **Walled garden** mengizinkan situs tertentu tanpa login (mis. halaman pembayaran voucher — `19/04`). Cocok untuk wifi publik/kafe/RT-RW-Net voucher. Skala besar → RADIUS + billing. ⚠️ Hotspot melakukan intersepsi+NAT; hati-hati bentrok firewall/NAT lain. Membuktikan `19/04`.
+Hotspot membuat **captive portal**: klien di-redirect ke halaman login sebelum akses. **Walled garden** mengizinkan situs tertentu tanpa login (mis. halaman pembayaran voucher, lihat `19/04`). Cocok untuk wifi publik/kafe/RT-RW-Net voucher. Skala besar → RADIUS + billing. Hotspot melakukan intersepsi+NAT, jadi hati-hati bentrok dengan firewall/NAT lain. Membuktikan `19/04`.
 </details>
 
 ---
@@ -193,7 +193,7 @@ Hotspot membuat **captive portal**: klien di-redirect ke halaman login sebelum a
 
 **VERIFIKASI:** LAN A ping LAN B via tunnel; netwatch log; torch menampilkan trafik.
 
-**KRITERIA SUKSES:** ✅ VPN antar-situs jalan; monitoring & diagnostik berfungsi.
+**KRITERIA SUKSES:** VPN antar-situs jalan; monitoring & diagnostik berfungsi.
 
 <details><summary>Solusi & penjelasan</summary>
 
@@ -211,7 +211,7 @@ Hotspot membuat **captive portal**: klien di-redirect ke halaman login sebelum a
 # torch (interaktif)
 /tool torch wg1
 ```
-(Situs B: mirror config dengan PUBKEY_A & subnet A.) WireGuard = VPN modern sederhana (`19/06`) — tukar public-key, set allowed-address (subnet yang dijangkau), tambah rute. **Netwatch** memantau & bereaksi (dasar failover — `19/07`). **Torch** menampilkan trafik live. ⚠️ Buka port UDP WireGuard di firewall input. Membuktikan `19/06-07`.
+(Situs B: mirror config dengan PUBKEY_A & subnet A.) WireGuard adalah VPN modern yang sederhana (`19/06`): tukar public-key, set allowed-address (subnet yang dijangkau), tambah rute. **Netwatch** memantau & bereaksi (dasar failover, lihat `19/07`). **Torch** menampilkan trafik live. Jangan lupa membuka port UDP WireGuard di firewall input. Membuktikan `19/06-07`.
 </details>
 
 ---
@@ -221,6 +221,6 @@ Hotspot membuat **captive portal**: klien di-redirect ke halaman login sebelum a
 Anda membangun jaringan MikroTik lengkap ala ISP/RT-RW-Net: hardening, bridge/VLAN, NAT+DHCP+DNS, bandwidth management (queue/PCQ/burst), PPPoE server, hotspot voucher, VPN WireGuard, dan monitoring. Ini mempersiapkan MTCNA (`18/05`) dan pekerjaan nyata di ISP lokal.
 
 > [!TIP]
-> **Proyek portofolio kuat:** gabungkan Lab 6.1-6.7 menjadi satu "RT-RW-Net simulasi" terdokumentasi (topologi, config, screenshot) di GitHub (`18/04`). Ini sangat dihargai untuk kerja di ISP Indonesia.
+> **Proyek portofolio:** gabungkan Lab 6.1-6.7 menjadi satu "RT-RW-Net simulasi" terdokumentasi (topologi, config, screenshot) di GitHub (`18/04`). Proyek seperti ini dihargai saat melamar kerja di ISP Indonesia.
 
 **Berikutnya:** `lab/07-lab-membangun-protokol`. Pendalaman: membangun protokol sendiri dengan Python, dari transfer andal sampai distance-vector.

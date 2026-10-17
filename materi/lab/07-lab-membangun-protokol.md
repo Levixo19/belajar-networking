@@ -6,7 +6,7 @@
 > **Format:** KONSEP → TUGAS → UJI OTOMATIS → KRITERIA SUKSES → pembahasan.
 
 > [!TIP]
-> **Ini lab pendalaman, bukan materi ujian.** Tidak ada satu pun latihan di sini yang diuji di CCNA, Network+, atau MTCNA. Lab ini ada karena satu alasan: orang yang pernah menulis Go-Back-N sendiri tidak akan lagi membaca "TCP Retransmission" di Wireshark sebagai hafalan, dan orang yang pernah menulis LPM sendiri tahu persis mengapa `show ip route 10.1.1.1` memilih rute /24, bukan /16. Kerjakan setelah Tahap 15, atau lebih awal bila Python Anda sudah lancar.
+> **Ini lab pendalaman, bukan materi ujian.** Tidak ada satu pun latihan di sini yang diuji di CCNA, Network+, atau MTCNA. Lab ini ada karena orang yang pernah menulis Go-Back-N sendiri tidak akan lagi membaca "TCP Retransmission" di Wireshark sebagai hafalan. Orang yang pernah menulis LPM sendiri juga tahu persis mengapa `show ip route 10.1.1.1` memilih rute /24, bukan /16. Kerjakan setelah Tahap 15, atau lebih awal bila Python Anda sudah lancar.
 
 ---
 
@@ -33,7 +33,7 @@ membangun-protokol/
 └── tests/                    uji otomatis, sama untuk starter dan referensi
 ```
 
-Semua kode memakai **standard library Python saja** ditambah pytest untuk menjalankan uji. Lisensinya MIT (lihat `materi/lab/kode/LICENSE`), jadi Anda bebas menyalin, mengubah, dan memakainya di portofolio.
+Semua kode memakai standard library Python saja, ditambah pytest untuk menjalankan uji. Lisensinya MIT (lihat `materi/lab/kode/LICENSE`), jadi Anda bebas menyalin, mengubah, dan memakainya di portofolio.
 
 ### Menyiapkan lingkungan
 
@@ -68,7 +68,7 @@ Di awal, hampir semua uji starter gagal dengan `NotImplementedError: TODO 7.x...
 
 ### Asal-usul desain
 
-Urutan latihan ini terinspirasi oleh lab kuliah jaringan universitas: Stanford CS144 (membangun TCP dan router IP bertahap), Berkeley CS168 (proyek traceroute dan distance-vector bertahap dengan split horizon dan poison reverse), serta Princeton COS 461 (pemrograman socket dan proxy HTTP). Repositori kode kuliah-kuliah tersebut **tidak berlisensi terbuka**, jadi tidak ada satu baris pun yang disalin. Desain antarmuka, format paket, simulator, dan semua kode di sini ditulis orisinal untuk kurikulum ini.
+Urutan latihan ini terinspirasi oleh lab kuliah jaringan universitas: Stanford CS144 (membangun TCP dan router IP bertahap), Berkeley CS168 (proyek traceroute dan distance-vector bertahap dengan split horizon dan poison reverse), serta Princeton COS 461 (pemrograman socket dan proxy HTTP). Repositori kode kuliah-kuliah tersebut tidak berlisensi terbuka, jadi tidak ada satu baris pun yang disalin. Desain antarmuka, format paket, simulator, dan semua kode di sini ditulis orisinal untuk kurikulum ini.
 
 ---
 
@@ -82,13 +82,13 @@ Socket adalah pintu antara aplikasi dan transport (`05-transport/01`). Dua perbe
 
 | | UDP (`SOCK_DGRAM`) | TCP (`SOCK_STREAM`) |
 |---|---|---|
-| Satuan | Datagram: satu `sendto` = satu `recvfrom` | Aliran byte: batas `send` **tidak** dipertahankan |
+| Satuan | Datagram: satu `sendto` = satu `recvfrom` | Aliran byte: batas `send` tidak dipertahankan |
 | Keandalan | Tidak ada. Aplikasi memasang timeout dan mengulang | Dijamin kernel (bagian 4 sampai 6 di `05-transport/02-tcp`) |
 | Koneksi | Tidak ada | `connect` / `listen` / `accept` |
 
 Karena TCP adalah aliran byte, `recv(1000)` boleh mengembalikan 1 byte, 7 byte, atau 1000 byte. Aplikasi yang mengirim beberapa pesan lewat TCP wajib membuat **framing** sendiri. Teknik paling sederhana: awali setiap pesan dengan panjangnya (4 byte, big-endian).
 
-HTTP/1.1 (RFC 9112) memakai framing berbasis teks: header diakhiri baris kosong `\r\n\r\n`, lalu panjang body ditentukan oleh `Content-Length`, atau oleh `Transfer-Encoding: chunked` (potongan-potongan berawalan ukuran heksadesimal, diakhiri potongan berukuran 0), atau, untuk respons tanpa keduanya, oleh penutupan koneksi.
+HTTP/1.1 (RFC 9112) memakai framing berbasis teks: header diakhiri baris kosong `\r\n\r\n`. Panjang body lalu ditentukan oleh `Content-Length`, atau oleh `Transfer-Encoding: chunked` (potongan-potongan berawalan ukuran heksadesimal, diakhiri potongan berukuran 0). Respons yang tidak memakai keduanya berakhir saat koneksi ditutup.
 
 ```
 GET / HTTP/1.1\r\n                       HTTP/1.1 200 OK\r\n
@@ -123,7 +123,7 @@ transfer-encoding: chunked
 
 Uji memakai `SoketPelit`, tiruan socket yang hanya mengembalikan 3 byte per `recv`, sehingga kode yang menganggap "satu `recv` = satu pesan" pasti gagal. Uji HTTP menjalankan server lokal di 127.0.0.1 (tidak butuh internet), termasuk server mentah yang mengirim respons chunked sepotong-sepotong 7 byte.
 
-**KRITERIA SUKSES:** ✅ Semua uji `test_71_soket.py` lulus dengan `--impl=starter`; `jalankan.py http` berhasil mengambil sebuah situs HTTP biasa (port 80).
+**KRITERIA SUKSES:** Semua uji `test_71_soket.py` lulus dengan `--impl=starter`; `jalankan.py http` berhasil mengambil sebuah situs HTTP biasa (port 80).
 
 <details><summary>Pembahasan</summary>
 
@@ -138,7 +138,7 @@ while len(potongan) < n:
     potongan += b
 ```
 
-Untuk HTTP, request memakai `Connection: close`, sehingga klien cukup membaca sampai `recv` mengembalikan `b""` lalu mengurai semuanya sekaligus. Klien sungguhan (browser, curl) memakai koneksi persisten dan harus berhenti membaca tepat di akhir body, yang justru merupakan alasan `Content-Length` dan chunked ada.
+Untuk HTTP, request memakai `Connection: close`, sehingga klien cukup membaca sampai `recv` mengembalikan `b""` lalu mengurai semuanya sekaligus. Klien sungguhan (browser, curl) memakai koneksi persisten dan harus berhenti membaca tepat di akhir body. Untuk itulah `Content-Length` dan chunked ada.
 
 Kesalahan umum:
 - Lupa `\r\n` (memakai `\n` saja). Banyak server menoleransinya, tetapi tidak semuanya.
@@ -158,7 +158,7 @@ Kesalahan umum:
 
 ### Konsep: kanal rusak dan protokol "sans-IO"
 
-`umum/kanal.py` menyediakan kanal satu arah yang bisa **membuang**, **menduplikasi**, **mengacak urutan**, dan **membalik satu bit** paket dengan peluang yang Anda atur, ditambah tunda propagasi dan laju link. Semua keacakan berasal dari satu `random.Random(seed)`, sehingga seed yang sama selalu menghasilkan kejadian yang sama. Kegagalan yang Anda lihat hari ini bisa diulang besok untuk di-debug.
+`umum/kanal.py` menyediakan kanal satu arah yang bisa membuang, menduplikasi, mengacak urutan, dan membalik satu bit paket dengan peluang yang Anda atur, ditambah tunda propagasi dan laju link. Semua keacakan berasal dari satu `random.Random(seed)`, sehingga seed yang sama selalu menghasilkan kejadian yang sama. Kegagalan yang Anda lihat hari ini bisa diulang besok untuk di-debug.
 
 Pengirim dan penerima yang Anda tulis tidak pernah menyentuh socket atau jam. Mereka hanya bereaksi:
 
@@ -196,7 +196,7 @@ SR : ACK individual, seq = paket yang diterima.
 4. **7.2e-f** `PengirimSR` dan `PenerimaSR`.
 
 > [!TIP]
-> Simpan indeks **absolut** (0, 1, 2, ...) di pengirim, dan ubah ke nomor di kabel hanya saat membuat paket (`i % ruang_seq`). Untuk menafsirkan nomor yang datang, hitung jaraknya dari base: `d = (seq - base) % ruang_seq`. Hampir semua bug wrap-around hilang dengan dua kebiasaan ini.
+> Simpan indeks absolut (0, 1, 2, ...) di pengirim, dan ubah ke nomor di kabel hanya saat membuat paket (`i % ruang_seq`). Untuk menafsirkan nomor yang datang, hitung jaraknya dari base: `d = (seq - base) % ruang_seq`. Hampir semua bug wrap-around hilang dengan dua kebiasaan ini.
 
 ### UJI OTOMATIS
 
@@ -241,7 +241,7 @@ Angka di atas berasal dari kode referensi. Kode Anda yang benar akan memberi ang
 3. Dengan 5% loss, goodput GBN dan SR jauh di bawah 10 Mbps. Ubah `--rto` menjadi 0.05 dan 0.5. Apa yang terjadi, dan mengapa TCP menghitung RTO dari RTT terukur alih-alih memakai konstanta?
 4. Jalankan `rdt --udp`. Mengapa hasilnya berubah sedikit setiap dijalankan, padahal seed-nya sama? (Petunjuk: penjadwalan thread dan waktu nyata. Mode UDP juga tidak memodelkan laju link, jadi kolom "teori U" tidak berlaku di sana.)
 
-**KRITERIA SUKSES:** ✅ Semua uji `test_72_rdt.py` lulus dengan `--impl=starter`; Anda bisa menjelaskan tabel goodput dengan rumus utilisasi dan BDP.
+**KRITERIA SUKSES:** Semua uji `test_72_rdt.py` lulus dengan `--impl=starter`; Anda bisa menjelaskan tabel goodput dengan rumus utilisasi dan BDP.
 
 <details><summary>Pembahasan</summary>
 
@@ -261,9 +261,9 @@ while self._next < len(self._potongan) and self._next - self._base < self.jendel
 
 Saat ACK datang, `maju = (ack - base) % ruang_seq` harus berada di antara 1 dan jumlah paket yang sedang dalam perjalanan. Nilai 0 adalah duplicate ACK (bahan fast retransmit); nilai di luar rentang adalah ACK basi.
 
-Penerima SR menerima nomor dalam jendelanya (`d < jendela`), dan **tetap meng-ACK** nomor dari jendela sebelumnya (`d >= ruang_seq - jendela`). Bila yang kedua dilupakan, ACK yang hilang membuat pengirim mengulang paket lama selamanya, karena penerima diam saja.
+Penerima SR menerima nomor dalam jendelanya (`d < jendela`), dan tetap meng-ACK nomor dari jendela sebelumnya (`d >= ruang_seq - jendela`). Bila yang kedua dilupakan, ACK yang hilang membuat pengirim mengulang paket lama selamanya, karena penerima diam saja.
 
-Uji "kegagalan diam-diam" adalah pelajaran terpenting lab ini: checksum hanya menjamin isi paket **utuh**, bukan bahwa paket itu **baru**. Pembedaan paket baru dari paket lama sepenuhnya tugas nomor urut, dan itu hanya berhasil bila ruang nomor urut cukup besar dibanding jendela dan dibanding lamanya paket bisa "tersesat" di jaringan. Itulah sebabnya TCP memakai 32 bit, MSL, dan PAWS.
+Uji "kegagalan diam-diam" adalah pelajaran terpenting lab ini: checksum hanya menjamin isi paket utuh, bukan bahwa paket itu baru. Pembedaan paket baru dari paket lama sepenuhnya tugas nomor urut, dan itu hanya berhasil bila ruang nomor urut cukup besar dibanding jendela dan dibanding lamanya paket bisa "tersesat" di jaringan. Itulah sebabnya TCP memakai 32 bit, MSL, dan PAWS.
 
 **Tantangan tambahan (tanpa kunci jawaban):**
 - RTO adaptif: ukur RTT dari ACK (abaikan paket yang dikirim ulang, sesuai algoritma Karn) dan hitung RTO = SRTT + 4·RTTVAR (RFC 6298).
@@ -281,7 +281,7 @@ Uji "kegagalan diam-diam" adalah pelajaran terpenting lab ini: checksum hanya me
 
 Traceroute mengeksploitasi aturan sederhana: router yang menurunkan TTL ke 0 membuang paket dan mengirim **ICMP Time Exceeded** (tipe 11, kode 0) ke pengirim. Kirim probe dengan TTL 1, 2, 3, dan seterusnya, maka setiap router di jalur memperkenalkan diri satu per satu. Probe klasik adalah datagram UDP ke port "tidak mungkin dipakai" mulai 33434. Ketika probe akhirnya sampai di tujuan, tidak ada aplikasi di port itu, sehingga tujuan membalas **ICMP Port Unreachable** (tipe 3, kode 3): tanda untuk berhenti.
 
-Bagaimana kita tahu balasan ICMP itu milik probe yang mana? ICMP error wajib **mengutip** header IP paket asli ditambah 8 byte pertama muatannya (RFC 792), dan 8 byte itu tepat header UDP probe kita, lengkap dengan port tujuannya:
+Bagaimana kita tahu balasan ICMP itu milik probe yang mana? ICMP error wajib mengutip header IP paket asli ditambah 8 byte pertama muatannya (RFC 792), dan 8 byte itu tepat header UDP probe kita, lengkap dengan port tujuannya:
 
 ```
 +---------------------------+
@@ -294,14 +294,14 @@ Bagaimana kita tahu balasan ICMP itu milik probe yang mana? ICMP error wajib **m
 +---------------------------+
 ```
 
-Karena itu setiap probe memakai **port unik**. Balasan yang port-nya tidak cocok (milik probe sebelumnya yang terlambat, milik traceroute lain di mesin yang sama, atau sampah) harus diabaikan.
+Karena itu setiap probe memakai port unik. Balasan yang port-nya tidak cocok (milik probe sebelumnya yang terlambat, milik traceroute lain di mesin yang sama, atau sampah) harus diabaikan.
 
 ### Tiga cara menerima ICMP
 
 | Mode | Butuh | Cara kerja |
 |---|---|---|
 | `simulasi` | Tidak ada | Jaringan tiruan berwaktu virtual: router diam, ECMP, balasan terlambat, ICMP nyasar. Untuk uji otomatis |
-| `recverr` | Linux, **tanpa root** | Socket UDP biasa dengan opsi `IP_RECVERR`. Kernel menaruh ICMP error untuk socket kita di antrean error, dibaca dengan `recvmsg(..., MSG_ERRQUEUE)`. Pendekatan yang sama dipakai `tracepath` dari iputils |
+| `recverr` | Linux, tanpa root | Socket UDP biasa dengan opsi `IP_RECVERR`. Kernel menaruh ICMP error untuk socket kita di antrean error, dibaca dengan `recvmsg(..., MSG_ERRQUEUE)`. Pendekatan yang sama dipakai `tracepath` dari iputils |
 | `raw` | Root atau `CAP_NET_RAW` | Socket `SOCK_RAW`/`IPPROTO_ICMP` menerima semua paket ICMP mentah, termasuk header IPv4. Anda mengurai semuanya sendiri |
 
 Ketiga backend sudah tersedia di `umum/penjejak.py` dan punya antarmuka sama: `kirim_probe(ttl, port)` dan `terima(batas)`. Backend `simulasi` dan `raw` mengembalikan paket IPv4 mentah (Anda yang mengurai); backend `recverr` mengembalikan `InfoICMP` yang sudah diurai kernel.
@@ -309,7 +309,7 @@ Ketiga backend sudah tersedia di `umum/penjejak.py` dan punya antarmuka sama: `k
 ### TUGAS
 
 1. **7.3a** `urai_balasan_icmp(paket)`: urai IPv4 luar, ICMP, lalu kutipan IPv4 dan UDP di dalamnya. Kembalikan `InfoICMP` atau `None` untuk apa pun yang bukan balasan probe (echo reply, checksum salah, kutipan TCP, paket terpotong).
-2. **7.3b** `traceroute(...)`: perulangan TTL, port unik per probe, pencocokan port **dan** alamat tujuan, catat `*` bila batas waktu lewat, berhenti setelah hop yang menjawab Destination Unreachable.
+2. **7.3b** `traceroute(...)`: perulangan TTL, port unik per probe, pencocokan port dan alamat tujuan, catat `*` bila batas waktu lewat, berhenti setelah hop yang menjawab Destination Unreachable.
 3. **7.3c** `format_hop(hop)`: format baris seperti traceroute Linux, termasuk alamat ECMP dan anotasi `!H`, `!N`, `!X`.
 
 ### UJI OTOMATIS dan percobaan nyata
@@ -337,7 +337,7 @@ Uji `recverr` ke 127.0.0.1 berjalan tanpa root dan tanpa internet: kernel sendir
 
 Bandingkan hasil traceroute buatan Anda ke beberapa tujuan (misalnya server lokal di IIX, situs luar negeri) dengan `traceroute -n` atau `mtr -n` bawaan sistem. Jumlah hop dan alamatnya seharusnya mirip; RTT tentu berbeda sedikit.
 
-**KRITERIA SUKSES:** ✅ Semua uji `test_73_traceroute.py` lulus dengan `--impl=starter` (yang raw boleh skip); traceroute Anda ke satu tujuan internet sesuai dengan `traceroute -n` bawaan.
+**KRITERIA SUKSES:** Semua uji `test_73_traceroute.py` lulus dengan `--impl=starter` (yang raw boleh skip); traceroute Anda ke satu tujuan internet sesuai dengan `traceroute -n` bawaan.
 
 <details><summary>Pembahasan</summary>
 
@@ -367,7 +367,7 @@ Hal yang perlu Anda pahami dari output traceroute sungguhan:
 
 ### Konsep
 
-Router Anda menerima **frame Ethernet mentah** di sebuah antarmuka dan mengembalikan daftar `(antarmuka_keluar, frame)`. Tidak ada kernel yang membantu: Anda yang memutuskan semuanya.
+Router Anda menerima frame Ethernet mentah di sebuah antarmuka dan mengembalikan daftar `(antarmuka_keluar, frame)`. Tidak ada kernel yang membantu: Anda yang memutuskan semuanya.
 
 ```
 frame masuk ──► MAC tujuan = saya / broadcast? ──tidak──► buang
@@ -391,7 +391,7 @@ frame masuk ──► MAC tujuan = saya / broadcast? ──tidak──► buang
                          ulangi tiap 1 s; setelah 3 kali → ICMP 3/1 (host unreachable)
 ```
 
-**Longest prefix match dengan trie biner.** Setiap level trie memutuskan satu bit alamat, dari bit paling kiri. Prefix /n disimpan di simpul kedalaman n. Untuk mencari, telusuri bit-bit alamat dari akar sambil mengingat simpul **terakhir** yang menyimpan rute:
+**Longest prefix match dengan trie biner.** Setiap level trie memutuskan satu bit alamat, dari bit paling kiri. Prefix /n disimpan di simpul kedalaman n. Untuk mencari, telusuri bit-bit alamat dari akar sambil mengingat simpul terakhir yang menyimpan rute:
 
 ```
 Rute: 0.0.0.0/0 (D), 10.0.0.0/8 (A), 10.1.0.0/16 (B)
@@ -432,7 +432,7 @@ Rute: 0.0.0.0/0 via 172.16.0.2 | 198.51.100.0/24 via 172.16.0.2 | 198.51.100.128
 
 Uji terpenting adalah `test_trie_sama_dengan_pencarian_linear`: 600 prefix acak yang banyak tumpang tindih di 10.0.0.0/8, 3.000 pencarian, dibandingkan dengan pencarian linear yang jelas benar. Uji lain memeriksa TTL turun tepat 1 dengan checksum yang valid, /25 menang atas /24 dan /0, kutipan ICMP berisi header asli (TTL sebelum dikurangi), dan urutan ARP request 1, 2, 3 lalu host unreachable.
 
-**KRITERIA SUKSES:** ✅ Semua uji `test_74_router.py` lulus dengan `--impl=starter`.
+**KRITERIA SUKSES:** Semua uji `test_74_router.py` lulus dengan `--impl=starter`.
 
 <details><summary>Pembahasan</summary>
 
@@ -468,7 +468,7 @@ Detail yang sering terlewat:
 
 ### Konsep
 
-Setiap node menyimpan vektor jarak **terakhir** dari setiap tetangga dan menghitung ulang tabelnya dengan persamaan Bellman-Ford:
+Setiap node menyimpan vektor jarak terakhir dari setiap tetangga dan menghitung ulang tabelnya dengan persamaan Bellman-Ford:
 
 ```
 D_x(y) = min over tetangga v of ( c(x, v) + D_v(y) ),   dibatasi tak hingga (16, seperti RIP)
@@ -488,7 +488,7 @@ Dua opsi pencegahan loop:
 4. **7.5d** `hitung_ulang`: Bellman-Ford dari nol. Tujuan yang tak terjangkau disimpan sebagai tak hingga (route poisoning), bukan dihapus.
 
 > [!WARNING]
-> Satu aturan yang terasa janggal tetapi wajib: bila **next hop Anda sendiri** melaporkan biaya naik, Anda harus ikut naik walaupun hasilnya lebih buruk. Tanpa aturan ini, node tidak akan pernah melupakan rute yang mati. Aturan yang sama inilah yang memungkinkan count-to-infinity.
+> Satu aturan yang terasa janggal tetapi wajib: bila next hop Anda sendiri melaporkan biaya naik, Anda harus ikut naik walaupun hasilnya lebih buruk. Tanpa aturan ini, node tidak akan pernah melupakan rute yang mati. Aturan yang sama inilah yang memungkinkan count-to-infinity.
 
 ### UJI OTOMATIS dan demonstrasi
 
@@ -521,7 +521,7 @@ Konvergen setelah 2 ronde
 
 Baca output pertama perlahan. Setelah B-C putus, B melihat A mengiklankan "C dengan biaya 2" (padahal rute A ke C lewat B sendiri), jadi B menyimpulkan "C lewat A, biaya 3". A melihat B naik menjadi 3, lalu naik menjadi 4. Keduanya saling percaya dan menghitung naik dua langkah setiap dua ronde sampai 16. Selama itu, paket ke C berputar-putar di antara A dan B sampai TTL-nya habis. Split horizon memutus siklus itu sejak ronde pertama, karena A tidak pernah memberi tahu B tentang rute yang ia pelajari dari B.
 
-**KRITERIA SUKSES:** ✅ Semua uji `test_75_dv.py` lulus dengan `--impl=starter`; Anda bisa menjelaskan output skenario `segitiga` dengan kata-kata sendiri.
+**KRITERIA SUKSES:** Semua uji `test_75_dv.py` lulus dengan `--impl=starter`; Anda bisa menjelaskan output skenario `segitiga` dengan kata-kata sendiri.
 
 <details><summary>Pembahasan</summary>
 
@@ -535,7 +535,7 @@ ronde 3: A->D=inf  B->D=5  C->D=inf
 ronde 14: semua inf
 ```
 
-Split horizon dan poison reverse hanya mencegah loop **dua node**. Loop tiga node atau lebih hanya dibatasi oleh nilai tak hingga yang kecil (16 di RIP, itulah alasan RIP tidak bisa dipakai di jaringan berdiameter lebih dari 15 hop), ditambah **hold-down timer** dan **triggered update**. Uji `test_tak_hingga_lebih_kecil_mempercepat_konvergensi` memperlihatkan pertukarannya: tak hingga 8 konvergen lebih cepat daripada 16, tetapi membatasi diameter jaringan. Protokol link-state (OSPF, IS-IS) menghindari masalah ini sama sekali, karena setiap router menghitung jalur dari peta topologi lengkap, bukan dari kabar tetangga. Protokol path-vector (BGP) menghindarinya dengan membawa seluruh daftar AS di setiap rute dan menolak rute yang memuat AS-nya sendiri.
+Split horizon dan poison reverse hanya mencegah loop dua node. Loop tiga node atau lebih hanya dibatasi oleh nilai tak hingga yang kecil (16 di RIP, itulah alasan RIP tidak bisa dipakai di jaringan berdiameter lebih dari 15 hop), ditambah **hold-down timer** dan **triggered update**. Uji `test_tak_hingga_lebih_kecil_mempercepat_konvergensi` memperlihatkan pertukarannya: tak hingga 8 konvergen lebih cepat daripada 16, tetapi membatasi diameter jaringan. Protokol link-state (OSPF, IS-IS) menghindari masalah ini sama sekali, karena setiap router menghitung jalur dari peta topologi lengkap, bukan dari kabar tetangga. Protokol path-vector (BGP) menghindarinya dengan membawa seluruh daftar AS di setiap rute dan menolak rute yang memuat AS-nya sendiri.
 
 **Split horizon versus poison reverse di simulator ini.** Di sini setiap iklan *menggantikan* seluruh vektor lama dari tetangga itu, jadi rute yang tidak disebut (split horizon) langsung sama dengan rute bernilai tak hingga (poison reverse). Itulah sebabnya kedua opsi menghasilkan perilaku yang sama di semua uji. Di RIP sungguhan, update hanya memperbarui rute yang disebut di dalamnya, dan rute yang tidak lagi disebut baru dihapus setelah timer kedaluwarsa (180 detik di RIP). Poison reverse mempercepat hal ini dengan menyebut rute itu secara eksplisit sebagai tak terjangkau, dengan harga update yang lebih besar.
 
@@ -556,7 +556,7 @@ Anda telah menulis sendiri:
 - **7.5** distance-vector yang memperlihatkan count-to-infinity, perbaikannya dengan split horizon dan poison reverse, serta batas perbaikan itu pada loop tiga node.
 
 > [!TIP]
-> **Untuk portofolio:** simpan pekerjaan Anda di repositori Git sendiri bersama catatan eksperimen (tabel goodput, output traceroute dari jaringan Anda, penjelasan skenario segitiga). Ini bukti kemampuan yang jarang dimiliki pelamar posisi network engineer di Indonesia: bukan hanya bisa mengonfigurasi, tetapi juga mengerti mesin di baliknya. Jangan unggah output traceroute yang memuat alamat IP internal kantor Anda.
+> **Untuk portofolio:** simpan pekerjaan Anda di repositori Git sendiri bersama catatan eksperimen (tabel goodput, output traceroute dari jaringan Anda, penjelasan skenario segitiga). Ini bukti kemampuan yang jarang dimiliki pelamar posisi network engineer di Indonesia: mengerti mesin di balik konfigurasi yang mereka ketik. Jangan unggah output traceroute yang memuat alamat IP internal kantor Anda.
 
 ---
 

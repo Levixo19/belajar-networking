@@ -7,7 +7,7 @@
 
 ## 1. Congestion Collapse: Masalah yang Harus Dicegah
 
-Oktober 1986: throughput antara Lawrence Berkeley Laboratory dan UC Berkeley (jarak 400 m) jatuh dari 32 kbps menjadi **40 bps** — turun 1000×. Ini disebut **congestion collapse**.
+Oktober 1986: throughput antara Lawrence Berkeley Laboratory dan UC Berkeley (jarak 400 m) jatuh dari 32 kbps menjadi **40 bps**, turun 1000×. Peristiwa ini disebut **congestion collapse**.
 
 Mekanismenya:
 ```
@@ -30,7 +30,7 @@ Dua hal berbeda yang sering tertukar:
 |---|---|---|
 | Melindungi | **Penerima** | **Jaringan** |
 | Mekanisme | `rwnd` (receive window) | `cwnd` (congestion window) |
-| Sinyal | **Eksplisit** — penerima mengiklankan window | **Implisit** — disimpulkan dari loss/delay/ECN |
+| Sinyal | **Eksplisit**: penerima mengiklankan window | **Implisit**: disimpulkan dari loss/delay/ECN |
 | Ditentukan oleh | Penerima | Pengirim (perkiraan sendiri) |
 
 **Pengirim dibatasi oleh yang terkecil:**
@@ -39,7 +39,7 @@ Data in-flight ≤ min(rwnd, cwnd)
 ```
 
 > [!WARNING]
-> Jaringan **tidak pernah** memberi tahu kapasitasnya. Pengirim harus **menebak** dengan mencoba menaikkan kecepatan sampai ada tanda masalah — itulah inti congestion control.
+> Jaringan tidak pernah memberi tahu kapasitasnya. Pengirim harus menebak dengan mencoba menaikkan kecepatan sampai ada tanda masalah. Itulah inti congestion control.
 
 ---
 
@@ -110,7 +110,7 @@ Loss terdeteksi (timeout ATAU 3 dup ACK)
 → ssthresh = cwnd / 2
 → cwnd = 1     ← kembali ke slow start dari nol
 ```
-Terlalu drastis — throughput jatuh total setiap kali ada loss kecil.
+Reaksi ini terlalu drastis: throughput jatuh total setiap kali ada loss kecil.
 
 ### Reno (1990)
 Menambahkan **Fast Recovery**:
@@ -125,7 +125,7 @@ Timeout (loss berat, tidak ada yang sampai):
 → cwnd = 1                 ← slow start dari awal
 ```
 
-Logikanya: duplicate ACK berarti paket **masih mengalir** (penerima menerima sesuatu), jadi jaringan belum runtuh. Timeout berarti tidak ada apa pun yang sampai — situasi jauh lebih serius.
+Logikanya: duplicate ACK berarti paket **masih mengalir** (penerima menerima sesuatu), jadi jaringan belum runtuh. Timeout berarti tidak ada apa pun yang sampai, situasi yang jauh lebih serius.
 
 ### NewReno
 Memperbaiki Reno untuk kasus **beberapa paket hilang dalam satu window**. Reno keluar dari fast recovery terlalu cepat dan bisa memicu timeout.
@@ -150,7 +150,7 @@ Pertumbuhannya juga **tidak bergantung RTT**, sehingga lebih adil antara aliran 
 
 ### BBR (Bottleneck Bandwidth and RTT): Google, 2016
 
-Pendekatan yang berbeda secara fundamental.
+BBR memakai pendekatan yang sama sekali berbeda.
 
 ```
 Algoritma berbasis LOSS (Reno, CUBIC):
@@ -202,7 +202,7 @@ $ sudo sysctl -w net.core.default_qdisc=fq
 ```
 
 > [!TIP]
-> **Kapan mengganti ke BBR:** server yang melayani klien di jaringan dengan loss (seluler, internasional, wireless), atau transfer besar lintas benua. Untuk LAN dan data center, CUBIC sudah baik — dan DCTCP lebih tepat kalau switch mendukung ECN.
+> **Kapan mengganti ke BBR:** server yang melayani klien di jaringan dengan loss (seluler, internasional, wireless), atau transfer besar lintas benua. Untuk LAN dan data center, CUBIC sudah baik, dan DCTCP lebih tepat kalau switch mendukung ECN.
 
 ---
 
@@ -239,17 +239,17 @@ $ sudo sysctl -w net.ipv4.tcp_ecn=1
 > [!WARNING]
 > Beberapa middlebox lama membuang paket ber-ECN atau menghapus bitnya. Nilai default `2` (pasif) aman; nilai `1` bisa menyebabkan masalah di jaringan tertentu.
 
-**L4S** (*Low Latency, Low Loss, Scalable throughput*) [RFC 9330] adalah evolusi ECN yang memberi sinyal jauh lebih halus dan sering — memungkinkan latency di bawah 1 ms bahkan saat link penuh.
+**L4S** (*Low Latency, Low Loss, Scalable throughput*) [RFC 9330] adalah evolusi ECN yang memberi sinyal jauh lebih halus dan sering, sehingga latency bisa di bawah 1 ms bahkan saat link penuh.
 
 ---
 
 ## 6. Bufferbloat
 
-Salah satu masalah kinerja jaringan yang paling banyak memengaruhi pengguna rumahan, dan paling sering salah didiagnosis.
+Bufferbloat adalah salah satu masalah kinerja jaringan yang paling banyak memengaruhi pengguna rumahan, dan paling sering salah didiagnosis.
 
 ### Masalahnya
 
-Memori menjadi murah, jadi produsen memasang buffer besar di router, modem, dan perangkat. Niatnya baik: "jangan buang paket". Hasilnya justru buruk.
+Memori menjadi murah, jadi produsen memasang buffer besar di router, modem, dan perangkat. Niatnya baik ("jangan buang paket"), tetapi hasilnya buruk:
 
 ```
 Router dengan buffer 1 MB pada link upload 1 Mbps:
@@ -271,15 +271,15 @@ Packet loss   : 0%
 Speedtest     : "kecepatan bagus!" (speedtest hanya mengukur throughput)
 ```
 
-Pengguna melaporkan "internet lambat saat ada yang download" — padahal bandwidth-nya baik-baik saja; yang rusak adalah **latency**.
+Pengguna melaporkan "internet lambat saat ada yang download", padahal bandwidth-nya baik-baik saja. Yang rusak adalah **latency**.
 
 ### Kenapa terjadi
 
-Algoritma berbasis loss (CUBIC, Reno) **membutuhkan** loss untuk tahu kapan berhenti menaikkan kecepatan. Buffer besar menunda loss itu — sehingga TCP terus mengisi buffer sampai penuh sebelum mendapat sinyal.
+Algoritma berbasis loss (CUBIC, Reno) **membutuhkan** loss untuk tahu kapan berhenti menaikkan kecepatan. Buffer besar menunda loss itu, sehingga TCP terus mengisi buffer sampai penuh sebelum mendapat sinyal.
 
 ### Solusi: AQM (Active Queue Management)
 
-Alih-alih membiarkan antrean penuh (*tail drop*), AQM membuang atau menandai paket **lebih awal dan cerdas**.
+Alih-alih membiarkan antrean penuh (*tail drop*), AQM membuang atau menandai paket lebih awal dan lebih cerdas.
 
 | AQM | Cara kerja |
 |---|---|
@@ -305,9 +305,9 @@ rtt min/avg/max = 18.5/850.2/2100.5 ms   ← BUFFERBLOAT PARAH
 ```
 
 Alat khusus:
-- **Waveform Bufferbloat Test** — https://www.waveform.com/tools/bufferbloat
-- **DSLReports Speed Test** — memberi grade A-F untuk bufferbloat
-- `flent` (Flexible Network Tester) — pengujian RRUL yang komprehensif
+- **Waveform Bufferbloat Test**: https://www.waveform.com/tools/bufferbloat
+- **DSLReports Speed Test**: memberi grade A-F untuk bufferbloat
+- `flent` (Flexible Network Tester): pengujian RRUL yang komprehensif
 
 ### Memperbaiki dengan CAKE
 ```bash
@@ -327,7 +327,7 @@ $ sudo tc qdisc replace dev eth0 root fq_codel
 ```
 
 > [!TIP]
-> **Kunci solusinya:** Anda harus membuat **bottleneck ada di perangkat yang Anda kendalikan**. Kalau Anda men-shape ke 95% dari kapasitas link, antrean terbentuk di router Anda (yang punya AQM baik) alih-alih di modem ISP (yang punya buffer besar tanpa AQM).
+> **Buat bottleneck berada di perangkat yang Anda kendalikan.** Kalau Anda men-shape ke 95% dari kapasitas link, antrean terbentuk di router Anda (yang punya AQM baik) alih-alih di modem ISP (yang punya buffer besar tanpa AQM).
 
 ---
 
@@ -463,7 +463,7 @@ $ sudo sysctl -w net.core.default_qdisc=fq
 > **6. Memperbesar buffer untuk "memperbaiki" masalah latency.** Justru memperburuk bufferbloat.
 
 > [!WARNING]
-> **7. Mengandalkan MSS clamping untuk trafik UDP.** Tidak berlaku — perbaiki MTU.
+> **7. Mengandalkan MSS clamping untuk trafik UDP.** Clamping tidak berlaku untuk UDP, jadi perbaiki MTU-nya.
 
 ---
 
@@ -476,7 +476,7 @@ $ sudo sysctl -w net.core.default_qdisc=fq
 - **BBR** mengukur bandwidth & RTT alih-alih menunggu loss → latency rendah, tahan loss acak. Cocok untuk seluler/internasional/video.
 - **ECN** menandai alih-alih membuang paket; **L4S** adalah evolusinya untuk latency sangat rendah.
 - **Bufferbloat**: buffer besar → latency melonjak saat beban, dengan **0% packet loss**. Gejala klasik "internet lambat saat ada yang download".
-- Solusi bufferbloat: **AQM** — FQ-CoDel atau **CAKE** — dan **shape ke ~95%** kapasitas agar antrean ada di perangkat yang Anda kendalikan.
+- Solusi bufferbloat: **AQM** (FQ-CoDel atau **CAKE**) dan **shape ke ~95%** kapasitas agar antrean ada di perangkat yang Anda kendalikan.
 - **MTU/MSS**: nilai aman universal untuk tunnel adalah MTU 1400 / MSS 1360. MSS clamping hanya untuk TCP.
 
 ---
@@ -494,12 +494,12 @@ $ sudo sysctl -w net.core.default_qdisc=fq
 <details>
 <summary>Jawaban</summary>
 
-1. **Flow control** melindungi **penerima** agar buffer penerimaannya tidak melimpah; penerima **secara eksplisit** mengiklankan `rwnd` di setiap ACK. **Congestion control** melindungi **jaringan** agar tidak macet; jaringan tidak pernah mengumumkan kapasitasnya, sehingga pengirim harus **menyimpulkan** dari sinyal implisit (packet loss, kenaikan RTT, penandaan ECN) dan memelihara `cwnd` sendiri. Pengirim dibatasi oleh **`min(rwnd, cwnd)`** — data in-flight tidak boleh melebihi yang lebih kecil dari keduanya.
+1. **Flow control** melindungi **penerima** agar buffer penerimaannya tidak melimpah; penerima secara eksplisit mengiklankan `rwnd` di setiap ACK. **Congestion control** melindungi **jaringan** agar tidak macet; jaringan tidak pernah mengumumkan kapasitasnya, sehingga pengirim harus menyimpulkan dari sinyal implisit (packet loss, kenaikan RTT, penandaan ECN) dan memelihara `cwnd` sendiri. Pengirim dibatasi oleh **`min(rwnd, cwnd)`**: data in-flight tidak boleh melebihi yang lebih kecil dari keduanya.
 
-2. Karena **konsekuensi kesalahan asimetris**. Menaikkan terlalu cepat berisiko menyebabkan kemacetan berantai hingga congestion collapse — kerugiannya besar dan memengaruhi semua pengguna jaringan. Menurunkan terlalu cepat hanya membuat pengirim ini sedikit lebih lambat, dan bisa dipulihkan kembali. Jadi: naik hati-hati (linear), turun tegas (½). Selain itu, AIMD terbukti secara matematis **konvergen ke pembagian bandwidth yang adil** antar-aliran yang berbagi bottleneck — sifat yang tidak dimiliki kombinasi lain (mis. additive-decrease).
+2. Karena **konsekuensi kesalahan asimetris**. Menaikkan terlalu cepat berisiko menyebabkan kemacetan berantai hingga congestion collapse, yang kerugiannya besar dan memengaruhi semua pengguna jaringan. Menurunkan terlalu cepat hanya membuat pengirim ini sedikit lebih lambat, dan bisa dipulihkan kembali. Jadi: naik hati-hati (linear), turun tegas (½). Selain itu, AIMD terbukti secara matematis **konvergen ke pembagian bandwidth yang adil** antar-aliran yang berbagi bottleneck, sifat yang tidak dimiliki kombinasi lain (mis. additive-decrease).
 
-3. **Bufferbloat.** Buffer besar di modem/router ISP terisi penuh saat unduhan berjalan, sehingga setiap paket baru (termasuk ICMP ping) harus mengantre di belakangnya. Tidak ada loss justru karena buffer-nya besar — paket tidak dibuang, hanya **ditunda**.
-   **Perbaikan:** pasang **AQM** di router yang Anda kendalikan — `fq_codel` atau lebih baik `cake` — dan **shape** bandwidth ke ~90-95% dari kapasitas sebenarnya, sehingga antrean terbentuk di router Anda (yang punya AQM) alih-alih di modem ISP. Pada router OpenWrt: pasang paket SQM (`luci-app-sqm`). Verifikasi dengan mengukur ping ulang di bawah beban.
+3. **Bufferbloat.** Buffer besar di modem/router ISP terisi penuh saat unduhan berjalan, sehingga setiap paket baru (termasuk ICMP ping) harus mengantre di belakangnya. Tidak ada loss justru karena buffer-nya besar: paket tidak dibuang, hanya **ditunda**.
+   **Perbaikan:** pasang **AQM** di router yang Anda kendalikan (`fq_codel`, atau lebih baik `cake`) dan **shape** bandwidth ke ~90-95% dari kapasitas sebenarnya, sehingga antrean terbentuk di router Anda (yang punya AQM) alih-alih di modem ISP. Pada router OpenWrt: pasang paket SQM (`luci-app-sqm`). Verifikasi dengan mengukur ping ulang di bawah beban.
 
 4. Reno menaikkan cwnd **+1 segmen per RTT** setelah loss. Pada link cepat berlatency tinggi, window yang harus dipulihkan sangat besar:
    ```
@@ -510,11 +510,11 @@ $ sudo sysctl -w net.core.default_qdisc=fq
    ```
    CUBIC memakai fungsi kubik yang tumbuh cepat saat jauh dari titik loss sebelumnya dan melambat saat mendekatinya, sehingga pemulihan berlangsung dalam hitungan detik. CUBIC juga **tidak bergantung RTT**, sehingga lebih adil antar-aliran dengan RTT berbeda.
 
-5. Jaringan seluler punya **loss acak** yang bukan disebabkan kemacetan — melainkan kondisi radio (fading, handover, interferensi). Algoritma berbasis loss seperti CUBIC menafsirkan setiap kehilangan sebagai "jaringan macet" dan **memotong cwnd menjadi setengah**, sehingga throughput jatuh drastis padahal kapasitas sebenarnya masih tersedia.
+5. Jaringan seluler punya **loss acak** yang disebabkan kondisi radio (fading, handover, interferensi), bukan kemacetan. Algoritma berbasis loss seperti CUBIC menafsirkan setiap kehilangan sebagai "jaringan macet" dan **memotong cwnd menjadi setengah**, sehingga throughput jatuh drastis padahal kapasitas sebenarnya masih tersedia.
    **BBR** tidak memakai loss sebagai sinyal utama; ia mengukur **bandwidth bottleneck** dan **RTT propagasi minimum**, lalu mengirim pada laju yang sesuai. Loss acak diabaikan, sehingga throughput tetap tinggi. Sebagai bonus, BBR menjaga antrean tetap pendek sehingga latency lebih rendah.
 
 6. **Penyebab: MTU black hole akibat overhead tunnel.** WireGuard menambah ~60 byte header, sehingga payload maksimum turun dari 1500 menjadi ~1440. Paket besar dengan bit DF diset akan dibuang, dan pesan ICMP "Fragmentation Needed" kemungkinan diblokir sehingga PMTUD gagal. SSH interaktif memakai paket kecil sehingga tetap bekerja; transfer file memakai paket penuh sehingga macet.
-   **Tiga perbaikan:** (a) **turunkan MTU interface tunnel** — `ip link set dev wg0 mtu 1400` (atau set `MTU = 1400` di file konfigurasi WireGuard) di kedua sisi; (b) **MSS clamping** di router — `ip tcp adjust-mss 1360` (Cisco) atau aturan nftables `tcp option maxseg size set rt mtu`; (c) **izinkan ICMP tipe 3 kode 4** melewati firewall di kedua ujung sehingga PMTUD dapat bekerja normal.
+   **Tiga perbaikan:** (a) **turunkan MTU interface tunnel** di kedua sisi dengan `ip link set dev wg0 mtu 1400` (atau set `MTU = 1400` di file konfigurasi WireGuard); (b) **MSS clamping** di router dengan `ip tcp adjust-mss 1360` (Cisco) atau aturan nftables `tcp option maxseg size set rt mtu`; (c) **izinkan ICMP tipe 3 kode 4** melewati firewall di kedua ujung sehingga PMTUD dapat bekerja normal.
 
 7. Beberapa **middlebox lama** (firewall, load balancer, perangkat ISP) tidak memahami bit ECN di header IP dan berperilaku salah: ada yang **membuang** paket dengan bit ECT/CE diset, ada yang **menghapus** bitnya sehingga negosiasi ECN menjadi tidak konsisten, dan ada yang menandai semua paket sebagai CE sehingga pengirim terus-menerus menurunkan cwnd tanpa alasan. Akibatnya: koneksi ke tujuan tertentu gagal total atau sangat lambat. Karena itu Linux memakai default `tcp_ecn=2` (hanya merespons jika lawan meminta, tidak pernah memulai), yang aman; nilai `1` (aktif meminta ECN) sebaiknya diuji dulu di lingkungan Anda.
 
@@ -524,15 +524,15 @@ $ sudo sysctl -w net.core.default_qdisc=fq
 
 ## 12. Sumber
 
-- RFC 5681 — TCP Congestion Control
-- RFC 6928 — Increasing TCP's Initial Window
-- RFC 8312 — CUBIC for Fast Long-Distance Networks
-- RFC 3168 — The Addition of ECN to IP
-- RFC 8290 — FQ-CoDel
-- RFC 9330 — L4S Architecture
+- RFC 5681, TCP Congestion Control
+- RFC 6928, Increasing TCP's Initial Window
+- RFC 8312, CUBIC for Fast Long-Distance Networks
+- RFC 3168, The Addition of ECN to IP
+- RFC 8290, FQ-CoDel
+- RFC 9330, L4S Architecture
 - Cardwell et al. (2016), *BBR: Congestion-Based Congestion Control*
 - Jacobson, V. (1988), *Congestion Avoidance and Control*
-- Bufferbloat project — https://www.bufferbloat.net/
+- Bufferbloat project: https://www.bufferbloat.net/
 
 ---
 

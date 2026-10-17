@@ -1,10 +1,10 @@
 # 12.2 Serangan Layer 2 dan Mitigasinya
 
-> **Prasyarat:** `03-data-link/02`–`04`, `06-aplikasi/02`
+> **Prasyarat:** `03-data-link/02`-`04`, `06-aplikasi/02`
 > **Tujuan:** Anda bisa mengenali setiap serangan layer 2 dan mengonfigurasi seluruh fitur mitigasinya di Cisco dan MikroTik.
 
 > > [!WARNING]
-> > **Layer 2 adalah lapisan yang paling sering diabaikan.** Semua enkripsi dan firewall di lapisan atas menjadi tidak berarti kalau penyerang bisa mengendalikan layer 2 — ia dapat melakukan MITM terhadap seluruh trafik sebelum enkripsi diterapkan.
+> > **Layer 2 adalah lapisan yang paling sering diabaikan.** Semua enkripsi dan firewall di lapisan atas menjadi tidak berarti kalau penyerang bisa mengendalikan layer 2. Ia dapat melakukan MITM terhadap seluruh trafik sebelum enkripsi diterapkan.
 
 ---
 
@@ -42,10 +42,10 @@ SW1(config-if)# switchport port-security aging type inactivity
 |---|---|---|---|---|
 | **protect** | Ya | Tidak | Tidak | Tidak |
 | **restrict** | Ya | Ya | Ya | Tidak |
-| **shutdown** (default) | Ya | Ya | Ya | ✅ (err-disabled) |
+| **shutdown** (default) | Ya | Ya | Ya | Ya (err-disabled) |
 
 > [!TIP]
-> **`restrict` sering lebih baik daripada `shutdown` di produksi** — Anda mendapat peringatan tanpa memutus pengguna karena kesalahan kecil (mis. seseorang memindahkan laptop).
+> **`restrict` sering lebih baik daripada `shutdown` di produksi.** Anda mendapat peringatan tanpa memutus pengguna karena kesalahan kecil (mis. seseorang memindahkan laptop).
 
 > [!WARNING]
 > **`maximum 1` terlalu ketat** kalau ada telepon IP dengan PC di belakangnya, atau VM di laptop. Gunakan `maximum 2` atau 3.
@@ -73,7 +73,7 @@ SW1(config)# errdisable recovery interval 300
 ```
 
 > [!WARNING]
-> **RouterOS tidak punya port security selengkap Cisco.** Alternatif yang lebih baik: **DHCP snooping + ARP reply-only** (lihat §3), atau **802.1X**.
+> **RouterOS tidak punya port security selengkap Cisco.** Alternatif yang lebih baik: **DHCP snooping + ARP reply-only** (lihat §3 dan §2), atau **802.1X**.
 
 ---
 
@@ -98,7 +98,7 @@ Serangan:
 ```
 
 > [!WARNING]
-> **ARP tidak punya autentikasi sama sekali.** Setiap host memercayai ARP Reply apa pun yang diterimanya — bahkan yang tidak diminta.
+> **ARP tidak punya autentikasi sama sekali.** Setiap host memercayai ARP Reply apa pun yang diterimanya, bahkan yang tidak diminta.
 
 **Dampak:** penyadapan seluruh trafik, SSL stripping, injeksi konten, pencurian kredensial, DoS.
 
@@ -127,7 +127,7 @@ SW1(config)# ip arp inspection validate src-mac dst-mac ip
 ```
 
 > [!WARNING]
-> **DAI BERGANTUNG pada DHCP snooping binding table.** Host dengan **IP statis** tidak ada di tabel itu → ARP-nya akan **dibuang**. Solusinya: ARP ACL.
+> **DAI BERGANTUNG pada DHCP snooping binding table.** Host dengan IP statis tidak ada di tabel itu → ARP-nya akan dibuang. Solusinya: ARP ACL.
 
 ```
 SW1(config)# arp access-list SERVER-STATIS
@@ -154,10 +154,10 @@ SW1# show ip dhcp snooping binding
 ```
 
 > [!TIP]
-> **Ini kombinasi yang sangat efektif dan sederhana:** router **hanya** mengenali host yang alamatnya diberikan oleh DHCP server-nya sendiri (atau didaftarkan manual). Host yang memasang IP statis sendiri atau melakukan ARP spoofing **tidak akan bisa berkomunikasi sama sekali**. Sangat umum dipakai di RT/RW-Net dan hotspot Indonesia.
+> **Kombinasi ini efektif dan sederhana:** router hanya mengenali host yang alamatnya diberikan oleh DHCP server-nya sendiri (atau didaftarkan manual). Host yang memasang IP statis sendiri atau melakukan ARP spoofing tidak akan bisa berkomunikasi sama sekali. Teknik ini umum dipakai di RT/RW-Net dan hotspot Indonesia.
 
 > [!WARNING]
-> Konsekuensinya: setiap perangkat dengan IP statis (server, printer, AP) **harus** didaftarkan di `/ip arp` atau diberi lease statis di DHCP.
+> Konsekuensinya: setiap perangkat dengan IP statis (server, printer, AP) harus didaftarkan di `/ip arp` atau diberi lease statis di DHCP.
 
 ---
 
@@ -173,7 +173,7 @@ Penyerang menjalankan DHCP server palsu
 ```
 
 > [!WARNING]
-> **Sering terjadi TANPA niat jahat** — karyawan mencolokkan router Wi-Fi rumahan dengan port LAN (bukan WAN) ke jaringan kantor. Router itu langsung menjadi DHCP server untuk seluruh segmen.
+> **Sering terjadi TANPA niat jahat.** Misalnya, karyawan mencolokkan router Wi-Fi rumahan dengan port LAN (bukan WAN) ke jaringan kantor. Router itu langsung menjadi DHCP server untuk seluruh segmen.
 
 ### Serangan 2: DHCP Starvation
 
@@ -214,7 +214,7 @@ Port TRUSTED:
   ✅ Semua pesan DHCP diizinkan
 ```
 
-**Binding table yang dibangun** menjadi dasar untuk **DAI** dan **IP Source Guard**:
+Binding table yang dibangun menjadi dasar untuk **DAI** dan **IP Source Guard**:
 ```
 SW1# show ip dhcp snooping binding
 MacAddress          IpAddress        Lease(sec)  Type           VLAN  Interface
@@ -273,7 +273,7 @@ R1(config-if)# ip verify unicast source reachable-via any     ← loose mode
 | **Loose** | Alamat sumber harus ada di routing table (interface mana pun) | Link multi-homed, asymmetric routing |
 
 > [!WARNING]
-> **Strict mode merusak asymmetric routing** — gunakan loose mode kalau ada beberapa jalur.
+> **Strict mode merusak asymmetric routing.** Gunakan loose mode kalau ada beberapa jalur.
 
 ```
 # MikroTik
@@ -282,7 +282,7 @@ R1(config-if)# ip verify unicast source reachable-via any     ← loose mode
 ```
 
 > [!TIP]
-> **BCP 38** (RFC 2827) mewajibkan setiap operator memfilter paket dengan alamat sumber yang tidak sah dari jaringannya. Kalau semua operator melakukannya, **amplification attack berbasis spoofing akan hilang**. Ini bagian dari MANRS.
+> **BCP 38** (RFC 2827) mewajibkan setiap operator memfilter paket dengan alamat sumber yang tidak sah dari jaringannya. Kalau semua operator melakukannya, amplification attack berbasis spoofing akan hilang. Ini bagian dari MANRS.
 
 ---
 
@@ -304,7 +304,7 @@ SW1(config-if)# switchport nonegotiate      ← MATIKAN DTP
 ```
 
 > [!WARNING]
-> **`switchport nonegotiate` wajib pada semua port** — access maupun trunk. DTP tidak memberi manfaat yang sepadan dengan risikonya.
+> **`switchport nonegotiate` wajib pada semua port, access maupun trunk.** DTP tidak memberi manfaat yang sepadan dengan risikonya.
 
 ### Serangan 2: Double Tagging
 
@@ -405,7 +405,7 @@ Detail lengkap di `03-data-link/04`.
 
 ## 7. CDP/LLDP Reconnaissance
 
-CDP dan LLDP membocorkan: hostname, model perangkat, **versi IOS** (untuk mencari exploit), IP manajemen, native VLAN, dan kemampuan perangkat.
+CDP dan LLDP membocorkan: hostname, model perangkat, versi IOS (untuk mencari exploit), IP manajemen, native VLAN, dan kemampuan perangkat.
 
 ```
 SW1(config)# interface range gi0/1-20
@@ -437,7 +437,7 @@ SW1# show storm-control
 ```
 
 > [!TIP]
-> Storm control adalah **jaring pengaman** untuk broadcast storm yang lolos dari STP — misalnya karena loop di perangkat downstream yang tidak menjalankan STP.
+> Storm control adalah jaring pengaman untuk broadcast storm yang lolos dari STP, misalnya karena loop di perangkat downstream yang tidak menjalankan STP.
 
 ---
 
@@ -450,7 +450,7 @@ Mencegah perangkat dalam VLAN yang sama saling berkomunikasi.
 ```
 SW1(config-if)# switchport protected
 ```
-Port protected tidak bisa berkomunikasi dengan port protected lain **di switch yang sama**.
+Port protected tidak bisa berkomunikasi dengan port protected lain di switch yang sama.
 
 ### Private VLAN (lengkap, lintas switch)
 
@@ -471,13 +471,13 @@ Detail di `03-data-link/03`.
 ```
 
 > [!TIP]
-> **Isolasi port sangat penting untuk jaringan tamu, hotel, apartemen, dan IoT** — mencegah satu perangkat terinfeksi menyerang tetangganya.
+> **Pakai isolasi port di jaringan tamu, hotel, apartemen, dan IoT** untuk mencegah satu perangkat terinfeksi menyerang tetangganya.
 
 ---
 
 ## 10. 802.1X (Kontrol Akses Berbasis Port)
 
-Solusi paling kuat untuk layer 2: **tidak ada perangkat yang bisa berkomunikasi sebelum terautentikasi**.
+Ini solusi paling kuat untuk layer 2: tidak ada perangkat yang bisa berkomunikasi sebelum terautentikasi.
 
 ```
 [Supplicant]  ←EAPOL→  [Authenticator]  ←RADIUS→  [Auth Server]
@@ -513,7 +513,7 @@ SW1(config-if-range)# spanning-tree portfast
 
 | Fitur | Fungsi |
 |---|---|
-| **MAB** (MAC Auth Bypass) | Untuk perangkat tanpa supplicant (printer, kamera) — autentikasi berbasis MAC |
+| **MAB** (MAC Auth Bypass) | Autentikasi berbasis MAC untuk perangkat tanpa supplicant (printer, kamera) |
 | **Guest VLAN** | Untuk perangkat yang tidak merespons 802.1X sama sekali |
 | **Auth-fail VLAN** | Untuk yang gagal autentikasi |
 | **Critical VLAN** | Kalau RADIUS server mati (fail-open terkontrol) |
@@ -521,10 +521,10 @@ SW1(config-if-range)# spanning-tree portfast
 | **dACL** | RADIUS mengirimkan ACL per pengguna |
 
 > [!WARNING]
-> **MAB tidak aman** — MAC address mudah dipalsukan. Ia hanya "memperlambat", bukan menghentikan. Gunakan untuk perangkat yang benar-benar tidak bisa 802.1X, dan kombinasikan dengan profiling dan segmentasi ketat.
+> **MAB tidak aman** karena MAC address mudah dipalsukan. Ia hanya "memperlambat", bukan menghentikan. Gunakan untuk perangkat yang benar-benar tidak bisa 802.1X, dan kombinasikan dengan profiling dan segmentasi ketat.
 
 > [!WARNING]
-> **Selalu konfigurasikan critical VLAN.** Kalau RADIUS server mati dan tidak ada fallback, **seluruh kantor tidak bisa terhubung ke jaringan** — outage total.
+> **Selalu konfigurasikan critical VLAN.** Kalau RADIUS server mati dan tidak ada fallback, seluruh kantor tidak bisa terhubung ke jaringan, alias outage total.
 
 > [!TIP]
 > **Terapkan 802.1X secara bertahap:** mulai dengan mode `monitor` (open mode) yang mencatat tetapi tidak memblokir, analisis perangkat apa saja yang ada, baru aktifkan enforcement.
@@ -649,7 +649,7 @@ interface range gi0/21-23
 
 ## 12. Ringkasan
 
-- **Layer 2 adalah lapisan yang paling sering diabaikan** — menguasainya berarti MITM terhadap seluruh trafik sebelum enkripsi.
+- **Layer 2 adalah lapisan yang paling sering diabaikan.** Menguasainya berarti bisa MITM terhadap seluruh trafik sebelum enkripsi.
 - **MAC flooding** membuat switch berperilaku seperti hub → **Port Security** (`maximum 2-3`, `violation restrict`).
 - **ARP spoofing** = MITM klasik karena ARP tidak punya autentikasi → **Dynamic ARP Inspection** (butuh DHCP snooping), atau **`arp=reply-only` + `add-arp=yes`** di MikroTik.
 - **Rogue DHCP** (sering tidak disengaja) dan **DHCP starvation** → **DHCP Snooping** dengan trusted port + rate limit.
@@ -659,8 +659,8 @@ interface range gi0/21-23
 - **STP root takeover** → **BPDU Guard** (port access), **Root Guard** (menghadap access), **Loop Guard + UDLD** (trunk fiber).
 - **Storm control** sebagai jaring pengaman broadcast storm.
 - **Port isolation** (`switchport protected`, private VLAN, `horizon=`) untuk tamu dan IoT.
-- **802.1X adalah solusi paling kuat** — terapkan bertahap dengan monitor mode. ⚠️ **Selalu konfigurasikan critical VLAN** agar RADIUS mati tidak melumpuhkan kantor.
-- **MAB tidak aman** (MAC mudah dipalsukan) — hanya untuk perangkat yang benar-benar tidak bisa 802.1X.
+- **802.1X adalah solusi paling kuat.** Terapkan bertahap dengan monitor mode, dan selalu konfigurasikan critical VLAN agar RADIUS mati tidak melumpuhkan kantor.
+- **MAB tidak aman** (MAC mudah dipalsukan). Gunakan hanya untuk perangkat yang benar-benar tidak bisa 802.1X.
 
 ---
 
@@ -678,14 +678,14 @@ interface range gi0/21-23
 <details>
 <summary>Jawaban</summary>
 
-1. **MAC flooding** mengirim ribuan frame dengan **MAC address sumber palsu yang berbeda-beda** (alat seperti `macof` mengirim >150.000 per menit). Switch mempelajari setiap MAC sumber dan memasukkannya ke **MAC address table**, yang kapasitasnya terbatas (8.000-32.000 entri).
-   Ketika tabel penuh, switch **tidak bisa lagi mempelajari MAC baru**. Akibatnya, ketika frame datang untuk MAC tujuan yang tidak ada di tabel, switch melakukan **unknown unicast flooding** — mengirimkannya ke **semua port** dalam VLAN itu. Karena hampir semua MAC yang sah sudah tersingkir dari tabel, hampir semua trafik menjadi flooding. Penyerang yang terhubung di segmen itu dapat menangkap **seluruh trafik**, persis seperti pada hub.
+1. **MAC flooding** mengirim ribuan frame dengan MAC address sumber palsu yang berbeda-beda (alat seperti `macof` mengirim >150.000 per menit). Switch mempelajari setiap MAC sumber dan memasukkannya ke **MAC address table**, yang kapasitasnya terbatas (8.000-32.000 entri).
+   Ketika tabel penuh, switch tidak bisa lagi mempelajari MAC baru. Akibatnya, ketika frame datang untuk MAC tujuan yang tidak ada di tabel, switch melakukan **unknown unicast flooding**: mengirimkannya ke semua port dalam VLAN itu. Karena hampir semua MAC yang sah sudah tersingkir dari tabel, hampir semua trafik menjadi flooding. Penyerang yang terhubung di segmen itu dapat menangkap seluruh trafik, persis seperti pada hub.
 
-2. **Akar masalahnya: ARP tidak punya mekanisme autentikasi sama sekali.** Protokol ini dirancang tahun 1982 untuk jaringan yang seluruhnya dipercaya. Setiap host **menerima dan memercayai ARP Reply apa pun** yang diterimanya — bahkan yang tidak pernah ia minta (gratuitous ARP), dan bahkan yang bertentangan dengan entri yang sudah ada. Tidak ada tanda tangan, tidak ada verifikasi, tidak ada state.
-   Karena itu penyerang cukup mengirim ARP Reply palsu yang menyatakan "IP gateway ada di MAC saya" untuk membelokkan seluruh trafik. Perbaikan pada protokol itu sendiri (mis. S-ARP) tidak pernah diadopsi; solusinya dilakukan di **switch** lewat DAI yang memvalidasi ARP terhadap sumber kebenaran eksternal (binding table DHCP snooping).
+2. **Akar masalahnya: ARP tidak punya mekanisme autentikasi sama sekali.** Protokol ini dirancang tahun 1982 untuk jaringan yang seluruhnya dipercaya. Setiap host menerima dan memercayai ARP Reply apa pun yang diterimanya, bahkan yang tidak pernah ia minta (gratuitous ARP), dan bahkan yang bertentangan dengan entri yang sudah ada. ARP tidak mengenal tanda tangan, verifikasi, maupun state.
+   Karena itu penyerang cukup mengirim ARP Reply palsu yang menyatakan "IP gateway ada di MAC saya" untuk membelokkan seluruh trafik. Perbaikan pada protokol itu sendiri (mis. S-ARP) tidak pernah diadopsi; solusinya dilakukan di switch lewat DAI yang memvalidasi ARP terhadap sumber kebenaran eksternal (binding table DHCP snooping).
 
-3. Karena **DAI memvalidasi paket ARP terhadap binding table DHCP snooping**, dan server itu memakai **alamat IP statis** — sehingga tidak pernah tercatat di binding table. Semua ARP dari server tersebut dianggap tidak sah dan **dibuang**, memutus komunikasinya.
-   **Perbaikan — dua pilihan:**
+3. Karena **DAI memvalidasi paket ARP terhadap binding table DHCP snooping**, dan server itu memakai alamat IP statis, sehingga tidak pernah tercatat di binding table. Semua ARP dari server tersebut dianggap tidak sah dan dibuang, memutus komunikasinya.
+   **Ada tiga pilihan perbaikan:**
    (a) **ARP ACL** untuk host statis:
    ```
    arp access-list SERVER-STATIS
@@ -698,14 +698,14 @@ interface range gi0/21-23
    ```
    (c) Alternatif yang lebih baik secara operasional: **berikan alamat "statis" lewat DHCP reservation** sehingga host tetap masuk binding table secara otomatis.
 
-4. **Double tagging:** penyerang mengirim frame dengan **dua tag VLAN** — tag luar berisi VLAN native (mis. VLAN 1), tag dalam berisi VLAN target (mis. VLAN 20). Switch pertama menerima frame di port access VLAN 1, **menghapus tag luar** karena native VLAN dikirim tanpa tag di trunk, lalu meneruskannya. Switch kedua menerima frame yang kini hanya punya tag VLAN 20 dan mengirimkannya ke VLAN 20. Penyerang berhasil mengirim ke VLAN yang seharusnya tidak dapat ia jangkau. (Serangan ini **satu arah** — tidak ada jalur balik.)
-   **Mitigasi:** (a) **Ubah native VLAN ke VLAN yang tidak dipakai** (mis. 999) dan pastikan tidak ada port akses di VLAN itu; (b) **`vlan dot1q tag native`** — memaksa native VLAN juga dikirim dengan tag, sehingga trik penghapusan tag tidak berlaku; (c) **Jangan pakai VLAN 1** untuk apa pun, dan **batasi VLAN pada trunk** dengan `switchport trunk allowed vlan` sehingga VLAN target tidak diizinkan lewat kalau memang tidak perlu.
+4. **Double tagging:** penyerang mengirim frame dengan dua tag VLAN: tag luar berisi VLAN native (mis. VLAN 1), tag dalam berisi VLAN target (mis. VLAN 20). Switch pertama menerima frame di port access VLAN 1, menghapus tag luar karena native VLAN dikirim tanpa tag di trunk, lalu meneruskannya. Switch kedua menerima frame yang kini hanya punya tag VLAN 20 dan mengirimkannya ke VLAN 20. Penyerang berhasil mengirim ke VLAN yang seharusnya tidak dapat ia jangkau. (Serangan ini satu arah: tidak ada jalur balik.)
+   **Mitigasi:** (a) **Ubah native VLAN ke VLAN yang tidak dipakai** (mis. 999) dan pastikan tidak ada port akses di VLAN itu; (b) **`vlan dot1q tag native`**, yang memaksa native VLAN juga dikirim dengan tag sehingga trik penghapusan tag tidak berlaku; (c) **Jangan pakai VLAN 1** untuk apa pun, dan **batasi VLAN pada trunk** dengan `switchport trunk allowed vlan` sehingga VLAN target tidak diizinkan lewat kalau memang tidak perlu.
 
-5. Karena **`shutdown` menempatkan port dalam err-disabled** dan memutus pengguna sepenuhnya sampai ada yang memulihkannya secara manual. Dalam operasi nyata, pelanggaran port security paling sering terjadi karena hal yang **tidak berbahaya**: pengguna memindahkan laptop ke meja lain, mengganti dock, menghubungkan VM dengan MAC baru, atau menancapkan mini-switch untuk perangkat tambahan. Menghukumnya dengan outage menghasilkan banyak tiket helpdesk dan tekanan untuk mematikan fitur keamanan itu sama sekali.
-   **`restrict` membuang trafik dari MAC yang melanggar, tetapi tetap melayani MAC yang sah**, sambil mengirimkan syslog/SNMP dan menaikkan counter. Anda tetap mendapat **visibilitas dan perlindungan** tanpa memutus pengguna. Kalau memang ingin `shutdown`, pasangkan dengan `errdisable recovery` agar pulih otomatis.
+5. Karena **`shutdown` menempatkan port dalam err-disabled** dan memutus pengguna sepenuhnya sampai ada yang memulihkannya secara manual. Dalam operasi nyata, pelanggaran port security paling sering terjadi karena hal yang tidak berbahaya: pengguna memindahkan laptop ke meja lain, mengganti dock, menghubungkan VM dengan MAC baru, atau menancapkan mini-switch untuk perangkat tambahan. Menghukumnya dengan outage menghasilkan banyak tiket helpdesk dan tekanan untuk mematikan fitur keamanan itu sama sekali.
+   **`restrict` membuang trafik dari MAC yang melanggar, tetapi tetap melayani MAC yang sah**, sambil mengirimkan syslog/SNMP dan menaikkan counter. Anda tetap mendapat visibilitas dan perlindungan tanpa memutus pengguna. Kalau memang ingin `shutdown`, pasangkan dengan `errdisable recovery` agar pulih otomatis.
 
-6. **Seluruh kantor tidak bisa terhubung ke jaringan.** Tanpa RADIUS, switch tidak dapat mengautentikasi siapa pun; port tetap dalam keadaan tidak terotorisasi dan **memblokir semua trafik**. Perangkat yang sudah terautentikasi sebelumnya akan terputus saat sesi habis atau saat port di-bounce. Ini **outage total** yang disebabkan oleh kontrol keamanan itu sendiri.
-   **Pencegahan — critical VLAN (inaccessible authentication bypass):**
+6. **Seluruh kantor tidak bisa terhubung ke jaringan.** Tanpa RADIUS, switch tidak dapat mengautentikasi siapa pun; port tetap dalam keadaan tidak terotorisasi dan memblokir semua trafik. Perangkat yang sudah terautentikasi sebelumnya akan terputus saat sesi habis atau saat port di-bounce. Ini outage total yang disebabkan oleh kontrol keamanan itu sendiri.
+   **Pencegahannya adalah critical VLAN (inaccessible authentication bypass):**
    ```
    authentication event server dead action authorize vlan 999
    authentication event server alive action reinitialize
@@ -718,8 +718,8 @@ interface range gi0/21-23
    2. ip arp inspection vlan ...
    3. ip verify source (IP Source Guard) pada interface
    ```
-   **Kenapa urutannya penting:** **DAI dan IP Source Guard keduanya bergantung sepenuhnya pada binding table yang dibangun DHCP snooping.** Tanpa DHCP snooping aktif, binding table kosong — sehingga DAI akan membuang **semua** ARP dan IP Source Guard akan membuang **semua** paket, memutus seluruh jaringan.
-   Selain itu, DHCP snooping perlu **waktu untuk mengisi tabel** — jalankan dulu selama beberapa jam/hari dan verifikasi dengan `show ip dhcp snooping binding` bahwa semua host sudah tercatat, **baru** aktifkan DAI dan IP Source Guard. Jangan lupa menandai port ke server DHCP dan uplink sebagai `trust`, serta menambahkan binding statis untuk host ber-IP statis, **sebelum** enforcement diaktifkan.
+   **Kenapa urutannya penting:** DAI dan IP Source Guard keduanya bergantung sepenuhnya pada binding table yang dibangun DHCP snooping. Tanpa DHCP snooping aktif, binding table kosong, sehingga DAI akan membuang semua ARP dan IP Source Guard akan membuang semua paket. Seluruh jaringan pun terputus.
+   Selain itu, DHCP snooping perlu waktu untuk mengisi tabel. Jalankan dulu selama beberapa jam/hari dan verifikasi dengan `show ip dhcp snooping binding` bahwa semua host sudah tercatat, baru aktifkan DAI dan IP Source Guard. Jangan lupa menandai port ke server DHCP dan uplink sebagai `trust`, serta menambahkan binding statis untuk host ber-IP statis, sebelum enforcement diaktifkan.
 
 8. Konfigurasi hardening untuk switch access 24 port dengan telepon IP:
    ```
@@ -802,10 +802,10 @@ interface range gi0/21-23
 
 - Cisco, *Catalyst Switch Security Configuration Guide*
 - Cisco, *VLAN Security White Paper*
-- RFC 2827 / BCP 38 — Network Ingress Filtering
-- IEEE 802.1X-2020 — Port-Based Network Access Control
+- RFC 2827 / BCP 38: Network Ingress Filtering
+- IEEE 802.1X-2020: Port-Based Network Access Control
 - Cisco CCNA 200-301 v1.1, topik 5.7 (Layer 2 security: DHCP snooping, dynamic ARP inspection, port security)
-- MikroTik — https://help.mikrotik.com/docs/display/ROS/Bridging+and+Switching
+- MikroTik: https://help.mikrotik.com/docs/display/ROS/Bridging+and+Switching
 
 ---
 

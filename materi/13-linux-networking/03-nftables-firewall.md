@@ -66,7 +66,7 @@ TABLE (family: ip / ip6 / inet / arp / bridge / netdev)
 | netdev | Ingress paling awal (untuk filtering DoS efisien) |
 
 > [!TIP]
-> **Gunakan family `inet`** — satu aturan berlaku untuk IPv4 dan IPv6, menghindari kesalahan umum "lupa firewall IPv6".
+> **Gunakan family `inet`.** Satu aturan berlaku untuk IPv4 dan IPv6, sehingga Anda terhindar dari kesalahan umum "lupa firewall IPv6".
 
 ---
 
@@ -136,7 +136,7 @@ $ sudo systemctl enable --now nftables   # persisten
 ```
 
 > [!WARNING]
-> **`policy drop` pada chain input adalah default-deny yang benar.** Tetapi ⚠️ **JANGAN memuat konfigurasi dengan `policy drop` dari jarak jauh sebelum memastikan aturan SSH benar** — Anda akan langsung terkunci. Selalu uji sintaks dengan `-c` dulu, dan sediakan mekanisme rollback.
+> **`policy drop` pada chain input adalah default-deny yang benar.** Tetapi hati-hati: JANGAN memuat konfigurasi dengan `policy drop` dari jarak jauh sebelum memastikan aturan SSH benar, karena Anda akan langsung terkunci. Selalu uji sintaks dengan `-c` dulu, dan sediakan mekanisme rollback.
 
 ---
 
@@ -204,7 +204,7 @@ $ sudo sysctl -w net.ipv4.ip_forward=1
 
 ## 6. Connection Tracking (conntrack)
 
-Netfilter melacak state setiap koneksi — inilah yang membuatnya **stateful**.
+Netfilter melacak state setiap koneksi, dan inilah yang membuatnya **stateful**.
 
 ```bash
 # Lihat koneksi yang dilacak
@@ -243,7 +243,7 @@ $ sudo sysctl -w net.netfilter.nf_conntrack_tcp_timeout_established=86400
 ```
 
 > [!WARNING]
-> **Default timeout TCP established Linux adalah 5 hari** — sangat boros pada router sibuk. Turunkan ke 1 hari atau kurang.
+> **Default timeout TCP established Linux adalah 5 hari**, sangat boros pada router sibuk. Turunkan ke 1 hari atau kurang.
 
 > [!TIP]
 > **Untuk trafik volume sangat tinggi yang tidak butuh state** (mis. DNS server yang sangat sibuk), gunakan `notrack` di prerouting untuk melewati conntrack dan menghemat sumber daya:
@@ -288,7 +288,7 @@ chain input {
 ```
 
 > [!TIP]
-> **Ini setara address-list dinamis di MikroTik** — blacklist otomatis dengan timeout.
+> **Ini setara address-list dinamis di MikroTik:** blacklist otomatis dengan timeout.
 
 ### Verdict maps (jump berdasarkan kondisi)
 
@@ -415,7 +415,7 @@ $ sudo firewall-cmd --reload
 $ sudo firewall-cmd --list-all
 ```
 
-**Konsep zona** — mirip zona firewall enterprise:
+**Konsep zona**, mirip zona firewall enterprise:
 ```
 public   : tidak dipercaya (default)
 internal : jaringan internal
@@ -474,7 +474,7 @@ $ sudo nft flush ruleset       # ⚠️ hanya kalau ada cara memulihkan!
 | Aturan tampak benar tetapi tidak jalan | Urutan salah; family salah; priority chain |
 
 > [!WARNING]
-> **Kesalahan #1: lupa `ct state established,related accept`.** Tanpa itu, koneksi keluar berhasil tetapi balasannya diblokir — sama seperti lupa "established" di ACL Cisco.
+> **Kesalahan #1: lupa `ct state established,related accept`.** Tanpa itu, koneksi keluar berhasil tetapi balasannya diblokir, sama seperti lupa "established" di ACL Cisco.
 
 ---
 
@@ -520,16 +520,16 @@ Untuk aplikasi yang ingin memproses paket di user space dengan cepat (IDS, penan
 ## 13. Ringkasan
 
 - **nftables menggantikan iptables** di distribusi modern; iptables sering menjadi wrapper di atasnya.
-- **Netfilter hook**: prerouting, input, forward, output, postrouting — konsep yang sama dengan chain MikroTik.
+- **Netfilter hook**: prerouting, input, forward, output, postrouting. Konsepnya sama dengan chain MikroTik.
 - Struktur: **table (family) → chain (type + hook) → rule**. **Gunakan family `inet`** agar satu aturan berlaku IPv4 dan IPv6.
-- **`ct state established,related accept`** membuat firewall stateful — **jangan pernah lupa ini**.
+- **`ct state established,related accept`** membuat firewall stateful. Jangan pernah lupa aturan ini.
 - **`ct state invalid drop`** dan **`policy drop`** (default-deny) adalah dasar yang benar.
-- **Jangan blokir ICMP total** — izinkan echo, unreachable, time-exceeded, dan (untuk IPv6) NDP + packet-too-big.
+- **Jangan blokir ICMP total.** Izinkan echo, unreachable, time-exceeded, dan (untuk IPv6) NDP + packet-too-big.
 - NAT: **DNAT di prerouting**, **SNAT/masquerade di postrouting**; butuh `ip_forward=1`.
 - **conntrack** melacak state; tabel bisa penuh (perbesar `nf_conntrack_max`, turunkan timeout dari default 5 hari).
 - **Set dinamis dengan timeout** = blacklist otomatis (setara address-list MikroTik).
 - **firewalld** (zona) dan **UFW** adalah frontend sederhana; tulis nftables langsung untuk router/aturan kompleks.
-- **Uji sintaks (`nft -c`) dan siapkan rollback** sebelum memuat `policy drop` dari jarak jauh — agar tidak terkunci.
+- **Uji sintaks (`nft -c`) dan siapkan rollback** sebelum memuat `policy drop` dari jarak jauh, agar tidak terkunci.
 - **XDP** menjalankan program eBPF di driver NIC sebelum `sk_buff` dibuat, dengan verdict `PASS`, `DROP`, `TX`, `REDIRECT`, `ABORTED`. Pasang dengan `ip link set dev X xdpdrv|xdpgeneric|xdpoffload object F section S`. Ia pra-filter murah di depan nftables, bukan penggantinya (tanpa conntrack bawaan); `AF_XDP` mengantar paket ke user space dengan UMEM dan empat ring.
 
 ---
@@ -549,15 +549,15 @@ Untuk aplikasi yang ingin memproses paket di user space dengan cepat (IDS, penan
 <details>
 <summary>Jawaban</summary>
 
-1. Karena family **`inet` memproses IPv4 dan IPv6 dengan satu set aturan**, sedangkan `ip` hanya IPv4 (dan `ip6` hanya IPv6). Dengan `inet`, Anda menulis aturan sekali dan otomatis berlaku untuk kedua protokol — menghindari **kesalahan paling umum: firewall IPv4 yang ketat tetapi IPv6 yang terlupa dan terbuka lebar**. Karena banyak sistem modern mengaktifkan IPv6 secara default dan mengutamakannya, firewall IPv6 yang tidak dikonfigurasi adalah celah keamanan serius. Family `inet` menutup celah ini secara struktural.
+1. Karena family **`inet` memproses IPv4 dan IPv6 dengan satu set aturan**, sedangkan `ip` hanya IPv4 (dan `ip6` hanya IPv6). Dengan `inet`, Anda menulis aturan sekali dan otomatis berlaku untuk kedua protokol. Ini menghindari kesalahan paling umum: firewall IPv4 yang ketat tetapi IPv6 yang terlupa dan terbuka lebar. Karena banyak sistem modern mengaktifkan IPv6 secara default dan mengutamakannya, firewall IPv6 yang tidak dikonfigurasi adalah celah keamanan serius. Family `inet` menutup celah ini secara struktural.
 
-2. **Koneksi keluar berhasil, tetapi balasannya diblokir** — sehingga praktis tidak ada yang bekerja. Ketika host membuat koneksi keluar (mis. `curl https://...`), paket keluar melewati chain output (biasanya `policy accept`). Tetapi paket **balasan** dari server masuk lewat chain input. Tanpa aturan yang mengizinkan trafik balasan, dan dengan `policy drop`, balasan itu dibuang — koneksi macet/timeout.
-   `ct state established,related accept` menyelesaikannya dengan mengizinkan paket yang merupakan **bagian dari koneksi yang sudah ada** (established) atau koneksi terkait (related, seperti data FTP atau ICMP error). Inilah inti firewall stateful — Anda hanya perlu mengizinkan **arah inisiasi**; balasan ditangani otomatis. Ini persis analog dengan kata kunci `established` di ACL Cisco atau `connection-state=established,related` di MikroTik.
+2. **Koneksi keluar berhasil, tetapi balasannya diblokir**, sehingga praktis tidak ada yang bekerja. Ketika host membuat koneksi keluar (mis. `curl https://...`), paket keluar melewati chain output (biasanya `policy accept`). Tetapi paket balasan dari server masuk lewat chain input. Tanpa aturan yang mengizinkan trafik balasan, dan dengan `policy drop`, balasan itu dibuang dan koneksi macet/timeout.
+   `ct state established,related accept` menyelesaikannya dengan mengizinkan paket yang merupakan bagian dari koneksi yang sudah ada (established) atau koneksi terkait (related, seperti data FTP atau ICMP error). Inilah inti firewall stateful: Anda hanya perlu mengizinkan arah inisiasi, dan balasan ditangani otomatis. Ini persis analog dengan kata kunci `established` di ACL Cisco atau `connection-state=established,related` di MikroTik.
 
-3. **prerouting** — segera setelah paket tiba, sebelum keputusan routing. Untuk DNAT (port forwarding) dan mangle awal; keputusan di sini memengaruhi ke mana paket dirutekan. **input** — paket yang **ditujukan ke host ini** setelah routing memutuskan itu lokal; untuk melindungi host itu sendiri (SSH, layanan). **forward** — paket yang **melewati** host dari satu interface ke interface lain; untuk melindungi jaringan saat host berfungsi sebagai router. **output** — paket yang **dihasilkan host ini**; untuk membatasi trafik keluar host (egress filtering). **postrouting** — setelah keputusan routing, sebelum paket keluar; untuk SNAT/masquerade.
+3. **prerouting**: segera setelah paket tiba, sebelum keputusan routing. Untuk DNAT (port forwarding) dan mangle awal; keputusan di sini memengaruhi ke mana paket dirutekan. **input**: paket yang ditujukan ke host ini setelah routing memutuskan itu lokal; untuk melindungi host itu sendiri (SSH, layanan). **forward**: paket yang melewati host dari satu interface ke interface lain; untuk melindungi jaringan saat host berfungsi sebagai router. **output**: paket yang dihasilkan host ini; untuk membatasi trafik keluar host (egress filtering). **postrouting**: setelah keputusan routing, sebelum paket keluar; untuk SNAT/masquerade.
 
-4. Kemungkinan besar Anda memuat konfigurasi dengan **`policy drop` pada chain input tanpa aturan yang mengizinkan sesi SSH Anda yang sedang berjalan** — sehingga paket balasan SSH langsung dibuang dan sesi mati. Bisa juga lupa `ct state established,related accept`.
-   **Pencegahan:** (a) **uji sintaks dulu** dengan `sudo nft -c -f config.nft` (memeriksa tanpa memuat); (b) **pastikan ada aturan** `ct state established,related accept` dan aturan yang mengizinkan port 22 dari alamat Anda, **sebelum** `policy drop`; (c) **jadwalkan rollback otomatis** — mis. `sleep 300 && nft flush ruleset` di background, dibatalkan kalau aturan berhasil, sehingga firewall kosong (dan Anda bisa masuk lagi) setelah 5 menit kalau terkunci; (d) uji dari **sesi kedua** sebelum menutup yang pertama; (e) miliki akses **out-of-band** (console/IPMI).
+4. Kemungkinan besar Anda memuat konfigurasi dengan **`policy drop` pada chain input tanpa aturan yang mengizinkan sesi SSH Anda yang sedang berjalan**, sehingga paket balasan SSH langsung dibuang dan sesi mati. Bisa juga lupa `ct state established,related accept`.
+   **Pencegahan:** (a) **uji sintaks dulu** dengan `sudo nft -c -f config.nft` (memeriksa tanpa memuat); (b) **pastikan ada aturan** `ct state established,related accept` dan aturan yang mengizinkan port 22 dari alamat Anda, sebelum `policy drop`; (c) **jadwalkan rollback otomatis**, mis. `sleep 300 && nft flush ruleset` di background yang dibatalkan kalau aturan berhasil, sehingga firewall kosong (dan Anda bisa masuk lagi) setelah 5 menit kalau terkunci; (d) uji dari sesi kedua sebelum menutup yang pertama; (e) miliki akses out-of-band (console/IPMI).
 
 5. Dengan **set dinamis bertimeout** dan rate limiting:
    ```
@@ -583,15 +583,15 @@ Untuk aplikasi yang ingin memproses paket di user space dengan cepat (IDS, penan
    ```
    Cara kerjanya: alamat yang membuat lebih dari 5 koneksi SSH baru per menit otomatis ditambahkan ke set `ssh_blacklist` dan diblokir selama 1 jam. Ini setara dengan teknik address-list bertingkat di MikroTik. Untuk keamanan sesungguhnya, kombinasikan dengan kunci SSH (bukan password) dan pembatasan sumber.
 
-6. (a) **`ip_forward`** — periksa `sysctl net.ipv4.ip_forward`; kalau 0, router tidak meneruskan paket sama sekali. Aktifkan dan buat permanen di `/etc/sysctl.d/`. (b) **Aturan masquerade/SNAT** — periksa apakah ada di chain **postrouting** dengan interface keluar yang **benar** (`oifname "eth0"` harus interface WAN yang sebenarnya), dan family/table yang benar (`table ip nat`). (c) **Chain forward** — periksa apakah trafik dari LAN ke WAN **diizinkan** (`iifname LAN oifname WAN accept`) dan `ct state established,related accept` ada untuk balasan; dengan `policy drop`, tanpa aturan accept trafik tidak akan diteruskan meski NAT benar. Tambahan: periksa routing (`ip route`), dan apakah conntrack bekerja (`conntrack -L`).
+6. (a) **`ip_forward`**: periksa `sysctl net.ipv4.ip_forward`; kalau 0, router tidak meneruskan paket sama sekali. Aktifkan dan buat permanen di `/etc/sysctl.d/`. (b) **Aturan masquerade/SNAT**: periksa apakah ada di chain **postrouting** dengan interface keluar yang benar (`oifname "eth0"` harus interface WAN yang sebenarnya), dan family/table yang benar (`table ip nat`). (c) **Chain forward**: periksa apakah trafik dari LAN ke WAN diizinkan (`iifname LAN oifname WAN accept`) dan `ct state established,related accept` ada untuk balasan; dengan `policy drop`, tanpa aturan accept trafik tidak akan diteruskan meski NAT benar. Tambahan: periksa routing (`ip route`), dan apakah conntrack bekerja (`conntrack -L`).
 
 7. **Tabel conntrack penuh.** Setiap koneksi yang dilacak memakan slot di tabel dengan batas `nf_conntrack_max`. Saat penuh, koneksi baru dibuang dan muncul error seperti "nf_conntrack: table full, dropping packet".
-   **Tindakan:** (a) **Periksa penyebab** — `conntrack -S` dan `conntrack -L` untuk melihat apa yang mengisi tabel; cari satu host yang membuat ribuan koneksi (P2P, malware, aplikasi bocor) atau serangan (SYN flood, port scan). (b) **Perbesar tabel** — `sysctl -w net.netfilter.nf_conntrack_max=262144` (sesuaikan dengan RAM). (c) **Turunkan timeout** — default TCP established 5 hari sangat boros; `sysctl -w net.netfilter.nf_conntrack_tcp_timeout_established=86400`, dan perpendek timeout UDP/close-wait. (d) **Batasi koneksi per host** dengan aturan firewall. (e) Untuk trafik volume tinggi yang tidak butuh state (mis. DNS server), pakai **`notrack`** di prerouting untuk melewati conntrack. (f) Tangani host bermasalah atau serangan yang menjadi akar penyebab.
+   **Tindakan:** (a) **Periksa penyebab**: `conntrack -S` dan `conntrack -L` untuk melihat apa yang mengisi tabel; cari satu host yang membuat ribuan koneksi (P2P, malware, aplikasi bocor) atau serangan (SYN flood, port scan). (b) **Perbesar tabel**: `sysctl -w net.netfilter.nf_conntrack_max=262144` (sesuaikan dengan RAM). (c) **Turunkan timeout**: default TCP established 5 hari sangat boros; `sysctl -w net.netfilter.nf_conntrack_tcp_timeout_established=86400`, dan perpendek timeout UDP/close-wait. (d) **Batasi koneksi per host** dengan aturan firewall. (e) Untuk trafik volume tinggi yang tidak butuh state (mis. DNS server), pakai **`notrack`** di prerouting untuk melewati conntrack. (f) Tangani host bermasalah atau serangan yang menjadi akar penyebab.
 
 8. ```
    nft add rule inet filter input tcp dport 443 ct state new,established accept
    ```
-   Catatan: `-m state --state` menjadi `ct state`; `NEW,ESTABLISHED` menjadi `new,established`; family sebaiknya `inet` (agar mencakup IPv6 juga, meski aturan asli iptables hanya IPv4 — kalau ingin persis IPv4 saja gunakan `add rule ip filter input`). Dalam praktik firewall yang baik, Anda biasanya memisahkan: `ct state established,related accept` di awal chain (untuk semua balasan), lalu `tcp dport 443 ct state new accept` untuk koneksi baru ke layanan itu.
+   Catatan: `-m state --state` menjadi `ct state`; `NEW,ESTABLISHED` menjadi `new,established`; family sebaiknya `inet` (agar mencakup IPv6 juga, meski aturan asli iptables hanya IPv4; kalau ingin persis IPv4 saja, gunakan `add rule ip filter input`). Dalam praktik firewall yang baik, Anda biasanya memisahkan: `ct state established,related accept` di awal chain (untuk semua balasan), lalu `tcp dport 443 ct state new accept` untuk koneksi baru ke layanan itu.
 
 9. Di nftables, paket sudah melewati driver, sudah dibuatkan `sk_buff`, dan sudah masuk stack sampai hook prerouting; semua biaya itu terbayar sebelum `drop`. XDP berjalan di driver **sebelum `sk_buff` dialokasikan**, sehingga paket buangan dibuang dengan biaya per paket jauh lebih kecil dan CPU tidak habis oleh paket yang akan dibuang juga. Verdict: `XDP_PASS` (teruskan ke stack), `XDP_DROP` (buang), `XDP_TX` (pantulkan keluar interface yang sama), `XDP_REDIRECT` (ke interface, CPU, atau socket AF_XDP lain), `XDP_ABORTED` (kesalahan program, paket dibuang). Perintah native tanpa fallback: `sudo ip link set dev eth0 xdpdrv object xdp_drop.o section xdp` (bila driver tidak mendukung XDP, perintah gagal alih-alih jatuh ke generic; lepas dengan `xdp off`). Yang tidak bisa dilakukan XDP: ia tidak punya **connection tracking** bawaan sehingga tidak stateful sendiri (state harus dibuat di BPF map oleh programmer), dan ia hanya melihat paket masuk. Karena itu XDP dipakai sebagai pra-filter di depan nftables, bukan penggantinya.
 
@@ -601,10 +601,10 @@ Untuk aplikasi yang ingin memproses paket di user space dengan cepat (IDS, penan
 
 ## 15. Sumber
 
-- nftables wiki — https://wiki.nftables.org/
+- nftables wiki: https://wiki.nftables.org/
 - `man nft`, `man conntrack`
-- netfilter project — https://www.netfilter.org/
-- firewalld — https://firewalld.org/
+- netfilter project: https://www.netfilter.org/
+- firewalld: https://firewalld.org/
 - Red Hat, *Securing Networks* (firewalld, nftables)
 - eBPF Docs, Program type BPF_PROG_TYPE_XDP: https://docs.ebpf.io/linux/program-type/BPF_PROG_TYPE_XDP/
 - Linux kernel documentation, AF_XDP: https://docs.kernel.org/networking/af_xdp.html
@@ -612,4 +612,4 @@ Untuk aplikasi yang ingin memproses paket di user space dengan cepat (IDS, penan
 
 ---
 
-**Berikutnya:** `13-linux-networking/04-layanan-jaringan-linux.md` — menjalankan layanan jaringan (DNS, DHCP, proxy, routing) di Linux.
+**Berikutnya:** `13-linux-networking/04-layanan-jaringan-linux.md`. Menjalankan layanan jaringan (DNS, DHCP, proxy, routing) di Linux.

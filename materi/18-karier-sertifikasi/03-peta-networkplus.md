@@ -31,7 +31,7 @@ Bahasa   : Inggris, Jerman, Jepang, Portugis, Spanyol
 Bobot di atas adalah bobot resmi CompTIA untuk N10-009 (23/20/19/14/24). Selalu cek ulang di halaman resmi [CompTIA Network+](https://www.comptia.org/en-us/certifications/network/) sebelum ujian, karena CompTIA bisa merevisinya.
 
 > [!TIP]
-> **Domain terbesar Network+ adalah Troubleshooting (24%)**, disusul Networking Concepts (23%). Security justru yang paling kecil (14%). Jadi bobotnya tidak merata: ujian ini paling berat di kemampuan mendiagnosis masalah, dan Tahap 14 kurikulum ini adalah bekal utamanya. Network+ juga **vendor-netral** — menguji konsep dan terminologi umum, bukan perintah CLI Cisco. Bagus sebagai fondasi pertama sebelum spesialisasi vendor.
+> **Domain terbesar Network+ adalah Troubleshooting (24%)**, disusul Networking Concepts (23%). Security justru yang paling kecil (14%). Jadi bobotnya tidak merata: ujian ini paling berat di kemampuan mendiagnosis masalah, dan Tahap 14 kurikulum ini adalah bekal utamanya. Network+ juga vendor-netral: menguji konsep dan terminologi umum, bukan perintah CLI Cisco. Ujian ini bagus sebagai fondasi pertama sebelum spesialisasi vendor.
 
 ---
 
@@ -46,7 +46,7 @@ Bobot di atas adalah bobot resmi CompTIA untuk N10-009 (23/20/19/14/24). Selalu 
 | Kesulitan | Lebih sulit (praktik) | Lebih mudah (konseptual) |
 
 > [!TIP]
-> **Banyak orang mengambil Network+ dulu** (fondasi netral, lebih mudah) **lalu CCNA** (kedalaman vendor). Keduanya saling melengkapi — kurikulum ini menyiapkan **keduanya** karena mengajarkan konsep (Network+) dan konfigurasi multi-platform (CCNA + MikroTik + Linux).
+> **Banyak orang mengambil Network+ dulu** (fondasi netral, lebih mudah), lalu CCNA (kedalaman vendor). Keduanya saling melengkapi, dan kurikulum ini menyiapkan keduanya karena mengajarkan konsep (Network+) dan konfigurasi multi-platform (CCNA + MikroTik + Linux).
 
 ---
 
@@ -132,17 +132,17 @@ Bobot di atas adalah bobot resmi CompTIA untuk N10-009 (23/20/19/14/24). Selalu 
 ```
 
 > [!WARNING]
-> **Network+ menekankan terminologi dan konsep**, bukan konfigurasi mendalam. Kalau Anda datang dari CCNA, tantangannya justru menghafal **istilah CompTIA yang spesifik** dan menjawab secara vendor-netral (mis. konsep umum "link aggregation", bukan "EtherChannel" Cisco).
+> **Network+ menekankan terminologi dan konsep**, bukan konfigurasi mendalam. Kalau Anda datang dari CCNA, tantangannya justru menghafal istilah CompTIA yang spesifik dan menjawab secara vendor-netral (mis. konsep umum "link aggregation", bukan "EtherChannel" Cisco).
 
 ---
 
 ## 9. Ringkasan
 
-- Network+ N10-009: 90 menit, vendor-netral, 5 domain dengan bobot resmi **23/20/19/14/24**. Domain terbesar adalah **Troubleshooting (24%)**, yang terkecil Security (14%).
-- Vs CCNA: Network+ lebih **konseptual & netral & mudah**; CCNA lebih **dalam, vendor Cisco, praktik**. Banyak ambil Network+ dulu.
-- Kurikulum ini menyiapkan **keduanya** (konsep + config multi-platform).
+- Network+ N10-009: 90 menit, vendor-netral, 5 domain dengan bobot resmi 23/20/19/14/24. Domain terbesar adalah **Troubleshooting (24%)**, yang terkecil Security (14%).
+- Vs CCNA: Network+ lebih konseptual, netral, dan mudah; CCNA lebih dalam, vendor Cisco, dan praktik. Banyak orang mengambil Network+ dulu.
+- Kurikulum ini menyiapkan keduanya (konsep + config multi-platform).
 - Domain: Concepts (OSI, IP, cloud, layanan modern), Implementation (routing/switching/wireless), Operations (dokumentasi, monitoring, HA), Security (CIA/ZTA/serangan/hardening), Troubleshooting (metodologi 7 langkah, tools).
-- Fokus: **terminologi, konsep, metodologi troubleshooting 7 langkah, istilah modern (SDN/SASE/ZTA/IaC)**.
+- Fokus: terminologi, konsep, metodologi troubleshooting 7 langkah, istilah modern (SDN/SASE/ZTA/IaC).
 
 ---
 
@@ -157,15 +157,15 @@ Bobot di atas adalah bobot resmi CompTIA untuk N10-009 (23/20/19/14/24). Selalu 
 <details>
 <summary>Jawaban</summary>
 
-1. **Perbedaan utama:** Network+ bersifat **vendor-netral** dan **konseptual** — menguji pemahaman konsep, terminologi, dan prinsip jaringan umum yang berlaku di semua vendor, dengan sedikit konfigurasi. CCNA bersifat **vendor-spesifik (Cisco)** dan **praktis** — menguji kemampuan mengonfigurasi dan memverifikasi perangkat Cisco lewat CLI, termasuk soal simulasi, dan lebih mendalam secara teknis. **Banyak orang mengambil Network+ dulu** karena: (a) sebagai fondasi vendor-netral, ia membangun pemahaman konsep yang transferable ke vendor mana pun; (b) lebih mudah/tidak menuntut penguasaan CLI mendalam, sehingga cocok sebagai langkah pertama bagi pemula total; (c) diakui luas untuk peran entry-level (help desk, teknisi); lalu **CCNA** menambahkan kedalaman dan keterampilan konfigurasi yang lebih dihargai untuk peran engineer di lingkungan enterprise/Cisco.
+1. **Perbedaan utama:** Network+ bersifat vendor-netral dan konseptual: menguji pemahaman konsep, terminologi, dan prinsip jaringan umum yang berlaku di semua vendor, dengan sedikit konfigurasi. CCNA bersifat vendor-spesifik (Cisco) dan praktis: menguji kemampuan mengonfigurasi dan memverifikasi perangkat Cisco lewat CLI, termasuk soal simulasi, dan lebih mendalam secara teknis. **Banyak orang mengambil Network+ dulu** karena: (a) sebagai fondasi vendor-netral, ia membangun pemahaman konsep yang transferable ke vendor mana pun; (b) lebih mudah/tidak menuntut penguasaan CLI mendalam, sehingga cocok sebagai langkah pertama bagi pemula total; (c) diakui luas untuk peran entry-level (help desk, teknisi); lalu CCNA menambahkan kedalaman dan keterampilan konfigurasi yang lebih dihargai untuk peran engineer di lingkungan enterprise/Cisco.
 
 2. Domain terbesar adalah **5.0 Network Troubleshooting (24%)**, disusul **1.0 Networking Concepts (23%)**. Domain terkecil justru **4.0 Network Security (14%)**. Jadi bobot Network+ tidak merata, dan anggapan bahwa semua domain sekitar 19-20% itu keliru. Artinya untuk strategi belajar: hampir seperempat soal menguji kemampuan mendiagnosis masalah, jadi kuasai metodologi 7 langkah, tools (ping, traceroute, dig, tcpdump, cable tester), serta pola masalah kabel, IP, VLAN, DNS, DHCP, dan wireless di Tahap 14. Konsep dasar (OSI, IP, port, media) tetap wajib karena bobotnya hampir sama besar. Keamanan tetap perlu dipelajari, tetapi porsinya di ujian ini lebih kecil daripada di ujian keamanan khusus. Bandingkan dengan CCNA yang paling berat di **IP Connectivity (25%)**: CCNA menekankan konfigurasi routing, Network+ menekankan troubleshooting.
 
 3. Tujuh langkah metodologi troubleshooting CompTIA: **(1) Identifikasi masalah** (kumpulkan informasi, gejala, cakupan; tanya pengguna; identifikasi perubahan). **(2) Buat teori kemungkinan penyebab** (mulai dari yang paling mungkin/sederhana; pertimbangkan pendekatan OSI). **(3) Uji teori untuk menentukan penyebab** (jika teori terkonfirmasi lanjut; jika tidak, buat teori baru atau eskalasi). **(4) Buat rencana tindakan** untuk menyelesaikan masalah dan identifikasi dampak potensial. **(5) Implementasikan solusi** (atau eskalasi bila perlu). **(6) Verifikasi fungsionalitas penuh sistem** dan, bila memungkinkan, terapkan **tindakan pencegahan**. **(7) Dokumentasikan** temuan, tindakan, dan hasil. Lihat `14-monitoring-troubleshooting/01`.
 
-4. Tantangannya adalah **beralih dari pola pikir vendor-spesifik ke vendor-netral**. Orang ber-CCNA terbiasa dengan **terminologi dan cara Cisco** (mis. "EtherChannel", "HSRP", perintah IOS spesifik), sedangkan Network+ menggunakan **istilah generik/industri** (mis. "link aggregation", "FHRP" atau konsep gateway redundan secara umum) dan menanyakan konsep tanpa konteks vendor. Mereka harus **menghafal terminologi CompTIA yang spesifik** dan berhati-hati menjawab dengan konsep umum, bukan nama fitur Cisco. Selain itu Network+ mencakup **keluasan topik** (termasuk hal-hal seperti standar kabel detail, prosedur dokumentasi, dan istilah modern seperti SASE/ZTA) yang mungkin kurang ditekankan di CCNA, sehingga perlu mempelajari area-area tersebut meski konsep intinya sudah dikuasai. Ironisnya, bagian "mudah" (konsep) bisa terasa menjebak justru karena perbedaan istilah.
+4. Tantangannya adalah **beralih dari pola pikir vendor-spesifik ke vendor-netral**. Orang ber-CCNA terbiasa dengan terminologi dan cara Cisco (mis. "EtherChannel", "HSRP", perintah IOS spesifik), sedangkan Network+ menggunakan istilah generik/industri (mis. "link aggregation", "FHRP" atau konsep gateway redundan secara umum) dan menanyakan konsep tanpa konteks vendor. Mereka harus menghafal terminologi CompTIA yang spesifik dan berhati-hati menjawab dengan konsep umum, bukan nama fitur Cisco. Selain itu Network+ mencakup keluasan topik (termasuk hal-hal seperti standar kabel detail, prosedur dokumentasi, dan istilah modern seperti SASE/ZTA) yang mungkin kurang ditekankan di CCNA, sehingga perlu mempelajari area-area tersebut meski konsep intinya sudah dikuasai. Ironisnya, bagian "mudah" (konsep) bisa terasa menjebak justru karena perbedaan istilah.
 
-5. (Lima dari) **SDN (Software-Defined Networking)** — `16/06`; **SD-WAN** — `11/01`; **VXLAN** — `16/02`; **ZTA (Zero Trust Architecture)** — `12/05`; **SASE (Secure Access Service Edge)** — `12/05`; **IaC (Infrastructure as Code)** — `15/04`. N10-009 memperbarui silabus untuk menyertakan istilah-istilah jaringan modern ini, mencerminkan pergeseran industri ke jaringan yang terdefinisi-software, ter-overlay, dan terotomasi.
+5. (Lima dari) **SDN (Software-Defined Networking)**: `16/06`; **SD-WAN**: `11/01`; **VXLAN**: `16/02`; **ZTA (Zero Trust Architecture)**: `12/05`; **SASE (Secure Access Service Edge)**: `12/05`; **IaC (Infrastructure as Code)**: `15/04`. N10-009 menambahkan istilah-istilah jaringan modern ini ke silabus karena industri bergeser ke jaringan yang terdefinisi-software, ter-overlay, dan terotomasi.
 
 </details>
 

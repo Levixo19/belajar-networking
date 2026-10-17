@@ -89,7 +89,7 @@ RADIUS tidak mengenkripsi seluruh paket. Yang dilindungi hanya dua hal, dan kedu
 1. **Password PAP disembunyikan.** RFC 2865 bagian 5.2 menjelaskan: password diberi padding hingga kelipatan 16 oktet, lalu di-XOR dengan `MD5(secret + Request Authenticator)` untuk blok pertama, dan `MD5(secret + blok sandi sebelumnya)` untuk blok berikutnya. Artinya username, alamat, dan atribut lain tetap terlihat polos bagi siapa pun yang menyadap.
 2. **Balasan ditandatangani.** Response Authenticator dihitung sebagai `MD5(Code + ID + Length + RequestAuth + Attributes + Secret)` (RFC 2865 bagian 3). NAS menghitung ulang nilai itu. Kalau tidak cocok, balasan dibuang.
 
-Untuk CHAP dan MS-CHAP, password tidak dikirim sama sekali. NAS meneruskan challenge dan response yang diterimanya dari klien, dan server memverifikasinya dengan password yang ia simpan. Konsekuensinya penting untuk troubleshooting: dokumentasi RouterOS mencatat bahwa pada CHAP dan MS-CHAP, secret yang salah tidak membuat server menolak, tetapi membuat router menolak balasan server.
+Untuk CHAP dan MS-CHAP, password tidak dikirim sama sekali. NAS meneruskan challenge dan response yang diterimanya dari klien, dan server memverifikasinya dengan password yang ia simpan. Konsekuensinya untuk troubleshooting: dokumentasi RouterOS mencatat bahwa pada CHAP dan MS-CHAP, secret yang salah tidak membuat server menolak, tetapi membuat router menolak balasan server.
 
 ### 2.3 Message-Authenticator dan BlastRADIUS
 

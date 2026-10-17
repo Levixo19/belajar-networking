@@ -1,15 +1,15 @@
 # Lab 00: Menyiapkan Lingkungan Lab
 
-> **Tujuan:** Menyiapkan lingkungan untuk mempraktikkan seluruh materi kurikulum — gratis dan tanpa hardware mahal.
+> **Tujuan:** Menyiapkan lingkungan untuk mempraktikkan seluruh materi kurikulum, gratis dan tanpa hardware mahal.
 
 ---
 
 ## 1. Kenapa Lab Penting
 
-Membaca teori jaringan tanpa praktik seperti membaca buku renang tanpa masuk air. **Konfigurasikan sendiri** — hanya dengan mengetik perintah, melihat output, membuat kesalahan, dan memperbaikinya, pemahaman menjadi solid dan siap ujian/kerja.
+Membaca teori jaringan tanpa praktik seperti membaca buku renang tanpa masuk air. Pemahaman baru menjadi solid dan siap ujian/kerja kalau Anda mengonfigurasi sendiri: mengetik perintah, melihat output, membuat kesalahan, lalu memperbaikinya.
 
 > [!WARNING]
-> Semua lab dalam kurikulum ini dirancang bisa dikerjakan dengan alat **gratis**. Anda tidak perlu membeli perangkat.
+> Semua lab dalam kurikulum ini dirancang agar bisa dikerjakan dengan alat gratis. Anda tidak perlu membeli perangkat.
 
 ---
 
@@ -113,7 +113,7 @@ SW1, SW2: switch (VLAN, trunk, STP)
 PC1-4   : host (uji konektivitas, DHCP, ping)
 ```
 
-Untuk lab MikroTik, ganti R1/R2 dengan CHR. Untuk lab Linux, seluruh topologi bisa dengan namespaces.
+Untuk lab MikroTik, ganti R1/R2 dengan CHR. Untuk lab Linux, seluruh topologi bisa dibangun dengan namespaces.
 
 ---
 
@@ -129,7 +129,7 @@ Untuk lab MikroTik, ganti R1/R2 dengan CHR. Untuk lab Linux, seluruh topologi bi
 ```
 
 > [!WARNING]
-> **Buat, rusak, perbaiki.** Jangan takut merusak lab — justru men-troubleshoot lab yang rusak melatih skill paling berharga. Reset dan ulangi sesering mungkin.
+> **Buat, rusak, perbaiki.** Jangan takut merusak lab. Men-troubleshoot lab yang rusak justru melatih skill yang paling berharga. Reset dan ulangi sesering mungkin.
 
 ---
 
@@ -148,12 +148,12 @@ Jika ketiganya berhasil, Anda siap mengerjakan semua lab kurikulum.
 
 ## 7. Ringkasan
 
-- Praktik lab **wajib** — konfigurasi sendiri membuat pemahaman solid.
-- Platform **gratis**: **Packet Tracer** (Cisco/CCNA), **GNS3/CML/Containerlab** (realistis/lanjutan), **MikroTik CHR** (Tahap 19), **Linux namespaces** (Tahap 13/otomasi).
+- Praktik lab wajib, karena konfigurasi sendiri membuat pemahaman solid.
+- Platform gratis: Packet Tracer (Cisco/CCNA), GNS3/CML/Containerlab (realistis/lanjutan), MikroTik CHR (Tahap 19), Linux namespaces (Tahap 13/otomasi).
 - Rekomendasi minimal: Packet Tracer + CHR + Linux VM (mencakup tiga platform kurikulum).
 - Gunakan **topologi lab standar** (2 router, 2 switch, 4 PC) berulang.
 - Setiap lab punya tujuan, tugas bertahap, verifikasi, dan kriteria sukses.
-- **Buat, rusak, perbaiki** — troubleshooting lab rusak melatih skill terbaik.
+- **Buat, rusak, perbaiki**: troubleshooting lab yang rusak melatih skill terbaik.
 
 ---
 

@@ -7,7 +7,7 @@
 
 ## 1. Bentuk Kerja Babak Ini
 
-Babak ini **bercabang dan berbiaya waktu.** Anda tidak diberi semua bukti sekaligus. Anda diberi gejala, lalu Anda memilih pemeriksaan mana yang dilakukan — dan setiap pemeriksaan **memakan waktu simulasi**.
+Babak ini bercabang dan berbiaya waktu. Anda tidak diberi semua bukti sekaligus. Anda diberi gejala, lalu Anda memilih pemeriksaan mana yang dilakukan, dan setiap pemeriksaan memakan waktu simulasi.
 
 Aturan main:
 
@@ -27,7 +27,7 @@ Catat semuanya di `13-postmortem.md` sambil berjalan. Menulis setelah semuanya s
 > [!TIP]
 > Latar: ini malam Jumat ke Sabtu. Anda sendirian. Bu Ratna sedang tidak bisa dihubungi sampai pukul 06:00. Ada tiga kontainer dijadwalkan berangkat pukul 07:00.
 
-<figure class="fig-img"><a href="/img/capstone-garis-waktu.png" target="_blank" rel="noreferrer"><img src="/img/capstone-garis-waktu.png" alt="Garis waktu lima tiket pada malam panjang beserta akar masalahnya" loading="lazy"></a><figcaption>Peta jawaban malam ini — buka hanya setelah kelima tiket selesai Anda kerjakan.</figcaption></figure>
+<figure class="fig-img"><a href="/img/capstone-garis-waktu.png" target="_blank" rel="noreferrer"><img src="/img/capstone-garis-waktu.png" alt="Garis waktu lima tiket pada malam panjang beserta akar masalahnya" loading="lazy"></a><figcaption>Peta jawaban malam ini. Buka hanya setelah kelima tiket selesai Anda kerjakan.</figcaption></figure>
 
 ---
 
@@ -40,7 +40,7 @@ Catat semuanya di `13-postmortem.md` sambil berjalan. Menulis setelah semuanya s
 Tulis hipotesis Anda sekarang.
 
 <details>
-<summary>Pemeriksaan A (3 menit) — Ping alamat terowongan TPI-07 dari hub</summary>
+<summary>Pemeriksaan A (3 menit): Ping alamat terowongan TPI-07 dari hub</summary>
 
 ```bash
 root@hub-wg:~# ping -c 4 10.72.4.1
@@ -52,7 +52,7 @@ PING 10.72.4.1 (10.72.4.1) 56(84) bytes of data.
 </details>
 
 <details>
-<summary>Pemeriksaan B (2 menit) — Status peer WireGuard di hub</summary>
+<summary>Pemeriksaan B (2 menit): Status peer WireGuard di hub</summary>
 
 ```text
 peer: TPI-03   latest handshake: 47 seconds ago    transfer: 19.2 MiB / 8.1 MiB
@@ -64,7 +64,7 @@ peer: TPI-11   latest handshake: 52 seconds ago    transfer: 20.5 MiB / 8.8 MiB
 </details>
 
 <details>
-<summary>Pemeriksaan C (5 menit) — Hubungi petugas TPI-07 lewat WhatsApp</summary>
+<summary>Pemeriksaan C (5 menit): Hubungi petugas TPI-07 lewat WhatsApp</summary>
 
 ```text
 22:22  Anda     : Pak, tabletnya masih bisa buka WhatsApp?
@@ -77,7 +77,7 @@ peer: TPI-11   latest handshake: 52 seconds ago    transfer: 20.5 MiB / 8.8 MiB
 </details>
 
 <details>
-<summary>Pemeriksaan D (6 menit) — Periksa log syslog terpusat untuk TPI-07</summary>
+<summary>Pemeriksaan D (6 menit): Periksa log syslog terpusat untuk TPI-07</summary>
 
 ```text
 21:47:02  TPI07-RTR01  dhcp,info  sensor-03 assigned 10.72.4.68
@@ -89,7 +89,7 @@ peer: TPI-11   latest handshake: 52 seconds ago    transfer: 20.5 MiB / 8.8 MiB
 </details>
 
 <details>
-<summary>Pemeriksaan E (8 menit) — Bandingkan konfigurasi TPI-07 dengan standar</summary>
+<summary>Pemeriksaan E (8 menit): Bandingkan konfigurasi TPI-07 dengan standar</summary>
 
 ```diff
 # hasil diff terhadap konfigurasi hasil templat (Babak 7)
@@ -104,7 +104,7 @@ Catatan riwayat: TPI-07 adalah satu-satunya lokasi yang dikonfigurasi ulang deng
 </details>
 
 <details>
-<summary>Pemeriksaan F (4 menit) — Cek dasbor status jaringan operator LTE wilayah itu</summary>
+<summary>Pemeriksaan F (4 menit): Cek dasbor status jaringan operator LTE wilayah itu</summary>
 
 ```text
 Tidak ada gangguan dilaporkan untuk wilayah tersebut.
@@ -114,17 +114,17 @@ Catatan teknis operator: pemeliharaan rutin pada gerbang NAT pukul 21:40–21:55
 </details>
 
 <details>
-<summary>Akar Masalah — Tiket 1</summary>
+<summary>Akar Masalah Tiket 1</summary>
 
-**Akar masalah:** TPI-07 berada di belakang CGNAT. Terowongan WireGuard hanya hidup selama **pemetaan NAT di sisi operator** masih ada. Konfigurasi TPI-07 kehilangan `persistent-keepalive` (satu-satunya lokasi yang dikonfigurasi dengan tangan setelah penggantian perangkat), sehingga ketika operator melakukan pemeliharaan gerbang NAT pukul 21:40-21:55, pemetaan lama hilang dan **tidak ada apa pun dari sisi TPI yang membangunnya kembali** — hub tidak bisa memulai karena TPI tidak punya alamat yang bisa dituju.
+**Akar masalah:** TPI-07 berada di belakang CGNAT. Terowongan WireGuard hanya hidup selama **pemetaan NAT di sisi operator** masih ada. Konfigurasi TPI-07 kehilangan `persistent-keepalive` (satu-satunya lokasi yang dikonfigurasi dengan tangan setelah penggantian perangkat), sehingga ketika operator melakukan pemeliharaan gerbang NAT pukul 21:40-21:55, pemetaan lama hilang dan **tidak ada apa pun dari sisi TPI yang membangunnya kembali**. Hub tidak bisa memulai karena TPI tidak punya alamat yang bisa dituju.
 
-**Kenapa tablet tetap bisa WhatsApp:** lalu lintas itu keluar langsung ke internet, bukan melewati terowongan. Inilah yang membuat "sinyal penuh" menjadi pengalih perhatian paling meyakinkan — dan kenapa tiket T-902 dulu ditutup dengan sebab yang salah.
+**Kenapa tablet tetap bisa WhatsApp:** lalu lintas itu keluar langsung ke internet, bukan melewati terowongan. Inilah yang membuat "sinyal penuh" menjadi pengalih perhatian paling meyakinkan, sekaligus alasan tiket T-902 dulu ditutup dengan sebab yang salah.
 
-**Jalur pemeriksaan paling efisien:** B (2 menit) memberi paling banyak informasi sekaligus — ia menunjukkan hanya TPI-07 yang terpengaruh, jadi masalahnya bukan hub dan bukan jalur umum. Lalu E (8 menit) langsung menunjuk sebabnya. Total **10 menit**. Pemeriksaan A dan D hanya memastikan gejala yang sudah diketahui; F memberi konteks yang berguna tetapi tidak mengubah tindakan; C terasa produktif tetapi justru menanam hipotesis yang salah.
+**Jalur pemeriksaan paling efisien:** B (2 menit) memberi paling banyak informasi sekaligus: ia menunjukkan hanya TPI-07 yang terpengaruh, jadi masalahnya bukan hub dan bukan jalur umum. Lalu E (8 menit) langsung menunjuk sebabnya. Total **10 menit**. Pemeriksaan A dan D hanya memastikan gejala yang sudah diketahui; F memberi konteks yang berguna tetapi tidak mengubah tindakan; C terasa produktif tetapi justru menanam hipotesis yang salah.
 
 **Tindakan malam itu:** minta petugas menjalankan sesuatu yang menghasilkan lalu lintas keluar dari sisi TPI melalui terowongan (misalnya membuka aplikasi setor data, atau menyalakan ulang perangkat) sehingga pemetaan NAT terbentuk kembali; verifikasi handshake baru di hub; pastikan data tersangga terkirim dan periksa apakah ada celah.
 
-**Tindakan permanen:** terapkan `persistent-keepalive` lewat playbook ke **semua** TPI (jangan perbaiki satu perangkat dengan tangan — itu yang menyebabkan masalah ini), tambahkan pemeriksaan "usia handshake terakhir per peer" sebagai metrik dengan alarm pada > 3 menit, dan jadikan penyimpangan konfigurasi sebagai temuan audit harian (Babak 7 Bagian D). Pelajaran struktural: **satu perangkat yang pernah disentuh tangan akan menjadi satu-satunya perangkat yang gagal.**
+**Tindakan permanen:** terapkan `persistent-keepalive` lewat playbook ke **semua** TPI (jangan perbaiki satu perangkat dengan tangan, karena itulah yang menyebabkan masalah ini), tambahkan pemeriksaan "usia handshake terakhir per peer" sebagai metrik dengan alarm pada > 3 menit, dan jadikan penyimpangan konfigurasi sebagai temuan audit harian (Babak 7 Bagian D). Pelajaran struktural: **satu perangkat yang pernah disentuh tangan akan menjadi satu-satunya perangkat yang gagal.**
 
 </details>
 
@@ -132,11 +132,11 @@ Catatan teknis operator: pemeliharaan rutin pada gerbang NAT pukul 21:40–21:55
 
 ## 3. Tiket 2: 22:40 · Kantor pabrik lambat, HMI kadang tidak merespons
 
-> **Laporan:** operator produksi menelepon — layar HMI "loading" berulang, dan komputer kantor pabrik lambat membuka berkas
+> **Laporan:** operator produksi menelepon karena layar HMI "loading" berulang dan komputer kantor pabrik lambat membuka berkas
 > **Anggaran waktu: 25 menit**
 
 <details>
-<summary>Pemeriksaan A (4 menit) — Hitungan kesalahan antarmuka di switch akses pabrik</summary>
+<summary>Pemeriksaan A (4 menit): Hitungan kesalahan antarmuka di switch akses pabrik</summary>
 
 ```cisco
 SBY-ACC-01# show interfaces counters errors
@@ -149,7 +149,7 @@ Po1                 0         0         0         0          0        84120
 </details>
 
 <details>
-<summary>Pemeriksaan B (3 menit) — Spanning tree</summary>
+<summary>Pemeriksaan B (3 menit): Spanning tree</summary>
 
 ```cisco
 SBY-ACC-01# show spanning-tree vlan 10 | include Root|topology|Port
@@ -162,7 +162,7 @@ SBY-ACC-01# show spanning-tree vlan 10 | include Root|topology|Port
 </details>
 
 <details>
-<summary>Pemeriksaan C (2 menit) — Log switch</summary>
+<summary>Pemeriksaan C (2 menit): Log switch</summary>
 
 ```text
 22:31:18 %SW_MATM-4-MACFLAP_NOTIF: Host 9c:8e:99:41:0a:3b in vlan 10 is flapping between port Gi1/0/14 and port Po1
@@ -174,7 +174,7 @@ SBY-ACC-01# show spanning-tree vlan 10 | include Root|topology|Port
 </details>
 
 <details>
-<summary>Pemeriksaan D (5 menit) — Lalu lintas broadcast pada uplink</summary>
+<summary>Pemeriksaan D (5 menit): Lalu lintas broadcast pada uplink</summary>
 
 ```cisco
 SBY-ACC-01# show interfaces Po1 | include broadcast|rate
@@ -185,7 +185,7 @@ SBY-ACC-01# show interfaces Po1 | include broadcast|rate
 </details>
 
 <details>
-<summary>Pemeriksaan E (6 menit) — Apa yang terpasang di Gi1/0/14?</summary>
+<summary>Pemeriksaan E (6 menit): Apa yang terpasang di Gi1/0/14?</summary>
 
 ```cisco
 SBY-ACC-01# show interfaces Gi1/0/14 status
@@ -200,7 +200,7 @@ SBY-ACC-01# show spanning-tree interface Gi1/0/14 detail | include BPDU|guard
 </details>
 
 <details>
-<summary>Pemeriksaan F (7 menit) — Tanya petugas keamanan pabrik yang sedang berjaga</summary>
+<summary>Pemeriksaan F (7 menit): Tanya petugas keamanan pabrik yang sedang berjaga</summary>
 
 ```text
 22:52  Satpam: "Sore tadi ada kontraktor CCTV, Pak. Pasang kamera baru di ruang ganti
@@ -211,17 +211,17 @@ SBY-ACC-01# show spanning-tree interface Gi1/0/14 detail | include BPDU|guard
 </details>
 
 <details>
-<summary>Akar Masalah — Tiket 2</summary>
+<summary>Akar Masalah Tiket 2</summary>
 
-**Akar masalah:** Kontraktor CCTV memasang switch tak terkelola di ruang ganti dan menyambungkannya ke jaringan dengan **dua kabel** (kemungkinan tidak sengaja — satu kabel sudah ada, satu ditambahkan agar "kabelnya cukup"). Itu menciptakan **loop lapisan 2**. Karena Gi1/0/14 tidak memiliki BPDU guard (port ini bagian pabrik yang belum dimigrasi — "sudah dari dulu", tepat seperti temuan Babak 1), loop tidak dipadamkan: BPDU terus diterima, topologi berubah 1.846 kali, tabel MAC dibersihkan berulang sehingga terjadi *flooding*, dan broadcast berputar sampai 412 Mbps pada uplink.
+**Akar masalah:** Kontraktor CCTV memasang switch tak terkelola di ruang ganti dan menyambungkannya ke jaringan dengan **dua kabel** (kemungkinan tidak sengaja: satu kabel sudah ada, satu ditambahkan agar "kabelnya cukup"). Itu menciptakan **loop lapisan 2**. Karena Gi1/0/14 tidak memiliki BPDU guard (port ini bagian pabrik yang belum dimigrasi, "sudah dari dulu", tepat seperti temuan Babak 1), loop tidak dipadamkan: BPDU terus diterima, topologi berubah 1.846 kali, tabel MAC dibersihkan berulang sehingga terjadi *flooding*, dan broadcast berputar sampai 412 Mbps pada uplink.
 
-**Kenapa HMI yang paling menderita:** protokol industri berkomunikasi dengan permintaan-jawaban bertenggat pendek. Jaringan yang penuh *flooding* menyebabkan waktu jawab melampaui tenggat, sehingga HMI menampilkan "loading" — walau tidak ada satu pun perangkat OT yang rusak.
+**Kenapa HMI yang paling menderita:** protokol industri berkomunikasi dengan permintaan-jawaban bertenggat pendek. Jaringan yang penuh *flooding* menyebabkan waktu jawab melampaui tenggat, sehingga HMI menampilkan "loading", walau tidak ada satu pun perangkat OT yang rusak.
 
-**Jalur paling efisien:** C (2 menit) hampir langsung menyelesaikan diagnosis — pesan MAC berpindah antara satu port akses dan uplink adalah tanda khas jalur ganda di lapisan 2. Lanjut E (6 menit) untuk memastikan port mana dan mengapa tidak terlindungi. Total **8 menit**. A adalah pengalih perhatian yang wajar (kesalahan fisik) tetapi bersih; D hanya mengukur besarnya akibat; F sangat berguna untuk cerita dan pencegahan, tetapi bukan untuk memadamkan.
+**Jalur paling efisien:** C (2 menit) hampir langsung menyelesaikan diagnosis: pesan MAC berpindah antara satu port akses dan uplink adalah tanda khas jalur ganda di lapisan 2. Lanjut E (6 menit) untuk memastikan port mana dan mengapa tidak terlindungi. Total **8 menit**. A adalah pengalih perhatian yang wajar (kesalahan fisik) tetapi bersih; D hanya mengukur besarnya akibat; F sangat berguna untuk cerita dan pencegahan, tetapi bukan untuk memadamkan.
 
-**Tindakan malam itu:** matikan Gi1/0/14 (bukan mencabut kabel — matikan portnya supaya tercatat), verifikasi perubahan topologi berhenti dan broadcast normal, konfirmasi HMI pulih, lalu beri tahu kontraktor bahwa perangkatnya terputus.
+**Tindakan malam itu:** matikan Gi1/0/14 (bukan mencabut kabel; matikan portnya supaya tercatat), verifikasi perubahan topologi berhenti dan broadcast normal, konfirmasi HMI pulih, lalu beri tahu kontraktor bahwa perangkatnya terputus.
 
-**Tindakan permanen:** aktifkan `portfast` + `bpduguard` pada seluruh port akses pabrik (lewat playbook, global default), sediakan **proses perubahan untuk pekerjaan pihak ketiga** — tidak ada kabel masuk jaringan tanpa tiket dan tanpa port yang disiapkan — dan percepat penggantian switch tak terkelola di pabrik. Catat juga bahwa kontraktor "sudah izin bagian umum": izin fisik tanpa izin jaringan adalah celah proses, bukan celah teknis.
+**Tindakan permanen:** aktifkan `portfast` + `bpduguard` pada seluruh port akses pabrik (lewat playbook, global default), sediakan **proses perubahan untuk pekerjaan pihak ketiga** (tidak ada kabel masuk jaringan tanpa tiket dan tanpa port yang disiapkan), dan percepat penggantian switch tak terkelola di pabrik. Catat juga bahwa kontraktor "sudah izin bagian umum": izin fisik tanpa izin jaringan adalah celah proses, bukan celah teknis.
 
 </details>
 
@@ -233,7 +233,7 @@ SBY-ACC-01# show spanning-tree interface Gi1/0/14 detail | include BPDU|guard
 > **Anggaran waktu: 25 menit**
 
 <details>
-<summary>Pemeriksaan A (3 menit) — Ping berkelanjutan ke gateway ISP-A dari tepi HQ</summary>
+<summary>Pemeriksaan A (3 menit): Ping berkelanjutan ke gateway ISP-A dari tepi HQ</summary>
 
 ```bash
 root@fw-hq:~# ping -i 0.2 -c 300 203.0.113.1 | tail -3
@@ -245,7 +245,7 @@ rtt min/avg/max/mdev = 11.204/48.771/412.339/89.114 ms
 </details>
 
 <details>
-<summary>Pemeriksaan B (2 menit) — Status tautan dan rute</summary>
+<summary>Pemeriksaan B (2 menit): Status tautan dan rute</summary>
 
 ```bash
 root@fw-hq:~# ip -brief link show | grep -E 'wan'
@@ -259,7 +259,7 @@ default via 198.51.100.1 dev wan-b metric 200
 </details>
 
 <details>
-<summary>Pemeriksaan C (5 menit) — Statistik panggilan dari server telepon</summary>
+<summary>Pemeriksaan C (5 menit): Statistik panggilan dari server telepon</summary>
 
 ```text
 Panggilan aktif: 6
@@ -272,7 +272,7 @@ Semua panggilan bermasalah melewati: wan-a
 </details>
 
 <details>
-<summary>Pemeriksaan D (6 menit) — Penandaan QoS di kedua jalur WAN</summary>
+<summary>Pemeriksaan D (6 menit): Penandaan QoS di kedua jalur WAN</summary>
 
 ```bash
 root@fw-hq:~# tc -s qdisc show dev wan-a | head -6
@@ -287,7 +287,7 @@ Jalur cadangan `wan-b` tidak memiliki kebijakan antrean apa pun.
 </details>
 
 <details>
-<summary>Pemeriksaan E (4 menit) — Riwayat kualitas jalur dari pemantauan</summary>
+<summary>Pemeriksaan E (4 menit): Riwayat kualitas jalur dari pemantauan</summary>
 
 ```text
 22:10  wan-a  loss 0,0%  jitter 4 ms
@@ -300,7 +300,7 @@ Jalur cadangan `wan-b` tidak memiliki kebijakan antrean apa pun.
 </details>
 
 <details>
-<summary>Pemeriksaan F (8 menit) — Buka tiket ke ISP-A dan tunggu jawaban</summary>
+<summary>Pemeriksaan F (8 menit): Buka tiket ke ISP-A dan tunggu jawaban</summary>
 
 ```text
 23:19  ISP-A: "Terdeteksi gangguan pada salah satu segmen backbone kami.
@@ -311,17 +311,17 @@ Jalur cadangan `wan-b` tidak memiliki kebijakan antrean apa pun.
 </details>
 
 <details>
-<summary>Akar Masalah — Tiket 3</summary>
+<summary>Akar Masalah Tiket 3</summary>
 
 **Akar masalah:** ISP-A mengalami **degradasi, bukan kegagalan**. Tautan fisik tetap `UP`, sehingga mekanisme peralihan yang hanya melihat status tautan (dan metrik rute statis) **tidak pernah terpicu**. Lalu lintas tetap dipaksa melewati jalur dengan kehilangan paket 8% dan jitter 84 ms.
 
-**Kenapa hanya VoIP yang mengeluh:** ini inti pelajarannya. VoIP memakai UDP tanpa pengiriman ulang, dan mutu suara langsung mencerminkan kehilangan paket serta jitter — 8% hilang sudah terdengar sebagai suara terpotong. ERP memakai TCP, yang **menyembunyikan** kehilangan paket dengan mengirim ulang; pengguna hanya merasa "agak lambat" dan tidak membuat tiket. Jadi **tidak adanya keluhan bukan bukti jaringan sehat** — keluhan hanya muncul dari aplikasi yang paling tidak toleran.
+**Kenapa hanya VoIP yang mengeluh:** VoIP memakai UDP tanpa pengiriman ulang, dan mutu suara langsung mencerminkan kehilangan paket serta jitter; 8% hilang sudah terdengar sebagai suara terpotong. ERP memakai TCP, yang **menyembunyikan** kehilangan paket dengan mengirim ulang; pengguna hanya merasa "agak lambat" dan tidak membuat tiket. Jadi **tidak adanya keluhan bukan bukti jaringan sehat**. Keluhan hanya muncul dari aplikasi yang paling tidak toleran.
 
-**Jalur paling efisien:** A (3 menit) segera membuktikan jalur buruk walau tautan up; E (4 menit) memberi garis waktu dan menegaskan tidak ada peristiwa turun — sehingga menjelaskan mengapa peralihan tidak terjadi. Total **7 menit**. C berguna untuk mengukur dampak bisnis; D menemukan cacat nyata (jalur cadangan tanpa QoS) tetapi **itu bukan penyebab** — ia akan menjadi masalah berikutnya begitu Anda berpindah, jadi harus dicatat, bukan diabaikan; F memakan waktu paling banyak dan datang terlambat, walau wajib dilakukan untuk pertanggungjawaban.
+**Jalur paling efisien:** A (3 menit) segera membuktikan jalur buruk walau tautan up; E (4 menit) memberi garis waktu dan menegaskan tidak ada peristiwa turun, sehingga menjelaskan mengapa peralihan tidak terjadi. Total **7 menit**. C berguna untuk mengukur dampak bisnis; D menemukan cacat nyata (jalur cadangan tanpa QoS) tetapi **itu bukan penyebab**: ia akan menjadi masalah berikutnya begitu Anda berpindah, jadi harus dicatat, bukan diabaikan; F memakan waktu paling banyak dan datang terlambat, walau wajib dilakukan untuk pertanggungjawaban.
 
 **Tindakan malam itu:** pindahkan lalu lintas ke `wan-b` (turunkan metrik atau paksa rute untuk lalu lintas suara terlebih dahulu). **Tapi perhatikan temuan D**: jalur cadangan belum punya QoS, jadi bila seluruh lalu lintas dipindahkan, VoIP bisa kembali buruk karena kejenuhan. Urutan yang benar: pasang kebijakan antrean minimum di `wan-b` (atau setidaknya batasi lalu lintas besar seperti pencadangan dan sinkronisasi cloud), baru pindahkan; verifikasi MOS naik; lapor ke ISP-A.
 
-**Tindakan permanen:** ganti pemicu peralihan dari "status tautan" menjadi **kualitas jalur** — probe berkala (loss/latensi/jitter) atau BFD, dengan ambang dan waktu tahan yang ditetapkan supaya tidak berpindah-pindah; **QoS harus ada di kedua jalur secara identik** (jalur cadangan bukan jalur kelas dua); pantau MOS/jitter sebagai SLI, bukan hanya status naik-turun tautan; dan tambahkan ke runbook: "up bukan berarti layak pakai".
+**Tindakan permanen:** ganti pemicu peralihan dari "status tautan" menjadi **kualitas jalur**, yaitu probe berkala (loss/latensi/jitter) atau BFD, dengan ambang dan waktu tahan yang ditetapkan supaya tidak berpindah-pindah; **QoS harus ada di kedua jalur secara identik** (jalur cadangan bukan jalur kelas dua); pantau MOS/jitter sebagai SLI, bukan hanya status naik-turun tautan; dan tambahkan ke runbook: "up bukan berarti layak pakai".
 
 </details>
 
@@ -332,10 +332,10 @@ Jalur cadangan `wan-b` tidak memiliki kebijakan antrean apa pun.
 > **Alarm:** tidak ada. Anda menemukannya sendiri saat memeriksa dasbor setelah Tiket 3.
 > **Data terakhir:** 00:07. Sekarang 01:20. **Celah 73 menit.**
 > **Dampak:** dua ruang beku tanpa bukti suhu. Tiga kontainer berangkat pukul 07:00.
-> **Anggaran waktu: 30 menit — dan keputusan bisnis harus diambil sebelum 02:00**
+> **Anggaran waktu: 30 menit, dan keputusan bisnis harus diambil sebelum 02:00**
 
 <details>
-<summary>Pemeriksaan A (3 menit) — Ping beberapa sensor</summary>
+<summary>Pemeriksaan A (3 menit): Ping beberapa sensor</summary>
 
 ```bash
 root@sby-collector:~# for i in 12 13 14 15; do ping -c1 -W1 10.65.70.$i >/dev/null \
@@ -349,7 +349,7 @@ root@sby-collector:~# for i in 12 13 14 15; do ping -c1 -W1 10.65.70.$i >/dev/nu
 </details>
 
 <details>
-<summary>Pemeriksaan B (4 menit) — Sewa DHCP pada VLAN sensor</summary>
+<summary>Pemeriksaan B (4 menit): Sewa DHCP pada VLAN sensor</summary>
 
 ```text
 SBY-CORE# show ip dhcp pool sensor-vlan70
@@ -368,7 +368,7 @@ Number of lines which match regexp = 30
 </details>
 
 <details>
-<summary>Pemeriksaan C (5 menit) — Siapa saja yang memegang sewa itu?</summary>
+<summary>Pemeriksaan C (5 menit): Siapa saja yang memegang sewa itu?</summary>
 
 ```text
 IP address       Client-ID/Hardware address   Lease expiration        Type
@@ -384,7 +384,7 @@ IP address       Client-ID/Hardware address   Lease expiration        Type
 </details>
 
 <details>
-<summary>Pemeriksaan D (3 menit) — Sinkronisasi waktu pengumpul dan sensor</summary>
+<summary>Pemeriksaan D (3 menit): Sinkronisasi waktu pengumpul dan sensor</summary>
 
 ```bash
 root@sby-collector:~# chronyc tracking | head -3
@@ -396,7 +396,7 @@ System time     : 0.000041 seconds fast of NTP time
 </details>
 
 <details>
-<summary>Pemeriksaan E (4 menit) — Kenapa alarm tidak berbunyi?</summary>
+<summary>Pemeriksaan E (4 menit): Kenapa alarm tidak berbunyi?</summary>
 
 ```yaml
 # aturan yang sedang berjalan
@@ -411,7 +411,7 @@ Tidak ada aturan untuk **ketiadaan data**. Sensor yang diam tidak menghasilkan n
 </details>
 
 <details>
-<summary>Pemeriksaan F (6 menit) — Periksa antrean data lokal pengumpul</summary>
+<summary>Pemeriksaan F (6 menit): Periksa antrean data lokal pengumpul</summary>
 
 ```bash
 root@sby-collector:~# ls /var/spool/coldchain/ | wc -l
@@ -426,9 +426,9 @@ Pengumpul sehat. Ia hanya tidak menerima apa pun dari 18 sensor karena sensor-se
 </details>
 
 <details>
-<summary>Akar Masalah — Tiket 4</summary>
+<summary>Akar Masalah Tiket 4</summary>
 
-**Akar masalah:** Kolam DHCP untuk VLAN sensor (VLAN 70) berukuran `/27` — **30 alamat** — untuk 40 sensor yang direncanakan sekarang berjumlah 18 di dua ruang ditambah 22 di ruang ketiga. Kontraktor CCTV (yang sama dengan Tiket 2) menyambungkan **12 kamera baru ke VLAN sensor** karena "port yang kosong hanya di situ". Dua belas alamat itu diambil dengan **masa sewa 3 hari**, sehingga kolam habis. Ketika sensor di ruang 1 dan 2 memperbarui sewanya, tidak ada alamat tersisa — mereka kehilangan IP dan berhenti mengirim.
+**Akar masalah:** Kolam DHCP untuk VLAN sensor (VLAN 70) berukuran `/27` (**30 alamat**) untuk 40 sensor yang direncanakan sekarang berjumlah 18 di dua ruang ditambah 22 di ruang ketiga. Kontraktor CCTV (yang sama dengan Tiket 2) menyambungkan **12 kamera baru ke VLAN sensor** karena "port yang kosong hanya di situ". Dua belas alamat itu diambil dengan **masa sewa 3 hari**, sehingga kolam habis. Ketika sensor di ruang 1 dan 2 memperbarui sewanya, tidak ada alamat tersisa, sehingga mereka kehilangan IP dan berhenti mengirim.
 
 Ada **kegagalan kedua yang lebih serius**: alarm tidak berbunyi. Satu-satunya aturan memantau **nilai suhu melewati batas**, sementara masalahnya adalah **tidak ada nilai sama sekali**. Sensor yang diam tidak memicu apa pun. Celah 73 menit hanya ditemukan karena Anda kebetulan melihat dasbor.
 
@@ -436,17 +436,17 @@ Ini akibat langsung dari tiga hal yang sudah teridentifikasi di babak sebelumnya
 
 **Jalur paling efisien:** B (4 menit) menunjukkan kolam 100% terpakai; C (5 menit) mengungkap 12 penyewa asing. Total **9 menit** untuk sebab teknis. Kemudian E (4 menit) mengungkap kegagalan yang sebenarnya lebih penting untuk ditulis di postmortem. A, D, dan F berguna untuk menyingkirkan hipotesis lain (perangkat rusak, waktu salah, pengumpul mati) tetapi tidak menunjuk sebab.
 
-**Tindakan teknis malam itu (urutan penting):** pindahkan 12 kamera keluar dari VLAN 70 — cara tercepat dan paling aman malam itu adalah **mematikan port kamera-kamera itu** (mereka baru dipasang, belum ada yang bergantung padanya) dan membersihkan sewanya; perpendek masa sewa VLAN sensor; **perbesar subnet sensor** sesuai rencana Babak 3 (`/24` untuk 240 alamat) — tetapi perubahan subnet di tengah malam berisiko, jadi malam ini cukup bebaskan alamat dan pastikan 18 sensor kembali; verifikasi data masuk lagi; lalu ukur celah sebenarnya dari basis data.
+**Tindakan teknis malam itu (urutan penting):** pindahkan 12 kamera keluar dari VLAN 70. Cara tercepat dan paling aman malam itu adalah **mematikan port kamera-kamera itu** (mereka baru dipasang, belum ada yang bergantung padanya) dan membersihkan sewanya. Setelah itu: perpendek masa sewa VLAN sensor; **perbesar subnet sensor** sesuai rencana Babak 3 (`/24` untuk 240 alamat), tetapi karena perubahan subnet di tengah malam berisiko, malam ini cukup bebaskan alamat dan pastikan 18 sensor kembali; verifikasi data masuk lagi; lalu ukur celah sebenarnya dari basis data.
 
-**Keputusan bisnis yang harus Anda ambil sebelum 02:00 — dan ini bagian yang dinilai paling berat:**
+**Keputusan bisnis yang harus Anda ambil sebelum 02:00 (bagian yang dinilai paling berat):**
 
 - **Bukti suhu untuk 73 menit itu tidak ada, dan tidak bisa dibuat ada.** Jangan pernah mengisi data yang hilang dengan nilai perkiraan. Itu memalsukan bukti, dan bila auditor menemukannya, akibatnya jauh lebih berat daripada celah data.
-- **Segera buat bukti pengganti yang sah:** kirim petugas dengan termometer terkalibrasi ke ruang 1 dan 2, catat suhu manual dengan waktu, nama pencatat, dan tanda tangan; ulangi setiap 15 menit sampai sistem kembali normal. Catatan manual adalah bukti yang diterima dalam praktik kepatuhan — asalkan jujur, terdokumentasi, dan disertai penjelasan kejadian.
+- **Segera buat bukti pengganti yang sah:** kirim petugas dengan termometer terkalibrasi ke ruang 1 dan 2, catat suhu manual dengan waktu, nama pencatat, dan tanda tangan; ulangi setiap 15 menit sampai sistem kembali normal. Catatan manual adalah bukti yang diterima dalam praktik kepatuhan, asalkan jujur, terdokumentasi, dan disertai penjelasan kejadian.
 - **Periksa data ruang ketiga** (yang masih mengirim) sebagai indikasi apakah sistem pendingin memang bekerja normal pada periode itu; ini bukan pengganti bukti, tetapi mendukung penjelasan.
-- **Tentukan soal tiga kontainer pukul 07:00.** Ini bukan keputusan Anda sendiri. Yang harus Anda lakukan: bangunkan Bu Ratna atau siapa pun yang berwenang **sekarang**, jangan tunggu pukul 06:00 — sajikan fakta (celah 73 menit, suhu manual terukur X, produk dari ruang mana, berangkat ke mana, aturan pembeli), dan sajikan pilihan beserta risikonya: berangkat dengan lampiran penjelasan dan catatan manual · tunda pengiriman · atau ganti muatan dari ruang yang datanya utuh. **Tugas Anda adalah membuat keputusan itu bisa diambil dengan informasi lengkap — bukan mengambilnya diam-diam, dan bukan menyembunyikannya sampai pagi.**
+- **Tentukan soal tiga kontainer pukul 07:00.** Ini bukan keputusan Anda sendiri. Yang harus Anda lakukan: bangunkan Bu Ratna atau siapa pun yang berwenang **sekarang**, jangan tunggu pukul 06:00. Sajikan fakta (celah 73 menit, suhu manual terukur X, produk dari ruang mana, berangkat ke mana, aturan pembeli), dan sajikan pilihan beserta risikonya: berangkat dengan lampiran penjelasan dan catatan manual · tunda pengiriman · atau ganti muatan dari ruang yang datanya utuh. **Tugas Anda adalah membuat keputusan itu bisa diambil dengan informasi lengkap, bukan mengambilnya diam-diam, dan bukan menyembunyikannya sampai pagi.**
 - **Catat semuanya saat itu juga**, termasuk waktu Anda mengetahui, waktu Anda menghubungi siapa, dan apa yang diputuskan. Auditor akan menanyakan garis waktu, dan garis waktu yang ditulis belakangan selalu terlihat seperti dikarang.
 
-**Tindakan permanen:** alarm ketiadaan data per sensor (dan alarm "jumlah sensor yang mengirim < jumlah yang terdaftar"), alarm pemakaian kolam DHCP > 80%, ukuran subnet dan masa sewa sesuai rencana, VLAN sensor tertutup bagi perangkat lain secara teknis (802.1X atau setidaknya port yang dipetakan tetap), proses perubahan untuk kontraktor, dan **uji alarm bulanan** dari Babak 7 §7.5 — yang bila sudah ada, akan menangkap kegagalan aturan alarm ini berbulan-bulan sebelum malam ini.
+**Tindakan permanen:** alarm ketiadaan data per sensor (dan alarm "jumlah sensor yang mengirim < jumlah yang terdaftar"), alarm pemakaian kolam DHCP > 80%, ukuran subnet dan masa sewa sesuai rencana, VLAN sensor tertutup bagi perangkat lain secara teknis (802.1X atau setidaknya port yang dipetakan tetap), proses perubahan untuk kontraktor, dan **uji alarm bulanan** dari Babak 7 §7.5, yang bila sudah ada akan menangkap kegagalan aturan alarm ini berbulan-bulan sebelum malam ini.
 
 </details>
 
@@ -454,11 +454,11 @@ Ini akibat langsung dari tiga hal yang sudah teridentifikasi di babak sebelumnya
 
 ## 6. Tiket 5: 03:50 · Empat belas kamera mengirim koneksi keluar berulang
 
-> **Alarm:** IDS — pola koneksi keluar berkala dari VLAN CCTV pabrik ke lima alamat di luar negeri
+> **Alarm:** IDS mendeteksi pola koneksi keluar berkala dari VLAN CCTV pabrik ke lima alamat di luar negeri
 > **Anggaran waktu: 25 menit**
 
 <details>
-<summary>Pemeriksaan A (3 menit) — Ringkasan koneksi</summary>
+<summary>Pemeriksaan A (3 menit): Ringkasan koneksi</summary>
 
 ```bash
 root@sensor-ids:~# zeek-cut id.orig_h id.resp_h id.resp_p duration < conn.log \
@@ -475,7 +475,7 @@ Pola: setiap kamera menghubungi salah satu alamat itu **setiap 60 detik**, ukura
 </details>
 
 <details>
-<summary>Pemeriksaan B (4 menit) — Identitas dan versi kamera</summary>
+<summary>Pemeriksaan B (4 menit): Identitas dan versi kamera</summary>
 
 ```text
 14 kamera dengan prefiks MAC 3c:ef:8c
@@ -489,7 +489,7 @@ Dua belas di antaranya adalah kamera yang dipasang kontraktor kemarin.
 </details>
 
 <details>
-<summary>Pemeriksaan C (5 menit) — Apakah aturan keluar seharusnya memblokir ini?</summary>
+<summary>Pemeriksaan C (5 menit): Apakah aturan keluar seharusnya memblokir ini?</summary>
 
 ```text
 Zona CCTV pabrik belum dimigrasi ke rancangan baru.
@@ -500,7 +500,7 @@ Aturan "kamera tidak boleh memulai sesi keluar" (uji T27 Babak 4) baru berlaku d
 </details>
 
 <details>
-<summary>Pemeriksaan D (6 menit) — Apakah ada usaha bergerak ke dalam?</summary>
+<summary>Pemeriksaan D (6 menit): Apakah ada usaha bergerak ke dalam?</summary>
 
 ```bash
 root@sensor-ids:~# zeek-cut id.orig_h id.resp_h id.resp_p < conn.log \
@@ -517,7 +517,7 @@ Port 502 adalah Modbus. Tujuannya berada di rentang zona OT dan zona sensor.
 </details>
 
 <details>
-<summary>Pemeriksaan E (4 menit) — Sejak kapan?</summary>
+<summary>Pemeriksaan E (4 menit): Sejak kapan?</summary>
 
 ```text
 Pola koneksi keluar pertama terlihat: 14 Sep 2026 17:22
@@ -528,22 +528,22 @@ Dua kamera lama di ruang timbang: pola yang sama terlihat sejak Juni 2026.
 </details>
 
 <details>
-<summary>Akar Masalah — Tiket 5</summary>
+<summary>Akar Masalah Tiket 5</summary>
 
-**Akar masalah:** Empat belas kamera IP dengan firmware 2019 dan kredensial bawaan telah dikuasai dari luar dan sedang **melapor ke pengendali** (pola ukuran kecil dan tetap setiap 60 detik adalah ciri khasnya). Dua kamera di ruang timbang sudah begitu **sejak Juni** — artinya ini bukan kejadian baru, hanya baru terlihat karena Anda kini punya pemantauan. Dua belas kamera baru memperluasnya, dan Pemeriksaan D menunjukkan hal yang paling berbahaya: **percobaan koneksi ke port 502 (Modbus) di zona OT dan ke zona sensor** — penyerang sedang meraba jaringan produksi, dan di jaringan pabrik yang masih datar, tidak ada yang menghalanginya.
+**Akar masalah:** Empat belas kamera IP dengan firmware 2019 dan kredensial bawaan telah dikuasai dari luar dan sedang **melapor ke pengendali** (pola ukuran kecil dan tetap setiap 60 detik adalah ciri khasnya). Dua kamera di ruang timbang sudah begitu **sejak Juni**. Artinya ini bukan kejadian baru, hanya baru terlihat karena Anda kini punya pemantauan. Dua belas kamera baru memperluasnya, dan Pemeriksaan D menunjukkan hal yang paling berbahaya: **percobaan koneksi ke port 502 (Modbus) di zona OT dan ke zona sensor**. Penyerang sedang meraba jaringan produksi, dan di jaringan pabrik yang masih datar, tidak ada yang menghalanginya.
 
-**Jalur paling efisien:** A (3 menit) menetapkan pola, B (4 menit) menjelaskan mengapa mungkin, **D (6 menit) adalah pemeriksaan terpenting** karena ia mengubah kejadian ini dari "perangkat IoT terinfeksi" menjadi "ada yang mencoba masuk ke sistem kendali produksi" — dan itu mengubah tingkat kegentingan serta siapa yang harus dibangunkan. E (4 menit) memberi rentang waktu yang menentukan luas penyelidikan. Total **17 menit**, dan di sini jangan berhemat.
+**Jalur paling efisien:** A (3 menit) menetapkan pola, B (4 menit) menjelaskan mengapa mungkin, **D (6 menit) adalah pemeriksaan terpenting** karena ia mengubah kejadian ini dari "perangkat IoT terinfeksi" menjadi "ada yang mencoba masuk ke sistem kendali produksi", dan itu mengubah tingkat kegentingan serta siapa yang harus dibangunkan. E (4 menit) memberi rentang waktu yang menentukan luas penyelidikan. Total **17 menit**, dan di sini jangan berhemat.
 
 **Tindakan malam itu, dengan urutan yang benar:**
 
-- **Kekang dulu jalur keluarnya, bukan kameranya:** blokir lalu lintas keluar dari segmen kamera di gerbang pabrik (dan blokir arah ke zona OT/sensor). Ini memutus kendali penyerang **tanpa** mematikan kamera — sehingga bukti visual tetap terekam, yang penting untuk kepatuhan.
+- **Kekang dulu jalur keluarnya, bukan kameranya:** blokir lalu lintas keluar dari segmen kamera di gerbang pabrik (dan blokir arah ke zona OT/sensor). Ini memutus kendali penyerang tanpa mematikan kamera, sehingga bukti visual tetap terekam, dan itu penting untuk kepatuhan.
 - **Jangan matikan atau setel ulang kamera lebih dulu.** Menyetel ulang menghapus bukti dan tidak memperbaiki apa pun bila kredensial bawaan dipakai lagi. Awetkan dulu: catat alamat, MAC, versi firmware, dan salinan log jaringan.
 - **Awetkan bukti**: simpan log koneksi (termasuk periode Juni ke belakang bila masih ada), tangkapan lalu lintas singkat, dan daftar perangkat. Buat catatan kronologis tindakan Anda.
 - **Tentukan cakupan**: apakah ada perangkat lain dengan pola sama (NVR, printer label, timbangan, HMI)? Percobaan ke port 22/23 menunjukkan penyerang mencari perangkat lain.
 - **Naikkan ke manajemen segera.** Percobaan menyentuh zona kendali produksi bukan urusan yang bisa ditunda sampai pagi, dan bila ada kemungkinan data pribadi tersentuh, kewajiban pelaporan UU PDP mulai berjalan dari saat Anda mengetahui.
 - **Keputusan sulit yang tidak punya jawaban bersih:** bila satu-satunya cara mengekang adalah mematikan kamera di titik kritis rantai dingin, Anda menghadapi pilihan antara risiko keamanan dan hilangnya bukti kepatuhan. Sajikan pilihannya, rekomendasikan yang paling masuk akal (memblokir di gerbang lebih dulu, karena ia mengekang tanpa mengorbankan bukti), dan **minta keputusan itu dicatat oleh yang berwenang**.
 
-**Tindakan permanen:** percepat migrasi pabrik — zona CCTV tanpa jalur keluar, sensor tersendiri, OT terkurung di balik conduit dengan bastion; ganti seluruh kredensial bawaan dan tetapkan pembaruan firmware sebagai proses (dari repositori internal, diuji dulu — lihat Babak 4 latihan 4); tidak ada perangkat pihak ketiga masuk tanpa pendaftaran dan pemeriksaan; dan pantau **koneksi keluar per zona** sebagai metrik tetap, karena perangkat yang tiba-tiba mencoba keluar adalah indikator dini yang paling murah.
+**Tindakan permanen:** percepat migrasi pabrik (zona CCTV tanpa jalur keluar, sensor tersendiri, OT terkurung di balik conduit dengan bastion); ganti seluruh kredensial bawaan dan tetapkan pembaruan firmware sebagai proses (dari repositori internal, diuji dulu; lihat Babak 4 latihan 4); tidak ada perangkat pihak ketiga masuk tanpa pendaftaran dan pemeriksaan; dan pantau **koneksi keluar per zona** sebagai metrik tetap, karena perangkat yang tiba-tiba mencoba keluar adalah indikator dini yang paling murah.
 
 </details>
 
@@ -551,9 +551,9 @@ Dua kamera lama di ruang timbang: pola yang sama terlihat sejak Juni 2026.
 
 ## 7. Setelah Pagi: Postmortem
 
-Tulis `13-postmortem.md`. Tanpa nama orang yang disalahkan — nama peran boleh.
+Tulis `13-postmortem.md`. Tanpa nama orang yang disalahkan; nama peran boleh.
 
-**a. Garis waktu** — kolom: waktu · kejadian · siapa yang tahu · tindakan. Cakup dari 17:22 (pola kamera pertama terlihat) sampai penyelesaian, dan tandai **kapan Anda tahu** versus **kapan sebenarnya mulai**.
+**a. Garis waktu**, dengan kolom: waktu · kejadian · siapa yang tahu · tindakan. Cakup dari 17:22 (pola kamera pertama terlihat) sampai penyelesaian, dan tandai **kapan Anda tahu** versus **kapan sebenarnya mulai**.
 
 **b. Dampak** dalam bahasa bisnis: berapa lama bukti suhu hilang, berapa panggilan terganggu, berapa lama HMI tidak responsif, apa yang terjadi pada tiga kontainer, dan apa risiko yang masih berjalan.
 
@@ -563,9 +563,9 @@ Tulis `13-postmortem.md`. Tanpa nama orang yang disalahkan — nama peran boleh.
 
 **e. Apa yang berjalan baik.** Wajib ada minimal tiga. Postmortem yang hanya berisi kegagalan akan berhenti ditulis orang setelah dua kali.
 
-**f. Tindakan perbaikan** — tabel: tindakan · pemilik (peran) · tenggat · bagaimana kita tahu ini selesai. Pisahkan **pencegahan** (agar tidak terjadi lagi) dari **deteksi** (agar kalau terjadi kita tahu dalam 5 menit, bukan 73 menit).
+**f. Tindakan perbaikan**, berupa tabel: tindakan · pemilik (peran) · tenggat · bagaimana kita tahu ini selesai. Pisahkan **pencegahan** (agar tidak terjadi lagi) dari **deteksi** (agar kalau terjadi kita tahu dalam 5 menit, bukan 73 menit).
 
-**g. Ukuran waktu Anda sendiri:** untuk tiap tiket, catat MTTD (dari mulai sampai Anda tahu) dan MTTR (dari tahu sampai pulih). Tiket 4 punya MTTD 73 menit — jelaskan bagaimana angka itu bisa menjadi 5 menit.
+**g. Ukuran waktu Anda sendiri:** untuk tiap tiket, catat MTTD (dari mulai sampai Anda tahu) dan MTTR (dari tahu sampai pulih). Tiket 4 punya MTTD 73 menit. Jelaskan bagaimana angka itu bisa menjadi 5 menit.
 
 ---
 
@@ -573,10 +573,10 @@ Tulis `13-postmortem.md`. Tanpa nama orang yang disalahkan — nama peran boleh.
 
 - Pemeriksaan yang baik **membelah ruang kemungkinan**; pemeriksaan yang buruk hanya memastikan gejala yang sudah diketahui.
 - "Sinyal penuh", "tautan up", dan "tidak ada keluhan" adalah tiga pengalih perhatian paling mahal dalam pekerjaan ini.
-- Tidak ada keluhan bukan bukti sehat — TCP menyembunyikan kerusakan yang langsung terdengar di VoIP.
+- Tidak ada keluhan bukan bukti sehat: TCP menyembunyikan kerusakan yang langsung terdengar di VoIP.
 - Alarm yang memantau nilai tidak akan pernah menangkap ketiadaan nilai.
 - Satu perangkat yang pernah dikonfigurasi dengan tangan akan menjadi satu-satunya yang gagal.
-- Saat bukti kepatuhan hilang, tugas orang teknis adalah menyediakan bukti pengganti yang jujur dan memastikan keputusan bisnis diambil oleh yang berwenang — bukan menambal data.
+- Saat bukti kepatuhan hilang, tugas orang teknis adalah menyediakan bukti pengganti yang jujur dan memastikan keputusan bisnis diambil oleh yang berwenang, bukan menambal data.
 - Insiden yang tampak terpisah sering punya satu akar proses. Menemukannya lebih berharga daripada memperbaiki lima gejala.
 
 ---
@@ -592,25 +592,25 @@ Tulis `13-postmortem.md`. Tanpa nama orang yang disalahkan — nama peran boleh.
 <details>
 <summary>Jawaban</summary>
 
-1. Pemeriksaan B (status semua peer di hub) lebih berharga karena ia **membandingkan yang bermasalah dengan yang sehat dalam satu tampilan**. Hasilnya langsung menyingkirkan seluruh kelas penyebab: bila hanya TPI-07 yang handshake-nya tua sementara 19 lainnya normal, maka hub sehat, kunci hub sehat, alamat publik hub sehat, aturan firewall hub sehat, dan jalur internet umum sehat — satu pemeriksaan 2 menit menghapus mungkin setengah dari daftar kemungkinan. Pemeriksaan A (ping ke TPI-07) hanya mengonfirmasi apa yang alarm sudah katakan: TPI-07 tidak terjangkau. Ia **tidak membelah** apa pun. Aturan umum untuk memilih pemeriksaan pertama: **cari pemeriksaan yang membagi ruang kemungkinan paling merata dan paling murah — biasanya pemeriksaan yang memberi Anda *pembanding*.** Turunan praktisnya: tanyakan "apa yang masih berjalan?" sebelum "apa yang rusak?"; periksa di tempat yang melihat banyak hal sekaligus (hub, inti, pengumpul, pemantauan) sebelum turun ke satu perangkat; dan jangan pernah memulai dengan pemeriksaan yang hasilnya sudah bisa Anda duga — apa pun hasilnya, ia tidak mengubah tindakan Anda, jadi ia tidak bernilai informasi.
+1. Pemeriksaan B (status semua peer di hub) lebih berharga karena ia **membandingkan yang bermasalah dengan yang sehat dalam satu tampilan**. Hasilnya langsung menyingkirkan seluruh kelas penyebab: bila hanya TPI-07 yang handshake-nya tua sementara 19 lainnya normal, maka hub sehat, kunci hub sehat, alamat publik hub sehat, aturan firewall hub sehat, dan jalur internet umum sehat. Satu pemeriksaan 2 menit menghapus mungkin setengah dari daftar kemungkinan. Pemeriksaan A (ping ke TPI-07) hanya mengonfirmasi apa yang alarm sudah katakan: TPI-07 tidak terjangkau. Ia **tidak membelah** apa pun. Aturan umum untuk memilih pemeriksaan pertama: **cari pemeriksaan yang membagi ruang kemungkinan paling merata dan paling murah, biasanya pemeriksaan yang memberi Anda *pembanding*.** Turunan praktisnya: tanyakan "apa yang masih berjalan?" sebelum "apa yang rusak?"; periksa di tempat yang melihat banyak hal sekaligus (hub, inti, pengumpul, pemantauan) sebelum turun ke satu perangkat; dan jangan pernah memulai dengan pemeriksaan yang hasilnya sudah bisa Anda duga. Apa pun hasilnya, pemeriksaan itu tidak mengubah tindakan Anda, jadi tidak bernilai informasi.
 
 2. Tiga contoh lain beserta metrik yang seharusnya dipantau:
    - **Pekerjaan pencadangan yang "sukses"** (Babak 1, Bukti D): status pekerjaan hijau padahal kapasitas tinggal 2%, salinan berada di host yang sama, dan pemulihan belum pernah diuji. Yang seharusnya dipantau: **hasil uji pemulihan terjadwal** (bukan status pekerjaan), usia salinan terakhir yang **terbukti bisa dipulihkan**, kapasitas tersisa dengan alarm pada 85%, dan ada-tidaknya salinan di luar lokasi yang tak bisa ditimpa.
-   - **Antarmuka yang `connected` dengan negosiasi yang salah** (Babak 1, Fa0/5 setengah dupleks 10 Mb, dan uplink dengan FCS-Err puluhan ribu): lampu hijau, lalu lintas jalan, tetapi separuh bingkai rusak. Yang seharusnya dipantau: **laju kesalahan (FCS/CRC, align, late collision) per antarmuka**, ketidaksesuaian dupleks/kecepatan terhadap standar, dan buangan keluar (output discards) — bukan status naik-turun.
+   - **Antarmuka yang `connected` dengan negosiasi yang salah** (Babak 1, Fa0/5 setengah dupleks 10 Mb, dan uplink dengan FCS-Err puluhan ribu): lampu hijau, lalu lintas jalan, tetapi separuh bingkai rusak. Yang seharusnya dipantau: **laju kesalahan (FCS/CRC, align, late collision) per antarmuka**, ketidaksesuaian dupleks/kecepatan terhadap standar, dan buangan keluar (output discards), bukan status naik-turun.
    - **Sensor yang terdaftar tetapi diam** (Tiket 4): dasbor menampilkan nilai terakhir yang pernah masuk, sehingga grafik tampak wajar. Yang seharusnya dipantau: **usia data terakhir per sensor** dan **jumlah sensor yang mengirim dibandingkan jumlah yang terdaftar**.
    - Contoh tambahan yang juga sah: **terowongan VPN yang "up"** sementara tidak ada lalu lintas yang benar-benar sampai (pantau usia handshake dan uji jangkauan ujung-ke-ujung); **AP yang aktif** dengan klien yang bertahan di laju terendah (pantau distribusi laju/waktu udara, bukan jumlah klien); dan **CPU/memori normal** pada perangkat yang tabel MAC atau tabel sesinya hampir penuh (pantau pemakaian tabel sebagai persentase kapasitas). Pola umumnya: **status adalah keadaan biner yang dilaporkan perangkat tentang dirinya; kesehatan adalah ukuran tentang apakah layanan benar-benar terjadi.** Pantau yang kedua.
 
 3. Lima kali kenapa untuk Tiket 4:
    - *Kenapa 18 sensor berhenti mengirim?* Karena mereka kehilangan alamat IP saat memperbarui sewa DHCP.
    - *Kenapa mereka tidak mendapat alamat?* Karena kolam DHCP VLAN sensor (30 alamat) habis, terpakai 12 alamat oleh kamera yang bukan miliknya.
-   - *Kenapa kamera bisa mengambil alamat di VLAN sensor?* Karena kontraktor menyambungkan kamera ke port yang tersedia, dan **secara teknis tidak ada yang mencegah perangkat asing masuk ke VLAN mana pun** — tidak ada 802.1X, tidak ada pemetaan port tetap, dan jaringan pabrik masih sebagian datar. Ditambah: kolam sensor diukur tanpa perhitungan pertumbuhan dan dengan masa sewa 3 hari.
-   - *Kenapa tidak ada yang mencegah, dan kenapa ukuran kolam tidak dihitung?* Karena **tidak ada proses perubahan yang mengikat pekerjaan pihak ketiga** (izin fisik dari bagian umum dianggap cukup) dan karena rencana pengalamatan lama dibuat tanpa perhitungan kapasitas per VLAN — keduanya adalah keadaan yang diwarisi dan sudah tercatat sebagai temuan audit, tetapi belum diperbaiki.
-   - *Kenapa temuan yang sudah diketahui belum diperbaiki, dan kenapa celahnya baru diketahui setelah 73 menit?* Karena **perbaikan bersaing dengan pekerjaan lain tanpa pemilik dan tenggat**, dan karena **pemantauan rantai dingin dibangun untuk memantau nilai, bukan untuk memantau ketiadaan nilai** — tidak ada seorang pun yang pernah menguji apakah alarm benar-benar berbunyi.
-   - Jawabannya berhenti menjadi masalah teknis pada **langkah keempat**: dari titik itu ke bawah, semuanya tentang proses, kepemilikan, prioritas, dan kebiasaan verifikasi — bukan tentang DHCP, VLAN, atau alarm. Inilah gunanya lima kali kenapa: ia memaksa Anda melewati batas nyaman "ini masalah konfigurasi" menuju "ini masalah cara kami bekerja".
+   - *Kenapa kamera bisa mengambil alamat di VLAN sensor?* Karena kontraktor menyambungkan kamera ke port yang tersedia, dan **secara teknis tidak ada yang mencegah perangkat asing masuk ke VLAN mana pun**: tidak ada 802.1X, tidak ada pemetaan port tetap, dan jaringan pabrik masih sebagian datar. Ditambah: kolam sensor diukur tanpa perhitungan pertumbuhan dan dengan masa sewa 3 hari.
+   - *Kenapa tidak ada yang mencegah, dan kenapa ukuran kolam tidak dihitung?* Karena **tidak ada proses perubahan yang mengikat pekerjaan pihak ketiga** (izin fisik dari bagian umum dianggap cukup) dan karena rencana pengalamatan lama dibuat tanpa perhitungan kapasitas per VLAN. Keduanya adalah keadaan yang diwarisi dan sudah tercatat sebagai temuan audit, tetapi belum diperbaiki.
+   - *Kenapa temuan yang sudah diketahui belum diperbaiki, dan kenapa celahnya baru diketahui setelah 73 menit?* Karena **perbaikan bersaing dengan pekerjaan lain tanpa pemilik dan tenggat**, dan karena **pemantauan rantai dingin dibangun untuk memantau nilai, bukan untuk memantau ketiadaan nilai**; tidak ada seorang pun yang pernah menguji apakah alarm benar-benar berbunyi.
+   - Jawabannya berhenti menjadi masalah teknis pada **langkah keempat**: dari titik itu ke bawah, semuanya tentang proses, kepemilikan, prioritas, dan kebiasaan verifikasi, bukan tentang DHCP, VLAN, atau alarm. Inilah gunanya lima kali kenapa: ia memaksa Anda melewati batas nyaman "ini masalah konfigurasi" menuju "ini masalah cara kami bekerja".
 
-4. **Akar bersama Tiket 2, 4, dan 5:** *pekerjaan pihak ketiga menyentuh jaringan produksi tanpa proses perubahan, di jaringan yang secara teknis tidak bisa menolaknya.* Kontraktor CCTV yang sama menyebabkan loop lapisan 2 (Tiket 2), menghabiskan kolam alamat sensor (Tiket 4), dan menambahkan 12 perangkat tak terkelola bercelah keamanan yang langsung dikuasai dari luar (Tiket 5) — dan pada ketiganya, jaringan tidak punya satu pun mekanisme yang menghentikannya. Bila hanya **satu** tindakan perbaikan yang boleh dijalankan, pilihannya adalah **menetapkan dan menegakkan proses perubahan untuk setiap pekerjaan yang menyentuh jaringan, termasuk pihak ketiga — dengan syarat teknis yang membuatnya bisa ditegakkan: port disiapkan lebih dulu, tidak ada port akses hidup tanpa tugas, dan perangkat baru harus didaftarkan sebelum tersambung.** Kenapa bukan tindakan teknis yang paling jelas (misalnya "aktifkan BPDU guard di semua port")? Karena BPDU guard hanya mencegah Tiket 2; memperbesar kolam DHCP hanya mencegah Tiket 4; memblokir keluar hanya mencegah Tiket 5. Satu kontrol teknis menutup satu jalan, sementara **kontrol proses menutup sumber yang menciptakan ketiga jalan itu** — dan ia juga mencegah kejadian keempat yang belum kita bayangkan. Catatan penting: ini bukan alasan untuk menunda perbaikan teknis; ketiganya tetap harus dikerjakan. Yang dinyatakan di sini adalah **urutan prioritas ketika sumber daya terbatas**, dan kemampuan melihatnya adalah perbedaan antara memperbaiki gejala dan memperbaiki sistem.
+4. **Akar bersama Tiket 2, 4, dan 5:** *pekerjaan pihak ketiga menyentuh jaringan produksi tanpa proses perubahan, di jaringan yang secara teknis tidak bisa menolaknya.* Kontraktor CCTV yang sama menyebabkan loop lapisan 2 (Tiket 2), menghabiskan kolam alamat sensor (Tiket 4), dan menambahkan 12 perangkat tak terkelola bercelah keamanan yang langsung dikuasai dari luar (Tiket 5). Pada ketiganya, jaringan tidak punya satu pun mekanisme yang menghentikannya. Bila hanya **satu** tindakan perbaikan yang boleh dijalankan, pilihannya adalah **menetapkan dan menegakkan proses perubahan untuk setiap pekerjaan yang menyentuh jaringan, termasuk pihak ketiga, dengan syarat teknis yang membuatnya bisa ditegakkan: port disiapkan lebih dulu, tidak ada port akses hidup tanpa tugas, dan perangkat baru harus didaftarkan sebelum tersambung.** Kenapa bukan tindakan teknis yang paling jelas (misalnya "aktifkan BPDU guard di semua port")? Karena BPDU guard hanya mencegah Tiket 2; memperbesar kolam DHCP hanya mencegah Tiket 4; memblokir keluar hanya mencegah Tiket 5. Satu kontrol teknis menutup satu jalan, sementara **kontrol proses menutup sumber yang menciptakan ketiga jalan itu**, dan ia juga mencegah kejadian keempat yang belum kita bayangkan. Ini bukan alasan untuk menunda perbaikan teknis; ketiganya tetap harus dikerjakan. Yang dinyatakan di sini adalah **urutan prioritas ketika sumber daya terbatas**, dan kemampuan melihatnya adalah perbedaan antara memperbaiki gejala dan memperbaiki sistem.
 
-5. Empat kalimat yang bisa dipakai: *"Bu, dua ruang beku tidak punya rekaman suhu selama 73 menit tadi, dan saya tidak bisa membuat data itu ada — kalau saya buat, kita memalsukan bukti ekspor."* · *"Saya sudah kirim petugas mencatat suhu manual dan sistemnya sudah jalan lagi, tapi celah itu tetap akan terlihat oleh auditor."* · *"Tiga kontainer berangkat jam 07:00, dan keputusan apakah tetap berangkat, ditunda, atau ganti muatan bukan keputusan yang boleh saya ambil sendiri — itu risiko bisnis, bukan risiko teknis."* · *"Saya membangunkan Ibu sekarang karena kalau saya menunggu jam enam, pilihan Ibu tinggal satu, dan yang satu itu yang paling mahal."* Prinsip yang menentukan: **orang non-teknis wajib dibangunkan ketika keputusan yang harus diambil bukan keputusan teknis, dan ketika menunda pemberitahuan akan mengurangi pilihan yang tersedia bagi mereka.** Kemampuan memperbaiki tidak relevan — kewenanganlah yang relevan. Uji cepatnya tiga pertanyaan: (a) Apakah ada keputusan yang harus diambil yang melampaui kewenangan saya (uang, kepatuhan, pelanggan, keselamatan, hukum)? (b) Apakah menunggu sampai pagi akan **menghapus** pilihan yang sekarang masih ada? (c) Apakah orang itu akan sangat keberatan jika baru diberi tahu setelah akibatnya terjadi? Bila salah satu jawabannya ya, bangunkan — dan terima kemarahannya, karena kemarahan karena dibangunkan selalu lebih murah daripada kemarahan karena disembunyikan. Satu hal lagi yang membedakan profesional: **jangan membangunkan orang tanpa membawa fakta, pilihan, dan rekomendasi.** Membangunkan dengan "ada masalah, bagaimana ini?" memang layak dimarahi.
+5. Empat kalimat yang bisa dipakai: *"Bu, dua ruang beku tidak punya rekaman suhu selama 73 menit tadi, dan saya tidak bisa membuat data itu ada; kalau saya buat, kita memalsukan bukti ekspor."* · *"Saya sudah kirim petugas mencatat suhu manual dan sistemnya sudah jalan lagi, tapi celah itu tetap akan terlihat oleh auditor."* · *"Tiga kontainer berangkat jam 07:00, dan keputusan apakah tetap berangkat, ditunda, atau ganti muatan bukan keputusan yang boleh saya ambil sendiri, karena itu risiko bisnis, bukan risiko teknis."* · *"Saya membangunkan Ibu sekarang karena kalau saya menunggu jam enam, pilihan Ibu tinggal satu, dan yang satu itu yang paling mahal."* Prinsip yang menentukan: **orang non-teknis wajib dibangunkan ketika keputusan yang harus diambil bukan keputusan teknis, dan ketika menunda pemberitahuan akan mengurangi pilihan yang tersedia bagi mereka.** Kemampuan memperbaiki tidak relevan; kewenanganlah yang relevan. Uji cepatnya tiga pertanyaan: (a) Apakah ada keputusan yang harus diambil yang melampaui kewenangan saya (uang, kepatuhan, pelanggan, keselamatan, hukum)? (b) Apakah menunggu sampai pagi akan **menghapus** pilihan yang sekarang masih ada? (c) Apakah orang itu akan sangat keberatan jika baru diberi tahu setelah akibatnya terjadi? Bila salah satu jawabannya ya, bangunkan, lalu terima kemarahannya, karena kemarahan karena dibangunkan selalu lebih murah daripada kemarahan karena disembunyikan. Satu syarat lagi: **jangan membangunkan orang tanpa membawa fakta, pilihan, dan rekomendasi.** Membangunkan dengan "ada masalah, bagaimana ini?" memang layak dimarahi.
 
 </details>
 
@@ -631,11 +631,11 @@ Tulis `13-postmortem.md`. Tanpa nama orang yang disalahkan — nama peran boleh.
 
 ## 11. Sumber
 
-- `14-monitoring-troubleshooting/01-metodologi.md` — atas-bawah, bawah-atas, belah-dua
-- `14-monitoring-troubleshooting/04-studi-kasus.md` — latihan pendahulu babak ini
-- `21-ekosistem-profesi/03-rumpun-keamanan` (profil Incident Responder) dan NIST SP 800-61 — penanganan insiden
-- Google SRE Book — bab *Postmortem Culture: Learning from Failure*
-- `19-mikrotik/06-vpn-tunnel.md` — perilaku terowongan di belakang NAT
+- `14-monitoring-troubleshooting/01-metodologi.md`: atas-bawah, bawah-atas, belah-dua
+- `14-monitoring-troubleshooting/04-studi-kasus.md`: latihan pendahulu babak ini
+- `21-ekosistem-profesi/03-rumpun-keamanan` (profil Incident Responder) dan NIST SP 800-61: penanganan insiden
+- Google SRE Book: bab *Postmortem Culture: Learning from Failure*
+- `19-mikrotik/06-vpn-tunnel.md`: perilaku terowongan di belakang NAT
 
 ---
 

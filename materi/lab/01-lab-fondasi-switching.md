@@ -17,7 +17,7 @@
 
 **VERIFIKASI:** `ping 192.168.1.20` dari PC1 berhasil (0% loss).
 
-**KRITERIA SUKSES:** ✅ Ping berhasil dua arah.
+**KRITERIA SUKSES:** Ping berhasil dua arah.
 
 <details><summary>Solusi & penjelasan</summary>
 
@@ -38,7 +38,7 @@ Di PC (Desktop → IP Configuration): set IP dan subnet mask. Tidak perlu gatewa
 
 **VERIFIKASI:** `show vlan brief`; ping dalam VLAN berhasil, antar-VLAN gagal.
 
-**KRITERIA SUKSES:** ✅ Ping intra-VLAN OK, inter-VLAN gagal (isolasi terbukti).
+**KRITERIA SUKSES:** Ping intra-VLAN OK, inter-VLAN gagal (isolasi terbukti).
 
 <details><summary>Solusi & penjelasan</summary>
 
@@ -54,7 +54,7 @@ Switch(config)# interface range fa0/3-4
 Switch(config-if-range)# switchport mode access
 Switch(config-if-range)# switchport access vlan 20
 ```
-Verifikasi: `show vlan brief` menampilkan port di VLAN masing-masing. PC1 tak bisa ping PC3 karena **VLAN memisahkan broadcast domain** — tanpa router/SVI, tidak ada jalur antar-VLAN. Ini membuktikan konsep `03-data-link/03`. (Untuk menghubungkannya butuh inter-VLAN routing — Lab 2.3.)
+Verifikasi: `show vlan brief` menampilkan port di VLAN masing-masing. PC1 tak bisa ping PC3 karena VLAN memisahkan broadcast domain. Tanpa router/SVI, tidak ada jalur antar-VLAN. Ini membuktikan konsep `03-data-link/03`. (Untuk menghubungkannya, Anda butuh inter-VLAN routing di Lab 2.3.)
 </details>
 
 ---
@@ -71,7 +71,7 @@ Verifikasi: `show vlan brief` menampilkan port di VLAN masing-masing. PC1 tak bi
 
 **VERIFIKASI:** `show interfaces trunk`; ping antar-switch dalam VLAN sama berhasil.
 
-**KRITERIA SUKSES:** ✅ Trunk up, native VLAN 99, VLAN sama tembus antar-switch.
+**KRITERIA SUKSES:** Trunk up, native VLAN 99, VLAN sama tembus antar-switch.
 
 <details><summary>Solusi & penjelasan</summary>
 
@@ -82,14 +82,14 @@ SW1(config-if)# switchport mode trunk
 SW1(config-if)# switchport trunk native vlan 99
 SW1(config-if)# switchport trunk allowed vlan 10,20,99
 ```
-(Sama di SW2.) `show interfaces trunk` memperlihatkan trunk up, VLAN yang diizinkan, native 99. PC VLAN10 di kedua switch bisa saling ping karena trunk membawa frame ber-tag antar-switch. **Mengubah native VLAN dari 1** mencegah VLAN hopping (`12-keamanan/02`). ⚠️ Native VLAN harus **cocok** di kedua ujung (mismatch → CDP warning + kebocoran VLAN). Membuktikan `03-data-link/03`.
+(Sama di SW2.) `show interfaces trunk` memperlihatkan trunk up, VLAN yang diizinkan, native 99. PC VLAN10 di kedua switch bisa saling ping karena trunk membawa frame ber-tag antar-switch. Mengubah native VLAN dari 1 mencegah VLAN hopping (`12-keamanan/02`). Hati-hati: native VLAN harus cocok di kedua ujung (mismatch → CDP warning + kebocoran VLAN). Membuktikan `03-data-link/03`.
 </details>
 
 ---
 
 ## Lab 1.4: Amati Root Bridge & Redundansi STP
 
-**Topologi:** 3 switch dihubungkan membentuk **loop segitiga** (SW1-SW2-SW3-SW1).
+**Topologi:** 3 switch dihubungkan membentuk loop segitiga (SW1-SW2-SW3-SW1).
 
 **TUGAS:**
 1. Hubungkan 3 switch membentuk loop fisik.
@@ -100,7 +100,7 @@ SW1(config-if)# switchport trunk allowed vlan 10,20,99
 
 **VERIFIKASI:** `show spanning-tree`; satu port `BLK` sebelum, konvergen setelah link putus.
 
-**KRITERIA SUKSES:** ✅ SW1 root, satu port ter-blok saat loop, konvergensi saat failover.
+**KRITERIA SUKSES:** SW1 root, satu port ter-blok saat loop, konvergensi saat failover.
 
 <details><summary>Solusi & penjelasan</summary>
 
@@ -109,14 +109,14 @@ SW1(config)# spanning-tree vlan 1 priority 4096   (jadikan root)
 SW1# show spanning-tree                            (This bridge is the root)
 SW2# show spanning-tree                            (lihat Root ID = SW1, root port, blocked port)
 ```
-Tanpa priority, root dipilih berdasarkan bridge ID terendah (priority+MAC). STP **memblokir satu port** dalam loop untuk cegah broadcast storm — inilah pemborosan bandwidth yang mendorong spine-leaf (`16/01`). Saat link aktif putus, STP mengaktifkan port yang tadinya blocked (konvergensi; RSTP lebih cepat dari STP klasik). Amati port states (blocking→listening→learning→forwarding untuk STP, atau langsung untuk RSTP). Membuktikan `03-data-link/04`. ⚠️ Aktifkan **BPDU Guard** di port access (`spanning-tree bpduguard enable`) untuk keamanan.
+Tanpa priority, root dipilih berdasarkan bridge ID terendah (priority+MAC). STP memblokir satu port dalam loop untuk mencegah broadcast storm. Link yang diblokir itu bandwidth yang terbuang, dan pemborosan inilah yang mendorong spine-leaf (`16/01`). Saat link aktif putus, STP mengaktifkan port yang tadinya blocked (konvergensi; RSTP lebih cepat dari STP klasik). Amati port states (blocking→listening→learning→forwarding untuk STP, atau langsung untuk RSTP). Membuktikan `03-data-link/04`. Untuk keamanan, aktifkan **BPDU Guard** di port access (`spanning-tree bpduguard enable`).
 </details>
 
 ---
 
 ## Lab 1.5: EtherChannel (LACP)
 
-**Topologi:** 2 switch dihubungkan dengan **2 link paralel**.
+**Topologi:** 2 switch dihubungkan dengan 2 link paralel.
 
 **TUGAS:**
 1. Gabungkan 2 link antar-switch menjadi satu **EtherChannel** dengan LACP.
@@ -125,7 +125,7 @@ Tanpa priority, root dipilih berdasarkan bridge ID terendah (priority+MAC). STP 
 
 **VERIFIKASI:** `show etherchannel summary` (Po1 up, 2 port bundled).
 
-**KRITERIA SUKSES:** ✅ EtherChannel up, kedua link aktif, tahan kegagalan satu link.
+**KRITERIA SUKSES:** EtherChannel up, kedua link aktif, tahan kegagalan satu link.
 
 <details><summary>Solusi & penjelasan</summary>
 
@@ -135,7 +135,7 @@ SW1(config-if-range)# channel-group 1 mode active   (active = LACP)
 SW1(config)# interface port-channel 1
 SW1(config-if)# switchport mode trunk
 ```
-(Sama di SW2, `mode active`.) `show etherchannel summary` → Po1 dengan flag `(SU)` dan port `(P)` bundled. **STP memperlakukan EtherChannel sebagai SATU link logis** — sehingga kedua link aktif sekaligus (tak ada yang diblok), menggandakan bandwidth + redundansi. Matikan satu link → channel tetap up dengan link tersisa. ⚠️ Kedua ujung harus mode kompatibel (active-active atau active-passive untuk LACP). Membuktikan `03-data-link/05`.
+(Sama di SW2, `mode active`.) `show etherchannel summary` → Po1 dengan flag `(SU)` dan port `(P)` bundled. STP memperlakukan EtherChannel sebagai satu link logis, sehingga kedua link aktif sekaligus (tak ada yang diblok): bandwidth berlipat dua, ditambah redundansi. Matikan satu link → channel tetap up dengan link tersisa. Hati-hati: mode kedua ujung harus kompatibel (active-active atau active-passive untuk LACP). Membuktikan `03-data-link/05`.
 </details>
 
 ---

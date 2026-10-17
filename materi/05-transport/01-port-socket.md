@@ -73,7 +73,7 @@ Sebuah **koneksi** diidentifikasi secara unik oleh **5-tuple**:
 └────────────┴──────────────┴───────────┴─────────────┴──────────┘
 ```
 
-**Karena inilah** Anda bisa membuka 10 tab ke situs yang sama:
+Karena inilah Anda bisa membuka 10 tab ke situs yang sama:
 ```
 TCP 192.168.1.50:51234 → 93.184.216.34:443    tab 1
 TCP 192.168.1.50:51235 → 93.184.216.34:443    tab 2
@@ -81,7 +81,7 @@ TCP 192.168.1.50:51236 → 93.184.216.34:443    tab 3
      └── port SUMBER berbeda → koneksi berbeda
 ```
 
-Dan **karena inilah** satu server bisa melayani ribuan klien di port 443 yang sama:
+Karena itu pula satu server bisa melayani ribuan klien di port 443 yang sama:
 ```
 TCP 203.0.113.5:443 ← 1.2.3.4:51234
 TCP 203.0.113.5:443 ← 1.2.3.4:51235      klien sama, port beda
@@ -90,8 +90,8 @@ TCP 203.0.113.5:443 ← 5.6.7.8:60001      klien beda
 
 ### Multiplexing dan Demultiplexing
 
-- **Multiplexing** (di pengirim) — mengumpulkan data dari banyak aplikasi, menambahkan port, mengirim lewat satu koneksi IP.
-- **Demultiplexing** (di penerima) — membaca port tujuan, menyerahkan data ke aplikasi yang tepat.
+- **Multiplexing** (di pengirim): mengumpulkan data dari banyak aplikasi, menambahkan port, mengirim lewat satu koneksi IP.
+- **Demultiplexing** (di penerima): membaca port tujuan, lalu menyerahkan data ke aplikasi yang tepat.
 
 ---
 
@@ -218,7 +218,7 @@ Firewall yang hanya mengizinkan UDP 53 akan merusak DNSSEC dan jawaban besar.
 
 ## 6. Membaca `ss` dan `netstat`
 
-`ss` adalah pengganti modern `netstat` di Linux — lebih cepat dan informatif.
+`ss` adalah pengganti modern `netstat` di Linux. Ia lebih cepat dan menampilkan lebih banyak informasi.
 
 ```bash
 $ ss -tulnp
@@ -322,10 +322,10 @@ $ telnet example.com 443
 |---|---|
 | **Connection succeeded** | Port terbuka, ada aplikasi listening |
 | **Connection refused** | Host **dapat dijangkau**, tetapi tidak ada yang listening di port itu (RST dikirim) |
-| **Timeout / no route** | Paket tidak sampai — firewall drop, routing salah, atau host mati |
+| **Timeout / no route** | Paket tidak sampai: firewall drop, routing salah, atau host mati |
 
 > [!WARNING]
-> Perbedaan **refused** vs **timeout** sangat informatif:
+> Perbedaan **refused** dan **timeout** menunjukkan di mana letak masalahnya:
 - *Refused* → jaringan sehat sampai host; masalah di aplikasi.
 - *Timeout* → ada yang memblokir atau tidak ada jalur.
 
@@ -335,7 +335,7 @@ $ telnet example.com 443
 
 ### Firewall dan port sumber
 
-Aturan firewall harus mempertimbangkan bahwa port sumber klien **acak**:
+Aturan firewall harus memperhitungkan bahwa port sumber klien itu acak:
 
 ```
 ❌ SALAH: allow src port 80 → dst port 80
@@ -343,7 +343,7 @@ Aturan firewall harus mempertimbangkan bahwa port sumber klien **acak**:
           (dan biarkan stateful firewall menangani balasannya)
 ```
 
-Firewall **stateful** mencatat koneksi keluar dan otomatis mengizinkan balasannya — inilah alasan Anda tidak perlu membuat aturan terpisah untuk trafik balik.
+Firewall **stateful** mencatat koneksi keluar dan otomatis mengizinkan balasannya. Karena itu Anda tidak perlu membuat aturan terpisah untuk trafik balik.
 
 ### NAT/PAT dan port
 
@@ -361,7 +361,7 @@ Detail di `09-nat-acl-firewall/01`.
 > Jangan menjalankan layanan di port yang sudah dipakai layanan standar, walau teknis bisa. Ini membingungkan firewall, IDS, dan orang lain.
 
 > [!WARNING]
-> Beberapa browser **memblokir port tertentu** untuk mencegah serangan cross-protocol (mis. port 25, 110, 143, 6667). Menjalankan web server di port itu akan gagal diakses dari browser.
+> Beberapa browser memblokir port tertentu untuk mencegah serangan cross-protocol (mis. port 25, 110, 143, 6667). Menjalankan web server di port itu akan gagal diakses dari browser.
 
 ---
 
@@ -396,7 +396,7 @@ Detail di `09-nat-acl-firewall/01`.
 - Hafalkan port inti: 22 SSH, 53 DNS (TCP **dan** UDP), 67/68 DHCP, 80/443 web, 123 NTP, 161/162 SNMP, 179 BGP, 389 LDAP, 514 syslog, 1812 RADIUS, 3389 RDP.
 - `ss -tulnp` adalah perintah diagnostik utama. Perhatikan alamat listening: **`0.0.0.0` vs `127.0.0.1`**.
 - **Connection refused** ≠ **timeout**: refused berarti jaringan sehat tetapi tidak ada aplikasi; timeout berarti ada yang memblokir.
-- Port ephemeral bisa habis pada proxy/LB — perluas rentang atau tambah IP/port tujuan.
+- Port ephemeral bisa habis pada proxy/LB. Solusinya: perluas rentang atau tambah IP/port tujuan.
 
 ---
 
@@ -413,19 +413,19 @@ Detail di `09-nat-acl-firewall/01`.
 <details>
 <summary>Jawaban</summary>
 
-1. Secara teori dibatasi oleh jumlah **port ephemeral** yang tersedia, karena IP sumber, IP tujuan, port tujuan, dan protokol semuanya tetap — hanya port sumber yang bervariasi. Di Linux default (32768-60999) itu **~28.232 koneksi**. Batas praktis lebih rendah karena socket dalam state `TIME_WAIT` masih menahan port selama ~60 detik. Bisa diperbesar dengan memperluas `ip_local_port_range`, mengaktifkan `tcp_tw_reuse`, atau menambah IP sumber.
+1. Secara teori dibatasi oleh jumlah **port ephemeral** yang tersedia, karena IP sumber, IP tujuan, port tujuan, dan protokol semuanya tetap. Hanya port sumber yang bervariasi. Di Linux default (32768-60999) itu **~28.232 koneksi**. Batas praktis lebih rendah karena socket dalam state `TIME_WAIT` masih menahan port selama ~60 detik. Bisa diperbesar dengan memperluas `ip_local_port_range`, mengaktifkan `tcp_tw_reuse`, atau menambah IP sumber.
 
-2. Aplikasi **hanya listening di loopback** (`127.0.0.1`), sehingga hanya bisa diakses dari komputer itu sendiri. Ini bukan masalah firewall. Perbaikan: ubah konfigurasi aplikasi agar bind ke `0.0.0.0` (semua interface) atau ke IP spesifik yang menghadap jaringan — cari opsi seperti `bind`, `listen`, `host`, atau `--bind-address`. Setelah itu barulah periksa firewall.
+2. Aplikasi **hanya listening di loopback** (`127.0.0.1`), sehingga hanya bisa diakses dari komputer itu sendiri. Ini bukan masalah firewall. Perbaikan: ubah konfigurasi aplikasi agar bind ke `0.0.0.0` (semua interface) atau ke IP spesifik yang menghadap jaringan. Cari opsi seperti `bind`, `listen`, `host`, atau `--bind-address`. Setelah itu barulah periksa firewall.
 
-3. **Connection refused** berarti paket SYN **sampai ke host** dan host membalas dengan **RST** — artinya jaringan, routing, dan firewall di jalur semuanya baik; hanya saja tidak ada aplikasi yang listening di port itu (atau aplikasi mati). **Timeout** berarti tidak ada respons sama sekali — paket dibuang di suatu tempat: firewall dengan aksi DROP, routing salah, host mati, atau tidak ada jalur balik.
+3. **Connection refused** berarti paket SYN sampai ke host dan host membalas dengan **RST**. Artinya jaringan, routing, dan firewall di jalur semuanya baik; hanya saja tidak ada aplikasi yang listening di port itu (atau aplikasi mati). **Timeout** berarti tidak ada respons sama sekali. Paketnya dibuang di suatu tempat: firewall dengan aksi DROP, routing salah, host mati, atau tidak ada jalur balik.
 
-4. **UDP 53** untuk query biasa: cepat, satu paket pergi-pulang, tanpa overhead handshake — cocok karena kebanyakan query DNS kecil dan sering. **TCP 53** dipakai ketika jawaban melebihi 512 byte (batas DNS klasik tanpa EDNS0) — misalnya jawaban DNSSEC yang besar atau record yang banyak — dan untuk **zone transfer** (AXFR/IXFR) yang memindahkan seluruh zona antar-server. Memblokir TCP 53 merusak DNSSEC dan sebagian resolusi.
+4. **UDP 53** untuk query biasa: cepat, satu paket pergi-pulang, tanpa overhead handshake. Ini cocok karena kebanyakan query DNS kecil dan sering. **TCP 53** dipakai ketika jawaban melebihi 512 byte (batas DNS klasik tanpa EDNS0), misalnya jawaban DNSSEC yang besar atau record yang banyak. TCP juga dipakai untuk **zone transfer** (AXFR/IXFR) yang memindahkan seluruh zona antar-server. Memblokir TCP 53 merusak DNSSEC dan sebagian resolusi.
 
 5. SSH **22/TCP** · DHCP server **67/UDP** (klien 68/UDP) · NTP **123/UDP** · Syslog **514/UDP** · RADIUS auth **1812/UDP** (accounting 1813/UDP) · BGP **179/TCP** · VXLAN **4789/UDP** · WireGuard **51820/UDP** (default, dapat diubah).
 
-6. **Kehabisan port ephemeral.** Proxy membuat sangat banyak koneksi keluar ke sedikit backend, sehingga kombinasi (IP src, port src, IP dst, port dst) habis — terutama karena socket `TIME_WAIT` menahan port. Solusi berlapis: (a) perluas rentang — `net.ipv4.ip_local_port_range = 10000 65535`; (b) aktifkan `net.ipv4.tcp_tw_reuse=1` agar socket TIME_WAIT dapat dipakai ulang untuk koneksi keluar; (c) aktifkan **keep-alive/connection pooling** ke backend sehingga koneksi dipakai ulang alih-alih dibuat baru; (d) tambahkan IP sumber tambahan pada proxy; (e) sebarkan backend ke lebih banyak IP/port.
+6. **Kehabisan port ephemeral.** Proxy membuat sangat banyak koneksi keluar ke sedikit backend, sehingga kombinasi (IP src, port src, IP dst, port dst) habis, terutama karena socket `TIME_WAIT` menahan port. Solusi berlapis: (a) perluas rentang, misalnya `net.ipv4.ip_local_port_range = 10000 65535`; (b) aktifkan `net.ipv4.tcp_tw_reuse=1` agar socket TIME_WAIT dapat dipakai ulang untuk koneksi keluar; (c) aktifkan **keep-alive/connection pooling** ke backend sehingga koneksi dipakai ulang alih-alih dibuat baru; (d) tambahkan IP sumber tambahan pada proxy; (e) sebarkan backend ke lebih banyak IP/port.
 
-7. Aturan itu mensyaratkan **port sumber = 80**, padahal klien memakai **port sumber ephemeral yang acak** (mis. 51234). Akibatnya hampir semua trafik sah akan ditolak. Yang benar: jangan batasi port sumber — `permit tcp any host 10.0.0.5 eq 80`. Trafik balasan ditangani otomatis oleh firewall stateful, atau dengan aturan balik yang memakai `established` pada ACL reflexive.
+7. Aturan itu mensyaratkan **port sumber = 80**, padahal klien memakai **port sumber ephemeral yang acak** (mis. 51234). Akibatnya hampir semua trafik sah akan ditolak. Yang benar: jangan batasi port sumber, cukup `permit tcp any host 10.0.0.5 eq 80`. Trafik balasan ditangani otomatis oleh firewall stateful, atau dengan aturan balik yang memakai `established` pada ACL reflexive.
 
 </details>
 
@@ -433,9 +433,9 @@ Detail di `09-nat-acl-firewall/01`.
 
 ## 12. Sumber
 
-- RFC 6335 — IANA Service Name and Transport Protocol Port Number Registry
-- IANA Port Registry — https://www.iana.org/assignments/service-names-port-numbers/
-- RFC 9293 — TCP (definisi socket & koneksi)
+- RFC 6335: IANA Service Name and Transport Protocol Port Number Registry
+- IANA Port Registry: https://www.iana.org/assignments/service-names-port-numbers/
+- RFC 9293: TCP (definisi socket & koneksi)
 - `man ss`, `man nc`, `/etc/services`
 - Cisco CCNA 200-301 v1.1, topik 1.5 & 4.x
 

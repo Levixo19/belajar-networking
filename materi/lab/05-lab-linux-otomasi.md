@@ -5,7 +5,7 @@
 > **Format:** TUGAS → VERIFIKASI → KRITERIA SUKSES → solusi.
 
 > [!WARNING]
-> Lab ini menyentuh konfigurasi jaringan sistem. Jalankan di **VM/lab**, bukan mesin produksi. Perintah `ip netns` bersifat sementara (hilang saat reboot) — aman untuk eksperimen.
+> Lab ini menyentuh konfigurasi jaringan sistem. Jalankan di VM/lab, bukan mesin produksi. Perintah `ip netns` bersifat sementara (hilang saat reboot), jadi aman untuk eksperimen.
 
 ---
 
@@ -19,7 +19,7 @@
 
 **VERIFIKASI:** perintah menampilkan state benar; perubahan terlihat lalu bersih.
 
-**KRITERIA SUKSES:** ✅ Nyaman dengan sintaks iproute2 modern.
+**KRITERIA SUKSES:** Nyaman dengan sintaks iproute2 modern.
 
 <details><summary>Solusi & penjelasan</summary>
 
@@ -33,14 +33,14 @@ ip route add 192.168.9.0/24 via 10.0.0.1
 ip route del 192.168.9.0/24
 ip neigh show                         # ARP/NDP cache
 ```
-`iproute2` (`ip`) menggantikan `ifconfig`/`route`/`arp` yang usang. Perubahan runtime hilang saat reboot (untuk permanen: netplan/NetworkManager/ifupdown). Membuktikan `13-linux-networking/01`. 💡 `-br` (brief) & `-c` (color) membuat output lebih terbaca. Padanan: `ip route` ≈ `show ip route` Cisco.
+`iproute2` (`ip`) menggantikan `ifconfig`/`route`/`arp` yang usang. Perubahan runtime hilang saat reboot (untuk permanen: netplan/NetworkManager/ifupdown). Membuktikan `13-linux-networking/01`. Opsi `-br` (brief) & `-c` (color) membuat output lebih terbaca. Padanan: `ip route` ≈ `show ip route` Cisco.
 </details>
 
 ---
 
 ## Lab 5.2: Simulasi Topologi dengan Network Namespaces
 
-**TUGAS:** bangun "dua router + dua host" **hanya dengan Linux namespaces** (tanpa VM/emulator).
+**TUGAS:** bangun "dua router + dua host" hanya dengan Linux namespaces (tanpa VM/emulator).
 ```
 [h1] --- [r1] --- [r2] --- [h2]
 ```
@@ -51,7 +51,7 @@ ip neigh show                         # ARP/NDP cache
 
 **VERIFIKASI:** `ip netns exec h1 ping <h2>` berhasil; `traceroute` lewat r1,r2.
 
-**KRITERIA SUKSES:** ✅ Ping end-to-end melalui dua router tersimulasi.
+**KRITERIA SUKSES:** Ping end-to-end melalui dua router tersimulasi.
 
 <details><summary>Solusi & penjelasan</summary>
 
@@ -85,7 +85,7 @@ sudo ip netns exec h2 ip route add default via 10.0.2.1
 sudo ip netns exec h1 ping -c3 10.0.2.2
 # bersihkan: for ns in h1 r1 r2 h2; do sudo ip netns del $ns; done
 ```
-Ini membangun topologi routing **nyata** di satu mesin — inti bagaimana container/Docker/K8s bekerja (`16/05`). `ip_forward=1` menjadikan namespace sebuah "router". Membuktikan `13-linux-networking/02`. 💡 Sama seperti Lab 2.1, butuh **rute dua arah**.
+Ini membangun topologi routing nyata di satu mesin. Mekanisme yang sama menjadi inti cara kerja container/Docker/K8s (`16/05`). `ip_forward=1` menjadikan namespace sebuah "router". Membuktikan `13-linux-networking/02`. Seperti di Lab 2.1, rutenya harus dua arah.
 </details>
 
 ---
@@ -99,7 +99,7 @@ Ini membangun topologi routing **nyata** di satu mesin — inti bagaimana contai
 
 **VERIFIKASI:** namespace saling ping via bridge; `bridge link` / `ip link` menampilkan anggota.
 
-**KRITERIA SUKSES:** ✅ Bridge berperilaku sebagai switch (satu broadcast domain).
+**KRITERIA SUKSES:** Bridge berperilaku sebagai switch (satu broadcast domain).
 
 <details><summary>Solusi & penjelasan</summary>
 
@@ -112,7 +112,7 @@ sudo ip link set v1 netns hA
 sudo ip link set v1b master br0 ; sudo ip link set v1b up
 # (ulangi untuk hB dengan v2/v2b) → beri IP sama-subnet di hA,hB → ping
 ```
-Bridge Linux = **switch software** — persis yang dipakai Docker (`docker0`), KVM/libvirt, dan RouterOS (`19/02`). Anggota bridge berada di satu broadcast domain. `bridge fdb show` menampilkan tabel MAC (seperti CAM table). Membuktikan `13-linux-networking/02` & mengaitkan `16/05` (jaringan container). 💡 Tambah `bridge vlan` untuk VLAN filtering (VLAN-aware bridge).
+Bridge Linux adalah **switch software**, persis yang dipakai Docker (`docker0`), KVM/libvirt, dan RouterOS (`19/02`). Anggota bridge berada di satu broadcast domain. `bridge fdb show` menampilkan tabel MAC (seperti CAM table). Membuktikan `13-linux-networking/02` & mengaitkan `16/05` (jaringan container). Tambah `bridge vlan` untuk VLAN filtering (VLAN-aware bridge).
 </details>
 
 ---
@@ -126,7 +126,7 @@ Bridge Linux = **switch software** — persis yang dipakai Docker (`docker0`), K
 
 **VERIFIKASI:** `nft list ruleset`; koneksi sesuai kebijakan.
 
-**KRITERIA SUKSES:** ✅ Firewall stateful default-deny berfungsi.
+**KRITERIA SUKSES:** Firewall stateful default-deny berfungsi.
 
 <details><summary>Solusi & penjelasan</summary>
 
@@ -138,7 +138,7 @@ sudo nft add rule inet filter input ct state established,related accept
 sudo nft add rule inet filter input ip saddr 192.168.1.0/24 tcp dport 22 accept
 sudo nft list ruleset
 ```
-Pola sama dengan firewall MikroTik (`19/03`) & konsep stateful (`12-keamanan/03`): **terima established,related dulu**, izinkan spesifik, **default drop**. `ct state` = connection tracking (stateful). nftables menggantikan iptables. Membuktikan `13-linux-networking/03`. ⚠️ Hati-hati mengunci diri via SSH — uji di konsol/VM dengan akses alternatif.
+Pola sama dengan firewall MikroTik (`19/03`) & konsep stateful (`12-keamanan/03`): terima established,related dulu, izinkan yang spesifik, lalu default drop. `ct state` = connection tracking (stateful). nftables menggantikan iptables. Membuktikan `13-linux-networking/03`. Hati-hati mengunci diri sendiri dari SSH. Uji di konsol/VM yang punya akses alternatif.
 </details>
 
 ---
@@ -152,7 +152,7 @@ Pola sama dengan firewall MikroTik (`19/03`) & konsep stateful (`12-keamanan/03`
 
 **VERIFIKASI:** file `.cfg` per-perangkat berisi konfigurasi.
 
-**KRITERIA SUKSES:** ✅ Backup semua perangkat otomatis dalam satu run.
+**KRITERIA SUKSES:** Backup semua perangkat otomatis dalam satu run.
 
 <details><summary>Solusi & penjelasan</summary>
 
@@ -176,7 +176,7 @@ for dev in perangkat:
     except Exception as e:
         print(f"GAGAL {dev['host']}: {e}")
 ```
-`pip install netmiko`. Skrip ini mendemonstrasikan otomasi multi-vendor (`15-otomasi/03`): satu skrip mem-backup Cisco & MikroTik. Tambahkan: commit ke Git (`15/04`), jadwalkan (cron), atau kirim ke penyimpanan terpusat. 💡 Kembangkan ke audit (cek baris config wajib) atau perubahan massal (hati-hati — dry-run dulu). ⚠️ Jangan hardcode password di produksi — pakai env var/vault.
+`pip install netmiko`. Skrip ini mendemonstrasikan otomasi multi-vendor (`15-otomasi/03`): satu skrip mem-backup Cisco & MikroTik. Tambahkan: commit ke Git (`15/04`), jadwalkan (cron), atau kirim ke penyimpanan terpusat. Skrip ini bisa dikembangkan untuk audit (cek baris config wajib) atau perubahan massal (hati-hati: dry-run dulu). Jangan hardcode password di produksi; pakai env var/vault.
 </details>
 
 ---
@@ -190,7 +190,7 @@ for dev in perangkat:
 
 **VERIFIKASI:** `--check --diff` menunjukkan perubahan; apply berhasil & idempoten (run kedua = no change).
 
-**KRITERIA SUKSES:** ✅ Playbook idempoten; dry-run sebelum apply dipahami.
+**KRITERIA SUKSES:** Playbook idempoten; dry-run sebelum apply dipahami.
 
 <details><summary>Solusi & penjelasan</summary>
 
@@ -216,7 +216,7 @@ all:
         text: "Akses hanya untuk yang berwenang"
         state: present
 ```
-Jalankan: `ansible-playbook -i inventory.yaml banner.yaml --check --diff` (dry-run), lalu tanpa `--check`. Run **kedua** harus "ok=... changed=0" (**idempoten** — inti Ansible, `15/04`). ⚠️ **Selalu `--check --diff` dulu** untuk perubahan. Butuh `ansible-galaxy collection install cisco.ios`. Membuktikan otomasi deklaratif.
+Jalankan: `ansible-playbook -i inventory.yaml banner.yaml --check --diff` (dry-run), lalu tanpa `--check`. Run kedua harus "ok=... changed=0". Sifat ini disebut **idempoten**, inti Ansible (`15/04`). Untuk setiap perubahan, selalu jalankan `--check --diff` dulu. Butuh `ansible-galaxy collection install cisco.ios`. Membuktikan otomasi deklaratif.
 </details>
 
 ---
@@ -226,6 +226,6 @@ Jalankan: `ansible-playbook -i inventory.yaml banner.yaml --check --diff` (dry-r
 Anda mempraktikkan: iproute2, simulasi topologi dengan namespaces (fondasi container/K8s), bridge Linux, nftables (firewall stateful), dan otomasi (Python/Netmiko + Ansible). Ini menjembatani jaringan dengan Linux & NetDevOps (Tahap 13 & 15).
 
 > [!TIP]
-> Lab 5.2 sangat berharga: memahami namespaces = memahami bagaimana Docker/Kubernetes networking (`16/05`) bekerja "di balik layar". Otomasi (5.5-5.6) adalah skill NetDevOps bernilai tinggi (`18/01`).
+> Kerjakan Lab 5.2 dengan teliti: memahami namespaces berarti memahami cara kerja networking Docker/Kubernetes (`16/05`) di balik layar. Otomasi (5.5-5.6) adalah skill NetDevOps bernilai tinggi (`18/01`).
 
 **Berikutnya:** `lab/06-lab-mikrotik.md`. Lab MikroTik RouterOS end-to-end.

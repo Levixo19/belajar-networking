@@ -18,9 +18,9 @@ Solusi: banyak perangkat berbagi SATU alamat publik
 
 ### Manfaat
 
-1. **Menghemat alamat IPv4** — ratusan host di balik satu alamat publik
-2. **Menyembunyikan topologi internal** — luar hanya melihat satu alamat
-3. **Fleksibilitas** — ganti ISP tanpa menomori ulang jaringan internal
+1. **Menghemat alamat IPv4**: ratusan host di balik satu alamat publik
+2. **Menyembunyikan topologi internal**: luar hanya melihat satu alamat
+3. **Fleksibilitas**: ganti ISP tanpa menomori ulang jaringan internal
 4. **Menghindari konflik** saat merger (dengan NAT overlapping)
 
 ### Biaya yang sering diabaikan
@@ -30,12 +30,12 @@ Solusi: banyak perangkat berbagi SATU alamat publik
 - Koneksi masuk **tidak mungkin** tanpa konfigurasi khusus
 - P2P, VoIP, dan game butuh mekanisme traversal (STUN/TURN/ICE)
 - Protokol yang menyertakan alamat di payload rusak (FTP aktif, SIP, H.323) → butuh ALG
-- Logging dan forensik jadi sulit — ribuan pengguna di satu alamat
+- Logging dan forensik jadi sulit karena ribuan pengguna berbagi satu alamat
 - Menambah latency dan beban CPU/memori router
 - IPsec AH tidak bisa melewati NAT (ESP butuh NAT-T)
 
 > [!TIP]
-> **NAT BUKAN fitur keamanan.** Ia menyembunyikan alamat, tetapi tidak memeriksa isi paket. Firewall stateful-lah yang memberi keamanan — dan NAT kebetulan menyertakan sifat stateful itu. Di IPv6 tidak ada NAT, dan keamanannya justru **lebih baik** karena firewall dikonfigurasi secara eksplisit.
+> **NAT BUKAN fitur keamanan.** Ia menyembunyikan alamat, tetapi tidak memeriksa isi paket. Firewall stateful-lah yang memberi keamanan, dan NAT kebetulan menyertakan sifat stateful itu. Di IPv6 tidak ada NAT, dan keamanannya justru **lebih baik** karena firewall dikonfigurasi secara eksplisit.
 
 ---
 
@@ -156,7 +156,7 @@ nft add rule ip nat postrouting oifname "eth0" snat to 198.51.100.1
 | Saat interface down | **Semua koneksi dihapus** | Tidak otomatis |
 
 > [!TIP]
-> **Gunakan `src-nat` kalau IP publik Anda statis** — lebih cepat dan tidak membuang tabel koneksi saat interface flapping.
+> **Gunakan `src-nat` kalau IP publik Anda statis.** Cara ini lebih cepat dan tidak membuang tabel koneksi saat interface flapping.
 
 ### Port Forwarding / Destination NAT
 
@@ -218,7 +218,7 @@ R1(config)# ip nat inside source list HAIRPIN interface gi0/1 overload
 ```
 
 > [!TIP]
-> **Solusi yang lebih elegan: split-horizon DNS.** Buat DNS internal mengembalikan alamat privat untuk nama domain yang sama. Klien internal langsung terhubung ke 10.0.0.10 tanpa melewati router sama sekali — lebih cepat dan lebih sederhana.
+> **Solusi yang lebih elegan: split-horizon DNS.** Buat DNS internal mengembalikan alamat privat untuk nama domain yang sama. Klien internal langsung terhubung ke 10.0.0.10 tanpa melewati router sama sekali, sehingga lebih cepat dan lebih sederhana.
 
 ---
 
@@ -261,13 +261,13 @@ Bagaimana aplikasi P2P bekerja meski kedua pihak di belakang NAT?
 | Teknik | Cara kerja |
 |---|---|
 | **STUN** | Klien bertanya ke server publik: "alamat dan port apa yang kamu lihat dari saya?" → tahu pemetaan NAT-nya |
-| **TURN** | Relay penuh lewat server — dipakai kalau STUN gagal (symmetric NAT). Boros bandwidth |
+| **TURN** | Relay penuh lewat server, dipakai kalau STUN gagal (symmetric NAT). Boros bandwidth |
 | **ICE** | Kerangka yang mencoba semua kandidat (host, STUN, TURN) dan memilih yang berhasil |
 | **UPnP / NAT-PMP / PCP** | Aplikasi meminta router membuka port secara otomatis |
 | **Hole punching** | Kedua pihak mengirim keluar bersamaan sehingga NAT membuka jalur |
 
 > [!WARNING]
-> **UPnP adalah risiko keamanan** — malware bisa memakainya untuk membuka port dari dalam. Matikan di lingkungan yang butuh kontrol:
+> **UPnP adalah risiko keamanan**: malware bisa memakainya untuk membuka port dari dalam. Matikan di lingkungan yang butuh kontrol:
 ```
 /ip upnp set enabled=no                          # MikroTik
 R1(config)# no ip nat service ...                # Cisco
@@ -289,7 +289,7 @@ MikroTik `masquerade` dan `src-nat` berperilaku mendekati **symmetric NAT** seca
 ## 6. NAT dan Protokol Bermasalah
 
 ### FTP Aktif
-Server membuka koneksi data **ke klien** — NAT memblokirnya. Solusi: mode pasif, atau ALG.
+Server membuka koneksi data **ke klien**, dan NAT memblokirnya. Solusi: mode pasif, atau ALG.
 
 ### SIP / VoIP
 SIP menyertakan alamat IP di **payload**, bukan hanya header. NAT tidak mengubahnya → RTP mengalir ke alamat privat yang tidak dapat dijangkau.
@@ -310,7 +310,7 @@ Selalu tanyakan ke penyedia VoIP Anda apa yang mereka rekomendasikan.
 
 ### IPsec
 - **AH tidak bisa melewati NAT** sama sekali (mengautentikasi header IP yang diubah NAT)
-- **ESP butuh NAT-T** — enkapsulasi dalam UDP 4500
+- **ESP butuh NAT-T**: enkapsulasi dalam UDP 4500
 
 ```
 /ip firewall service-port set ipsec-esp disabled=no    # MikroTik ESP helper
@@ -360,8 +360,8 @@ $ cat /proc/sys/net/netfilter/nf_conntrack_max
 | Sebagian host bisa, sebagian tidak | ACL/`src-address` tidak mencakup semua subnet |
 | Port forwarding tidak bekerja | Firewall memblokir; aturan filter memakai alamat publik alih-alih internal |
 | Internal tidak bisa akses server sendiri lewat IP publik | **Perlu hairpin NAT** atau split-horizon DNS |
-| Koneksi terputus setelah beberapa menit | **NAT timeout** — perpendek keep-alive aplikasi atau perpanjang timeout NAT |
-| Router kehabisan memori | Tabel koneksi penuh (`nf_conntrack_max`) — sering karena serangan atau P2P |
+| Koneksi terputus setelah beberapa menit | **NAT timeout**; perpendek keep-alive aplikasi atau perpanjang timeout NAT |
+| Router kehabisan memori | Tabel koneksi penuh (`nf_conntrack_max`), sering karena serangan atau P2P |
 | VoIP satu arah | SIP ALG bermasalah, atau RTP tidak di-NAT dengan benar |
 | Game/P2P tidak bisa host | Symmetric NAT / CGNAT |
 
@@ -380,7 +380,7 @@ $ sudo sysctl -w net.netfilter.nf_conntrack_max=262144
 ```
 
 > [!WARNING]
-> **Timeout TCP established default Linux adalah 5 hari** — sangat boros memori pada router sibuk. Turunkan ke 1 hari atau kurang, dan pastikan aplikasi memakai TCP keep-alive.
+> **Timeout TCP established default Linux adalah 5 hari**, sangat boros memori pada router sibuk. Turunkan ke 1 hari atau kurang, dan pastikan aplikasi memakai TCP keep-alive.
 
 ---
 
@@ -389,7 +389,7 @@ $ sudo sysctl -w net.netfilter.nf_conntrack_max=262144
 > [!WARNING]
 > **IPv6 tidak butuh NAT** karena alamatnya cukup untuk semua perangkat.
 
-Ada **NPTv6** [RFC 6296] — translasi prefix stateless 1:1 — untuk kasus khusus (multihoming tanpa BGP). Tetapi ini **bukan** NAT dengan port translation, dan tidak merusak end-to-end sebanyak NAT44.
+Ada **NPTv6** [RFC 6296], translasi prefix stateless 1:1 untuk kasus khusus (multihoming tanpa BGP). Tetapi ini **bukan** NAT dengan port translation, dan tidak merusak end-to-end sebanyak NAT44.
 
 ```
 # MikroTik NPTv6 (jarang dipakai)
@@ -408,13 +408,13 @@ Ada **NPTv6** [RFC 6296] — translasi prefix stateless 1:1 — untuk kasus khus
 - Terminologi Cisco: **Inside/Outside** = perangkat di jaringan mana; **Local/Global** = terlihat dari mana.
 - Jenis: **static** (1:1 tetap), **dynamic** (pool), **PAT/overload** (banyak:1, paling umum), **destination NAT** (port forwarding).
 - MikroTik: **`masquerade`** untuk IP dinamis, **`src-nat`** untuk IP statis (lebih efisien).
-- **Hairpin NAT** diperlukan agar klien internal bisa mengakses server internal lewat IP publik — atau pakai **split-horizon DNS** (lebih baik).
+- **Hairpin NAT** diperlukan agar klien internal bisa mengakses server internal lewat IP publik. Alternatifnya, pakai **split-horizon DNS** (lebih baik).
 - **CGNAT** (`100.64.0.0/10`) memakai dua lapis NAT; port forwarding tidak mungkin.
 - **NAT traversal**: STUN (tahu pemetaan), TURN (relay), ICE (kerangka). **Symmetric NAT** paling sulit untuk P2P.
 - Protokol bermasalah: FTP aktif, **SIP** (sering lebih baik matikan ALG), IPsec (AH tidak bisa, ESP butuh NAT-T).
 - **NAT BUKAN firewall.** Keamanan datang dari inspeksi stateful, bukan dari penyembunyian alamat.
-- Perhatikan **tabel koneksi** dan **timeout** — sumber masalah memori dan koneksi terputus.
-- **IPv6 tidak butuh NAT** — jangan menirunya di sana.
+- Perhatikan **tabel koneksi** dan **timeout**, karena keduanya sumber masalah memori dan koneksi terputus.
+- **IPv6 tidak butuh NAT**, jadi jangan menirunya di sana.
 
 ---
 
@@ -432,30 +432,30 @@ Ada **NPTv6** [RFC 6296] — translasi prefix stateless 1:1 — untuk kasus khus
 <summary>Jawaban</summary>
 
 1. Contoh: host internal `10.0.0.5` mengakses `93.184.216.34` lewat router yang mem-PAT ke `198.51.100.1`.
-   - **Inside Local = `10.0.0.5`** — alamat host internal seperti terlihat dari dalam jaringan.
-   - **Inside Global = `198.51.100.1`** — alamat host internal yang sama seperti terlihat dari internet (setelah NAT).
-   - **Outside Local = `93.184.216.34`** — alamat host eksternal seperti terlihat dari dalam.
-   - **Outside Global = `93.184.216.34`** — alamat host eksternal seperti terlihat dari luar.
+   - **Inside Local = `10.0.0.5`**: alamat host internal seperti terlihat dari dalam jaringan.
+   - **Inside Global = `198.51.100.1`**: alamat host internal yang sama seperti terlihat dari internet (setelah NAT).
+   - **Outside Local = `93.184.216.34`**: alamat host eksternal seperti terlihat dari dalam.
+   - **Outside Global = `93.184.216.34`**: alamat host eksternal seperti terlihat dari luar.
    Outside Local dan Global sama di sini karena tidak ada destination NAT untuk alamat eksternal.
 
-2. Karena PAT membedakan sesi bukan hanya dengan alamat, tetapi dengan **kombinasi alamat + port**. Setiap sesi keluar diberi **port sumber unik** pada alamat publik, sehingga router bisa memetakan balasan kembali ke host internal yang benar lewat tabel translasi.
+2. Karena PAT membedakan sesi dengan **kombinasi alamat + port**, bukan dengan alamat saja. Setiap sesi keluar diberi **port sumber unik** pada alamat publik, sehingga router bisa memetakan balasan kembali ke host internal yang benar lewat tabel translasi.
    **Batasnya:** port adalah field 16 bit → **~65.000 port per alamat publik**, dan sebagian dicadangkan. Batas praktis lebih rendah karena: setiap aplikasi bisa membuka banyak koneksi (browser modern puluhan per situs), koneksi yang ditutup tetap menahan port selama timeout, dan memori untuk tabel translasi terbatas. Untuk ribuan pengguna aktif, ISP menambah alamat publik ke pool.
 
-3. Ini masalah **hairpin NAT / NAT loopback**. Klien internal me-resolve nama domain ke alamat **publik**, lalu mengirim paket ke router. Router menerapkan `dstnat` sehingga tujuan berubah menjadi alamat internal server. Tetapi server melihat alamat sumber = klien internal yang berada **di subnet yang sama**, sehingga ia membalas **langsung** tanpa melewati router. Klien menerima balasan dari alamat yang berbeda dari yang ia kirimi, sehingga **membuangnya** — koneksi gagal.
-   **Solusi 1 — Hairpin NAT:** tambahkan aturan `srcnat` yang juga menerjemahkan alamat sumber untuk trafik internal→internal, sehingga balasan kembali lewat router.
+3. Ini masalah **hairpin NAT / NAT loopback**. Klien internal me-resolve nama domain ke alamat **publik**, lalu mengirim paket ke router. Router menerapkan `dstnat` sehingga tujuan berubah menjadi alamat internal server. Tetapi server melihat alamat sumber = klien internal yang berada di subnet yang sama, sehingga ia membalas langsung tanpa melewati router. Klien menerima balasan dari alamat yang berbeda dari yang ia kirimi, sehingga membuangnya, dan koneksi gagal.
+   **Solusi 1 (Hairpin NAT):** tambahkan aturan `srcnat` yang juga menerjemahkan alamat sumber untuk trafik internal→internal, sehingga balasan kembali lewat router.
    ```
    /ip firewall nat add chain=srcnat src-address=10.0.0.0/24 dst-address=10.0.0.10 \
        protocol=tcp dst-port=443 action=masquerade
    ```
-   **Solusi 2 — Split-horizon DNS (lebih baik):** konfigurasikan DNS internal agar nama domain itu me-resolve ke alamat **privat** server. Klien internal langsung terhubung ke `10.0.0.10` tanpa melibatkan router sama sekali — lebih cepat, lebih sederhana, dan tidak membebani router.
+   **Solusi 2 (split-horizon DNS, lebih baik):** konfigurasikan DNS internal agar nama domain itu me-resolve ke alamat **privat** server. Klien internal langsung terhubung ke `10.0.0.10` tanpa melibatkan router sama sekali. Cara ini lebih cepat, lebih sederhana, dan tidak membebani router.
 
-4. Pilih **`src-nat`** ketika alamat IP publik WAN Anda **statis**. Alasannya: (a) lebih **efisien** — router tidak perlu memeriksa alamat interface untuk setiap paket, cukup memakai nilai tetap; (b) lebih **stabil** — `masquerade` menghapus seluruh entri koneksi terkait ketika interface turun, sehingga semua sesi terputus bahkan pada gangguan singkat.
+4. Pilih **`src-nat`** ketika alamat IP publik WAN Anda **statis**. Alasannya: (a) lebih **efisien**, karena router tidak perlu memeriksa alamat interface untuk setiap paket dan cukup memakai nilai tetap; (b) lebih **stabil**, karena `masquerade` menghapus seluruh entri koneksi terkait ketika interface turun, sehingga semua sesi terputus bahkan pada gangguan singkat.
    Pilih **`masquerade`** ketika alamat WAN **dinamis** (DHCP dari ISP, PPPoE), karena ia otomatis mengikuti alamat yang sedang aktif tanpa perlu mengubah konfigurasi.
 
-5. (a) **Minta IPv4 publik statis ke ISP** — biasanya layanan berbayar, tetapi paling sederhana dan memberi kontrol penuh. (b) **Gunakan layanan tunnel/reverse proxy** — Cloudflare Tunnel, Tailscale, ZeroTier, ngrok, atau VPS murah dengan reverse SSH tunnel/WireGuard; koneksi diinisiasi dari dalam sehingga NAT tidak menjadi penghalang. (c) **Aktifkan IPv6** — kalau ISP menyediakan IPv6 (banyak yang sudah), NAS mendapat alamat publik yang dapat dijangkau langsung; cukup buka firewall untuk port yang diperlukan. Opsi tambahan: VPN ke rumah lewat penyedia dynamic DNS **jika** Anda punya IPv4 publik dinamis (bukan CGNAT).
+5. (a) **Minta IPv4 publik statis ke ISP.** Biasanya ini layanan berbayar, tetapi paling sederhana dan memberi kontrol penuh. (b) **Gunakan layanan tunnel/reverse proxy** seperti Cloudflare Tunnel, Tailscale, ZeroTier, ngrok, atau VPS murah dengan reverse SSH tunnel/WireGuard; koneksi diinisiasi dari dalam sehingga NAT tidak menjadi penghalang. (c) **Aktifkan IPv6.** Kalau ISP menyediakan IPv6 (banyak yang sudah), NAS mendapat alamat publik yang dapat dijangkau langsung; cukup buka firewall untuk port yang diperlukan. Opsi tambahan: VPN ke rumah lewat penyedia dynamic DNS **jika** Anda punya IPv4 publik dinamis (bukan CGNAT).
 
 6. **SIP menyertakan alamat IP dan port di dalam payload pesan** (header SDP), bukan hanya di header IP. NAT hanya mengubah header IP/UDP, sehingga payload masih berisi **alamat privat**. Akibatnya lawan bicara mencoba mengirim aliran RTP (suara) ke alamat privat yang tidak dapat dijangkau → **suara satu arah atau tidak ada suara sama sekali**.
-   **SIP ALG** mencoba memperbaikinya dengan menulis ulang payload. Masalahnya: implementasi ALG di banyak router **buruk dan tidak konsisten** — ia bisa merusak pesan SIP yang sah, gagal menangani SIP over TLS (yang terenkripsi sehingga tidak bisa dimodifikasi), salah menangani beberapa dialek SIP, atau berkonflik dengan mekanisme traversal yang sudah dipakai penyedia (STUN/ICE/SBC). Karena itu banyak penyedia VoIP **secara eksplisit meminta SIP ALG dimatikan** dan mengandalkan mekanisme di sisi mereka.
+   **SIP ALG** mencoba memperbaikinya dengan menulis ulang payload. Masalahnya, implementasi ALG di banyak router **buruk dan tidak konsisten**. Ia bisa merusak pesan SIP yang sah, gagal menangani SIP over TLS (yang terenkripsi sehingga tidak bisa dimodifikasi), salah menangani beberapa dialek SIP, atau berkonflik dengan mekanisme traversal yang sudah dipakai penyedia (STUN/ICE/SBC). Karena itu banyak penyedia VoIP **secara eksplisit meminta SIP ALG dimatikan** dan mengandalkan mekanisme di sisi mereka.
 
 7. **Periksa dulu apa yang mengisi tabel koneksi:**
    ```
@@ -478,7 +478,7 @@ Ada **NPTv6** [RFC 6296] — translasi prefix stateless 1:1 — untuk kasus khus
    ```
    (c) **Aktifkan FastTrack** untuk koneksi established agar tidak semua diproses penuh (perhatikan: FastTrack melewati queue dan mangle).
    (d) Identifikasi dan tangani host bermasalah; blokir trafik P2P kalau melanggar kebijakan.
-   (e) Kalau perangkat memang kurang kuat untuk beban itu, pertimbangkan upgrade — CCR punya RAM jauh lebih besar.
+   (e) Kalau perangkat memang kurang kuat untuk beban itu, pertimbangkan upgrade; CCR punya RAM jauh lebih besar.
 
 </details>
 
@@ -486,14 +486,14 @@ Ada **NPTv6** [RFC 6296] — translasi prefix stateless 1:1 — untuk kasus khus
 
 ## 11. Sumber
 
-- RFC 3022 — Traditional IP Network Address Translator (NAT)
-- RFC 2663 — NAT Terminology and Considerations
-- RFC 4787 — NAT Behavioral Requirements for Unicast UDP
-- RFC 6598 — Shared Address Space (CGNAT)
-- RFC 5389 — STUN · RFC 8656 — TURN · RFC 8445 — ICE
-- RFC 6296 — IPv6-to-IPv6 Network Prefix Translation
+- RFC 3022, Traditional IP Network Address Translator (NAT)
+- RFC 2663, NAT Terminology and Considerations
+- RFC 4787, NAT Behavioral Requirements for Unicast UDP
+- RFC 6598, Shared Address Space (CGNAT)
+- RFC 5389, STUN · RFC 8656, TURN · RFC 8445, ICE
+- RFC 6296, IPv6-to-IPv6 Network Prefix Translation
 - Cisco CCNA 200-301 v1.1, topik 4.1 (configure and verify inside source NAT using static and pools)
-- MikroTik — https://help.mikrotik.com/docs/display/ROS/NAT
+- MikroTik: https://help.mikrotik.com/docs/display/ROS/NAT
 
 ---
 

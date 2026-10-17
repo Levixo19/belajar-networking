@@ -31,7 +31,7 @@ output   → trafik DIHASILKAN oleh router itu sendiri
 
 ## 2. Connection Tracking & Stateful Firewall
 
-RouterOS adalah **stateful firewall** — melacak status koneksi. Ini kunci firewall efisien dan aman.
+RouterOS adalah **stateful firewall** yang melacak status koneksi. Pelacakan inilah yang membuat firewall efisien dan aman.
 
 ```
 Status koneksi (connection-state):
@@ -60,7 +60,7 @@ add chain=input action=drop
 > **Terima `established,related` di aturan PERTAMA** adalah praktik terbaik: mayoritas paket adalah bagian koneksi yang sudah diizinkan, sehingga diproses cepat tanpa mengevaluasi semua aturan. Ini persis pola stateful yang diajarkan di `12-keamanan/03` dan `13-linux-networking/03`.
 
 > [!WARNING]
-> **Aturan diproses BERURUTAN dari atas ke bawah**, paket cocok aturan pertama yang sesuai. **Urutan sangat penting** — aturan `drop` di atas akan memblokir sebelum aturan `accept` di bawahnya sempat dievaluasi. Selalu susun: accept spesifik dulu, drop umum terakhir.
+> **Aturan diproses BERURUTAN dari atas ke bawah**, dan paket cocok dengan aturan pertama yang sesuai. Akibatnya, aturan `drop` di atas akan memblokir sebelum aturan `accept` di bawahnya sempat dievaluasi. Selalu susun: accept spesifik dulu, drop umum terakhir.
 
 ---
 
@@ -97,13 +97,13 @@ add chain=dstnat protocol=tcp dst-port=80 in-interface=ether1-wan \
 Setara port forwarding / `ip nat inside source static tcp` Cisco.
 
 > [!TIP]
-> **`masquerade` vs `src-nat`:** gunakan **masquerade** untuk IP WAN **dinamis** (otomatis ikut IP interface), **src-nat** untuk IP WAN **statik** (sedikit lebih efisien). Untuk RT-RW-Net dengan IP dari ISP, masquerade paling umum.
+> **`masquerade` vs `src-nat`:** gunakan masquerade untuk IP WAN dinamis (otomatis ikut IP interface), src-nat untuk IP WAN statik (sedikit lebih efisien). Untuk RT-RW-Net dengan IP dari ISP, masquerade paling umum.
 
 ---
 
 ## 4. Address-List: Kelompok Dinamis
 
-**Address-list** mengelompokkan alamat IP untuk dipakai di banyak aturan — sangat kuat di RouterOS.
+**Address-list** mengelompokkan alamat IP sehingga satu daftar bisa dipakai di banyak aturan.
 
 ```routeros
 # Buat daftar
@@ -117,7 +117,7 @@ add chain=input src-address-list=TEPERCAYA action=accept
 add chain=forward src-address-list=DIBLOKIR action=drop
 ```
 
-**Dinamis (otomatis) — mis. deteksi port scan / brute force:**
+**Dinamis (otomatis), mis. deteksi port scan / brute force:**
 ```routeros
 # Tambahkan penyerang ke address-list otomatis lalu blokir
 /ip firewall filter
@@ -128,7 +128,7 @@ add chain=input src-address-list=SSH-ATTACK action=drop
 ```
 
 > [!TIP]
-> **Address-list dinamis** adalah salah satu fitur firewall MikroTik paling berguna — bisa otomatis menambahkan IP mencurigakan (port scanner, brute-forcer) ke daftar blokir dengan timeout. Banyak dipakai untuk proteksi otomatis di ISP.
+> **Address-list dinamis** bisa otomatis menambahkan IP mencurigakan (port scanner, brute-forcer) ke daftar blokir dengan timeout. Fitur ini banyak dipakai untuk proteksi otomatis di ISP.
 
 ---
 
@@ -149,7 +149,7 @@ add chain=forward connection-mark=web-conn \
 > **Pola mark-connection lalu mark-packet** adalah standar: tandai koneksi sekali (efisien), lalu tandai semua paket koneksi itu. Packet-mark dipakai queue tree untuk QoS (`19.4`) atau routing-mark untuk PBR/failover multi-WAN.
 
 > [!WARNING]
-> Mangle bekerja sebelum/berdampingan dengan queue dan routing — urutan dan chain (prerouting/forward/output) penting. Untuk QoS pelanggan, umumnya di chain `forward`.
+> Mangle bekerja sebelum/berdampingan dengan queue dan routing, jadi urutan dan chain (prerouting/forward/output) penting. Untuk QoS pelanggan, umumnya di chain `forward`.
 
 ---
 
@@ -255,7 +255,7 @@ Aturan accept kedua tetap diperlukan karena hanya TCP dan UDP yang bisa di-fastt
 
 Daftar yang **dilewati** paket FastTrack menurut dokumentasi: firewall (termasuk mangle), connection tracking, **simple queue, queue tree dengan parent=global**, IP traffic-flow, IP accounting, IPsec, hotspot universal client, dan penetapan VRF. FastTrack juga hanya memakai tabel routing `main`.
 
-Akibatnya di dunia nyata:
+Akibatnya dalam praktik:
 
 | Fitur Anda | Apa yang terjadi bila trafiknya di-fasttrack |
 |---|---|
@@ -392,7 +392,7 @@ set ssh port=2200              # ganti port default (opsional)
 ```
 
 > [!WARNING]
-> **Amankan router MikroTik sejak awal** — RouterOS default cukup terbuka. Nonaktifkan Telnet/FTP/layanan tak terpakai, batasi Winbox/SSH ke subnet admin, ganti password default, dan pasang firewall `input` default-deny. Router ISP yang terekspos tanpa proteksi cepat diserang (brute-force, botnet). Lihat juga `12-keamanan/05` (hardening).
+> **Amankan router MikroTik sejak awal**, karena RouterOS default cukup terbuka. Nonaktifkan Telnet/FTP/layanan tak terpakai, batasi Winbox/SSH ke subnet admin, ganti password default, dan pasang firewall `input` default-deny. Router ISP yang terekspos tanpa proteksi cepat diserang (brute-force, botnet). Lihat juga `12-keamanan/05` (hardening).
 
 ---
 
@@ -413,11 +413,11 @@ set ssh port=2200              # ganti port default (opsional)
 
 ## 9. Ringkasan
 
-- Firewall RouterOS (netfilter): tabel **filter, nat, mangle, raw**. Chain filter: **input** (ke router), **forward** (lewat router), **output** (dari router). ⚠️ Bedakan input vs forward.
-- **Stateful** via **connection-state** (new/established/related/invalid). Best practice: **terima established,related dulu**, drop invalid, izinkan spesifik, **default drop**. ⚠️ Urutan aturan menentukan (atas ke bawah).
+- Firewall RouterOS (netfilter): tabel filter, nat, mangle, raw. Chain filter: **input** (ke router), **forward** (lewat router), **output** (dari router). Hati-hati: bedakan input vs forward.
+- **Stateful** via **connection-state** (new/established/related/invalid). Best practice: terima established,related dulu, drop invalid, izinkan spesifik, default drop. Urutan aturan menentukan (atas ke bawah).
 - **NAT**: **srcnat** (`masquerade` untuk IP dinamis, `src-nat` untuk statik) = PAT keluar; **dstnat** (`dst-nat`) = port forwarding.
-- **Address-list**: kelompok IP; **dinamis** bisa auto-tambah penyerang (anti brute-force/scan) dengan timeout.
-- **Mangle**: tandai koneksi lalu paket (mark) untuk **QoS (queue)** dan **routing (PBR/failover)**.
+- **Address-list**: kelompok IP; versi dinamis bisa auto-tambah penyerang (anti brute-force/scan) dengan timeout.
+- **Mangle**: tandai koneksi lalu paket (mark) untuk QoS (queue) dan routing (PBR/failover).
 - **Amankan router**: nonaktifkan layanan tak perlu, batasi Winbox/SSH ke admin, firewall input default-deny.
 
 ---
@@ -435,11 +435,11 @@ set ssh port=2200              # ganti port default (opsional)
 <details>
 <summary>Jawaban</summary>
 
-1. **`input`** menangani trafik yang **ditujukan ke router itu sendiri** — misalnya seseorang mengakses Winbox/SSH/API router, atau ping ke alamat router. Aturan di chain input **melindungi router** (akses manajemen dan layanannya). **`forward`** menangani trafik yang **melewati router** dari satu interface ke interface lain — misalnya trafik pelanggan menuju internet, atau antar-VLAN/antar-jaringan. Aturan di chain forward **mengontrol trafik transit** (apa yang boleh lewat). **Kapan memakai:** gunakan `input` untuk membatasi/melindungi akses ke router (mis. hanya admin boleh Winbox); gunakan `forward` untuk kebijakan trafik yang mengalir melalui router (mis. blokir pelanggan mengakses situs tertentu, izinkan LAN ke internet, kontrol antar-VLAN). Salah memilih chain adalah kesalahan umum: aturan `forward` tidak akan melindungi router, dan aturan `input` tidak akan memengaruhi trafik pelanggan yang lewat.
+1. **`input`** menangani trafik yang ditujukan ke router itu sendiri, misalnya seseorang mengakses Winbox/SSH/API router, atau ping ke alamat router. Aturan di chain input melindungi router (akses manajemen dan layanannya). **`forward`** menangani trafik yang melewati router dari satu interface ke interface lain, misalnya trafik pelanggan menuju internet, atau antar-VLAN/antar-jaringan. Aturan di chain forward mengontrol trafik transit (apa yang boleh lewat). **Kapan memakai:** gunakan `input` untuk membatasi/melindungi akses ke router (mis. hanya admin boleh Winbox); gunakan `forward` untuk kebijakan trafik yang mengalir melalui router (mis. blokir pelanggan mengakses situs tertentu, izinkan LAN ke internet, kontrol antar-VLAN). Salah memilih chain adalah kesalahan umum: aturan `forward` tidak akan melindungi router, dan aturan `input` tidak akan memengaruhi trafik pelanggan yang lewat.
 
-2. Karena **mayoritas paket yang melewati firewall adalah bagian dari koneksi yang sudah terjalin** (established) atau terkait dengannya (related) — sekali sebuah koneksi diizinkan (paket `new`-nya lolos), semua paket balasan dan lanjutannya adalah established/related. Dengan menempatkan `accept connection-state=established,related` sebagai aturan **pertama**, paket-paket ini langsung diterima tanpa harus dievaluasi terhadap seluruh daftar aturan di bawahnya — jauh lebih **efisien** (menghemat CPU, penting pada trafik tinggi di router ISP). Selain efisiensi, ini juga **benar secara logika stateful**: Anda hanya perlu memutuskan izin pada paket **`new`** (pembuka koneksi); begitu koneksi diizinkan, lanjutannya otomatis boleh. Aturan-aturan spesifik di bawahnya kemudian hanya perlu menangani koneksi `new`. Ini pola stateful standar yang sama di netfilter Linux dan konsep firewall di `12-keamanan/03`.
+2. Karena mayoritas paket yang melewati firewall adalah bagian dari koneksi yang sudah terjalin (established) atau terkait dengannya (related). Sekali sebuah koneksi diizinkan (paket `new`-nya lolos), semua paket balasan dan lanjutannya adalah established/related. Dengan menempatkan `accept connection-state=established,related` sebagai aturan pertama, paket-paket ini langsung diterima tanpa harus dievaluasi terhadap seluruh daftar aturan di bawahnya. Cara ini jauh lebih efisien (menghemat CPU, penting pada trafik tinggi di router ISP). Selain efisiensi, ini juga benar secara logika stateful: Anda hanya perlu memutuskan izin pada paket `new` (pembuka koneksi); begitu koneksi diizinkan, lanjutannya otomatis boleh. Aturan-aturan spesifik di bawahnya kemudian hanya perlu menangani koneksi `new`. Ini pola stateful standar yang sama di netfilter Linux dan konsep firewall di `12-keamanan/03`.
 
-3. Gunakan **`masquerade`** ketika IP publik WAN **dinamis** (berubah, mis. dari DHCP ISP) — masquerade otomatis memakai alamat interface WAN saat itu, jadi tidak perlu diubah saat IP berganti. Gunakan **`src-nat` dengan `to-addresses`** ketika IP publik WAN **statik** — sedikit lebih efisien karena router tidak perlu memeriksa/menghitung alamat interface setiap kali. **Port forwarding HTTP ke 192.168.1.10:**
+3. Gunakan **`masquerade`** ketika IP publik WAN dinamis (berubah, mis. dari DHCP ISP): masquerade otomatis memakai alamat interface WAN saat itu, jadi tidak perlu diubah saat IP berganti. Gunakan **`src-nat` dengan `to-addresses`** ketika IP publik WAN statik; cara ini sedikit lebih efisien karena router tidak perlu memeriksa/menghitung alamat interface setiap kali. **Port forwarding HTTP ke 192.168.1.10:**
    ```routeros
    /ip firewall nat
    add chain=dstnat protocol=tcp dst-port=80 in-interface=ether1-wan \
@@ -447,9 +447,9 @@ set ssh port=2200              # ganti port default (opsional)
    ```
    (Pastikan juga ada aturan `filter forward` yang mengizinkan trafik ke 192.168.1.10 port 80 bila firewall forward default-deny.)
 
-4. Dengan **dua aturan yang bekerja sama**: aturan pertama mendeteksi **koneksi baru** ke port SSH (22) dan secara otomatis **menambahkan IP sumbernya ke sebuah address-list** (mis. bernama `SSH-ATTACK`) dengan `action=add-src-to-address-list` dan `address-list-timeout` tertentu (mis. 1 jam); aturan kedua **men-drop** semua trafik dari IP yang ada di address-list itu (`src-address-list=SSH-ATTACK action=drop`). Untuk implementasi anti-brute-force yang lebih canggih, biasanya dipakai **beberapa tingkat**: percobaan pertama masuk daftar tahap-1, jika mencoba lagi dalam waktu singkat naik ke tahap-2, dan seterusnya hingga masuk daftar blokir — sehingga hanya IP yang **berulang kali** mencoba (ciri brute-force) yang diblokir, bukan kesalahan ketik password sekali. Karena **timeout**, blokir otomatis kedaluwarsa setelah periode tertentu (tidak perlu intervensi manual). Ini melindungi router dari serangan brute-force login SSH secara otomatis dan adaptif — salah satu kekuatan address-list dinamis MikroTik.
+4. Dengan dua aturan yang bekerja sama: aturan pertama mendeteksi koneksi baru ke port SSH (22) dan secara otomatis menambahkan IP sumbernya ke sebuah address-list (mis. bernama `SSH-ATTACK`) dengan `action=add-src-to-address-list` dan `address-list-timeout` tertentu (mis. 1 jam); aturan kedua men-drop semua trafik dari IP yang ada di address-list itu (`src-address-list=SSH-ATTACK action=drop`). Untuk implementasi anti-brute-force yang lebih canggih, biasanya dipakai beberapa tingkat: percobaan pertama masuk daftar tahap-1, jika mencoba lagi dalam waktu singkat naik ke tahap-2, dan seterusnya hingga masuk daftar blokir. Dengan begitu, hanya IP yang berulang kali mencoba (ciri brute-force) yang diblokir, bukan kesalahan ketik password sekali. Karena ada timeout, blokir otomatis kedaluwarsa setelah periode tertentu (tidak perlu intervensi manual). Ini melindungi router dari serangan brute-force login SSH secara otomatis dan adaptif.
 
-5. (Empat dari) **(1) Firewall `input` default-deny** — pasang aturan chain input yang hanya mengizinkan established/related, ICMP secukupnya, dan akses dari subnet/address-list admin, lalu **drop sisanya**, sehingga router tidak menerima koneksi dari sumber tak dikenal. **(2) Nonaktifkan layanan yang tidak dipakai** — matikan Telnet, FTP, API, dan WebFig HTTP bila tidak digunakan (`/ip service set ... disabled=yes`) untuk mengurangi permukaan serang. **(3) Batasi akses manajemen ke sumber tepercaya** — set Winbox/SSH agar hanya menerima dari subnet admin (`/ip service set winbox address=...`), dan pertimbangkan mengganti port default SSH. **(4) Ganti kredensial default dan gunakan password kuat** — hapus/ubah user `admin` default, gunakan password kuat atau kunci SSH. Tambahan: aktifkan **address-list dinamis anti-brute-force**, nonaktifkan penemuan (MAC-server/neighbor discovery) di interface WAN, jaga RouterOS **selalu ter-update** (patch keamanan), dan matikan Bandwidth Test server. Ini konsisten dengan prinsip hardening di `12-keamanan/05`.
+5. (Empat dari) **(1) Firewall `input` default-deny**: pasang aturan chain input yang hanya mengizinkan established/related, ICMP secukupnya, dan akses dari subnet/address-list admin, lalu drop sisanya, sehingga router tidak menerima koneksi dari sumber tak dikenal. **(2) Nonaktifkan layanan yang tidak dipakai**: matikan Telnet, FTP, API, dan WebFig HTTP bila tidak digunakan (`/ip service set ... disabled=yes`) untuk mengurangi permukaan serang. **(3) Batasi akses manajemen ke sumber tepercaya**: set Winbox/SSH agar hanya menerima dari subnet admin (`/ip service set winbox address=...`), dan pertimbangkan mengganti port default SSH. **(4) Ganti kredensial default dan gunakan password kuat**: hapus/ubah user `admin` default, gunakan password kuat atau kunci SSH. Tambahan: aktifkan address-list dinamis anti-brute-force, nonaktifkan penemuan (MAC-server/neighbor discovery) di interface WAN, jaga RouterOS selalu ter-update (patch keamanan), dan matikan Bandwidth Test server. Ini konsisten dengan prinsip hardening di `12-keamanan/05`.
 
 6. Di packet flow RouterOS, paket yang masuk melewati **RAW prerouting, lalu connection tracking**, baru kemudian mangle, dstnat, keputusan routing, dan **filter input**. Jadi setiap paket banjir sudah dicari dan dicatat di connection tracking (membuat entri `new` baru untuk setiap alamat palsu) sebelum aturan filter sempat men-drop-nya. Biaya terbesarnya ada di pembuatan entri itu, sehingga CPU dan tabel koneksi tetap penuh. Ganti dengan aturan di tabel RAW yang dievaluasi sebelum connection tracking:
    ```routeros
@@ -466,8 +466,8 @@ set ssh port=2200              # ganti port default (opsional)
 
 ## 11. Sumber
 
-- MikroTik documentation — Firewall, NAT, Mangle, Connection tracking (help.mikrotik.com)
-- MTCNA outline — Firewall · MikroTik "Building Your First Firewall" guide
+- MikroTik documentation: Firewall, NAT, Mangle, Connection tracking (help.mikrotik.com)
+- MTCNA outline: Firewall · MikroTik "Building Your First Firewall" guide
 - `09-nat-acl-firewall/*`, `12-keamanan/03`, `13-linux-networking/03` (netfilter)
 - MikroTik, Packet Flow in RouterOS: https://help.mikrotik.com/docs/spaces/ROS/pages/328227/Packet+Flow+in+RouterOS
 - MikroTik, Filter (bagian RAW Filtering): https://help.mikrotik.com/docs/spaces/ROS/pages/48660574/Filter

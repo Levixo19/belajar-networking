@@ -1,10 +1,10 @@
 # 13.4 Layanan Jaringan di Linux
 
-> **Prasyarat:** `13-linux-networking/01`–`03`, `06-aplikasi/*`
-> **Tujuan:** Anda bisa menjalankan layanan jaringan inti di Linux — DNS, DHCP, reverse proxy/LB, NTP, RADIUS, dan routing daemon.
+> **Prasyarat:** `13-linux-networking/01`-`03`, `06-aplikasi/*`
+> **Tujuan:** Anda bisa menjalankan layanan jaringan inti di Linux: DNS, DHCP, reverse proxy/LB, NTP, RADIUS, dan routing daemon.
 
 > > [!NOTE]
-> > Ini adalah tahap **profesional (P)**. Layanan-layanan ini menggantikan appliance mahal dengan software gratis di atas Linux — pendekatan yang mendominasi cloud dan infrastruktur modern.
+> > Ini adalah tahap **profesional (P)**. Layanan-layanan ini menggantikan appliance mahal dengan software gratis di atas Linux, pendekatan yang mendominasi cloud dan infrastruktur modern.
 
 ---
 
@@ -64,7 +64,7 @@ $ sudo unbound-control stats_noreset
 ```
 
 > [!WARNING]
-> **`access-control` yang membatasi sumber adalah WAJIB** — open resolver dipakai untuk DNS amplification attack. Sama seperti kesalahan `allow-remote-requests` di MikroTik.
+> **`access-control` yang membatasi sumber adalah WAJIB**, karena open resolver dipakai untuk DNS amplification attack. Ini sama dengan kesalahan `allow-remote-requests` di MikroTik.
 
 ### dnsmasq: DNS + DHCP + TFTP ringan (SOHO)
 
@@ -94,13 +94,13 @@ dhcp-host=00:11:22:33:44:55,192.168.1.50,nas,infinite
 ```
 
 > [!TIP]
-> **dnsmasq sangat populer di router rumahan dan Raspberry Pi** — satu proses menangani DNS, DHCP, dan TFTP dengan konfigurasi minimal. **Pi-hole** dibangun di atasnya untuk ad-blocking berbasis DNS.
+> **dnsmasq sangat populer di router rumahan dan Raspberry Pi:** satu proses menangani DNS, DHCP, dan TFTP dengan konfigurasi minimal. **Pi-hole** dibangun di atasnya untuk ad-blocking berbasis DNS.
 
 ---
 
 ## 2. DHCP Server: ISC Kea
 
-ISC DHCP klasik sudah EOL — **Kea** adalah penggantinya. (Ringkasan dari `06-aplikasi/02`.)
+ISC DHCP klasik sudah EOL, dan **Kea** adalah penggantinya. (Ringkasan dari `06-aplikasi/02`.)
 
 `/etc/kea/kea-dhcp4.conf`:
 ```json
@@ -132,7 +132,7 @@ $ sudo systemctl enable --now kea-dhcp4-server
 ```
 
 > [!TIP]
-> **Kea mendukung backend database (MySQL/PostgreSQL)** untuk lease — memungkinkan HA dan skala besar. Ini keunggulan besar untuk ISP dan enterprise.
+> **Kea mendukung backend database (MySQL/PostgreSQL)** untuk lease, sehingga memungkinkan HA dan skala besar. Ini keunggulan besar untuk ISP dan enterprise.
 
 ---
 
@@ -214,10 +214,10 @@ $ echo "show stat" | sudo socat stdio /run/haproxy/admin.sock
 ```
 
 > [!TIP]
-> **HAProxy unggul dalam health check dan reload tanpa downtime.** `reload` memuat konfigurasi baru sambil menyelesaikan koneksi lama — penting untuk zero-downtime deployment.
+> **HAProxy unggul dalam health check dan reload tanpa downtime.** `reload` memuat konfigurasi baru sambil menyelesaikan koneksi lama, yang penting untuk zero-downtime deployment.
 
 > [!WARNING]
-> **Health check L7 (`option httpchk`) sangat penting** — server yang menjawab TCP tetapi aplikasinya mati akan tetap menerima trafik kalau hanya cek L4. Lihat `06-aplikasi/03`.
+> **Pakai health check L7 (`option httpchk`).** Server yang menjawab TCP tetapi aplikasinya mati akan tetap menerima trafik kalau hanya cek L4. Lihat `06-aplikasi/03`.
 
 ### keepalived: VIP dan failover (VRRP)
 
@@ -242,7 +242,7 @@ vrrp_script chk_haproxy {
 ```
 
 > [!TIP]
-> **keepalived + HAProxy = load balancer HA** — VIP berpindah ke node cadangan kalau node utama atau HAProxy-nya mati. Setara VRRP + FHRP di dunia appliance.
+> **keepalived + HAProxy = load balancer HA.** VIP berpindah ke node cadangan kalau node utama atau HAProxy-nya mati. Setara VRRP + FHRP di dunia appliance.
 
 ---
 
@@ -314,7 +314,7 @@ $ sudo systemctl enable --now freeradius
 ```
 
 > [!TIP]
-> **`freeradius -X` (mode debug) menampilkan setiap langkah autentikasi** — alat troubleshooting AAA yang tak ternilai. Selalu jalankan ini saat mengonfigurasi 802.1X baru.
+> **`freeradius -X` (mode debug) menampilkan setiap langkah autentikasi**, sehingga menjadi alat utama troubleshooting AAA. Selalu jalankan ini saat mengonfigurasi 802.1X baru.
 
 **Integrasi umum:**
 ```
@@ -327,19 +327,19 @@ FreeRADIUS + Google Authenticator → MFA
 
 ## 6. Routing Daemon: FRRouting (FRR)
 
-Menjalankan **OSPF, BGP, IS-IS, RIP, PIM** di Linux — menjadikan Linux router penuh. Fork dari Quagga, dipakai di banyak produk jaringan (Cumulus/NVIDIA, SONiC, VyOS memakai FRR atau turunannya).
+FRR menjalankan **OSPF, BGP, IS-IS, RIP, PIM** di Linux dan menjadikan Linux router penuh. FRR adalah fork dari Quagga dan dipakai di banyak produk jaringan (Cumulus/NVIDIA, SONiC, VyOS memakai FRR atau turunannya).
 
 ```bash
 $ sudo apt install frr frr-pythontools
 ```
 
-`/etc/frr/daemons` — aktifkan daemon yang dipakai:
+Di `/etc/frr/daemons`, aktifkan daemon yang dipakai:
 ```
 ospfd=yes
 bgpd=yes
 ```
 
-Konfigurasi (mode vtysh — mirip Cisco IOS!):
+Konfigurasi (mode vtysh, mirip Cisco IOS!):
 ```bash
 $ sudo vtysh
 
@@ -362,10 +362,10 @@ router# show ip route
 ```
 
 > [!TIP]
-> **FRR memakai CLI yang hampir identik dengan Cisco IOS** — kalau Anda menguasai OSPF/BGP di Cisco, Anda bisa langsung memakai FRR. Ini menjadikan Linux router yang serius untuk data center (BGP unnumbered di spine-leaf), lab, dan edge.
+> **FRR memakai CLI yang hampir identik dengan Cisco IOS.** Kalau Anda menguasai OSPF/BGP di Cisco, Anda bisa langsung memakai FRR. Ini menjadikan Linux router yang serius untuk data center (BGP unnumbered di spine-leaf), lab, dan edge.
 
 > [!WARNING]
-> **Jangan lupa `sudo sysctl -w net.ipv4.ip_forward=1`** — FRR menghitung rute, tetapi kernel yang meneruskan paket.
+> **Jangan lupa `sudo sysctl -w net.ipv4.ip_forward=1`.** FRR menghitung rute, tetapi kernel yang meneruskan paket.
 
 ### BGP unnumbered dengan FRR (data center)
 
@@ -422,7 +422,7 @@ Komponen:
 ```
 
 > [!TIP]
-> **Ini persis yang dilakukan distribusi router seperti VyOS, OPNsense, dan pfSense** — mereka mengemas komponen-komponen ini dengan antarmuka manajemen terpadu. VyOS memakai CLI mirip Junos; OPNsense/pfSense memakai GUI web dan berbasis FreeBSD (bukan Linux, tetapi konsepnya sama).
+> **Ini persis yang dilakukan distribusi router seperti VyOS, OPNsense, dan pfSense:** mereka mengemas komponen-komponen ini dengan antarmuka manajemen terpadu. VyOS memakai CLI mirip Junos; OPNsense/pfSense memakai GUI web dan berbasis FreeBSD (bukan Linux, tetapi konsepnya sama).
 
 ### Distribusi router siap pakai
 
@@ -434,7 +434,7 @@ Komponen:
 | **OpenWrt** | Linux minimal | GUI (LuCI) + CLI | Router rumahan, embedded, IoT gateway |
 
 > [!TIP]
-> **OpenWrt** menjadikan router rumahan murah menjadi perangkat yang sangat mampu (SQM/CAKE untuk bufferbloat, WireGuard, VLAN, dll) — alternatif menarik untuk RouterOS pada perangkat non-MikroTik.
+> **OpenWrt** mengubah router rumahan murah menjadi perangkat yang sangat mampu (SQM/CAKE untuk bufferbloat, WireGuard, VLAN, dll), dan menjadi alternatif menarik untuk RouterOS pada perangkat non-MikroTik.
 
 ---
 
@@ -479,7 +479,7 @@ $ systemctl list-dependencies unbound
 ```
 
 > [!WARNING]
-> **Layanan yang bind ke `0.0.0.0` terekspos ke semua interface** — termasuk WAN. Periksa dengan `ss -tulnp` dan bind ke alamat internal saja kalau layanan tidak seharusnya publik. Ini kesalahan yang sangat umum (mis. database yang tidak sengaja terekspos internet).
+> **Layanan yang bind ke `0.0.0.0` terekspos ke semua interface**, termasuk WAN. Periksa dengan `ss -tulnp` dan bind ke alamat internal saja kalau layanan tidak seharusnya publik. Ini kesalahan yang sangat umum (mis. database yang tidak sengaja terekspos internet).
 
 ```
 # systemd hardening (contoh unit override)
@@ -495,12 +495,12 @@ CapabilityBoundingSet=CAP_NET_BIND_SERVICE
 
 ## 11. Ringkasan
 
-- Linux menggantikan appliance mahal dengan layanan gratis — pendekatan yang mendominasi cloud dan infrastruktur modern.
+- Linux menggantikan appliance mahal dengan layanan gratis, pendekatan yang mendominasi cloud dan infrastruktur modern.
 - **DNS**: **Unbound** (validating recursive, batasi `access-control`!), **dnsmasq** (DNS+DHCP+TFTP ringan, dasar Pi-hole).
 - **DHCP**: **Kea** (pengganti ISC DHCP EOL, mendukung database backend untuk HA).
 - **Reverse proxy/LB**: **nginx** dan **HAProxy** (health check L7 penting, reload tanpa downtime); **keepalived** untuk VIP/failover.
 - **NTP**: **chrony** (lebih akurat & cepat konvergen daripada ntpd). Waktu salah merusak TLS/Kerberos/log.
-- **RADIUS**: **FreeRADIUS** — jalankan `freeradius -X` untuk debug 802.1X.
+- **RADIUS**: **FreeRADIUS**, dengan `freeradius -X` untuk debug 802.1X.
 - **Routing**: **FRR** (OSPF/BGP/IS-IS dengan CLI mirip Cisco) menjadikan Linux router penuh; jangan lupa `ip_forward=1`.
 - Distribusi router siap pakai: **VyOS** (CLI, otomasi), **OPNsense/pfSense** (GUI, firewall UTM), **OpenWrt** (router rumahan).
 - systemd: **`enable --now`** agar layanan otomatis setelah reboot; `journalctl -u` untuk log.
@@ -523,32 +523,32 @@ CapabilityBoundingSet=CAP_NET_BIND_SERVICE
 <details>
 <summary>Jawaban</summary>
 
-1. Karena resolver DNS yang menerima query dari **sumber mana pun (open resolver)** akan disalahgunakan untuk **DNS amplification attack**: penyerang mengirim query kecil dengan alamat sumber palsu (= korban), dan resolver Anda mengirim respons besar ke korban. Ini membuat server Anda menjadi senjata serangan, memakan bandwidth Anda, dan bisa membuat IP Anda masuk daftar hitam.
-   `access-control` yang membatasi ke subnet internal (`allow`) dan menolak sisanya (`refuse`) memastikan resolver hanya melayani klien Anda sendiri. Ini persis analog dengan kesalahan `allow-remote-requests=yes` tanpa filter WAN di MikroTik — salah satu miskonfigurasi paling umum yang menjadikan perangkat bagian dari serangan.
+1. Karena resolver DNS yang menerima query dari **sumber mana pun (open resolver)** akan disalahgunakan untuk **DNS amplification attack**: penyerang mengirim query kecil dengan alamat sumber palsu (= korban), dan resolver Anda mengirim respons besar ke korban. Ini membuat server Anda menjadi alat serangan, memakan bandwidth Anda, dan bisa membuat IP Anda masuk daftar hitam.
+   `access-control` yang membatasi ke subnet internal (`allow`) dan menolak sisanya (`refuse`) memastikan resolver hanya melayani klien Anda sendiri. Ini persis analog dengan kesalahan `allow-remote-requests=yes` tanpa filter WAN di MikroTik, salah satu miskonfigurasi paling umum yang menjadikan perangkat bagian dari serangan.
 
-2. HAProxy memberi kontrol yang jauh lebih baik: (a) **Health check yang sesungguhnya** — HAProxy memeriksa apakah backend benar-benar melayani (L4 atau L7 seperti `GET /healthz`) dan **otomatis mengeluarkan server yang mati** dari rotasi; DNS round-robin memberikan alamat server yang mati begitu saja karena tidak tahu statusnya. (b) **Algoritma pintar** — least connections, weighted, dsb, berdasarkan beban nyata; DNS hanya merotasi urutan buta. (c) **Session affinity/sticky** yang benar. (d) **Distribusi yang dapat diandalkan** — DNS terpengaruh caching di resolver dan klien, sehingga distribusinya tidak merata dan lambat berubah. (e) Fitur L7: TLS termination, header rewriting, routing berbasis path, rate limiting, dan **reload tanpa downtime**. DNS round-robin cocok hanya untuk distribusi geografis kasar (bersama GeoDNS), bukan load balancing yang serius.
+2. HAProxy memberi kontrol yang jauh lebih baik: (a) **Health check yang sesungguhnya**: HAProxy memeriksa apakah backend benar-benar melayani (L4 atau L7 seperti `GET /healthz`) dan otomatis mengeluarkan server yang mati dari rotasi, sedangkan DNS round-robin memberikan alamat server yang mati begitu saja karena tidak tahu statusnya. (b) **Algoritma pintar**: least connections, weighted, dsb, berdasarkan beban nyata; DNS hanya merotasi urutan buta. (c) **Session affinity/sticky** yang benar. (d) **Distribusi yang dapat diandalkan**: DNS terpengaruh caching di resolver dan klien, sehingga distribusinya tidak merata dan lambat berubah. (e) Fitur L7: TLS termination, header rewriting, routing berbasis path, rate limiting, dan reload tanpa downtime. DNS round-robin cocok hanya untuk distribusi geografis kasar (bersama GeoDNS), bukan load balancing yang serius.
 
-3. Dengan **keepalived** yang mengimplementasikan **VRRP**. Dua (atau lebih) node menjalankan HAProxy/nginx, dan keepalived mengelola **Virtual IP (VIP)** yang menjadi alamat yang dituju klien. Node MASTER memegang VIP; kalau node MASTER mati **atau proses HAProxy-nya mati** (dideteksi lewat `track_script`), VIP **otomatis berpindah** ke node BACKUP lewat gratuitous ARP. Klien tidak menyadari perpindahan karena alamat yang mereka tuju tetap sama. Ini setara VRRP/HSRP di dunia appliance — dan memang memakai protokol VRRP yang sama. Untuk skala lebih besar, VIP bisa dikombinasikan dengan ECMP/anycast.
+3. Dengan **keepalived** yang mengimplementasikan **VRRP**. Dua (atau lebih) node menjalankan HAProxy/nginx, dan keepalived mengelola **Virtual IP (VIP)** yang menjadi alamat yang dituju klien. Node MASTER memegang VIP; kalau node MASTER mati atau proses HAProxy-nya mati (dideteksi lewat `track_script`), VIP otomatis berpindah ke node BACKUP lewat gratuitous ARP. Klien tidak menyadari perpindahan karena alamat yang mereka tuju tetap sama. Ini setara VRRP/HSRP di dunia appliance, dan memang memakai protokol VRRP yang sama. Untuk skala lebih besar, VIP bisa dikombinasikan dengan ECMP/anycast.
 
-4. **`sudo freeradius -X`** — menjalankan FreeRADIUS dalam **mode debug foreground** yang menampilkan **setiap langkah** proses autentikasi secara real-time: request yang masuk dari NAS (switch/AP), atribut yang dikirim, metode EAP yang dinegosiasikan, pencarian ke modul (users file, LDAP, SQL), keputusan, dan atribut balasan (VLAN, dACL). Kalau autentikasi gagal, Anda melihat **persis di langkah mana dan mengapa** — shared secret salah, user tidak ditemukan, sertifikat bermasalah, atau metode EAP tidak cocok. Ini alat troubleshooting AAA yang tak tergantikan; selalu jalankan saat menyiapkan 802.1X baru. Lengkapi dengan `radtest` untuk uji cepat dan log di sisi NAS (`debug radius` di Cisco, `/log print` di MikroTik).
+4. **`sudo freeradius -X`**, yang menjalankan FreeRADIUS dalam **mode debug foreground** dan menampilkan setiap langkah proses autentikasi secara real-time: request yang masuk dari NAS (switch/AP), atribut yang dikirim, metode EAP yang dinegosiasikan, pencarian ke modul (users file, LDAP, SQL), keputusan, dan atribut balasan (VLAN, dACL). Kalau autentikasi gagal, Anda melihat persis di langkah mana dan mengapa: shared secret salah, user tidak ditemukan, sertifikat bermasalah, atau metode EAP tidak cocok. Selalu jalankan perintah ini saat menyiapkan 802.1X baru. Lengkapi dengan `radtest` untuk uji cepat dan log di sisi NAS (`debug radius` di Cisco, `/log print` di MikroTik).
 
-5. Karena **FRR memakai CLI yang hampir identik dengan Cisco IOS** — masuk dengan `vtysh`, lalu `configure terminal`, `router ospf`, `network X area 0`, `show ip ospf neighbor`, `show ip bgp summary`, `write memory` — semua terasa seperti IOS. Konsep OSPF (area, cost, LSA), BGP (neighbor, AS_PATH, filter), dan verifikasinya sama persis. Artinya keahlian routing yang sudah dikuasai di Cisco **langsung terpakai** di Linux, tanpa mempelajari sintaks baru.
+5. Karena **FRR memakai CLI yang hampir identik dengan Cisco IOS**. Anda masuk dengan `vtysh`, lalu `configure terminal`, `router ospf`, `network X area 0`, `show ip ospf neighbor`, `show ip bgp summary`, `write memory`, dan semuanya terasa seperti IOS. Konsep OSPF (area, cost, LSA), BGP (neighbor, AS_PATH, filter), dan verifikasinya sama persis. Artinya keahlian routing yang sudah dikuasai di Cisco langsung terpakai di Linux, tanpa mempelajari sintaks baru.
    Ini membuat Linux menjadi **router yang serius dan gratis** untuk: lab (Containerlab memakai FRR), data center (BGP unnumbered di spine-leaf), router edge, dan cloud (route server, VPN gateway). Banyak produk jaringan komersial (NVIDIA Cumulus, SONiC, VyOS) memakai FRR di bawahnya.
 
 6. Layanan di-**`start`** tetapi tidak di-**`enable`**. `systemctl start` hanya menjalankan layanan **saat ini**; ia tidak mendaftarkannya untuk berjalan otomatis saat boot. Setelah reboot, layanan tidak dimulai.
    **Perbaikan:** `sudo systemctl enable <layanan>` (mendaftarkan untuk boot) atau `sudo systemctl enable --now <layanan>` (mendaftarkan **dan** menjalankan sekarang sekaligus). Verifikasi dengan `systemctl is-enabled <layanan>`. Kesalahan lain yang mungkin: layanan bergantung pada layanan/mount lain yang belum siap saat boot (periksa `systemctl list-dependencies` dan `Requires=`/`After=` di unit file), atau konfigurasi jaringan belum siap (gunakan `After=network-online.target`).
 
-7. **Penyebab umum:** layanan (database) dikonfigurasi untuk **bind ke `0.0.0.0`** (semua interface) alih-alih ke alamat internal atau `127.0.0.1`, **dan** firewall tidak memblokir portnya dari WAN, **dan/atau** server punya alamat publik langsung. Banyak database (MongoDB, Redis, Elasticsearch, MySQL) di masa lalu bahkan default ke bind semua interface tanpa autentikasi — sumber banyak kebocoran data besar.
+7. **Penyebab umum:** layanan (database) dikonfigurasi untuk **bind ke `0.0.0.0`** (semua interface) alih-alih ke alamat internal atau `127.0.0.1`, dan firewall tidak memblokir portnya dari WAN, dan/atau server punya alamat publik langsung. Banyak database (MongoDB, Redis, Elasticsearch, MySQL) di masa lalu bahkan default ke bind semua interface tanpa autentikasi, dan inilah sumber banyak kebocoran data besar.
    **Memeriksa di seluruh server:**
    ```
    ss -tulnp                    # di setiap server: apa yang listening di 0.0.0.0
    ss -tulnp | grep -v 127.0.0.1   # yang TIDAK hanya loopback
    ```
-   Untuk audit dari luar: pindai rentang IP publik Anda sendiri dengan nmap dan cek **Shodan** (`org:"..."`) — sering mengungkap layanan terekspos yang tidak disadari.
+   Untuk audit dari luar: pindai rentang IP publik Anda sendiri dengan nmap dan cek **Shodan** (`org:"..."`). Keduanya sering mengungkap layanan terekspos yang tidak disadari.
    **Perbaikan:** bind layanan ke `127.0.0.1` atau alamat internal saja (di konfigurasi aplikasi), aktifkan autentikasi, terapkan firewall default-deny, dan untuk cloud pakai security group yang ketat. Otomasi pemeriksaan ini dalam pipeline (mis. dengan skrip yang menjalankan `ss` di semua host).
 
-8. Pilih **VyOS/OpenWrt** ketika: (a) Anda ingin **menghindari vendor lock-in** dan memakai perangkat keras generik (server x86, Raspberry Pi, router yang didukung OpenWrt); (b) **otomasi dan infrastructure-as-code** adalah prioritas — VyOS punya API dan konfigurasi berbasis teks yang bagus untuk Git/CI; (c) Anda menjalankan di **cloud/VM** (VyOS populer sebagai router virtual di AWS/Azure/GCP); (d) Anda ingin **CLI mirip Junos** (VyOS) atau ekosistem paket Linux terbuka; (e) untuk router rumahan/embedded, **OpenWrt** memberi SQM/CAKE (anti-bufferbloat) dan fleksibilitas tinggi pada perangkat murah.
-   Pilih **MikroTik RouterOS** ketika: (a) Anda butuh **perangkat keras terintegrasi murah** dengan port dan radio bawaan (hEX, CCR, wireless) — ekosistem hardware+software yang matang; (b) Anda bekerja di **pasar ISP kecil/RT-RW Net Indonesia** di mana MikroTik dominan dan keahliannya banyak tersedia; (c) Anda ingin **WinBox GUI** dan fitur seperti hotspot/PPPoE server yang siap pakai; (d) tim Anda sudah menguasai RouterOS. Dalam praktik, banyak lingkungan memakai **keduanya** untuk peran yang berbeda.
+8. Pilih **VyOS/OpenWrt** ketika: (a) Anda ingin **menghindari vendor lock-in** dan memakai perangkat keras generik (server x86, Raspberry Pi, router yang didukung OpenWrt); (b) **otomasi dan infrastructure-as-code** adalah prioritas, karena VyOS punya API dan konfigurasi berbasis teks yang bagus untuk Git/CI; (c) Anda menjalankan di **cloud/VM** (VyOS populer sebagai router virtual di AWS/Azure/GCP); (d) Anda ingin **CLI mirip Junos** (VyOS) atau ekosistem paket Linux terbuka; (e) untuk router rumahan/embedded, **OpenWrt** memberi SQM/CAKE (anti-bufferbloat) dan fleksibilitas tinggi pada perangkat murah.
+   Pilih **MikroTik RouterOS** ketika: (a) Anda butuh **perangkat keras terintegrasi murah** dengan port dan radio bawaan (hEX, CCR, wireless), dalam ekosistem hardware+software yang matang; (b) Anda bekerja di **pasar ISP kecil/RT-RW Net Indonesia** di mana MikroTik dominan dan keahliannya banyak tersedia; (c) Anda ingin **WinBox GUI** dan fitur seperti hotspot/PPPoE server yang siap pakai; (d) tim Anda sudah menguasai RouterOS. Dalam praktik, banyak lingkungan memakai **keduanya** untuk peran yang berbeda.
 
 </details>
 
@@ -556,14 +556,14 @@ CapabilityBoundingSet=CAP_NET_BIND_SERVICE
 
 ## 13. Sumber
 
-- Unbound — https://nlnetlabs.nl/documentation/unbound/
-- ISC Kea — https://kea.readthedocs.io/
-- nginx — https://nginx.org/en/docs/ · HAProxy — https://docs.haproxy.org/
-- keepalived — https://keepalived.readthedocs.io/
-- FreeRADIUS — https://freeradius.org/documentation/
-- FRRouting — https://docs.frrouting.org/
-- VyOS — https://docs.vyos.io/ · OpenWrt — https://openwrt.org/docs/
-- chrony — https://chrony-project.org/documentation.html
+- Unbound: https://nlnetlabs.nl/documentation/unbound/
+- ISC Kea: https://kea.readthedocs.io/
+- nginx: https://nginx.org/en/docs/ · HAProxy: https://docs.haproxy.org/
+- keepalived: https://keepalived.readthedocs.io/
+- FreeRADIUS: https://freeradius.org/documentation/
+- FRRouting: https://docs.frrouting.org/
+- VyOS: https://docs.vyos.io/ · OpenWrt: https://openwrt.org/docs/
+- chrony: https://chrony-project.org/documentation.html
 
 ---
 
