@@ -98,7 +98,7 @@ Istilah-istilah ini akan muncul di setiap modul. Pahami sekarang, bukan nanti.
 
 ## 5. Dua Model Komunikasi
 
-### 5.1 Klien–Server
+### 5.1 Klien-Server
 
 Satu pihak (**server**) menyediakan layanan; pihak lain (**klien**) memintanya.
 

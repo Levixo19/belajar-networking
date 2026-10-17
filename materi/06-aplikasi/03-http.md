@@ -119,7 +119,7 @@ ETag: "a1b2c3"
 - Satu koneksi TCP per request — sangat boros
 - Tidak ada header `Host` → satu IP hanya bisa melayani satu situs
 
-### HTTP/1.1 (1997, diperbarui RFC 9110–9112 pada 2022)
+### HTTP/1.1 (1997, diperbarui RFC 9110-9112 pada 2022)
 - **`Host` wajib** → virtual hosting (banyak situs di satu IP)
 - **Keep-alive** default → koneksi dipakai ulang
 - **Chunked transfer encoding** → streaming

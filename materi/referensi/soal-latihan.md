@@ -4,7 +4,7 @@
 
 ---
 
-## Bagian A: Fondasi & Model (Tahap 0–1)
+## Bagian A: Fondasi & Model (Tahap 0-1)
 
 **A1.** Konversikan `192` dan `172` ke biner 8-bit. Berapa `11000000` dalam desimal?
 
@@ -24,7 +24,7 @@
 
 ---
 
-## Bagian B: Layer Fisik & Data Link (Tahap 2–3)
+## Bagian B: Layer Fisik & Data Link (Tahap 2-3)
 
 **B1.** PC terhubung ke switch tetapi lambat & banyak error. `show interface` menunjukkan banyak "late collisions". Apa penyebab paling mungkin?
 
@@ -68,7 +68,7 @@
 
 ---
 
-## Bagian D: Transport & Aplikasi (Tahap 5–6)
+## Bagian D: Transport & Aplikasi (Tahap 5-6)
 
 **D1.** Kapan memilih UDP daripada TCP? Beri dua contoh aplikasi UDP.
 
@@ -136,7 +136,7 @@
 
 ---
 
-## Bagian G: Wireless, WAN, QoS (Tahap 10–11)
+## Bagian G: Wireless, WAN, QoS (Tahap 10-11)
 
 **G1.** Kenapa di 2.4 GHz hanya kanal 1, 6, 11 yang direkomendasikan?
 
@@ -152,7 +152,7 @@
 
 ---
 
-## Bagian H: Otomasi, DC, Cloud (Tahap 15–16)
+## Bagian H: Otomasi, DC, Cloud (Tahap 15-16)
 
 **H1.** Apa arti "idempoten" dalam otomasi, dan kenapa penting?
 

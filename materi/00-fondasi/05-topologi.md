@@ -181,7 +181,7 @@ Kombinasi — inilah kenyataan hampir semua jaringan:
 
 ## 3. Topologi Arsitektural (Yang Diuji di CCNA)
 
-### 3.1 Three-Tier (Core: Distribution – Access)
+### 3.1 Three-Tier (Core, Distribution, Access)
 
 ```
    ┌──────────────── CORE ────────────────┐
