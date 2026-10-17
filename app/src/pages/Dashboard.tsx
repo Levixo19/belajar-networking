@@ -96,7 +96,7 @@ export default function Dashboard() {
           <div className="mt-9 flex flex-wrap items-center gap-x-7 gap-y-4">
             {/* Satu-satunya tombol berlatar aksen di layar ini. */}
             <Link to={tautan(lanjut)} className="btn btn-primary btn-lg group">
-              {baru ? `Mulai modul ${lanjut.num}` : `Lanjutkan modul ${lanjut.num}`} <span className="btn-bubble"><IconArrowRight size={16} /></span>
+              {baru ? `Mulai modul ${lanjut.num}` : `Lanjutkan modul ${lanjut.num}`}
             </Link>
             <a href="#rasi" onClick={scrollToId('rasi')} className="link-arrow">Lihat rasi {tahapLanjut?.title}</a>
           </div>
@@ -157,7 +157,7 @@ export default function Dashboard() {
               Satu bintang lagi hari ini.
             </h2>
             <Link to={tautan(lanjut)} className="btn btn-ink btn-lg group shrink-0">
-              Buka modul {lanjut.num} <span className="btn-bubble"><IconArrowRight size={16} /></span>
+              Buka modul {lanjut.num}
             </Link>
           </div>
           <div className="mt-24 grid gap-8 border-t border-app pt-8 text-[13px] text-faint md:grid-cols-[1fr_auto]">

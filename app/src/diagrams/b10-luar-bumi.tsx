@@ -78,15 +78,15 @@ export function DgLbJalurStarlink() {
       <T x={375} y={100} cls="dg-note" size={11}>3 laser per satelit, hingga 200 Gbps</T>
 
       <Box x={40} y={230} w={190} h={50} label="Terminal pengguna" sub="antena phased array" tone="n" />
-      <Arrow d="M135 230 L230 80" tone="p" label="link pengguna (Ku-band)" lx={92} ly={160} />
+      <Arrow d="M135 230 L230 80" tone="p" both label="link pengguna (Ku-band)" lx={92} ly={160} />
 
-      <Box x={450} y={230} w={150} h={50} label="Gateway" sub="antena besar di darat" tone="n" />
-      <Arrow d="M515 80 L522 228" tone="p" label="link gateway" lx={580} ly={160} />
+      <Box x={440} y={230} w={130} h={50} label="Gateway" sub="antena besar" tone="n" />
+      <Arrow d="M515 80 L507 228" tone="p" both label="link gateway" lx={572} ly={160} />
 
-      <Box x={630} y={230} w={110} h={50} label="PoP" sub="ke internet" tone="ok" />
-      <Arrow d="M600 255 H628" tone="ok" />
-      <Box x={765} y={230} w={75} h={50} label="Internet" tone="n" fs={12} />
-      <Arrow d="M740 255 H763" tone="ok" />
+      <Box x={620} y={230} w={100} h={50} label="PoP" sub="ke internet" tone="ok" />
+      <Arrow d="M572 255 H618" tone="ok" both />
+      <Box x={770} y={230} w={70} h={50} label="Internet" tone="n" fs={12} />
+      <Arrow d="M722 255 H768" tone="ok" both />
 
       <path d="M20 300 H840" className="dg-lnk thin" />
       <T x={840} y={318} anchor="end" cls="dg-note" size={10.5}>permukaan Bumi</T>
@@ -151,11 +151,11 @@ export function DgLbDsnCakupan() {
   const kompleks = [
     { nama: 'Goldstone', deg: 90, cls: 'dg-lnk v10' },
     { nama: 'Madrid', deg: 210, cls: 'dg-lnk v20' },
-    { nama: 'Canberra', deg: 330, cls: 'dg-lnk fwd' },
+    { nama: 'Canberra', deg: 330, cls: 'dg-ray r2' },
   ]
   return (
     <Fig title="NASA Deep Space Network: tiga kompleks, sekitar 120 derajat bujur" sub="Saat Bumi berputar, setiap kompleks menjaga sepertiga langit; wahana selalu terlihat dari salah satunya" w={860} h={380}>
-      <circle cx={cx} cy={cy} r={90} className="dg-node" />
+      <circle cx={cx} cy={cy} r={90} className="dg-pdu" />
       <T x={cx} y={cy + 4} cls="dg-cap-in">Bumi</T>
       <T x={cx} y={cy + 22} cls="dg-note" size={10.5}>dari atas kutub utara</T>
       <Arrow d={`M${titik(60, 62).x.toFixed(1)} ${titik(60, 62).y.toFixed(1)} A62 62 0 0 0 ${titik(120, 62).x.toFixed(1)} ${titik(120, 62).y.toFixed(1)}`} tone="n" />
@@ -163,7 +163,7 @@ export function DgLbDsnCakupan() {
         // Label atas di antara Bumi dan busur; label bawah di luar busur, rata ke arah luar.
         const atas = k.deg === 90
         const s = titik(k.deg, 90), l = titik(k.deg, atas ? 112 : 150)
-        const anchor = atas ? 'middle' : (Math.cos((k.deg * Math.PI) / 180) < 0 ? 'end' : 'start')
+        const anchor: 'start' | 'middle' | 'end' = atas ? 'middle' : (Math.cos((k.deg * Math.PI) / 180) < 0 ? 'end' : 'start')
         return (
           <g key={k.nama}>
             <path d={busur(k.deg - 60, k.deg + 60)} className={k.cls} />
@@ -199,7 +199,7 @@ export function DgLbBundleDtn() {
     { c: 216.5, l: 'UHF' }, { c: 429.5, l: 'X-band' }, { c: 642.5, l: 'darat' },
   ]
   return (
-    <Fig title="DTN: bundle disimpan sampai kontak berikutnya" sub="Skenario DTN dengan rover dan orbiter; setiap ruas hanya perlu tersambung pada gilirannya" w={860} h={380}>
+    <Fig title="DTN: bundle disimpan sampai kontak berikutnya" sub="Skenario DTN dengan rover dan orbiter, custody transfer opsional; setiap ruas hanya perlu tersambung pada gilirannya" w={860} h={380}>
       {node.map(n => <Box key={n.l} x={n.x} y={24} w={180} h={52} label={n.l} sub={n.s} tone={n.tone} fs={12.5} />)}
       {hop.map(h => (
         <g key={h.l}>

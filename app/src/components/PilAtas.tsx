@@ -21,7 +21,7 @@ const TUJUAN = [
 ] as const
 
 /**
- * Cangkang laptop: SATU pil kaca melayang di tengah atas berisi semua tujuan, dan
+ * Cangkang laptop: SATU panel navigasi melayang di tengah atas berisi semua tujuan, dan
  * satu kanvas lapang di bawahnya. Bentuk ini menggantikan bilah atas + menu burger +
  * tab bar bawah (aplikasi ini dipakai hanya di laptop).
  *
@@ -67,7 +67,7 @@ export default function PilAtas({ onSearch }: { onSearch: () => void }) {
 
   return (
     <header className="pil-wadah">
-      <nav ref={pil} className="pil glass" aria-label="Utama">
+      <nav ref={pil} className="pil" aria-label="Utama">
         <span aria-hidden="true" className="pil-penanda" style={penanda ? { transform: `translateX(${penanda.x}px)`, width: penanda.w } : { opacity: 0 }} />
         <Link to="/" className="pil-logo" aria-label="Belajar Networking, ke dasbor"><Logo size={22} /></Link>
 

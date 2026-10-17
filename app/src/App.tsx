@@ -5,14 +5,11 @@ import CommandPalette from './components/CommandPalette'
 import Logo from './components/Logo'
 import Kursor from './components/Kursor'
 import { useStore } from './lib/store'
-import { installSpotlight } from './lib/spotlight'
 
 export default function App() {
   const [paletteOpen, setPaletteOpen] = useState(false)
   const store = useStore()
   const loc = useLocation()
-
-  useEffect(() => installSpotlight(), [])
 
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
@@ -31,7 +28,6 @@ export default function App() {
     <div className="relative min-h-[100dvh] text-default">
       <a href="#konten" className="skip-link">Lewati ke konten</a>
       <div className="ambient" aria-hidden="true" />
-      <div className="grain" aria-hidden="true" />
       <PilAtas onSearch={() => setPaletteOpen(true)} />
       {/* Dasbor membentangkan hero sinematiknya di bawah pil; layar lain mulai di bawahnya. */}
       <main id="konten" className={`mx-auto w-full max-w-full overflow-x-clip ${loc.pathname === '/' ? 'tanpa-jarak-atas' : ''}`}>

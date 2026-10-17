@@ -114,7 +114,7 @@
   .pf-kartu-meta { margin-top: 0.35rem; font-size: 0.8rem; color: var(--text-faint); }
 
   /* Di peta penuh kartu mengikuti lensa (transform ditulis JS tiap frame). */
-  .pf-penuh .pf-kartu { top: 0; bottom: auto; pointer-events: none; will-change: transform; }
+  body > .pf-kartu { position: fixed; z-index: 45; left: 0; top: 0; bottom: auto; pointer-events: none; will-change: transform; }
 
   .tanda-bintang { flex: none; }
   .tanda-bintang .tb-inti { fill: var(--pf-bintang-redup); }
@@ -189,7 +189,7 @@
   }
   .langit-hero-isi > * { pointer-events: auto; }
   .log-waktu { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-faint); letter-spacing: 0.01em; }
-  .langit-judul { margin-top: 1.1rem; max-width: 15ch; font-size: clamp(2.5rem, 4.3vw, 4.3rem); line-height: 1.03; font-weight: 600; letter-spacing: -0.045em; }
+  .langit-judul { margin-top: 1.1rem; max-width: 15ch; font-size: clamp(2.4rem, 4.1vw, 4.1rem); line-height: 1.04; font-weight: 600; font-stretch: var(--lebar-layar); letter-spacing: -0.035em; }
   .langit-lead { margin-top: 1.4rem; max-width: 44ch; font-size: 1.1rem; line-height: 1.6; color: var(--text-muted); }
   .instrumen { display: flex; flex-wrap: wrap; gap: 0.5rem 2.5rem; margin: 3rem 0 0; padding-top: 1.1rem; border-top: 1px solid var(--border); max-width: 30rem; }
   .instrumen dt { font-size: 0.74rem; font-weight: 500; color: var(--text-faint); }
@@ -231,7 +231,7 @@
 @layer components {
   .kepala-halaman { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: center; gap: 3.5rem; }
   .kepala-halaman.tanpa-visual { grid-template-columns: minmax(0, 1fr); }
-  .kepala-judul { margin-top: 1rem; max-width: 16ch; font-size: clamp(2.3rem, 4.4vw, 3.6rem); font-weight: 600; line-height: 1.04; letter-spacing: -0.045em; }
+  .kepala-judul { margin-top: 1rem; max-width: 16ch; font-size: clamp(2.2rem, 4.2vw, 3.4rem); font-weight: 600; line-height: 1.05; font-stretch: var(--lebar-layar); letter-spacing: -0.035em; }
   .kepala-lead { margin-top: 1.25rem; max-width: 56ch; font-size: 1.05rem; line-height: 1.65; color: var(--text-muted); }
   .kepala-visual { min-width: 0; display: flex; justify-content: center; }
   .kepala-visual .pf-mini { width: min(100%, 360px); }

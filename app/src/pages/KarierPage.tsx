@@ -66,7 +66,6 @@ function PetaKarier() {
     <div className="overflow-x-hidden">
       <section className="mx-auto max-w-[1440px] px-4 pt-12 sm:px-6 md:pt-16 lg:px-8" aria-labelledby="judul-karier">
         <div className="fade-up max-w-3xl">
-          <span className="eyebrow mb-5">Ekosistem profesi jaringan</span>
           <h1 id="judul-karier" className="hero-title max-w-[16ch] scroll-mt-24">Peta {PROFESI.length} profesi di sekitar jaringan</h1>
           <p className="mt-6 max-w-[56ch] text-[17px] leading-relaxed text-muted">
             Tiap baris satu rumpun, tiap kolom satu jenjang. Arahkan kursor ke sebuah profesi untuk melihat ke mana ia naik
@@ -74,7 +73,7 @@ function PetaKarier() {
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
             <a href="#cocok" onClick={scrollToId('cocok')} className="btn btn-primary btn-lg group">
-              Cari yang cocok <span className="btn-bubble"><IconArrowRight size={16} /></span>
+              Cari yang cocok
             </a>
             {paling && ready.get(paling.id)!.pct > 0 && (
               <button onClick={() => select(paling.id)} className="link-arrow">

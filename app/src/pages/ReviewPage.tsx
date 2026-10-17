@@ -140,7 +140,6 @@ export default function ReviewPage() {
             <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3">
               <Link to={`/m/${encodeURI(modulPertama.id)}`} className="btn btn-ink">
                 Buka modul pertama
-                <span className="btn-bubble"><IconArrowRight size={15} /></span>
               </Link>
               <button onClick={() => setScope('all')} className="link-arrow">Pakai seluruh kurikulum</button>
             </div>
@@ -157,7 +156,6 @@ export default function ReviewPage() {
                 {total === 0 ? 'Tidak ada kartu untuk diulang' : (
                   <>
                     Mulai review {total} kartu
-                    <span className="btn-bubble"><IconArrowRight size={16} /></span>
                   </>
                 )}
               </button>

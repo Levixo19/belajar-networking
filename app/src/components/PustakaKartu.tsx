@@ -35,7 +35,7 @@ export default function PustakaKartu() {
             </dl>
           </div>
           <span className="inline-flex items-center gap-2 text-[14px] font-medium">
-            Buka Pustaka <span className="btn-bubble"><IconArrowRight size={16} /></span>
+            Buka Pustaka
           </span>
         </Link>
       </div>

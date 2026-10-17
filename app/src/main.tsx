@@ -11,8 +11,8 @@ import '@fontsource-variable/literata/opsz.css'
 import '@fontsource-variable/literata/opsz-italic.css'
 import '@fontsource-variable/geist'
 import '@fontsource-variable/jetbrains-mono'
-// Judul dan antarmuka (Fase 4). Prosa tetap Atkinson.
-import '@fontsource-variable/space-grotesk'
+// Judul dan antarmuka: Archivo (sumbu lebar 62-125%). Prosa tetap Atkinson.
+import '@fontsource-variable/archivo/wdth.css'
 // Label atlas (nama rasi, keterangan peta): EB Garamond, dipakai hemat.
 import '@fontsource-variable/eb-garamond'
 import '@fontsource-variable/eb-garamond/wght-italic.css'

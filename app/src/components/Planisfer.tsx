@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { createPortal } from 'react-dom'
 import { stages, stageOfModule, linearModules } from '../lib/content'
 import { bangunLangit, kotakRasi, bintangTerdekat, kutubKeXY, jariSpiral, type Bintang, type Langit } from '../lib/langit'
 import { gsap, useGSAP, MOTION_OK } from '../lib/motion'
@@ -110,8 +111,8 @@ export default function Planisfer({ progress, tuju, mode = 'penuh', sorot = null
     if (!halus) { p.x = p.tx; p.y = p.ty }
     let raf = 0, jalan = true
     // Skala dan posisi layar peta di-cache; diukur ulang saat ukuran atau gulir berubah.
-    let skala = 1, kiri = 0
-    const ukur = () => { const r = el.getBoundingClientRect(); skala = r.width / 1170; kiri = r.left }
+    let skala = 1, kiri = 0, atas = 0
+    const ukur = () => { const r = el.getBoundingClientRect(); skala = r.width / 1170; kiri = r.left; atas = r.top }
     ukur()
     const ro = new ResizeObserver(ukur)
     ro.observe(el)
@@ -120,11 +121,12 @@ export default function Planisfer({ progress, tuju, mode = 'penuh', sorot = null
       lensa.current?.setAttribute('transform', `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)})`)
       potong.current?.setAttribute('cx', p.x.toFixed(1)); potong.current?.setAttribute('cy', p.y.toFixed(1))
       // Kartu bintang menempel di samping lensa seperti label pada jendela bidik;
-      // pindah ke kiri lensa bila mendekati tepi kanan layar.
+      // pindah ke kiri lensa bila mendekati tepi kanan layar. Kartu hidup di body
+      // (portal, position: fixed) supaya tidak tertutup tirai teks hero.
       const k = kartu.current
       if (k) {
-        const cx = (p.x + 585) * skala, cy = (p.y + 585) * skala, jarak = LENSA * skala + 18
-        const keKanan = kiri + cx + jarak + k.offsetWidth < window.innerWidth - 24
+        const cx = kiri + (p.x + 585) * skala, cy = atas + (p.y + 585) * skala, jarak = LENSA * skala + 18
+        const keKanan = cx + jarak + k.offsetWidth < window.innerWidth - 24
         const x = keKanan ? cx + jarak : cx - jarak - k.offsetWidth
         k.style.transform = `translate3d(${x.toFixed(1)}px, ${(cy - 34).toFixed(1)}px, 0)`
       }
@@ -363,7 +365,7 @@ export default function Planisfer({ progress, tuju, mode = 'penuh', sorot = null
       </svg>
 
       {/* Kartu bintang: apa yang sedang ditunjuk lensa */}
-      {interaktif && <KartuBintang ref={kartu} b={dekat} status={dekat ? status(dekat.id) : 'baru'} tuju={!!dekat && dekat.id === tuju} />}
+      {interaktif && createPortal(<KartuBintang ref={kartu} b={dekat} status={dekat ? status(dekat.id) : 'baru'} tuju={!!dekat && dekat.id === tuju} />, document.body)}
     </div>
   )
 }
