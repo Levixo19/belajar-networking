@@ -1516,6 +1516,20 @@
    ]
   },
   {
+   "id": "materi-d699972b",
+   "judul": "IP Routing: Protocol-Independent Configuration Guide, Policy-Based Routing",
+   "url": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_pi/configuration/xe-16/iri-xe-16-book/iri-pbr.html",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "routing"
+   ],
+   "catatan": "",
+   "modul": [
+    "07-routing-lanjutan/07-redistribusi-policy"
+   ]
+  },
+  {
    "id": "materi-535f6629",
    "judul": "ISO/IEC 10589:2002, Intermediate System to Intermediate System intra-domain routeing information exchange protocol (rujukan; standar berbayar)",
    "url": "https://www.iso.org/standard/30932.html",
@@ -4275,7 +4289,7 @@
   },
   {
    "id": "materi-4f87b885",
-   "judul": "Cisco CCNA 200-301 v1.1 Exam Topics (blueprint resmi), sumber pemetaan di atas",
+   "judul": "Cisco, CCNA 200-301 v1.1 Exam Topics (PDF blueprint resmi), sumber pemetaan bagian 2 sampai 7",
    "url": "https://learningcontent.cisco.com/documents/marketing/exam-topics/200-301-CCNA-v1.1.pdf",
    "jenis": "artikel",
    "bahasa": "en",
@@ -4291,7 +4305,7 @@
   },
   {
    "id": "materi-18738221",
-   "judul": "Cisco CCNA 200-301 v2.0 Exam Topics",
+   "judul": "Cisco, CCNA 200-301 v2.0 Exam Topics (PDF blueprint resmi), sumber pemetaan bagian 8 sampai 12 dan perbandingan bagian 13",
    "url": "https://learningcontent.cisco.com/documents/marketing/exam-topics/200-301_CCNA_v2.0_Exam_Topics_PDF.pdf",
    "jenis": "artikel",
    "bahasa": "en",
@@ -4306,8 +4320,73 @@
    ]
   },
   {
+   "id": "materi-7810befb",
+   "judul": "Cisco Learning Network, halaman exam topics v1.1 (hari terakhir v1.1 dan hari pertama v2.0, biaya, durasi, bahasa, jenis soal)",
+   "url": "https://learningnetwork.cisco.com/s/ccna-exam-topics",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "karier",
+    "sertifikasi",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "18-karier-sertifikasi/02-peta-ccna",
+    "referensi/sumber-belajar"
+   ]
+  },
+  {
+   "id": "materi-09bf1b80",
+   "judul": "Cisco Learning Network, halaman exam topics v2.0 (hari pertama v2.0, biaya, durasi, bahasa, jenis soal, bobot domain)",
+   "url": "https://learningnetwork.cisco.com/s/ccna-v2-exam-topics",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "karier",
+    "sertifikasi",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "18-karier-sertifikasi/02-peta-ccna"
+   ]
+  },
+  {
+   "id": "materi-ff059131",
+   "judul": "Cisco Learning Network, Ryan Rose, \"Steps to the Future: The Modern CCNA\" (pengumuman v2.0, apa yang berbeda, penilaian praktik)",
+   "url": "https://learningnetwork.cisco.com/s/blogs/a0DQO00000616W92AI/steps-to-the-future-the-modern-ccna",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "karier",
+    "sertifikasi",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "18-karier-sertifikasi/02-peta-ccna"
+   ]
+  },
+  {
+   "id": "materi-cfd1b079",
+   "judul": "Cisco Blogs, Ryan Rose, \"Stay on Track: Get Certified Before the CCNA Refresh\", 1 Juli 2026 (jadwal transisi v1.1 ke v2.0)",
+   "url": "https://blogs.cisco.com/learning/stay-on-track-get-certified-before-the-ccna-refresh",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "karier",
+    "sertifikasi",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "18-karier-sertifikasi/02-peta-ccna"
+   ]
+  },
+  {
    "id": "materi-bf6fc8d0",
-   "judul": "Cisco, halaman ujian CCNA (durasi, biaya, bahasa)",
+   "judul": "Cisco, halaman ujian CCNA (durasi, biaya, bahasa; per pemeriksaan masih menjelaskan domain v1.1)",
    "url": "https://www.cisco.com/site/us/en/learn/training-certifications/exams/ccna.html",
    "jenis": "artikel",
    "bahasa": "en",
@@ -4320,22 +4399,6 @@
    "modul": [
     "18-karier-sertifikasi/02-peta-ccna",
     "21-ekosistem-profesi/02-rumpun-infrastruktur"
-   ]
-  },
-  {
-   "id": "materi-cfd1b079",
-   "judul": "Cisco Learning Network, jadwal transisi v1.1 ke v2.0",
-   "url": "https://blogs.cisco.com/learning/stay-on-track-get-certified-before-the-ccna-refresh",
-   "jenis": "artikel",
-   "bahasa": "en",
-   "topik": [
-    "karier",
-    "sertifikasi",
-    "cisco"
-   ],
-   "catatan": "",
-   "modul": [
-    "18-karier-sertifikasi/02-peta-ccna"
    ]
   },
   {
@@ -11975,21 +12038,6 @@
    "bahasa": "en",
    "topik": [
     "standar"
-   ],
-   "catatan": "",
-   "modul": [
-    "referensi/sumber-belajar"
-   ]
-  },
-  {
-   "id": "materi-7810befb",
-   "judul": "exam topics di Cisco Learning Network",
-   "url": "https://learningnetwork.cisco.com/s/ccna-exam-topics",
-   "jenis": "artikel",
-   "bahasa": "en",
-   "topik": [
-    "standar",
-    "cisco"
    ],
    "catatan": "",
    "modul": [

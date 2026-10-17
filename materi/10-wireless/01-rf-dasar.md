@@ -436,9 +436,9 @@ $ watch -n1 'iw dev wlan0 link | grep signal'
 # Analisis kanal
 $ sudo iw dev wlan0 scan | grep -E 'freq|SSID' | paste - - | sort -k2 -n
 
-# macOS
-$ /System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I
-$ /System/.../airport -s          # scan
+# macOS (alat airport sudah usang sejak macOS 14.4)
+$ sudo wdutil info                    # RSSI, noise, kanal, laju PHY
+$ system_profiler SPAirPortDataType   # termasuk jaringan lain di sekitar
 
 # Windows
 PS> netsh wlan show interfaces

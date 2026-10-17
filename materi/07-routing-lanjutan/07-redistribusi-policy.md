@@ -341,8 +341,8 @@ R1(config)# route-map PBR-TAMU permit 10
 R1(config-route-map)# match ip address 101
 R1(config-route-map)# set ip next-hop 198.51.100.1        ← ISP murah
 R1(config-route-map)# exit
-R1(config)# route-map PBR-TAMU permit 20
-   ← sisanya routing normal (WAJIB, kalau tidak akan di-drop)
+   ← paket yang tidak cocok dengan sequence mana pun tetap di-routing
+     normal berdasarkan tujuan; tidak perlu sequence permit kosong
 
 # 3. Terapkan pada interface MASUK
 R1(config)# interface vlan 30
@@ -354,6 +354,9 @@ R1(config)# ip local policy route-map PBR-LOKAL
 
 > [!WARNING]
 > **PBR diterapkan pada interface INGRESS** (tempat trafik masuk), bukan egress.
+
+> [!NOTE]
+> **Implicit deny pada PBR tidak membuang paket.** Route-map yang sama artinya berbeda menurut pemakaiannya. Pada redistribusi (§7), rute yang tidak cocok dengan sequence mana pun memang tidak diredistribusi. Pada PBR, paket yang tidak cocok, atau yang cocok dengan sequence `deny`, hanya **tidak di-policy-route**: router meneruskannya lewat routing biasa berdasarkan alamat tujuan. Sequence `deny` di PBR dipakai untuk mengecualikan sebagian trafik dari kebijakan, bukan untuk memblokirnya. Kalau trafik memang harus dibuang, pakai ACL di interface atau `set interface Null0`.
 
 ### PBR dengan verifikasi ketersediaan
 
@@ -504,14 +507,14 @@ Membutuhkan MP-BGP. Untuk kasus sederhana, bisa memakai static route antar-VRF.
    route-map PBR-VLAN30 permit 10
     match ip address 130
     set ip next-hop verify-availability 198.51.100.1 10 track 2   ! ISP-B
-   route-map PBR-VLAN30 permit 20
-    ! kosong = routing normal untuk sisanya (WAJIB!)
+   ! Paket yang tidak cocok dengan permit 10 di-routing normal
+   ! berdasarkan tujuan, jadi tidak perlu sequence tambahan.
 
    ! 3. Terapkan pada interface INGRESS
    interface vlan 30
     ip policy route-map PBR-VLAN30
    ```
-   Catatan: sequence `permit 20` yang kosong wajib ada. Tanpa itu, trafik yang tidak cocok dengan ACL 130 akan dibuang. Gunakan `verify-availability` + tracking agar trafik jatuh kembali ke routing normal bila ISP-B mati. Verifikasi dukungan PBR di hardware pada platform Anda.
+   Catatan: trafik yang tidak cocok dengan ACL 130 tidak dibuang. Pada PBR, implicit deny berarti paket tidak di-policy-route, sehingga router meneruskannya lewat routing biasa ke ISP-A. Ini berbeda dengan route-map untuk redistribusi, tempat implicit deny memang menyaring rute. Gunakan `verify-availability` + tracking agar trafik jatuh kembali ke routing normal bila ISP-B mati. Verifikasi dukungan PBR di hardware pada platform Anda.
 
 </details>
 
@@ -520,7 +523,7 @@ Membutuhkan MP-BGP. Untuk kasus sederhana, bisa memakai static route antar-VRF.
 ## 12. Sumber
 
 - Cisco, *Route Redistribution* (Document ID 8606)
-- Cisco, *Policy-Based Routing Configuration Guide*
+- Cisco, [*IP Routing: Protocol-Independent Configuration Guide, Policy-Based Routing*](https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_pi/configuration/xe-16/iri-xe-16-book/iri-pbr.html): paket yang cocok dengan entri `deny` atau tidak cocok sama sekali diteruskan dengan algoritma forwarding biasa
 - Cisco, *VRF-lite Configuration Guide*
 - RFC 4364, BGP/MPLS IP VPNs (konsep VRF & route target)
 

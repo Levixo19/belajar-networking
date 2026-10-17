@@ -49,7 +49,7 @@ Architect : CCAr — level tertinggi (desain, sangat langka)
 **Track CCNP/CCIE** (pilih spesialisasi): **Enterprise, Security, Data Center, Service Provider, Collaboration, Wireless, Automation**. Per 2026, jalur DevNet berganti nama menjadi **CCNA/CCNP/CCIE Automation**, CyberOps Associate menjadi **CCNA Cybersecurity**, dan wireless kembali menjadi jalur CCNP tersendiri.
 
 > [!TIP]
-> **CCNA adalah fondasi de-facto industri jaringan.** Kurikulum ini dipetakan langsung ke CCNA 200-301 v1.1 (lihat `18.2`). Setelah CCNA, pilih track CCNP sesuai minat (Enterprise umum, Security untuk keamanan, Automation untuk otomasi, dulu bernama DevNet).
+> **CCNA adalah fondasi de-facto industri jaringan.** Kurikulum ini dipetakan langsung ke CCNA 200-301 v1.1, yang bisa diambil sampai 2 Februari 2027, dan ke v2.0 yang diuji mulai 3 Februari 2027 (lihat `18.2`, termasuk topik v2.0 yang belum tercakup). Setelah CCNA, pilih track CCNP sesuai minat (Enterprise umum, Security untuk keamanan, Automation untuk otomasi, dulu bernama DevNet).
 
 ---
 
@@ -112,7 +112,7 @@ Sudah berpengalaman, ingin naik     → CCNP track pilihan
 ```
 
 > [!WARNING]
-> **Nama dan kode sertifikasi berubah cepat.** Sepanjang 2025-2026 banyak yang berganti: DevNet menjadi CCNA/CCNP Automation, CyberOps Associate menjadi CCNA Cybersecurity, CASP+ menjadi SecurityX, CySA+ ke CS0-004, A+ ke 220-1201/1202, PCNSE digantikan sertifikasi berbasis peran, AWS SysOps menjadi CloudOps Engineer (SOA-C03), dan ITIL kini Version 5. Selalu cek halaman resmi penerbit sebelum mendaftar ujian. Rincian per profesi, lengkap dengan sumbernya, ada di Tahap 21 (`21-ekosistem-profesi/01-peta-ekosistem`).
+> **Nama dan kode sertifikasi berubah cepat.** Sepanjang 2025-2026 banyak yang berganti: DevNet menjadi CCNA/CCNP Automation, CyberOps Associate menjadi CCNA Cybersecurity, CASP+ menjadi SecurityX, CySA+ ke CS0-004, A+ ke 220-1201/1202, PCNSE digantikan sertifikasi berbasis peran, AWS SysOps menjadi CloudOps Engineer (SOA-C03), dan ITIL kini Version 5. CCNA sendiri berganti blueprint ke v2.0 pada 3 Februari 2027 dengan nomor ujian yang sama, 200-301. Selalu cek halaman resmi penerbit sebelum mendaftar ujian. Rincian per profesi, lengkap dengan sumbernya, ada di Tahap 21 (`21-ekosistem-profesi/01-peta-ekosistem`).
 
 > [!WARNING]
 > **Jangan mengejar terlalu banyak sertifikasi sekaligus.** Lebih baik satu sertifikasi dengan pemahaman & praktik solid daripada banyak "kertas" dangkal. Untuk kebanyakan orang, CCNA + portofolio praktik adalah kombinasi awal terkuat.

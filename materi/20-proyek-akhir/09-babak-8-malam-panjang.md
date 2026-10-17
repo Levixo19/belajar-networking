@@ -327,11 +327,11 @@ Jalur cadangan `wan-b` tidak memiliki kebijakan antrean apa pun.
 
 ---
 
-## 5. Tiket 4: 01:20 · Delapan belas sensor cold storage 1 & 2 berhenti mengirim
+## 5. Tiket 4: 01:20 · Dua belas sensor cold storage 1 & 2 berhenti mengirim
 
 > **Alarm:** tidak ada. Anda menemukannya sendiri saat memeriksa dasbor setelah Tiket 3.
 > **Data terakhir:** 00:07. Sekarang 01:20. **Celah 73 menit.**
-> **Dampak:** dua ruang beku tanpa bukti suhu. Tiga kontainer berangkat pukul 07:00.
+> **Dampak:** 12 titik ukur di dua ruang beku tanpa bukti suhu. Tiga kontainer berangkat pukul 07:00.
 > **Anggaran waktu: 30 menit, dan keputusan bisnis harus diambil sebelum 02:00**
 
 <details>
@@ -340,10 +340,10 @@ Jalur cadangan `wan-b` tidak memiliki kebijakan antrean apa pun.
 ```bash
 root@sby-collector:~# for i in 12 13 14 15; do ping -c1 -W1 10.65.70.$i >/dev/null \
   && echo "10.65.70.$i HIDUP" || echo "10.65.70.$i TIDAK MENJAWAB"; done
-10.65.70.12 TIDAK MENJAWAB
-10.65.70.13 TIDAK MENJAWAB
+10.65.70.12 HIDUP
+10.65.70.13 HIDUP
 10.65.70.14 HIDUP
-10.65.70.15 TIDAK MENJAWAB
+10.65.70.15 HIDUP
 ```
 
 </details>
@@ -356,13 +356,13 @@ SBY-CORE# show ip dhcp pool sensor-vlan70
  Pool sensor-vlan70 :
   Utilization mark (high/low)    : 100 / 0
   Subnet size (first/next)       : 0 / 0
-  Total addresses                : 30
-  Leased addresses               : 30
-  Excluded addresses             : 1
+  Total addresses                : 126
+  Leased addresses               : 120
+  Excluded addresses             : 6
   Pending event                  : none
 
-SBY-CORE# show ip dhcp binding | count
-Number of lines which match regexp = 30
+SBY-CORE# show ip dhcp binding | count Automatic
+Number of lines which match regexp = 120
 ```
 
 </details>
@@ -372,14 +372,19 @@ Number of lines which match regexp = 30
 
 ```text
 IP address       Client-ID/Hardware address   Lease expiration        Type
-10.65.70.11      00:1b:c5:04:aa:11            Sep 15 2026 03:12 AM    Automatic
-10.65.70.12      00:1b:c5:04:aa:12            Sep 15 2026 03:14 AM    Automatic
+10.65.70.7       00:1b:c5:04:a9:07            Sep 15 2026 03:12 AM    Automatic
+10.65.70.8       00:1b:c5:04:a9:08            Sep 15 2026 03:12 AM    Automatic
 ...
-10.65.70.31      3c:ef:8c:22:10:04            Sep 17 2026 11:40 PM    Automatic
-10.65.70.32      3c:ef:8c:22:10:05            Sep 17 2026 11:41 PM    Automatic
-10.65.70.33      3c:ef:8c:22:10:06            Sep 17 2026 11:43 PM    Automatic
-(12 entri dengan prefiks MAC 3c:ef:8c — terdaftar sebagai produsen kamera IP)
+10.65.70.12      3c:ef:8c:22:10:01            Sep 18 2026 12:05 AM    Automatic
+10.65.70.13      3c:ef:8c:22:10:02            Sep 18 2026 12:05 AM    Automatic
+10.65.70.14      00:1b:c5:04:aa:14            Sep 18 2026 12:06 AM    Automatic
+10.65.70.15      3c:ef:8c:22:10:03            Sep 18 2026 12:06 AM    Automatic
+...
+(12 entri dengan prefiks MAC 3c:ef:8c — terdaftar sebagai produsen kamera IP,
+ semuanya mulai disewa antara 00:05 dan 00:07)
 ```
+
+Catatan inventaris: sensor ruang 3 dinyalakan 12 September pukul 03:12. Delapan belas sensor ruang 1 dan 2 diganti baterainya pada malam yang sama, pukul 00:05.
 
 </details>
 
@@ -417,26 +422,28 @@ Tidak ada aturan untuk **ketiadaan data**. Sensor yang diam tidak menghasilkan n
 root@sby-collector:~# ls /var/spool/coldchain/ | wc -l
 0
 root@sby-collector:~# journalctl -u coldchain-collector --since 00:00 | tail -2
-00:07:14 coldchain-collector: menerima 40 sampel (ruang 1,2,3)
-01:19:52 coldchain-collector: menerima 22 sampel (ruang 3)
+00:07:14 coldchain-collector: menerima 120 sampel (ruang 1: 40, ruang 2: 40, ruang 3: 40)
+01:19:52 coldchain-collector: menerima 108 sampel (ruang 1: 34, ruang 2: 34, ruang 3: 40)
 ```
 
-Pengumpul sehat. Ia hanya tidak menerima apa pun dari 18 sensor karena sensor-sensornya tidak punya alamat IP.
+Pengumpul sehat. Ia hanya tidak menerima apa pun dari 12 sensor karena sensor-sensornya tidak punya alamat IP.
 
 </details>
 
 <details>
 <summary>Akar Masalah Tiket 4</summary>
 
-**Akar masalah:** Kolam DHCP untuk VLAN sensor (VLAN 70) berukuran `/27` (**30 alamat**) untuk 40 sensor yang direncanakan sekarang berjumlah 18 di dua ruang ditambah 22 di ruang ketiga. Kontraktor CCTV (yang sama dengan Tiket 2) menyambungkan **12 kamera baru ke VLAN sensor** karena "port yang kosong hanya di situ". Dua belas alamat itu diambil dengan **masa sewa 3 hari**, sehingga kolam habis. Ketika sensor di ruang 1 dan 2 memperbarui sewanya, tidak ada alamat tersisa, sehingga mereka kehilangan IP dan berhenti mengirim.
+**Akar masalah:** Kolam DHCP untuk VLAN sensor (VLAN 70) berupa `/25` dengan **120 alamat yang bisa disewakan** (126 dikurangi gateway dan 5 alamat statis), pas untuk 120 sensor (40 per ruang) tanpa sisa sedikit pun. Sore tadi kontraktor CCTV (yang sama dengan Tiket 2) menyambungkan **12 kamera baru ke VLAN sensor** karena "port yang kosong hanya di situ". Kolam sudah penuh, jadi kamera belum mendapat alamat, tetapi terus mengirim DHCPDISCOVER setiap beberapa detik.
+
+Kolam yang penuh saja belum memutus sensor, karena klien yang memperbarui sewanya tetap memegang alamat yang sama. Masalahnya ada pada firmware sensor ini: ia **tidak memperbarui sewa di tengah masa sewa** dan baru meminta alamat lagi setelah sewanya habis (lihat C: sewa sensor berakhir tepat tiga hari sesudah sensor menyala, tidak pernah diperpanjang). Tiga hari lalu, 18 sensor di ruang 1 dan 2 dinyalakan ulang bersamaan saat penggantian baterai terjadwal, jadi **masa sewa 3 hari** mereka habis bersamaan antara 00:05 dan 00:07 malam ini. Delapan belas alamat kembali ke kolam, kamera yang terus mencoba merebut 12 di antaranya, dan hanya 6 sensor yang mendapat alamat lagi. Dua belas sensor sisanya tanpa IP dan berhenti mengirim. Selama kamera itu memegang sewa, setiap sensor yang sewanya habis harus berebut alamat dengan dua belas sensor yang sedang menunggu. Sewa sensor ruang 3 habis pukul 03:12, jadi tanpa tindakan, celahnya akan merambat ke sana.
 
 Ada **kegagalan kedua yang lebih serius**: alarm tidak berbunyi. Satu-satunya aturan memantau **nilai suhu melewati batas**, sementara masalahnya adalah **tidak ada nilai sama sekali**. Sensor yang diam tidak memicu apa pun. Celah 73 menit hanya ditemukan karena Anda kebetulan melihat dasbor.
 
 Ini akibat langsung dari tiga hal yang sudah teridentifikasi di babak sebelumnya: ukuran kolam dan masa sewa yang tidak dihitung (Babak 3, jebakan ketiga), VLAN sensor yang seharusnya tidak berbagi apa pun dengan perangkat lain (Babak 3 aturan 5), dan alarm yang harus berbasis ketiadaan data (Babak 7 §7.2).
 
-**Jalur paling efisien:** B (4 menit) menunjukkan kolam 100% terpakai; C (5 menit) mengungkap 12 penyewa asing. Total **9 menit** untuk sebab teknis. Kemudian E (4 menit) mengungkap kegagalan yang sebenarnya lebih penting untuk ditulis di postmortem. A, D, dan F berguna untuk menyingkirkan hipotesis lain (perangkat rusak, waktu salah, pengumpul mati) tetapi tidak menunjuk sebab.
+**Jalur paling efisien:** B (4 menit) menunjukkan kolam 100% terpakai; C (5 menit) mengungkap 12 penyewa asing. Total **9 menit** untuk sebab teknis. Kemudian E (4 menit) mengungkap kegagalan yang sebenarnya lebih penting untuk ditulis di postmortem. D dan F berguna untuk menyingkirkan hipotesis lain (waktu salah, pengumpul mati) tetapi tidak menunjuk sebab. A justru menyesatkan: keempat alamat menjawab, padahal `.12`, `.13`, dan `.15` kini dipegang kamera (lihat C). Ping hanya membuktikan ada perangkat di alamat itu, bukan perangkat yang mana.
 
-**Tindakan teknis malam itu (urutan penting):** pindahkan 12 kamera keluar dari VLAN 70. Cara tercepat dan paling aman malam itu adalah **mematikan port kamera-kamera itu** (mereka baru dipasang, belum ada yang bergantung padanya) dan membersihkan sewanya. Setelah itu: perpendek masa sewa VLAN sensor; **perbesar subnet sensor** sesuai rencana Babak 3 (`/24` untuk 240 alamat), tetapi karena perubahan subnet di tengah malam berisiko, malam ini cukup bebaskan alamat dan pastikan 18 sensor kembali; verifikasi data masuk lagi; lalu ukur celah sebenarnya dari basis data.
+**Tindakan teknis malam itu (urutan penting):** pindahkan 12 kamera keluar dari VLAN 70. Cara tercepat dan paling aman malam itu adalah **mematikan port kamera-kamera itu** (mereka baru dipasang, belum ada yang bergantung padanya) lalu membersihkan sewanya (`clear ip dhcp binding` untuk 12 alamat itu). Dua belas sensor yang sedang menunggu akan mendapat alamat dalam hitungan detik. Setelah itu verifikasi data masuk lagi, pantau sampai lewat 03:12 saat sewa ruang 3 habis, lalu ukur celah sebenarnya dari basis data. **Perbesar subnet sensor** sesuai rencana Babak 3 (`/24` untuk 240 alamat) di jendela perubahan berikutnya, bukan malam ini, karena mengganti subnet di tengah malam berisiko.
 
 **Keputusan bisnis yang harus Anda ambil sebelum 02:00 (bagian yang dinilai paling berat):**
 
@@ -446,7 +453,7 @@ Ini akibat langsung dari tiga hal yang sudah teridentifikasi di babak sebelumnya
 - **Tentukan soal tiga kontainer pukul 07:00.** Ini bukan keputusan Anda sendiri. Yang harus Anda lakukan: bangunkan Bu Ratna atau siapa pun yang berwenang **sekarang**, jangan tunggu pukul 06:00. Sajikan fakta (celah 73 menit, suhu manual terukur X, produk dari ruang mana, berangkat ke mana, aturan pembeli), dan sajikan pilihan beserta risikonya: berangkat dengan lampiran penjelasan dan catatan manual · tunda pengiriman · atau ganti muatan dari ruang yang datanya utuh. **Tugas Anda adalah membuat keputusan itu bisa diambil dengan informasi lengkap, bukan mengambilnya diam-diam, dan bukan menyembunyikannya sampai pagi.**
 - **Catat semuanya saat itu juga**, termasuk waktu Anda mengetahui, waktu Anda menghubungi siapa, dan apa yang diputuskan. Auditor akan menanyakan garis waktu, dan garis waktu yang ditulis belakangan selalu terlihat seperti dikarang.
 
-**Tindakan permanen:** alarm ketiadaan data per sensor (dan alarm "jumlah sensor yang mengirim < jumlah yang terdaftar"), alarm pemakaian kolam DHCP > 80%, ukuran subnet dan masa sewa sesuai rencana, VLAN sensor tertutup bagi perangkat lain secara teknis (802.1X atau setidaknya port yang dipetakan tetap), proses perubahan untuk kontraktor, dan **uji alarm bulanan** dari Babak 7 §7.5, yang bila sudah ada akan menangkap kegagalan aturan alarm ini berbulan-bulan sebelum malam ini.
+**Tindakan permanen:** alarm ketiadaan data per sensor (dan alarm "jumlah sensor yang mengirim < jumlah yang terdaftar"), alarm pemakaian kolam DHCP > 80%, ukuran subnet dan masa sewa sesuai rencana, laporan ke vendor sensor tentang klien DHCP yang tidak memperbarui sewa (sementara itu, reservasi alamat per MAC untuk setiap sensor), VLAN sensor tertutup bagi perangkat lain secara teknis (802.1X atau setidaknya port yang dipetakan tetap), proses perubahan untuk kontraktor, dan **uji alarm bulanan** dari Babak 7 §7.5, yang bila sudah ada akan menangkap kegagalan aturan alarm ini berbulan-bulan sebelum malam ini.
 
 </details>
 
@@ -601,8 +608,8 @@ Tulis `13-postmortem.md`. Tanpa nama orang yang disalahkan; nama peran boleh.
    - Contoh tambahan yang juga sah: **terowongan VPN yang "up"** sementara tidak ada lalu lintas yang benar-benar sampai (pantau usia handshake dan uji jangkauan ujung-ke-ujung); **AP yang aktif** dengan klien yang bertahan di laju terendah (pantau distribusi laju/waktu udara, bukan jumlah klien); dan **CPU/memori normal** pada perangkat yang tabel MAC atau tabel sesinya hampir penuh (pantau pemakaian tabel sebagai persentase kapasitas). Pola umumnya: **status adalah keadaan biner yang dilaporkan perangkat tentang dirinya; kesehatan adalah ukuran tentang apakah layanan benar-benar terjadi.** Pantau yang kedua.
 
 3. Lima kali kenapa untuk Tiket 4:
-   - *Kenapa 18 sensor berhenti mengirim?* Karena mereka kehilangan alamat IP saat memperbarui sewa DHCP.
-   - *Kenapa mereka tidak mendapat alamat?* Karena kolam DHCP VLAN sensor (30 alamat) habis, terpakai 12 alamat oleh kamera yang bukan miliknya.
+   - *Kenapa 12 sensor berhenti mengirim?* Karena sewa DHCP mereka habis, dan saat meminta alamat baru mereka kalah berebut.
+   - *Kenapa mereka tidak mendapat alamat?* Karena kolam DHCP VLAN sensor (120 alamat, pas untuk 120 sensor) tidak punya sisa, dan 12 kamera yang bukan miliknya sudah menunggu sejak sore lalu merebut alamat yang dilepas.
    - *Kenapa kamera bisa mengambil alamat di VLAN sensor?* Karena kontraktor menyambungkan kamera ke port yang tersedia, dan **secara teknis tidak ada yang mencegah perangkat asing masuk ke VLAN mana pun**: tidak ada 802.1X, tidak ada pemetaan port tetap, dan jaringan pabrik masih sebagian datar. Ditambah: kolam sensor diukur tanpa perhitungan pertumbuhan dan dengan masa sewa 3 hari.
    - *Kenapa tidak ada yang mencegah, dan kenapa ukuran kolam tidak dihitung?* Karena **tidak ada proses perubahan yang mengikat pekerjaan pihak ketiga** (izin fisik dari bagian umum dianggap cukup) dan karena rencana pengalamatan lama dibuat tanpa perhitungan kapasitas per VLAN. Keduanya adalah keadaan yang diwarisi dan sudah tercatat sebagai temuan audit, tetapi belum diperbaiki.
    - *Kenapa temuan yang sudah diketahui belum diperbaiki, dan kenapa celahnya baru diketahui setelah 73 menit?* Karena **perbaikan bersaing dengan pekerjaan lain tanpa pemilik dan tenggat**, dan karena **pemantauan rantai dingin dibangun untuk memantau nilai, bukan untuk memantau ketiadaan nilai**; tidak ada seorang pun yang pernah menguji apakah alarm benar-benar berbunyi.
