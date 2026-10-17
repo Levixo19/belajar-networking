@@ -1,10 +1,10 @@
-# Cheatsheet — Linux Networking
+# Cheatsheet: Linux Networking
 
 > Rujukan cepat perintah jaringan Linux modern (iproute2, nftables, systemd, diagnostik). Untuk Tahap 13 & otomasi.
 
 ---
 
-## iproute2 (`ip`) — pengganti ifconfig/route/arp
+## iproute2 (`ip`): pengganti ifconfig/route/arp
 
 ```
 ip link show                      interface (state up/down, MAC)
@@ -75,7 +75,7 @@ ethtool eth0                     speed/duplex/link (fisik)
 ip -s link                       error/drop counter
 ```
 
-## Firewall — nftables (modern)
+## Firewall: nftables (modern)
 
 ```
 nft list ruleset                                    tampilkan semua
@@ -93,7 +93,7 @@ nft add rule inet nat postrouting oif eth0 masquerade
 sysctl -w net.ipv4.ip_forward=1
 ```
 
-## iptables (lama — masih umum)
+## iptables (lama: masih umum)
 
 ```
 iptables -L -n -v                 daftar aturan
@@ -112,7 +112,7 @@ journalctl -u sshd -f             log layanan (follow)
 resolvectl status                 status DNS (systemd-resolved)
 ```
 
-## FRR (routing — OSPF/BGP di Linux)
+## FRR (routing: OSPF/BGP di Linux)
 
 ```
 vtysh                             masuk shell FRR (mirip Cisco IOS)
@@ -125,11 +125,14 @@ configure terminal
   network 10.0.0.0/24 area 0
 ```
 
-💡 **Perintah tersering:** `ip -br addr`, `ip route`, `ss -tulpn`, `dig +short`, `tcpdump -ni`, `ip route get`. `ss` menggantikan `netstat`; `ip` menggantikan `ifconfig`; `nft` menggantikan `iptables`.
+> [!TIP]
+> **Perintah tersering:** `ip -br addr`, `ip route`, `ss -tulpn`, `dig +short`, `tcpdump -ni`, `ip route get`. `ss` menggantikan `netstat`; `ip` menggantikan `ifconfig`; `nft` menggantikan `iptables`.
 
-⚠️ Perubahan `ip`/`sysctl` bersifat **runtime** (hilang saat reboot). Untuk permanen: netplan/NetworkManager (jaringan), `/etc/sysctl.d/` (sysctl), unit systemd (nftables).
+> [!WARNING]
+> Perubahan `ip`/`sysctl` bersifat **runtime** (hilang saat reboot). Untuk permanen: netplan/NetworkManager (jaringan), `/etc/sysctl.d/` (sysctl), unit systemd (nftables).
 
-💡 **RouterOS berbasis Linux** — banyak konsep di sini (bridge, veth, netfilter/conntrack) identik dengan yang di balik MikroTik (`19/*`).
+> [!TIP]
+> **RouterOS berbasis Linux** — banyak konsep di sini (bridge, veth, netfilter/conntrack) identik dengan yang di balik MikroTik (`19/*`).
 
 ---
 

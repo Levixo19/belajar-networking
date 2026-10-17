@@ -1,15 +1,15 @@
-# 05.3 — UDP dan QUIC
+# 05.3 UDP dan QUIC
 
 > **Prasyarat:** `05-transport/02`
 > **Tujuan:** Anda tahu kapan UDP lebih tepat daripada TCP, dan memahami mengapa QUIC/HTTP3 menjadi transport modern.
 
 ---
 
-## 1. UDP — User Datagram Protocol
+## 1. UDP (User Datagram Protocol)
 
 UDP [RFC 768] adalah protokol transport paling sederhana yang mungkin dibuat: ia hanya menambahkan **port** dan **checksum** di atas IP.
 
-### Header UDP — hanya 8 byte
+### Header UDP: hanya 8 byte
 
 ```
  0                   1                   2                   3
@@ -96,7 +96,7 @@ Aplikasi bisa membangun mekanisme keandalannya sendiri yang lebih cocok — inil
 | Koneksi | Connection-oriented | Connectionless |
 | Keandalan | Dijamin | Tidak |
 | Urutan | Dijaga | Tidak |
-| Header | 20–60 byte | **8 byte** |
+| Header | 20-60 byte | **8 byte** |
 | Handshake | 3-way (1 RTT) | Tidak ada |
 | Flow control | Ya | Tidak |
 | Congestion control | Ya | Tidak (aplikasi harus sendiri) |
@@ -105,7 +105,8 @@ Aplikasi bisa membangun mekanisme keandalannya sendiri yang lebih cocok — inil
 | Kecepatan | Lebih lambat | Lebih cepat |
 | Analogi | Surat tercatat | Kartu pos |
 
-💡 **UDP menjaga batas pesan** — satu `sendto()` = satu `recvfrom()`. Ini keuntungan yang sering dilupakan; dengan TCP, aplikasi harus membuat framingnya sendiri.
+> [!TIP]
+> **UDP menjaga batas pesan** — satu `sendto()` = satu `recvfrom()`. Ini keuntungan yang sering dilupakan; dengan TCP, aplikasi harus membuat framingnya sendiri.
 
 ---
 
@@ -134,11 +135,12 @@ Penyerang dengan 1 Mbps bisa menghasilkan 50 Gbps trafik ke korban lewat memcach
 4. **DNS Response Rate Limiting (RRL)**.
 5. Jangan pernah mengekspos memcached/Redis ke internet.
 
-⚠️ Ini alasan penting mengapa **UDP sering dibatasi ketat di firewall perusahaan** — dan sebabnya QUIC kadang diblokir.
+> [!WARNING]
+> Ini alasan penting mengapa **UDP sering dibatasi ketat di firewall perusahaan** — dan sebabnya QUIC kadang diblokir.
 
 ---
 
-## 3. QUIC — Transport Modern
+## 3. QUIC (Transport Modern)
 
 **QUIC** [RFC 9000] adalah protokol transport yang berjalan **di atas UDP**, tetapi menyediakan semua yang TCP berikan — plus lebih banyak.
 
@@ -199,7 +201,8 @@ QUIC menggabungkan handshake transport dan kripto:
 vs TCP+TLS 1.3 = 2 RTT, TCP+TLS 1.2 = 3 RTT
 ```
 
-⚠️ 0-RTT punya risiko **replay attack** — data 0-RTT bisa diputar ulang penyerang. Karena itu hanya boleh untuk request idempoten (GET), bukan POST yang mengubah state.
+> [!WARNING]
+> 0-RTT punya risiko **replay attack** — data 0-RTT bisa diputar ulang penyerang. Karena itu hanya boleh untuk request idempoten (GET), bukan POST yang mengubah state.
 
 **2. Tidak ada head-of-line blocking antar-stream**
 ```
@@ -228,13 +231,17 @@ Nomor paket QUIC **selalu bertambah** (tidak dipakai ulang saat retransmisi), se
 
 ### Kelemahan dan tantangan QUIC
 
-⚠️ **1. Konsumsi CPU lebih tinggi.** Karena berjalan di user space dan mengenkripsi lebih banyak, QUIC memakai CPU lebih besar daripada TCP yang dioptimasi kernel (walaupun terus membaik dengan offload dan optimasi).
+> [!WARNING]
+> **1. Konsumsi CPU lebih tinggi.** Karena berjalan di user space dan mengenkripsi lebih banyak, QUIC memakai CPU lebih besar daripada TCP yang dioptimasi kernel (walaupun terus membaik dengan offload dan optimasi).
 
-⚠️ **2. Diblokir sebagian jaringan.** Banyak firewall perusahaan memblokir UDP/443. Klien akan **fallback ke TCP** — tetapi itu berarti percobaan yang terbuang dan latency tambahan.
+> [!WARNING]
+> **2. Diblokir sebagian jaringan.** Banyak firewall perusahaan memblokir UDP/443. Klien akan **fallback ke TCP** — tetapi itu berarti percobaan yang terbuang dan latency tambahan.
 
-⚠️ **3. Sulit di-troubleshoot.** Trafiknya terenkripsi hampir seluruhnya; tidak bisa dianalisis dengan cara yang sama seperti TCP. Butuh kunci sesi (`SSLKEYLOGFILE`) untuk dekripsi di Wireshark.
+> [!WARNING]
+> **3. Sulit di-troubleshoot.** Trafiknya terenkripsi hampir seluruhnya; tidak bisa dianalisis dengan cara yang sama seperti TCP. Butuh kunci sesi (`SSLKEYLOGFILE`) untuk dekripsi di Wireshark.
 
-⚠️ **4. Middlebox lama tidak mengenalinya.** Beberapa perangkat menganggap UDP/443 mencurigakan.
+> [!WARNING]
+> **4. Middlebox lama tidak mengenalinya.** Beberapa perangkat menganggap UDP/443 mencurigakan.
 
 ### Keluarga RFC QUIC
 
@@ -264,7 +271,7 @@ HTTP/3 adalah HTTP yang berjalan di atas QUIC.
 | HOL blocking | Ya (per koneksi) | **Ya (di TCP)** | **Tidak** |
 | Kompresi header | Tidak | HPACK | QPACK |
 | Enkripsi | Opsional | Praktis wajib | **Wajib** |
-| Handshake | 1–3 RTT | 2–3 RTT | **1 RTT / 0-RTT** |
+| Handshake | 1-3 RTT | 2-3 RTT | **1 RTT / 0-RTT** |
 
 ### Bagaimana browser menemukan HTTP/3
 
@@ -281,19 +288,21 @@ Beberapa klien memakai **Happy Eyeballs untuk QUIC** — mencoba QUIC dan TCP se
 
 ### Implikasi untuk network engineer
 
-⚠️ **Ini yang harus Anda putuskan di jaringan perusahaan:**
+> [!WARNING]
+> **Ini yang harus Anda putuskan di jaringan perusahaan:**
 
 **Kalau mengizinkan UDP/443:**
-- ✅ Pengguna mendapat kinerja lebih baik
-- ❌ Tidak bisa melakukan TLS inspection dengan perangkat lama (banyak yang belum mendukung QUIC)
-- ❌ Visibilitas berkurang untuk DLP/IPS
+- **Benar:** Pengguna mendapat kinerja lebih baik
+- **Hindari:** Tidak bisa melakukan TLS inspection dengan perangkat lama (banyak yang belum mendukung QUIC)
+- **Hindari:** Visibilitas berkurang untuk DLP/IPS
 
 **Kalau memblokir UDP/443:**
-- ✅ Semua trafik web kembali ke TCP → bisa diinspeksi seperti biasa
-- ❌ Latency sedikit lebih tinggi
-- ❌ Ada delay saat browser mencoba QUIC lalu fallback
+- **Benar:** Semua trafik web kembali ke TCP → bisa diinspeksi seperti biasa
+- **Hindari:** Latency sedikit lebih tinggi
+- **Hindari:** Ada delay saat browser mencoba QUIC lalu fallback
 
-💡 **Praktik yang lazim saat ini:** blokir UDP/443 di jaringan yang membutuhkan inspeksi mendalam, izinkan di jaringan tamu/umum. Tetapi ini akan berubah seiring perangkat keamanan mendukung QUIC.
+> [!TIP]
+> **Praktik yang lazim saat ini:** blokir UDP/443 di jaringan yang membutuhkan inspeksi mendalam, izinkan di jaringan tamu/umum. Tetapi ini akan berubah seiring perangkat keamanan mendukung QUIC.
 
 ```
 # Memblokir QUIC (Cisco)
@@ -385,7 +394,7 @@ Membuat protokol tunneling                     → UDP (enkapsulasi sederhana)
 - **UDP** hanya menambahkan port + checksum (8 byte). Tanpa handshake, keandalan, urutan, atau kontrol apa pun.
 - UDP dipilih karena: **latency rendah**, overhead kecil, mendukung broadcast/multicast, menjaga **batas pesan**, dan memberi kontrol penuh ke aplikasi.
 - Untuk real-time, **data yang terlambat tidak berguna** — retransmisi TCP justru merugikan.
-- ⚠️ UDP rentan **spoofing dan amplification attack** (DNS 54×, NTP 556×, memcached 51.000×). Mitigasi: BCP 38/uRPF, rate limiting, nonaktifkan fitur berisiko.
+- **Perhatian:** UDP rentan **spoofing dan amplification attack** (DNS 54×, NTP 556×, memcached 51.000×). Mitigasi: BCP 38/uRPF, rate limiting, nonaktifkan fitur berisiko.
 - **QUIC** (RFC 9000) berjalan di atas UDP dan menyediakan keandalan + TLS 1.3 + multiplexing.
 - Keunggulan QUIC: **1 RTT / 0-RTT**, **tanpa head-of-line blocking antar-stream**, **connection migration** (Connection ID), enkripsi menyeluruh (anti-ossification), di user space (mudah diperbarui).
 - **HTTP/3** = HTTP di atas QUIC; ditemukan lewat header **`Alt-Svc`**; fallback ke TCP jika UDP/443 diblokir.
@@ -443,4 +452,4 @@ Membuat protokol tunneling                     → UDP (enkapsulasi sederhana)
 
 ---
 
-**Berikutnya:** `05-transport/04-congestion-control.md` — bagaimana internet tidak runtuh karena kepadatan.
+**Berikutnya:** `05-transport/04-congestion-control.md`. Bagaimana internet tidak runtuh karena kepadatan.

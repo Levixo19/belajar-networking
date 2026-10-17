@@ -1,4 +1,4 @@
-# 20.2 — Babak 1: Audit Warisan (Forensik)
+# 20.2 Babak 1: Audit Warisan (Forensik)
 
 > **Prasyarat:** `20.1`, ditambah `03` (data link), `04` (network layer), `09` (NAT/ACL/firewall), `12` (keamanan), `13` (Linux), `19` (MikroTik)
 > **Tujuan:** Membedah konfigurasi dan keluaran perintah yang sudah berjalan di BNS, menemukan cacatnya tanpa diberi petunjuk, lalu mengubah temuan mentah menjadi laporan audit yang bisa dibaca manajemen.
@@ -18,13 +18,15 @@ Aturannya:
 - Tingkat: **1** kritis (bisa merusak bisnis pekan ini) · **2** tinggi · **3** sedang · **4** rendah.
 - Target realistis: **minimal 30 temuan**. Auditor berpengalaman menemukan 45+.
 
-⏱ Mode Ujian: 120 menit. Mode Kilat: 45 menit, cukup kejar tingkat 1 dan 2.
+> [!NOTE]
+> Mode Ujian: 120 menit. Mode Kilat: 45 menit, cukup kejar tingkat 1 dan 2.
 
-💡 Trik profesional: baca konfigurasi **dua kali dengan pertanyaan berbeda**. Sapuan pertama: "apa yang ada di sini tapi seharusnya tidak ada?" Sapuan kedua: "apa yang tidak ada di sini tapi seharusnya ada?" Sapuan kedua selalu menghasilkan lebih banyak temuan, dan hampir selalu dilewatkan pemula.
+> [!TIP]
+> Trik profesional: baca konfigurasi **dua kali dengan pertanyaan berbeda**. Sapuan pertama: "apa yang ada di sini tapi seharusnya tidak ada?" Sapuan kedua: "apa yang tidak ada di sini tapi seharusnya ada?" Sapuan kedua selalu menghasilkan lebih banyak temuan, dan hampir selalu dilewatkan pemula.
 
 ---
 
-## 2. Bukti A — Switch Akses HQ (`JKT-AC-SW03`)
+## 2. Bukti A: Switch Akses HQ (`JKT-AC-SW03`)
 
 ```cisco
 version 12.2
@@ -85,11 +87,12 @@ line vty 0 4
 end
 ```
 
-⚠️ Konfigurasi ini pendek. Justru itu masalahnya.
+> [!WARNING]
+> Konfigurasi ini pendek. Justru itu masalahnya.
 
 ---
 
-## 3. Bukti B — Keluaran Perintah Pemeriksaan
+## 3. Bukti B: Keluaran Perintah Pemeriksaan
 
 ```cisco
 JKT-AC-SW03# show version
@@ -159,7 +162,7 @@ SWITCH-8P    Fas 0/23         167          S      unknown    port 1
 
 ---
 
-## 4. Bukti C — MikroTik TPI-04 (`/export` disederhanakan)
+## 4. Bukti C: MikroTik TPI-04 (`/export` disederhanakan)
 
 ```routeros
 # model = RB952Ui-5ac2nD
@@ -195,7 +198,7 @@ Catatan lapangan dari teknisi: *"Konfigurasi 12 TPI disalin dari TPI-01, cuma al
 
 ---
 
-## 5. Bukti D — Server Linux `jkt-nas01` (NAS + DNS + backup)
+## 5. Bukti D: Server Linux `jkt-nas01` (NAS + DNS + backup)
 
 ```bash
 root@jkt-nas01:~# ip -brief addr
@@ -241,7 +244,7 @@ Router internet HQ punya aturan *port forward* `TCP/22 → 192.168.10.20` "supay
 
 ---
 
-## 6. Bukti E — Wawancara Proses Kerja
+## 6. Bukti E: Wawancara Proses Kerja
 
 | Pertanyaan | Jawaban tim IT |
 |---|---|
@@ -293,7 +296,7 @@ Kalau salah satu baris Anda jauh di bawah angka itu, kembali ke bukti tersebut *
 
 ---
 
-## 10. Latihan — Pembuktian Temuan
+## 10. Latihan: Pembuktian Temuan
 
 Kerjakan setelah tabel temuan Anda selesai. Soal ini menguji apakah Anda memahami **mekanismenya**, bukan hanya mengenali polanya.
 
@@ -317,7 +320,7 @@ Kerjakan setelah tabel temuan Anda selesai. Soal ini menguji apakah Anda memaham
 
 4. Karena ketiga bukti itu bersama-sama berarti: cadangan berada di **mesin yang sama dengan data aslinya** (`/srv/erp-db` → `/srv/backup/erp-db` di host yang sama, `/dev/md0`), dicapai lewat `rsync -a` yang **menyalin keadaan terkini** sehingga file yang terenkripsi ransomware akan menimpa salinan yang masih baik pada siklus berikutnya, tidak ada versi/riwayat, mesinnya punya SSH root+password terbuka ke internet lewat *port forward* (jadi justru sasaran pertama), ruang tinggal 2% sehingga pekerjaan cadangan kemungkinan sudah gagal diam-diam, dan **pemulihannya belum pernah diuji sekali pun**. Ransomware yang mendapat root di host ini mengenkripsi data dan cadangan dalam satu langkah. Tiga sifat wajib cadangan: **(a) terpisah** — media/host/kredensial berbeda, minimal satu salinan di luar lokasi dan satu salinan yang tidak bisa ditimpa (*immutable*/WORM atau media lepas); **(b) berversi & teruji** — beberapa titik waktu, dan **uji pemulihan terjadwal** yang membuktikan datanya bisa hidup kembali, bukan hanya berkasnya ada; **(c) terpantau** — kegagalan pekerjaan cadangan memicu alarm, dan kapasitas diawasi. Aturan praktis 3-2-1-1-0: 3 salinan, 2 media, 1 di luar lokasi, 1 tidak bisa diubah, 0 kesalahan pada uji pemulihan terakhir.
 
-5. Karena TPI terhubung lewat LTE yang hampir selalu berada di belakang **CGNAT**: alamat yang didapat antarmuka `lte1` bukan alamat publik yang bisa dituju, dan operator tidak meneruskan port masuk. Konfigurasi dengan `listen-port` tanpa `endpoint` berarti TPI **menunggu dipanggil** — model ini menuntut TPI punya alamat publik tetap yang bisa dihubungi, yang tidak dimiliki. Ditambah lagi `/ip cloud ddns-enabled=yes` memberi ilusi "ada nama yang bisa dituju", padahal nama DDNS yang menunjuk alamat CGNAT tetap tidak bisa dihubungi dari luar — sekaligus membocorkan keberadaan perangkat. Rancangan yang benar: **TPI selalu yang menginisiasi** (*dial-out*) ke satu titik pusat yang punya alamat publik tetap — di sisi TPI setel `endpoint-address` dan `endpoint-port` ke hub, `persistent-keepalive` 20–25 detik supaya pemetaan NAT operator tetap hidup, dan `allowed-address` hanya prefix yang memang perlu dijangkau (bukan `10.0.0.0/8` seluruhnya, yang membuat perutean sembarang dan menghapus batas keamanan). Di sisi hub: satu antarmuka WireGuard dengan 20 peer berbeda kunci, satu prefix unik per TPI supaya perutean dan pencatatan jelas, dan hub sebaiknya redundan (dua hub di lokasi berbeda) karena kalau hub tunggal mati, seluruh 20 TPI kehilangan jalur pelaporan suhu sekaligus. Kunci konseptualnya: **pada jaringan yang ber-NAT, arah pembentukan sesi adalah keputusan desain, bukan detail teknis.**
+5. Karena TPI terhubung lewat LTE yang hampir selalu berada di belakang **CGNAT**: alamat yang didapat antarmuka `lte1` bukan alamat publik yang bisa dituju, dan operator tidak meneruskan port masuk. Konfigurasi dengan `listen-port` tanpa `endpoint` berarti TPI **menunggu dipanggil** — model ini menuntut TPI punya alamat publik tetap yang bisa dihubungi, yang tidak dimiliki. Ditambah lagi `/ip cloud ddns-enabled=yes` memberi ilusi "ada nama yang bisa dituju", padahal nama DDNS yang menunjuk alamat CGNAT tetap tidak bisa dihubungi dari luar — sekaligus membocorkan keberadaan perangkat. Rancangan yang benar: **TPI selalu yang menginisiasi** (*dial-out*) ke satu titik pusat yang punya alamat publik tetap — di sisi TPI setel `endpoint-address` dan `endpoint-port` ke hub, `persistent-keepalive` 20-25 detik supaya pemetaan NAT operator tetap hidup, dan `allowed-address` hanya prefix yang memang perlu dijangkau (bukan `10.0.0.0/8` seluruhnya, yang membuat perutean sembarang dan menghapus batas keamanan). Di sisi hub: satu antarmuka WireGuard dengan 20 peer berbeda kunci, satu prefix unik per TPI supaya perutean dan pencatatan jelas, dan hub sebaiknya redundan (dua hub di lokasi berbeda) karena kalau hub tunggal mati, seluruh 20 TPI kehilangan jalur pelaporan suhu sekaligus. Kunci konseptualnya: **pada jaringan yang ber-NAT, arah pembentukan sesi adalah keputusan desain, bukan detail teknis.**
 
 </details>
 
@@ -347,4 +350,4 @@ Nilai < 60 berarti kembali ke `03`, `09`, `12`, `13`, dan `19` sebelum lanjut �
 
 ---
 
-**Berikutnya:** `20-proyek-akhir/03-babak-2-sidang-arsitektur.md` — tiga vendor mengajukan proposal, Anda jadi jurinya.
+**Berikutnya:** `20-proyek-akhir/03-babak-2-sidang-arsitektur.md`. Tiga vendor mengajukan proposal, Anda jadi jurinya.

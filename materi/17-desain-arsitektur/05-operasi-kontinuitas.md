@@ -1,4 +1,4 @@
-# 17.5 — Operasi, Kontinuitas & Manajemen Perubahan
+# 17.5 Operasi, Kontinuitas & Manajemen Perubahan
 
 > **Prasyarat:** `17-desain-arsitektur/01-prinsip-desain`, `17-desain-arsitektur/03-perencanaan-dokumentasi`, `14-monitoring-troubleshooting/03-observability`
 > **Tujuan:** Anda bisa menghitung dan menetapkan RPO, RTO, dan availability, memilih strategi site dan backup, menjalankan perubahan lewat change management dengan MOP dan rollback, serta mengelola siklus hidup aset sampai decommissioning.
@@ -46,7 +46,8 @@ Perhitungan 99,9%: 0,1% x 43.200 menit = 43,2 menit per bulan; 0,1% x 525.600 me
 
 **Susunan seri dan paralel.** Komponen yang harus bekerja semua (seri) mengalikan availability: dua perangkat 99,9% berurutan menjadi 0,999 x 0,999 = 99,80%. Komponen redundan (paralel, salah satu cukup) mengalikan *ketidaktersediaannya*: dua perangkat 99,9% paralel menjadi 1 - (0,001 x 0,001) = 99,9999% secara teori. Angka teoretis ini mengabaikan titik kegagalan bersama (listrik yang sama, perangkat lunak yang sama, kesalahan konfigurasi yang tersalin ke kedua perangkat). Karena itu redundansi di modul 17.1 harus disertai pemisahan fault domain.
 
-⚠️ RTO dan RPO bukan janji teknologi, melainkan keputusan biaya. RPO nol butuh replikasi sinkron; RTO menit butuh site siaga. Tanyakan bisnisnya dulu, jangan menebak.
+> [!WARNING]
+> RTO dan RPO bukan janji teknologi, melainkan keputusan biaya. RPO nol butuh replikasi sinkron; RTO menit butuh site siaga. Tanyakan bisnisnya dulu, jangan menebak.
 
 ---
 
@@ -67,7 +68,8 @@ Dua istilah pola layanan yang sering muncul bersama:
 
 **DR di cloud.** Site pemulihan dapat berupa sumber daya cloud yang disewa. Pola umum: *pilot light* (hanya inti seperti basis data direplikasi, sisanya dinyalakan saat bencana), *warm standby* (versi mengecil yang sudah berjalan), atau hot lewat replikasi penuh. Keunggulannya biaya mengikuti pemakaian; kelemahannya Anda tetap harus menguji failover, konektivitas VPN atau jalur khusus ke cloud, dan batas kuota akun.
 
-💡 Pilih site per layanan, bukan satu untuk semuanya. Layanan pembayaran bisa hot, portal internal cukup warm, arsip cukup cold.
+> [!TIP]
+> Pilih site per layanan, bukan satu untuk semuanya. Layanan pembayaran bisa hot, portal internal cukup warm, arsip cukup cold.
 
 ---
 
@@ -125,7 +127,8 @@ Tiga jenis perubahan dalam praktik ITIL:
 | **Normal** | Perubahan terencana di luar kategori standard (misalnya mengganti core switch, migrasi OSPF area) | Melalui penilaian dan CAB |
 | **Emergency** | Perbaikan mendesak insiden besar | Jalur cepat oleh otoritas darurat (ECAB), review dilengkapi sesudahnya |
 
-⚠️ Emergency change bukan jalan pintas untuk perubahan yang lupa dijadwalkan. Bila terlalu sering muncul, itu gejala perencanaan yang buruk, dan setiap emergency change tetap harus direview sesudahnya.
+> [!WARNING]
+> Emergency change bukan jalan pintas untuk perubahan yang lupa dijadwalkan. Bila terlalu sering muncul, itu gejala perencanaan yang buruk, dan setiap emergency change tetap harus direview sesudahnya.
 
 Terkait **configuration management** (Network+ 3.1): jaga **konfigurasi produksi**, **konfigurasi backup**, dan **konfigurasi baseline** (acuan standar yang disetujui) tetap terdokumentasi, sehingga penyimpangan (configuration drift) terdeteksi.
 
@@ -143,7 +146,8 @@ Terkait **configuration management** (Network+ 3.1): jaga **konfigurasi produksi
 
 **Maintenance window** adalah jadwal yang disepakati untuk perubahan berdampak, biasanya di jam sepi. Praktik baik: umumkan ke pemangku kepentingan, batasi durasi, dan sisakan waktu cadangan untuk rollback di akhir window (jangan mulai langkah berisiko di menit terakhir). Pantau juga trafik sungguhan, karena "jam sepi" menurut kalender belum tentu sepi menurut grafik.
 
-💡 Uji MOP lebih dulu di lab atau perangkat virtual (lihat `lab/00-setup-lab`). MOP yang baru dibaca pertama kali pada malam eksekusi biasanya salah.
+> [!TIP]
+> Uji MOP lebih dulu di lab atau perangkat virtual (lihat `lab/00-setup-lab`). MOP yang baru dibaca pertama kali pada malam eksekusi biasanya salah.
 
 ---
 
@@ -157,7 +161,8 @@ Aset jaringan melewati tahap: **perencanaan dan pengadaan, penerapan, operasi da
 - **Manajemen perangkat lunak dan patch:** jadwalkan pembaruan firmware, uji dulu di lab, lalu terapkan lewat change management.
 - **Decommissioning aman:** hapus dari monitoring, inventaris, dan IPAM; cabut rute dan ACL yang merujuknya; **hapus data dan kredensial** (reset ke pabrik, hapus kunci, sanitasi media penyimpan); cabut sertifikat dan akun; catat pemusnahan atau penjualan.
 
-⚠️ Perangkat bekas dengan konfigurasi utuh membocorkan topologi, kata sandi, dan kunci VPN. Anggap setiap konfigurasi sebagai data sensitif sampai terbukti dihapus.
+> [!WARNING]
+> Perangkat bekas dengan konfigurasi utuh membocorkan topologi, kata sandi, dan kunci VPN. Anggap setiap konfigurasi sebagai data sensitif sampai terbukti dihapus.
 
 Rencanakan penggantian sebelum EoSW, terutama pada anggaran tahunan.
 
@@ -271,23 +276,32 @@ sudo systemctl stop rollback-net.timer     # tanda berhasil, batalkan rollback
 
 ## 11. Kesalahan Umum
 
-❌ **Backup yang tidak pernah diuji restore.** Berkas ada, tetapi tidak bisa dipulihkan, atau terenkripsi dengan kunci yang hilang.
+> [!CAUTION]
+> **Backup yang tidak pernah diuji restore.** Berkas ada, tetapi tidak bisa dipulihkan, atau terenkripsi dengan kunci yang hilang.
 
-❌ **Semua salinan di satu tempat.** Backup di flash perangkat yang sama dengan konfigurasinya hilang bersama perangkat; melanggar 3-2-1.
+> [!CAUTION]
+> **Semua salinan di satu tempat.** Backup di flash perangkat yang sama dengan konfigurasinya hilang bersama perangkat; melanggar 3-2-1.
 
-❌ **Mencampur RPO/RTO dengan MTTR/MTBF.** Yang pertama target bisnis, yang kedua ukuran hasil.
+> [!CAUTION]
+> **Mencampur RPO/RTO dengan MTTR/MTBF.** Yang pertama target bisnis, yang kedua ukuran hasil.
 
-❌ **Perubahan tanpa rollback atau tanpa jaring pengaman** pada akses jarak jauh: salah ubah IP manajemen lalu terkunci.
+> [!CAUTION]
+> **Perubahan tanpa rollback atau tanpa jaring pengaman** pada akses jarak jauh: salah ubah IP manajemen lalu terkunci.
 
-❌ **Menyimpan `write memory` sebelum perubahan terbukti,** sehingga `reload in` tidak lagi menyelamatkan.
+> [!CAUTION]
+> **Menyimpan `write memory` sebelum perubahan terbukti,** sehingga `reload in` tidak lagi menyelamatkan.
 
-❌ **Menjadikan emergency change sebagai kebiasaan,** melewati CAB tanpa review sesudahnya.
+> [!CAUTION]
+> **Menjadikan emergency change sebagai kebiasaan,** melewati CAB tanpa review sesudahnya.
 
-❌ **Redundansi di atas kertas.** Dua perangkat redundan yang berbagi satu catu daya, satu rak, atau satu konfigurasi yang tersalin salah tetap satu titik kegagalan.
+> [!CAUTION]
+> **Redundansi di atas kertas.** Dua perangkat redundan yang berbagi satu catu daya, satu rak, atau satu konfigurasi yang tersalin salah tetap satu titik kegagalan.
 
-❌ **Postmortem untuk mencari kambing hitam,** sehingga insiden berikutnya disembunyikan.
+> [!CAUTION]
+> **Postmortem untuk mencari kambing hitam,** sehingga insiden berikutnya disembunyikan.
 
-✅ Benar: backup sebelum, jaring pengaman otomatis, kriteria rollback tertulis, pre/post-check yang sama, dan review sesudahnya.
+> [!TIP]
+> Benar: backup sebelum, jaring pengaman otomatis, kriteria rollback tertulis, pre/post-check yang sama, dan review sesudahnya.
 
 ---
 
@@ -345,4 +359,4 @@ sudo systemctl stop rollback-net.timer     # tanda berhasil, batalkan rollback
 
 ---
 
-**Berikutnya:** `18-karier-sertifikasi/01-peta-sertifikasi` — memetakan jalur karier dan sertifikasi jaringan.
+**Berikutnya:** `18-karier-sertifikasi/01-peta-sertifikasi`. Memetakan jalur karier dan sertifikasi jaringan.

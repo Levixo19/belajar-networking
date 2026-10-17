@@ -1,11 +1,12 @@
-# Lab 07 — Membangun Protokol Sendiri
+# Lab 07: Membangun Protokol Sendiri
 
 > **Prasyarat:** `05-transport/02-tcp` (terutama bagian 12, prinsip transfer andal), `15-otomasi/03-python-jaringan` (Python dasar), `04-network-layer/04-arp-icmp`, `07-routing-lanjutan/02-konsep-routing-dinamis`
 > **Tujuan:** Anda menulis sendiri, dalam Python, lima potong mesin jaringan: klien HTTP di atas socket mentah, protokol transfer andal (Go-Back-N dan Selective Repeat) di atas kanal rusak, traceroute, router mini dengan longest prefix match dan ARP, serta protokol distance-vector. Semuanya diuji otomatis dengan pytest dan diukur dengan angka.
 > **Platform:** Linux (native, VM, atau WSL2) atau macOS dengan Python 3.10+ dan pytest. Tidak butuh root, kecuali mode raw socket opsional di Lab 7.3.
 > **Format:** KONSEP → TUGAS → UJI OTOMATIS → KRITERIA SUKSES → pembahasan.
 
-💡 **Ini lab pendalaman, bukan materi ujian.** Tidak ada satu pun latihan di sini yang diuji di CCNA, Network+, atau MTCNA. Lab ini ada karena satu alasan: orang yang pernah menulis Go-Back-N sendiri tidak akan lagi membaca "TCP Retransmission" di Wireshark sebagai hafalan, dan orang yang pernah menulis LPM sendiri tahu persis mengapa `show ip route 10.1.1.1` memilih rute /24, bukan /16. Kerjakan setelah Tahap 15, atau lebih awal bila Python Anda sudah lancar.
+> [!TIP]
+> **Ini lab pendalaman, bukan materi ujian.** Tidak ada satu pun latihan di sini yang diuji di CCNA, Network+, atau MTCNA. Lab ini ada karena satu alasan: orang yang pernah menulis Go-Back-N sendiri tidak akan lagi membaca "TCP Retransmission" di Wireshark sebagai hafalan, dan orang yang pernah menulis LPM sendiri tahu persis mengapa `show ip route 10.1.1.1` memilih rute /24, bukan /16. Kerjakan setelah Tahap 15, atau lebih awal bila Python Anda sudah lancar.
 
 ---
 
@@ -62,7 +63,8 @@ SKIPPED [1] tests/test_73_traceroute.py: raw socket butuh root/CAP_NET_RAW; ...
 
 Di awal, hampir semua uji starter gagal dengan `NotImplementedError: TODO 7.x...`. Itu normal: pesan tersebut menunjuk fungsi mana yang harus Anda isi. Satu uji yang selalu berjalan, `tests/test_00_api.py`, memastikan antarmuka starter dan referensi tetap sama. Jangan ubah nama atau parameter fungsi.
 
-⚠️ **Aturan main.** (1) Jangan membuka `referensi/` sebelum mencoba sungguh-sungguh; bacalah setelah lulus uji untuk membandingkan gaya. (2) Jangan memakai library HTTP atau library jaringan pihak ketiga. (3) Jangan "mengakali" uji, misalnya dengan mengembalikan nilai yang dihafal dari isi tes. Tujuannya pemahaman, bukan centang hijau.
+> [!WARNING]
+> **Aturan main.** (1) Jangan membuka `referensi/` sebelum mencoba sungguh-sungguh; bacalah setelah lulus uji untuk membandingkan gaya. (2) Jangan memakai library HTTP atau library jaringan pihak ketiga. (3) Jangan "mengakali" uji, misalnya dengan mengembalikan nilai yang dihafal dari isi tes. Tujuannya pemahaman, bukan centang hijau.
 
 ### Asal-usul desain
 
@@ -144,8 +146,9 @@ Kesalahan umum:
 - Menganggap nama header peka huruf besar-kecil. Nama header HTTP tidak peka huruf, jadi simpan dalam huruf kecil.
 - Menganggap `sendall` dan `send` sama. `send` boleh mengirim sebagian; `sendall` mengulang sampai semua terkirim.
 
-💡 HTTPS tidak dicakup di sini. Untuk mencobanya, bungkus socket dengan `ssl.create_default_context().wrap_socket(s, server_hostname=host)`; sisa kode klien tidak berubah, karena TLS bekerja di bawah HTTP (`06-aplikasi/04-tls-pki`).
-</details>
+> [!TIP]
+> HTTPS tidak dicakup di sini. Untuk mencobanya, bungkus socket dengan `ssl.create_default_context().wrap_socket(s, server_hostname=host)`; sisa kode klien tidak berubah, karena TLS bekerja di bawah HTTP (`06-aplikasi/04-tls-pki`).
+> </details>
 
 ---
 
@@ -192,7 +195,8 @@ SR : ACK individual, seq = paket yang diterima.
 3. **7.2c-d** `PengirimGBN` dan `PenerimaGBN`. Jendela 1 otomatis menjadi stop-and-wait.
 4. **7.2e-f** `PengirimSR` dan `PenerimaSR`.
 
-💡 Simpan indeks **absolut** (0, 1, 2, ...) di pengirim, dan ubah ke nomor di kabel hanya saat membuat paket (`i % ruang_seq`). Untuk menafsirkan nomor yang datang, hitung jaraknya dari base: `d = (seq - base) % ruang_seq`. Hampir semua bug wrap-around hilang dengan dua kebiasaan ini.
+> [!TIP]
+> Simpan indeks **absolut** (0, 1, 2, ...) di pengirim, dan ubah ke nomor di kabel hanya saat membuat paket (`i % ruang_seq`). Untuk menafsirkan nomor yang datang, hitung jaraknya dari base: `d = (seq - base) % ruang_seq`. Hampir semua bug wrap-around hilang dengan dua kebiasaan ini.
 
 ### UJI OTOMATIS
 
@@ -483,7 +487,8 @@ Dua opsi pencegahan loop:
 3. **7.5c** `terima_iklan`: simpan vektor terbaru dari tetangga, hitung ulang.
 4. **7.5d** `hitung_ulang`: Bellman-Ford dari nol. Tujuan yang tak terjangkau disimpan sebagai tak hingga (route poisoning), bukan dihapus.
 
-⚠️ Satu aturan yang terasa janggal tetapi wajib: bila **next hop Anda sendiri** melaporkan biaya naik, Anda harus ikut naik walaupun hasilnya lebih buruk. Tanpa aturan ini, node tidak akan pernah melupakan rute yang mati. Aturan yang sama inilah yang memungkinkan count-to-infinity.
+> [!WARNING]
+> Satu aturan yang terasa janggal tetapi wajib: bila **next hop Anda sendiri** melaporkan biaya naik, Anda harus ikut naik walaupun hasilnya lebih buruk. Tanpa aturan ini, node tidak akan pernah melupakan rute yang mati. Aturan yang sama inilah yang memungkinkan count-to-infinity.
 
 ### UJI OTOMATIS dan demonstrasi
 
@@ -550,7 +555,8 @@ Anda telah menulis sendiri:
 - **7.4** router dengan LPM trie, ARP cache dan antrean, penurunan TTL, serta ICMP error yang mengikuti aturan RFC;
 - **7.5** distance-vector yang memperlihatkan count-to-infinity, perbaikannya dengan split horizon dan poison reverse, serta batas perbaikan itu pada loop tiga node.
 
-💡 **Untuk portofolio:** simpan pekerjaan Anda di repositori Git sendiri bersama catatan eksperimen (tabel goodput, output traceroute dari jaringan Anda, penjelasan skenario segitiga). Ini bukti kemampuan yang jarang dimiliki pelamar posisi network engineer di Indonesia: bukan hanya bisa mengonfigurasi, tetapi juga mengerti mesin di baliknya. Jangan unggah output traceroute yang memuat alamat IP internal kantor Anda.
+> [!TIP]
+> **Untuk portofolio:** simpan pekerjaan Anda di repositori Git sendiri bersama catatan eksperimen (tabel goodput, output traceroute dari jaringan Anda, penjelasan skenario segitiga). Ini bukti kemampuan yang jarang dimiliki pelamar posisi network engineer di Indonesia: bukan hanya bisa mengonfigurasi, tetapi juga mengerti mesin di baliknya. Jangan unggah output traceroute yang memuat alamat IP internal kantor Anda.
 
 ---
 
@@ -577,4 +583,4 @@ Anda telah menulis sendiri:
 
 ---
 
-**Berikutnya:** `lab/08-lab-netdevops` — lab NetDevOps: jaringan sebagai kode di atas containerlab.
+**Berikutnya:** `lab/08-lab-netdevops`. Lab NetDevOps: jaringan sebagai kode di atas containerlab.

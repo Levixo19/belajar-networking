@@ -1,4 +1,4 @@
-# 20.8 — Babak 7: Kode yang Menjaga
+# 20.8 Babak 7: Kode yang Menjaga
 
 > **Prasyarat:** `20.7`, ditambah `15` (otomasi) dan `14` (monitoring & troubleshooting)
 > **Tujuan:** Mengubah 23 lokasi yang dikelola dengan tangan menjadi sesuatu yang dikelola dengan kode, dan membuat rantai dingin punya alarm yang **terbukti berbunyi** — bukan alarm yang diasumsikan berbunyi.
@@ -17,13 +17,15 @@ Babak ini menghasilkan **berkas yang bisa dijalankan**, bukan dokumen. Penilaian
 | Alarm benar-benar berbunyi | Matikan satu sensor → notifikasi sampai ≤ 5 menit, tercatat waktunya |
 | Penyimpangan konfigurasi terdeteksi | Ubah satu baris di perangkat secara manual → laporan menyebutnya dalam 24 jam |
 
-⏱ Mode Ujian: 4 jam. Bahasa bebas — Python + Ansible adalah jalur yang paling banyak dipakai di industri, tetapi skrip RouterOS, `netmiko`, atau `pyats` juga sah bila hasilnya memenuhi kriteria di atas.
+> [!NOTE]
+> Mode Ujian: 4 jam. Bahasa bebas — Python + Ansible adalah jalur yang paling banyak dipakai di industri, tetapi skrip RouterOS, `netmiko`, atau `pyats` juga sah bila hasilnya memenuhi kriteria di atas.
 
-💡 Kenapa babak ini penting untuk BNS secara khusus: satu engineer tidak mungkin merawat 20 TPI dengan tangan. Bukan karena malas — karena **konfigurasi yang disalin tangan pasti menyimpang**, dan penyimpangan itulah yang menjadi gangguan jam 3 pagi (Anda akan mengalaminya di Babak 8).
+> [!TIP]
+> Kenapa babak ini penting untuk BNS secara khusus: satu engineer tidak mungkin merawat 20 TPI dengan tangan. Bukan karena malas — karena **konfigurasi yang disalin tangan pasti menyimpang**, dan penyimpangan itulah yang menjadi gangguan jam 3 pagi (Anda akan mengalaminya di Babak 8).
 
 ---
 
-## 2. Bagian A — Sumber Kebenaran
+## 2. Bagian A: Sumber Kebenaran
 
 Buat `11-otomasi/inventory/` berisi data, bukan konfigurasi. Aturannya: **setiap fakta hanya boleh ditulis satu kali di satu tempat.**
 
@@ -61,11 +63,12 @@ vlans:
   # ...
 ```
 
-⚠️ Pertanyaan yang menentukan nilai Anda di bagian ini: **apakah menambah TPI ke-21 memerlukan perubahan di lebih dari satu berkas?** Kalau ya, rancangan data Anda belum benar.
+> [!WARNING]
+> Pertanyaan yang menentukan nilai Anda di bagian ini: **apakah menambah TPI ke-21 memerlukan perubahan di lebih dari satu berkas?** Kalau ya, rancangan data Anda belum benar.
 
 ---
 
-## 3. Bagian B — Templat Konfigurasi
+## 3. Bagian B: Templat Konfigurasi
 
 Dua templat minimum. Semua nilai harus datang dari inventory, tidak ada yang ditulis keras.
 
@@ -98,7 +101,7 @@ vlan {{ v.id }}
 
 ---
 
-## 4. Bagian C — Playbook yang Aman Dijalankan Berulang
+## 4. Bagian C: Playbook yang Aman Dijalankan Berulang
 
 ```yaml
 # 11-otomasi/playbooks/push-tpi.yml
@@ -135,7 +138,7 @@ vlan {{ v.id }}
 
 ---
 
-## 5. Bagian D — Audit Kepatuhan sebagai Kode
+## 5. Bagian D: Audit Kepatuhan sebagai Kode
 
 Ubah daftar periksa hardening Babak 6 menjadi program. Daftar periksa yang dibaca manusia akan dilewati; program tidak.
 
@@ -181,11 +184,12 @@ if __name__ == "__main__":
     sys.exit(main())
 ```
 
-⚠️ Jebakan yang membuat skrip audit berbahaya: **kegagalan senyap.** Bila perangkat tidak bisa dihubungi, atau keluarannya tidak sesuai dugaan pemroses teks Anda, skrip tidak boleh menganggapnya "lulus". Perangkat yang tidak bisa diperiksa adalah **temuan**, bukan ketiadaan temuan. Buktikan sifat ini dengan sengaja mematikan satu perangkat lalu menjalankan skripnya.
+> [!WARNING]
+> Jebakan yang membuat skrip audit berbahaya: **kegagalan senyap.** Bila perangkat tidak bisa dihubungi, atau keluarannya tidak sesuai dugaan pemroses teks Anda, skrip tidak boleh menganggapnya "lulus". Perangkat yang tidak bisa diperiksa adalah **temuan**, bukan ketiadaan temuan. Buktikan sifat ini dengan sengaja mematikan satu perangkat lalu menjalankan skripnya.
 
 ---
 
-## 6. Bagian E — Alur CI
+## 6. Bagian E: Alur CI
 
 ```yaml
 # 11-otomasi/ci/pipeline.yml (konsep; sesuaikan dengan alat yang Anda pakai)
@@ -211,7 +215,7 @@ Tiga sifat yang dinilai: **(a)** tahap `lint` menangkap kesalahan rencana alamat
 
 ---
 
-## 7. Bagian F — Observability sebagai Kode
+## 7. Bagian F: Observability sebagai Kode
 
 ### 7.1 Tetapkan SLO dulu, alarm kemudian
 
@@ -225,7 +229,8 @@ Isi tabel ini di `10-observability.md`. Angkanya milik Anda, tapi harus bisa dip
 | S4 | Data TPI sampai ke pusat dalam jendela tertentu | <<?>> | <<?>> | TPI boleh menyangga, tidak boleh kehilangan |
 | S5 | Sinkronisasi waktu: proporsi perangkat dengan selisih < 1 detik | <<?>> | <<?>> | bukti butuh penanda waktu sah |
 
-💡 Bedakan **SLI kesehatan bisnis** dari **metrik perangkat**. "CPU switch 40%" bukan SLO; "bukti suhu tidak bolong" adalah SLO. Alarm pada yang pertama membangunkan Anda tanpa alasan; alarm pada yang kedua membangunkan Anda tepat waktu.
+> [!TIP]
+> Bedakan **SLI kesehatan bisnis** dari **metrik perangkat**. "CPU switch 40%" bukan SLO; "bukti suhu tidak bolong" adalah SLO. Alarm pada yang pertama membangunkan Anda tanpa alasan; alarm pada yang kedua membangunkan Anda tepat waktu.
 
 ### 7.2 Aturan alarm
 
@@ -290,7 +295,8 @@ Minimal tiga runbook, masing-masing satu halaman, berisi: gejala · dampak bisni
 # 5. Simpan hasil: tanggal, sensor, waktu deteksi, lulus/gagal
 ```
 
-⚠️ Alarm yang belum pernah diuji adalah alarm yang **kemungkinan besar tidak berfungsi**. Ada banyak cara alarm gagal diam-diam: aturan yang salah tulis sehingga tidak pernah cocok, jalur notifikasi yang kedaluwarsa, penerima yang sudah resign, atau pemantauan yang melewati jaringan yang sedang mati. Di BNS, alarm yang tidak berbunyi berharga Rp 1,2 miliar per kontainer.
+> [!WARNING]
+> Alarm yang belum pernah diuji adalah alarm yang **kemungkinan besar tidak berfungsi**. Ada banyak cara alarm gagal diam-diam: aturan yang salah tulis sehingga tidak pernah cocok, jalur notifikasi yang kedaluwarsa, penerima yang sudah resign, atau pemantauan yang melewati jaringan yang sedang mati. Di BNS, alarm yang tidak berbunyi berharga Rp 1,2 miliar per kontainer.
 
 ---
 
@@ -305,7 +311,7 @@ Minimal tiga runbook, masing-masing satu halaman, berisi: gejala · dampak bisni
 
 ---
 
-## 9. Latihan — Menguji Kode Anda Sendiri
+## 9. Latihan: Menguji Kode Anda Sendiri
 
 1. Jelaskan apa arti idempoten pada konteks konfigurasi jaringan, berikan satu contoh perintah/tugas yang **tampak** idempoten tetapi sebenarnya tidak, dan jelaskan cara Anda membuktikan playbook Anda idempoten.
 2. Anda menjalankan `push-tpi.yml` ke 20 TPI, dan templatnya mengandung satu kesalahan pada aturan firewall yang memutus terowongan setelah diterapkan. Jelaskan apa yang akan terjadi pada masing-masing pilihan `serial` (semua sekaligus, 5 sekaligus, 1 sekaligus), lalu rancang mekanisme yang membuat kesalahan seperti ini **tidak mungkin** melumpuhkan lebih dari satu lokasi.
@@ -354,4 +360,4 @@ Minimal tiga runbook, masing-masing satu halaman, berisi: gejala · dampak bisni
 
 ---
 
-**Berikutnya:** `20-proyek-akhir/09-babak-8-malam-panjang.md` — pukul 22:14, ponsel Anda berbunyi.
+**Berikutnya:** `20-proyek-akhir/09-babak-8-malam-panjang.md`. Pukul 22:14, ponsel Anda berbunyi.

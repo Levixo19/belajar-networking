@@ -1,9 +1,10 @@
-# 07.6 — BGP
+# 07.6 BGP
 
 > **Prasyarat:** `07-routing-lanjutan/02`, `00-fondasi/04` (AS, transit, peering)
 > **Tujuan:** Anda paham cara kerja BGP, bisa membaca dan memengaruhi best path selection, mengonfigurasi multihoming, dan memahami keamanan routing internet (RPKI).
 
-> 📌 **BGP menjalankan internet.** Ia satu-satunya protokol yang menghubungkan ~80.000 jaringan otonom menjadi satu internet.
+> > [!NOTE]
+> > **BGP menjalankan internet.** Ia satu-satunya protokol yang menghubungkan ~80.000 jaringan otonom menjadi satu internet.
 
 ---
 
@@ -23,7 +24,8 @@
 
 BGP memakai TCP agar tidak perlu mengimplementasikan sendiri: keandalan, pengurutan, flow control, dan fragmentasi. Dengan jutaan rute yang harus dipertukarkan, ini keputusan desain yang tepat.
 
-⚠️ **Konsekuensinya:** BGP membutuhkan **konektivitas IP terlebih dahulu** sebelum bisa membentuk sesi. Anda tidak bisa memakai BGP untuk membangun konektivitas dasar — harus ada rute (connected, static, atau IGP) ke alamat peer.
+> [!WARNING]
+> **Konsekuensinya:** BGP membutuhkan **konektivitas IP terlebih dahulu** sebelum bisa membentuk sesi. Anda tidak bisa memakai BGP untuk membangun konektivitas dasar — harus ada rute (connected, static, atau IGP) ke alamat peer.
 
 ---
 
@@ -44,7 +46,8 @@ BGP memakai TCP agar tidak perlu mengimplementasikan sendiri: keandalan, penguru
 
 Kenapa? Karena iBGP tidak menambahkan AS_PATH, sehingga tidak ada mekanisme deteksi loop. Aturan ini mencegah loop, tetapi menimbulkan konsekuensi:
 
-⚠️ **Semua router iBGP harus terhubung FULL MESH.**
+> [!WARNING]
+> **Semua router iBGP harus terhubung FULL MESH.**
 ```
 n router → n(n−1)/2 sesi
 
@@ -67,7 +70,8 @@ OPENCONFIRM  → OPEN diterima, menunggu KEEPALIVE
 ESTABLISHED  → sesi aktif, siap bertukar UPDATE ✅
 ```
 
-⚠️ **`ACTIVE` bukan berarti "aktif dan sehat"** — justru sebaliknya. `ACTIVE` berarti BGP **gagal** membuka koneksi TCP dan sedang mencoba lagi. Nama yang menyesatkan.
+> [!WARNING]
+> **`ACTIVE` bukan berarti "aktif dan sehat"** — justru sebaliknya. `ACTIVE` berarti BGP **gagal** membuka koneksi TCP dan sedang mencoba lagi. Nama yang menyesatkan.
 
 **Diagnosis dari state:**
 ```
@@ -142,7 +146,8 @@ Mengendalikan trafik KELUAR dari AS Anda  → LOCAL_PREF (dan WEIGHT lokal)
 Memengaruhi trafik MASUK ke AS Anda       → AS_PATH prepending, MED, community
 ```
 
-⚠️ **Anda punya kendali penuh atas trafik keluar, tetapi hanya bisa "menyarankan" untuk trafik masuk.** Keputusan akhir ada di AS lain. Ini asimetri fundamental BGP.
+> [!WARNING]
+> **Anda punya kendali penuh atas trafik keluar, tetapi hanya bisa "menyarankan" untuk trafik masuk.** Keputusan akhir ada di AS lain. Ini asimetri fundamental BGP.
 
 ---
 
@@ -171,7 +176,8 @@ Urutan ini **wajib dihafal** untuk memahami keputusan BGP.
 > **W**e **L**ove **O**ranges **A**s **O**ranges **M**ean **P**ure **R**efreshment
 > (Weight, LOCAL_PREF, Originate, AS_PATH, ORIGIN, MED, Paths eBGP/iBGP, RID/Router ID)
 
-💡 **Dalam praktik, 95% keputusan berhenti di langkah 1–4.** Kalau Anda ingin memengaruhi pilihan BGP, gunakan LOCAL_PREF (keluar) atau AS_PATH prepending (masuk).
+> [!TIP]
+> **Dalam praktik, 95% keputusan berhenti di langkah 1–4.** Kalau Anda ingin memengaruhi pilihan BGP, gunakan LOCAL_PREF (keluar) atau AS_PATH prepending (masuk).
 
 ```
 R1# show ip bgp 192.168.10.0
@@ -210,7 +216,8 @@ R1(config-router-af)# neighbor 203.0.113.2 prefix-list MASUK in
 R1(config-router-af)# neighbor 203.0.113.2 maximum-prefix 100000 90 restart 15
 ```
 
-⚠️ **Perintah `network` di BGP BERBEDA dari IGP.** Ia **tidak** mengaktifkan BGP di interface — ia berarti: *"iklankan prefix ini, JIKA prefix ini ada di routing table."* Kalau prefix tidak ada di routing table, ia tidak akan diiklankan.
+> [!WARNING]
+> **Perintah `network` di BGP BERBEDA dari IGP.** Ia **tidak** mengaktifkan BGP di interface — ia berarti: *"iklankan prefix ini, JIKA prefix ini ada di routing table."* Kalau prefix tidak ada di routing table, ia tidak akan diiklankan.
 
 ```
 R1(config-router-af)# network 192.168.0.0 mask 255.255.252.0
@@ -227,9 +234,11 @@ R1(config-router)# neighbor 10.0.0.2 update-source loopback0  ← PENTING!
 R1(config-router)# neighbor 10.0.0.2 next-hop-self            ← PENTING!
 ```
 
-💡 **`update-source loopback0`** — sesi iBGP dibangun dari loopback ke loopback, sehingga tetap hidup selama ada **jalur mana pun** antar-router (IGP menyediakan redundansi). Kalau memakai interface fisik, sesi putus saat interface itu down walau ada jalur alternatif.
+> [!TIP]
+> **`update-source loopback0`** — sesi iBGP dibangun dari loopback ke loopback, sehingga tetap hidup selama ada **jalur mana pun** antar-router (IGP menyediakan redundansi). Kalau memakai interface fisik, sesi putus saat interface itu down walau ada jalur alternatif.
 
-💡 **`next-hop-self`** — router border mengubah NEXT_HOP menjadi dirinya sendiri sebelum meneruskan rute eBGP ke iBGP peer. Tanpa ini, router internal menerima NEXT_HOP berupa alamat router ISP yang **tidak ada di IGP mereka** → rute dianggap tidak reachable dan tidak dipasang.
+> [!TIP]
+> **`next-hop-self`** — router border mengubah NEXT_HOP menjadi dirinya sendiri sebelum meneruskan rute eBGP ke iBGP peer. Tanpa ini, router internal menerima NEXT_HOP berupa alamat router ISP yang **tidak ada di IGP mereka** → rute dianggap tidak reachable dan tidak dipasang.
 
 ### eBGP multihop
 
@@ -271,7 +280,8 @@ Dari eBGP        → refleksikan ke semua
 
 **Pencegahan loop:** atribut `ORIGINATOR_ID` (RID pembuat asli) dan `CLUSTER_LIST` (daftar RR yang dilalui). Router membuang rute yang `ORIGINATOR_ID`-nya adalah dirinya sendiri, atau yang `CLUSTER_LIST`-nya berisi cluster-ID-nya.
 
-💡 **Selalu pasang minimal dua RR** untuk redundansi — RR adalah single point of failure untuk distribusi rute.
+> [!TIP]
+> **Selalu pasang minimal dua RR** untuk redundansi — RR adalah single point of failure untuk distribusi rute.
 
 ### Confederation
 
@@ -281,7 +291,8 @@ Memecah satu AS besar menjadi beberapa **sub-AS**. Di dalam sub-AS tetap butuh f
 
 ## 8. Filtering dan Route-Map
 
-⚠️ **Filtering di BGP bukan opsional — ia wajib.** Tanpa filter, Anda bisa secara tidak sengaja menjadi transit untuk seluruh internet (route leak), atau menerima rute palsu.
+> [!WARNING]
+> **Filtering di BGP bukan opsional — ia wajib.** Tanpa filter, Anda bisa secara tidak sengaja menjadi transit untuk seluruh internet (route leak), atau menerima rute palsu.
 
 ### Prefix-list
 
@@ -319,7 +330,8 @@ R1(config-router-af)# neighbor 203.0.113.2 filter-list 1 out
    ← hanya iklankan rute milik sendiri, JANGAN jadi transit
 ```
 
-💡 **`^$` adalah filter keluar paling penting bagi jaringan multihomed non-transit.** Ia mencegah Anda secara tidak sengaja mengiklankan rute dari ISP A ke ISP B (yang akan membuat seluruh trafik internet mengalir melalui Anda).
+> [!TIP]
+> **`^$` adalah filter keluar paling penting bagi jaringan multihomed non-transit.** Ia mencegah Anda secara tidak sengaja mengiklankan rute dari ISP A ke ISP B (yang akan membuat seluruh trafik internet mengalir melalui Anda).
 
 ### Route-map
 
@@ -333,7 +345,8 @@ R1(config-route-map)# set local-preference 150
 R1(config-router-af)# neighbor 203.0.113.2 route-map ISP-A-IN in
 ```
 
-⚠️ **Route-map punya implicit deny di akhir.** Kalau Anda membuat route-map dengan hanya satu `permit 10` yang cocok sebagian rute, sisanya akan **dibuang diam-diam**. Selalu akhiri dengan `permit` kosong kalau ingin melewatkan sisanya.
+> [!WARNING]
+> **Route-map punya implicit deny di akhir.** Kalau Anda membuat route-map dengan hanya satu `permit 10` yang cocok sebagian rute, sisanya akan **dibuang diam-diam**. Selalu akhiri dengan `permit` kosong kalau ingin melewatkan sisanya.
 
 ### Menerapkan perubahan filter
 
@@ -343,7 +356,8 @@ R1# clear ip bgp 203.0.113.2 soft out
 R1# clear ip bgp *                         ⚠️ HARD RESET — memutus semua sesi!
 ```
 
-⚠️ **Jangan pernah `clear ip bgp *` di produksi.** Selalu gunakan `soft`.
+> [!WARNING]
+> **Jangan pernah `clear ip bgp *` di produksi.** Selalu gunakan `soft`.
 
 ---
 
@@ -389,7 +403,8 @@ R1(config-route-map)# set as-path prepend 65001 65001 65001
 R1(config-router-af)# neighbor 198.51.100.2 route-map PREPEND-ISP-B out
 ```
 
-⚠️ **Prepending tidak selalu efektif.** AS lain bisa punya LOCAL_PREF yang mengalahkan panjang AS_PATH. Alternatif yang lebih presisi: **BGP community** yang disediakan ISP (mis. "kurangi LOCAL_PREF Anda untuk rute saya").
+> [!WARNING]
+> **Prepending tidak selalu efektif.** AS lain bisa punya LOCAL_PREF yang mengalahkan panjang AS_PATH. Alternatif yang lebih presisi: **BGP community** yang disediakan ISP (mis. "kurangi LOCAL_PREF Anda untuk rute saya").
 
 ### Mencegah menjadi transit
 
@@ -418,7 +433,8 @@ R1(config-router)# neighbor 203.0.113.2 ttl-security hops 1
 R1(config-router)# neighbor 203.0.113.2 password RahasiaKuat
 ```
 
-⚠️ **`maximum-prefix` adalah perlindungan penting.** Tanpa itu, ISP yang salah konfigurasi bisa mengirim jutaan rute dan menghabiskan memori router Anda.
+> [!WARNING]
+> **`maximum-prefix` adalah perlindungan penting.** Tanpa itu, ISP yang salah konfigurasi bisa mengirim jutaan rute dan menghabiskan memori router Anda.
 
 ---
 
@@ -464,7 +480,8 @@ R1# show ip bgp rpki table
 R1# show ip bgp rpki servers
 ```
 
-⚠️ **Praktik yang disarankan MANRS: pasang RPKI dengan logging dulu, jangan langsung memfilter.** ROA yang salah atau validator yang gagal bisa memutus konektivitas ke jaringan yang sah.
+> [!WARNING]
+> **Praktik yang disarankan MANRS: pasang RPKI dengan logging dulu, jangan langsung memfilter.** ROA yang salah atau validator yang gagal bisa memutus konektivitas ke jaringan yang sah.
 
 ### MANRS
 
@@ -584,13 +601,15 @@ Connect             → sedang mencoba TCP
    → show ip bgp <prefix> dan telusuri algoritma seleksi langkah demi langkah
 ```
 
-⚠️ **"Rute ada di `show ip bgp` tetapi tidak di `show ip route`"** hampir selalu berarti **NEXT_HOP tidak reachable**. Pada iBGP, solusinya `next-hop-self` di router border.
+> [!WARNING]
+> **"Rute ada di `show ip bgp` tetapi tidak di `show ip route`"** hampir selalu berarti **NEXT_HOP tidak reachable**. Pada iBGP, solusinya `next-hop-self` di router border.
 
 ---
 
 ## MikroTik RouterOS
 
-⚠️ **BGP ditulis ulang total di RouterOS v7.** Sintaks v6 dan v7 sangat berbeda.
+> [!WARNING]
+> **BGP ditulis ulang total di RouterOS v7.** Sintaks v6 dan v7 sangat berbeda.
 
 ### RouterOS v7
 
@@ -621,7 +640,8 @@ Sintaks di bawah ini diuji di RouterOS 7.24.5 (stable, Oktober 2026). Beberapa n
 /ip route print where bgp
 ```
 
-⚠️ **RouterOS tidak mengiklankan default route lewat BGP kecuali diminta.** Untuk itu pasang `output.default-originate` (misalnya `if-installed`) di connection.
+> [!WARNING]
+> **RouterOS tidak mengiklankan default route lewat BGP kecuali diminta.** Untuk itu pasang `output.default-originate` (misalnya `if-installed`) di connection.
 
 ### Routing filter (setara route-map)
 
@@ -645,7 +665,8 @@ Sintaks di bawah ini diuji di RouterOS 7.24.5 (stable, Oktober 2026). Beberapa n
 /routing filter rule print
 ```
 
-⚠️ **Bahasa routing filter RouterOS v7 memakai sintaks mirip skrip**, bukan match/set terpisah seperti Cisco. Ini lebih ekspresif tetapi butuh pembiasaan.
+> [!WARNING]
+> **Bahasa routing filter RouterOS v7 memakai sintaks mirip skrip**, bukan match/set terpisah seperti Cisco. Ini lebih ekspresif tetapi butuh pembiasaan.
 
 ### RouterOS v6 (untuk referensi jaringan lama)
 
@@ -676,9 +697,11 @@ Sintaks di bawah ini diuji di RouterOS 7.24.5 (stable, Oktober 2026). Beberapa n
 | `show ip bgp` | `/ip route print where bgp` |
 | `clear ip bgp X soft` | `/routing bgp session refresh [find]` |
 
-💡 **MikroTik sering dipakai sebagai router BGP untuk ISP kecil di Indonesia** karena CCR bisa menangani tabel internet penuh dengan harga jauh di bawah router setara dari vendor lain. Pastikan RAM cukup: **full table IPv4 + IPv6 butuh minimal 4 GB**.
+> [!TIP]
+> **MikroTik sering dipakai sebagai router BGP untuk ISP kecil di Indonesia** karena CCR bisa menangani tabel internet penuh dengan harga jauh di bawah router setara dari vendor lain. Pastikan RAM cukup: **full table IPv4 + IPv6 butuh minimal 4 GB**.
 
-⚠️ **Selalu pasang `maximum-prefix`** dan filter keluar `^$`-equivalent agar tidak menjadi transit tidak sengaja:
+> [!WARNING]
+> **Selalu pasang `maximum-prefix`** dan filter keluar `^$`-equivalent agar tidak menjadi transit tidak sengaja:
 ```
 /routing bgp connection set ISP-A input.limit-process-routes-ipv4=1000000
 ```
@@ -711,7 +734,8 @@ Neighbor        V    AS   MsgRcvd MsgSent TblVer InQ OutQ Up/Down  State/PfxRcd 
 10.10.0.10      4 64510        14      13      9   0    0 00:02:13            1 (Policy) RS-IXP-LAB
 ```
 
-⚠️ **`(Policy)` bukan error sesi.** Sesi tetap Established. Pemula sering menghabiskan waktu memeriksa kabel dan password, padahal yang kurang hanya `neighbor X route-map ... out`.
+> [!WARNING]
+> **`(Policy)` bukan error sesi.** Sesi tetap Established. Pemula sering menghabiskan waktu memeriksa kabel dan password, padahal yang kurang hanya `neighbor X route-map ... out`.
 
 ### 13.2 BGP Roles dan atribut OTC (RFC 9234)
 
@@ -766,7 +790,8 @@ isp-a# show bgp ipv4 unicast 203.0.113.0/24
       Origin IGP, metric 0, localpref 200, valid, external, otc 64510, best
 ```
 
-💡 **Roles tidak menggantikan filter.** Ia hanya tahu hubungan bisnis, bukan prefix mana milik siapa. Pasang roles **di samping** prefix-list, as-path filter, max-prefix, dan ROV.
+> [!TIP]
+> **Roles tidak menggantikan filter.** Ia hanya tahu hubungan bisnis, bukan prefix mana milik siapa. Pasang roles **di samping** prefix-list, as-path filter, max-prefix, dan ROV.
 
 ### 13.3 ROA yang benar: maxLength (RFC 9319), profil ROA (RFC 9582), satu prefix per ROA (RFC 9455)
 
@@ -842,7 +867,8 @@ router bgp 64500
  exit
 ```
 
-⚠️ Dokumentasi BIRD 2 menyebut implementasi BMP-nya masih pendahuluan dan **belum siap produksi** (tidak dikompilasi secara default). Untuk router BIRD, andalkan dulu log, `show route filtered`, dan ekspor tabel.
+> [!WARNING]
+> Dokumentasi BIRD 2 menyebut implementasi BMP-nya masih pendahuluan dan **belum siap produksi** (tidak dikompilasi secara default). Untuk router BIRD, andalkan dulu log, `show route filtered`, dan ekspor tabel.
 
 ### 13.8 Validator RPKI dan RTR: konfigurasi multi-platform
 
@@ -940,7 +966,8 @@ show ip bgp rpki servers
 show ip bgp rpki table
 ```
 
-⚠️ **Perilaku default IOS XE berbeda dari platform lain.** Menurut dokumentasi Cisco, begitu `bgp rpki server` dipasang, rute **invalid tidak dipilih sebagai best path** dan tidak diiklankan, tanpa perlu route-map. Kalau Anda ingin tahap "logging dulu", pasang `bgp bestpath prefix-validate allow-invalid` sebelum menambahkan server, lalu hapus setelah yakin.
+> [!WARNING]
+> **Perilaku default IOS XE berbeda dari platform lain.** Menurut dokumentasi Cisco, begitu `bgp rpki server` dipasang, rute **invalid tidak dipilih sebagai best path** dan tidak diiklankan, tanpa perlu route-map. Kalau Anda ingin tahap "logging dulu", pasang `bgp bestpath prefix-validate allow-invalid` sebelum menambahkan server, lalu hapus setelah yakin.
 
 **Juniper Junos**:
 
@@ -1046,7 +1073,7 @@ show validation database
 
 7. **`INVALID`** berarti **ada ROA** untuk prefix tersebut, tetapi pengumumannya **tidak cocok** — AS asal salah, atau panjang prefix melebihi `maxLength`. Ini indikasi kuat **hijacking** atau salah konfigurasi. Router sebaiknya **menolak** rute ini.
    **`NOTFOUND`** berarti **tidak ada ROA** yang mencakup prefix tersebut — pemiliknya belum mendaftarkan RPKI. Ini bukan indikasi masalah; masih banyak prefix di internet tanpa ROA. Router harus **menerima** rute ini secara normal (kalau menolaknya, Anda akan kehilangan konektivitas ke sebagian besar internet).
-   ⚠️ Sesuai rekomendasi MANRS, terapkan RPKI dengan **logging terlebih dahulu** sebelum mengaktifkan penolakan INVALID — untuk memastikan validator berfungsi dan tidak ada ROA salah yang memutus trafik sah.
+   **Perhatian:** Sesuai rekomendasi MANRS, terapkan RPKI dengan **logging terlebih dahulu** sebelum mengaktifkan penolakan INVALID — untuk memastikan validator berfungsi dan tidak ada ROA salah yang memutus trafik sah.
 
 8. **`clear ip bgp *` melakukan HARD RESET** — memutus semua sesi TCP BGP, sehingga: seluruh rute yang dipelajari **dihapus dari routing table**, terjadi **outage total** selama sesi dibangun ulang, dan pada router dengan tabel internet penuh (>1 juta rute) proses ini bisa memakan **beberapa menit** dengan CPU mendekati 100%. Selain itu ia memicu churn di seluruh jaringan Anda dan bahkan ke peer.
    **Alternatif:** **soft reset**, yang menerapkan ulang kebijakan tanpa memutus sesi:
@@ -1095,4 +1122,4 @@ show validation database
 
 ---
 
-**Berikutnya:** `07-routing-lanjutan/07-redistribusi-policy.md` — menggabungkan protokol routing dan menerapkan kebijakan.
+**Berikutnya:** `07-routing-lanjutan/07-redistribusi-policy.md`. Menggabungkan protokol routing dan menerapkan kebijakan.

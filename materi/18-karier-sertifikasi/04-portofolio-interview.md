@@ -1,4 +1,4 @@
-# 18.4 — Portofolio & Persiapan Wawancara
+# 18.4 Portofolio & Persiapan Wawancara
 
 > **Prasyarat:** sebaiknya sudah mempraktikkan beberapa lab (`lab/`)
 > **Tujuan:** Anda tahu cara membangun portofolio jaringan yang meyakinkan dan mempersiapkan wawancara teknis.
@@ -42,7 +42,8 @@ OPSI LAB (murah → serius):
    - Raspberry Pi untuk layanan (DNS, firewall)
 ```
 
-💡 **Anda tidak perlu hardware mahal.** Packet Tracer + GNS3 + MikroTik CHR + Linux VM sudah cukup untuk membangun dan mendemonstrasikan hampir semua skenario di kurikulum ini secara gratis. Yang dinilai adalah **apa yang Anda bangun dan pahami**, bukan seberapa mahal peralatannya.
+> [!TIP]
+> **Anda tidak perlu hardware mahal.** Packet Tracer + GNS3 + MikroTik CHR + Linux VM sudah cukup untuk membangun dan mendemonstrasikan hampir semua skenario di kurikulum ini secara gratis. Yang dinilai adalah **apa yang Anda bangun dan pahami**, bukan seberapa mahal peralatannya.
 
 ---
 
@@ -70,9 +71,11 @@ LANJUTAN / MENONJOL:
   - Kubernetes networking (CNI, network policy)
 ```
 
-⚠️ **Dokumentasikan setiap proyek** dengan: tujuan, topologi (diagram), konfigurasi, tantangan yang dihadapi & cara mengatasinya, dan apa yang dipelajari. **Proyek tak terdokumentasi = tak terlihat.** Dokumentasi juga menunjukkan skill komunikasi yang dicari pemberi kerja.
+> [!WARNING]
+> **Dokumentasikan setiap proyek** dengan: tujuan, topologi (diagram), konfigurasi, tantangan yang dihadapi & cara mengatasinya, dan apa yang dipelajari. **Proyek tak terdokumentasi = tak terlihat.** Dokumentasi juga menunjukkan skill komunikasi yang dicari pemberi kerja.
 
-💡 **Simpan di GitHub.** Repositori berisi konfigurasi, skrip, diagram, dan README yang menjelaskan tiap proyek adalah portofolio digital yang bisa Anda tautkan di CV/LinkedIn. Ini sekaligus menunjukkan Anda familiar dengan Git — skill NetDevOps yang bernilai (`15/04`).
+> [!TIP]
+> **Simpan di GitHub.** Repositori berisi konfigurasi, skrip, diagram, dan README yang menjelaskan tiap proyek adalah portofolio digital yang bisa Anda tautkan di CV/LinkedIn. Ini sekaligus menunjukkan Anda familiar dengan Git — skill NetDevOps yang bernilai (`15/04`).
 
 ---
 
@@ -118,9 +121,11 @@ KEAMANAN & MODERN:
   - (Untuk peran modern) otomasi, SDN, cloud
 ```
 
-💡 **"Jelaskan apa yang terjadi saat Anda mengetik URL dan menekan Enter"** adalah pertanyaan wawancara jaringan **paling klasik**. Jawaban lengkap menyentuh: DNS (resolusi nama), ARP (MAC gateway), TCP handshake, TLS, HTTP request/response, routing di sepanjang jalan, dan enkapsulasi. Ini menguji apakah Anda paham **keseluruhan sistem** — persis yang diajarkan kurikulum ini secara progresif. Latih jawaban ini sampai lancar.
+> [!TIP]
+> **"Jelaskan apa yang terjadi saat Anda mengetik URL dan menekan Enter"** adalah pertanyaan wawancara jaringan **paling klasik**. Jawaban lengkap menyentuh: DNS (resolusi nama), ARP (MAC gateway), TCP handshake, TLS, HTTP request/response, routing di sepanjang jalan, dan enkapsulasi. Ini menguji apakah Anda paham **keseluruhan sistem** — persis yang diajarkan kurikulum ini secara progresif. Latih jawaban ini sampai lancar.
 
-⚠️ **Untuk pertanyaan troubleshooting, tunjukkan METODOLOGI, bukan tebakan.** Pewawancara ingin melihat pendekatan sistematis (bottom-up/top-down OSI, `14/01`): "Pertama saya cek layer fisik — apakah link up? Lalu IP config — apakah host punya IP/gateway benar? Lalu gateway — bisa ping gateway? Lalu DNS..." Proses berpikir lebih dinilai daripada langsung menebak jawaban.
+> [!WARNING]
+> **Untuk pertanyaan troubleshooting, tunjukkan METODOLOGI, bukan tebakan.** Pewawancara ingin melihat pendekatan sistematis (bottom-up/top-down OSI, `14/01`): "Pertama saya cek layer fisik — apakah link up? Lalu IP config — apakah host punya IP/gateway benar? Lalu gateway — bisa ping gateway? Lalu DNS..." Proses berpikir lebih dinilai daripada langsung menebak jawaban.
 
 ---
 
@@ -137,7 +142,8 @@ KEAMANAN & MODERN:
 ⚠️ Jangan mengarang jawaban — pewawancara teknis mudah mendeteksi
 ```
 
-💡 **Kejujuran + kemauan belajar** sering lebih dihargai daripada berpura-pura tahu segalanya. Tidak ada yang tahu semuanya; pemberi kerja mencari fondasi solid + kemampuan & antusiasme belajar. Kurikulum ini memberi fondasi itu.
+> [!TIP]
+> **Kejujuran + kemauan belajar** sering lebih dihargai daripada berpura-pura tahu segalanya. Tidak ada yang tahu semuanya; pemberi kerja mencari fondasi solid + kemampuan & antusiasme belajar. Kurikulum ini memberi fondasi itu.
 
 ---
 
@@ -185,4 +191,4 @@ KEAMANAN & MODERN:
 
 ---
 
-**Berikutnya:** `18-karier-sertifikasi/05-peta-mikrotik.md` — jalur sertifikasi MikroTik (MTCNA dan seterusnya).
+**Berikutnya:** `18-karier-sertifikasi/05-peta-mikrotik.md`. Jalur sertifikasi MikroTik (MTCNA dan seterusnya).

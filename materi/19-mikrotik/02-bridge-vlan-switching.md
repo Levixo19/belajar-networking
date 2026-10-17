@@ -1,4 +1,4 @@
-# 19.2 — MikroTik: Bridge, VLAN & Switching
+# 19.2 MikroTik: Bridge, VLAN & Switching
 
 > **Prasyarat:** `19-mikrotik/01`, `03-data-link/02-03` (switching & VLAN)
 > **Tujuan:** Anda bisa mengonfigurasi bridge, VLAN, dan switching di RouterOS, memahami perbedaan bridge software vs switch chip (hardware offload).
@@ -25,9 +25,11 @@ Dengan bridge: ether1,2,3 → anggota bridge1 = 1 switch/broadcast domain
 /ip address add address=192.168.1.1/24 interface=bridge1
 ```
 
-⚠️ **Beri IP pada interface bridge, bukan pada port anggota.** Port anggota bridge menjadi bagian dari L2 domain; alamat L3 diberikan ke bridge sebagai satu kesatuan (seperti SVI/VLAN interface di Cisco).
+> [!WARNING]
+> **Beri IP pada interface bridge, bukan pada port anggota.** Port anggota bridge menjadi bagian dari L2 domain; alamat L3 diberikan ke bridge sebagai satu kesatuan (seperti SVI/VLAN interface di Cisco).
 
-💡 **Padanan konsep:** bridge RouterOS ≈ membuat VLAN/broadcast domain + SVI di Cisco, atau `brctl`/`ip link add type bridge` di Linux (lihat `13-linux-networking/02` — RouterOS berbasis Linux, jadi konsepnya identik).
+> [!TIP]
+> **Padanan konsep:** bridge RouterOS ≈ membuat VLAN/broadcast domain + SVI di Cisco, atau `brctl`/`ip link add type bridge` di Linux (lihat `13-linux-networking/02` — RouterOS berbasis Linux, jadi konsepnya identik).
 
 ---
 
@@ -40,9 +42,11 @@ Perangkat MikroTik punya **switch chip** yang bisa melakukan switching pada kece
 # Kolom H = hardware offloaded (bagus — switching oleh chip, CPU bebas)
 ```
 
-⚠️ **Bridge software (CPU) vs hardware offload:** jika switching ditangani CPU (tanpa offload), throughput terbatas dan CPU tinggi pada trafik besar. Fitur tertentu (beberapa konfigurasi VLAN lama, beberapa filter) dapat **menonaktifkan** hardware offload. Pada RouterOS modern, konfigurasi VLAN berbasis bridge (`vlan-filtering`) mendukung offload pada banyak chip — gunakan pendekatan itu.
+> [!WARNING]
+> **Bridge software (CPU) vs hardware offload:** jika switching ditangani CPU (tanpa offload), throughput terbatas dan CPU tinggi pada trafik besar. Fitur tertentu (beberapa konfigurasi VLAN lama, beberapa filter) dapat **menonaktifkan** hardware offload. Pada RouterOS modern, konfigurasi VLAN berbasis bridge (`vlan-filtering`) mendukung offload pada banyak chip — gunakan pendekatan itu.
 
-💡 **Selalu cek kolom `H`** setelah konfigurasi. Jika hilang pada perangkat yang seharusnya mendukung, throughput bisa anjlok. Ini gotcha khas MikroTik yang tidak ada padanannya di Cisco (di mana ASIC selalu menangani switching).
+> [!TIP]
+> **Selalu cek kolom `H`** setelah konfigurasi. Jika hilang pada perangkat yang seharusnya mendukung, throughput bisa anjlok. Ini gotcha khas MikroTik yang tidak ada padanannya di Cisco (di mana ASIC selalu menangani switching).
 
 ---
 
@@ -75,7 +79,8 @@ Cara modern dan direkomendasikan untuk VLAN di RouterOS adalah **bridge VLAN fil
 - **untagged** = port mengirim/menerima tanpa tag (setara "access").
 - **bridge1 dalam daftar tagged** = agar router (CPU) bisa memproses VLAN itu (untuk L3/inter-VLAN).
 
-⚠️ **AKTIFKAN `vlan-filtering=yes` HANYA setelah semua port & VLAN benar** — terutama pastikan port tempat Anda mengakses router (mis. via Winbox) sudah ter-tag/PVID dengan benar. **Mengaktifkan vlan-filtering tanpa konfigurasi benar bisa mengunci Anda keluar** dari router! Konfigurasikan lewat MAC-Winbox atau serial bila ragu.
+> [!WARNING]
+> **AKTIFKAN `vlan-filtering=yes` HANYA setelah semua port & VLAN benar** — terutama pastikan port tempat Anda mengakses router (mis. via Winbox) sudah ter-tag/PVID dengan benar. **Mengaktifkan vlan-filtering tanpa konfigurasi benar bisa mengunci Anda keluar** dari router! Konfigurasikan lewat MAC-Winbox atau serial bila ragu.
 
 ---
 
@@ -94,7 +99,8 @@ Untuk routing antar-VLAN, buat **VLAN interface** di atas bridge dan beri IP (se
 # Routing antar keduanya otomatis (connected routes) — seperti Cisco SVI
 ```
 
-💡 Ini setara **inter-VLAN routing dengan SVI** di switch L3 Cisco. RouterOS meneruskan antar-`vlan10` dan `vlan20` via connected routes-nya. Terapkan firewall (`19.3`) untuk mengontrol trafik antar-VLAN.
+> [!TIP]
+> Ini setara **inter-VLAN routing dengan SVI** di switch L3 Cisco. RouterOS meneruskan antar-`vlan10` dan `vlan20` via connected routes-nya. Terapkan firewall (`19.3`) untuk mengontrol trafik antar-VLAN.
 
 ---
 
@@ -130,7 +136,7 @@ Default `rstp`. Konsep sama dengan `03-data-link/04` (root bridge, port role/sta
 - Di RouterOS, interface **independen** secara default; buat **bridge** untuk menyatukan port jadi satu broadcast domain (≈ switch). Beri **IP pada bridge**, bukan port.
 - **Hardware offload (kolom H)** = switching oleh switch chip (cepat, CPU bebas). Selalu cek `H`; beberapa konfigurasi menonaktifkannya.
 - **Bridge VLAN filtering** = cara modern VLAN: **PVID** (≈access), **tagged** (≈trunk), **untagged** (≈access). Sertakan `bridge` di tagged untuk L3.
-- ⚠️ **Aktifkan `vlan-filtering=yes` HANYA setelah konfigurasi benar** — salah bisa mengunci Anda keluar.
+- **Aktifkan `vlan-filtering=yes` HANYA setelah konfigurasi benar** — salah bisa mengunci Anda keluar.
 - **Inter-VLAN routing**: buat `/interface vlan` di atas bridge + IP (≈ SVI Cisco).
 - **STP/RSTP** didukung (`protocol-mode`), konsep sama dengan Cisco.
 
@@ -169,4 +175,4 @@ Default `rstp`. Konsep sama dengan `03-data-link/04` (root bridge, port role/sta
 
 ---
 
-**Berikutnya:** `19-mikrotik/03-firewall-nat.md` — firewall filter, NAT, mangle, dan connection tracking RouterOS.
+**Berikutnya:** `19-mikrotik/03-firewall-nat.md`. Firewall filter, NAT, mangle, dan connection tracking RouterOS.

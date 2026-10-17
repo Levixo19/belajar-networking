@@ -1,9 +1,10 @@
-# 13.3 — nftables: Firewall Linux Modern
+# 13.3 nftables: Firewall Linux Modern
 
 > **Prasyarat:** `13-linux-networking/01`, `09-nat-acl-firewall/03`
 > **Tujuan:** Anda bisa membangun firewall Linux lengkap dengan nftables, memahami netfilter, dan memakai connection tracking.
 
-> 📌 **nftables menggantikan iptables** sebagai firewall default di distribusi modern (Debian 10+, RHEL 8+, Ubuntu 20.04+). iptables masih ada tetapi kini sering menjadi wrapper di atas nftables.
+> > [!NOTE]
+> > **nftables menggantikan iptables** sebagai firewall default di distribusi modern (Debian 10+, RHEL 8+, Ubuntu 20.04+). iptables masih ada tetapi kini sering menjadi wrapper di atas nftables.
 
 ---
 
@@ -41,7 +42,8 @@ Paket masuk ──────→ │ PREROUTING  │ ──→ keputusan routin
 | **output** | Paket **dari host ini** | Membatasi trafik keluar host |
 | **postrouting** | Setelah keputusan routing | SNAT/masquerade |
 
-💡 **Ini konsep yang sama dengan chain di MikroTik** (yang memang berbasis netfilter Linux): input, forward, output, prerouting, postrouting.
+> [!TIP]
+> **Ini konsep yang sama dengan chain di MikroTik** (yang memang berbasis netfilter Linux): input, forward, output, prerouting, postrouting.
 
 ---
 
@@ -63,11 +65,12 @@ TABLE (family: ip / ip6 / inet / arp / bridge / netdev)
 | bridge | Frame layer 2 di bridge |
 | netdev | Ingress paling awal (untuk filtering DoS efisien) |
 
-💡 **Gunakan family `inet`** — satu aturan berlaku untuk IPv4 dan IPv6, menghindari kesalahan umum "lupa firewall IPv6".
+> [!TIP]
+> **Gunakan family `inet`** — satu aturan berlaku untuk IPv4 dan IPv6, menghindari kesalahan umum "lupa firewall IPv6".
 
 ---
 
-## 3. Firewall Lengkap — Contoh untuk Server
+## 3. Firewall Lengkap: Contoh untuk Server
 
 `/etc/nftables.conf`:
 ```
@@ -132,7 +135,8 @@ $ sudo nft -c -f /etc/nftables.conf      # cek sintaks tanpa memuat
 $ sudo systemctl enable --now nftables   # persisten
 ```
 
-⚠️ **`policy drop` pada chain input adalah default-deny yang benar.** Tetapi ⚠️ **JANGAN memuat konfigurasi dengan `policy drop` dari jarak jauh sebelum memastikan aturan SSH benar** — Anda akan langsung terkunci. Selalu uji sintaks dengan `-c` dulu, dan sediakan mekanisme rollback.
+> [!WARNING]
+> **`policy drop` pada chain input adalah default-deny yang benar.** Tetapi ⚠️ **JANGAN memuat konfigurasi dengan `policy drop` dari jarak jauh sebelum memastikan aturan SSH benar** — Anda akan langsung terkunci. Selalu uji sintaks dengan `-c` dulu, dan sediakan mekanisme rollback.
 
 ---
 
@@ -190,7 +194,8 @@ table ip nat {
 }
 ```
 
-⚠️ **Untuk NAT bekerja, IP forwarding harus aktif:**
+> [!WARNING]
+> **Untuk NAT bekerja, IP forwarding harus aktif:**
 ```bash
 $ sudo sysctl -w net.ipv4.ip_forward=1
 ```
@@ -229,16 +234,19 @@ invalid     → tidak cocok state mana pun → SELALU DROP
 untracked   → sengaja dikecualikan (notrack, untuk kinerja)
 ```
 
-⚠️ **Tabel conntrack bisa penuh** pada server sibuk atau saat serangan → koneksi baru dibuang.
+> [!WARNING]
+> **Tabel conntrack bisa penuh** pada server sibuk atau saat serangan → koneksi baru dibuang.
 ```bash
 # Perbesar dan sesuaikan timeout
 $ sudo sysctl -w net.netfilter.nf_conntrack_max=262144
 $ sudo sysctl -w net.netfilter.nf_conntrack_tcp_timeout_established=86400
 ```
 
-⚠️ **Default timeout TCP established Linux adalah 5 hari** — sangat boros pada router sibuk. Turunkan ke 1 hari atau kurang.
+> [!WARNING]
+> **Default timeout TCP established Linux adalah 5 hari** — sangat boros pada router sibuk. Turunkan ke 1 hari atau kurang.
 
-💡 **Untuk trafik volume sangat tinggi yang tidak butuh state** (mis. DNS server yang sangat sibuk), gunakan `notrack` di prerouting untuk melewati conntrack dan menghemat sumber daya:
+> [!TIP]
+> **Untuk trafik volume sangat tinggi yang tidak butuh state** (mis. DNS server yang sangat sibuk), gunakan `notrack` di prerouting untuk melewati conntrack dan menghemat sumber daya:
 ```
 chain raw_prerouting {
     type filter hook prerouting priority -300;
@@ -279,7 +287,8 @@ chain input {
 }
 ```
 
-💡 **Ini setara address-list dinamis di MikroTik** — blacklist otomatis dengan timeout.
+> [!TIP]
+> **Ini setara address-list dinamis di MikroTik** — blacklist otomatis dengan timeout.
 
 ### Verdict maps (jump berdasarkan kondisi)
 
@@ -345,7 +354,7 @@ $ sudo nft -f /etc/nftables.conf
 
 ---
 
-## 9. iptables — Masih Anda Temui
+## 9. iptables: Masih Anda Temui
 
 Banyak sistem, dokumentasi, dan skrip lama memakai iptables. Anda perlu bisa membacanya.
 
@@ -385,7 +394,8 @@ $ sudo iptables-save | sudo iptables-restore-translate -f /dev/stdin
 | tabel + chain terpisah per family | family `inet` untuk IPv4+IPv6 |
 | ipset | set bawaan |
 
-💡 **Untuk sistem baru, pakai nftables.** Pelajari iptables secukupnya untuk membaca sistem dan skrip lama.
+> [!TIP]
+> **Untuk sistem baru, pakai nftables.** Pelajari iptables secukupnya untuk membaca sistem dan skrip lama.
 
 ---
 
@@ -426,7 +436,8 @@ $ sudo ufw limit 22/tcp                   # rate limit built-in
 $ sudo ufw enable
 ```
 
-💡 **UFW dan firewalld cukup untuk server sederhana.** Untuk router dan aturan kompleks, tulis nftables langsung.
+> [!TIP]
+> **UFW dan firewalld cukup untuk server sederhana.** Untuk router dan aturan kompleks, tulis nftables langsung.
 
 ---
 
@@ -462,7 +473,8 @@ $ sudo nft flush ruleset       # ⚠️ hanya kalau ada cara memulihkan!
 | Koneksi baru ditolak saat sibuk | conntrack penuh |
 | Aturan tampak benar tetapi tidak jalan | Urutan salah; family salah; priority chain |
 
-⚠️ **Kesalahan #1: lupa `ct state established,related accept`.** Tanpa itu, koneksi keluar berhasil tetapi balasannya diblokir — sama seperti lupa "established" di ACL Cisco.
+> [!WARNING]
+> **Kesalahan #1: lupa `ct state established,related accept`.** Tanpa itu, koneksi keluar berhasil tetapi balasannya diblokir — sama seperti lupa "established" di ACL Cisco.
 
 ---
 
@@ -500,7 +512,8 @@ XDP **tidak menggantikan** nftables. Ia hanya melihat paket masuk (ingress), tid
 
 Untuk aplikasi yang ingin memproses paket di user space dengan cepat (IDS, penangkap paket, atau stack jaringan khusus), `XDP_REDIRECT` bisa mengarahkan paket ke socket **AF_XDP**. Aplikasi mendaftarkan area memori bernama **UMEM** yang dibagi menjadi bingkai berukuran sama, lalu berkomunikasi dengan kernel lewat empat ring: **FILL** (aplikasi menyerahkan bingkai kosong untuk menerima), **RX** (paket diterima), **TX** (paket yang akan dikirim), dan **COMPLETION** (bingkai kirim yang sudah selesai). Program XDP memilih socket tujuan lewat map bertipe XSKMAP. Mode **zero-copy** menghindari penyalinan paket antara kernel dan aplikasi, asalkan driver mendukungnya; bila tidak, mode copy menjadi cadangan.
 
-⚠️ **Paket yang dijatuhkan XDP umumnya tidak muncul di `tcpdump`**, karena penangkap paket bekerja pada jalur `sk_buff` yang tidak pernah dibuat. Kalau paket "hilang tanpa jejak" di server yang memakai XDP, periksa dulu apakah ada program yang terpasang (`ip link show dev eth0`) sebelum menyalahkan nftables atau kabel. Perhatikan juga batas per driver, misalnya MTU maksimum yang boleh dipakai bersama XDP native.
+> [!WARNING]
+> **Paket yang dijatuhkan XDP umumnya tidak muncul di `tcpdump`**, karena penangkap paket bekerja pada jalur `sk_buff` yang tidak pernah dibuat. Kalau paket "hilang tanpa jejak" di server yang memakai XDP, periksa dulu apakah ada program yang terpasang (`ip link show dev eth0`) sebelum menyalahkan nftables atau kabel. Perhatikan juga batas per driver, misalnya MTU maksimum yang boleh dipakai bersama XDP native.
 
 ---
 
@@ -516,7 +529,7 @@ Untuk aplikasi yang ingin memproses paket di user space dengan cepat (IDS, penan
 - **conntrack** melacak state; tabel bisa penuh (perbesar `nf_conntrack_max`, turunkan timeout dari default 5 hari).
 - **Set dinamis dengan timeout** = blacklist otomatis (setara address-list MikroTik).
 - **firewalld** (zona) dan **UFW** adalah frontend sederhana; tulis nftables langsung untuk router/aturan kompleks.
-- ⚠️ **Uji sintaks (`nft -c`) dan siapkan rollback** sebelum memuat `policy drop` dari jarak jauh — agar tidak terkunci.
+- **Uji sintaks (`nft -c`) dan siapkan rollback** sebelum memuat `policy drop` dari jarak jauh — agar tidak terkunci.
 - **XDP** menjalankan program eBPF di driver NIC sebelum `sk_buff` dibuat, dengan verdict `PASS`, `DROP`, `TX`, `REDIRECT`, `ABORTED`. Pasang dengan `ip link set dev X xdpdrv|xdpgeneric|xdpoffload object F section S`. Ia pra-filter murah di depan nftables, bukan penggantinya (tanpa conntrack bawaan); `AF_XDP` mengantar paket ke user space dengan UMEM dan empat ring.
 
 ---

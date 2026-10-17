@@ -1,4 +1,4 @@
-# 17.3 — Perencanaan IP, Penamaan & Dokumentasi
+# 17.3 Perencanaan IP, Penamaan & Dokumentasi
 
 > **Prasyarat:** `04-network-layer/02-03` (subnetting/VLSM), `17.1–17.2`
 > **Tujuan:** Anda bisa merencanakan skema pengalamatan IP yang rapi, konvensi penamaan, dan dokumentasi jaringan yang berguna.
@@ -28,9 +28,11 @@ BAIK (hierarkis):
 - **Rencanakan IPv6 sejak awal** (`08-ipv6`) — jangan ditambal belakangan.
 - **Blok khusus**: manajemen, loopback (satu /32 per perangkat untuk router ID/telemetri), infrastruktur (link), server, user, guest, IoT.
 
-💡 **Alamat loopback per perangkat** (mis. `10.255.0.1/32`, `10.255.0.2/32`, ...) memberi identitas stabil untuk router ID (OSPF/BGP), manajemen, dan telemetri — tidak terpengaruh interface fisik mana yang up/down. Praktik standar di jaringan profesional.
+> [!TIP]
+> **Alamat loopback per perangkat** (mis. `10.255.0.1/32`, `10.255.0.2/32`, ...) memberi identitas stabil untuk router ID (OSPF/BGP), manajemen, dan telemetri — tidak terpengaruh interface fisik mana yang up/down. Praktik standar di jaringan profesional.
 
-⚠️ **Route summarization hanya mungkin bila pengalamatan hierarkis.** Kalau subnet tersebar acak, Anda tidak bisa meringkas dan tabel routing membengkak. Rencanakan alokasi agar setiap situs/region memiliki blok kontinu yang bisa diringkas menjadi satu rute ke seluruh jaringan lain.
+> [!WARNING]
+> **Route summarization hanya mungkin bila pengalamatan hierarkis.** Kalau subnet tersebar acak, Anda tidak bisa meringkas dan tabel routing membengkak. Rencanakan alokasi agar setiap situs/region memiliki blok kontinu yang bisa diringkas menjadi satu rute ke seluruh jaringan lain.
 
 ---
 
@@ -47,9 +49,11 @@ Konvensi VLAN konsisten (contoh):
   VLAN 999 → Native (unused/blackhole)
 ```
 
-⚠️ **Ubah native VLAN dari default (VLAN 1)** dan jangan pakai VLAN 1 untuk data — praktik keamanan (`03-data-link/03`, `12-keamanan/02`). Native VLAN sebaiknya VLAN "buangan" yang tidak dipakai untuk trafik apa pun.
+> [!WARNING]
+> **Ubah native VLAN dari default (VLAN 1)** dan jangan pakai VLAN 1 untuk data — praktik keamanan (`03-data-link/03`, `12-keamanan/02`). Native VLAN sebaiknya VLAN "buangan" yang tidak dipakai untuk trafik apa pun.
 
-💡 Petakan VLAN ke subnet secara konsisten (VLAN 10 = `10.x.10.0/24`) — memudahkan menghafal, troubleshooting, dan ACL.
+> [!TIP]
+> Petakan VLAN ke subnet secara konsisten (VLAN 10 = `10.x.10.0/24`) — memudahkan menghafal, troubleshooting, dan ACL.
 
 ---
 
@@ -76,7 +80,8 @@ Hostname mencerminkan lokasi + peran + nomor.
 - **Interface description wajib** — setiap link penting diberi keterangan tujuannya. Ini menghemat waktu besar saat troubleshoot.
 - Hindari nama yang membocorkan info sensitif ke luar (mis. jangan taruh model perangkat/versi di banner publik).
 
-💡 **`description` pada setiap interface uplink dan koneksi server** adalah salah satu kebiasaan paling berharga. Saat jam 2 pagi menelusuri masalah, `show interface description` yang informatif menghemat menit-menit berharga dibanding menebak kabel mana ke mana.
+> [!TIP]
+> **`description` pada setiap interface uplink dan koneksi server** adalah salah satu kebiasaan paling berharga. Saat jam 2 pagi menelusuri masalah, `show interface description` yang informatif menghemat menit-menit berharga dibanding menebak kabel mana ke mana.
 
 ---
 
@@ -108,9 +113,11 @@ Dokumentasi yang berguna (bukan sekadar formalitas):
    - Aplikasi kritis, port, jalur, dependensi
 ```
 
-⚠️ **Dokumentasi yang usang lebih berbahaya daripada tidak ada** — ia menyesatkan saat krisis. Karena itu praktik modern: **dokumentasi as-code** dan **source of truth** (NetBox) yang **otomatis** mencerminkan keadaan, plus diagram yang di-generate dari data. Lihat `15-otomasi/04`.
+> [!WARNING]
+> **Dokumentasi yang usang lebih berbahaya daripada tidak ada** — ia menyesatkan saat krisis. Karena itu praktik modern: **dokumentasi as-code** dan **source of truth** (NetBox) yang **otomatis** mencerminkan keadaan, plus diagram yang di-generate dari data. Lihat `15-otomasi/04`.
 
-💡 **Diagram topologi** sebaiknya ada dua: **fisik** (apa terhubung ke apa, port berapa) untuk teknisi/kabel, dan **logis** (VLAN, subnet, routing) untuk desain/troubleshoot L3. Keduanya melayani kebutuhan berbeda.
+> [!TIP]
+> **Diagram topologi** sebaiknya ada dua: **fisik** (apa terhubung ke apa, port berapa) untuk teknisi/kabel, dan **logis** (VLAN, subnet, routing) untuk desain/troubleshoot L3. Keduanya melayani kebutuhan berbeda.
 
 ---
 
@@ -174,4 +181,4 @@ Dokumentasi dan desain sering harus memenuhi standar:
 
 ---
 
-**Berikutnya:** `17-desain-arsitektur/04-studi-kasus-desain.md` — studi kasus desain end-to-end.
+**Berikutnya:** `17-desain-arsitektur/04-studi-kasus-desain.md`. Studi kasus desain end-to-end.

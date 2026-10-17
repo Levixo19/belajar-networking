@@ -1,11 +1,11 @@
-# 04.4 — ARP dan ICMP
+# 04.4 ARP dan ICMP
 
 > **Prasyarat:** `04-network-layer/01`, `03-data-link/01`
 > **Tujuan:** Anda paham bagaimana IP dipetakan ke MAC, bisa membaca setiap tipe pesan ICMP, dan tahu persis bagaimana `ping` dan `traceroute` bekerja.
 
 ---
 
-## 1. ARP — Address Resolution Protocol
+## 1. ARP (Address Resolution Protocol)
 
 ### Masalah yang dipecahkan
 
@@ -42,7 +42,8 @@ Layer 2 butuh : "MAC tujuan = ?"
 7. Sekarang frame bisa dikirim
 ```
 
-⚠️ **Poin penting:** Request adalah **broadcast**, Reply adalah **unicast**. Host lain yang mendengar request juga sering menyimpan pemetaan IP↔MAC pengirim (ARP snooping pasif).
+> [!WARNING]
+> **Poin penting:** Request adalah **broadcast**, Reply adalah **unicast**. Host lain yang mendengar request juga sering menyimpan pemetaan IP↔MAC pengirim (ARP snooping pasif).
 
 ### Struktur paket ARP
 
@@ -60,7 +61,8 @@ Target IP          : IP yang dicari
 
 ### ARP untuk tujuan di luar subnet
 
-⚠️ **Kesalahpahaman paling umum tentang ARP.**
+> [!WARNING]
+> **Kesalahpahaman paling umum tentang ARP.**
 
 ```
 Host A (192.168.1.10/24) ingin mengirim ke 8.8.8.8
@@ -113,7 +115,8 @@ R1(config)# arp 192.168.1.99 0011.2233.4455 arpa    ← entri statis
 R1(config-if)# arp timeout 300                       ← default 14400 detik (4 jam)
 ```
 
-⚠️ **ARP timeout default Cisco adalah 4 jam**, sementara MAC address table switch hanya 5 menit. Ketidaksesuaian ini menyebabkan **unicast flooding** — dibahas di `03-data-link/02`.
+> [!WARNING]
+> **ARP timeout default Cisco adalah 4 jam**, sementara MAC address table switch hanya 5 menit. Ketidaksesuaian ini menyebabkan **unicast flooding** — dibahas di `03-data-link/02`.
 
 ### Gratuitous ARP
 
@@ -131,7 +134,8 @@ Kegunaan:
 3. **Setelah VM migrasi** — mengumumkan lokasi baru.
 4. **Saat interface naik** — memastikan tetangga punya informasi terbaru.
 
-⚠️ Gratuitous ARP juga menjadi mekanisme **ARP spoofing** (`12-keamanan/02`) — penyerang mengirim gratuitous ARP palsu untuk mengaku sebagai gateway.
+> [!WARNING]
+> Gratuitous ARP juga menjadi mekanisme **ARP spoofing** (`12-keamanan/02`) — penyerang mengirim gratuitous ARP palsu untuk mengaku sebagai gateway.
 
 ### Proxy ARP
 
@@ -145,9 +149,11 @@ Host A mengira 192.168.2.20 ada di subnetnya (karena /16)
 → Trafik lewat router, komunikasi berhasil
 ```
 
-💡 Proxy ARP "menyembunyikan" kesalahan konfigurasi subnet mask. Ini terdengar membantu, tetapi:
+> [!TIP]
+> Proxy ARP "menyembunyikan" kesalahan konfigurasi subnet mask. Ini terdengar membantu, tetapi:
 
-⚠️ **Umumnya sebaiknya dimatikan:**
+> [!WARNING]
+> **Umumnya sebaiknya dimatikan:**
 - Menyembunyikan kesalahan konfigurasi (masalah tidak pernah diperbaiki)
 - Memperbesar ARP table
 - Bisa dieksploitasi untuk MITM
@@ -166,11 +172,12 @@ Pengecualian di mana proxy ARP sah: beberapa desain VPN remote-access dan skenar
 
 ---
 
-## 2. ICMP — Internet Control Message Protocol
+## 2. ICMP (Internet Control Message Protocol)
 
 Protokol pelaporan error dan diagnostik untuk IP. Berjalan **langsung di dalam IP** (protokol nomor **1**), bukan di atas TCP/UDP.
 
-⚠️ ICMP bukan protokol layer 4. Ia adalah bagian integral dari layer 3.
+> [!WARNING]
+> ICMP bukan protokol layer 4. Ia adalah bagian integral dari layer 3.
 
 ### Struktur pesan ICMP
 
@@ -185,7 +192,8 @@ Protokol pelaporan error dan diagnostik untuk IP. Berjalan **langsung di dalam I
 └────────────────────────────────────┘
 ```
 
-💡 Pesan error ICMP menyertakan **header paket yang gagal + 8 byte pertama payload**. Delapan byte itu cukup untuk memuat port sumber & tujuan TCP/UDP — sehingga host bisa tahu **koneksi mana** yang bermasalah.
+> [!TIP]
+> Pesan error ICMP menyertakan **header paket yang gagal + 8 byte pertama payload**. Delapan byte itu cukup untuk memuat port sumber & tujuan TCP/UDP — sehingga host bisa tahu **koneksi mana** yang bermasalah.
 
 ### Tipe ICMP yang wajib dikenal
 
@@ -200,7 +208,7 @@ Protokol pelaporan error dan diagnostik untuk IP. Berjalan **langsung di dalam I
 | **3** | **4** | **Fragmentation Needed & DF set** | **Kunci PMTUD!** |
 | 3 | 9/10 | Administratively Prohibited | Diblokir ACL/firewall |
 | 3 | 13 | Communication Administratively Filtered | Diblokir kebijakan |
-| **5** | 0–3 | **Redirect** | "Ada gateway yang lebih baik" |
+| **5** | 0-3 | **Redirect** | "Ada gateway yang lebih baik" |
 | **8** | 0 | **Echo Request** | Ping dikirim |
 | **11** | **0** | **TTL Exceeded in Transit** | **Kunci traceroute!** |
 | 11 | 1 | Fragment Reassembly Time Exceeded | Fragmen tidak lengkap |
@@ -220,14 +228,15 @@ Router A meneruskan paketnya, TAPI juga mengirim ICMP Redirect ke host:
 Host memperbarui routing table-nya
 ```
 
-⚠️ **Sering dimatikan** karena bisa dieksploitasi untuk mengarahkan trafik ke penyerang:
+> [!WARNING]
+> **Sering dimatikan** karena bisa dieksploitasi untuk mengarahkan trafik ke penyerang:
 ```
 R1(config-if)# no ip redirects
 ```
 
 ---
 
-## 3. Ping — Cara Kerja Sesungguhnya
+## 3. Ping: Cara Kerja Sesungguhnya
 
 ```
 Host A                          Host B
@@ -301,11 +310,13 @@ Sweep range of sizes [n]: y            ← uji berbagai ukuran sekaligus
 R1# ping 10.0.0.1 source gi0/1 repeat 100 size 1500 df-bit
 ```
 
-💡 **`source` sangat penting** saat menguji dari router: tanpa itu, router memakai IP interface keluar, yang mungkin tidak punya jalur balik. Banyak masalah "ping gagal dari router tetapi PC bisa" berasal dari sini.
+> [!TIP]
+> **`source` sangat penting** saat menguji dari router: tanpa itu, router memakai IP interface keluar, yang mungkin tidak punya jalur balik. Banyak masalah "ping gagal dari router tetapi PC bisa" berasal dari sini.
 
 ### Kenapa ping gagal padahal host hidup
 
-⚠️ **`ping` gagal ≠ host mati.** Kemungkinan penyebab:
+> [!WARNING]
+> **`ping` gagal ≠ host mati.** Kemungkinan penyebab:
 1. **Firewall memblokir ICMP** — sangat umum di server Windows dan cloud
 2. **ACL di router** memblokir
 3. Host dikonfigurasi tidak menjawab ICMP
@@ -324,7 +335,7 @@ $ arping -I eth0 192.168.1.20  # uji L2 (tanpa ICMP)
 
 ---
 
-## 4. Traceroute — Cara Kerja Sesungguhnya
+## 4. Traceroute: Cara Kerja Sesungguhnya
 
 Traceroute memanfaatkan **TTL** untuk memaksa setiap router mengungkapkan dirinya.
 
@@ -349,7 +360,8 @@ Kirim paket dengan TTL=3, 4, 5, ...
 | Paket keluar | **UDP** port tinggi (33434+) | **ICMP Echo Request** | ICMP Echo Request |
 | Tanda selesai | ICMP **Port Unreachable** (3/3) | ICMP **Echo Reply** (0) | ICMP Echo Reply |
 
-⚠️ **Konsekuensi praktis:** firewall yang memblokir UDP port tinggi akan membuat `traceroute` Linux gagal tetapi `tracert` Windows berhasil (atau sebaliknya jika ICMP yang diblokir). Kalau satu gagal, coba yang lain:
+> [!WARNING]
+> **Konsekuensi praktis:** firewall yang memblokir UDP port tinggi akan membuat `traceroute` Linux gagal tetapi `tracert` Windows berhasil (atau sebaliknya jika ICMP yang diblokir). Kalau satu gagal, coba yang lain:
 ```bash
 $ traceroute -I host          # pakai ICMP
 $ traceroute -T -p 443 host   # pakai TCP SYN ke port 443 (paling sering lolos firewall)
@@ -367,7 +379,8 @@ $ traceroute -n 8.8.8.8
  6  8.8.8.8         12.601 ms  12.588 ms  12.594 ms
 ```
 
-⚠️ **Cara menafsirkan yang BENAR — ini sering salah:**
+> [!WARNING]
+> **Cara menafsirkan yang BENAR — ini sering salah:**
 
 **1. `* * *` tidak selalu berarti masalah.**
 Router bisa:
@@ -395,7 +408,7 @@ Ini normal! Hop 5 hanya lambat **membalas ICMP** (prioritas rendah di CPU-nya), 
 
 **5. Load balancing membuat hop berbeda-beda.** Tiga probe per hop bisa melewati router berbeda.
 
-### MTR — traceroute + ping berkelanjutan
+### MTR: traceroute + ping berkelanjutan
 
 ```bash
 $ mtr -n -r -c 100 8.8.8.8
@@ -406,7 +419,8 @@ HOST: laptop                      Loss%   Snt   Last   Avg  Best  Wrst StDev
   4.|-- 8.8.8.8                    0.0%   100   12.6  12.8  12.3  18.9   0.8
 ```
 
-⚠️ **Loss di hop tengah yang tidak muncul di hop akhir adalah normal** — itu ICMP rate limiting, bukan packet loss sesungguhnya. **Loss yang benar-benar bermasalah adalah loss di hop terakhir** (atau loss yang persisten dari satu hop sampai akhir).
+> [!WARNING]
+> **Loss di hop tengah yang tidak muncul di hop akhir adalah normal** — itu ICMP rate limiting, bukan packet loss sesungguhnya. **Loss yang benar-benar bermasalah adalah loss di hop terakhir** (atau loss yang persisten dari satu hop sampai akhir).
 
 Dalam contoh di atas: hop 3 menunjukkan 12% loss tetapi hop 4 (tujuan) 0% → tidak ada masalah nyata.
 
@@ -426,7 +440,8 @@ Mekanisme untuk menemukan MTU terkecil di sepanjang jalur, tanpa fragmentasi.
 5. Diulang sampai paket lolos
 ```
 
-⚠️ **PMTUD gagal total jika ICMP tipe 3 kode 4 diblokir** → **MTU black hole**.
+> [!WARNING]
+> **PMTUD gagal total jika ICMP tipe 3 kode 4 diblokir** → **MTU black hole**.
 
 **Gejala MTU black hole:**
 ```
@@ -464,7 +479,8 @@ $ sudo ip link set dev tun0 mtu 1400
 R1(config-if)# ip tcp adjust-mss 1360
 ```
 
-💡 **MSS clamping** memodifikasi opsi MSS di paket SYN TCP sehingga kedua ujung sepakat memakai segmen kecil sejak awal. Ini bekerja tanpa bergantung pada ICMP — solusi paling andal untuk tunnel.
+> [!TIP]
+> **MSS clamping** memodifikasi opsi MSS di paket SYN TCP sehingga kedua ujung sepakat memakai segmen kecil sejak awal. Ini bekerja tanpa bergantung pada ICMP — solusi paling andal untuk tunnel.
 
 ---
 
@@ -478,7 +494,8 @@ R1(config-if)# ip tcp adjust-mss 1360
 
 ### Kenapa memblokir ICMP total adalah kesalahan
 
-⚠️ Memblokir **seluruh** ICMP merusak:
+> [!WARNING]
+> Memblokir **seluruh** ICMP merusak:
 1. **PMTUD** → MTU black hole (masalah paling sering)
 2. **Traceroute** → troubleshooting jauh lebih sulit
 3. **Pesan error yang berguna** → "host unreachable" menjadi timeout misterius
@@ -547,25 +564,33 @@ R1(config-if)# no ip redirects
 R1(config-if)# no ip unreachables      ← hati-hati: merusak PMTUD!
 ```
 
-⚠️ `no ip unreachables` sering direkomendasikan untuk hardening, tetapi **merusak PMTUD** karena ICMP tipe 3 kode 4 tidak lagi dikirim. Pertimbangkan `ip icmp rate-limit unreachable` sebagai gantinya.
+> [!WARNING]
+> `no ip unreachables` sering direkomendasikan untuk hardening, tetapi **merusak PMTUD** karena ICMP tipe 3 kode 4 tidak lagi dikirim. Pertimbangkan `ip icmp rate-limit unreachable` sebagai gantinya.
 
 ---
 
 ## 8. Kesalahan Umum
 
-⚠️ **1. Mengira host ber-ARP untuk tujuan jauh.** Host hanya ber-ARP untuk gateway.
+> [!WARNING]
+> **1. Mengira host ber-ARP untuk tujuan jauh.** Host hanya ber-ARP untuk gateway.
 
-⚠️ **2. Menyimpulkan "host mati" dari ping yang gagal.** Firewall sangat sering memblokir ICMP.
+> [!WARNING]
+> **2. Menyimpulkan "host mati" dari ping yang gagal.** Firewall sangat sering memblokir ICMP.
 
-⚠️ **3. Menyalahkan hop tengah dengan latency tinggi di traceroute.** Yang penting hop terakhir.
+> [!WARNING]
+> **3. Menyalahkan hop tengah dengan latency tinggi di traceroute.** Yang penting hop terakhir.
 
-⚠️ **4. Menyalahkan `* * *` di traceroute.** Sering hanya ICMP yang tidak dijawab.
+> [!WARNING]
+> **4. Menyalahkan `* * *` di traceroute.** Sering hanya ICMP yang tidak dijawab.
 
-⚠️ **5. Memblokir seluruh ICMP.** Merusak PMTUD, dan mematikan IPv6.
+> [!WARNING]
+> **5. Memblokir seluruh ICMP.** Merusak PMTUD, dan mematikan IPv6.
 
-⚠️ **6. Mengabaikan `source` saat ping/traceroute dari router.** Hasil bisa menyesatkan.
+> [!WARNING]
+> **6. Mengabaikan `source` saat ping/traceroute dari router.** Hasil bisa menyesatkan.
 
-⚠️ **7. Membiarkan proxy ARP aktif.** Menyembunyikan salah konfigurasi mask.
+> [!WARNING]
+> **7. Membiarkan proxy ARP aktif.** Menyembunyikan salah konfigurasi mask.
 
 ---
 
@@ -593,9 +618,11 @@ R1(config-if)# no ip unreachables      ← hati-hati: merusak PMTUD!
 /ip dhcp-server set dhcp1 add-arp=yes
 ```
 
-💡 **`arp=reply-only` + `add-arp=yes` di DHCP server** adalah teknik keamanan khas MikroTik: router **hanya** mengenali host yang mendapat alamat dari DHCP-nya. Host yang memasang IP statis sendiri **tidak akan bisa berkomunikasi** — mencegah pencurian IP dan ARP spoofing sekaligus. Sangat umum dipakai di hotspot dan RT/RW-Net.
+> [!TIP]
+> **`arp=reply-only` + `add-arp=yes` di DHCP server** adalah teknik keamanan khas MikroTik: router **hanya** mengenali host yang mendapat alamat dari DHCP-nya. Host yang memasang IP statis sendiri **tidak akan bisa berkomunikasi** — mencegah pencurian IP dan ARP spoofing sekaligus. Sangat umum dipakai di hotspot dan RT/RW-Net.
 
-⚠️ Konsekuensinya: perangkat dengan IP statis (server, printer) harus didaftarkan manual di `/ip arp` atau diberi lease statis di DHCP.
+> [!WARNING]
+> Konsekuensinya: perangkat dengan IP statis (server, printer) harus didaftarkan manual di `/ip arp` atau diberi lease statis di DHCP.
 
 ### ICMP dan diagnostik
 
@@ -621,7 +648,8 @@ R1(config-if)# no ip unreachables      ← hati-hati: merusak PMTUD!
 /tool netwatch print
 ```
 
-💡 **Netwatch adalah salah satu fitur paling berguna di RouterOS** — setara IP SLA + EEM di Cisco, tetapi jauh lebih sederhana. Dipakai untuk failover, notifikasi, dan otomasi.
+> [!TIP]
+> **Netwatch adalah salah satu fitur paling berguna di RouterOS** — setara IP SLA + EEM di Cisco, tetapi jauh lebih sederhana. Dipakai untuk failover, notifikasi, dan otomasi.
 
 ### Padanan istilah
 
@@ -678,7 +706,7 @@ R1(config-if)# no ip unreachables      ← hati-hati: merusak PMTUD!
 
 5. Masalah utama: (a) **PMTUD rusak** → MTU black hole: koneksi terbentuk tetapi transfer besar menggantung, sebagian situs tidak terbuka; (b) traceroute tidak berfungsi → troubleshooting jauh lebih sulit; (c) pesan error berguna hilang → aplikasi menunggu timeout panjang alih-alih langsung tahu tujuan tidak terjangkau; (d) jika IPv6 dipakai, **IPv6 berhenti bekerja total** karena NDP, RA, dan DAD semuanya memakai ICMPv6.
 
-6. **MTU black hole akibat overhead tunnel.** VPN menambah header (WireGuard 60 byte, IPsec ~56–73 byte), sehingga MTU efektif turun di bawah 1500. Paket besar dengan DF diset dibuang, dan ICMP "Fragmentation Needed" kemungkinan diblokir di jalur.
+6. **MTU black hole akibat overhead tunnel.** VPN menambah header (WireGuard 60 byte, IPsec ~56-73 byte), sehingga MTU efektif turun di bawah 1500. Paket besar dengan DF diset dibuang, dan ICMP "Fragmentation Needed" kemungkinan diblokir di jalur.
    **Diagnosis:** `ping -M do -s <ukuran> tujuan` dengan ukuran menurun untuk menemukan MTU efektif; bandingkan dengan `ip link show <tunnel>`.
    **Perbaikan:** turunkan MTU interface tunnel (mis. `ip link set dev wg0 mtu 1420`), dan/atau terapkan **MSS clamping** di router (`ip tcp adjust-mss 1380`), dan pastikan ICMP tipe 3 kode 4 tidak diblokir.
 
@@ -702,4 +730,4 @@ R1(config-if)# no ip unreachables      ← hati-hati: merusak PMTUD!
 
 ---
 
-**Berikutnya:** `04-network-layer/05-routing-dasar.md` — bagaimana router memilih jalur.
+**Berikutnya:** `04-network-layer/05-routing-dasar.md`. Bagaimana router memilih jalur.

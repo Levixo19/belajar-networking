@@ -1,4 +1,4 @@
-# Lab 08 — NetDevOps dari Nol
+# Lab 08: NetDevOps dari Nol
 
 > **Prasyarat:** `15-otomasi/03-python-jaringan`, `15-otomasi/04-ansible-cicd`, `lab/05-lab-linux-otomasi`, `07-routing-lanjutan/04-ospf`, `14-monitoring-troubleshooting/03-observability`
 > **Tujuan:** Anda membangun satu alur NetDevOps utuh di satu mesin: jaringan containerlab, NetBox sebagai source of truth, konfigurasi dari template Jinja2, verifikasi Batfish sebelum deploy, deploy Nornir dengan canary dan rollback otomatis, streaming telemetry gNMI ke Prometheus dan Grafana, serta pipeline CI bergaya GitOps.
@@ -7,7 +7,8 @@
 
 Modul `15-otomasi/02-data-dan-api` sampai `15-otomasi/04-ansible-cicd` memperkenalkan NETCONF, gNMI, Nornir, NetBox, Batfish, dan CI/CD sebagai konsep. Lab 05 baru menyentuh backup dengan Netmiko dan satu playbook Ansible. Lab ini menyambungkan semuanya menjadi satu rantai kerja yang sama dengan yang dipakai tim jaringan modern: data mengalir dari source of truth ke perangkat tanpa diketik ulang oleh manusia, dan setiap perubahan diperiksa tiga kali: sebelum deploy oleh Batfish, saat deploy oleh canary dan post-check, dan sesudah deploy oleh telemetri.
 
-⚠️ Lab ini panjang. Kerjakan berurutan, satu langkah per sesi bila perlu. Setiap langkah menghasilkan sesuatu yang bisa Anda periksa sendiri, jadi Anda tidak perlu menyelesaikan semuanya dalam sekali duduk.
+> [!WARNING]
+> Lab ini panjang. Kerjakan berurutan, satu langkah per sesi bila perlu. Setiap langkah menghasilkan sesuatu yang bisa Anda periksa sendiri, jadi Anda tidak perlu menyelesaikan semuanya dalam sekali duduk.
 
 ---
 
@@ -166,7 +167,8 @@ pytest -q tests/test_offline.py
 
 **KRITERIA SUKSES:** ✅ 10 uji offline lulus, image `netdevops/srv:local` ada di `docker images`, dan repositori Git punya satu commit.
 
-💡 Perhatikan bahwa `build/` sudah berisi hasil render dari `sot/seed.yml`. Itu disengaja: di alur GitOps, konfigurasi yang dimaksud ikut tersimpan di Git, sehingga setiap perubahan konfigurasi terlihat sebagai diff di pull request.
+> [!TIP]
+> Perhatikan bahwa `build/` sudah berisi hasil render dari `sot/seed.yml`. Itu disengaja: di alur GitOps, konfigurasi yang dimaksud ikut tersimpan di Git, sehingga setiap perubahan konfigurasi terlihat sebagai diff di pull request.
 
 ---
 
@@ -235,7 +237,8 @@ docker exec -it clab-netdevops-sw1 sr_cli
 
 **KRITERIA SUKSES:** ✅ 13 node berstatus running, ping h1 ke srv1 gagal, SSH ke `root@clab-netdevops-r1` berhasil dengan kunci.
 
-⚠️ Bila SSH meminta kata sandi, containerlab tidak menemukan kunci publik Anda saat deploy. Buat kunci dulu (Langkah 0), lalu `sudo containerlab deploy -t topology/netdevops.clab.yml --reconfigure`.
+> [!WARNING]
+> Bila SSH meminta kata sandi, containerlab tidak menemukan kunci publik Anda saat deploy. Buat kunci dulu (Langkah 0), lalu `sudo containerlab deploy -t topology/netdevops.clab.yml --reconfigure`.
 
 ---
 
@@ -263,7 +266,8 @@ curl -s -H "Authorization: Bearer $NETBOX_TOKEN" -H "Accept: application/json" \
   "$NETBOX_URL/api/status/" | python3 -m json.tool | head -20
 ```
 
-⚠️ Sandi dan token di berkas override hanya untuk lab yang tidak terjangkau dari luar mesin Anda. Untuk NetBox sungguhan, buat token per aplikasi, aktifkan pembatasan IP klien, dan matikan opsi "write enabled" untuk token yang hanya membaca (misalnya token yang dipakai CI untuk render).
+> [!WARNING]
+> Sandi dan token di berkas override hanya untuk lab yang tidak terjangkau dari luar mesin Anda. Untuk NetBox sungguhan, buat token per aplikasi, aktifkan pembatasan IP klien, dan matikan opsi "write enabled" untuk token yang hanya membaca (misalnya token yang dipakai CI untuk render).
 
 ### Mengisi data
 
@@ -408,7 +412,8 @@ Diff harus menunjukkan satu baris `ip ospf cost` di `r2.frr.conf`, satu baris ya
 
 **KRITERIA SUKSES:** ✅ `render.py --check` mencetak `OK: build/ sesuai dengan source of truth`, dan Anda bisa menjelaskan mengapa satu perubahan di NetBox menghasilkan tepat tiga baris diff.
 
-💡 Render harus **deterministik**: urutan perangkat, interface, dan kunci JSON selalu sama. Tanpa itu, setiap render menghasilkan diff palsu dan reviewer berhenti membaca diff. `tests/test_offline.py::test_render_deterministik` menjaga sifat ini.
+> [!TIP]
+> Render harus **deterministik**: urutan perangkat, interface, dan kunci JSON selalu sama. Tanpa itu, setiap render menghasilkan diff palsu dan reviewer berhenti membaca diff. `tests/test_offline.py::test_render_deterministik` menjaga sifat ini.
 
 ---
 
@@ -670,7 +675,8 @@ Notifikasi `down` lalu `up` muncul seketika di terminal gnmic, tanpa menunggu in
 - `telemetry/prometheus.yml` punya dua job: `gnmic` (scrape 5 detik) dan `snmp` (30 detik, lewat snmp_exporter dengan modul `if_mib`).
 - Grafana diprovisikan dari berkas: sumber data dan dashboard "Lab 08 - gNMI vs SNMP" ikut versi di Git. Ini "observability sebagai kode".
 
-⚠️ Status oper-state di berkas gnmic sengaja memakai `sample`, bukan `on-change`. Output Prometheus gnmic membuang metrik yang tidak diperbarui dalam jangka `expiration` (bawaan 60 detik). Status yang jarang berubah dan dikirim on-change bisa "menghilang" dari Prometheus walau port baik-baik saja.
+> [!WARNING]
+> Status oper-state di berkas gnmic sengaja memakai `sample`, bukan `on-change`. Output Prometheus gnmic membuang metrik yang tidak diperbarui dalam jangka `expiration` (bawaan 60 detik). Status yang jarang berubah dan dikirim on-change bisa "menghilang" dari Prometheus walau port baik-baik saja.
 
 **VERIFIKASI:** buka `http://localhost:9090/targets` (tiga job berstatus UP), lalu `http://localhost:3000` dan pilih dashboard Lab 08. Di Prometheus, coba kueri:
 
@@ -695,7 +701,8 @@ Di dashboard, pilih switch `sw2` dan port `ethernet-1/2` (port menuju srv1; data
 
 Hitung sendiri mengapa: misalkan burst mengalir 2 Gbit/s selama 5 detik lalu diam. Penghitung byte bertambah 2 × 5 = 10 Gbit. SNMP hanya melihat selisih penghitung per 30 detik, jadi rata-rata yang tampak adalah 10 Gbit ÷ 30 detik ≈ 333 Mbit/s, sekitar seperenam puncak sebenarnya. Dengan sample 5 detik, gNMI melihat puncak hampir utuh. Di jaringan nyata, inilah bedanya antara "utilisasi link 30%, aman" dan "link penuh berkali-kali per menit sehingga ada drop".
 
-⚠️ Pilihan fungsi PromQL bisa menghapus perbedaan yang ingin Anda lihat. `rate(x[30s])` menghitung rata-rata per detik selama 30 detik terakhir, sehingga burst 5 detik dari gNMI pun ikut diratakan menjadi seperenamnya. Dashboard lab ini memakai `irate()`, yang hanya memakai dua sampel terakhir, sehingga resolusi setiap garis sama dengan interval datanya. Jendela kurung siku tetap harus memuat minimal dua sampel: `[30s]` cukup untuk data 5 detik, sedangkan data 30 detik butuh `[2m]` agar tidak kosong ketika satu scrape terlambat. Untuk alarm dan laporan kapasitas, `rate()` dengan jendela panjang justru yang tepat; untuk mencari burst, pakai `irate()` atau resolusi data yang lebih tinggi.
+> [!WARNING]
+> Pilihan fungsi PromQL bisa menghapus perbedaan yang ingin Anda lihat. `rate(x[30s])` menghitung rata-rata per detik selama 30 detik terakhir, sehingga burst 5 detik dari gNMI pun ikut diratakan menjadi seperenamnya. Dashboard lab ini memakai `irate()`, yang hanya memakai dua sampel terakhir, sehingga resolusi setiap garis sama dengan interval datanya. Jendela kurung siku tetap harus memuat minimal dua sampel: `[30s]` cukup untuk data 5 detik, sedangkan data 30 detik butuh `[2m]` agar tidak kosong ketika satu scrape terlambat. Untuk alarm dan laporan kapasitas, `rate()` dengan jendela panjang justru yang tepat; untuk mencari burst, pakai `irate()` atau resolusi data yang lebih tinggi.
 
 **KRITERIA SUKSES:** ✅ dashboard menampilkan kedua garis, Anda bisa menjelaskan selisih puncaknya dengan hitungan di atas, dan grafik status port menunjukkan 0 saat port dimatikan.
 
@@ -762,7 +769,8 @@ Uji differential membandingkan snapshot PR dengan snapshot `main`. Flow yang tad
 4. Settings → Actions → Runners → New self-hosted runner. Ikuti perintah pemasangan di mesin lab, beri label `netdevops-lab`. User runner harus anggota grup `docker` dan memiliki kunci SSH yang tersalin ke node FRR (deploy ulang containerlab bila perlu).
 5. Buat label `izinkan-reachability-hilang` di tab Issues → Labels.
 
-⚠️ Runner self-hosted punya akses ke lab dan NetBox Anda. Jangan pernah menjalankan kode dari PR fork di runner itu. Job `render-check` sudah dibatasi untuk PR dari repositori sendiri, dan `deploy` hanya berjalan pada push ke `main`. Untuk repositori publik, pertimbangkan untuk tidak memakai runner self-hosted sama sekali.
+> [!WARNING]
+> Runner self-hosted punya akses ke lab dan NetBox Anda. Jangan pernah menjalankan kode dari PR fork di runner itu. Job `render-check` sudah dibatasi untuk PR dari repositori sendiri, dan `deploy` hanya berjalan pada push ke `main`. Untuk repositori publik, pertimbangkan untuk tidak memakai runner self-hosted sama sekali.
 
 ### Satu perubahan dari awal sampai akhir
 
@@ -1054,4 +1062,4 @@ Inti lab ini bukan alat-alatnya, karena alat akan berganti. Intinya adalah kebia
 
 ---
 
-**Berikutnya:** `20-proyek-akhir/01-briefing-dan-aturan` — proyek akhir: satu studi kasus berkelanjutan yang menguji seluruh kurikulum, termasuk babak kode yang menjaga jaringan.
+**Berikutnya:** `20-proyek-akhir/01-briefing-dan-aturan`. Proyek akhir: satu studi kasus berkelanjutan yang menguji seluruh kurikulum, termasuk babak kode yang menjaga jaringan.

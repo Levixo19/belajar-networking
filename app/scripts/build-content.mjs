@@ -30,6 +30,10 @@ const DIAGRAM_ID = new Set([...fs.readFileSync(path.join(APP_DIR, 'src', 'diagra
   .matchAll(/^\s*'([a-z0-9-]+)':\s*[A-Za-z0-9_.]+,?\s*$/gm)].map(m => m[1]))
 const ENRICH_GALAT = []
 
+// Pola yang DILARANG apa pun lisensinya: penyingkat tautan menyembunyikan tujuan,
+// cermin PDF menyalin tanpa izin. Dipakai Pustaka, kasus nyata, dan misi.
+const DOMAIN_DILARANG = /(^|\.)(bit\.ly|tinyurl\.com|t\.co|goo\.gl|s\.id|ow\.ly|is\.gd|cutt\.ly|scribd\.com|pdfdrive\.com|libgen\.[a-z]+|z-lib\.[a-z]+|dokumen\.pub|vdoc\.pub|epdf\.pub|studylib\.net|pdfcoffee\.com|dokumen\.tips|idoc\.pub)$/i
+
 // --- Peta judul & ikon per tahap -------------------------------------------
 const STAGE_META = {
   '00-fondasi': { title: 'Fondasi', icon: '🌱', band: 'dasar' },
@@ -128,11 +132,13 @@ function postProcess(html) {
   // Bungkus tabel agar bisa di-scroll horizontal
   html = html.replace(/<table>/g, '<div class="table-wrap"><table>').replace(/<\/table>/g, '</table></div>')
   html = wrapAsciiFigures(html)
-  // Ubah paragraf yang diawali ⚠️ / 💡 menjadi callout berstyle
-  html = html.replace(/<p>(⚠️|💡|✅|❌)\s*([\s\S]*?)<\/p>/g, (m, ico, body) => {
-    const kind = ico === '⚠️' ? 'warn' : ico === '💡' ? 'tip' : ico === '✅' ? 'ok' : 'no'
-    const label = { warn: 'Perhatian', tip: 'Tips', ok: 'Benar', no: 'Hindari' }[kind]
-    return `<div class="callout callout-${kind}"><div class="callout-body"><span class="callout-label">${label}</span> ${body}</div></div>`
+  // Callout = alert GitHub di materi (> [!WARNING], > [!TIP], > [!CAUTION], > [!NOTE],
+  // > [!IMPORTANT]). Dulu penandanya emoji di awal paragraf; sintaks alert terbaca
+  // sebagai kotak di GitHub juga, dan tidak menaruh emoji di antarmuka.
+  html = html.replace(/<blockquote>\s*<p>\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*(?:<br\s*\/?>)?\s*([\s\S]*?)<\/blockquote>/g, (m, jenis, isi) => {
+    const kind = { WARNING: 'warn', TIP: 'tip', CAUTION: 'no', NOTE: 'note', IMPORTANT: 'note' }[jenis]
+    const label = { WARNING: 'Perhatian', TIP: 'Tips', CAUTION: 'Hindari', NOTE: 'Catatan', IMPORTANT: 'Penting' }[jenis]
+    return `<div class="callout callout-${kind}"><div class="callout-body"><p><span class="callout-label">${label}</span> ${isi.trim()}</div></div>`
   })
   return html
 }
@@ -250,7 +256,8 @@ function parseFile(absPath, stageId, order, base = CONTENT_ROOT) {
   let title = path.basename(absPath, '.md'), num = ''
   const h1 = raw.match(/^#\s+(.+)$/m)
   if (h1) {
-    const m = h1[1].match(/^([\d.]+)\s*[—–-]\s*(.+)$/)
+    // "05.2 TCP" (bentuk sekarang) atau "05.2 — TCP" (bentuk lama). Nomor = angka bertitik di depan.
+    const m = h1[1].match(/^(\d+(?:\.\d+)*)\s+(?:[—–:-]\s+)?(.+)$/)
     if (m) { num = m[1]; title = m[2].trim() } else { title = h1[1].trim() }
   }
 
@@ -263,7 +270,7 @@ function parseFile(absPath, stageId, order, base = CONTENT_ROOT) {
 
   // "Berikutnya"
   let next = null
-  const nm = raw.match(/\*\*Berikutnya:\*\*\s*`([^`]+)`\s*[—–-]?\s*(.*)$/m)
+  const nm = raw.match(/\*\*Berikutnya:\*\*\s*`([^`]+)`\s*[—–.:-]?\s*(.*)$/m)
   if (nm) {
     const p = nm[1].trim().replace(/\.md$/, '')
     next = { id: p, teaser: (nm[2] || '').trim() }
@@ -353,6 +360,105 @@ if (rootDocs.length) {
   stages.unshift({ id: 'panduan', title: 'Panduan', icon: '📖', band: 'panduan', num: -1, modules })
 }
 
+// --- Wawasan per modul (data/kasus/*.json) -----------------------------------
+// Tiga lapis untuk pembaca awam: "intinya" (satu kalimat, analogi, istilah), satu
+// kasus NYATA yang bersumber (insiden atau praktik terdokumentasi), dan satu
+// tantangan pemecahan masalah. Disimpan di luar .md, seperti enrich.json, supaya
+// penomoran bagian dan jangkar diagram tidak bergeser. Data rusak MENGGAGALKAN
+// build: kasus tanpa sumber https, tanggal di masa depan, atau em-dash/emoji di teks
+// antarmuka tidak boleh sampai ke layar.
+const hariIniLokal = (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}` })()
+const httpsSah = u => typeof u === 'string' && /^https:\/\/[^\s]+$/.test(u)
+const domainDilarang = u => { try { return DOMAIN_DILARANG.test(new URL(u).hostname) } catch { return true } }
+const TEKS_TERLARANG = /—|\p{Extended_Pictographic}/u
+const teksSah = (v, min, maks) => typeof v === 'string' && v.trim().length >= min && v.length <= maks
+function periksaTeksBersih(obj, at, galat, kecuali = new Set()) {
+  const jalan = (v, k) => {
+    if (typeof v === 'string') { if (!kecuali.has(k) && TEKS_TERLARANG.test(v)) galat.push(`${at} "${k}" memuat em-dash atau emoji`) }
+    else if (Array.isArray(v)) v.forEach(x => jalan(x, k))
+    else if (v && typeof v === 'object') for (const [kk, vv] of Object.entries(v)) jalan(vv, kk)
+  }
+  jalan(obj, '')
+}
+const KASUS_GALAT = []
+let totalKasus = 0, totalIntinya = 0, totalTantangan = 0
+{
+  // BN_KASUS_DIR cuma untuk tes: menyuapkan data rusak dan menuntut build GAGAL.
+  const dir = process.env.BN_KASUS_DIR || path.join(EXTRA_DIR, 'kasus')
+  const perModul = new Map(stages.flatMap(s => s.modules.map(m => [m.id, m])))
+  const g = KASUS_GALAT
+  const files = fs.existsSync(dir) ? fs.readdirSync(dir).filter(f => f.endsWith('.json')).sort() : []
+  for (const f of files) {
+    let data
+    try { data = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')) } catch (e) { g.push(`kasus/${f} bukan JSON valid: ${e.message}`); continue }
+    for (const [id, w] of Object.entries(data)) {
+      if (id.startsWith('_')) continue
+      const at = `kasus/${f}:${id}`
+      const m = perModul.get(id)
+      if (!m) { g.push(`${at} modul tidak ada di kurikulum`); continue }
+      if (m.wawasan) { g.push(`${at} ganda (sudah diisi berkas lain)`); continue }
+      periksaTeksBersih(w, at, g)
+      const out = {}
+      const i = w.intinya
+      if (!i) g.push(`${at} "intinya" wajib`)
+      else {
+        if (!teksSah(i.satu_kalimat, 20, 240)) g.push(`${at} intinya.satu_kalimat 20-240 huruf`)
+        if (!teksSah(i.analogi, 40, 800)) g.push(`${at} intinya.analogi 40-800 huruf`)
+        if (!teksSah(i.kenapa_penting, 20, 450)) g.push(`${at} intinya.kenapa_penting 20-450 huruf`)
+        if (!Array.isArray(i.istilah) || i.istilah.length < 2 || i.istilah.length > 6) g.push(`${at} intinya.istilah harus 2-6 butir`)
+        else for (const t of i.istilah) if (!teksSah(t?.kata, 1, 48) || !teksSah(t?.arti, 10, 300)) g.push(`${at} istilah harus {kata 1-48, arti 10-300}: ${t?.kata}`)
+        out.intinya = {
+          satuKalimat: md.renderInline(i.satu_kalimat || ''), analogi: md.renderInline(i.analogi || ''),
+          kenapaPenting: md.renderInline(i.kenapa_penting || ''),
+          istilah: (i.istilah || []).map(t => ({ kata: t.kata, arti: md.renderInline(t.arti || '') })),
+        }
+        totalIntinya++
+      }
+      const k = w.kasus
+      if (k !== undefined) {
+        if (!['insiden', 'praktik'].includes(k.jenis)) g.push(`${at} kasus.jenis harus insiden|praktik`)
+        if (!teksSah(k.judul, 8, 140)) g.push(`${at} kasus.judul 8-140 huruf`)
+        if (!/^\d{4}(-\d{2}(-\d{2})?)?$/.test(k.kapan || '') || k.kapan > hariIniLokal) g.push(`${at} kasus.kapan harus YYYY, YYYY-MM, atau YYYY-MM-DD dan tidak di masa depan`)
+        if (!teksSah(k.di_mana, 2, 90)) g.push(`${at} kasus.di_mana 2-90 huruf`)
+        if (!teksSah(k.ringkas, 40, 700)) g.push(`${at} kasus.ringkas 40-700 huruf`)
+        if (!Array.isArray(k.kronologi) || k.kronologi.length < 2 || k.kronologi.length > 8) g.push(`${at} kasus.kronologi harus 2-8 butir`)
+        else for (const e of k.kronologi) if (!teksSah(e?.waktu, 1, 48) || !teksSah(e?.peristiwa, 10, 360)) g.push(`${at} kronologi harus {waktu 1-48, peristiwa 10-360}`)
+        if (!teksSah(k.akar_masalah, 20, 700)) g.push(`${at} kasus.akar_masalah 20-700 huruf`)
+        if (!teksSah(k.kaitan, 20, 700)) g.push(`${at} kasus.kaitan 20-700 huruf`)
+        if (!Array.isArray(k.pelajaran) || k.pelajaran.length < 1 || k.pelajaran.length > 4) g.push(`${at} kasus.pelajaran harus 1-4 butir`)
+        else for (const p of k.pelajaran) if (!teksSah(p, 10, 360)) g.push(`${at} pelajaran 10-360 huruf`)
+        if (!Array.isArray(k.sumber) || k.sumber.length < 1 || k.sumber.length > 5) g.push(`${at} kasus.sumber harus 1-5 butir: kasus tanpa sumber bukan kasus nyata`)
+        else for (const s of k.sumber) {
+          if (!teksSah(s?.judul, 4, 200) || !teksSah(s?.penerbit, 2, 90)) g.push(`${at} sumber harus {judul, penerbit, url}`)
+          if (!httpsSah(s?.url)) g.push(`${at} sumber.url harus https: ${s?.url}`)
+          else if (domainDilarang(s.url)) g.push(`${at} sumber.url domain dilarang: ${s.url}`)
+        }
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(k.diperiksa || '') || k.diperiksa > hariIniLokal) g.push(`${at} kasus.diperiksa harus YYYY-MM-DD dan tidak di masa depan`)
+        out.kasus = {
+          jenis: k.jenis, judul: k.judul, kapan: k.kapan, diMana: k.di_mana,
+          ringkas: md.renderInline(k.ringkas || ''),
+          kronologi: (k.kronologi || []).map(e => ({ waktu: e.waktu, peristiwa: md.renderInline(e.peristiwa || '') })),
+          akarMasalah: md.renderInline(k.akar_masalah || ''), kaitan: md.renderInline(k.kaitan || ''),
+          pelajaran: (k.pelajaran || []).map(p => md.renderInline(p || '')),
+          sumber: (k.sumber || []).map(s => ({ judul: s.judul, url: s.url, penerbit: s.penerbit })),
+          diperiksa: k.diperiksa,
+        }
+        totalKasus++
+      }
+      const t = w.tantangan
+      if (t !== undefined) {
+        if (!teksSah(t.soal, 30, 800)) g.push(`${at} tantangan.soal 30-800 huruf`)
+        if (!Array.isArray(t.petunjuk) || t.petunjuk.length < 1 || t.petunjuk.length > 4) g.push(`${at} tantangan.petunjuk harus 1-4 butir`)
+        else for (const p of t.petunjuk) if (!teksSah(p, 10, 360)) g.push(`${at} petunjuk 10-360 huruf`)
+        if (!teksSah(t.jawaban, 40, 2200)) g.push(`${at} tantangan.jawaban 40-2200 huruf`)
+        out.tantangan = { soal: md.renderInline(t.soal || ''), petunjuk: (t.petunjuk || []).map(p => md.renderInline(p || '')), jawabanHtml: md.render(t.jawaban || '') }
+        totalTantangan++
+      }
+      m.wawasan = out
+    }
+  }
+}
+
 const search = []
 let totalModules = 0, totalCards = 0
 for (const s of stages) for (const m of s.modules) {
@@ -374,6 +480,10 @@ const bundle = {
 
 if (ENRICH_GALAT.length) {
   console.error('GAGAL validasi enrich.json:\n  ' + ENRICH_GALAT.join('\n  '))
+  process.exit(1)
+}
+if (KASUS_GALAT.length) {
+  console.error('GAGAL validasi data/kasus:\n  ' + KASUS_GALAT.join('\n  '))
   process.exit(1)
 }
 fs.mkdirSync(OUT_DIR, { recursive: true })
@@ -474,6 +584,99 @@ const RUMPUN_MODUL = {
   console.log(`OK  ${profesi.length} profesi → src/generated/profesi.json`)
 }
 console.log(`OK  ${totalModules} modul, ${totalCards} kartu latihan, ${stages.length} tahap → src/generated/curriculum.json`)
+console.log(`OK  wawasan: ${totalIntinya} intinya, ${totalKasus} kasus nyata, ${totalTantangan} tantangan`)
+
+// --- Misi troubleshooting (data/misi/*.json) → src/generated/misi.json --------
+// Skenario pemecahan masalah: gejala, topologi kecil, perintah yang bisa dijalankan
+// (dengan keluaran realistis), dugaan akar masalah, dan pembahasan. Dimuat malas di
+// layar Misi. Validasinya menjaga agar setiap misi BISA dipecahkan: ada langkah
+// yang berguna, ada pengecoh, tepat satu dugaan benar, semua rujukan sah.
+{
+  const dir = process.env.BN_MISI_DIR || path.join(EXTRA_DIR, 'misi')
+  const moduleIds = new Set(stages.flatMap(s => s.modules.map(m => m.id)))
+  const JENIS_SIMPUL = new Set(['pc', 'laptop', 'ponsel', 'router', 'switch', 'server', 'firewall', 'ap', 'cloud', 'isp'])
+  const TINGKAT = ['pemula', 'menengah', 'lanjut']
+  const misi = [], g = [], seen = new Set()
+  const files = fs.existsSync(dir) ? fs.readdirSync(dir).filter(f => f.endsWith('.json')).sort() : []
+  for (const f of files) {
+    let arr
+    try { arr = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')) } catch (e) { g.push(`misi/${f} bukan JSON valid: ${e.message}`); continue }
+    if (!Array.isArray(arr)) { g.push(`misi/${f} harus array`); continue }
+    for (const x of arr) {
+      const at = `misi/${f}:${x?.id}`
+      if (!/^[a-z0-9-]{3,60}$/.test(x?.id || '')) { g.push(`${at} id harus huruf kecil, angka, tanda hubung`); continue }
+      if (seen.has(x.id)) g.push(`${at} id ganda`)
+      seen.add(x.id)
+      // Keluaran terminal dan perintah boleh memuat apa saja yang dicetak perangkat sungguhan.
+      periksaTeksBersih(x, at, g, new Set(['keluaran', 'perintah']))
+      if (!teksSah(x.judul, 8, 110)) g.push(`${at} judul 8-110 huruf`)
+      if (!TINGKAT.includes(x.tingkat)) g.push(`${at} tingkat harus pemula|menengah|lanjut`)
+      if (!Array.isArray(x.modul) || !x.modul.length || x.modul.length > 6) g.push(`${at} modul harus 1-6 ID`)
+      else for (const m of x.modul) if (!moduleIds.has(m)) g.push(`${at} modul "${m}" tidak ada`)
+      if (!teksSah(x.briefing, 60, 1400)) g.push(`${at} briefing 60-1400 huruf`)
+      if (!teksSah(x.gejala, 10, 300)) g.push(`${at} gejala 10-300 huruf`)
+      const simpul = x.topologi?.simpul, sisi = x.topologi?.sisi
+      const idSimpul = new Set()
+      if (!Array.isArray(simpul) || simpul.length < 2 || simpul.length > 10) g.push(`${at} topologi.simpul harus 2-10`)
+      else for (const s of simpul) {
+        if (!/^[A-Za-z0-9_-]{1,24}$/.test(s?.id || '')) g.push(`${at} simpul.id tidak sah: ${s?.id}`)
+        idSimpul.add(s?.id)
+        if (!teksSah(s?.label, 1, 22)) g.push(`${at} simpul ${s?.id} label 1-22 huruf`)
+        if (!JENIS_SIMPUL.has(s?.jenis)) g.push(`${at} simpul ${s?.id} jenis "${s?.jenis}" tidak dikenal`)
+        if (typeof s?.x !== 'number' || typeof s?.y !== 'number' || s.x < 0 || s.x > 100 || s.y < 0 || s.y > 100) g.push(`${at} simpul ${s?.id} x/y harus angka 0-100`)
+        if (s?.info !== undefined && !teksSah(s.info, 1, 60)) g.push(`${at} simpul ${s?.id} info 1-60 huruf`)
+      }
+      if (!Array.isArray(sisi) || !sisi.length || sisi.length > 16) g.push(`${at} topologi.sisi harus 1-16`)
+      else for (const e of sisi) {
+        if (!idSimpul.has(e?.dari) || !idSimpul.has(e?.ke)) g.push(`${at} sisi ${e?.dari}-${e?.ke} menunjuk simpul yang tidak ada`)
+        if (e?.label !== undefined && !teksSah(e.label, 1, 26)) g.push(`${at} sisi label 1-26 huruf`)
+      }
+      const langkah = x.langkah
+      if (!Array.isArray(langkah) || langkah.length < 6 || langkah.length > 16) g.push(`${at} langkah harus 6-16`)
+      else {
+        const idL = new Set()
+        for (const l of langkah) {
+          if (!/^[a-z0-9-]{2,40}$/.test(l?.id || '') || idL.has(l.id)) g.push(`${at} langkah.id tidak sah atau ganda: ${l?.id}`)
+          idL.add(l?.id)
+          if (!teksSah(l?.label, 4, 90)) g.push(`${at} langkah ${l?.id} label 4-90 huruf`)
+          if (!idSimpul.has(l?.perangkat)) g.push(`${at} langkah ${l?.id} perangkat "${l?.perangkat}" bukan simpul topologi`)
+          if (!teksSah(l?.perintah, 1, 200)) g.push(`${at} langkah ${l?.id} perintah 1-200 huruf`)
+          if (!teksSah(l?.keluaran, 1, 3200)) g.push(`${at} langkah ${l?.id} keluaran 1-3200 huruf`)
+          if (!teksSah(l?.makna, 20, 600)) g.push(`${at} langkah ${l?.id} makna 20-600 huruf`)
+          if (typeof l?.berguna !== 'boolean') g.push(`${at} langkah ${l?.id} berguna harus boolean`)
+        }
+        const n = langkah.filter(l => l?.berguna === true).length
+        if (n < 3) g.push(`${at} minimal 3 langkah berguna (sekarang ${n})`)
+        if (langkah.length - n < 2) g.push(`${at} minimal 2 langkah pengecoh`)
+      }
+      const dugaan = x.dugaan
+      if (!Array.isArray(dugaan) || dugaan.length < 3 || dugaan.length > 6) g.push(`${at} dugaan harus 3-6`)
+      else {
+        if (dugaan.filter(d => d?.benar === true).length !== 1) g.push(`${at} dugaan benar harus tepat satu`)
+        for (const d of dugaan) if (!teksSah(d?.teks, 10, 220) || !teksSah(d?.umpan, 20, 600) || typeof d?.benar !== 'boolean') g.push(`${at} dugaan harus {teks 10-220, benar, umpan 20-600}`)
+      }
+      if (!teksSah(x.pembahasan, 100, 3000)) g.push(`${at} pembahasan 100-3000 huruf`)
+      if (!teksSah(x.perbaikan?.penjelasan, 20, 900)) g.push(`${at} perbaikan.penjelasan 20-900 huruf`)
+      if (x.perbaikan?.perintah !== undefined && !teksSah(x.perbaikan.perintah, 1, 1600)) g.push(`${at} perbaikan.perintah 1-1600 huruf`)
+      for (const s of x.sumber || []) if (!teksSah(s?.judul, 4, 200) || !httpsSah(s?.url) || domainDilarang(s.url)) g.push(`${at} sumber harus {judul, url https}: ${s?.url}`)
+      misi.push({
+        id: x.id, judul: x.judul, tingkat: x.tingkat, modul: x.modul, gejala: x.gejala,
+        briefingHtml: md.render(x.briefing || ''), topologi: x.topologi,
+        langkah: (x.langkah || []).map(l => ({ id: l.id, label: l.label, perangkat: l.perangkat, perintah: l.perintah, keluaran: l.keluaran, makna: md.renderInline(l.makna || ''), berguna: l.berguna })),
+        dugaan: (x.dugaan || []).map(d => ({ id: d.id || d.teks, teks: md.renderInline(d.teks || ''), benar: d.benar, umpan: md.renderInline(d.umpan || '') })),
+        pembahasanHtml: md.render(x.pembahasan || ''),
+        perbaikan: { penjelasan: md.renderInline(x.perbaikan?.penjelasan || ''), perintah: x.perbaikan?.perintah || '' },
+        sumber: x.sumber || [],
+      })
+    }
+  }
+  if (g.length) {
+    console.error('GAGAL validasi data/misi:\n  ' + g.join('\n  '))
+    process.exit(1)
+  }
+  fs.writeFileSync(path.join(OUT_DIR, 'misi.json'), JSON.stringify(misi))
+  console.log(`OK  ${misi.length} misi troubleshooting → src/generated/misi.json`)
+}
 
 // --- Pustaka: data/pustaka/*.json (hasil panen) + data/pustaka-kurasi/*.json (riset) ---
 // → src/generated/pustaka.json. Data yang rusak MENGGAGALKAN build. Tahap terkait tiap
@@ -485,7 +688,7 @@ console.log(`OK  ${totalModules} modul, ${totalCards} kartu latihan, ${stages.le
   const errors = []
   // Pola yang DILARANG apa pun lisensinya: penyingkat tautan menyembunyikan tujuan,
   // dan situs-situs ini dikenal sebagai cermin buku berhak cipta.
-  const DILARANG = /(^|\.)(bit\.ly|tinyurl\.com|t\.co|goo\.gl|s\.id|ow\.ly|is\.gd|cutt\.ly|scribd\.com|pdfdrive\.com|libgen\.[a-z]+|z-lib\.[a-z]+|dokumen\.pub|vdoc\.pub|epdf\.pub|studylib\.net|pdfcoffee\.com|dokumen\.tips|idoc\.pub)$/i
+  const DILARANG = DOMAIN_DILARANG
   // "hak cipta" sengaja TIDAK ada di TIDAK_BEBAS: setiap lisensi CC diberikan oleh
   // pemegang hak cipta, jadi "CC BY-SA 3.0 (hak cipta 2014 Bonaventure)" itu sah.
   const BISA_DISALIN = /\b(CC BY(?:-SA)?(?: \d\.\d)?|CC0|Creative Commons (?:Attribution|Zero)|MIT|BSD|Apache|domain publik|public domain)\b/i

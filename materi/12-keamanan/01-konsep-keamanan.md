@@ -1,11 +1,11 @@
-# 12.1 — Konsep Dasar Keamanan Jaringan
+# 12.1 Konsep Dasar Keamanan Jaringan
 
 > **Prasyarat:** `09-nat-acl-firewall/03`
 > **Tujuan:** Anda menguasai kosakata keamanan yang dipakai profesional, memahami model ancaman, dan bisa berpikir seperti penyerang maupun pembela.
 
 ---
 
-## 1. CIA Triad — Fondasi Semua Keamanan
+## 1. CIA Triad: Fondasi Semua Keamanan
 
 ```
         ┌─────────────────┐
@@ -28,7 +28,8 @@
 | **Integrity** | Modifikasi data, MITM, malware | Hash, tanda tangan digital, checksum, kontrol perubahan |
 | **Availability** | DDoS, kegagalan hardware, ransomware | Redundansi, backup, rate limiting, DDoS protection |
 
-⚠️ **Ketiganya sering saling bertentangan.** Enkripsi penuh (confidentiality) menyulitkan inspeksi keamanan; redundansi (availability) memperbesar permukaan serangan; kontrol ketat (integrity) memperlambat operasi. **Keamanan selalu soal keseimbangan, bukan maksimum.**
+> [!WARNING]
+> **Ketiganya sering saling bertentangan.** Enkripsi penuh (confidentiality) menyulitkan inspeksi keamanan; redundansi (availability) memperbesar permukaan serangan; kontrol ketat (integrity) memperlambat operasi. **Keamanan selalu soal keseimbangan, bukan maksimum.**
 
 ### Tambahan penting
 
@@ -64,7 +65,7 @@ THREAT memanfaatkan VULNERABILITY lewat EXPLOIT
 → dikurangi dengan MITIGATION
 ```
 
-### Menangani risiko — empat pilihan
+### Menangani risiko: empat pilihan
 
 ```
 1. MITIGATE  (kurangi)   → pasang kontrol keamanan
@@ -73,7 +74,8 @@ THREAT memanfaatkan VULNERABILITY lewat EXPLOIT
 4. AVOID     (hindari)   → hentikan aktivitas yang berisiko
 ```
 
-💡 **"Accept" adalah keputusan yang sah** — asalkan **disadari, didokumentasikan, dan disetujui manajemen**. Yang berbahaya adalah risiko yang tidak diketahui, bukan risiko yang diterima secara sadar.
+> [!TIP]
+> **"Accept" adalah keputusan yang sah** — asalkan **disadari, didokumentasikan, dan disetujui manajemen**. Yang berbahaya adalah risiko yang tidak diketahui, bukan risiko yang diterima secara sadar.
 
 ---
 
@@ -107,7 +109,8 @@ THREAT memanfaatkan VULNERABILITY lewat EXPLOIT
 
 **Prinsipnya:** asumsikan setiap lapisan **akan** ditembus. Lapisan berikutnya harus tetap memberi perlindungan.
 
-⚠️ **Kesalahan klasik: "kami punya firewall, jadi kami aman".** Firewall hanya melindungi perimeter. Sebagian besar serangan modern masuk lewat **email dan browser** — melewati firewall sebagai trafik yang tampak sah.
+> [!WARNING]
+> **Kesalahan klasik: "kami punya firewall, jadi kami aman".** Firewall hanya melindungi perimeter. Sebagian besar serangan modern masuk lewat **email dan browser** — melewati firewall sebagai trafik yang tampak sah.
 
 ### Prinsip lainnya
 
@@ -122,7 +125,8 @@ THREAT memanfaatkan VULNERABILITY lewat EXPLOIT
 | **Security by Design** | Keamanan sejak awal, bukan ditambal | Ancam-modelkan sebelum membangun |
 | **KISS** | Sederhana lebih aman | Konfigurasi rumit = lebih banyak celah |
 
-💡 **Kompleksitas adalah musuh keamanan.** Firewall dengan 3.000 aturan yang tidak ada yang memahaminya lebih tidak aman daripada 50 aturan yang jelas.
+> [!TIP]
+> **Kompleksitas adalah musuh keamanan.** Firewall dengan 3.000 aturan yang tidak ada yang memahaminya lebih tidak aman daripada 50 aturan yang jelas.
 
 ---
 
@@ -132,18 +136,20 @@ THREAT memanfaatkan VULNERABILITY lewat EXPLOIT
 |---|---|---|---|
 | **Script kiddie** | Iseng, pamer | Rendah (pakai alat orang lain) | Siapa saja yang lengah |
 | **Hacktivist** | Ideologi, politik | Sedang | Pemerintah, korporasi |
-| **Cybercriminal** | **Uang** | Sedang–tinggi | Semua (ransomware, pencurian data) |
+| **Cybercriminal** | **Uang** | Sedang-tinggi | Semua (ransomware, pencurian data) |
 | **Insider** | Dendam, uang, kelalaian | **Akses istimewa** | Organisasi sendiri |
 | **Competitor** | Keunggulan bisnis | Sedang | Pesaing |
 | **Nation-state / APT** | Spionase, sabotase | **Sangat tinggi** | Infrastruktur kritis, pemerintah |
 
-⚠️ **Insider threat adalah yang paling sering diremehkan.** Mereka sudah punya akses, tahu di mana data berharga, dan tahu kontrol apa yang ada. Termasuk **kelalaian** (mengklik phishing, salah konfigurasi) — yang jauh lebih umum daripada niat jahat.
+> [!WARNING]
+> **Insider threat adalah yang paling sering diremehkan.** Mereka sudah punya akses, tahu di mana data berharga, dan tahu kontrol apa yang ada. Termasuk **kelalaian** (mengklik phishing, salah konfigurasi) — yang jauh lebih umum daripada niat jahat.
 
-💡 **Untuk sebagian besar organisasi, ancaman nyata adalah cybercriminal dengan ransomware dan insider yang lalai** — bukan APT. Rancang pertahanan sesuai ancaman yang realistis.
+> [!TIP]
+> **Untuk sebagian besar organisasi, ancaman nyata adalah cybercriminal dengan ransomware dan insider yang lalai** — bukan APT. Rancang pertahanan sesuai ancaman yang realistis.
 
 ---
 
-## 5. Rekayasa Sosial — Serangan yang Menargetkan Manusia
+## 5. Rekayasa Sosial: Serangan yang Menargetkan Manusia
 
 Manusia adalah lapisan yang paling sulit di-patch.
 
@@ -160,7 +166,8 @@ Manusia adalah lapisan yang paling sulit di-patch.
 | **Business Email Compromise (BEC)** | Berpura-pura jadi eksekutif untuk meminta transfer dana |
 | **MFA fatigue** | Membanjiri pengguna dengan prompt MFA sampai ia menyetujui |
 
-⚠️ **Rekayasa sosial adalah vektor serangan paling sukses.** Tidak ada firewall yang menghentikan karyawan yang secara sukarela memasukkan kredensialnya ke situs palsu.
+> [!WARNING]
+> **Rekayasa sosial adalah vektor serangan paling sukses.** Tidak ada firewall yang menghentikan karyawan yang secara sukarela memasukkan kredensialnya ke situs palsu.
 
 **Mitigasi:**
 ```
@@ -172,7 +179,8 @@ Manusia adalah lapisan yang paling sulit di-patch.
 ✅ Budaya "tidak apa-apa melaporkan kesalahan"
 ```
 
-💡 **Budaya sangat penting.** Kalau karyawan takut dihukum karena mengklik phishing, mereka akan menyembunyikannya — dan Anda kehilangan waktu berharga untuk merespons.
+> [!TIP]
+> **Budaya sangat penting.** Kalau karyawan takut dihukum karena mengklik phishing, mereka akan menyembunyikannya — dan Anda kehilangan waktu berharga untuk merespons.
 
 ---
 
@@ -213,13 +221,15 @@ Keamanan siber tidak berarti kalau penyerang bisa masuk ke ruang server.
 - Pemusnahan media (shredding, degaussing)
 ```
 
-⚠️ **Akses fisik = akses penuh.** Dengan akses fisik ke router/switch, penyerang bisa melakukan **password recovery** dalam hitungan menit — semua konfigurasi keamanan menjadi tidak berarti.
+> [!WARNING]
+> **Akses fisik = akses penuh.** Dengan akses fisik ke router/switch, penyerang bisa melakukan **password recovery** dalam hitungan menit — semua konfigurasi keamanan menjadi tidak berarti.
 
 ```
 # Cisco — matikan password recovery (⚠️ hati-hati!)
 R1(config)# no service password-recovery
 ```
-⚠️ Setelah ini, kalau Anda lupa password, satu-satunya jalan adalah **menghapus seluruh konfigurasi**. Pastikan Anda punya backup dan proses manajemen kredensial yang baik.
+> [!WARNING]
+> Setelah ini, kalau Anda lupa password, satu-satunya jalan adalah **menghapus seluruh konfigurasi**. Pastikan Anda punya backup dan proses manajemen kredensial yang baik.
 
 ---
 
@@ -239,7 +249,8 @@ Memahami **bagaimana** serangan berlangsung membantu menempatkan pertahanan di t
 7. ACTIONS ON OBJECTIVES  → mencuri data, enkripsi, sabotase
 ```
 
-💡 **Memutus satu tahap saja sudah menggagalkan serangan.** Ini alasan defense in depth bekerja — penyerang harus berhasil di **setiap** tahap; pembela cukup berhasil di **satu**.
+> [!TIP]
+> **Memutus satu tahap saja sudah menggagalkan serangan.** Ini alasan defense in depth bekerja — penyerang harus berhasil di **setiap** tahap; pembela cukup berhasil di **satu**.
 
 **Di mana kontrol jaringan berperan:**
 ```
@@ -262,7 +273,8 @@ Discovery → Lateral Movement → Collection → Command and Control →
 Exfiltration → Impact
 ```
 
-💡 **ATT&CK dipakai untuk:** memetakan cakupan deteksi Anda, merancang purple team exercise, dan berkomunikasi tentang ancaman dengan bahasa yang sama. Situs: https://attack.mitre.org
+> [!TIP]
+> **ATT&CK dipakai untuk:** memetakan cakupan deteksi Anda, merancang purple team exercise, dan berkomunikasi tentang ancaman dengan bahasa yang sama. Situs: https://attack.mitre.org
 
 ---
 
@@ -278,7 +290,8 @@ Penyerang masuk lewat laptop karyawan (phishing)
 → RANSOMWARE SELURUH ORGANISASI
 ```
 
-⚠️ **Jaringan "datar" (semua perangkat bisa menjangkau semuanya) adalah mimpi buruk keamanan.** Satu laptop yang terinfeksi dapat menjangkau setiap server.
+> [!WARNING]
+> **Jaringan "datar" (semua perangkat bisa menjangkau semuanya) adalah mimpi buruk keamanan.** Satu laptop yang terinfeksi dapat menjangkau setiap server.
 
 **Segmentasi adalah kontrol paling efektif melawan lateral movement:**
 
@@ -291,7 +304,8 @@ Penyerang masuk lewat laptop karyawan (phishing)
 ✅ Batasi SMB, RDP, WinRM antar-segmen
 ```
 
-💡 **Dampak nyata:** organisasi dengan segmentasi yang baik sering hanya kehilangan satu segmen saat terkena ransomware; yang jaringannya datar kehilangan semuanya.
+> [!TIP]
+> **Dampak nyata:** organisasi dengan segmentasi yang baik sering hanya kehilangan satu segmen saat terkena ransomware; yang jaringannya datar kehilangan semuanya.
 
 ---
 
@@ -330,9 +344,11 @@ Untuk bertahan dengan baik, Anda harus memahami cara berpikir penyerang.
 6. Rantai pasokan (software pihak ketiga, vendor)
 ```
 
-⚠️ **Perhatikan bahwa sebagian besar bukan serangan "canggih".** Mereka memanfaatkan kelalaian dasar: patch yang tertunda, MFA yang tidak dipakai, dan layanan yang tidak seharusnya terekspos.
+> [!WARNING]
+> **Perhatikan bahwa sebagian besar bukan serangan "canggih".** Mereka memanfaatkan kelalaian dasar: patch yang tertunda, MFA yang tidak dipakai, dan layanan yang tidak seharusnya terekspos.
 
-💡 **Konsekuensinya untuk network engineer:** pekerjaan keamanan Anda yang paling bernilai adalah hal-hal membosankan — patching, mematikan yang tidak dipakai, segmentasi, MFA, backup, dan monitoring. Bukan membeli produk keamanan termahal.
+> [!TIP]
+> **Konsekuensinya untuk network engineer:** pekerjaan keamanan Anda yang paling bernilai adalah hal-hal membosankan — patching, mematikan yang tidak dipakai, segmentasi, MFA, backup, dan monitoring. Bukan membeli produk keamanan termahal.
 
 ---
 
@@ -349,9 +365,11 @@ Untuk bertahan dengan baik, Anda harus memahami cara berpikir penyerang.
 | **UU PDP (Indonesia)** | Perlindungan data pribadi | **Wajib di Indonesia** |
 | **IEC 62443** | Keamanan sistem industri (OT) | Pabrik, utilitas |
 
-💡 **CIS Controls v8 adalah titik awal terbaik** untuk organisasi yang belum punya program keamanan — 18 kontrol yang diurutkan berdasarkan dampak, dengan panduan implementasi konkret.
+> [!TIP]
+> **CIS Controls v8 adalah titik awal terbaik** untuk organisasi yang belum punya program keamanan — 18 kontrol yang diurutkan berdasarkan dampak, dengan panduan implementasi konkret.
 
-⚠️ **Kepatuhan ≠ keamanan.** Banyak organisasi yang "compliant" tetap diretas. Kepatuhan adalah **standar minimum**, bukan tujuan akhir.
+> [!WARNING]
+> **Kepatuhan ≠ keamanan.** Banyak organisasi yang "compliant" tetap diretas. Kepatuhan adalah **standar minimum**, bukan tujuan akhir.
 
 ---
 
@@ -443,4 +461,4 @@ Untuk bertahan dengan baik, Anda harus memahami cara berpikir penyerang.
 
 ---
 
-**Berikutnya:** `12-keamanan/02-serangan-l2.md` — serangan layer 2 dan mitigasinya.
+**Berikutnya:** `12-keamanan/02-serangan-l2.md`. Serangan layer 2 dan mitigasinya.

@@ -1,4 +1,4 @@
-# 07.11 — Interkoneksi Internet dan Ekosistem Indonesia
+# 07.11 Interkoneksi Internet dan Ekosistem Indonesia
 
 > **Prasyarat:** `07-routing-lanjutan/06-bgp` (atribut, filter, RPKI), `07-routing-lanjutan/07-redistribusi-policy` (route-map dan community), `00-fondasi/04-sejarah-dan-standar` (AS, tier, IXP, RIR). Untuk lab: `lab/00-setup-lab`.
 > **Tujuan:** Anda memahami internet sebagai jaringan hubungan bisnis antar-AS (transit, peering, aturan ekspor valley-free), bisa membaca dan memakai PeeringDB, memahami cara kerja IXP dan route server, mampu menghitung kelayakan peering tanpa menebak harga, mengenal ekosistem Indonesia (IDNIC, IIX, JKT-IX, OpenIXP, DE-CIX Jakarta, CDIX, ID-NOG), mendaftarkan objek IRR dan ROA, lalu menjalankan sendiri route server BIRD dengan validasi RPKI di lab.
@@ -21,7 +21,8 @@ Di modul BGP Anda belajar bahwa internet adalah puluhan ribu **AS** (*Autonomous
 | **Partial transit** | Pelanggan membayar | Penyedia mengirim **sebagian** tabel, misalnya rute regional atau rute pelanggan dan peer-nya saja | Transit "Asia saja" yang lebih murah |
 | **Remote peering** | Pelanggan membayar penyedia layanan transport L2 | Port IXP Anda dibawa lewat jaringan pihak ketiga, jadi Anda bisa peering di IXP kota lain tanpa router di sana | ISP di Makassar ikut IXP Jakarta |
 
-💡 **Kuncinya ada di kolom "apa yang dipertukarkan".** Transit memberi Anda jalan ke **mana saja**. Peering hanya memberi jalan ke **jaringan pihak lain dan pelanggannya**, tidak lebih. Peer Anda tidak akan membawa trafik Anda ke peer-nya yang lain.
+> [!TIP]
+> **Kuncinya ada di kolom "apa yang dipertukarkan".** Transit memberi Anda jalan ke **mana saja**. Peering hanya memberi jalan ke **jaringan pihak lain dan pelanggannya**, tidak lebih. Peer Anda tidak akan membawa trafik Anda ke peer-nya yang lain.
 
 ### 1.2 Tier: label yang longgar
 
@@ -31,7 +32,8 @@ Di modul BGP Anda belajar bahwa internet adalah puluhan ribu **AS** (*Autonomous
 | **Tier 2** | Melakukan peering luas, tetapi tetap membeli transit untuk sebagian tujuan | Kebanyakan operator nasional |
 | **Tier 3** | Hanya membeli transit, sedikit atau tanpa peering | ISP lokal, jaringan perusahaan |
 
-⚠️ **"Tier" bukan standar teknis.** Tidak ada badan yang menetapkannya. Peneliti biasanya menyimpulkan hubungan antar-AS dari data BGP publik (misalnya proyek AS Rank dari CAIDA) dan hasilnya tetap berupa inferensi. Jangan memakai label tier sebagai dasar keputusan teknis. Yang penting adalah: siapa pelanggan Anda, siapa penyedia Anda, dan siapa peer Anda.
+> [!WARNING]
+> **"Tier" bukan standar teknis.** Tidak ada badan yang menetapkannya. Peneliti biasanya menyimpulkan hubungan antar-AS dari data BGP publik (misalnya proyek AS Rank dari CAIDA) dan hasilnya tetap berupa inferensi. Jangan memakai label tier sebagai dasar keputusan teknis. Yang penting adalah: siapa pelanggan Anda, siapa penyedia Anda, dan siapa peer Anda.
 
 ---
 
@@ -49,10 +51,10 @@ Dalam bentuk tabel (baris = dari mana rute dipelajari, kolom = boleh diiklankan 
 
 | Rute dipelajari dari | ke Pelanggan | ke Peer | ke Penyedia |
 |---|---|---|---|
-| Diri sendiri (prefix milik sendiri) | ✅ | ✅ | ✅ |
-| Pelanggan | ✅ | ✅ | ✅ |
-| Peer | ✅ | ❌ | ❌ |
-| Penyedia | ✅ | ❌ | ❌ |
+| Diri sendiri (prefix milik sendiri) | Ya | Ya | Ya |
+| Pelanggan | Ya | Ya | Ya |
+| Peer | Ya | Tidak | Tidak |
+| Penyedia | Ya | Tidak | Tidak |
 
 Aturan ini dikenal sebagai **aturan Gao-Rexford**, dari dua makalah Lixin Gao dan Jennifer Rexford tahun 2001. Gao menunjukkan bahwa hubungan antar-AS bisa disimpulkan dari pola AS_PATH, dan bersama Rexford membuktikan bahwa kalau semua AS mengikuti aturan ekspor ini **dan** lebih menyukai rute dari pelanggan daripada dari peer atau penyedia (dengan syarat hubungan pelanggan-penyedia tidak membentuk siklus), BGP dijamin konvergen ke keadaan stabil tanpa koordinasi global.
 
@@ -82,7 +84,8 @@ Garis miring menghubungkan penyedia (atas) dengan pelanggannya (bawah).
 
 Pola umumnya bisa ditulis seperti ekspresi reguler: `(naik)* (peer)? (turun)*`.
 
-⚠️ **Route leak adalah jalur yang tidak valley-free.** RFC 7908 mendefinisikan route leak sebagai penyebaran rute melewati batas yang dimaksudkan. Contoh klasiknya persis baris ketiga tabel: pelanggan multihomed menerima tabel penuh dari penyedia A lalu meneruskannya ke penyedia B. Penyedia B yang tidak memfilter akan mengirim sebagian trafik internetnya lewat pelanggan kecil itu, dan link pelanggan langsung penuh. Filter `^$` yang Anda pelajari di modul BGP adalah pertahanan paling dasar terhadap kesalahan ini.
+> [!WARNING]
+> **Route leak adalah jalur yang tidak valley-free.** RFC 7908 mendefinisikan route leak sebagai penyebaran rute melewati batas yang dimaksudkan. Contoh klasiknya persis baris ketiga tabel: pelanggan multihomed menerima tabel penuh dari penyedia A lalu meneruskannya ke penyedia B. Penyedia B yang tidak memfilter akan mengirim sebagian trafik internetnya lewat pelanggan kecil itu, dan link pelanggan langsung penuh. Filter `^$` yang Anda pelajari di modul BGP adalah pertahanan paling dasar terhadap kesalahan ini.
 
 ### 2.3 Preferensi mengikuti uang
 
@@ -132,7 +135,8 @@ route-map KELUAR-PELANGGAN permit 10
 
 Pasang `MASUK-*` sebagai filter `in` dan `KELUAR-*` sebagai filter `out` pada neighbor yang sesuai. Router border lain di AS yang sama cukup membaca community-nya, sehingga kebijakan tetap konsisten walaupun rute diteruskan lewat iBGP.
 
-💡 **RFC 9234 (BGP Roles) mengotomatiskan sebagian pola ini.** Kedua sisi sesi menyatakan perannya (provider, customer, peer, rs-server, rs-client) di pesan OPEN, dan router memasang atribut OTC (*Only to Customer*) yang mencegah rute dari peer atau penyedia bocor naik lagi. Detail dan konfigurasinya ada di modul BGP bagian "Higiene dan Keamanan BGP 2026". Roles tidak menggantikan community di atas, tetapi menjadi jaring pengaman kedua.
+> [!TIP]
+> **RFC 9234 (BGP Roles) mengotomatiskan sebagian pola ini.** Kedua sisi sesi menyatakan perannya (provider, customer, peer, rs-server, rs-client) di pesan OPEN, dan router memasang atribut OTC (*Only to Customer*) yang mencegah rute dari peer atau penyedia bocor naik lagi. Detail dan konfigurasinya ada di modul BGP bagian "Higiene dan Keamanan BGP 2026". Roles tidak menggantikan community di atas, tetapi menjadi jaring pengaman kedua.
 
 ---
 
@@ -265,7 +269,8 @@ Cara memakai setiap field:
 | `policy_general` | Open, Selective, Restrictive, atau No: apakah layak mengirim permintaan peering |
 | `info_type` | NSP, Content, Cable/DSL/ISP, Enterprise, dan seterusnya: memperkirakan arah dan volume trafik |
 
-⚠️ **PeeringDB berisi data yang diisi sendiri.** Angkanya bisa usang. Kalau `info_prefixes4` milik peer terlalu kecil dibanding yang sebenarnya diumumkan, sesi Anda akan putus karena max-prefix, dan kesalahannya ada pada record mereka, tetapi gangguannya Anda yang merasakan.
+> [!WARNING]
+> **PeeringDB berisi data yang diisi sendiri.** Angkanya bisa usang. Kalau `info_prefixes4` milik peer terlalu kecil dibanding yang sebenarnya diumumkan, sesi Anda akan putus karena max-prefix, dan kesalahannya ada pada record mereka, tetapi gangguannya Anda yang merasakan.
 
 ### 4.3 Bertanya ke API
 
@@ -346,7 +351,8 @@ Cara memperkirakan `O`:
 3. Jumlahkan trafik ke AS yang (a) hadir di IXP itu dan (b) kebijakannya Open atau ikut RS.
 4. Hitung p95 dari jumlah itu, bukan rata-rata.
 
-⚠️ **Dua jebakan perhitungan.** Pertama, memindahkan trafik ke IXP tidak otomatis menurunkan tagihan transit kalau Anda masih di bawah commit. Kedua, Anda tetap butuh kapasitas transit yang cukup untuk menanggung trafik itu **saat IXP bermasalah**. Kalau Anda menurunkan kapasitas transit terlalu jauh, gangguan IXP berubah menjadi gangguan total.
+> [!WARNING]
+> **Dua jebakan perhitungan.** Pertama, memindahkan trafik ke IXP tidak otomatis menurunkan tagihan transit kalau Anda masih di bawah commit. Kedua, Anda tetap butuh kapasitas transit yang cukup untuk menanggung trafik itu **saat IXP bermasalah**. Kalau Anda menurunkan kapasitas transit terlalu jauh, gangguan IXP berubah menjadi gangguan total.
 
 ### 5.4 Manfaat di luar uang
 
@@ -389,7 +395,8 @@ Cara kerja umumnya:
 3. Sistem pengarah milik penyedia konten mengarahkan pelanggan dari prefix tersebut ke cache lokal.
 4. Cache mengisi ulang kontennya (*fill*) dari internet, biasanya di luar jam sibuk.
 
-⚠️ **Kesalahan umum:** mengiklankan prefix yang salah ke cache (misalnya lupa prefix CGNAT publik yang baru), sehingga sebagian pelanggan tetap dilayani dari luar. Atau sebaliknya, mengiklankan prefix pelanggan ISP lain (pelanggan transit Anda) tanpa izin program.
+> [!WARNING]
+> **Kesalahan umum:** mengiklankan prefix yang salah ke cache (misalnya lupa prefix CGNAT publik yang baru), sehingga sebagian pelanggan tetap dilayani dari luar. Atau sebaliknya, mengiklankan prefix pelanggan ISP lain (pelanggan transit Anda) tanpa izin program.
 
 ### 6.3 Anycast
 
@@ -447,7 +454,8 @@ Beberapa pengamatan dari data yang sama:
 - Sebagian besar record kehadiran (`netixlan`) bertanda `is_rs_peer: true`: IIX-Jakarta 731 dari 852 record, DE-CIX Jakarta 149 dari 181, CDIX 55 dari 84, OpenIXP/NiCE 386 dari 626, dan JKT-IX 688 record. Artinya route server adalah cara utama anggota bertukar rute. Satu jaringan bisa punya lebih dari satu record di IXP yang sama.
 - Satu jaringan biasanya hadir di beberapa IXP sekaligus. Jangan menjumlahkan angka anggota antar-IXP.
 
-💡 **Memilih IXP pertama.** Jangan memilih dari jumlah anggota saja. Ambil daftar AS tujuan trafik terbesar Anda (5.3), lalu cek di PeeringDB di IXP mana mereka hadir dan apakah mereka ikut RS. Pertimbangkan juga gedung: IXP yang switch-nya ada di gedung tempat router Anda sudah berada menghemat cross-connect dan transport.
+> [!TIP]
+> **Memilih IXP pertama.** Jangan memilih dari jumlah anggota saja. Ambil daftar AS tujuan trafik terbesar Anda (5.3), lalu cek di PeeringDB di IXP mana mereka hadir dan apakah mereka ikut RS. Pertimbangkan juga gedung: IXP yang switch-nya ada di gedung tempat router Anda sudah berada menghemat cross-connect dan transport.
 
 ### 7.3 Komunitas: ID-NOG, APNIC, MANRS
 
@@ -531,7 +539,8 @@ $ bgpq4 -S APNIC -4 -K7 -l IIX AS7597         # format MikroTik RouterOS v7
 
 Opsi yang sering dipakai: `-6` untuk IPv6, `-A` untuk agregasi, `-J` Junos, `-X` IOS XR, `-S` untuk memilih sumber IRR (dokumentasi bgpq4 menyarankan sumber RIR dan RPKI, tidak sembarang IRR), `-m 24` untuk membatasi panjang prefix maksimum. Server default bgpq4 adalah `rr.ntt.net`.
 
-💡 **Otomatiskan.** Jalankan bgpq4 terjadwal (misalnya setiap malam), bandingkan dengan filter yang terpasang, dan terapkan perubahan lewat sistem otomasi Anda. Filter yang dibuat tangan sekali lalu dilupakan adalah sumber gangguan klasik: pelanggan menambah prefix baru, mendaftarkannya di IRR, tetapi tetap tidak bisa diakses karena filter Anda usang.
+> [!TIP]
+> **Otomatiskan.** Jalankan bgpq4 terjadwal (misalnya setiap malam), bandingkan dengan filter yang terpasang, dan terapkan perubahan lewat sistem otomasi Anda. Filter yang dibuat tangan sekali lalu dilupakan adalah sumber gangguan klasik: pelanggan menambah prefix baru, mendaftarkannya di IRR, tetapi tetap tidak bisa diakses karena filter Anda usang.
 
 ---
 
@@ -577,7 +586,8 @@ Aturan praktis saat mengisi ROA:
 | Blok yang belum diumumkan sama sekali | Pertimbangkan ROA dengan ASN 0 (AS0) agar setiap pengumuman blok itu menjadi invalid |
 | Prefix dialihkan ke pelanggan yang memakai ASN sendiri | ROA untuk ASN pelanggan itu, dengan prefix sepersis yang ia umumkan |
 
-⚠️ **ROA yang salah lebih berbahaya daripada tidak punya ROA.** Tanpa ROA, prefix Anda "not found" dan tetap diterima. Dengan ROA yang salah (ASN keliru, MSA terlalu pendek untuk prefix yang Anda umumkan), prefix Anda **invalid** dan ditolak oleh setiap jaringan yang menerapkan ROV, termasuk sejumlah transit global. Selalu buat ROA baru **sebelum** mengubah pengumuman, bukan sesudahnya.
+> [!WARNING]
+> **ROA yang salah lebih berbahaya daripada tidak punya ROA.** Tanpa ROA, prefix Anda "not found" dan tetap diterima. Dengan ROA yang salah (ASN keliru, MSA terlalu pendek untuk prefix yang Anda umumkan), prefix Anda **invalid** dan ditolak oleh setiap jaringan yang menerapkan ROV, termasuk sejumlah transit global. Selalu buat ROA baru **sebelum** mengubah pengumuman, bukan sesudahnya.
 
 ### 9.3 Menjalankan validator sendiri
 
@@ -740,7 +750,8 @@ alias a='docker exec -it clab-ixp-isp-a vtysh -c'
 alias b='docker exec -it clab-ixp-isp-b vtysh -c'
 ```
 
-⚠️ Pada `uji-tanpa-clab.sh`, Docker menamai interface secara berbeda (peering LAN menjadi `eth0`), tetapi alamat IP-nya sama. Contoh keluaran di bawah memakai penamaan containerlab.
+> [!WARNING]
+> Pada `uji-tanpa-clab.sh`, Docker menamai interface secara berbeda (peering LAN menjadi `eth0`), tetapi alamat IP-nya sama. Contoh keluaran di bawah memakai penamaan containerlab.
 
 ### 11.3 Langkah 1: Sesi BGP dan RTR di route server
 
@@ -794,7 +805,8 @@ $ rs show route 192.0.2.0/24 all | grep large
 
 Perhatikan `BGP.as_path: 64501` (tanpa 64510) dan `BGP.next_hop: 10.10.0.12` (alamat ISP-B, bukan RS). Itu dua sifat utama route server dari §3.3.
 
-⚠️ **Perhatikan stempel waktunya.** Di uji coba modul ini, sesi BGP naik sekitar 15 detik **sebelum** sesi RTR. Selama jeda itu tabel `r4` kosong, semua rute berstatus not found, dan hijack sempat lolos ke ISP-A sampai data ROA tiba dan BIRD mengevaluasi ulang. Di produksi, jeda seperti ini terjadi setiap kali route server atau validator di-restart. Itulah alasan menjalankan dua validator dan memantau sesi RTR, bukan hanya sesi BGP.
+> [!WARNING]
+> **Perhatikan stempel waktunya.** Di uji coba modul ini, sesi BGP naik sekitar 15 detik **sebelum** sesi RTR. Selama jeda itu tabel `r4` kosong, semua rute berstatus not found, dan hijack sempat lolos ke ISP-A sampai data ROA tiba dan BIRD mengevaluasi ulang. Di produksi, jeda seperti ini terjadi setiap kali route server atau validator di-restart. Itulah alasan menjalankan dua validator dan memantau sesi RTR, bukan hanya sesi BGP.
 
 ### 11.5 Langkah 3: Dari sisi ISP-A
 
@@ -823,7 +835,8 @@ $ docker exec clab-ixp-isp-a traceroute -n -s 198.18.0.1 203.0.113.1
 
 Rute dari ISP-B diterima "dari" 10.10.0.10 (RS) tetapi next-hop-nya 10.10.0.12, dan traceroute membuktikan paket langsung ke ISP-B dalam satu hop. Atribut `otc 64510` dipasang otomatis karena kedua sisi mengumumkan role RFC 9234.
 
-⚠️ **Kalau LocPrf rute valid masih 150, bukan 200,** sesi BGP terbentuk sebelum sesi RTR ISP-A tersambung, jadi route-map dievaluasi saat status RPKI belum diketahui. Jalankan `a "clear bgp ipv4 unicast 10.10.0.10 soft in"`. Masalah "status RPKI berubah tetapi kebijakan tidak dievaluasi ulang" ini dibahas RFC 9324; BIRD di route server menanganinya otomatis lewat `import table on` dan opsi `rpki reload`.
+> [!WARNING]
+> **Kalau LocPrf rute valid masih 150, bukan 200,** sesi BGP terbentuk sebelum sesi RTR ISP-A tersambung, jadi route-map dievaluasi saat status RPKI belum diketahui. Jalankan `a "clear bgp ipv4 unicast 10.10.0.10 soft in"`. Masalah "status RPKI berubah tetapi kebijakan tidak dievaluasi ulang" ini dibahas RFC 9324; BIRD di route server menanganinya otomatis lewat `import table on` dan opsi `rpki reload`.
 
 ### 11.6 Langkah 4: Percobaan, apa jadinya tanpa ROV di route server?
 
@@ -1045,4 +1058,4 @@ Subbagian 2.1 mengadaptasi sebagian penjelasan dari *Computer Networks: A System
 
 ---
 
-**Berikutnya:** `08-ipv6/01-dasar-ipv6` — alamat IPv6, yang alokasinya dari IDNIC cukup besar untuk seluruh rencana jaringan Anda.
+**Berikutnya:** `08-ipv6/01-dasar-ipv6`. Alamat IPv6, yang alokasinya dari IDNIC cukup besar untuk seluruh rencana jaringan Anda.

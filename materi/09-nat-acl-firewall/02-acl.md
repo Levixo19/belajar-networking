@@ -1,4 +1,4 @@
-# 09.2 — Access Control List (ACL)
+# 09.2 Access Control List (ACL)
 
 > **Prasyarat:** `04-network-layer/03` (wildcard mask), `05-transport/01`
 > **Tujuan:** Anda bisa menulis, menempatkan, dan mendiagnosis ACL dengan benar di Cisco, dan memahami padanannya di MikroTik/Linux.
@@ -9,7 +9,7 @@
 
 **ACL** adalah daftar aturan berurutan yang menentukan paket mana yang **diizinkan** atau **ditolak**.
 
-### Kegunaan — lebih dari sekadar filtering
+### Kegunaan: lebih dari sekadar filtering
 
 ```
 1. Filtering trafik (paling umum)
@@ -22,7 +22,8 @@
 8. Debug yang terbatas
 ```
 
-💡 **ACL sering dipakai sebagai "pemilih trafik" (traffic selector), bukan hanya sebagai firewall.** Ini konsep yang membedakan penggunaan pemula dan profesional.
+> [!TIP]
+> **ACL sering dipakai sebagai "pemilih trafik" (traffic selector), bukan hanya sebagai firewall.** Ini konsep yang membedakan penggunaan pemula dan profesional.
 
 ---
 
@@ -41,7 +42,8 @@ IMPLICIT DENY ANY  ← selalu ada di akhir, tidak terlihat
     → paket DIBUANG
 ```
 
-⚠️ **Dua aturan yang menyebabkan 90% kesalahan ACL:**
+> [!WARNING]
+> **Dua aturan yang menyebabkan 90% kesalahan ACL:**
 
 **1. Urutan sangat penting.** Aturan pertama yang cocok yang menang.
 ```
@@ -71,8 +73,8 @@ access-list 101 permit ip any any
 
 | Jenis | Nomor | Memeriksa |
 |---|---|---|
-| **Standard** | 1–99, 1300–1999 | **Hanya alamat sumber** |
-| **Extended** | 100–199, 2000–2699 | Sumber, tujuan, protokol, port, flag |
+| **Standard** | 1-99, 1300-1999 | **Hanya alamat sumber** |
+| **Extended** | 100-199, 2000-2699 | Sumber, tujuan, protokol, port, flag |
 | **Named** | Nama teks | Standard atau extended, lebih mudah dikelola |
 
 ### Standard ACL
@@ -88,7 +90,8 @@ R1(config-std-nacl)# permit 192.168.99.0 0.0.0.255
 R1(config-std-nacl)# deny any log
 ```
 
-⚠️ **Standard ACL hanya melihat alamat SUMBER.** Karena itu ia harus ditempatkan **sedekat mungkin dengan TUJUAN** — kalau ditempatkan dekat sumber, ia akan memblokir trafik ke semua tujuan, bukan hanya yang dimaksud.
+> [!WARNING]
+> **Standard ACL hanya melihat alamat SUMBER.** Karena itu ia harus ditempatkan **sedekat mungkin dengan TUJUAN** — kalau ditempatkan dekat sumber, ia akan memblokir trafik ke semua tujuan, bukan hanya yang dimaksud.
 
 ### Extended ACL
 
@@ -147,7 +150,8 @@ R1(config-ext-nacl)# permit udp 192.168.1.0 0.0.0.255 any eq 53
 R1(config-ext-nacl)# deny ip any any log
 ```
 
-💡 **Selalu pakai named ACL** — lebih mudah dibaca, lebih mudah diedit, dan tidak membuang nomor.
+> [!TIP]
+> **Selalu pakai named ACL** — lebih mudah dibaca, lebih mudah diedit, dan tidak membuang nomor.
 
 ---
 
@@ -175,11 +179,13 @@ R1(config-if)# ip access-group 101 out    ← periksa SETELAH routing
 |---|---|---|
 | Kapan diperiksa | Sebelum keputusan routing | Setelah keputusan routing |
 | Efisiensi | **Lebih efisien** (paket ditolak lebih awal) | Router terlanjur memproses routing |
-| Trafik yang dihasilkan router | ❌ Tidak diperiksa | ❌ Tidak diperiksa |
+| Trafik yang dihasilkan router | Tidak diperiksa | Tidak diperiksa |
 
-💡 **Umumnya pilih `in`** — lebih efisien dan lebih intuitif.
+> [!TIP]
+> **Umumnya pilih `in`** — lebih efisien dan lebih intuitif.
 
-⚠️ **ACL tidak memfilter trafik yang dihasilkan router itu sendiri.** Ping, SSH, atau routing update dari router tidak melewati ACL interface. Untuk itu gunakan Control Plane Policing (CoPP).
+> [!WARNING]
+> **ACL tidak memfilter trafik yang dihasilkan router itu sendiri.** Ping, SSH, atau routing update dari router tidak melewati ACL interface. Untuk itu gunakan Control Plane Policing (CoPP).
 
 ---
 
@@ -198,15 +204,18 @@ R1(config-line)# access-class AKSES-SSH in
 R1(config-line)# exec-timeout 10 0
 ```
 
-⚠️ **Perhatikan `access-class`, bukan `ip access-group`** untuk VTY.
+> [!WARNING]
+> **Perhatikan `access-class`, bukan `ip access-group`** untuk VTY.
 
-⚠️ **Selalu uji dari sesi kedua sebelum menutup sesi pertama.** Kalau ACL salah, Anda akan terkunci dan harus datang secara fisik.
+> [!WARNING]
+> **Selalu uji dari sesi kedua sebelum menutup sesi pertama.** Kalau ACL salah, Anda akan terkunci dan harus datang secara fisik.
 
 ---
 
 ## 6. Mengedit ACL dengan Aman
 
-⚠️ **Named ACL dengan sequence number** adalah satu-satunya cara aman untuk mengedit ACL produksi.
+> [!WARNING]
+> **Named ACL dengan sequence number** adalah satu-satunya cara aman untuk mengedit ACL produksi.
 
 ```
 R1# show ip access-lists DARI-LAN
@@ -226,9 +235,11 @@ R1(config-ext-nacl)# no 20
 R1(config)# ip access-list resequence DARI-LAN 10 10
 ```
 
-⚠️ **JANGAN memakai `no access-list 101` pada ACL bernomor yang sedang terpasang** — ini **menghapus seluruh ACL sekaligus**, dan karena ACL kosong berarti implicit deny, **seluruh trafik langsung diblokir**. Outage instan.
+> [!WARNING]
+> **JANGAN memakai `no access-list 101` pada ACL bernomor yang sedang terpasang** — ini **menghapus seluruh ACL sekaligus**, dan karena ACL kosong berarti implicit deny, **seluruh trafik langsung diblokir**. Outage instan.
 
-💡 **Cara aman mengganti ACL produksi:**
+> [!TIP]
+> **Cara aman mengganti ACL produksi:**
 ```
 1. Buat ACL BARU dengan nama berbeda
 2. Uji dengan hati-hati
@@ -249,7 +260,8 @@ R1(config-ipv6-acl)# deny ipv6 any any log
 R1(config-if)# ipv6 traffic-filter DARI-LAN-V6 in
 ```
 
-⚠️ **Perbedaan penting dari IPv4:**
+> [!WARNING]
+> **Perbedaan penting dari IPv4:**
 
 1. **Perintahnya `ipv6 traffic-filter`**, bukan `ipv6 access-group`.
 2. **JANGAN blokir ICMPv6** — ia membawa NDP (pengganti ARP), RA, DAD. Memblokirnya mematikan IPv6 total.
@@ -259,7 +271,7 @@ R1(config-if)# ipv6 traffic-filter DARI-LAN-V6 in
    permit icmp any any nd-ns
    deny ipv6 any any
    ```
-   ⚠️ Tetapi kalau Anda menambahkan `deny ipv6 any any` **eksplisit**, kedua permit implisit itu **hilang** — dan IPv6 berhenti bekerja. Selalu tambahkan permit NDP secara eksplisit kalau memakai deny eksplisit.
+   **Perhatian:** Tetapi kalau Anda menambahkan `deny ipv6 any any` **eksplisit**, kedua permit implisit itu **hilang** — dan IPv6 berhenti bekerja. Selalu tambahkan permit NDP secara eksplisit kalau memakai deny eksplisit.
 
 4. **Tidak ada wildcard mask** — memakai prefix length.
 
@@ -295,11 +307,13 @@ MikroTik tidak punya "ACL" terpisah — semuanya dilakukan lewat **firewall filt
 /ip firewall filter remove [find comment="lama"]
 ```
 
-⚠️ **Sama seperti Cisco, urutan sangat penting di MikroTik** — aturan diproses dari atas ke bawah. Gunakan `/ip firewall filter move` untuk mengurutkannya, dan **selalu beri `comment`** agar bisa dicari dengan `[find comment=...]`.
+> [!WARNING]
+> **Sama seperti Cisco, urutan sangat penting di MikroTik** — aturan diproses dari atas ke bawah. Gunakan `/ip firewall filter move` untuk mengurutkannya, dan **selalu beri `comment`** agar bisa dicari dengan `[find comment=...]`.
 
-⚠️ **Berbeda dari Cisco, MikroTik TIDAK punya implicit deny.** Kalau tidak ada aturan yang cocok, paket **diterima**. Anda harus menambahkan aturan `drop` di akhir secara eksplisit.
+> [!WARNING]
+> **Berbeda dari Cisco, MikroTik TIDAK punya implicit deny.** Kalau tidak ada aturan yang cocok, paket **diterima**. Anda harus menambahkan aturan `drop` di akhir secara eksplisit.
 
-### Address list — fitur unggulan MikroTik
+### Address list: fitur unggulan MikroTik
 
 ```
 # Statis
@@ -315,7 +329,8 @@ MikroTik tidak punya "ACL" terpisah — semuanya dilakukan lewat **firewall filt
     address-list-timeout=1d comment="Brute force → blacklist 1 hari"
 ```
 
-💡 **Address list dinamis dengan timeout adalah salah satu fitur terkuat MikroTik** — memungkinkan blacklist otomatis, deteksi port scan, dan brute force protection tanpa perangkat tambahan. Tidak ada padanan sesederhana ini di Cisco IOS.
+> [!TIP]
+> **Address list dinamis dengan timeout adalah salah satu fitur terkuat MikroTik** — memungkinkan blacklist otomatis, deteksi port scan, dan brute force protection tanpa perangkat tambahan. Tidak ada padanan sesederhana ini di Cisco IOS.
 
 ---
 
@@ -351,7 +366,8 @@ R1# clear ip access-list counters DARI-LAN
 R1# debug ip packet 101 detail        ⚠️ SANGAT berbahaya di produksi!
 ```
 
-⚠️ **`debug ip packet` bisa melumpuhkan router** karena setiap paket diproses CPU dan dicatat. **Jangan pernah** menjalankannya di produksi tanpa ACL pembatas yang sangat sempit, dan selalu siapkan `undebug all`.
+> [!WARNING]
+> **`debug ip packet` bisa melumpuhkan router** karena setiap paket diproses CPU dan dicatat. **Jangan pernah** menjalankannya di produksi tanpa ACL pembatas yang sangat sempit, dan selalu siapkan `undebug all`.
 
 ### Alur diagnosis
 
@@ -376,7 +392,8 @@ R1# debug ip packet 101 detail        ⚠️ SANGAT berbahaya di produksi!
    (atau kata kunci "established" / reflexive ACL)
 ```
 
-⚠️ **Kesalahan nomor satu: lupa trafik balik.** ACL standar bersifat **stateless** — mengizinkan paket keluar tidak otomatis mengizinkan balasannya masuk.
+> [!WARNING]
+> **Kesalahan nomor satu: lupa trafik balik.** ACL standar bersifat **stateless** — mengizinkan paket keluar tidak otomatis mengizinkan balasannya masuk.
 
 ```
 # Solusi 1: kata kunci established (hanya TCP)
@@ -423,12 +440,12 @@ R1(config-ext-nacl)# deny ip any any
 ## 12. Ringkasan
 
 - ACL = daftar aturan berurutan; diproses **top-down**, aturan pertama yang cocok menang, dan ada **implicit deny any** di akhir (Cisco).
-- **Standard** (1–99) hanya melihat **sumber** → tempatkan **dekat tujuan**. **Extended** (100–199) melihat semuanya → tempatkan **dekat sumber**.
+- **Standard** (1-99) hanya melihat **sumber** → tempatkan **dekat tujuan**. **Extended** (100-199) melihat semuanya → tempatkan **dekat sumber**.
 - Gunakan **named ACL** dengan sequence number agar bisa diedit dengan aman.
 - `host X` ≡ `X 0.0.0.0`; `any` ≡ `0.0.0.0 255.255.255.255`.
 - **`in` lebih efisien** daripada `out`. ACL **tidak memfilter trafik yang dihasilkan router sendiri**.
 - **`access-class` untuk VTY**, `ip access-group` untuk interface.
-- ⚠️ **`no access-list 101` menghapus seluruh ACL → outage instan.** Buat ACL baru, ganti binding, baru hapus yang lama.
+- **`no access-list 101` menghapus seluruh ACL → outage instan.** Buat ACL baru, ganti binding, baru hapus yang lama.
 - **IPv6: `ipv6 traffic-filter`**, jangan blokir ICMPv6, dan `deny ipv6 any any` eksplisit menghapus permit NDP implisit.
 - **MikroTik tidak punya implicit deny** — tambahkan `action=drop` eksplisit di akhir. **Address list dinamis** adalah fitur unggulannya.
 - ACL bersifat **stateless** — selalu pertimbangkan trafik balik (`established`, reflexive, atau pakai firewall stateful).

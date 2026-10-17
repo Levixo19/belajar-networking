@@ -1,4 +1,4 @@
-# 22.2 — MPLS L3VPN
+# 22.2 MPLS L3VPN
 
 > **Prasyarat:** `22-service-provider/01-mpls-ldp`, `07-routing-lanjutan/06-bgp`, `07-routing-lanjutan/07-redistribusi-policy` (§9 VRF-Lite), `07-routing-lanjutan/04-ospf`
 > **Tujuan:** Anda bisa menjelaskan arsitektur BGP/MPLS IP VPN (RFC 4364) sampai ke format RD, RT, dan NLRI VPNv4, membedakan RD dan RT tanpa ragu, mengonfigurasi VRF, MP-BGP VPNv4, dan routing PE-CE (static, eBGP, OSPF) di Cisco, Juniper, MikroTik, dan FRR, merancang topologi full mesh, hub-and-spoke, dan extranet dengan route target, memahami route reflector dan opsi inter-AS, serta mendiagnosis layanan VPN yang putus secara sistematis.
@@ -193,9 +193,11 @@ pe2 VRF CUST-B  import RT:65000:200   ❌ tidak cocok, rute diabaikan VRF CUST-B
 
 Karena impor hanya berdasarkan RT, Anda bisa membangun topologi apa pun: full mesh, hub-and-spoke, extranet, VPN manajemen. Semuanya hanya permainan daftar RT (§9).
 
-⚠️ **RD tidak pernah dipakai untuk memutuskan impor.** Kesalahan paling umum pemula adalah mengira "RD sama berarti satu VPN". Dua VRF dengan RD sama tetapi RT berbeda tidak akan saling bertukar rute. Dua VRF dengan RD berbeda tetapi RT cocok akan bertukar rute dengan normal.
+> [!WARNING]
+> **RD tidak pernah dipakai untuk memutuskan impor.** Kesalahan paling umum pemula adalah mengira "RD sama berarti satu VPN". Dua VRF dengan RD sama tetapi RT berbeda tidak akan saling bertukar rute. Dua VRF dengan RD berbeda tetapi RT cocok akan bertukar rute dengan normal.
 
-💡 Kebiasaan yang baik: buat RD dan RT **terlihat berbeda** agar tidak tertukar saat membaca konfigurasi. Misalnya RD selalu `<loopback>:<id>` dan RT selalu `<ASN>:<id>`.
+> [!TIP]
+> Kebiasaan yang baik: buat RD dan RT **terlihat berbeda** agar tidak tertukar saat membaca konfigurasi. Misalnya RD selalu `<loopback>:<id>` dan RT selalu `<ASN>:<id>`.
 
 ---
 
@@ -406,7 +408,8 @@ router bgp 65000
   neighbor 172.16.1.2 maximum-prefix 500 80
 ```
 
-⚠️ **Selalu pasang filter dan `maximum-prefix` pada sesi PE-CE.** CE milik pelanggan berada di luar kendali Anda. Satu salah konfigurasi di CE (misalnya meredistribusi tabel internet penuh ke VRF) bisa menghabiskan memori PE dan memengaruhi pelanggan lain di PE yang sama.
+> [!WARNING]
+> **Selalu pasang filter dan `maximum-prefix` pada sesi PE-CE.** CE milik pelanggan berada di luar kendali Anda. Satu salah konfigurasi di CE (misalnya meredistribusi tabel internet penuh ke VRF) bisa menghabiskan memori PE dan memengaruhi pelanggan lain di PE yang sama.
 
 ### OSPF sebagai PE-CE
 
@@ -436,7 +439,8 @@ router bgp 65000
   redistribute ospf 100
 ```
 
-⚠️ Endpoint sham-link harus diiklankan lewat MP-BGP, bukan lewat OSPF di VRF itu. Jika endpoint dipelajari lewat OSPF, sham-link akan mencoba berjalan di atas dirinya sendiri dan tidak stabil.
+> [!WARNING]
+> Endpoint sham-link harus diiklankan lewat MP-BGP, bukan lewat OSPF di VRF itu. Jika endpoint dipelajari lewat OSPF, sham-link akan mencoba berjalan di atas dirinya sendiri dan tidak stabil.
 
 FRR ospfd mendukung OSPF di dalam VRF untuk PE-CE, tetapi dokumentasinya tidak mencakup sham-link. RouterOS v7 mencantumkan OSPF sebagai protokol CE-PE di daftar fiturnya.
 
@@ -571,7 +575,8 @@ router bgp 65000 vrf CUST-A
   route-map vpn export EXPORT-A
 ```
 
-⚠️ **Extranet mensyaratkan alamat yang tidak tumpang tindih** di antara pihak yang bertemu. Dua pelanggan yang sama-sama memakai `192.168.1.0/24` tidak bisa sama-sama dijangkau dari VRF SHARED tanpa NAT. Untuk layanan bersama, operator biasanya memakai blok alamat yang dijamin tidak dipakai pelanggan, atau melakukan NAT di sisi layanan.
+> [!WARNING]
+> **Extranet mensyaratkan alamat yang tidak tumpang tindih** di antara pihak yang bertemu. Dua pelanggan yang sama-sama memakai `192.168.1.0/24` tidak bisa sama-sama dijangkau dari VRF SHARED tanpa NAT. Untuk layanan bersama, operator biasanya memakai blok alamat yang dijamin tidak dipakai pelanggan, atau melakukan NAT di sisi layanan.
 
 ### VPN manajemen
 
@@ -604,7 +609,8 @@ Bagaimana jika satu pelanggan punya situs yang dilayani dua AS berbeda, misalnya
 
 Konsep serupa **Carrier Supporting Carrier (CSC)** (RFC 4364 §9) dipakai saat pelanggan VPN sendiri adalah operator. Operator pelanggan hanya memasukkan loopback dan rute internalnya ke VRF, dengan label (LDP atau BGP-LU) di sambungan PE-CE, sehingga rute pelanggan-pelanggannya tidak membebani operator penyedia.
 
-💡 Opsi C dan desain seamless/unified MPLS membutuhkan **BGP labeled unicast**. Menurut manual MikroTik, RouterOS belum mendukung BGP sebagai protokol distribusi label, jadi opsi C tidak bisa dibangun murni dengan RouterOS.
+> [!TIP]
+> Opsi C dan desain seamless/unified MPLS membutuhkan **BGP labeled unicast**. Menurut manual MikroTik, RouterOS belum mendukung BGP sebagai protokol distribusi label, jadi opsi C tidak bisa dibangun murni dengan RouterOS.
 
 ---
 
@@ -663,7 +669,8 @@ router bgp 65000
  exit-address-family
 ```
 
-⚠️ **`vrf forwarding` menghapus alamat IP interface.** IOS menampilkan pesan bahwa IPv4 di interface dinonaktifkan dan alamatnya dihapus. Jika Anda menambahkan VRF ke interface yang sudah beralamat (misalnya saat migrasi), alamat harus diketik ulang. Di jendela pemeliharaan, ini berarti pelanggan putus sampai alamat dipasang kembali.
+> [!WARNING]
+> **`vrf forwarding` menghapus alamat IP interface.** IOS menampilkan pesan bahwa IPv4 di interface dinonaktifkan dan alamatnya dihapus. Jika Anda menambahkan VRF ke interface yang sudah beralamat (misalnya saat migrasi), alamat harus diketik ulang. Di jendela pemeliharaan, ini berarti pelanggan putus sampai alamat dipasang kembali.
 
 Verifikasi:
 
@@ -719,7 +726,8 @@ router bgp 65000
     as-override
 ```
 
-⚠️ IOS XR **tidak menerima dan tidak mengirim rute eBGP** apa pun tanpa `route-policy` di kedua arah (perilaku RFC 8212). Contoh di atas memakai `PASS` agar ringkas. Di produksi, gunakan kebijakan yang benar-benar menyaring.
+> [!WARNING]
+> IOS XR **tidak menerima dan tidak mengirim rute eBGP** apa pun tanpa `route-policy` di kedua arah (perilaku RFC 8212). Contoh di atas memakai `PASS` agar ringkas. Di produksi, gunakan kebijakan yang benar-benar menyaring.
 
 ```
 RP/0/RP0/CPU0:PE1# show bgp vpnv4 unicast summary
@@ -1037,7 +1045,8 @@ DATA PLANE
 11. Arah balik : ulangi semua langkah untuk 192.168.2.0/24 dari ce2a ke pe1
 ```
 
-⚠️ **Jangan lupa arah balik.** Ping butuh rute di kedua arah. Banyak tiket "VPN mati" ternyata hanya satu arah yang rusak, misalnya RT impor salah hanya di satu PE.
+> [!WARNING]
+> **Jangan lupa arah balik.** Ping butuh rute di kedua arah. Banyak tiket "VPN mati" ternyata hanya satu arah yang rusak, misalnya RT impor salah hanya di satu PE.
 
 ### Gejala dan penyebab
 
@@ -1195,4 +1204,4 @@ Pekerjaan sehari-hari di NOC atau tim provisioning operator banyak berkisar pada
 
 ---
 
-**Berikutnya:** `22-service-provider/03-te-segment-routing` — memilih jalur selain jalur terpendek IGP: RSVP-TE, Segment Routing, TI-LFA, dan Flex-Algo.
+**Berikutnya:** `22-service-provider/03-te-segment-routing`. Memilih jalur selain jalur terpendek IGP: RSVP-TE, Segment Routing, TI-LFA, dan Flex-Algo.

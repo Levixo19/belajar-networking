@@ -1,12 +1,12 @@
-# Lab 04 — Keamanan L2 & Wireless
+# Lab 04: Keamanan L2 & Wireless
 
-> **Prasyarat:** Tahap 10, 12, Lab 01–03
+> **Prasyarat:** Tahap 10, 12, Lab 01-03
 > **Platform:** Packet Tracer (mendukung port security, DHCP snooping, WLC/WLAN)
 > **Format:** TUGAS → VERIFIKASI → KRITERIA SUKSES → solusi.
 
 ---
 
-## Lab 4.1 — Port Security
+## Lab 4.1: Port Security
 
 **Topologi:** switch + PC di port access.
 
@@ -34,7 +34,7 @@ SW(config-if)# switchport port-security mac-address sticky
 
 ---
 
-## Lab 4.2 — DHCP Snooping
+## Lab 4.2: DHCP Snooping
 
 **Topologi:** switch + DHCP server sah + PC + "rogue DHCP" (server nakal).
 
@@ -61,7 +61,7 @@ DHCP snooping memblokir pesan **DHCP server (OFFER/ACK)** dari port **untrusted*
 
 ---
 
-## Lab 4.3 — Dynamic ARP Inspection (DAI)
+## Lab 4.3: Dynamic ARP Inspection (DAI)
 
 **Topologi:** lanjutan Lab 4.2 (butuh DHCP snooping aktif).
 
@@ -86,7 +86,7 @@ DAI memeriksa setiap paket ARP di port untrusted terhadap **binding table DHCP s
 
 ---
 
-## Lab 4.4 — WLAN via WLC (GUI)
+## Lab 4.4: WLAN via WLC (GUI)
 
 **Topologi:** WLC + LAP (lightweight AP) + klien wireless (PT mendukung WLC 3504 & AP).
 
@@ -107,7 +107,7 @@ Via **GUI WLC** (browser ke IP manajemen WLC): WLANs → Create New → SSID, la
 
 ---
 
-## Lab 4.5 — Hardening Perangkat (Checklist)
+## Lab 4.5: Hardening Perangkat (Checklist)
 
 **TUGAS:** terapkan baseline keamanan di router/switch:
 1. Password enable secret (bukan password lemah).
@@ -143,6 +143,7 @@ Ini menerapkan prinsip hardening (`12-keamanan/05`): kurangi permukaan serang (m
 
 Anda mempraktikkan: port security, DHCP snooping, DAI, WLAN via WLC (WPA2-PSK), dan hardening perangkat. Ini inti CCNA domain 5.0 (Security Fundamentals, 15%) dan bagian wireless (domain 2.0).
 
-💡 Gabungkan semua: jaringan dengan L2 security lengkap + WLAN aman + perangkat ter-hardening = postur keamanan dasar solid. Untuk portofolio, dokumentasikan sebagai "secure campus lab".
+> [!TIP]
+> Gabungkan semua: jaringan dengan L2 security lengkap + WLAN aman + perangkat ter-hardening = postur keamanan dasar solid. Untuk portofolio, dokumentasikan sebagai "secure campus lab".
 
-**Berikutnya:** `lab/05-lab-linux-otomasi.md` — Linux networking & otomasi.
+**Berikutnya:** `lab/05-lab-linux-otomasi.md`. Linux networking & otomasi.

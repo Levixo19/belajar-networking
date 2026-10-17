@@ -1,4 +1,4 @@
-# Cheatsheet — MikroTik RouterOS
+# Cheatsheet: MikroTik RouterOS
 
 > Rujukan cepat perintah RouterOS (CLI). Bisa juga lewat WinBox/WebFig (GUI). Untuk MTCNA & kerja ISP.
 
@@ -178,9 +178,11 @@ add chain=forward src-address-list=BLOKIR action=drop
 /system scheduler add name=harian interval=1d start-time=02:00:00 on-event="/system script run bkp"
 ```
 
-💡 **`/export`** (teks, untuk Git) vs `/system backup` (biner, lengkap). **Torch** & **netwatch** adalah tools diagnostik/otomasi paling berguna. **`ip firewall filter` chain input** melindungi router; **forward** trafik pelanggan.
+> [!TIP]
+> **`/export`** (teks, untuk Git) vs `/system backup` (biner, lengkap). **Torch** & **netwatch** adalah tools diagnostik/otomasi paling berguna. **`ip firewall filter` chain input** melindungi router; **forward** trafik pelanggan.
 
-⚠️ **Amankan router sejak awal:** firewall input default-deny, batasi Winbox/SSH, matikan layanan tak perlu, ganti password default. RouterOS default cukup terbuka.
+> [!WARNING]
+> **Amankan router sejak awal:** firewall input default-deny, batasi Winbox/SSH, matikan layanan tak perlu, ganti password default. RouterOS default cukup terbuka.
 
 ---
 

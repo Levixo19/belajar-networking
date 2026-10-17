@@ -1,4 +1,4 @@
-# 07.9 — Multicast
+# 07.9 Multicast
 
 > **Prasyarat:** `04-network-layer/01`, `07-routing-lanjutan/04`
 > **Tujuan:** Anda paham model multicast, bisa mengonfigurasi IGMP snooping dan PIM, serta mendiagnosis masalah distribusi multicast.
@@ -43,18 +43,19 @@ Multicast : server mengirim 1 × 5 = 5 Mbps ✅
 | **Protokol routing** (OSPF, EIGRP, RIPv2) | Menjangkau router saja |
 | **Cluster heartbeat** | |
 
-⚠️ **Multicast kompleks dan sering dihindari** kalau tidak benar-benar diperlukan. Banyak organisasi memilih unicast + CDN daripada mengelola multicast end-to-end.
+> [!WARNING]
+> **Multicast kompleks dan sering dihindari** kalau tidak benar-benar diperlukan. Banyak organisasi memilih unicast + CDN daripada mengelola multicast end-to-end.
 
 ---
 
 ## 2. Alamat Multicast
 
-Rentang: **224.0.0.0 – 239.255.255.255** (`224.0.0.0/4`, kelas D).
+Rentang: **224.0.0.0-239.255.255.255** (`224.0.0.0/4`, kelas D).
 
 | Blok | Nama | Kegunaan |
 |---|---|---|
 | **224.0.0.0/24** | **Link-local** | Protokol jaringan; **TTL 1, tidak dirutekan** |
-| 224.0.1.0 – 238.255.255.255 | Globally scoped | Aplikasi internet |
+| 224.0.1.0-238.255.255.255 | Globally scoped | Aplikasi internet |
 | 232.0.0.0/8 | **SSM** (Source-Specific Multicast) | Satu sumber spesifik |
 | 233.0.0.0/8 | GLOP | Berdasarkan nomor AS |
 | **239.0.0.0/8** | **Administratively scoped** | **Privat dalam organisasi** (setara RFC 1918) |
@@ -76,7 +77,8 @@ Rentang: **224.0.0.0 – 239.255.255.255** (`224.0.0.0/4`, kelas D).
 224.0.0.252  → LLMNR
 ```
 
-💡 **Gunakan `239.0.0.0/8` untuk aplikasi internal organisasi Anda** — ini setara RFC 1918 untuk multicast dan tidak akan bocor ke internet.
+> [!TIP]
+> **Gunakan `239.0.0.0/8` untuk aplikasi internal organisasi Anda** — ini setara RFC 1918 untuk multicast dan tidak akan bocor ke internet.
 
 ### Pemetaan ke MAC Multicast
 
@@ -92,7 +94,8 @@ Aturan: 23 BIT TERENDAH dari IP disalin ke MAC
   MAC : 01:00:5E:40:0A:14
 ```
 
-⚠️ **Ada overlap 32:1.** Karena hanya 23 dari 28 bit alamat multicast yang dipetakan, **32 alamat IP multicast berbeda memetakan ke MAC yang sama**:
+> [!WARNING]
+> **Ada overlap 32:1.** Karena hanya 23 dari 28 bit alamat multicast yang dipetakan, **32 alamat IP multicast berbeda memetakan ke MAC yang sama**:
 ```
 224.1.1.1, 224.129.1.1, 225.1.1.1, 225.129.1.1, ...
    semuanya → 01:00:5E:01:01:01
@@ -103,7 +106,7 @@ Konsekuensi: host bisa menerima trafik multicast yang tidak diinginkan di layer 
 
 ---
 
-## 3. IGMP — Bagaimana Host Berlangganan
+## 3. IGMP (Bagaimana Host Berlangganan)
 
 **IGMP** (*Internet Group Management Protocol*) adalah cara host memberi tahu router: *"saya ingin menerima grup X."*
 
@@ -148,7 +151,7 @@ Ini memungkinkan **SSM** (*Source-Specific Multicast*) di `232.0.0.0/8` — mode
 
 ---
 
-## 4. IGMP Snooping — Wajib di Switch
+## 4. IGMP Snooping: Wajib di Switch
 
 ### Masalah tanpa snooping
 
@@ -181,17 +184,19 @@ SW1# show ip igmp snooping groups
 SW1# show ip igmp snooping mrouter
 ```
 
-⚠️ **IGMP snooping membutuhkan QUERIER.** Tanpa ada yang mengirim query secara berkala, snooping table akan kedaluwarsa dan switch kembali membanjiri. Kalau tidak ada router multicast di VLAN, **aktifkan snooping querier di switch**.
+> [!WARNING]
+> **IGMP snooping membutuhkan QUERIER.** Tanpa ada yang mengirim query secara berkala, snooping table akan kedaluwarsa dan switch kembali membanjiri. Kalau tidak ada router multicast di VLAN, **aktifkan snooping querier di switch**.
 
-💡 **Gejala klasik "multicast bekerja beberapa menit lalu berhenti"**: tidak ada querier. Tabel snooping kedaluwarsa, dan tanpa query berkala tidak ada yang memperbaruinya.
+> [!TIP]
+> **Gejala klasik "multicast bekerja beberapa menit lalu berhenti"**: tidak ada querier. Tabel snooping kedaluwarsa, dan tanpa query berkala tidak ada yang memperbaruinya.
 
 ---
 
-## 5. PIM — Routing Multicast
+## 5. PIM (Routing Multicast)
 
 **PIM** (*Protocol Independent Multicast*) membangun **distribution tree** untuk meneruskan multicast antar-subnet. Disebut "protocol independent" karena memakai routing table unicast yang sudah ada.
 
-### RPF — Reverse Path Forwarding
+### RPF (Reverse Path Forwarding)
 
 Konsep kunci untuk mencegah loop multicast.
 
@@ -215,7 +220,8 @@ RPF information for ? (192.168.1.100)
   RPF type: unicast (ospf 1)
 ```
 
-⚠️ **RPF failure adalah penyebab masalah multicast nomor satu.** Sering terjadi pada **routing asimetris** — jalur unicast ke sumber berbeda dari jalur multicast yang sebenarnya.
+> [!WARNING]
+> **RPF failure adalah penyebab masalah multicast nomor satu.** Sering terjadi pada **routing asimetris** — jalur unicast ke sumber berbeda dari jalur multicast yang sebenarnya.
 
 ### Mode PIM
 
@@ -306,7 +312,8 @@ R1(config-if)# ip igmp version 3
 R1(config)# ip pim ssm default        ← mengaktifkan SSM untuk 232.0.0.0/8
 ```
 
-⚠️ **`ip pim sparse-mode` harus ada di SETIAP interface** yang membawa multicast — termasuk interface yang menghadap host. Interface tanpa PIM tidak akan meneruskan multicast.
+> [!WARNING]
+> **`ip pim sparse-mode` harus ada di SETIAP interface** yang membawa multicast — termasuk interface yang menghadap host. Interface tanpa PIM tidak akan meneruskan multicast.
 
 ---
 
@@ -486,4 +493,4 @@ $ iperf -c 239.1.1.1 -u -T 5 -t 30 -i 1  # pengirim (T = TTL)
 
 ---
 
-**Berikutnya:** `07-routing-lanjutan/10-isis` — IS-IS, IGP pilihan backbone operator dan fondasi Segment Routing.
+**Berikutnya:** `07-routing-lanjutan/10-isis`. IS-IS, IGP pilihan backbone operator dan fondasi Segment Routing.

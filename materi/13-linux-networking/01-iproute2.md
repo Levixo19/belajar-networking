@@ -1,9 +1,10 @@
-# 13.1 — iproute2: Perangkat Jaringan Linux Modern
+# 13.1 iproute2: Perangkat Jaringan Linux Modern
 
 > **Prasyarat:** `04-network-layer/05`, `03-data-link/01`
 > **Tujuan:** Anda menguasai suite `ip`, bisa mengelola alamat/rute/tetangga, dan mengonfigurasi jaringan secara persisten di Linux.
 
-> 📌 **Kenapa Linux networking penting?** Setiap server, container, dan sebagian besar cloud berjalan di Linux. Router modern (termasuk banyak appliance) berbasis Linux. Menguasai jaringan Linux adalah keterampilan inti untuk sysadmin, DevOps, cloud engineer, dan network engineer.
+> > [!NOTE]
+> > **Kenapa Linux networking penting?** Setiap server, container, dan sebagian besar cloud berjalan di Linux. Router modern (termasuk banyak appliance) berbasis Linux. Menguasai jaringan Linux adalah keterampilan inti untuk sysadmin, DevOps, cloud engineer, dan network engineer.
 
 ---
 
@@ -21,13 +22,15 @@ Perintah lama (`ifconfig`, `route`, `arp`, `netstat`) sudah **usang** dan tidak 
 | `brctl` | `ip link ... type bridge` | Bridge |
 | `vconfig` | `ip link ... type vlan` | VLAN |
 
-⚠️ **`ifconfig` tidak menampilkan semua alamat** (mis. beberapa alamat IPv6 atau alamat sekunder). Selalu pakai `ip` untuk hasil yang akurat.
+> [!WARNING]
+> **`ifconfig` tidak menampilkan semua alamat** (mis. beberapa alamat IPv6 atau alamat sekunder). Selalu pakai `ip` untuk hasil yang akurat.
 
-💡 Semua perintah `ip` bisa disingkat selama tidak ambigu: `ip a` = `ip addr`, `ip r` = `ip route`, `ip l` = `ip link`, `ip n` = `ip neigh`.
+> [!TIP]
+> Semua perintah `ip` bisa disingkat selama tidak ambigu: `ip a` = `ip addr`, `ip r` = `ip route`, `ip l` = `ip link`, `ip n` = `ip neigh`.
 
 ---
 
-## 2. `ip link` — Interface (Layer 1/2)
+## 2. `ip link`: Interface (Layer 1/2)
 
 ```bash
 # Lihat semua interface
@@ -64,7 +67,8 @@ eth1             DOWN           00:1a:2b:3c:4d:5f <BROADCAST,MULTICAST>
 wg0              UNKNOWN        <POINTOPOINT,NOARP,UP,LOWER_UP>
 ```
 
-⚠️ **Perhatikan `UP` vs `LOWER_UP`:**
+> [!WARNING]
+> **Perhatikan `UP` vs `LOWER_UP`:**
 - **`UP`** = interface diaktifkan secara administratif (`ip link set up`)
 - **`LOWER_UP`** = ada **carrier fisik** (kabel tersambung, link naik)
 - `NO-CARRIER` = diaktifkan tetapi tidak ada sinyal (kabel dicabut)
@@ -73,7 +77,7 @@ Ini setara "administratively up" vs "line protocol up" di Cisco.
 
 ---
 
-## 3. `ip addr` — Alamat IP (Layer 3)
+## 3. `ip addr`: Alamat IP (Layer 3)
 
 ```bash
 # Lihat alamat
@@ -119,7 +123,7 @@ $ ip addr show eth0
 
 ---
 
-## 4. `ip route` — Routing
+## 4. `ip route`: Routing
 
 ```bash
 # Lihat routing table
@@ -174,11 +178,12 @@ $ ip route get 8.8.8.8
 8.8.8.8 via 192.168.1.1 dev eth0 src 192.168.1.50 uid 1000
     cache
 ```
-💡 **`ip route get` adalah alat diagnostik terbaik** — menunjukkan rute mana yang **benar-benar dipakai** untuk tujuan tertentu, termasuk alamat sumber yang dipilih. Setara `show ip cef exact-route` di Cisco.
+> [!TIP]
+> **`ip route get` adalah alat diagnostik terbaik** — menunjukkan rute mana yang **benar-benar dipakai** untuk tujuan tertentu, termasuk alamat sumber yang dipilih. Setara `show ip cef exact-route` di Cisco.
 
 ---
 
-## 5. `ip neigh` — Tabel Tetangga (ARP/NDP)
+## 5. `ip neigh`: Tabel Tetangga (ARP/NDP)
 
 ```bash
 # Lihat tabel
@@ -248,7 +253,7 @@ $ ip netns list
 
 ---
 
-## 7. `ethtool` — Kontrol Hardware NIC
+## 7. `ethtool`: Kontrol Hardware NIC
 
 ```bash
 # Kecepatan, duplex, status link
@@ -283,9 +288,11 @@ $ sudo ethtool --cable-test eth0
 $ sudo ethtool --identify eth0 10
 ```
 
-💡 **`ethtool -S` menampilkan counter hardware** — setara `show interfaces` di Cisco. CRC error, drop, dan discard di sini menunjukkan masalah layer 1 (kabel, SFP, interferensi).
+> [!TIP]
+> **`ethtool -S` menampilkan counter hardware** — setara `show interfaces` di Cisco. CRC error, drop, dan discard di sini menunjukkan masalah layer 1 (kabel, SFP, interferensi).
 
-⚠️ **Offload features (`ethtool -k`)** bisa menyebabkan capture yang membingungkan — dengan GRO/TSO aktif, tcpdump/Wireshark melihat "paket raksasa" yang sebenarnya sudah digabung NIC. Untuk analisis akurat, matikan sementara:
+> [!WARNING]
+> **Offload features (`ethtool -k`)** bisa menyebabkan capture yang membingungkan — dengan GRO/TSO aktif, tcpdump/Wireshark melihat "paket raksasa" yang sebenarnya sudah digabung NIC. Untuk analisis akurat, matikan sementara:
 ```bash
 $ sudo ethtool -K eth0 gro off tso off gso off
 ```
@@ -391,7 +398,8 @@ $ sudo netplan apply
 $ sudo netplan get
 ```
 
-⚠️ **Netplan sensitif terhadap indentasi (YAML)** dan **tidak boleh memakai tab**. `netplan try` memberi rollback otomatis kalau konfigurasi memutus koneksi Anda — selalu pakai ini untuk perubahan jarak jauh.
+> [!WARNING]
+> **Netplan sensitif terhadap indentasi (YAML)** dan **tidak boleh memakai tab**. `netplan try` memberi rollback otomatis kalau konfigurasi memutus koneksi Anda — selalu pakai ini untuk perubahan jarak jauh.
 
 ### Debian klasik (`/etc/network/interfaces`)
 
@@ -404,11 +412,12 @@ iface eth0 inet static
     up ip route add 10.0.0.0/8 via 192.168.1.254
 ```
 
-💡 **Pilih SATU sistem manajemen dan konsisten.** Mencampur NetworkManager dan systemd-networkd pada interface yang sama menyebabkan konflik. Periksa mana yang aktif: `systemctl status NetworkManager systemd-networkd`.
+> [!TIP]
+> **Pilih SATU sistem manajemen dan konsisten.** Mencampur NetworkManager dan systemd-networkd pada interface yang sama menyebabkan konflik. Periksa mana yang aktif: `systemctl status NetworkManager systemd-networkd`.
 
 ---
 
-## 9. sysctl — Tuning Kernel Network
+## 9. sysctl: Tuning Kernel Network
 
 ```bash
 # IP forwarding — menjadikan Linux router
@@ -441,7 +450,8 @@ $ echo 'net.ipv4.ip_forward=1' | sudo tee /etc/sysctl.d/99-router.conf
 $ sudo sysctl --system
 ```
 
-⚠️ **Setelan sysctl bersifat sementara** kecuali ditulis ke `/etc/sysctl.d/`. Untuk router produksi, dokumentasikan semua setelan dalam file yang dikelola konfigurasi (Ansible, dll).
+> [!WARNING]
+> **Setelan sysctl bersifat sementara** kecuali ditulis ke `/etc/sysctl.d/`. Untuk router produksi, dokumentasikan semua setelan dalam file yang dikelola konfigurasi (Ansible, dll).
 
 ---
 
@@ -468,13 +478,14 @@ $ nslookup example.com
 $ getent hosts example.com        # memakai nsswitch (files + dns)
 ```
 
-⚠️ **`/etc/resolv.conf` sering merupakan symlink yang dikelola systemd-resolved** — mengeditnya langsung tidak permanen. Gunakan `resolvectl` atau konfigurasi NetworkManager/netplan.
+> [!WARNING]
+> **`/etc/resolv.conf` sering merupakan symlink yang dikelola systemd-resolved** — mengeditnya langsung tidak permanen. Gunakan `resolvectl` atau konfigurasi NetworkManager/netplan.
 
 Detail DNS di `06-aplikasi/01`.
 
 ---
 
-## 11. Troubleshooting Konektivitas — Alur Linux
+## 11. Troubleshooting Konektivitas: Alur Linux
 
 ```bash
 # 1. LAYER 1/2 — apakah interface up dan ada carrier?
@@ -539,7 +550,7 @@ $ ss -tn state established | awk '{print $4}' | cut -d: -f1 | sort | uniq -c | s
 - **`UP` = admin up; `LOWER_UP` = ada carrier fisik.** `NO-CARRIER` = kabel dicabut.
 - **`ip route get <tujuan>`** menunjukkan rute yang benar-benar dipakai — alat diagnostik terbaik.
 - **`ethtool`** untuk hardware NIC: kecepatan/duplex, counter error (setara `show interfaces`), offload, ring buffer.
-- ⚠️ **Offload (GRO/TSO) membuat capture membingungkan** — matikan sementara untuk analisis akurat.
+- **Offload (GRO/TSO) membuat capture membingungkan** — matikan sementara untuk analisis akurat.
 - Perintah `ip` **sementara** — persisten lewat **NetworkManager** (`nmcli`), **systemd-networkd**, **Netplan**, atau `/etc/network/interfaces`. Pilih satu, konsisten.
 - **`netplan try`** dan **`nmcli`** memberi cara aman untuk perubahan jarak jauh (rollback).
 - **sysctl** untuk tuning: `ip_forward` (router), `rp_filter` (anti-spoof), congestion control. Permanen di `/etc/sysctl.d/`.
@@ -613,4 +624,4 @@ $ ss -tn state established | awk '{print $4}' | cut -d: -f1 | sort | uniq -c | s
 
 ---
 
-**Berikutnya:** `13-linux-networking/02-virtual-networking.md` — namespace, veth, bridge, dan membangun router di Linux.
+**Berikutnya:** `13-linux-networking/02-virtual-networking.md`. Namespace, veth, bridge, dan membangun router di Linux.

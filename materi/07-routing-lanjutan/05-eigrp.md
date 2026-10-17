@@ -1,4 +1,4 @@
-# 07.5 — EIGRP
+# 07.5 EIGRP
 
 > **Prasyarat:** `07-routing-lanjutan/02`, `07-routing-lanjutan/04`
 > **Tujuan:** Anda paham DUAL, successor/feasible successor, metrik composite, dan bisa mengonfigurasi EIGRP termasuk named mode.
@@ -16,7 +16,7 @@
 | Transport | **RTP** (Reliable Transport Protocol) langsung di IP, **protokol 88** |
 | Multicast | **224.0.0.10** (IPv4), **FF02::A** (IPv6) |
 | Standar | RFC 7868 (Informational; sebelumnya proprietary Cisco) |
-| Classless | ✅ |
+| Classless | Ya |
 
 ### Kelebihan EIGRP
 
@@ -32,7 +32,8 @@
 - Tidak ada konsep **area** — skalabilitas bergantung pada summarization manual
 - Metrik composite lebih sulit diprediksi daripada cost OSPF
 
-💡 **Kapan memilih EIGRP:** jaringan all-Cisco yang menginginkan konvergensi tercepat dan konfigurasi sederhana. Untuk lingkungan multi-vendor atau jaringan yang mungkin berganti vendor, **OSPF** lebih aman.
+> [!TIP]
+> **Kapan memilih EIGRP:** jaringan all-Cisco yang menginginkan konvergensi tercepat dan konfigurasi sederhana. Untuk lingkungan multi-vendor atau jaringan yang mungkin berganti vendor, **OSPF** lebih aman.
 
 ---
 
@@ -53,7 +54,7 @@ R1# show ip route eigrp
 
 ---
 
-## 3. DUAL — Successor dan Feasible Successor
+## 3. DUAL (Successor dan Feasible Successor)
 
 Ini inti EIGRP dan alasan konvergensinya sangat cepat.
 
@@ -66,7 +67,7 @@ Ini inti EIGRP dan alasan konvergensinya sangat cepat.
 | **Successor** | Tetangga dengan FD terkecil → dipasang ke routing table |
 | **Feasible Successor (FS)** | Jalur cadangan yang **dijamin bebas loop** |
 
-### Feasibility Condition — aturan kunci
+### Feasibility Condition: aturan kunci
 
 > **Sebuah jalur menjadi Feasible Successor jika AD tetangga itu < FD saat ini.**
 
@@ -123,7 +124,8 @@ ACTIVE  = successor hilang dan TIDAK ada FS
           → tunggu REPLY dari semuanya
 ```
 
-⚠️ **SIA (Stuck In Active)** — router tidak menerima REPLY dalam batas waktu (default 3 menit).
+> [!WARNING]
+> **SIA (Stuck In Active)** — router tidak menerima REPLY dalam batas waktu (default 3 menit).
 ```
 %DUAL-3-SIA: Route 10.1.1.0/24 stuck-in-active state in IP-EIGRP(0) 1.
 Cleaning up
@@ -141,7 +143,8 @@ Penyebab SIA:
 3. Perbaiki stabilitas link
 4. `timers active-time` untuk menyesuaikan batas waktu
 
-💡 **Query scope adalah faktor skalabilitas utama EIGRP.** Tanpa summarization dan stub, query bisa menyebar ke seluruh jaringan — inilah kelemahan EIGRP di jaringan besar.
+> [!TIP]
+> **Query scope adalah faktor skalabilitas utama EIGRP.** Tanpa summarization dan stub, query bisa menyebar ke seluruh jaringan — inilah kelemahan EIGRP di jaringan besar.
 
 ---
 
@@ -163,7 +166,8 @@ di mana:
   Delay     = jumlah_semua_delay_di_jalur (dalam satuan 10 mikrodetik)
 ```
 
-⚠️ **Perhatikan asimetri penting:**
+> [!WARNING]
+> **Perhatikan asimetri penting:**
 - **Bandwidth** = yang **TERKECIL** (bottleneck) sepanjang jalur
 - **Delay** = **JUMLAH** semua delay sepanjang jalur
 
@@ -180,7 +184,8 @@ Delay total = 100 + 1000 = 1100 µs = 110 (satuan 10 µs)
 Metric = 256 × (1000 + 110) = 256 × 1110 = 284.160
 ```
 
-⚠️ **JANGAN ubah nilai K** kecuali Anda benar-benar memahami konsekuensinya:
+> [!WARNING]
+> **JANGAN ubah nilai K** kecuali Anda benar-benar memahami konsekuensinya:
 - K harus **sama persis** di semua router, atau **adjacency tidak terbentuk**
 - Memakai **load** (K2) atau **reliability** (K4/K5) menyebabkan metrik berubah terus-menerus → rute flapping → jaringan tidak stabil
 
@@ -198,7 +203,8 @@ R1(config-if)# delay 200          ← satuan 10 mikrodetik → 2000 µs
 R1(config-if)# bandwidth 10000    ← kbps
 ```
 
-⚠️ **Mengubah `bandwidth` memengaruhi banyak hal lain**: perhitungan QoS, `ip bandwidth-percent`, statistik SNMP, dan protokol lain. **Gunakan `delay` untuk memanipulasi metrik EIGRP** karena efeknya terisolasi.
+> [!WARNING]
+> **Mengubah `bandwidth` memengaruhi banyak hal lain**: perhitungan QoS, `ip bandwidth-percent`, statistik SNMP, dan protokol lain. **Gunakan `delay` untuk memanipulasi metrik EIGRP** karena efeknya terisolasi.
 
 ### Wide Metrics (EIGRP Named Mode)
 
@@ -224,9 +230,11 @@ R1(config-router)# passive-interface default
 R1(config-router)# no passive-interface gi0/1
 ```
 
-⚠️ **AS number harus identik di semua router** yang akan membentuk adjacency. Ini bukan AS BGP — hanya pengenal proses lokal.
+> [!WARNING]
+> **AS number harus identik di semua router** yang akan membentuk adjacency. Ini bukan AS BGP — hanya pengenal proses lokal.
 
-⚠️ EIGRP menerima `network` dengan atau tanpa wildcard mask. Tanpa wildcard, ia diperlakukan classful.
+> [!WARNING]
+> EIGRP menerima `network` dengan atau tanpa wildcard mask. Tanpa wildcard, ia diperlakukan classful.
 
 ### Named Mode (modern, direkomendasikan)
 
@@ -277,7 +285,8 @@ R1(config-if)# ip hello-interval eigrp 100 5
 R1(config-if)# ip hold-time eigrp 100 15
 ```
 
-⚠️ **Hello dan hold interval TIDAK harus cocok** untuk membentuk adjacency di EIGRP (berbeda dari OSPF). Tetapi **hold time harus lebih besar daripada hello interval tetangga**, atau adjacency akan naik-turun.
+> [!WARNING]
+> **Hello dan hold interval TIDAK harus cocok** untuk membentuk adjacency di EIGRP (berbeda dari OSPF). Tetapi **hold time harus lebih besar daripada hello interval tetangga**, atau adjacency akan naik-turun.
 
 ---
 
@@ -298,14 +307,16 @@ Efeknya:
 - Router otomatis membuat **rute null0** untuk summary (mencegah loop)
 - **Query scope terbatas** — router yang punya summary langsung membalas query, tidak meneruskannya
 
-💡 **Summarization adalah alat skalabilitas utama EIGRP.** Ia mengecilkan tabel **dan** membatasi query scope sekaligus.
+> [!TIP]
+> **Summarization adalah alat skalabilitas utama EIGRP.** Ia mengecilkan tabel **dan** membatasi query scope sekaligus.
 
 ### Auto-summary
 
 ```
 R1(config-router)# no auto-summary
 ```
-⚠️ Auto-summary meringkas ke batas classful, merusak jaringan discontiguous. Default `no auto-summary` sejak IOS 15, tetapi selalu verifikasi.
+> [!WARNING]
+> Auto-summary meringkas ke batas classful, merusak jaringan discontiguous. Default `no auto-summary` sejak IOS 15, tetapi selalu verifikasi.
 
 ---
 
@@ -332,15 +343,18 @@ R2(config-router)# eigrp stub connected summary
 - Mengurangi beban CPU dan bandwidth
 - Meningkatkan stabilitas
 
-💡 **Konfigurasikan semua router cabang (spoke) sebagai stub.** Ini praktik standar di jaringan hub-and-spoke dan salah satu perbaikan skalabilitas EIGRP yang paling efektif.
+> [!TIP]
+> **Konfigurasikan semua router cabang (spoke) sebagai stub.** Ini praktik standar di jaringan hub-and-spoke dan salah satu perbaikan skalabilitas EIGRP yang paling efektif.
 
-⚠️ Router stub **tidak akan meneruskan trafik transit** antar-tetangga. Jangan pakai pada router yang memang berfungsi sebagai transit.
+> [!WARNING]
+> Router stub **tidak akan meneruskan trafik transit** antar-tetangga. Jangan pakai pada router yang memang berfungsi sebagai transit.
 
 ---
 
 ## 8. Unequal-Cost Load Balancing (Variance)
 
-⚠️ **Hanya EIGRP yang punya ini** di antara IGP.
+> [!WARNING]
+> **Hanya EIGRP yang punya ini** di antara IGP.
 
 ```
 R1(config-router)# variance 2
@@ -362,7 +376,8 @@ Trafik dibagi PROPORSIONAL terbalik terhadap metrik:
   jalur 100.000 mendapat lebih banyak daripada jalur 180.000
 ```
 
-⚠️ **Syarat mutlak: jalur harus feasible successor.** Variance tidak akan memakai jalur yang gagal feasibility condition, karena itu bisa menyebabkan loop.
+> [!WARNING]
+> **Syarat mutlak: jalur harus feasible successor.** Variance tidak akan memakai jalur yang gagal feasibility condition, karena itu bisa menyebabkan loop.
 
 ```
 R1(config-router)# maximum-paths 6         ← maksimum jalur yang dipakai
@@ -389,7 +404,8 @@ R1(config-router)# address-family ipv6 unicast autonomous-system 100
 R1(config-router-af)# eigrp router-id 1.1.1.1
 ```
 
-⚠️ **`no shutdown` pada proses EIGRPv6 sering terlupa** — proses dibuat dalam keadaan shutdown secara default, sehingga tidak ada adjacency yang terbentuk walau konfigurasi lain benar.
+> [!WARNING]
+> **`no shutdown` pada proses EIGRPv6 sering terlupa** — proses dibuat dalam keadaan shutdown secara default, sehingga tidak ada adjacency yang terbentuk walau konfigurasi lain benar.
 
 ---
 
@@ -497,7 +513,7 @@ R1# show ip protocols | include EIGRP metric
 4. Karena **`bandwidth` memengaruhi banyak subsistem lain** selain EIGRP: perhitungan QoS (`bandwidth-percent`, CBWFQ), statistik utilisasi SNMP, cost OSPF jika berjalan bersamaan, dan berbagai fitur yang memakai nilai bandwidth interface. Mengubahnya untuk memanipulasi routing bisa menimbulkan efek samping yang tidak diinginkan dan sulit dilacak.
    **`delay`** hanya dipakai oleh EIGRP (dan sedikit fitur lain), sehingga efeknya **terisolasi** dan dapat diprediksi. Ini alasan Cisco secara konsisten merekomendasikan `delay` untuk *traffic engineering* pada EIGRP.
 
-5. (a) **AS number** — harus identik di kedua router (`router eigrp 100`); (b) **nilai K** — `show ip protocols` dan bandingkan K1–K5; berbeda satu saja → adjacency ditolak; (c) **subnet primer** — kedua interface harus berada di subnet yang sama; EIGRP tidak membentuk adjacency lewat secondary address; (d) **autentikasi** — mode dan key-chain harus cocok, termasuk nomor key; (e) **passive-interface** — periksa `show ip protocols`; (f) **ACL/firewall** yang memblokir protokol IP 88 atau multicast 224.0.0.10; (g) untuk EIGRPv6: apakah proses sudah `no shutdown`; (h) interface up/up dan MTU wajar.
+5. (a) **AS number** — harus identik di kedua router (`router eigrp 100`); (b) **nilai K** — `show ip protocols` dan bandingkan K1-K5; berbeda satu saja → adjacency ditolak; (c) **subnet primer** — kedua interface harus berada di subnet yang sama; EIGRP tidak membentuk adjacency lewat secondary address; (d) **autentikasi** — mode dan key-chain harus cocok, termasuk nomor key; (e) **passive-interface** — periksa `show ip protocols`; (f) **ACL/firewall** yang memblokir protokol IP 88 atau multicast 224.0.0.10; (g) untuk EIGRPv6: apakah proses sudah `no shutdown`; (h) interface up/up dan MTU wajar.
 
 6. **`variance N`** memungkinkan EIGRP memakai jalur yang metriknya sampai **N × metrik successor** untuk load balancing, dengan trafik dibagi **proporsional terbalik** terhadap metrik (jalur lebih baik membawa lebih banyak). Ini menjadikan EIGRP satu-satunya IGP dengan **unequal-cost load balancing**.
    **Syarat mutlaknya:** jalur alternatif itu harus merupakan **feasible successor** (memenuhi `AD tetangga < FD`). Tanpa syarat ini, EIGRP bisa mengirim trafik ke jalur yang sebenarnya kembali melewati dirinya sendiri — menyebabkan **routing loop**. Jalur yang gagal feasibility condition **tidak akan** dipakai berapa pun nilai variance-nya.
@@ -519,4 +535,4 @@ R1# show ip protocols | include EIGRP metric
 
 ---
 
-**Berikutnya:** `07-routing-lanjutan/06-bgp.md` — protokol yang menjalankan internet.
+**Berikutnya:** `07-routing-lanjutan/06-bgp.md`. Protokol yang menjalankan internet.

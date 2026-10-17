@@ -1,4 +1,4 @@
-# 18.1 — Peta Sertifikasi & Jalur Karier Jaringan
+# 18.1 Peta Sertifikasi & Jalur Karier Jaringan
 
 > **Prasyarat:** tidak ada (bisa dibaca kapan saja)
 > **Tujuan:** Anda paham lanskap sertifikasi jaringan, jalur karier, dan bagaimana memilih yang tepat untuk tujuan Anda.
@@ -13,7 +13,8 @@ Sertifikasi **bukan** pengganti pemahaman, tetapi berguna untuk:
 - **Pintu masuk** — banyak lowongan mensyaratkan/menyukai sertifikasi tertentu.
 - **Kredibilitas** — terutama di awal karier atau saat pindah bidang.
 
-⚠️ **Sertifikasi tanpa pemahaman praktik = kertas kosong.** Pemberi kerja menguji apakah Anda benar-benar bisa. Kurikulum ini mengajarkan **pemahaman**; sertifikasi memvalidasinya. Kombinasikan dengan **lab praktik** (`lab/`) dan **portofolio** (`18.4`).
+> [!WARNING]
+> **Sertifikasi tanpa pemahaman praktik = kertas kosong.** Pemberi kerja menguji apakah Anda benar-benar bisa. Kurikulum ini mengajarkan **pemahaman**; sertifikasi memvalidasinya. Kombinasikan dengan **lab praktik** (`lab/`) dan **portofolio** (`18.4`).
 
 ---
 
@@ -27,7 +28,8 @@ Bagus untuk pemula — mengajarkan konsep tanpa terikat satu vendor:
 | **CompTIA Security+** (SY0-701) | CompTIA | Fondasi keamanan | Pemula |
 | **CompTIA A+** (220-1201 & 220-1202) | CompTIA | IT dasar (hardware/OS) | Sangat pemula |
 
-💡 **Network+ (N10-009)** adalah titik awal yang bagus jika Anda benar-benar baru — vendor-netral, konsep murni. Setelahnya, spesialisasi ke vendor (Cisco/lainnya). Peta detail Network+ ada di `18.3`.
+> [!TIP]
+> **Network+ (N10-009)** adalah titik awal yang bagus jika Anda benar-benar baru — vendor-netral, konsep murni. Setelahnya, spesialisasi ke vendor (Cisco/lainnya). Peta detail Network+ ada di `18.3`.
 
 ---
 
@@ -46,7 +48,8 @@ Architect : CCAr — level tertinggi (desain, sangat langka)
 
 **Track CCNP/CCIE** (pilih spesialisasi): **Enterprise, Security, Data Center, Service Provider, Collaboration, Wireless, Automation**. Per 2026, jalur DevNet berganti nama menjadi **CCNA/CCNP/CCIE Automation**, CyberOps Associate menjadi **CCNA Cybersecurity**, dan wireless kembali menjadi jalur CCNP tersendiri.
 
-💡 **CCNA adalah fondasi de-facto industri jaringan** — kurikulum ini dipetakan langsung ke CCNA 200-301 v1.1 (lihat `18.2`). Setelah CCNA, pilih track CCNP sesuai minat (Enterprise umum, Security untuk keamanan, DevNet untuk otomasi).
+> [!TIP]
+> **CCNA adalah fondasi de-facto industri jaringan** — kurikulum ini dipetakan langsung ke CCNA 200-301 v1.1 (lihat `18.2`). Setelah CCNA, pilih track CCNP sesuai minat (Enterprise umum, Security untuk keamanan, DevNet untuk otomasi).
 
 ---
 
@@ -57,7 +60,7 @@ Architect : CCAr — level tertinggi (desain, sangat langka)
 | **MikroTik** | MTCNA → MTCRE/MTCWE/dll → MTCINE | Populer di ISP/RT-RW-Net Indonesia (lihat `18.5`) |
 | **Juniper** | JNCIA → JNCIS → JNCIP → JNCIE | Kuat di service provider |
 | **Aruba (HPE)** | ACA → ACP → ACE | Wireless/kampus |
-| **Fortinet** | NSE 1–8 / FCA-FCX | Keamanan/firewall |
+| **Fortinet** | NSE 1-8 / FCA-FCX | Keamanan/firewall |
 | **Palo Alto** | Sertifikasi berbasis peran (mis. Next-Generation Firewall Engineer, pengganti PCNSE) | NGFW |
 | **AWS/Azure/GCP** | Cloud networking specialties | Cloud (lihat `16.4`) |
 | **VMware** | VCP-NV (NSX) | Virtualisasi jaringan |
@@ -92,7 +95,8 @@ ISP/NOC Engineer                  → operator, BGP, MPLS (7, 11)
 
 **Progresi umum:** Technician → Admin → Engineer → Senior/Specialist → Architect / Lead. Spesialisasi (keamanan, cloud, otomasi, wireless, SP) bercabang dari Engineer.
 
-💡 **NetDevOps/Automation Engineer** adalah jalur dengan permintaan tinggi & berkembang — menggabungkan jaringan (kurikulum ini) dengan pemrograman/otomasi (`15`). Skill langka & bernilai tinggi.
+> [!TIP]
+> **NetDevOps/Automation Engineer** adalah jalur dengan permintaan tinggi & berkembang — menggabungkan jaringan (kurikulum ini) dengan pemrograman/otomasi (`15`). Skill langka & bernilai tinggi.
 
 ---
 
@@ -107,9 +111,11 @@ Tertarik otomasi/cloud              → CCNA → CCNA Automation / cloud certs
 Sudah berpengalaman, ingin naik     → CCNP track pilihan
 ```
 
-⚠️ **Nama dan kode sertifikasi berubah cepat.** Sepanjang 2025-2026 banyak yang berganti: DevNet menjadi CCNA/CCNP Automation, CyberOps Associate menjadi CCNA Cybersecurity, CASP+ menjadi SecurityX, CySA+ ke CS0-004, A+ ke 220-1201/1202, PCNSE digantikan sertifikasi berbasis peran, AWS SysOps menjadi CloudOps Engineer (SOA-C03), dan ITIL kini Version 5. Selalu cek halaman resmi penerbit sebelum mendaftar ujian. Rincian per profesi, lengkap dengan sumbernya, ada di Tahap 21 (`21-ekosistem-profesi/01-peta-ekosistem`).
+> [!WARNING]
+> **Nama dan kode sertifikasi berubah cepat.** Sepanjang 2025-2026 banyak yang berganti: DevNet menjadi CCNA/CCNP Automation, CyberOps Associate menjadi CCNA Cybersecurity, CASP+ menjadi SecurityX, CySA+ ke CS0-004, A+ ke 220-1201/1202, PCNSE digantikan sertifikasi berbasis peran, AWS SysOps menjadi CloudOps Engineer (SOA-C03), dan ITIL kini Version 5. Selalu cek halaman resmi penerbit sebelum mendaftar ujian. Rincian per profesi, lengkap dengan sumbernya, ada di Tahap 21 (`21-ekosistem-profesi/01-peta-ekosistem`).
 
-⚠️ **Jangan mengejar terlalu banyak sertifikasi sekaligus.** Lebih baik satu sertifikasi dengan pemahaman & praktik solid daripada banyak "kertas" dangkal. Untuk kebanyakan orang: **CCNA + portofolio praktik** adalah kombinasi awal terkuat.
+> [!WARNING]
+> **Jangan mengejar terlalu banyak sertifikasi sekaligus.** Lebih baik satu sertifikasi dengan pemahaman & praktik solid daripada banyak "kertas" dangkal. Untuk kebanyakan orang: **CCNA + portofolio praktik** adalah kombinasi awal terkuat.
 
 ---
 
@@ -160,4 +166,4 @@ Sudah berpengalaman, ingin naik     → CCNP track pilihan
 
 ---
 
-**Berikutnya:** `18-karier-sertifikasi/02-peta-ccna.md` — pemetaan kurikulum ini ke blueprint CCNA 200-301.
+**Berikutnya:** `18-karier-sertifikasi/02-peta-ccna.md`. Pemetaan kurikulum ini ke blueprint CCNA 200-301.

@@ -1,4 +1,4 @@
-# 06.5 — Email, SSH, NTP, SNMP, Syslog, dan Layanan Infrastruktur
+# 06.5 Email, SSH, NTP, SNMP, Syslog, dan Layanan Infrastruktur
 
 > **Prasyarat:** `06-aplikasi/01`–`04`
 > **Tujuan:** Anda menguasai layanan infrastruktur yang dipakai setiap hari oleh network engineer, dan tahu mengonfigurasi serta mendiagnosisnya.
@@ -25,7 +25,8 @@
 | **POP3** | 110 / **995** | Unduh email, biasanya hapus dari server |
 | **IMAP** | 143 / **993** | Sinkronisasi; email tetap di server, mendukung banyak perangkat |
 
-⚠️ **Port 25 hampir selalu diblokir ISP untuk pelanggan rumahan** — untuk mencegah spam dari perangkat yang terinfeksi. Klien harus memakai **587** (submission) ke server mail mereka.
+> [!WARNING]
+> **Port 25 hampir selalu diblokir ISP untuk pelanggan rumahan** — untuk mencegah spam dari perangkat yang terinfeksi. Klien harus memakai **587** (submission) ke server mail mereka.
 
 ### Istilah
 
@@ -49,7 +50,8 @@ example.com.  IN TXT  "v=spf1 ip4:203.0.113.0/24 include:_spf.google.com -all"
                        ~all = tandai mencurigakan (soft fail)
                        ?all = netral
 ```
-⚠️ SPF punya batas **10 lookup DNS**. Terlalu banyak `include:` menyebabkan `permerror` dan SPF gagal total.
+> [!WARNING]
+> SPF punya batas **10 lookup DNS**. Terlalu banyak `include:` menyebabkan `permerror` dan SPF gagal total.
 
 **DKIM (DomainKeys Identified Mail)** — tanda tangan kriptografis pada header dan body email.
 ```
@@ -66,7 +68,8 @@ _dmarc.example.com.  IN TXT  "v=DMARC1; p=quarantine; rua=mailto:dmarc@example.c
                               p=reject     → tolak total
 ```
 
-💡 **Urutan penerapan yang benar:** mulai dengan `p=none` + laporan, analisis laporan selama beberapa minggu untuk menemukan pengirim sah yang terlewat, baru naikkan ke `quarantine` lalu `reject`. Langsung ke `reject` akan memblokir email sah dari layanan pihak ketiga yang belum Anda daftarkan.
+> [!TIP]
+> **Urutan penerapan yang benar:** mulai dengan `p=none` + laporan, analisis laporan selama beberapa minggu untuk menemukan pengirim sah yang terlewat, baru naikkan ke `quarantine` lalu `reject`. Langsung ke `reject` akan memblokir email sah dari layanan pihak ketiga yang belum Anda daftarkan.
 
 **MTA-STS** dan **DANE/TLSA** — memaksa enkripsi TLS antar-server mail.
 
@@ -99,7 +102,8 @@ $ openssl s_client -connect mail.example.com:587 -starttls smtp
 $ dig -x 203.0.113.50 +short
 ```
 
-⚠️ **Reverse DNS (PTR) yang tidak cocok adalah penyebab utama email masuk spam.** Banyak MTA menolak koneksi dari IP yang PTR-nya tidak ada atau tidak "forward-confirmed" (PTR → nama → A kembali ke IP yang sama).
+> [!WARNING]
+> **Reverse DNS (PTR) yang tidak cocok adalah penyebab utama email masuk spam.** Banyak MTA menolak koneksi dari IP yang PTR-nya tidak ada atau tidak "forward-confirmed" (PTR → nama → A kembali ke IP yang sama).
 
 ---
 
@@ -132,7 +136,7 @@ $ ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server
 $ cat ~/.ssh/id_ed25519.pub | ssh user@server 'mkdir -p ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys'
 ```
 
-### Port forwarding — fitur yang sangat berguna
+### Port forwarding: fitur yang sangat berguna
 
 ```bash
 # Local forwarding: akses layanan remote lewat port lokal
@@ -182,7 +186,8 @@ Host sw-access-01
 ```
 Setelah ini cukup: `ssh sw-access-01`.
 
-💡 **ControlMaster** membuat koneksi berikutnya ke host yang sama memakai koneksi yang sudah ada — instan, tanpa handshake ulang. Sangat mempercepat kerja dengan banyak perintah SSH (dan otomasi).
+> [!TIP]
+> **ControlMaster** membuat koneksi berikutnya ke host yang sama memakai koneksi yang sudah ada — instan, tanpa handshake ulang. Sangat mempercepat kerja dengan banyak perintah SSH (dan otomasi).
 
 ### Hardening server SSH
 
@@ -225,11 +230,12 @@ R1# show ip ssh
 R1# show ssh
 ```
 
-⚠️ **`crypto key generate rsa` membutuhkan hostname dan domain-name sudah diset** — kalau belum, perintahnya akan gagal.
+> [!WARNING]
+> **`crypto key generate rsa` membutuhkan hostname dan domain-name sudah diset** — kalau belum, perintahnya akan gagal.
 
 ---
 
-## 3. NTP — Sinkronisasi Waktu
+## 3. NTP (Sinkronisasi Waktu)
 
 Waktu yang tidak sinkron menyebabkan masalah yang sangat sulit didiagnosis:
 - Sertifikat TLS ditolak ("not yet valid")
@@ -249,7 +255,8 @@ Stratum 3 : Menyinkronkan ke stratum 2
 Stratum 16: TIDAK TERSINKRONISASI
 ```
 
-⚠️ **Stratum 16 berarti "tidak sinkron"**, bukan "sangat jauh". Kalau Anda melihat stratum 16, NTP tidak berfungsi.
+> [!WARNING]
+> **Stratum 16 berarti "tidak sinkron"**, bukan "sangat jauh". Kalau Anda melihat stratum 16, NTP tidak berfungsi.
 
 ### Konfigurasi Cisco
 
@@ -275,7 +282,7 @@ R1# show ntp associations
 R1# show clock detail
 ```
 
-### Linux (chrony — direkomendasikan)
+### Linux (chrony: direkomendasikan)
 
 `/etc/chrony/chrony.conf`:
 ```
@@ -298,7 +305,7 @@ $ chronyc sourcestats
 $ timedatectl status
 ```
 
-### PTP — untuk presisi tinggi
+### PTP: untuk presisi tinggi
 
 **PTP** (IEEE 1588) memberi akurasi **sub-mikrodetik** (NTP: milidetik). Dipakai di: telekomunikasi (sinkronisasi radio 5G), finansial (timestamp transaksi), broadcast, industri.
 
@@ -306,7 +313,7 @@ Membutuhkan dukungan hardware di switch (**boundary clock** atau **transparent c
 
 ---
 
-## 4. SNMP — Monitoring Klasik
+## 4. SNMP (Monitoring Klasik)
 
 ### Konsep
 
@@ -352,7 +359,8 @@ Membutuhkan dukungan hardware di switch (**boundary clock** atau **transparent c
 .1.3.6.1.4.1.9.9.109.1.1.1.1.7  cpmCPUTotal5minRev (CPU Cisco)
 ```
 
-⚠️ **Gunakan counter 64-bit (`ifHC*`), bukan 32-bit (`ifInOctets`).** Counter 32-bit **wrap** (kembali ke nol) setiap:
+> [!WARNING]
+> **Gunakan counter 64-bit (`ifHC*`), bukan 32-bit (`ifInOctets`).** Counter 32-bit **wrap** (kembali ke nol) setiap:
 ```
 Link 1 Gbps  : 2^32 byte / 125 MB/s ≈ 34 detik
 Link 10 Gbps : ≈ 3,4 detik
@@ -363,11 +371,12 @@ Kalau polling interval Anda 5 menit, counter 32-bit pada link gigabit sudah wrap
 
 | Versi | Autentikasi | Enkripsi | Catatan |
 |---|---|---|---|
-| **v1** | Community string plaintext | ❌ | Usang; counter 32-bit saja |
-| **v2c** | Community string plaintext | ❌ | Masih paling banyak dipakai; ada GETBULK & counter 64-bit |
+| **v1** | Community string plaintext | Tidak | Usang; counter 32-bit saja |
+| **v2c** | Community string plaintext | Tidak | Masih paling banyak dipakai; ada GETBULK & counter 64-bit |
 | **v3** | Username + auth (SHA) | ✅ (AES) | **Satu-satunya yang aman** |
 
-⚠️ **Community string SNMPv2c dikirim plaintext.** Siapa pun yang menyadap bisa membacanya. Community `public`/`private` yang masih default adalah kerentanan serius — dengan community RW, penyerang bisa **mengubah konfigurasi perangkat**.
+> [!WARNING]
+> **Community string SNMPv2c dikirim plaintext.** Siapa pun yang menyadap bisa membacanya. Community `public`/`private` yang masih default adalah kerentanan serius — dengan community RW, penyerang bisa **mengubah konfigurasi perangkat**.
 
 ### Konfigurasi
 
@@ -409,13 +418,14 @@ $ snmptranslate -Of .1.3.6.1.2.1.1.5.0
 | | SNMP | gNMI / Streaming Telemetry |
 |---|---|---|
 | Model | **Pull** (polling) | **Push** (subscription) |
-| Interval | 1–5 menit (beban tinggi kalau lebih cepat) | Detik atau sub-detik |
+| Interval | 1-5 menit (beban tinggi kalau lebih cepat) | Detik atau sub-detik |
 | Beban perangkat | Tinggi (setiap poll = pekerjaan CPU) | Rendah (sekali subscribe) |
 | Format | ASN.1/BER | Protobuf/JSON |
 | Keamanan | v3 (rumit) | TLS + gRPC |
 | Skalabilitas | Terbatas | Sangat baik |
 
-💡 **SNMP masih dominan** karena didukung semua perangkat, tetapi jaringan modern beralih ke streaming telemetry untuk visibilitas yang lebih detail dan real-time (`14-monitoring-troubleshooting/03`).
+> [!TIP]
+> **SNMP masih dominan** karena didukung semua perangkat, tetapi jaringan modern beralih ke streaming telemetry untuk visibilitas yang lebih detail dan real-time (`14-monitoring-troubleshooting/03`).
 
 ---
 
@@ -423,7 +433,7 @@ $ snmptranslate -Of .1.3.6.1.2.1.1.5.0
 
 Standar logging terpusat.
 
-### Severity — hafalkan ini
+### Severity: hafalkan ini
 
 | Level | Nama | Arti | Contoh |
 |---|---|---|---|
@@ -438,15 +448,18 @@ Standar logging terpusat.
 
 Mnemonic: **E**very **A**wesome **C**isco **E**ngineer **W**ill **N**eed **I**ce cream **D**aily.
 
-⚠️ **Angka lebih KECIL = lebih PARAH.** Ini sering tertukar.
+> [!WARNING]
+> **Angka lebih KECIL = lebih PARAH.** Ini sering tertukar.
 
-⚠️ Mengatur level ke `7` (debug) berarti **semua** pesan level 0–7 dikirim — bisa membanjiri jaringan dan perangkat. Level `6` (informational) adalah default yang wajar untuk produksi.
+> [!WARNING]
+> Mengatur level ke `7` (debug) berarti **semua** pesan level 0–7 dikirim — bisa membanjiri jaringan dan perangkat. Level `6` (informational) adalah default yang wajar untuk produksi.
 
 ### Facility
 
-Mengelompokkan sumber pesan: `kern`(0), `user`(1), `mail`(2), `daemon`(3), `auth`(4), `syslog`(5), `lpr`(6), `news`(7), `uucp`(8), `cron`(9), `authpriv`(10), `ftp`(11), `local0`–`local7`(16–23).
+Mengelompokkan sumber pesan: `kern`(0), `user`(1), `mail`(2), `daemon`(3), `auth`(4), `syslog`(5), `lpr`(6), `news`(7), `uucp`(8), `cron`(9), `authpriv`(10), `ftp`(11), `local0`–`local7`(16-23).
 
-💡 Perangkat jaringan biasanya memakai `local7` secara default; gunakan `local0`–`local7` untuk memisahkan sumber di server syslog.
+> [!TIP]
+> Perangkat jaringan biasanya memakai `local7` secara default; gunakan `local0`–`local7` untuk memisahkan sumber di server syslog.
 
 ### Format
 
@@ -485,7 +498,8 @@ R1# show logging
 R1# show logging | include LINK-3
 ```
 
-⚠️ **`service timestamps log datetime msec` sangat penting.** Tanpa itu, log Cisco hanya menampilkan uptime relatif (`00:12:34`), bukan waktu absolut — mustahil dikorelasikan dengan log perangkat lain.
+> [!WARNING]
+> **`service timestamps log datetime msec` sangat penting.** Tanpa itu, log Cisco hanya menampilkan uptime relatif (`00:12:34`), bukan waktu absolut — mustahil dikorelasikan dengan log perangkat lain.
 
 ### rsyslog di Linux
 
@@ -517,7 +531,8 @@ $ journalctl -u sshd --since "1 hour ago"
 $ journalctl -p err --since today
 ```
 
-⚠️ **Syslog UDP 514 tidak andal dan tidak terenkripsi.** Untuk lingkungan penting, gunakan **TCP** atau **RELP** dengan **TLS**:
+> [!WARNING]
+> **Syslog UDP 514 tidak andal dan tidak terenkripsi.** Untuk lingkungan penting, gunakan **TCP** atau **RELP** dengan **TLS**:
 ```
 R1(config)# logging host 192.168.99.50 transport tcp port 6514
 ```
@@ -528,11 +543,11 @@ R1(config)# logging host 192.168.99.50 transport tcp port 6514
 
 | Protokol | Port | Enkripsi | Autentikasi | Catatan |
 |---|---|---|---|---|
-| **FTP** | 21 (kontrol), 20 (data aktif) | ❌ | Plaintext | Rumit di firewall/NAT |
-| **FTPS** | 990 / 21 dengan AUTH TLS | ✅ | TLS | Masih pakai dua port |
-| **SFTP** | **22** | ✅ | SSH | **Direkomendasikan** — satu port, mudah di firewall |
-| **SCP** | 22 | ✅ | SSH | Lebih sederhana, kurang fitur |
-| **TFTP** | **69 UDP** | ❌ | **TIDAK ADA** | Untuk boot & backup config perangkat |
+| **FTP** | 21 (kontrol), 20 (data aktif) | Tidak | Plaintext | Rumit di firewall/NAT |
+| **FTPS** | 990 / 21 dengan AUTH TLS | Ya | TLS | Masih pakai dua port |
+| **SFTP** | **22** | Ya | SSH | **Direkomendasikan** — satu port, mudah di firewall |
+| **SCP** | 22 | Ya | SSH | Lebih sederhana, kurang fitur |
+| **TFTP** | **69 UDP** | Tidak | **TIDAK ADA** | Untuk boot & backup config perangkat |
 
 ### FTP: Mode Aktif vs Pasif
 
@@ -553,7 +568,8 @@ MODE PASIF:
    ✅ Firewall klien mengizinkan → BERHASIL
 ```
 
-💡 **Selalu pakai mode pasif** dari belakang firewall/NAT. Di sisi server, batasi rentang port pasif dan buka rentang itu di firewall.
+> [!TIP]
+> **Selalu pakai mode pasif** dari belakang firewall/NAT. Di sisi server, batasi rentang port pasif dan buka rentang itu di firewall.
 
 ### TFTP
 
@@ -580,7 +596,8 @@ $ sudo systemctl enable --now tftpd-hpa
 $ sudo chmod 777 /srv/tftp        # tftpd tidak bisa membuat file tanpa ini
 ```
 
-⚠️ **TFTP tanpa autentikasi apa pun.** Jangan pernah ekspos ke jaringan yang tidak tepercaya. Batasi dengan ACL ke subnet manajemen saja. Untuk backup config produksi, gunakan **SCP/SFTP**:
+> [!WARNING]
+> **TFTP tanpa autentikasi apa pun.** Jangan pernah ekspos ke jaringan yang tidak tepercaya. Batasi dengan ACL ke subnet manajemen saja. Untuk backup config produksi, gunakan **SCP/SFTP**:
 ```
 R1# copy running-config scp://admin@192.168.99.50/backup/r1-confg
 ```
@@ -590,7 +607,8 @@ R1# copy running-config scp://admin@192.168.99.50/backup/r1-confg
 ## 7. Layanan Lain yang Perlu Dikenal
 
 ### Telnet (port 23)
-⚠️ **Mengirim semua data, termasuk password, dalam plaintext.** Jangan pernah dipakai untuk manajemen. Satu-satunya kegunaan sah: menguji apakah port TCP terbuka (`telnet host 443`) — dan bahkan itu lebih baik dengan `nc -zv`.
+> [!WARNING]
+> **Mengirim semua data, termasuk password, dalam plaintext.** Jangan pernah dipakai untuk manajemen. Satu-satunya kegunaan sah: menguji apakah port TCP terbuka (`telnet host 443`) — dan bahkan itu lebih baik dengan `nc -zv`.
 
 ```
 R1(config-line)# transport input ssh     ← matikan Telnet di semua vty
@@ -599,7 +617,8 @@ R1(config-line)# transport input ssh     ← matikan Telnet di semua vty
 ### Out-of-Band Management
 Jaringan manajemen **terpisah** dari jaringan produksi (console server, port manajemen khusus, jalur seluler).
 
-💡 **Sangat penting:** ketika jaringan produksi mati, Anda tetap bisa masuk untuk memperbaikinya. Tanpa OOB, kesalahan konfigurasi bisa mengunci Anda dari perangkat sendiri — dan harus datang secara fisik.
+> [!TIP]
+> **Sangat penting:** ketika jaringan produksi mati, Anda tetap bisa masuk untuk memperbaikinya. Tanpa OOB, kesalahan konfigurasi bisa mengunci Anda dari perangkat sendiri — dan harus datang secara fisik.
 
 ### LDAP / Active Directory (389 / 636)
 Direktori pengguna terpusat. Dipakai untuk autentikasi aplikasi dan sebagai sumber identitas bagi RADIUS.
@@ -619,7 +638,8 @@ Remote desktop. ⚠️ **Jangan pernah ekspos RDP langsung ke internet** — tar
 ### mDNS (5353), SSDP (1900)
 Service discovery lokal (Bonjour, Chromecast, printer, UPnP). Berbasis multicast dan **tidak melewati router** — inilah sebabnya AirPlay/Chromecast tidak bekerja lintas VLAN tanpa mDNS repeater/gateway.
 
-⚠️ **SSDP/UPnP adalah risiko keamanan** — bisa dipakai untuk amplification attack dan membuka port firewall secara otomatis. Matikan di perimeter.
+> [!WARNING]
+> **SSDP/UPnP adalah risiko keamanan** — bisa dipakai untuk amplification attack dan membuka port firewall secara otomatis. Matikan di perimeter.
 
 ---
 
@@ -649,7 +669,8 @@ Service discovery lokal (Bonjour, Chromecast, printer, UPnP). Berbasis multicast
 /user active print                    ← siapa yang sedang login
 ```
 
-⚠️ **`address=` pada `/user` dan `/ip service` adalah kontrol keamanan penting** — membatasi dari mana user boleh login. Ini lapisan kedua di luar firewall.
+> [!WARNING]
+> **`address=` pada `/user` dan `/ip service` adalah kontrol keamanan penting** — membatasi dari mana user boleh login. Ini lapisan kedua di luar firewall.
 
 ### NTP
 
@@ -664,7 +685,8 @@ Service discovery lokal (Bonjour, Chromecast, printer, UPnP). Berbasis multicast
 /system ntp server set enabled=yes broadcast=no multicast=no manycast=no
 ```
 
-⚠️ **RouterOS v7 memisahkan NTP client dan server** ke menu berbeda dari v6. Di v6: `/system ntp client` dan `/system ntp server`.
+> [!WARNING]
+> **RouterOS v7 memisahkan NTP client dan server** ke menu berbeda dari v6. Di v6: `/system ntp client` dan `/system ntp server`.
 
 ### SNMP
 
@@ -708,7 +730,8 @@ Service discovery lokal (Bonjour, Chromecast, printer, UPnP). Berbasis multicast
     disk-lines-per-file=10000 disk-file-count=5
 ```
 
-⚠️ **Buffer log RouterOS default sangat kecil (100 baris)** dan hilang saat reboot. **Selalu kirim ke syslog server** untuk jaringan produksi.
+> [!WARNING]
+> **Buffer log RouterOS default sangat kecil (100 baris)** dan hilang saat reboot. **Selalu kirim ke syslog server** untuk jaringan produksi.
 
 ### File transfer dan backup
 
@@ -757,7 +780,7 @@ Service discovery lokal (Bonjour, Chromecast, printer, UPnP). Berbasis multicast
 - **SSH**: pakai kunci Ed25519, matikan password auth, manfaatkan `~/.ssh/config`, ProxyJump, ControlMaster, dan port forwarding.
 - **NTP**: stratum 0 (sumber) sampai 15; **stratum 16 = tidak sinkron**. Waktu salah merusak TLS, Kerberos, dan korelasi log.
 - **SNMP**: OID dalam pohon MIB; **gunakan counter 64-bit (`ifHC*`)** — counter 32-bit wrap dalam 34 detik di link 1 Gbps. **v3 satu-satunya yang aman.**
-- **Syslog severity 0–7, angka kecil = lebih parah.** Aktifkan `service timestamps log datetime msec`. UDP 514 tidak andal — pakai TCP/TLS untuk lingkungan penting.
+- **Syslog severity 0-7, angka kecil = lebih parah.** Aktifkan `service timestamps log datetime msec`. UDP 514 tidak andal — pakai TCP/TLS untuk lingkungan penting.
 - **FTP pasif** untuk melewati firewall. **SFTP (22)** direkomendasikan; **TFTP tanpa keamanan apa pun** — batasi dengan ACL.
 - **Ganti Telnet dengan SSH.** Sediakan **out-of-band management**.
 - **mDNS/SSDP tidak melewati router** — butuh repeater untuk lintas VLAN.
@@ -815,13 +838,13 @@ Service discovery lokal (Bonjour, Chromecast, printer, UPnP). Berbasis multicast
 
 - RFC 5321 — SMTP · RFC 3501 — IMAP · RFC 1939 — POP3
 - RFC 7208 — SPF · RFC 6376 — DKIM · RFC 7489 — DMARC
-- RFC 4251–4254 — SSH Protocol
+- RFC 4251-4254 — SSH Protocol
 - RFC 5905 — NTPv4 · IEEE 1588 — PTP
-- RFC 3411–3418 — SNMPv3
+- RFC 3411-3418 — SNMPv3
 - RFC 3164 & RFC 5424 — Syslog
 - RFC 959 — FTP · RFC 1350 — TFTP
 - Cisco CCNA 200-301 v1.1, topik 4.2 (NTP), 4.4 (SNMP), 4.5 (syslog facilities & severity), 4.8 (SSH), 4.9 (TFTP/FTP)
 
 ---
 
-**Berikutnya:** `07-routing-lanjutan/01-static-routing.md` — memasuki tahap menengah.
+**Berikutnya:** `07-routing-lanjutan/01-static-routing.md`. Memasuki tahap menengah.

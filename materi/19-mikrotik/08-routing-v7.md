@@ -1,4 +1,4 @@
-# 19.8 — Routing RouterOS v7 (MTCRE)
+# 19.8 Routing RouterOS v7 (MTCRE)
 
 > **Prasyarat:** `19-mikrotik/01-pengenalan-routeros`, `19-mikrotik/03-firewall-nat` (mangle), `07-routing-lanjutan/01-static-routing`, `07-routing-lanjutan/04-ospf`, `07-routing-lanjutan/06-bgp`, `07-routing-lanjutan/07-redistribusi-policy`
 > **Tujuan:** Anda memahami arsitektur routing RouterOS v7 (RIB, FIB, scope, routing table, routing rule), bisa menulis routing filter dengan sintaks baru, membangun OSPFv2/v3 dan BGP v7 (instance, template, connection, community, route reflector) untuk ISP lokal yang multihoming ke dua upstream, memakai VRF dan ECMP, serta mengenali perbedaan perilaku v6 dan v7 yang paling sering menjebak.
@@ -24,9 +24,11 @@ Semua perintah dan contoh keluaran di modul ini diuji pada **CHR RouterOS 7.24.5
 | 7.22 | BGP multipath, add-path, BGP unnumbered; `/routing settings policy-rules` |
 | 7.23 | Konfigurasi virtual link OSPF berubah (memakai interface OSPF langsung) |
 
-⚠️ Lab di modul ini memakai `/routing bgp instance`, jadi butuh **RouterOS 7.20 atau lebih baru**. Kalau perangkat Anda masih di bawah itu, bagian BGP perlu disesuaikan (lihat §7.1). Periksa versi dengan `/system resource print` sebelum menyalin apa pun.
+> [!WARNING]
+> Lab di modul ini memakai `/routing bgp instance`, jadi butuh **RouterOS 7.20 atau lebih baru**. Kalau perangkat Anda masih di bawah itu, bagian BGP perlu disesuaikan (lihat §7.1). Periksa versi dengan `/system resource print` sebelum menyalin apa pun.
 
-💡 Satu kebiasaan yang menyelamatkan banyak jam: setiap kali menemukan contoh konfigurasi RouterOS di forum atau blog, cari tahu dulu ditulis untuk v6 atau v7. Tanda v6 yang paling mudah dikenali: `/ip route rule`, `/routing bgp peer`, `/routing bgp network`, `/routing ospf network`, `/routing filter add chain=... action=...`. Semua menu itu tidak ada lagi di v7.
+> [!TIP]
+> Satu kebiasaan yang menyelamatkan banyak jam: setiap kali menemukan contoh konfigurasi RouterOS di forum atau blog, cari tahu dulu ditulis untuk v6 atau v7. Tanda v6 yang paling mudah dikenali: `/ip route rule`, `/routing bgp peer`, `/routing bgp network`, `/routing ospf network`, `/routing filter add chain=... action=...`. Semua menu itu tidak ada lagi di v7.
 
 ---
 
@@ -178,7 +180,8 @@ Modul `19-mikrotik/01-pengenalan-routeros` §7 sudah memberi resep failover klas
 
 Rute pertama diberi `scope=10` supaya boleh dipakai untuk resolusi. Rute kedua memakai `target-scope=11`, sehingga ia hanya bisa diselesaikan lewat rute dengan scope ≤ 11, yaitu rute /32 tadi (bukan lewat default route dirinya sendiri, yang scope-nya 30). `check-gateway=ping` lalu memeriksa 8.8.8.8 yang berada di luar jaringan ISP. Kalau upstream ISP-A putus di tengah jalan sementara modem tetap hidup, ping ke 8.8.8.8 gagal dan default route pertama dinonaktifkan. Ini yang tidak bisa dilakukan oleh `check-gateway` biasa yang hanya memeriksa gateway terdekat.
 
-⚠️ Pilih alamat probe yang Anda boleh ping terus-menerus dan yang jarang berubah. Dua ISP sebaiknya memakai alamat probe yang berbeda, dan rute /32 ke probe harus tetap mengarah lewat ISP yang diuji.
+> [!WARNING]
+> Pilih alamat probe yang Anda boleh ping terus-menerus dan yang jarang berubah. Dua ISP sebaiknya memakai alamat probe yang berbeda, dan rute /32 ke probe harus tetap mengarah lewat ISP yang diuji.
 
 ### Perbedaan v6 dan v7 dalam resolusi next-hop
 
@@ -204,7 +207,8 @@ v7 memperkenalkan notasi untuk menyatakan di tabel mana gateway dicari:
 | `gateway=10.0.0.1%ether2` | Gateway di interface tertentu |
 | `gateway=ether2@vrf-a` | Interface di VRF lain |
 
-⚠️ Hindari interface sebagai gateway pada link broadcast (Ethernet) kecuali tujuannya memang terhubung langsung. Router akan mengirim ARP untuk alamat tujuan akhir, bukan untuk next-hop, sehingga tujuan yang berjarak beberapa hop tidak akan pernah terjangkau. `check-gateway` juga tidak bisa dipakai pada gateway berupa interface broadcast karena tidak ada alamat yang bisa diperiksa.
+> [!WARNING]
+> Hindari interface sebagai gateway pada link broadcast (Ethernet) kecuali tujuannya memang terhubung langsung. Router akan mengirim ARP untuk alamat tujuan akhir, bukan untuk next-hop, sehingga tujuan yang berjarak beberapa hop tidak akan pernah terjangkau. `check-gateway` juga tidak bisa dipakai pada gateway berupa interface broadcast karena tidak ada alamat yang bisa diperiksa.
 
 ### check-gateway
 
@@ -237,7 +241,8 @@ Perbedaan v7 yang paling sering memakan korban: **tabel harus didaftarkan di `/r
 
 Di v6 Anda cukup menulis `routing-mark=nama` di rute dan tabel tercipta sendiri. Di v7, perintah `/ip route add ... routing-table=via-upb` tanpa tabel terdaftar ditolak dengan pesan `input does not match any value of routing-table`. Batas jumlah tabel adalah 4096.
 
-💡 Rute di tabel selain `main` yang gateway-nya ada di `main` perlu notasi `gateway=x.x.x.x@main` bila gateway tidak terhubung langsung ke tabel itu. Dokumentasi resmi juga mengingatkan: agar lookup di tabel kustom berhasil, tabel `main` sebaiknya juga bisa menyelesaikan tujuan yang sama.
+> [!TIP]
+> Rute di tabel selain `main` yang gateway-nya ada di `main` perlu notasi `gateway=x.x.x.x@main` bila gateway tidak terhubung langsung ke tabel itu. Dokumentasi resmi juga mengingatkan: agar lookup di tabel kustom berhasil, tabel `main` sebaiknya juga bisa menyelesaikan tujuan yang sama.
 
 ### Routing rule
 
@@ -254,7 +259,8 @@ Parameter pencocokan: `src-address`, `dst-address`, `interface` (interface masuk
 
 Rule diperiksa berurutan dari atas. Urutan inilah sumber jebakan klasik berikut.
 
-⚠️ **Default route di tabel kustom menelan lalu lintas internal.** Aksi `lookup` hanya jatuh ke `main` kalau *tidak ada* rute yang cocok. Tabel `via-upb` berisi default route, sehingga selalu ada yang cocok. Akibatnya, paket dari pelanggan korporat ke server di jaringan sendiri ikut dikirim ke upstream. Solusinya, taruh pengecualian di atas:
+> [!WARNING]
+> **Default route di tabel kustom menelan lalu lintas internal.** Aksi `lookup` hanya jatuh ke `main` kalau *tidak ada* rute yang cocok. Tabel `via-upb` berisi default route, sehingga selalu ada yang cocok. Akibatnya, paket dari pelanggan korporat ke server di jaringan sendiri ikut dikirim ke upstream. Solusinya, taruh pengecualian di atas:
 
 ```
 /routing rule
@@ -324,7 +330,8 @@ add gateway=198.51.100.1 distance=2 check-gateway=ping
 
 Pilihan `both-addresses` membuat satu pasangan alamat sumber-tujuan selalu jatuh ke ISP yang sama. Ini penting untuk layanan perbankan dan game daring yang menolak sesi jika alamat publik pelanggan berganti di tengah jalan. Jangan lupa NAT masquerade untuk kedua interface WAN.
 
-⚠️ Dokumentasi resmi menyarankan tidak mencampur mangle routing mark dan routing rule untuk lalu lintas yang sama kecuali Anda paham urutannya. Mangle diproses lebih dulu, sehingga lalu lintas yang sudah ditandai dan berhasil di-lookup tidak akan pernah dilihat routing rule.
+> [!WARNING]
+> Dokumentasi resmi menyarankan tidak mencampur mangle routing mark dan routing rule untuk lalu lintas yang sama kecuali Anda paham urutannya. Mangle diproses lebih dulu, sehingga lalu lintas yang sudah ditandai dan berhasil di-lookup tidak akan pernah dilihat routing rule.
 
 ---
 
@@ -383,7 +390,8 @@ add chain=upa-masuk rule="set bgp-local-pref 200; append bgp-communities 64500:1
 
 `return` di akhir rantai `bogon` mengembalikan rute yang lolos ke rantai pemanggil. Tanpa baris itu, rute yang lolos akan jatuh ke aksi default (reject). Perhatikan juga bahwa `dst in 0.0.0.0/8` tidak menangkap default route 0.0.0.0/0, karena 0.0.0.0/0 bukan subnet dari 0.0.0.0/8. Lab membuktikan default route dari upstream tetap diterima.
 
-💡 Aturan keempat (menolak prefiks milik sendiri dari upstream) adalah higiene BGP dasar. Kalau ada pihak lain yang membajak atau membocorkan prefiks Anda, router Anda tidak akan ikut mempercayainya.
+> [!TIP]
+> Aturan keempat (menolak prefiks milik sendiri dari upstream) adalah higiene BGP dasar. Kalau ada pihak lain yang membajak atau membocorkan prefiks Anda, router Anda tidak akan ikut mempercayainya.
 
 ### Regex AS-path: jangan salin dari v6 atau Cisco
 
@@ -534,7 +542,8 @@ Hasilnya teramati di CORE sebagai LSA eksternal tipe 1 dengan metric 50:
 
 Default route punya jalur khusus: `originate-default=always | if-installed | never` di instance. `if-installed` hanya mengiklankan default jika router punya default route aktif.
 
-⚠️ Contoh di atas sengaja memperlihatkan bahaya klasik. Rute 203.0.113.0/24 di BR2 adalah blackhole agregat. Begitu diredistribusikan ke OSPF, CORE akan mengirim paket ke bagian prefiks yang tidak punya rute lebih spesifik ke BR2, lalu dibuang. Di lab, eksperimen ini Anda batalkan lagi setelah melihat hasilnya.
+> [!WARNING]
+> Contoh di atas sengaja memperlihatkan bahaya klasik. Rute 203.0.113.0/24 di BR2 adalah blackhole agregat. Begitu diredistribusikan ke OSPF, CORE akan mengirim paket ke bagian prefiks yang tidak punya rute lebih spesifik ke BR2, lalu dibuang. Di lab, eksperimen ini Anda batalkan lagi setelah melihat hasilnya.
 
 ### BFD untuk OSPF
 
@@ -657,7 +666,8 @@ Prefiks hanya diiklankan jika rute yang sama persis ada di tabel routing (sinkro
 
 ### 7.4 Jebakan output dan input
 
-⚠️ **Tanpa `output.filter-chain`, BGP mengiklankan semua rute BGP aktif.** RouterOS tidak menerapkan perilaku "tolak semua secara default" seperti yang dianjurkan RFC 8212. Satu sesi eBGP tanpa filter di router yang menerima full table dari upstream A akan mengiklankan seluruh internet ke upstream B. Itulah route leak, dan itulah alasan setiap sesi eBGP di lab punya rantai keluar yang berakhir `reject`:
+> [!WARNING]
+> **Tanpa `output.filter-chain`, BGP mengiklankan semua rute BGP aktif.** RouterOS tidak menerapkan perilaku "tolak semua secara default" seperti yang dianjurkan RFC 8212. Satu sesi eBGP tanpa filter di router yang menerima full table dari upstream A akan mengiklankan seluruh internet ke upstream B. Itulah route leak, dan itulah alasan setiap sesi eBGP di lab punya rantai keluar yang berakhir `reject`:
 
 ```
 /routing filter rule
@@ -665,7 +675,8 @@ add chain=upa-keluar rule="if (dst == 203.0.113.0/24) { accept }"
 add chain=upa-keluar rule="reject"
 ```
 
-⚠️ **Default route tidak diiklankan lewat BGP kecuali diminta.** Ini ditemukan saat menguji lab: BR1 menerima default dari UPA, tetapi CORE tidak pernah menerimanya lewat iBGP sampai connection BR1 ke CORE diberi `output.default-originate=if-installed`. Nilai lain: `always` (selalu kirim default, dipakai upstream ke pelanggan) dan `never` (default).
+> [!WARNING]
+> **Default route tidak diiklankan lewat BGP kecuali diminta.** Ini ditemukan saat menguji lab: BR1 menerima default dari UPA, tetapi CORE tidak pernah menerimanya lewat iBGP sampai connection BR1 ke CORE diberi `output.default-originate=if-installed`. Nilai lain: `always` (selalu kirim default, dipakai upstream ke pelanggan) dan `never` (default).
 
 Untuk sisi masuk, ada dua lapis:
 
@@ -688,7 +699,8 @@ Role menyatakan hubungan bisnis: `ebgp-customer` (saya pelanggan tetangga), `ebg
 
 Sesi yang dikonfigurasi dengan role juga memakai atribut OTC (Only To Customer). Di UPB, rute 203.0.113.0/24 yang diterima dari peer UPA membawa `.otc=64501`. Dengan atribut ini, router yang mematuhi RFC 9234 tidak akan meneruskan rute tersebut ke provider atau peer lain. Ini mekanisme di tingkat protokol untuk aturan valley-free yang dibahas di `07-routing-lanjutan/11-interkoneksi-internet`.
 
-💡 Role adalah tambahan, bukan pengganti filter keluar. Upstream Anda mungkin belum mendukung RFC 9234. Selalu pertahankan filter prefiks keluar.
+> [!TIP]
+> Role adalah tambahan, bukan pengganti filter keluar. Upstream Anda mungkin belum mendukung RFC 9234. Selalu pertahankan filter prefiks keluar.
 
 ### 7.7 iBGP dan route reflector
 
@@ -721,7 +733,8 @@ add chain=contoh2 rule="append bgp-large-communities 64500:1:101; accept"
 
 Community well-known yang dikenali di `community-list` antara lain `no-export`, `no-advertise`, `blackhole`, `graceful-shutdown`, `local-as`.
 
-💡 Banyak upstream dan IXP di Indonesia menyediakan *action community*: community yang Anda tempel pada prefiks agar upstream melakukan sesuatu, misalnya prepend ke tetangga tertentu, tidak mengiklankan ke peer tertentu, atau RTBH (blackhole) saat Anda diserang DDoS. Nilainya berbeda di tiap operator dan biasanya ada di dokumen teknis untuk pelanggan atau di catatan PeeringDB-nya. Mintalah dokumen itu saat tanda tangan kontrak transit. Teknik pemasangannya di RouterOS sama: `append bgp-communities AS-UPSTREAM:NILAI` di rantai keluar ke upstream tersebut.
+> [!TIP]
+> Banyak upstream dan IXP di Indonesia menyediakan *action community*: community yang Anda tempel pada prefiks agar upstream melakukan sesuatu, misalnya prepend ke tetangga tertentu, tidak mengiklankan ke peer tertentu, atau RTBH (blackhole) saat Anda diserang DDoS. Nilainya berbeda di tiap operator dan biasanya ada di dokumen teknis untuk pelanggan atau di catatan PeeringDB-nya. Mintalah dokumen itu saat tanda tangan kontrak transit. Teknik pemasangannya di RouterOS sama: `append bgp-communities AS-UPSTREAM:NILAI` di rantai keluar ke upstream tersebut.
 
 ### 7.9 Multihoming ke dua upstream: kebijakan ISP lokal
 
@@ -734,7 +747,8 @@ Skenario lab mewakili kasus yang sangat umum di Indonesia: ISP lokal di sebuah k
 
 Untuk butir 2, perhatikan semantik prepend di RouterOS yang ditemukan saat pengujian:
 
-⚠️ **`set bgp-path-prepend N` membuat AS Anda muncul N kali total, bukan ditambah N.** Dengan `set bgp-path-prepend 2`, UPB menerima AS-path `64500,64500` (satu tambahan). Panjangnya sama dengan jalur lewat UPA (`64501,64500`), sehingga UPB tetap memilih jalur langsung dan inbound tidak bergeser. Baru dengan nilai 3 (`64500,64500,64500`) UPB memilih jalur lewat UPA:
+> [!WARNING]
+> **`set bgp-path-prepend N` membuat AS Anda muncul N kali total, bukan ditambah N.** Dengan `set bgp-path-prepend 2`, UPB menerima AS-path `64500,64500` (satu tambahan). Panjangnya sama dengan jalur lewat UPA (`64501,64500`), sehingga UPB tetap memilih jalur langsung dan inbound tidak bergeser. Baru dengan nilai 3 (`64500,64500,64500`) UPB memilih jalur lewat UPA:
 
 ```
 [admin@UPB] > /routing route print detail where dst-address=203.0.113.0/24
@@ -786,7 +800,8 @@ Hal-hal penting:
 /ip route print where routing-table=vrf-noc
 ```
 
-💡 Selalu isi `src-address` saat ping dari router ke dalam VRF. Saat menguji lab 19.9, ping dari PE ke VRF tanpa `src-address` gagal, sedangkan dengan `src-address` alamat interface VRF berhasil.
+> [!TIP]
+> Selalu isi `src-address` saat ping dari router ke dalam VRF. Saat menguji lab 19.9, ping dari PE ke VRF tanpa `src-address` gagal, sedangkan dengan `src-address` alamat interface VRF berhasil.
 
 ### Route leaking statis
 
@@ -803,7 +818,8 @@ Ada dua arah, dan ada satu jebakan yang ditemukan saat pengujian:
 /ip route add dst-address=172.16.99.0/24 gateway=vrf-noc@vrf-noc
 ```
 
-⚠️ Gateway `interface@vrf` hanya bekerja untuk paket yang diteruskan (forwarding). Untuk paket yang ditujukan ke alamat lokal router di VRF itu (misalnya balasan ping ke 172.16.99.1), gateway harus interface VRF-nya (`vrf-noc@vrf-noc`). Di lab, ping dari VRF ke loopback BR1 baru berhasil setelah rute balik diubah ke bentuk ini. Membocorkan prefiks yang tumpang tindih tidak akan bekerja.
+> [!WARNING]
+> Gateway `interface@vrf` hanya bekerja untuk paket yang diteruskan (forwarding). Untuk paket yang ditujukan ke alamat lokal router di VRF itu (misalnya balasan ping ke 172.16.99.1), gateway harus interface VRF-nya (`vrf-noc@vrf-noc`). Di lab, ping dari VRF ke loopback BR1 baru berhasil setelah rute balik diubah ke bentuk ini. Membocorkan prefiks yang tumpang tindih tidak akan bekerja.
 
 ### Route leaking dinamis tanpa sesi BGP (7.14+)
 
@@ -927,7 +943,8 @@ docker images | grep mikrotik_routeros     # hasil: vrnetlab/mikrotik_routeros:7
 
 Catatan dari dokumentasi containerlab: `ether1` dipakai untuk manajemen dan tidak boleh muncul di bagian `links`, port data mulai dari `ether2`, kredensial default `admin:admin`, dan berkas `startup-config` disalin ke node sebagai `config.auto.rsc` lalu dieksekusi otomatis oleh RouterOS. Host Linux butuh KVM (`/dev/kvm`). Lisensi CHR gratis membatasi kecepatan unggah 1 Mbps per interface, lebih dari cukup untuk lab routing.
 
-💡 Tanpa containerlab, topologi yang sama bisa dibangun di GNS3 atau EVE-NG dengan template CHR. Hubungkan port sesuai tabel, lalu impor berkas `.rsc` dengan `/import file-name=br1.rsc` setelah mengunggahnya lewat WinBox atau SCP.
+> [!TIP]
+> Tanpa containerlab, topologi yang sama bisa dibangun di GNS3 atau EVE-NG dengan template CHR. Hubungkan port sesuai tabel, lalu impor berkas `.rsc` dengan `/import file-name=br1.rsc` setelah mengunggahnya lewat WinBox atau SCP.
 
 ### Menjalankan
 
@@ -1069,25 +1086,35 @@ sudo containerlab destroy -t routing-v7.clab.yml
 
 ## 12. Kesalahan Umum
 
-⚠️ **Menyalin konfigurasi v6 dari tutorial lama.** Sebagian perintah ditolak (bagus, Anda langsung tahu), tetapi sebagian lain diterima dengan makna berbeda, terutama regex AS-path dan prepend. Selalu cek versi sumber.
+> [!WARNING]
+> **Menyalin konfigurasi v6 dari tutorial lama.** Sebagian perintah ditolak (bagus, Anda langsung tahu), tetapi sebagian lain diterima dengan makna berbeda, terutama regex AS-path dan prepend. Selalu cek versi sumber.
 
-⚠️ **Rantai filter tanpa `accept` di akhir.** Sesi BGP established, tetapi `prefix-count` tidak bertambah di tabel aktif, atau semua rute tampil sebagai filtered. Tambahkan aturan `accept` atau `return` yang tepat.
+> [!WARNING]
+> **Rantai filter tanpa `accept` di akhir.** Sesi BGP established, tetapi `prefix-count` tidak bertambah di tabel aktif, atau semua rute tampil sebagai filtered. Tambahkan aturan `accept` atau `return` yang tepat.
 
-⚠️ **Sesi eBGP tanpa filter keluar.** Router ISP lokal menjadi transit gratis antar-upstream dan membocorkan rute. Setiap connection eBGP wajib punya `output.filter-chain` yang berakhir `reject`.
+> [!WARNING]
+> **Sesi eBGP tanpa filter keluar.** Router ISP lokal menjadi transit gratis antar-upstream dan membocorkan rute. Setiap connection eBGP wajib punya `output.filter-chain` yang berakhir `reject`.
 
-⚠️ **Rule policy routing tanpa pengecualian tujuan internal.** Pelanggan korporat tidak bisa menjangkau DNS atau server di jaringan sendiri karena paketnya dibawa ke upstream.
+> [!WARNING]
+> **Rule policy routing tanpa pengecualian tujuan internal.** Pelanggan korporat tidak bisa menjangkau DNS atau server di jaringan sendiri karena paketnya dibawa ke upstream.
 
-⚠️ **Mangle menandai lalu lintas ke router sendiri.** WinBox dan DNS router tidak bisa diakses dari LAN setelah PCC dipasang. Tambahkan `dst-address-type=!local`.
+> [!WARNING]
+> **Mangle menandai lalu lintas ke router sendiri.** WinBox dan DNS router tidak bisa diakses dari LAN setelah PCC dipasang. Tambahkan `dst-address-type=!local`.
 
-⚠️ **Static route ke loopback tanpa menaikkan target-scope.** Rute tidak aktif dan tidak ada pesan galat. Periksa kolom `TA` dan `IMMEDIATE-GW` di `/routing route print`.
+> [!WARNING]
+> **Static route ke loopback tanpa menaikkan target-scope.** Rute tidak aktif dan tidak ada pesan galat. Periksa kolom `TA` dan `IMMEDIATE-GW` di `/routing route print`.
 
-⚠️ **Mengandalkan cost OSPF otomatis.** Link 10G dan 100M diperlakukan sama. Tetapkan cost secara eksplisit sesuai kebijakan yang sama dengan router vendor lain di jaringan Anda.
+> [!WARNING]
+> **Mengandalkan cost OSPF otomatis.** Link 10G dan 100M diperlakukan sama. Tetapkan cost secara eksplisit sesuai kebijakan yang sama dengan router vendor lain di jaringan Anda.
 
-⚠️ **Mengharapkan default route BGP mengalir sendiri ke router internal.** Pakai `output.default-originate=if-installed` di connection yang perlu menerimanya.
+> [!WARNING]
+> **Mengharapkan default route BGP mengalir sendiri ke router internal.** Pakai `output.default-originate=if-installed` di connection yang perlu menerimanya.
 
-⚠️ **Membuat VRF lalu langsung menambah rute di skrip.** Tabel VRF belum siap. Beri jeda.
+> [!WARNING]
+> **Membuat VRF lalu langsung menambah rute di skrip.** Tabel VRF belum siap. Beri jeda.
 
-⚠️ **Lupa bahwa layanan router tidak mengikuti VRF.** SSH ke router lewat interface VRF gagal sampai `/ip service set ssh vrf=...` diatur.
+> [!WARNING]
+> **Lupa bahwa layanan router tidak mengikuti VRF.** SSH ke router lewat interface VRF gagal sampai `/ip service set ssh vrf=...` diatur.
 
 ---
 
@@ -1164,4 +1191,4 @@ sudo containerlab destroy -t routing-v7.clab.yml
 
 ---
 
-**Berikutnya:** `19-mikrotik/09-mpls-routeros` — MPLS, LDP, L3VPN, VPLS, dan RSVP-TE di RouterOS v7 untuk backbone ISP lokal.
+**Berikutnya:** `19-mikrotik/09-mpls-routeros`. MPLS, LDP, L3VPN, VPLS, dan RSVP-TE di RouterOS v7 untuk backbone ISP lokal.

@@ -1,4 +1,4 @@
-# Lab 02 — Routing
+# Lab 02: Routing
 
 > **Prasyarat:** Tahap 4, 7, Lab 01
 > **Platform:** Packet Tracer / GNS3 / Containerlab (FRR)
@@ -6,7 +6,7 @@
 
 ---
 
-## Lab 2.1 — Static Routing & Default Route
+## Lab 2.1: Static Routing & Default Route
 
 **Topologi:** R1 — R2 — R3 (rantai); tiap router punya LAN sendiri.
 ```
@@ -37,7 +37,7 @@ Setiap router hanya tahu jaringan yang **langsung terhubung** (connected) secara
 
 ---
 
-## Lab 2.2 — Floating Static (Backup Route)
+## Lab 2.2: Floating Static (Backup Route)
 
 **Topologi:** R1 ke R2 punya **dua jalur** (primer + backup).
 
@@ -61,7 +61,7 @@ Angka `10` di akhir = **administrative distance**. Router memilih rute dengan **
 
 ---
 
-## Lab 2.3 — Inter-VLAN Routing (Router-on-a-Stick & SVI)
+## Lab 2.3: Inter-VLAN Routing (Router-on-a-Stick & SVI)
 
 **Topologi:** switch dengan VLAN 10 & 20 + router (atau L3 switch).
 
@@ -99,7 +99,7 @@ Set gateway PC = IP SVI/subinterface VLAN-nya. Kini VLAN 10 & 20 terhubung via *
 
 ---
 
-## Lab 2.4 — OSPF Single-Area
+## Lab 2.4: OSPF Single-Area
 
 **Topologi:** 3 router (R1-R2-R3) + LAN di tiap router.
 
@@ -126,7 +126,7 @@ R1(config-router)# network 10.0.12.0 0.0.0.3 area 0
 
 ---
 
-## Lab 2.5 — OSPF DR/BDR pada Segmen Broadcast
+## Lab 2.5: OSPF DR/BDR pada Segmen Broadcast
 
 **Topologi:** 3+ router di **satu segmen broadcast** (switch bersama).
 
@@ -152,7 +152,7 @@ Pada segmen **broadcast/multi-access**, OSPF memilih **DR (Designated Router)** 
 
 ---
 
-## Lab 2.6 (Lanjutan) — BGP eBGP Dua AS
+## Lab 2.6 (Lanjutan): BGP eBGP Dua AS
 
 **Topologi:** R1 (AS 65001) — R2 (AS 65002); simulasi dua ISP/organisasi. *(Butuh GNS3/Containerlab/FRR untuk realistis; PT terbatas.)*
 
@@ -184,6 +184,7 @@ R2(config-router)# network 10.0.2.0 mask 255.255.255.0
 
 Anda mempraktikkan: static routing + default + rute balik, floating static (failover/AD), inter-VLAN (RoaS & SVI), OSPF single-area + DR/BDR, dan eBGP. Ini inti CCNA domain 3.0 (IP Connectivity, 25% — terbesar).
 
-💡 Eksperimen lanjutan: redistribusi static↔OSPF (`07/07`), OSPF cost manipulation, BGP path selection. Dokumentasikan untuk portofolio.
+> [!TIP]
+> Eksperimen lanjutan: redistribusi static↔OSPF (`07/07`), OSPF cost manipulation, BGP path selection. Dokumentasikan untuk portofolio.
 
-**Berikutnya:** `lab/03-lab-ip-services.md` — DHCP, DNS, NAT, ACL.
+**Berikutnya:** `lab/03-lab-ip-services.md`. DHCP, DNS, NAT, ACL.

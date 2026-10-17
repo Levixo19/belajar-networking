@@ -1,4 +1,4 @@
-# 03.4 — Spanning Tree Protocol (STP)
+# 03.4 Spanning Tree Protocol (STP)
 
 > **Prasyarat:** `03-data-link/02`, `03-data-link/03`
 > **Tujuan:** Anda paham kenapa loop L2 fatal, bisa memprediksi topologi STP yang terbentuk, mengonfigurasi root bridge secara sengaja, dan menerapkan fitur perlindungan.
@@ -30,7 +30,8 @@ Skenario: dua switch dihubungkan dengan **dua kabel** (tanpa STP), lalu PC-A men
 6. Frame berlipat ganda EKSPONENSIAL
 ```
 
-⚠️ **Tidak ada TTL di layer 2.** Header IP punya TTL yang mencegah paket berputar selamanya; header Ethernet **tidak punya mekanisme itu sama sekali**. Frame akan berputar selamanya sampai jaringan runtuh.
+> [!WARNING]
+> **Tidak ada TTL di layer 2.** Header IP punya TTL yang mencegah paket berputar selamanya; header Ethernet **tidak punya mekanisme itu sama sekali**. Frame akan berputar selamanya sampai jaringan runtuh.
 
 Dalam beberapa detik: link 100% penuh, CPU switch 100%, semua perangkat tidak responsif — termasuk akses manajemen Anda ke switch.
 
@@ -55,7 +56,8 @@ Penerima mendapat salinan ganda dari frame yang sama. Aplikasi yang tidak siap (
 - Kesalahan kabel saat pemindahan rak
 - Kegagalan unidirectional pada link fiber (hanya satu arah yang mati)
 
-💡 Redundansi fisik **diperlukan** untuk keandalan. STP-lah yang membuat redundansi itu aman: ia menyediakan jalur cadangan yang **diblokir sampai dibutuhkan**.
+> [!TIP]
+> Redundansi fisik **diperlukan** untuk keandalan. STP-lah yang membuat redundansi itu aman: ia menyediakan jalur cadangan yang **diblokir sampai dibutuhkan**.
 
 ---
 
@@ -73,7 +75,7 @@ Topologi fisik (ada loop):        Topologi logis setelah STP (tanpa loop):
                                       (diblokir)
 ```
 
-Jika link SW1–SW2 putus, STP membuka blokir link SW2–SW3 → jaringan pulih otomatis.
+Jika link SW1-SW2 putus, STP membuka blokir link SW2-SW3 → jaringan pulih otomatis.
 
 STP distandarkan sebagai **IEEE 802.1D**, dirancang oleh Radia Perlman (1985).
 
@@ -125,7 +127,8 @@ Priority hanya bisa diubah dalam **kelipatan 4096**: 0, 4096, 8192, 12288, 16384
 2. Kalau seri → MAC address TERENDAH menang
 ```
 
-⚠️ **Bahaya default:** kalau semua switch memakai priority 32768, yang menang adalah **MAC address terendah** — biasanya switch **tertua** di jaringan, yang sering kali switch access kecil di sudut ruangan, bukan core switch yang kuat. Ini menghasilkan topologi yang buruk: semua trafik memutar lewat switch lemah.
+> [!WARNING]
+> **Bahaya default:** kalau semua switch memakai priority 32768, yang menang adalah **MAC address terendah** — biasanya switch **tertua** di jaringan, yang sering kali switch access kecil di sudut ruangan, bukan core switch yang kuat. Ini menghasilkan topologi yang buruk: semua trafik memutar lewat switch lemah.
 
 **Selalu tetapkan root bridge secara sengaja:**
 ```
@@ -162,7 +165,8 @@ Setiap switch **non-root** memilih **satu** root port — port dengan jalur terb
 | 10 Gbps | 2 | 2.000 |
 | 100 Gbps | — | 200 |
 
-⚠️ Cost lama tidak bisa membedakan 10 G dan 100 G dengan baik (2 vs 1). Untuk jaringan cepat, aktifkan mode long:
+> [!WARNING]
+> Cost lama tidak bisa membedakan 10 G dan 100 G dengan baik (2 vs 1). Untuk jaringan cepat, aktifkan mode long:
 ```
 SW1(config)# spanning-tree pathcost method long
 ```
@@ -269,11 +273,11 @@ R = Root Port, D = Designated Port, B = Blocking
 
 | State | Meneruskan data? | Belajar MAC? | Memproses BPDU? | Durasi |
 |---|---|---|---|---|
-| **Disabled** | ❌ | ❌ | ❌ | — (admin down) |
-| **Blocking** | ❌ | ❌ | ✅ | 20 detik (max age) |
-| **Listening** | ❌ | ❌ | ✅ | 15 detik (forward delay) |
-| **Learning** | ❌ | ✅ | ✅ | 15 detik (forward delay) |
-| **Forwarding** | ✅ | ✅ | ✅ | — (normal) |
+| **Disabled** | Tidak | Tidak | Tidak | — (admin down) |
+| **Blocking** | Tidak | Tidak | Ya | 20 detik (max age) |
+| **Listening** | Tidak | Tidak | Ya | 15 detik (forward delay) |
+| **Learning** | Tidak | Ya | Ya | 15 detik (forward delay) |
+| **Forwarding** | Ya | Ya | Ya | — (normal) |
 
 **Timer default:**
 ```
@@ -288,7 +292,8 @@ Port baru menyala        : 15 (listening) + 15 (learning) = 30 detik
 Kegagalan link tak langsung: 20 (max age) + 15 + 15 = 50 detik
 ```
 
-⚠️ **30–50 detik adalah keabadian** dalam istilah jaringan modern. Panggilan VoIP putus, sesi TCP timeout, aplikasi error. Inilah alasan utama RSTP diciptakan.
+> [!WARNING]
+> **30–50 detik adalah keabadian** dalam istilah jaringan modern. Panggilan VoIP putus, sesi TCP timeout, aplikasi error. Inilah alasan utama RSTP diciptakan.
 
 ---
 
@@ -313,13 +318,14 @@ Message Age, Max Age, Hello Time, Forward Delay
 
 **TCN BPDU** (*Topology Change Notification*) — dikirim ke arah root ketika topologi berubah. Root lalu mengirim BPDU dengan flag TC diset, memerintahkan semua switch mempersingkat MAC aging time menjadi forward delay (15 detik) agar tabel cepat diperbarui.
 
-⚠️ **Topology change berlebihan berbahaya.** Setiap TC memaksa semua switch membuang sebagian MAC table → flooding meningkat. Port access yang naik-turun (PC dinyalakan/dimatikan) akan memicu TC — kecuali port itu dikonfigurasi **PortFast**.
+> [!WARNING]
+> **Topology change berlebihan berbahaya.** Setiap TC memaksa semua switch membuang sebagian MAC table → flooding meningkat. Port access yang naik-turun (PC dinyalakan/dimatikan) akan memicu TC — kecuali port itu dikonfigurasi **PortFast**.
 
 ---
 
-## 7. RSTP — 802.1w
+## 7. RSTP: 802.1w
 
-Perbaikan besar dari 802.1D. Waktu konvergensi turun dari 30–50 detik menjadi **kurang dari 1 detik** pada kondisi ideal.
+Perbaikan besar dari 802.1D. Waktu konvergensi turun dari 30-50 detik menjadi **kurang dari 1 detik** pada kondisi ideal.
 
 ### Port role baru
 
@@ -365,7 +371,8 @@ Perbaikan besar dari 802.1D. Waktu konvergensi turun dari 30–50 detik menjadi 
 SW1(config)# spanning-tree mode rapid-pvst
 ```
 
-💡 **RSTP kompatibel mundur dengan 802.1D** — jika ada switch lama, port yang terhubung ke sana otomatis turun ke mode 802.1D. Tapi ini juga berarti satu switch lama bisa memperlambat sebagian jaringan.
+> [!TIP]
+> **RSTP kompatibel mundur dengan 802.1D** — jika ada switch lama, port yang terhubung ke sana otomatis turun ke mode 802.1D. Tapi ini juga berarti satu switch lama bisa memperlambat sebagian jaringan.
 
 ---
 
@@ -393,7 +400,8 @@ SW-CORE2(config)# spanning-tree vlan 10,30,50 root secondary
 
 Hasilnya: trafik VLAN ganjil lewat CORE1, VLAN genap lewat CORE2. Kedua uplink terpakai, bukan satu menganggur.
 
-⚠️ Kelemahan: dengan 500 VLAN, ada 500 instance STP → beban CPU dan memori besar.
+> [!WARNING]
+> Kelemahan: dengan 500 VLAN, ada 500 instance STP → beban CPU dan memori besar.
 
 ### MSTP (802.1s)
 
@@ -411,7 +419,8 @@ SW1(config)# spanning-tree mst 1 root primary
 SW1(config)# spanning-tree mst 2 root secondary
 ```
 
-⚠️ **Semua switch dalam satu MST region HARUS punya name, revision, dan pemetaan VLAN→instance yang IDENTIK.** Kalau berbeda satu karakter saja, switch dianggap berada di region berbeda dan perilaku STP menjadi tidak sesuai harapan. Ini kesalahan konfigurasi MST paling umum.
+> [!WARNING]
+> **Semua switch dalam satu MST region HARUS punya name, revision, dan pemetaan VLAN→instance yang IDENTIK.** Kalau berbeda satu karakter saja, switch dianggap berada di region berbeda dan perilaku STP menjadi tidak sesuai harapan. Ini kesalahan konfigurasi MST paling umum.
 
 ```
 SW1# show spanning-tree mst configuration
@@ -438,7 +447,8 @@ SW1(config)# spanning-tree portfast default
 - PC bisa langsung dapat DHCP saat boot (tanpa PortFast, 30 detik pertama tidak ada konektivitas → DHCP timeout → PC dapat APIPA 169.254.x.x)
 - Port naik-turun tidak memicu Topology Change
 
-⚠️ **HANYA untuk port yang terhubung ke end device.** Memasang PortFast pada port yang terhubung switch lain = **loop instan** karena tidak ada jeda untuk mendeteksi.
+> [!WARNING]
+> **HANYA untuk port yang terhubung ke end device.** Memasang PortFast pada port yang terhubung switch lain = **loop instan** karena tidak ada jeda untuk mendeteksi.
 
 ### BPDU Guard
 
@@ -463,13 +473,15 @@ SW1(config)# errdisable recovery cause bpduguard
 SW1(config)# errdisable recovery interval 300
 ```
 
-💡 **PortFast + BPDU Guard adalah kombinasi standar** untuk semua port access. Terapkan secara global.
+> [!TIP]
+> **PortFast + BPDU Guard adalah kombinasi standar** untuk semua port access. Terapkan secara global.
 
 ### BPDU Filter
 
 Menghentikan pengiriman/penerimaan BPDU pada port.
 
-⚠️ **BERBAHAYA.** Jika diterapkan global pada port PortFast, port akan berhenti mengirim BPDU tetapi masih memproses BPDU masuk (dan kehilangan status PortFast). Jika diterapkan per-interface, port sepenuhnya buta terhadap BPDU → **loop tidak akan terdeteksi**.
+> [!WARNING]
+> **BERBAHAYA.** Jika diterapkan global pada port PortFast, port akan berhenti mengirim BPDU tetapi masih memproses BPDU masuk (dan kehilangan status PortFast). Jika diterapkan per-interface, port sepenuhnya buta terhadap BPDU → **loop tidak akan terdeteksi**.
 
 Gunakan hanya jika Anda benar-benar paham konsekuensinya, misalnya pada port yang menghadap penyedia layanan yang tidak boleh menerima BPDU Anda.
 
@@ -503,7 +515,7 @@ SW1(config-if)# spanning-tree guard loop
 
 Port masuk state **loop-inconsistent** alih-alih forwarding.
 
-### UDLD — Unidirectional Link Detection
+### UDLD (Unidirectional Link Detection)
 
 Protokol Cisco yang secara aktif mendeteksi link satu arah dengan bertukar pesan berisi identitas perangkat/port.
 
@@ -514,7 +526,8 @@ SW1(config-if)# udld port aggressive
 SW1# show udld gi0/24
 ```
 
-💡 **UDLD dan Loop Guard saling melengkapi**, bukan menggantikan. UDLD mendeteksi masalah fisik; Loop Guard melindungi logika STP. Terapkan keduanya pada link fiber antar-switch.
+> [!TIP]
+> **UDLD dan Loop Guard saling melengkapi**, bukan menggantikan. UDLD mendeteksi masalah fisik; Loop Guard melindungi logika STP. Terapkan keduanya pada link fiber antar-switch.
 
 ### Ringkasan penerapan
 
@@ -601,7 +614,8 @@ SW1# show spanning-tree detail | include ieee|occurr|from|is exec
 6. Perbaiki akar masalah, lalu terapkan BPDU Guard agar tidak terulang.
 ```
 
-💡 **Pencegahan lebih baik:** aktifkan **storm control** agar storm dibatasi otomatis.
+> [!TIP]
+> **Pencegahan lebih baik:** aktifkan **storm control** agar storm dibatasi otomatis.
 ```
 SW1(config-if)# storm-control broadcast level 5.00
 SW1(config-if)# storm-control multicast level 5.00
@@ -623,7 +637,8 @@ STP memblokir jalur — artinya **membuang kapasitas**. Dalam topologi dengan du
 | **Routed access (L3 sampai access)** | Tidak ada L2 antar-switch → tidak ada STP → ECMP memakai semua jalur |
 | **VXLAN + EVPN** | Overlay L2 di atas underlay L3 dengan ECMP (`16-datacenter-cloud-sdn/02`) |
 
-💡 **Arah desain modern: kurangi domain layer 2 sekecil mungkin, gunakan routing untuk redundansi.** Tetapi STP tetap harus aktif sebagai jaring pengaman — jangan pernah mematikannya di jaringan L2.
+> [!TIP]
+> **Arah desain modern: kurangi domain layer 2 sekecil mungkin, gunakan routing untuk redundansi.** Tetapi STP tetap harus aktif sebagai jaring pengaman — jangan pernah mematikannya di jaringan L2.
 
 ---
 
@@ -669,9 +684,11 @@ STP memblokir jalur — artinya **membuang kapasitas**. Dalam topologi dengan du
 /interface bridge vlan set [find vlan-ids=10] ... 
 ```
 
-⚠️ **`protocol-mode=none` mematikan STP sepenuhnya.** Ini default pada beberapa konfigurasi dan **sangat berbahaya** — satu kabel yang salah akan menyebabkan broadcast storm. **Selalu aktifkan minimal `rstp`** pada bridge yang punya lebih dari satu port ke perangkat lain.
+> [!WARNING]
+> **`protocol-mode=none` mematikan STP sepenuhnya.** Ini default pada beberapa konfigurasi dan **sangat berbahaya** — satu kabel yang salah akan menyebabkan broadcast storm. **Selalu aktifkan minimal `rstp`** pada bridge yang punya lebih dari satu port ke perangkat lain.
 
-💡 **`edge=yes-discover`** adalah pilihan yang aman: port berperilaku sebagai edge (langsung forwarding) tetapi tetap mendeteksi BPDU — kalau ada switch yang tercolok, ia otomatis beralih ke mode normal.
+> [!TIP]
+> **`edge=yes-discover`** adalah pilihan yang aman: port berperilaku sebagai edge (langsung forwarding) tetapi tetap mendeteksi BPDU — kalau ada switch yang tercolok, ia otomatis beralih ke mode normal.
 
 ### Padanan istilah
 
@@ -684,7 +701,8 @@ STP memblokir jalur — artinya **membuang kapasitas**. Dalam topologi dengan du
 | `spanning-tree guard root` | `root-guard=yes` |
 | `show spanning-tree` | `/interface bridge monitor` + `/interface bridge port print detail` |
 
-⚠️ **RSTP di RouterOS bersifat per-bridge, bukan per-VLAN.** Tidak ada padanan PVST+. Untuk load balancing per-VLAN, gunakan **MSTP**.
+> [!WARNING]
+> **RSTP di RouterOS bersifat per-bridge, bukan per-VLAN.** Tidak ada padanan PVST+. Untuk load balancing per-VLAN, gunakan **MSTP**.
 
 ---
 
@@ -696,7 +714,7 @@ STP memblokir jalur — artinya **membuang kapasitas**. Dalam topologi dengan du
 - Bridge ID = priority (kelipatan 4096) + extended system ID (VLAN) + MAC. **Priority terendah menang; seri → MAC terendah.**
 - **Selalu tetapkan root bridge secara sengaja** — default memilih switch tertua.
 - Cost berdasarkan bandwidth, dijumlahkan sepanjang jalur. Aktifkan `pathcost method long` untuk link cepat.
-- 802.1D lambat (30–50 detik); **RSTP <1 detik** berkat proposal/agreement dan alternate port.
+- 802.1D lambat (30-50 detik); **RSTP <1 detik** berkat proposal/agreement dan alternate port.
 - Rapid PVST+ (default Cisco) = cepat + load balancing per VLAN. MSTP hemat CPU untuk banyak VLAN.
 - Wajib: **PortFast + BPDU Guard** di port access, **Root Guard** menghadap access, **Loop Guard + UDLD** di trunk fiber.
 - MST region butuh name, revision, dan pemetaan VLAN **identik** di semua switch.
@@ -711,7 +729,7 @@ STP memblokir jalur — artinya **membuang kapasitas**. Dalam topologi dengan du
 3. Sebuah port access di-err-disable dengan pesan BPDU Guard. Apa yang terjadi dan apa langkah Anda?
 4. Jelaskan skenario kegagalan yang dilindungi Loop Guard tetapi tidak oleh STP biasa.
 5. Anda memasang PortFast pada port trunk antar-switch. Apa yang mungkin terjadi?
-6. Kenapa RSTP bisa konvergen dalam <1 detik sementara 802.1D butuh 30–50 detik? Sebutkan tiga alasan.
+6. Kenapa RSTP bisa konvergen dalam <1 detik sementara 802.1D butuh 30-50 detik? Sebutkan tiga alasan.
 7. Sebuah jaringan memakai Rapid PVST+ dengan 400 VLAN. Apa masalahnya dan apa solusinya?
 8. Dua switch dalam MST region yang sama tetapi STP berperilaku seolah region berbeda. Apa yang harus Anda periksa?
 
@@ -730,7 +748,7 @@ STP memblokir jalur — artinya **membuang kapasitas**. Dalam topologi dengan du
 
 6. (a) **Proposal/Agreement handshake** — dua switch bertetangga langsung menyepakati state forwarding dalam milidetik, tanpa menunggu forward delay. (b) **Alternate port** sudah mengetahui topologi dan bisa langsung mengambil alih tanpa melewati listening/learning. (c) **Semua switch mengirim BPDU sendiri** (bukan hanya meneruskan dari root), dan kehilangan 3 BPDU (6 detik) sudah dianggap link mati — bukan menunggu max age 20 detik. (d) Tambahan: edge port langsung forwarding, dan RSTP membedakan link point-to-point yang bisa dikonvergensikan cepat.
 
-7. Rapid PVST+ menjalankan **satu instance STP per VLAN** → 400 instance. Ini memakan CPU dan memori switch secara signifikan, memperlambat konvergensi, dan bisa membuat switch tidak stabil. Solusi: migrasi ke **MSTP (802.1s)**, memetakan 400 VLAN ke misalnya 2–4 instance saja — tetap mendapat load balancing tetapi dengan beban jauh lebih ringan. Alternatif lain: kurangi span VLAN dengan desain routed access.
+7. Rapid PVST+ menjalankan **satu instance STP per VLAN** → 400 instance. Ini memakan CPU dan memori switch secara signifikan, memperlambat konvergensi, dan bisa membuat switch tidak stabil. Solusi: migrasi ke **MSTP (802.1s)**, memetakan 400 VLAN ke misalnya 2-4 instance saja — tetap mendapat load balancing tetapi dengan beban jauh lebih ringan. Alternatif lain: kurangi span VLAN dengan desain routed access.
 
 8. Periksa tiga hal yang harus **identik persis** di semua switch dalam satu region: (a) **MST region name**; (b) **revision number**; (c) **pemetaan VLAN ke instance**. Perbedaan sekecil apa pun (termasuk huruf besar/kecil pada nama, atau satu VLAN yang tertinggal di pemetaan) membuat switch dianggap berada di region berbeda. Verifikasi dengan `show spanning-tree mst configuration` dan bandingkan **digest**-nya — digest yang berbeda memastikan konfigurasinya tidak sama.
 
@@ -748,4 +766,4 @@ STP memblokir jalur — artinya **membuang kapasitas**. Dalam topologi dengan du
 
 ---
 
-**Berikutnya:** `03-data-link/05-etherchannel.md` — menggabungkan beberapa link agar semuanya terpakai.
+**Berikutnya:** `03-data-link/05-etherchannel.md`. Menggabungkan beberapa link agar semuanya terpakai.

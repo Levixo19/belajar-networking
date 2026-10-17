@@ -1,4 +1,4 @@
-# 21.7 — Rumpun Tata Kelola & Konsultasi
+# 21.7 Rumpun Tata Kelola & Konsultasi
 
 > **Prasyarat:** `17-desain-arsitektur/01-prinsip-desain`, `17-desain-arsitektur/03-perencanaan-dokumentasi`, `12-keamanan/01-konsep-keamanan`, `14-monitoring-troubleshooting/01-metodologi`, dan `18-karier-sertifikasi/01-peta-sertifikasi`
 > **Tujuan:** Anda memahami lima profesi yang bekerja di "lapisan atas" infrastruktur (IT consultant, IT auditor, disaster recovery specialist, solution architect, scrum master infrastruktur), tahu kerangka dan regulasi yang mereka pakai di Indonesia, dan bisa menilai apakah salah satunya cocok sebagai langkah karier Anda berikutnya.
@@ -27,7 +27,8 @@ Itulah sebabnya rumpun ini sering diisi orang yang dulunya network engineer atau
 | Solution Architect | "Solusi seperti apa yang memenuhi kebutuhan ini dan bisa dibangun?" | Arsitektur solusi, BoM, proposal teknis | Senior | TOGAF Standard 10th Edition, Well-Architected |
 | Scrum Master Infrastruktur | "Bagaimana tim infrastruktur ini bisa menyelesaikan pekerjaan dengan aliran yang sehat?" | Papan kerja, metrik aliran, retrospektif | Menengah | Scrum Guide 2020, Kanban, SAFe |
 
-💡 Perhatikan kolom "jenjang masuk". Hanya IT auditor yang realistis dimasuki langsung oleh lulusan baru. Empat lainnya hampir selalu diisi orang yang sudah beberapa tahun di peran teknis. Artinya, rumpun ini lebih tepat dibaca sebagai **tujuan tahap kedua karier Anda**, bukan pintu pertama.
+> [!TIP]
+> Perhatikan kolom "jenjang masuk". Hanya IT auditor yang realistis dimasuki langsung oleh lulusan baru. Empat lainnya hampir selalu diisi orang yang sudah beberapa tahun di peran teknis. Artinya, rumpun ini lebih tepat dibaca sebagai **tujuan tahap kedua karier Anda**, bukan pintu pertama.
 
 ---
 
@@ -74,7 +75,8 @@ Ketentuan pelaksananya kini ada di **Peraturan Anggota Dewan Komisioner (PADK) O
 
 **Standar kompetensi: Kepmenaker 231/2024** menetapkan SKKNI bidang Audit Teknologi Informasi (berlaku 12 September 2024), berisi 18 unit kompetensi mulai dari penentuan ruang lingkup audit TI, analisis risiko audit, penyusunan rencana audit, hingga identifikasi kontrol TI. Ini acuan bagi Lembaga Sertifikasi Profesi (LSP) berlisensi BNSP yang menyelenggarakan uji kompetensi auditor TI.
 
-⚠️ Regulasi berubah lebih cepat dari buku. Kebiasaan yang membedakan profesional rumpun ini adalah selalu memeriksa status peraturan di sumber resmi (situs OJK, JDIH kementerian, peraturan.bpk.go.id) sebelum mengutipnya di laporan. Mengutip SEOJK yang sudah dicabut di laporan audit adalah temuan yang memalukan bagi auditornya sendiri.
+> [!WARNING]
+> Regulasi berubah lebih cepat dari buku. Kebiasaan yang membedakan profesional rumpun ini adalah selalu memeriksa status peraturan di sumber resmi (situs OJK, JDIH kementerian, peraturan.bpk.go.id) sebelum mengutipnya di laporan. Mengutip SEOJK yang sudah dicabut di laporan audit adalah temuan yang memalukan bagi auditornya sendiri.
 
 ---
 
@@ -274,18 +276,20 @@ Di perusahaan pengguna akhir, harinya lebih banyak berisi rapat desain dengan ti
 | Jenjang | Sertifikasi | Catatan per Oktober 2026 |
 |---|---|---|
 | Fondasi | CCNA 200-301 v1.1, atau sertifikasi cloud tingkat associate | Banyak solution architect jaringan memulai dari sini |
-| Menengah | AWS Certified Solutions Architect – Associate (SAA-C03) | 65 soal, 130 menit, USD 150. Belum ada pengumuman versi baru untuk SAA |
+| Menengah | AWS Certified Solutions Architect - Associate (SAA-C03) | 65 soal, 130 menit, USD 150. Belum ada pengumuman versi baru untuk SAA |
 | Menengah | Microsoft Certified: Azure Solutions Architect Expert (ujian AZ-305) | Prasyarat: Azure Administrator Associate (AZ-104). Versi bahasa Inggris AZ-305 diperbarui 17 April 2026 |
 | Menengah | Google Cloud Professional Cloud Architect | 2 jam, 50 sampai 60 soal, termasuk studi kasus |
-| Senior | AWS Certified Solutions Architect – Professional | **Berganti versi:** SAP-C02 terakhir bisa diambil 16 November 2026; SAP-C03 dibuka registrasinya 27 Oktober 2026 dan mulai diujikan 17 November 2026 |
+| Senior | AWS Certified Solutions Architect - Professional | **Berganti versi:** SAP-C02 terakhir bisa diambil 16 November 2026; SAP-C03 dibuka registrasinya 27 Oktober 2026 dan mulai diujikan 17 November 2026 |
 | Senior | TOGAF Enterprise Architecture Foundation dan Practitioner (TOGAF Standard, 10th Edition) | Untuk jalur menuju enterprise architect |
-| Spesialis jaringan | AWS Certified Advanced Networking – Specialty (ANS-C01) | **Sedang dipensiunkan:** halaman resmi AWS menyebut hari terakhir ujian 31 Desember 2026, tanpa pengganti yang diumumkan. Sertifikat yang sudah didapat tetap berlaku tiga tahun |
+| Spesialis jaringan | AWS Certified Advanced Networking - Specialty (ANS-C01) | **Sedang dipensiunkan:** halaman resmi AWS menyebut hari terakhir ujian 31 Desember 2026, tanpa pengganti yang diumumkan. Sertifikat yang sudah didapat tetap berlaku tiga tahun |
 
-⚠️ Jangan merencanakan belajar setahun untuk ANS-C01 per Oktober 2026: ujiannya akan tutup sebelum Anda siap. Arahkan energi ke SAP-C03 (jika di ekosistem AWS) atau ke sertifikasi desain jaringan vendor.
+> [!WARNING]
+> Jangan merencanakan belajar setahun untuk ANS-C01 per Oktober 2026: ujiannya akan tutup sebelum Anda siap. Arahkan energi ke SAP-C03 (jika di ekosistem AWS) atau ke sertifikasi desain jaringan vendor.
 
 **Jalur masuk, progresi, dan transisi.** Solution architect hampir selalu senior. Jalur yang paling sering terlihat di Indonesia: network engineer atau system engineer (3 sampai 5 tahun), lalu presales engineer atau technical consultant di SI atau vendor (2 sampai 4 tahun), lalu solution architect. Jalur lain: cloud engineer yang naik menjadi cloud solution architect. Progresi setelahnya: lead atau principal architect, enterprise architect, kepala presales, sampai CTO. Dari network architect, perpindahan ke solution architect adalah perluasan cakupan: dari "jaringan yang benar" ke "solusi menyeluruh yang benar", termasuk aplikasi, data, dan biaya.
 
-💡 **Presales adalah sekolah terbaik untuk solution architect.** Anda dipaksa menjelaskan teknologi kepada pelanggan, menghitung BoM, dan menerima bahwa desain terbaik secara teknis belum tentu menang tender. Lowongan "presales engineer" di distributor dan SI adalah pintu realistis bagi network engineer.
+> [!TIP]
+> **Presales adalah sekolah terbaik untuk solution architect.** Anda dipaksa menjelaskan teknologi kepada pelanggan, menghitung BoM, dan menerima bahwa desain terbaik secara teknis belum tentu menang tender. Lowongan "presales engineer" di distributor dan SI adalah pintu realistis bagi network engineer.
 
 **Konteks pasar kerja Indonesia.** Pemberi kerja: system integrator dan distributor (presales dan solution architect adalah jantung bisnis mereka), vendor jaringan, keamanan, dan cloud, penyedia cloud dan data center lokal, operator telekomunikasi, perusahaan digital, serta bank dan BUMN yang membangun tim arsitektur internal. Banyak proyek pemerintah (SPBE, pusat data, integrasi layanan digital) dimenangkan lewat proposal yang ditulis solution architect di SI.
 
@@ -343,7 +347,8 @@ Rujukan resmi Scrum per 2026 tetap Scrum Guide edisi November 2020. Belum ada SK
 
 **Jalur masuk, progresi, dan transisi.** Jalur paling realistis: beberapa tahun sebagai network atau system engineer di tim yang mulai memakai agile, menjadi orang yang paling rajin memperbaiki cara kerja tim, lalu memegang peran scrum master paruh waktu sebelum penuh waktu. Progresi: scrum master beberapa tim, agile coach, delivery manager, lalu IT operations manager. Kembali ke peran teknis, terutama DevOps atau SRE, juga umum.
 
-⚠️ Peran scrum master di banyak perusahaan Indonesia digabung dengan project manager atau team lead. Baca deskripsi pekerjaannya dengan teliti. Lowongan yang meminta "scrum master yang juga mengatur prioritas dan menilai kinerja anggota tim" sebenarnya sedang mencari manajer, dan itu bertentangan dengan peran scrum master menurut Scrum Guide.
+> [!WARNING]
+> Peran scrum master di banyak perusahaan Indonesia digabung dengan project manager atau team lead. Baca deskripsi pekerjaannya dengan teliti. Lowongan yang meminta "scrum master yang juga mengatur prioritas dan menilai kinerja anggota tim" sebenarnya sedang mencari manajer, dan itu bertentangan dengan peran scrum master menurut Scrum Guide.
 
 **Konteks pasar kerja Indonesia.** Pemberi kerja utama: bank besar dan bank digital yang menerapkan agile berskala (sering dengan SAFe atau model tribe-squad), perusahaan teknologi dan e-commerce, operator telekomunikasi, BUMN yang memiliki unit digital, serta konsultan agile yang menempatkan scrum master di klien. Lowongan yang secara eksplisit menyebut "scrum master infrastruktur" masih jarang; lebih sering Anda akan menemukan "scrum master" di tim platform, cloud, atau DevOps.
 
@@ -389,7 +394,8 @@ Kalau rumpun ini lebih banyak dokumen dan rapat, apakah kurikulum teknis ini sia
 | Network engineer atau architect | IT consultant | Kerangka tata kelola (COBIT, ISO/IEC 27001), menulis laporan untuk manajemen |
 | Network atau system engineer | Scrum master infrastruktur | Scrum dan Kanban, fasilitasi, metrik aliran |
 
-💡 Satu kebiasaan yang membantu transisi ke mana pun di rumpun ini: mulai sekarang, setiap kali Anda menyelesaikan pekerjaan teknis, tulis ringkasan satu paragraf untuk pembaca non-teknis. Apa yang berubah, kenapa penting, apa risikonya kalau tidak dilakukan. Kebiasaan ini melatih otot yang paling dibutuhkan kelima profesi tersebut.
+> [!TIP]
+> Satu kebiasaan yang membantu transisi ke mana pun di rumpun ini: mulai sekarang, setiap kali Anda menyelesaikan pekerjaan teknis, tulis ringkasan satu paragraf untuk pembaca non-teknis. Apa yang berubah, kenapa penting, apa risikonya kalau tidak dilakukan. Kebiasaan ini melatih otot yang paling dibutuhkan kelima profesi tersebut.
 
 ---
 
@@ -451,9 +457,9 @@ Kalau rumpun ini lebih banyak dokumen dan rapat, apakah kurikulum teknis ini sia
 - DRI International, ABCP: https://drii.org/certification/abcp
 - EC-Council, Disaster Recovery Professional (EDRP): https://cert.eccouncil.org/ec-council-disaster-recovery-professional.html
 - AWS Whitepaper, Disaster Recovery of Workloads on AWS: Disaster recovery options in the cloud: https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-options-in-the-cloud.html
-- AWS, Certified Solutions Architect – Associate: https://aws.amazon.com/certification/certified-solutions-architect-associate/
+- AWS, Certified Solutions Architect - Associate: https://aws.amazon.com/certification/certified-solutions-architect-associate/
 - AWS Training and Certification Blog, September 2026 new offerings (SAP-C03): https://aws.amazon.com/blogs/training-and-certification/september-2026-new-offerings/
-- AWS, Certified Advanced Networking – Specialty: https://aws.amazon.com/certification/certified-advanced-networking-specialty/
+- AWS, Certified Advanced Networking - Specialty: https://aws.amazon.com/certification/certified-advanced-networking-specialty/
 - Microsoft Learn, Azure Solutions Architect Expert: https://learn.microsoft.com/en-us/credentials/certifications/azure-solutions-architect/
 - Google Cloud, Professional Cloud Architect: https://cloud.google.com/learn/certification/cloud-architect
 - The Open Group, The TOGAF Standard: https://www.opengroup.org/togaf
@@ -475,4 +481,4 @@ Kalau rumpun ini lebih banyak dokumen dan rapat, apakah kurikulum teknis ini sia
 
 ---
 
-**Berikutnya:** `lab/00-setup-lab` — saatnya praktik: siapkan lab gratis, kerjakan lab bertahap, lalu uji semua bekal di proyek akhir.
+**Berikutnya:** `lab/00-setup-lab`. Saatnya praktik: siapkan lab gratis, kerjakan lab bertahap, lalu uji semua bekal di proyek akhir.

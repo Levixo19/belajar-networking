@@ -1,4 +1,4 @@
-# 23.1 — Junos untuk Network Engineer
+# 23.1 Junos untuk Network Engineer
 
 > **Prasyarat:** `07-routing-lanjutan/06-bgp`, `22-service-provider/01-mpls-ldp`, `07-routing-lanjutan/04-ospf`
 > **Tujuan:** Anda bisa membaca dan menulis konfigurasi Junos dasar (interface, routing-instance, OSPF, eBGP, policy-options), memakai alur candidate config dengan `commit check`, `commit confirmed`, dan `rollback` tanpa mengunci diri dari perangkat, menerjemahkan konfigurasi antara Junos, Cisco IOS XE, dan MikroTik RouterOS v7, serta memetakan materi ini ke ujian JNCIA-Junos (JN0-106).
@@ -7,7 +7,8 @@
 
 ## 1. Pengantar: Label Pendalaman
 
-⚠️ **Label pendalaman.** Modul ini adalah spesialisasi vendor setelah Tahap 22. Isinya **tidak diuji** di CCNA, Network+, maupun MTCNA. Lewati dulu bila target Anda salah satu dari ketiganya, dan kembali ke sini ketika karier atau pekerjaan Anda menyentuh perangkat Juniper.
+> [!WARNING]
+> **Label pendalaman.** Modul ini adalah spesialisasi vendor setelah Tahap 22. Isinya **tidak diuji** di CCNA, Network+, maupun MTCNA. Lewati dulu bila target Anda salah satu dari ketiganya, dan kembali ke sini ketika karier atau pekerjaan Anda menyentuh perangkat Juniper.
 
 Juniper dipakai luas di backbone operator, data center, dan sebagian kampus besar. Seorang engineer yang bekerja di ISP hampir pasti bertemu Junos, termasuk di lab dan di modul 22.1 yang sudah menyebut `set protocols ldp`. Kabar baiknya: konsep routing yang Anda kenal tidak berubah. Yang berubah adalah **cara perangkat menyimpan, mengubah, dan mengesahkan konfigurasi**. Itulah inti modul ini.
 
@@ -129,9 +130,11 @@ commit complete
 | `load override`, `load merge`, `load set` | Memuat berkas konfigurasi penuh, menggabungkan, atau menjalankan baris `set` dari berkas/paste |
 | `show system commit` | Riwayat commit, juga menampilkan jadwal rollback dari `commit confirmed` |
 
-💡 **Kebiasaan emas:** setiap perubahan yang menyentuh interface manajemen, routing menuju router, atau akses SSH, gunakan `commit confirmed`. Bila perubahan memutus Anda, tunggu beberapa menit dan perangkat memulihkan dirinya sendiri. Mekanisme ini yang membuat engineer Junos tenang mengubah router jarak jauh. Juniper sendiri menjelaskannya sebagai cara memastikan perubahan tidak menutup akses manajemen, dan semua pengguna yang login menerima pesan siaran saat rollback otomatis terjadi.
+> [!TIP]
+> **Kebiasaan emas:** setiap perubahan yang menyentuh interface manajemen, routing menuju router, atau akses SSH, gunakan `commit confirmed`. Bila perubahan memutus Anda, tunggu beberapa menit dan perangkat memulihkan dirinya sendiri. Mekanisme ini yang membuat engineer Junos tenang mengubah router jarak jauh. Juniper sendiri menjelaskannya sebagai cara memastikan perubahan tidak menutup akses manajemen, dan semua pengguna yang login menerima pesan siaran saat rollback otomatis terjadi.
 
-⚠️ `rollback 1` **tidak langsung mengembalikan jaringan**. Ia hanya mengisi candidate dengan versi lama. Tanpa `commit`, router tetap memakai konfigurasi yang bermasalah. Kesalahan ini sangat umum saat panik.
+> [!WARNING]
+> `rollback 1` **tidak langsung mengembalikan jaringan**. Ia hanya mengisi candidate dengan versi lama. Tanpa `commit`, router tetap memakai konfigurasi yang bermasalah. Kesalahan ini sangat umum saat panik.
 
 ### Di mana ekuivalennya di platform lain
 
@@ -252,7 +255,8 @@ Junos menyebutnya **preference**, dan **angka lebih kecil menang**, sama seperti
 | OSPF external | 150 | 110 |
 | BGP | 170 | 20 (eBGP) / 200 (iBGP) |
 
-⚠️ Dua perbedaan dengan Cisco yang sering menipu: Junos **tidak membedakan eBGP dan iBGP** pada preference bawaan (keduanya 170, sedangkan Cisco 20 dan 200), dan nilai OSPF external (150) berbeda dari OSPF internal (10). Bila Anda memindahkan desain dari Cisco ke Junos, periksa ulang rute mana yang menang.
+> [!WARNING]
+> Dua perbedaan dengan Cisco yang sering menipu: Junos **tidak membedakan eBGP dan iBGP** pada preference bawaan (keduanya 170, sedangkan Cisco 20 dan 200), dan nilai OSPF external (150) berbeda dari OSPF internal (10). Bila Anda memindahkan desain dari Cisco ke Junos, periksa ulang rute mana yang menang.
 
 ### OSPF
 
@@ -391,19 +395,26 @@ Cakupan ujian bisa berubah. Cek lembar ujian resmi di situs Juniper untuk kode d
 
 ## 13. Kesalahan Umum
 
-❌ **Lupa `commit`.** Perubahan hanya ada di candidate. Prompt `[edit]` dan peringatan "uncommitted changes" saat `exit` adalah petunjuknya.
+> [!CAUTION]
+> **Lupa `commit`.** Perubahan hanya ada di candidate. Prompt `[edit]` dan peringatan "uncommitted changes" saat `exit` adalah petunjuknya.
 
-❌ **`rollback 1` tanpa `commit`.** Hanya mengganti candidate.
+> [!CAUTION]
+> **`rollback 1` tanpa `commit`.** Hanya mengganti candidate.
 
-❌ **Mengubah akses manajemen dengan `commit` biasa.** Pakai `commit confirmed`, dan jangan lupa konfirmasi sebelum waktunya habis bila perubahan berhasil.
+> [!CAUTION]
+> **Mengubah akses manajemen dengan `commit` biasa.** Pakai `commit confirmed`, dan jangan lupa konfirmasi sebelum waktunya habis bila perubahan berhasil.
 
-❌ **BGP tidak mengiklankan prefix `direct`/`static`.** Itu perilaku bawaan, bukan bug. Buat export policy.
+> [!CAUTION]
+> **BGP tidak mengiklankan prefix `direct`/`static`.** Itu perilaku bawaan, bukan bug. Buat export policy.
 
-❌ **Lupa `family`** (`inet`, `mpls`, `iso`) pada unit. Alamat tidak jadi aktif atau LDP/IS-IS tidak naik.
+> [!CAUTION]
+> **Lupa `family`** (`inet`, `mpls`, `iso`) pada unit. Alamat tidak jadi aktif atau LDP/IS-IS tidak naik.
 
-❌ **Menulis interface OSPF tanpa unit** (`ge-0/0/0` bukan `ge-0/0/0.0`).
+> [!CAUTION]
+> **Menulis interface OSPF tanpa unit** (`ge-0/0/0` bukan `ge-0/0/0.0`).
 
-✅ Biasakan urutan: `show | compare`, `commit check`, `commit confirmed`, uji, `commit`. Lalu simpan `show | display set` sebagai catatan perubahan.
+> [!TIP]
+> Biasakan urutan: `show | compare`, `commit check`, `commit confirmed`, uji, `commit`. Lalu simpan `show | display set` sebagai catatan perubahan.
 
 ---
 
@@ -466,4 +477,4 @@ Cakupan ujian bisa berubah. Cek lembar ujian resmi di situs Juniper untuk kode d
 
 ---
 
-**Berikutnya:** `23-jalur-vendor/02-sd-access-sd-wan` — dari satu perangkat ke seluruh fabric: Cisco SD-Access untuk kampus dan Catalyst SD-WAN untuk cabang.
+**Berikutnya:** `23-jalur-vendor/02-sd-access-sd-wan`. Dari satu perangkat ke seluruh fabric: Cisco SD-Access untuk kampus dan Catalyst SD-WAN untuk cabang.

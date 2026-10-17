@@ -1,9 +1,10 @@
-# 12.6 — Alat Keamanan Jaringan
+# 12.6 Alat Keamanan Jaringan
 
 > **Prasyarat:** `12-keamanan/01`–`05`, `14-monitoring-troubleshooting/02` (akan dibahas)
 > **Tujuan:** Anda mengenal alat keamanan utama, tahu kapan memakainya, dan memahami batasan hukum serta etikanya.
 
-> ⚠️ **PERINGATAN HUKUM DAN ETIKA (baca dulu):** semua alat di modul ini hanya boleh dipakai pada **sistem yang Anda miliki** atau yang Anda punya **izin tertulis** untuk mengujinya. Di Indonesia, akses tidak sah ke sistem elektronik diatur **UU ITE** (UU No. 11/2008 jo. UU No. 19/2016) dengan ancaman pidana. Pemindaian, pengujian penetrasi, dan analisis trafik terhadap sistem orang lain **tanpa izin adalah tindak pidana** — bahkan jika niatnya baik.
+> > [!WARNING]
+> > **PERINGATAN HUKUM DAN ETIKA (baca dulu):** semua alat di modul ini hanya boleh dipakai pada **sistem yang Anda miliki** atau yang Anda punya **izin tertulis** untuk mengujinya. Di Indonesia, akses tidak sah ke sistem elektronik diatur **UU ITE** (UU No. 11/2008 jo. UU No. 19/2016) dengan ancaman pidana. Pemindaian, pengujian penetrasi, dan analisis trafik terhadap sistem orang lain **tanpa izin adalah tindak pidana** — bahkan jika niatnya baik.
 
 ---
 
@@ -32,13 +33,14 @@
 | **CTF** | Latihan di lingkungan yang dirancang | Kompetisi |
 | **Audit konfigurasi** | Memeriksa kepatuhan | Internal |
 
-⚠️ **"Saya cuma iseng cek keamanan mereka" bukan pembelaan hukum.** Tanpa izin, itu tetap tindak pidana.
+> [!WARNING]
+> **"Saya cuma iseng cek keamanan mereka" bukan pembelaan hukum.** Tanpa izin, itu tetap tindak pidana.
 
 ---
 
 ## 2. Discovery dan Scanning
 
-### nmap — Network Mapper
+### nmap: Network Mapper
 
 Alat pemindaian jaringan yang paling penting.
 
@@ -80,7 +82,8 @@ $ nmap --script broadcast-dhcp-discover        # temukan rogue DHCP
 $ nmap --script dns-zone-transfer example.com
 ```
 
-⚠️ **Pemindaian tidak "tak terlihat".** IDS/IPS mendeteksinya, dan pemindaian agresif bisa **mengganggu** perangkat rapuh (perangkat IoT, printer, sistem SCADA lama bisa crash). Gunakan timing yang wajar dan hindari sistem produksi kritis.
+> [!WARNING]
+> **Pemindaian tidak "tak terlihat".** IDS/IPS mendeteksinya, dan pemindaian agresif bisa **mengganggu** perangkat rapuh (perangkat IoT, printer, sistem SCADA lama bisa crash). Gunakan timing yang wajar dan hindari sistem produksi kritis.
 
 ### Alat discovery lain
 
@@ -93,7 +96,8 @@ $ dnsrecon -d example.com                        # enumerasi DNS
 $ theHarvester -d example.com -b all             # OSINT (email, subdomain)
 ```
 
-💡 **Shodan** (https://shodan.io) memindai seluruh internet — cari apa yang **terekspos dari organisasi Anda sendiri**: `org:"PT Perusahaan"` atau `net:203.0.113.0/24`. Sering mengungkap layanan yang tidak seharusnya publik.
+> [!TIP]
+> **Shodan** (https://shodan.io) memindai seluruh internet — cari apa yang **terekspos dari organisasi Anda sendiri**: `org:"PT Perusahaan"` atau `net:203.0.113.0/24`. Sering mengungkap layanan yang tidak seharusnya publik.
 
 ---
 
@@ -119,9 +123,11 @@ $ nuclei -u https://example.com -t cves/
 $ nikto -h https://example.com
 ```
 
-⚠️ **Vulnerability scanner menghasilkan banyak false positive.** Setiap temuan harus **diverifikasi manual** sebelum ditindaklanjuti. "3.000 kerentanan kritis" sering kali sebagian besar tidak relevan atau tidak dapat dieksploitasi di konteks Anda.
+> [!WARNING]
+> **Vulnerability scanner menghasilkan banyak false positive.** Setiap temuan harus **diverifikasi manual** sebelum ditindaklanjuti. "3.000 kerentanan kritis" sering kali sebagian besar tidak relevan atau tidak dapat dieksploitasi di konteks Anda.
 
-💡 **Prioritaskan berdasarkan risiko nyata, bukan skor CVSS mentah** — kerentanan CVSS 9.8 pada sistem internal yang tersegmentasi mungkin kurang mendesak daripada CVSS 6.5 pada server yang terekspos internet.
+> [!TIP]
+> **Prioritaskan berdasarkan risiko nyata, bukan skor CVSS mentah** — kerentanan CVSS 9.8 pada sistem internal yang tersegmentasi mungkin kurang mendesak daripada CVSS 6.5 pada server yang terekspos internet.
 
 ---
 
@@ -162,13 +168,14 @@ Display filter untuk keamanan:
   wlan.fc.type_subtype == 0x0c            ← deauth attack
 ```
 
-⚠️ **Menangkap trafik jaringan orang lain adalah penyadapan** — ilegal tanpa izin, bahkan di jaringan yang Anda kelola (ada implikasi privasi karyawan). Punya kebijakan yang jelas dan pemberitahuan.
+> [!WARNING]
+> **Menangkap trafik jaringan orang lain adalah penyadapan** — ilegal tanpa izin, bahkan di jaringan yang Anda kelola (ada implikasi privasi karyawan). Punya kebijakan yang jelas dan pemberitahuan.
 
 ---
 
 ## 5. Pengujian dan Simulasi
 
-### hping3 — pembuat paket
+### hping3: pembuat paket
 
 ```bash
 # Uji apakah port terbuka (TCP SYN)
@@ -182,9 +189,10 @@ $ sudo hping3 -F -p 443 example.com          # FIN scan
 $ sudo hping3 -S -p 443 --traceroute example.com
 ```
 
-⚠️ **hping3 juga bisa dipakai untuk SYN flood** — hanya pada sistem Anda sendiri untuk menguji ketahanan.
+> [!WARNING]
+> **hping3 juga bisa dipakai untuk SYN flood** — hanya pada sistem Anda sendiri untuk menguji ketahanan.
 
-### iperf3 — uji kapasitas dan stress
+### iperf3: uji kapasitas dan stress
 
 ```bash
 # Server
@@ -194,7 +202,7 @@ $ iperf3 -c server -t 30
 $ iperf3 -c server -u -b 1G                   # UDP, uji flood/loss
 ```
 
-### Scapy — pembuatan paket dengan Python
+### Scapy: pembuatan paket dengan Python
 
 ```python
 from scapy.all import *
@@ -214,13 +222,15 @@ for p in packets:
         print(p[DNS].qd.qname)
 ```
 
-💡 **Scapy sangat berguna untuk memahami protokol** — Anda bisa membuat paket apa pun dan melihat responsnya. Untuk network engineer, ini alat pembelajaran yang luar biasa.
+> [!TIP]
+> **Scapy sangat berguna untuk memahami protokol** — Anda bisa membuat paket apa pun dan melihat responsnya. Untuk network engineer, ini alat pembelajaran yang luar biasa.
 
 ---
 
 ## 6. Alat Serangan (untuk Pengujian Berizin)
 
-⚠️ **Semua alat di bawah hanya untuk lab, CTF, atau pengujian berizin.**
+> [!WARNING]
+> **Semua alat di bawah hanya untuk lab, CTF, atau pengujian berizin.**
 
 | Alat | Fungsi | Kategori |
 |---|---|---|
@@ -234,7 +244,8 @@ for p in packets:
 | **Burp Suite** | Pengujian aplikasi web | Web pentest |
 | **Kali Linux / Parrot** | Distribusi berisi semua alat | Platform pentest |
 
-💡 **Memahami alat serangan membuat Anda pembela yang lebih baik.** Menguji hardening L2 Anda dengan Yersinia (di lab) memverifikasi bahwa DHCP snooping dan BPDU guard benar-benar bekerja.
+> [!TIP]
+> **Memahami alat serangan membuat Anda pembela yang lebih baik.** Menguji hardening L2 Anda dengan Yersinia (di lab) memverifikasi bahwa DHCP snooping dan BPDU guard benar-benar bekerja.
 
 ### Contoh: menguji hardening L2 sendiri
 
@@ -267,7 +278,8 @@ $ zeek -i eth0
 $ cat conn.log http.log dns.log ssl.log
 ```
 
-💡 **Zeek berbeda dari Snort/Suricata** — ia tidak mencari tanda tangan serangan, melainkan **mencatat semua aktivitas jaringan secara terstruktur** (setiap koneksi, DNS query, sertifikat TLS, transfer file). Ini emas untuk investigasi dan berburu ancaman.
+> [!TIP]
+> **Zeek berbeda dari Snort/Suricata** — ia tidak mencari tanda tangan serangan, melainkan **mencatat semua aktivitas jaringan secara terstruktur** (setiap koneksi, DNS query, sertifikat TLS, transfer file). Ini emas untuk investigasi dan berburu ancaman.
 
 ### Log analysis dan SIEM
 
@@ -285,9 +297,10 @@ Yang dikorelasikan:
   - Log DNS
 ```
 
-💡 **Security Onion** adalah distribusi lengkap yang menggabungkan Suricata + Zeek + Wazuh + dashboard — titik awal yang sangat baik untuk network security monitoring.
+> [!TIP]
+> **Security Onion** adalah distribusi lengkap yang menggabungkan Suricata + Zeek + Wazuh + dashboard — titik awal yang sangat baik untuk network security monitoring.
 
-### Analisis alur — NetFlow
+### Analisis alur: NetFlow
 
 ```
 Deteksi berbasis alur (tanpa membaca isi paket):
@@ -319,7 +332,8 @@ Detail di `14-monitoring-troubleshooting/03`.
 - kube-bench (Kubernetes)
 ```
 
-💡 **Batfish** sangat menarik untuk network engineer — ia mem-parsing konfigurasi router/switch/firewall dan bisa **menjawab pertanyaan tentang jaringan tanpa menyentuh perangkat**: "apakah host A bisa mencapai host B?", "apakah ada ACL yang tumpang tindih?", "apa dampak perubahan ini?". Dipakai dalam pipeline CI/CD jaringan (`15-otomasi`).
+> [!TIP]
+> **Batfish** sangat menarik untuk network engineer — ia mem-parsing konfigurasi router/switch/firewall dan bisa **menjawab pertanyaan tentang jaringan tanpa menyentuh perangkat**: "apakah host A bisa mencapai host B?", "apakah ada ACL yang tumpang tindih?", "apa dampak perubahan ini?". Dipakai dalam pipeline CI/CD jaringan (`15-otomasi`).
 
 ---
 
@@ -352,7 +366,8 @@ MikroTik punya banyak alat diagnostik dan keamanan bawaan.
 /tool ip-scan address-range=192.168.1.0/24
 ```
 
-⚠️ **`/tool sniffer` menangkap trafik** — sama seperti Wireshark, hanya untuk jaringan yang Anda kelola dengan kebijakan yang jelas.
+> [!WARNING]
+> **`/tool sniffer` menangkap trafik** — sama seperti Wireshark, hanya untuk jaringan yang Anda kelola dengan kebijakan yang jelas.
 
 ---
 
@@ -378,13 +393,14 @@ Aturan lab:
   ❌ JANGAN pernah arahkan alat serangan ke sistem nyata
 ```
 
-💡 **HackTheBox, TryHackMe, dan CTF** memberi lingkungan legal untuk mempraktikkan keterampilan ofensif. Ini cara yang tepat untuk belajar — bukan menyerang sistem orang lain.
+> [!TIP]
+> **HackTheBox, TryHackMe, dan CTF** memberi lingkungan legal untuk mempraktikkan keterampilan ofensif. Ini cara yang tepat untuk belajar — bukan menyerang sistem orang lain.
 
 ---
 
 ## 11. Ringkasan
 
-- ⚠️ **Semua alat ini hanya untuk sistem Anda sendiri atau dengan izin tertulis.** Akses tidak sah = pidana (UU ITE di Indonesia). "Iseng" bukan pembelaan.
+- **Semua alat ini hanya untuk sistem Anda sendiri atau dengan izin tertulis.** Akses tidak sah = pidana (UU ITE di Indonesia). "Iseng" bukan pembelaan.
 - Sebelum menguji: **izin tertulis, scope, rules of engagement, waktu, kontak darurat**.
 - **nmap** adalah alat discovery utama; **Shodan** untuk melihat apa yang terekspos dari organisasi Anda sendiri.
 - **Vulnerability scanner banyak false positive** — verifikasi manual, prioritaskan berdasarkan risiko nyata bukan skor CVSS mentah.
@@ -455,4 +471,4 @@ Aturan lab:
 
 ---
 
-**Berikutnya:** `13-linux-networking/01-iproute2.md` — memasuki jaringan Linux secara praktis.
+**Berikutnya:** `13-linux-networking/01-iproute2.md`. Memasuki jaringan Linux secara praktis.

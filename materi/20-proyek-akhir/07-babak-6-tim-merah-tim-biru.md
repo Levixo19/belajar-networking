@@ -1,4 +1,4 @@
-# 20.7 — Babak 6: Tim Merah vs Tim Biru
+# 20.7 Babak 6: Tim Merah vs Tim Biru
 
 > **Prasyarat:** `20.6`, ditambah `09` (NAT/ACL/firewall), `12` (keamanan), `03` (serangan layer 2), `06` (DNS, TLS)
 > **Tujuan:** Mengenali sepuluh serangan dari buktinya saja, menyusun mitigasi yang bisa dikonfigurasi, dan — yang paling sering dilupakan — menentukan apa yang harus dipantau agar serangan itu terlihat.
@@ -17,15 +17,17 @@ Babak ini berpasangan lawan. Untuk tiap kejadian Anda dapat **bukti mentah saja*
 
 Setiap kejadian bernilai 3 poin: 1 untuk kenali, 1 untuk cegah, 1 untuk deteksi. Kalau Anda hanya mengisi dua kolom pertama, nilai Anda maksimum dua pertiga — dan itu gambaran yang jujur tentang jaringan yang "sudah dikeraskan tapi tidak diawasi".
 
-⏱ Mode Ujian: 120 menit. Jawaban ditulis di `09-keamanan.md`.
+> [!NOTE]
+> Mode Ujian: 120 menit. Jawaban ditulis di `09-keamanan.md`.
 
-⚠️ Semua bukti di bawah ini adalah **bukti pertahanan**: yang Anda cari adalah indikator dan mitigasinya. Babak ini tidak memerlukan Anda melakukan serangan apa pun — dan jangan mencobanya pada jaringan yang bukan milik Anda atau tanpa izin tertulis.
+> [!WARNING]
+> Semua bukti di bawah ini adalah **bukti pertahanan**: yang Anda cari adalah indikator dan mitigasinya. Babak ini tidak memerlukan Anda melakukan serangan apa pun — dan jangan mencobanya pada jaringan yang bukan milik Anda atau tanpa izin tertulis.
 
 ---
 
 ## 2. Sepuluh Kejadian
 
-### S1 — Pagi Senin, pengguna lantai 2 tidak bisa membuka ERP
+### S1 (Pagi Senin, pengguna lantai 2 tidak bisa membuka ERP)
 
 ```bash
 staf@pc-lt2:~$ ip route
@@ -38,7 +40,7 @@ staf@pc-lt2:~$ ip neigh | grep 244
 
 Gateway yang seharusnya `192.168.10.1`. Prefiks MAC `b8:27:eb` terdaftar sebagai perangkat komputer papan tunggal.
 
-### S2 — Switch akses tiba-tiba melambat untuk semua port
+### S2 (Switch akses tiba-tiba melambat untuk semua port)
 
 ```cisco
 JKT-ACC-02# show mac address-table count
@@ -49,7 +51,7 @@ JKT-ACC-02# show mac address-table dynamic interface Gi1/0/17 | count
 Number of lines which match regexp = 7931
 ```
 
-### S3 — Staf keuangan melihat peringatan sertifikat saat membuka portal internal
+### S3 (Staf keuangan melihat peringatan sertifikat saat membuka portal internal)
 
 ```bash
 staf@pc-fin:~$ ip neigh
@@ -59,7 +61,7 @@ staf@pc-fin:~$ ip neigh
 
 Dua alamat IP berbeda, satu MAC yang sama. `10.64.11.1` adalah gateway.
 
-### S4 — Bingkai aneh tertangkap di uplink
+### S4 (Bingkai aneh tertangkap di uplink)
 
 ```text
 Frame 8812: 122 bytes
@@ -72,7 +74,7 @@ Frame 8812: 122 bytes
 
 VLAN 50 di pabrik adalah zona PLC. Bingkai ini masuk dari port akses di VLAN staf.
 
-### S5 — Jaringan pabrik "kedip" tiap beberapa menit
+### S5 (Jaringan pabrik "kedip" tiap beberapa menit)
 
 ```cisco
 SBY-ACC-01# show spanning-tree vlan 10 | include Root|topology
@@ -87,7 +89,7 @@ SBY-ACC-01# show cdp neighbors Gi1/0/9
 
 Gi1/0/9 adalah port akses di area kantor pabrik. Switch inti pabrik memakai prioritas 8192.
 
-### S6 — Lalu lintas DNS naik lima kali lipat dari satu host
+### S6 (Lalu lintas DNS naik lima kali lipat dari satu host)
 
 ```bash
 root@dns01:~# tail -4 /var/log/named/query.log
@@ -102,7 +104,7 @@ root@dns01:~# grep -c 'n0de-sync.ru' /var/log/named/query.log
 
 `10.64.50.31` adalah server aplikasi internal. Ia tidak punya alasan menanyakan nama luar sebanyak itu.
 
-### S7 — Suhu ruang beku 2 naik perlahan pada 02:40
+### S7 (Suhu ruang beku 2 naik perlahan pada 02:40)
 
 ```text
 HMI audit log
@@ -114,7 +116,7 @@ HMI audit log
 
 Tidak ada permintaan perubahan, tidak ada tiket, tidak ada operator yang tahu. Perangkat lunak akses jarak jauh terpasang permanen di komputer HMI.
 
-### S8 — Lonjakan lalu lintas internal pada 01:15
+### S8 (Lonjakan lalu lintas internal pada 01:15)
 
 ```bash
 root@sensor-ids:~# zeek-cut id.orig_h id.resp_p < conn.log | sort | uniq -c | sort -rn | head -5
@@ -127,7 +129,7 @@ root@sensor-ids:~# zeek-cut id.orig_h id.resp_p < conn.log | sort | uniq -c | so
 
 Satu PC staf membuka koneksi ke port berbagi berkas pada 4.800 alamat internal dalam 9 menit. Segera setelah itu, pekerjaan cadangan malam gagal dan berkas di `/srv/file` berubah ekstensinya.
 
-### S9 — Dua SSID dengan nama sama di lantai 3
+### S9 (Dua SSID dengan nama sama di lantai 3)
 
 ```text
 SSID              BSSID              Enkripsi    Kanal  Sinyal
@@ -137,7 +139,7 @@ BNS-Karyawan      02:11:6b:9f:cd:0e  Terbuka     6      -39 dBm
 Bingkai manajemen pada kanal 36: 1.284 deauthentication dalam 3 menit
 ```
 
-### S10 — Beberapa laptop tiba-tiba memakai IPv6 untuk keluar
+### S10 (Beberapa laptop tiba-tiba memakai IPv6 untuk keluar)
 
 ```bash
 staf@pc-lt4:~$ ip -6 route | head -3
@@ -179,7 +181,7 @@ BNS memang punya `2001:db8:5e4a::/48`, tetapi IPv6 **belum** diaktifkan di jarin
 
 ---
 
-## 5. Latihan — Pertanyaan Tim Biru
+## 5. Latihan: Pertanyaan Tim Biru
 
 1. Ambil S1, S3, dan S10. Ketiganya berujung pada hal yang sama: penyerang menjadi perantara lalu lintas. Jelaskan mekanisme masing-masing, lalu susun **satu set kontrol hop pertama** yang menutup ketiganya sekaligus, dan tunjukkan kontrol mana yang menutup jalur mana.
 2. S4 menunjukkan bingkai dengan dua tag 802.1Q yang berakhir di zona PLC. Jelaskan bagaimana bingkai seperti itu bisa berpindah VLAN, sebutkan dua kesalahan konfigurasi yang memungkinkannya, dan jelaskan mengapa mitigasinya sama sekali tidak melibatkan firewall.
@@ -236,4 +238,4 @@ BNS memang punya `2001:db8:5e4a::/48`, tetapi IPv6 **belum** diaktifkan di jarin
 
 ---
 
-**Berikutnya:** `20-proyek-akhir/08-babak-7-kode-yang-menjaga.md` — berhenti mengetik di perangkat, mulai menulis kode yang mengerjakannya untuk Anda.
+**Berikutnya:** `20-proyek-akhir/08-babak-7-kode-yang-menjaga.md`. Berhenti mengetik di perangkat, mulai menulis kode yang mengerjakannya untuk Anda.

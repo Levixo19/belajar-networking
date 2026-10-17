@@ -1,4 +1,4 @@
-# 06.2 — DHCP
+# 06.2 DHCP
 
 > **Prasyarat:** `04-network-layer/01`, `05-transport/01`
 > **Tujuan:** Anda paham proses DORA, bisa mengonfigurasi server & relay DHCP, dan mendiagnosis kegagalan alokasi alamat.
@@ -15,7 +15,7 @@ Pendahulunya: **RARP** → **BOOTP** → **DHCP**. DHCP kompatibel mundur dengan
 
 ---
 
-## 2. DORA — Empat Langkah
+## 2. DORA (Empat Langkah)
 
 ```
 Klien (belum punya IP)                       Server DHCP
@@ -52,7 +52,8 @@ Server : UDP 67
 Klien  : UDP 68
 ```
 
-⚠️ Klien belum punya IP, sehingga:
+> [!WARNING]
+> Klien belum punya IP, sehingga:
 - IP sumber = `0.0.0.0`
 - IP tujuan = `255.255.255.255` (limited broadcast)
 - Server mengidentifikasi klien dari **MAC address** dan field **XID** (transaction ID)
@@ -75,7 +76,8 @@ T2 = 87,5% lease (7 jam) → jika T1 gagal, klien BROADCAST REQUEST
                             dan memulai DORA dari awal
 ```
 
-💡 Perhatikan: pembaruan pada T1 memakai **unicast** langsung ke server, bukan broadcast. Ini efisien dan tidak mengganggu perangkat lain.
+> [!TIP]
+> Perhatikan: pembaruan pada T1 memakai **unicast** langsung ke server, bukan broadcast. Ini efisien dan tidak mengganggu perangkat lain.
 
 ### Pesan DHCP lengkap
 
@@ -119,9 +121,11 @@ Server tidak hanya memberi IP — ia memberi seluruh konfigurasi jaringan.
 | **121** | Classless Static Route | **Rute statis tambahan** — sangat berguna |
 | **150** | TFTP Server (Cisco) | Untuk telepon IP Cisco |
 
-💡 **Opsi 121** memungkinkan mendorong rute statis ke klien tanpa mengubah gateway — berguna untuk mengarahkan subnet tertentu lewat VPN atau firewall khusus.
+> [!TIP]
+> **Opsi 121** memungkinkan mendorong rute statis ke klien tanpa mengubah gateway — berguna untuk mengarahkan subnet tertentu lewat VPN atau firewall khusus.
 
-⚠️ **Opsi 82** ditambahkan oleh **DHCP relay**, berisi identitas port switch tempat klien terhubung. Ini memungkinkan server memberikan alamat berdasarkan lokasi fisik — dan menjadi bagian penting **DHCP snooping**.
+> [!WARNING]
+> **Opsi 82** ditambahkan oleh **DHCP relay**, berisi identitas port switch tempat klien terhubung. Ini memungkinkan server memberikan alamat berdasarkan lokasi fisik — dan menjadi bagian penting **DHCP snooping**.
 
 ---
 
@@ -148,7 +152,8 @@ R1(config-if)# ip helper-address 192.168.10.10
 R1(config-if)# ip helper-address 192.168.10.11    ← bisa lebih dari satu (redundansi)
 ```
 
-⚠️ **`ip helper-address` juga meneruskan protokol UDP lain secara default**, tidak hanya DHCP:
+> [!WARNING]
+> **`ip helper-address` juga meneruskan protokol UDP lain secara default**, tidak hanya DHCP:
 ```
 TFTP (69), DNS (53), Time (37), NetBIOS NS (137),
 NetBIOS DS (138), TACACS (49), BOOTP/DHCP (67/68)
@@ -274,7 +279,7 @@ $ sudo systemctl enable --now kea-dhcp4-server
 $ sudo cat /var/lib/kea/dhcp4.leases
 ```
 
-### dnsmasq (SOHO/lab — DNS + DHCP sekaligus)
+### dnsmasq (SOHO/lab: DNS + DHCP sekaligus)
 
 ```
 dhcp-range=192.168.1.100,192.168.1.200,255.255.255.0,12h
@@ -367,7 +372,8 @@ Flag O (Other config)  = 1 → gunakan DHCPv6 hanya untuk opsi lain (DNS, dll)
 Kedua flag = 0          → SLAAC murni (alamat dibentuk sendiri)
 ```
 
-⚠️ **Default gateway IPv6 SELALU berasal dari Router Advertisement**, tidak pernah dari DHCPv6. Ini perbedaan konseptual penting yang sering membingungkan.
+> [!WARNING]
+> **Default gateway IPv6 SELALU berasal dari Router Advertisement**, tidak pernah dari DHCPv6. Ini perbedaan konseptual penting yang sering membingungkan.
 
 ### Prefix Delegation (IA_PD)
 
@@ -493,7 +499,8 @@ Ini berarti **DHCP gagal total**. Urutan pemeriksaan:
 | Hanya sebagian klien gagal | Pool habis; rate limit DHCP snooping; MAC randomization vs reservasi |
 | Berhasil setelah beberapa kali coba | **PortFast tidak aktif** — port butuh 30 detik STP sebelum forwarding, DHCP timeout duluan |
 
-⚠️ **PortFast adalah penyebab yang sering terlewat.** Tanpa PortFast, port access butuh ~30 detik melewati listening dan learning sebelum meneruskan trafik. Klien mengirim DISCOVER selama masa itu, tidak mendapat jawaban, dan menyerah ke APIPA.
+> [!WARNING]
+> **PortFast adalah penyebab yang sering terlewat.** Tanpa PortFast, port access butuh ~30 detik melewati listening dan learning sebelum meneruskan trafik. Klien mengirim DISCOVER selama masa itu, tidak mendapat jawaban, dan menyerah ke APIPA.
 
 ```
 SW1(config)# interface range gi0/1-20
@@ -561,7 +568,8 @@ bootp.option.dhcp == 5       ← ACK
 /ip dhcp-server network set [find address=192.168.1.0/24] dhcp-option-set=pxe
 ```
 
-💡 **`add-arp=yes`** membuat DHCP server otomatis menambahkan entri ARP statis. Dikombinasikan dengan `arp=reply-only` di interface, ini **mencegah pengguna memasang IP statis sendiri** — teknik keamanan yang sangat umum di RT/RW-Net dan hotspot Indonesia.
+> [!TIP]
+> **`add-arp=yes`** membuat DHCP server otomatis menambahkan entri ARP statis. Dikombinasikan dengan `arp=reply-only` di interface, ini **mencegah pengguna memasang IP statis sendiri** — teknik keamanan yang sangat umum di RT/RW-Net dan hotspot Indonesia.
 
 ### DHCP Client
 
@@ -593,7 +601,8 @@ bootp.option.dhcp == 5       ← ACK
 /ip dhcp-server alert print
 ```
 
-⚠️ **`/ip dhcp-server alert` adalah fitur khas MikroTik yang sangat berguna** — mendeteksi DHCP server tidak sah di jaringan dan menjalankan skrip. Tidak ada padanan langsung di Cisco.
+> [!WARNING]
+> **`/ip dhcp-server alert` adalah fitur khas MikroTik yang sangat berguna** — mendeteksi DHCP server tidak sah di jaringan dan menjalankan skrip. Tidak ada padanan langsung di Cisco.
 
 ### Padanan istilah
 
@@ -691,4 +700,4 @@ bootp.option.dhcp == 5       ← ACK
 
 ---
 
-**Berikutnya:** `06-aplikasi/03-http.md` — protokol yang membawa sebagian besar trafik internet.
+**Berikutnya:** `06-aplikasi/03-http.md`. Protokol yang membawa sebagian besar trafik internet.

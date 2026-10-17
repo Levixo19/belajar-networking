@@ -1,4 +1,4 @@
-# 15.5 — Rekayasa Perangkat Lunak untuk Network Engineer
+# 15.5 Rekayasa Perangkat Lunak untuk Network Engineer
 
 > **Prasyarat:** `15-otomasi/03-python-jaringan`, `15-otomasi/04-ansible-cicd`
 > **Tujuan:** Anda bisa mengerjakan skrip otomasi seperti proyek perangkat lunak: memakai Git dengan rapi, membaca unified diff, menulis tes pytest tanpa perangkat, memakai pola adapter, idempotensi, dan retry, menangani pagination, rate limit, dan webhook, lalu mengemas alat dalam Dockerfile tanpa membocorkan kredensial.
@@ -17,7 +17,8 @@ Skrip otomasi yang dijalankan langsung ke router produksi adalah cara pertama. G
 
 Dokumen topik ujian resmi (Automating Networks Using Cisco Platforms v1.1, 200-901) membagi ujian menjadi enam domain: 1.0 Software Development and Design (15%), 2.0 Understanding and Using APIs (20%), 3.0 Cisco Platforms and Development (15%), 4.0 Application Deployment and Security (15%), 5.0 Infrastructure and Automation (20%), dan 6.0 Network Fundamentals (15%).
 
-⚠️ Ada satu catatan penomoran. Topik rekayasa perangkat lunak di modul ini tersebar di domain **1.0, 2.0, 4.0, dan 5.0**. Domain 3.0 adalah platform Cisco (Meraki, Catalyst Center, RESTCONF/NETCONF di IOS XE, DevNet) dan hanya disentuh lewat praktik Cisco di bagian 9. Jangan mengandalkan peta lama yang menyebut "domain 3.0" untuk Git atau pengujian.
+> [!WARNING]
+> Ada satu catatan penomoran. Topik rekayasa perangkat lunak di modul ini tersebar di domain **1.0, 2.0, 4.0, dan 5.0**. Domain 3.0 adalah platform Cisco (Meraki, Catalyst Center, RESTCONF/NETCONF di IOS XE, DevNet) dan hanya disentuh lewat praktik Cisco di bagian 9. Jangan mengandalkan peta lama yang menyebut "domain 3.0" untuk Git atau pengujian.
 
 | Topik resmi | Bagian modul |
 |---|---|
@@ -33,7 +34,8 @@ Dokumen topik ujian resmi (Automating Networks Using Cisco Platforms v1.1, 200-9
 | 5.13 Prinsip dan manfaat code review | 3 |
 | 5.14 Menafsirkan sequence diagram yang memuat panggilan API | 7 |
 
-💡 Topik 1.8.g (diff), 5.12, dan 5.14 sering keluar sebagai soal "baca gambar atau teks lalu jawab", jadi latihan membaca diff dan diagram sekuens lebih berguna daripada menghafal perintah.
+> [!TIP]
+> Topik 1.8.g (diff), 5.12, dan 5.14 sering keluar sebagai soal "baca gambar atau teks lalu jawab", jadi latihan membaca diff dan diagram sekuens lebih berguna daripada menghafal perintah.
 
 ---
 
@@ -66,7 +68,8 @@ Misalkan `main` sudah maju sementara Anda mengerjakan branch `fitur`. Ada dua ca
 - **Merge** membuat *merge commit* baru dengan dua induk. Riwayat asli tetap utuh dan jujur, tetapi grafiknya bercabang.
 - **Rebase** memindahkan commit branch Anda ke ujung `main` yang baru. Commit-nya dibuat ulang (hash berubah), riwayat jadi lurus.
 
-⚠️ **Jangan rebase branch yang sudah dipakai orang lain.** Rebase menulis ulang commit; rekan yang sudah menarik versi lama akan berurusan dengan riwayat ganda. Aturan praktis: rebase untuk merapikan branch pribadi sebelum di-push, merge untuk menyatukan ke branch bersama.
+> [!WARNING]
+> **Jangan rebase branch yang sudah dipakai orang lain.** Rebase menulis ulang commit; rekan yang sudah menarik versi lama akan berurusan dengan riwayat ganda. Aturan praktis: rebase untuk merapikan branch pribadi sebelum di-push, merge untuk menyatukan ke branch bersama.
 
 ### Konflik merge (1.8.f)
 
@@ -231,7 +234,8 @@ Operasi **idempoten** menghasilkan keadaan akhir yang sama walau dijalankan seka
 
 Kegagalan sementara (kode 429, 502, 503, 504, timeout) layak diulang; kegagalan permanen (401, 404, 400) tidak. Interval diperlebar secara eksponensial (0,5 detik, 1, 2, 4, dibatasi `cap`) agar server yang sedang kewalahan punya waktu pulih, dan diberi *jitter* acak agar ratusan klien tidak mencoba ulang serentak.
 
-⚠️ Retry hanya aman untuk operasi idempoten. Mengulang `PUT` yang menambah record tanpa memeriksa lebih dulu bisa menggandakan record bila respons pertama hilang di tengah jalan.
+> [!WARNING]
+> Retry hanya aman untuk operasi idempoten. Mengulang `PUT` yang menambah record tanpa memeriksa lebih dulu bisa menggandakan record bila respons pertama hilang di tengah jalan.
 
 `netauto/drivers.py` menggabungkan ketiganya (sesi HTTP disuntikkan, jadi bisa diganti tiruan):
 
@@ -410,11 +414,14 @@ Diagram sekuens membaca dari atas ke bawah: garis vertikal adalah pelaku, panah 
 
 Kredensial, token API, dan kunci privat tidak boleh masuk repositori. Alasannya sederhana: Git menyimpan semua riwayat, jadi rahasia yang pernah di-commit tetap ada di riwayat walau berkasnya dihapus kemudian.
 
-✅ Baca rahasia dari environment variable atau secret manager (`os.environ["ROUTER_PASS"]`), taruh berkas `.env` di `.gitignore`, dan sediakan `.env.example` berisi nama variabel tanpa nilai.
+> [!TIP]
+> Baca rahasia dari environment variable atau secret manager (`os.environ["ROUTER_PASS"]`), taruh berkas `.env` di `.gitignore`, dan sediakan `.env.example` berisi nama variabel tanpa nilai.
 
-❌ Jangan menulis `password="admin123"` di skrip, jangan menaruh token di URL yang masuk log, dan jangan menonaktifkan verifikasi TLS secara permanen demi "supaya jalan".
+> [!CAUTION]
+> Jangan menulis `password="admin123"` di skrip, jangan menaruh token di URL yang masuk log, dan jangan menonaktifkan verifikasi TLS secara permanen demi "supaya jalan".
 
-⚠️ Jika rahasia terlanjur ter-commit, anggap sudah bocor: **ganti (rotate) kredensialnya segera**. Menghapus commit atau menulis ulang riwayat tidak menjamin tidak ada yang sempat menyalinnya.
+> [!WARNING]
+> Jika rahasia terlanjur ter-commit, anggap sudah bocor: **ganti (rotate) kredensialnya segera**. Menghapus commit atau menulis ulang riwayat tidak menjamin tidak ada yang sempat menyalinnya.
 
 ### Dockerfile minimal (topik 4.6 dan 4.7)
 
@@ -478,7 +485,8 @@ curl -k -u "$ROUTER_USER:$ROUTER_PASS" -X PUT https://$ROUTER_URL/rest/ip/addres
   --data '{"address": "192.168.111.111/24", "interface": "dummy"}'
 ```
 
-⚠️ `-k` mengabaikan verifikasi sertifikat dan hanya layak untuk lab. Di produksi, pasang sertifikat yang dipercaya. Galat REST berbentuk JSON, misalnya `{"error":404,"message":"Not Found"}`. Kelas `MikroTikRest` di bagian 6 persis memakai jalur `/rest/ip/address` ini.
+> [!WARNING]
+> `-k` mengabaikan verifikasi sertifikat dan hanya layak untuk lab. Di produksi, pasang sertifikat yang dipercaya. Galat REST berbentuk JSON, misalnya `{"error":404,"message":"Not Found"}`. Kelas `MikroTikRest` di bagian 6 persis memakai jalur `/rest/ip/address` ini.
 
 ### Linux (pytest dan Docker)
 
@@ -578,4 +586,4 @@ git init && printf '.venv/\n.env\n__pycache__/\n' > .gitignore
 
 ---
 
-**Berikutnya:** `16-datacenter-cloud-sdn/01-desain-dc` — memasuki dunia data center dan cloud.
+**Berikutnya:** `16-datacenter-cloud-sdn/01-desain-dc`. Memasuki dunia data center dan cloud.

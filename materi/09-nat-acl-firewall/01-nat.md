@@ -1,4 +1,4 @@
-# 09.1 — NAT
+# 09.1 NAT
 
 > **Prasyarat:** `04-network-layer/01`, `05-transport/01`
 > **Tujuan:** Anda paham semua varian NAT, bisa mengonfigurasinya di Cisco/MikroTik/Linux, dan mendiagnosis masalah yang ditimbulkannya.
@@ -25,7 +25,8 @@ Solusi: banyak perangkat berbagi SATU alamat publik
 
 ### Biaya yang sering diabaikan
 
-⚠️ **NAT merusak prinsip end-to-end internet:**
+> [!WARNING]
+> **NAT merusak prinsip end-to-end internet:**
 - Koneksi masuk **tidak mungkin** tanpa konfigurasi khusus
 - P2P, VoIP, dan game butuh mekanisme traversal (STUN/TURN/ICE)
 - Protokol yang menyertakan alamat di payload rusak (FTP aktif, SIP, H.323) → butuh ALG
@@ -33,7 +34,8 @@ Solusi: banyak perangkat berbagi SATU alamat publik
 - Menambah latency dan beban CPU/memori router
 - IPsec AH tidak bisa melewati NAT (ESP butuh NAT-T)
 
-💡 **NAT BUKAN fitur keamanan.** Ia menyembunyikan alamat, tetapi tidak memeriksa isi paket. Firewall stateful-lah yang memberi keamanan — dan NAT kebetulan menyertakan sifat stateful itu. Di IPv6 tidak ada NAT, dan keamanannya justru **lebih baik** karena firewall dikonfigurasi secara eksplisit.
+> [!TIP]
+> **NAT BUKAN fitur keamanan.** Ia menyembunyikan alamat, tetapi tidak memeriksa isi paket. Firewall stateful-lah yang memberi keamanan — dan NAT kebetulan menyertakan sifat stateful itu. Di IPv6 tidak ada NAT, dan keamanannya justru **lebih baik** karena firewall dikonfigurasi secara eksplisit.
 
 ---
 
@@ -54,7 +56,8 @@ Solusi: banyak perangkat berbagi SATU alamat publik
 - **Inside/Outside** = perangkat itu ada di **jaringan mana**
 - **Local/Global** = alamat itu **terlihat dari mana**
 
-⚠️ Outside Local dan Outside Global biasanya sama, kecuali Anda memakai NAT dua arah (destination NAT untuk alamat yang tumpang tindih).
+> [!WARNING]
+> Outside Local dan Outside Global biasanya sama, kecuali Anda memakai NAT dua arah (destination NAT untuk alamat yang tumpang tindih).
 
 ---
 
@@ -104,9 +107,10 @@ R1(config)# access-list 1 permit 10.0.0.0 0.0.0.255
 R1(config)# ip nat inside source list 1 pool POOL-PUBLIK
 ```
 
-⚠️ **Jumlah host bersamaan dibatasi ukuran pool.** Kalau pool habis, host berikutnya tidak bisa keluar sama sekali. Jarang dipakai; PAT hampir selalu lebih baik.
+> [!WARNING]
+> **Jumlah host bersamaan dibatasi ukuran pool.** Kalau pool habis, host berikutnya tidak bisa keluar sama sekali. Jarang dipakai; PAT hampir selalu lebih baik.
 
-### PAT / NAT Overload (banyak-ke-satu) — yang paling umum
+### PAT / NAT Overload (banyak-ke-satu): yang paling umum
 
 Semua host berbagi **satu** alamat publik; dibedakan dengan **port sumber**.
 
@@ -142,7 +146,8 @@ nft add rule ip nat postrouting oifname "eth0" masquerade
 nft add rule ip nat postrouting oifname "eth0" snat to 198.51.100.1
 ```
 
-⚠️ **`masquerade` vs `src-nat` di MikroTik:**
+> [!WARNING]
+> **`masquerade` vs `src-nat` di MikroTik:**
 | | `masquerade` | `src-nat` |
 |---|---|---|
 | Alamat | Otomatis dari interface keluar | Ditentukan manual |
@@ -150,7 +155,8 @@ nft add rule ip nat postrouting oifname "eth0" snat to 198.51.100.1
 | Kinerja | Sedikit lebih berat (harus cek alamat tiap paket) | Lebih efisien |
 | Saat interface down | **Semua koneksi dihapus** | Tidak otomatis |
 
-💡 **Gunakan `src-nat` kalau IP publik Anda statis** — lebih cepat dan tidak membuang tabel koneksi saat interface flapping.
+> [!TIP]
+> **Gunakan `src-nat` kalau IP publik Anda statis** — lebih cepat dan tidak membuang tabel koneksi saat interface flapping.
 
 ### Port Forwarding / Destination NAT
 
@@ -180,7 +186,8 @@ R1(config)# ip nat inside source static tcp 10.0.0.20 3389 198.51.100.1 33890
 nft add rule ip nat prerouting iifname "eth0" tcp dport 443 dnat to 10.0.0.10:443
 ```
 
-⚠️ **Port forwarding + firewall harus konsisten.** Di MikroTik, aturan `dstnat` diproses **sebelum** `filter forward`, sehingga aturan filter harus mengizinkan alamat **internal** (10.0.0.10), bukan alamat publik.
+> [!WARNING]
+> **Port forwarding + firewall harus konsisten.** Di MikroTik, aturan `dstnat` diproses **sebelum** `filter forward`, sehingga aturan filter harus mengizinkan alamat **internal** (10.0.0.10), bukan alamat publik.
 
 ### Hairpin NAT / NAT Loopback
 
@@ -210,7 +217,8 @@ Tanpa hairpin:
 R1(config)# ip nat inside source list HAIRPIN interface gi0/1 overload
 ```
 
-💡 **Solusi yang lebih elegan: split-horizon DNS.** Buat DNS internal mengembalikan alamat privat untuk nama domain yang sama. Klien internal langsung terhubung ke 10.0.0.10 tanpa melewati router sama sekali — lebih cepat dan lebih sederhana.
+> [!TIP]
+> **Solusi yang lebih elegan: split-horizon DNS.** Buat DNS internal mengembalikan alamat privat untuk nama domain yang sama. Klien internal langsung terhubung ke 10.0.0.10 tanpa melewati router sama sekali — lebih cepat dan lebih sederhana.
 
 ---
 
@@ -258,7 +266,8 @@ Bagaimana aplikasi P2P bekerja meski kedua pihak di belakang NAT?
 | **UPnP / NAT-PMP / PCP** | Aplikasi meminta router membuka port secara otomatis |
 | **Hole punching** | Kedua pihak mengirim keluar bersamaan sehingga NAT membuka jalur |
 
-⚠️ **UPnP adalah risiko keamanan** — malware bisa memakainya untuk membuka port dari dalam. Matikan di lingkungan yang butuh kontrol:
+> [!WARNING]
+> **UPnP adalah risiko keamanan** — malware bisa memakainya untuk membuka port dari dalam. Matikan di lingkungan yang butuh kontrol:
 ```
 /ip upnp set enabled=no                          # MikroTik
 R1(config)# no ip nat service ...                # Cisco
@@ -291,7 +300,8 @@ SIP menyertakan alamat IP di **payload**, bukan hanya header. NAT tidak mengubah
 /ip firewall service-port set sip disabled=no
 ```
 
-⚠️ **SIP ALG sering menyebabkan masalah, bukan menyelesaikannya.** Banyak penyedia VoIP menyarankan **mematikannya** dan memakai STUN/SBC di sisi mereka:
+> [!WARNING]
+> **SIP ALG sering menyebabkan masalah, bukan menyelesaikannya.** Banyak penyedia VoIP menyarankan **mematikannya** dan memakai STUN/SBC di sisi mereka:
 ```
 /ip firewall service-port set sip disabled=yes
 ```
@@ -369,13 +379,15 @@ $ sudo sysctl -w net.netfilter.nf_conntrack_tcp_timeout_established=86400
 $ sudo sysctl -w net.netfilter.nf_conntrack_max=262144
 ```
 
-⚠️ **Timeout TCP established default Linux adalah 5 hari** — sangat boros memori pada router sibuk. Turunkan ke 1 hari atau kurang, dan pastikan aplikasi memakai TCP keep-alive.
+> [!WARNING]
+> **Timeout TCP established default Linux adalah 5 hari** — sangat boros memori pada router sibuk. Turunkan ke 1 hari atau kurang, dan pastikan aplikasi memakai TCP keep-alive.
 
 ---
 
 ## 8. NAT dan IPv6
 
-⚠️ **IPv6 tidak butuh NAT** karena alamatnya cukup untuk semua perangkat.
+> [!WARNING]
+> **IPv6 tidak butuh NAT** karena alamatnya cukup untuk semua perangkat.
 
 Ada **NPTv6** [RFC 6296] — translasi prefix stateless 1:1 — untuk kasus khusus (multihoming tanpa BGP). Tetapi ini **bukan** NAT dengan port translation, dan tidak merusak end-to-end sebanyak NAT44.
 
@@ -385,7 +397,8 @@ Ada **NPTv6** [RFC 6296] — translasi prefix stateless 1:1 — untuk kasus khus
     action=netmap to-address=2001:db8:1::/64
 ```
 
-💡 **Jangan meniru pola IPv4 di IPv6.** Memakai ULA + NAT66 membuang seluruh keunggulan IPv6 dan menambah kompleksitas tanpa manfaat keamanan nyata. Gunakan GUA + firewall stateful.
+> [!TIP]
+> **Jangan meniru pola IPv4 di IPv6.** Memakai ULA + NAT66 membuang seluruh keunggulan IPv6 dan menambah kompleksitas tanpa manfaat keamanan nyata. Gunakan GUA + firewall stateful.
 
 ---
 
@@ -399,7 +412,7 @@ Ada **NPTv6** [RFC 6296] — translasi prefix stateless 1:1 — untuk kasus khus
 - **CGNAT** (`100.64.0.0/10`) memakai dua lapis NAT; port forwarding tidak mungkin.
 - **NAT traversal**: STUN (tahu pemetaan), TURN (relay), ICE (kerangka). **Symmetric NAT** paling sulit untuk P2P.
 - Protokol bermasalah: FTP aktif, **SIP** (sering lebih baik matikan ALG), IPsec (AH tidak bisa, ESP butuh NAT-T).
-- ⚠️ **NAT BUKAN firewall.** Keamanan datang dari inspeksi stateful, bukan dari penyembunyian alamat.
+- **NAT BUKAN firewall.** Keamanan datang dari inspeksi stateful, bukan dari penyembunyian alamat.
 - Perhatikan **tabel koneksi** dan **timeout** — sumber masalah memori dan koneksi terputus.
 - **IPv6 tidak butuh NAT** — jangan menirunya di sana.
 
@@ -484,4 +497,4 @@ Ada **NPTv6** [RFC 6296] — translasi prefix stateless 1:1 — untuk kasus khus
 
 ---
 
-**Berikutnya:** `09-nat-acl-firewall/02-acl.md` — kontrol trafik dengan access control list.
+**Berikutnya:** `09-nat-acl-firewall/02-acl.md`. Kontrol trafik dengan access control list.

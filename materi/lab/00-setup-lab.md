@@ -1,4 +1,4 @@
-# Lab 00 — Menyiapkan Lingkungan Lab
+# Lab 00: Menyiapkan Lingkungan Lab
 
 > **Tujuan:** Menyiapkan lingkungan untuk mempraktikkan seluruh materi kurikulum — gratis dan tanpa hardware mahal.
 
@@ -8,13 +8,14 @@
 
 Membaca teori jaringan tanpa praktik seperti membaca buku renang tanpa masuk air. **Konfigurasikan sendiri** — hanya dengan mengetik perintah, melihat output, membuat kesalahan, dan memperbaikinya, pemahaman menjadi solid dan siap ujian/kerja.
 
-⚠️ Semua lab dalam kurikulum ini dirancang bisa dikerjakan dengan alat **gratis**. Anda tidak perlu membeli perangkat.
+> [!WARNING]
+> Semua lab dalam kurikulum ini dirancang bisa dikerjakan dengan alat **gratis**. Anda tidak perlu membeli perangkat.
 
 ---
 
 ## 2. Pilihan Platform Lab
 
-### A. Cisco Packet Tracer (untuk lab Cisco level CCNA) — REKOMENDASI PEMULA
+### A. Cisco Packet Tracer (untuk lab Cisco level CCNA): REKOMENDASI PEMULA
 ```
 + Gratis (via Cisco Networking Academy — daftar akun gratis)
 + Ringan, mudah, cukup untuk 90% lab CCNA
@@ -39,7 +40,7 @@ Unduh: netacad.com → Resources → Packet Tracer (butuh akun gratis)
 Instal: containerlab.dev (butuh Docker/Linux)
 ```
 
-### D. MikroTik CHR (untuk lab MikroTik — Tahap 19)
+### D. MikroTik CHR (untuk lab MikroTik: Tahap 19)
 ```
 + RouterOS LENGKAP, GRATIS (batas 1 Mbps per interface, cukup untuk belajar)
 + Jalan di VirtualBox/VMware/GNS3/Proxmox
@@ -47,14 +48,15 @@ Unduh: mikrotik.com → Software → Cloud Hosted Router (CHR)
 Kelola dengan: WinBox (GUI), WebFig (browser), atau SSH
 ```
 
-### E. Linux (untuk lab Linux networking — Tahap 13)
+### E. Linux (untuk lab Linux networking: Tahap 13)
 ```
 + Sudah ada di sistem Anda (atau VM Linux gratis)
 + Praktik nyata: ip, namespaces, veth, bridge, nftables, tcpdump
 + Bisa simulasi seluruh topologi dengan network namespaces (lihat 13/02)
 ```
 
-💡 **Rekomendasi minimal untuk seluruh kurikulum:** Packet Tracer (lab Cisco/CCNA) + MikroTik CHR di VirtualBox (lab MikroTik) + Linux/VM (lab Linux & otomasi). Ketiganya gratis dan mencakup pendekatan tiga-platform kurikulum ini.
+> [!TIP]
+> **Rekomendasi minimal untuk seluruh kurikulum:** Packet Tracer (lab Cisco/CCNA) + MikroTik CHR di VirtualBox (lab MikroTik) + Linux/VM (lab Linux & otomasi). Ketiganya gratis dan mencakup pendekatan tiga-platform kurikulum ini.
 
 ---
 
@@ -126,7 +128,8 @@ Untuk lab MikroTik, ganti R1/R2 dengan CHR. Untuk lab Linux, seluruh topologi bi
 - Dokumentasikan (screenshot/config) untuk portofolio (18/04).
 ```
 
-⚠️ **Buat, rusak, perbaiki.** Jangan takut merusak lab — justru men-troubleshoot lab yang rusak melatih skill paling berharga. Reset dan ulangi sesering mungkin.
+> [!WARNING]
+> **Buat, rusak, perbaiki.** Jangan takut merusak lab — justru men-troubleshoot lab yang rusak melatih skill paling berharga. Reset dan ulangi sesering mungkin.
 
 ---
 
@@ -154,4 +157,4 @@ Jika ketiganya berhasil, Anda siap mengerjakan semua lab kurikulum.
 
 ---
 
-**Berikutnya:** `lab/01-lab-fondasi-switching.md` — lab pertama: fondasi & switching.
+**Berikutnya:** `lab/01-lab-fondasi-switching.md`. Lab pertama: fondasi & switching.

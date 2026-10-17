@@ -1,4 +1,4 @@
-# 19.11 — Switching CRS dan SwOS (MTCSWE)
+# 19.11 Switching CRS dan SwOS (MTCSWE)
 
 > **Prasyarat:** `19-mikrotik/02-bridge-vlan-switching` (bridge, flag H, bridge VLAN filtering dasar), `03-data-link/04-stp` (STP/RSTP), `03-data-link/05-etherchannel` (agregasi link)
 > **Tujuan:** Anda bisa menjelaskan kapan sebuah frame diproses switch chip dan kapan naik ke CPU, mengonfigurasi bridge VLAN filtering, L3 hardware offloading, isolasi port, IGMP snooping, RSTP/MSTP, dan bonding LACP di CRS3xx/CRS5xx tanpa kehilangan offload, memakai ACL dan QoS dasar switch chip, memilih antara SwOS dan RouterOS, serta mendiagnosis konfigurasi yang diam-diam membuat trafik lewat CPU.
@@ -49,7 +49,8 @@ Seluruh modul ini pada dasarnya menjawab satu pertanyaan: **bagaimana menjaga tr
 | Switch chip sederhana di router | QCA8337, Atheros8327, 88E6393X, MT7621, RTL8367 | Port switching dasar. Hanya sebagian yang bisa VLAN filtering dengan offload (Marvell 88E6xxx, MT7621, RTL8367 sejak v7). |
 | IPQ-PPE | sebagian router ARM baru | Dokumentasi menyebut offload bridge untuk chip ini masih dalam pengerjaan dan menyarankan bridge non-offload dengan RSTP. |
 
-⚠️ Fitur "switch" di perangkat berbeda **tidak sama**. Sebelum mengonfigurasi, cek tabel fitur di halaman "Bridging and Switching" untuk chip Anda (`/interface ethernet switch print` menampilkan tipe chip).
+> [!WARNING]
+> Fitur "switch" di perangkat berbeda **tidak sama**. Sebelum mengonfigurasi, cek tabel fitur di halaman "Bridging and Switching" untuk chip Anda (`/interface ethernet switch print` menampilkan tipe chip).
 
 ---
 
@@ -319,7 +320,8 @@ Hasil di lab (SW1 punya prioritas 0x1000 untuk MSTI 1, SW2 punya 0x1000 untuk MS
 
 SW1 menjadi root regional untuk VLAN 10, SW2 untuk VLAN 20. Pada jaringan dengan dua uplink fisik terpisah, pembagian ini membuat masing-masing uplink aktif untuk sebagian VLAN.
 
-💡 Loop Protect (`/interface ethernet set ether5 loop-protect=on`) mendeteksi loop dengan mengirim paket EtherType 0x9003 dan mematikan port yang menerima paketnya sendiri. Dokumentasi tetap menyarankan (R/M)STP sebagai mekanisme utama; loop protect berguna sebagai lapisan tambahan di port pelanggan.
+> [!TIP]
+> Loop Protect (`/interface ethernet set ether5 loop-protect=on`) mendeteksi loop dengan mengirim paket EtherType 0x9003 dan mematikan port yang menerima paketnya sendiri. Dokumentasi tetap menyarankan (R/M)STP sebagai mekanisme utama; loop protect berguna sebagai lapisan tambahan di port pelanggan.
 
 ---
 
@@ -327,7 +329,8 @@ SW1 menjadi root regional untuk VLAN 10, SW2 untuk VLAN 20. Pada jaringan dengan
 
 Bonding menggabungkan beberapa link menjadi satu antarmuka logis. Mode yang tersedia: `802.3ad`, `active-backup`, `balance-alb`, `balance-rr`, `balance-tlb`, `balance-xor`, `broadcast` (bawaan `balance-rr`).
 
-⚠️ Hanya **802.3ad (LACP), balance-xor (static LAG), dan active-backup** yang di-offload ke switch chip pada perangkat Prestera dan chip 88E6393X/88E6191X/88E6190. Mode lain berjalan di CPU. Untuk antar-switch, pakai 802.3ad.
+> [!WARNING]
+> Hanya **802.3ad (LACP), balance-xor (static LAG), dan active-backup** yang di-offload ke switch chip pada perangkat Prestera dan chip 88E6393X/88E6191X/88E6190. Mode lain berjalan di CPU. Untuk antar-switch, pakai 802.3ad.
 
 ```routeros
 /interface bonding add name=bond-uplink mode=802.3ad slaves=ether2,ether3 \
@@ -410,7 +413,8 @@ Switch chip punya alat pembatas sederhana yang tidak memakan CPU:
 - Dokumentasi juga mencatat bahwa `egress-rate` dan `storm-rate` tidak bekerja benar di port 10G yang tersambung pada kecepatan lebih rendah, untuk chip-chip di atas.
 - Chip Prestera mendukung delapan antrean keluaran per port, pemetaan DSCP dan 802.1p PCP, serta penjadwalan strict priority dan SDWRR. Konfigurasinya ada di halaman QoS dokumentasi switch; `new-vlan-priority` di ACL adalah cara paling sederhana untuk menandai trafik.
 
-💡 Untuk pembagian bandwidth per pelanggan (paket 10 Mbps, 20 Mbps), switch chip bukan tempatnya. Biarkan router PPPoE atau Hotspot dengan queue HTB yang melakukannya (`19-mikrotik/04-qos-queue-hotspot`). Pakai QoS switch untuk perlindungan kasar: membatasi AP hotspot, meredam broadcast storm, dan memprioritaskan VoIP di uplink.
+> [!TIP]
+> Untuk pembagian bandwidth per pelanggan (paket 10 Mbps, 20 Mbps), switch chip bukan tempatnya. Biarkan router PPPoE atau Hotspot dengan queue HTB yang melakukannya (`19-mikrotik/04-qos-queue-hotspot`). Pakai QoS switch untuk perlindungan kasar: membatasi AP hotspot, meredam broadcast storm, dan memprioritaskan VoIP di uplink.
 
 ---
 
@@ -462,7 +466,8 @@ Perangkat CRS3xx umumnya **dual boot**. Dari RouterOS:
 
 Dari SwOS, pakai tombol "Boot RouterOS" di menu System. Sejak RouterOS 7.17, device-mode membatasi perpindahan ini; dokumentasi SwOS menyebut Anda perlu `system/device-mode/update routerboard=yes` (dengan konfirmasi fisik) terlebih dulu.
 
-⚠️ Konfigurasi SwOS dan RouterOS **tidak saling dikonversi**. Berpindah sistem berarti mengonfigurasi ulang dari awal.
+> [!WARNING]
+> Konfigurasi SwOS dan RouterOS **tidak saling dikonversi**. Berpindah sistem berarti mengonfigurasi ulang dari awal.
 
 ---
 
@@ -676,4 +681,4 @@ Berkas containerlab tidak diuji dengan containerlab.
 
 ---
 
-**Berikutnya:** `22-service-provider/01-mpls-ldp` — masuk ke jaringan service provider: MPLS dan LDP dari sudut pandang multi-vendor.
+**Berikutnya:** `22-service-provider/01-mpls-ldp`. Masuk ke jaringan service provider: MPLS dan LDP dari sudut pandang multi-vendor.

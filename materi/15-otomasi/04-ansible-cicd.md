@@ -1,11 +1,11 @@
-# 15.4 — Ansible, Terraform, dan CI/CD Jaringan
+# 15.4 Ansible, Terraform, dan CI/CD Jaringan
 
 > **Prasyarat:** `15-otomasi/01`–`03`, `06-aplikasi/03` (YAML)
 > **Tujuan:** Anda paham otomasi deklaratif dengan Ansible dan Terraform, NetBox sebagai source of truth, dan pipeline CI/CD untuk jaringan — sesuai CCNA 6.6.
 
 ---
 
-## 1. Ansible — Otomasi Deklaratif
+## 1. Ansible: Otomasi Deklaratif
 
 **Ansible** adalah alat otomasi **agentless** (tidak perlu agen di perangkat) yang memakai **YAML** untuk mendeskripsikan keadaan yang diinginkan.
 
@@ -105,11 +105,13 @@ $ ansible-playbook -i inventory.yaml konfig-vlan.yaml --check --diff
 $ ansible-playbook -i inventory.yaml konfig-vlan.yaml --limit sw-access-01
 ```
 
-⚠️ **`--check --diff` (dry-run) sebelum menerapkan adalah wajib** untuk perubahan. `--check` mensimulasikan tanpa mengubah, `--diff` menampilkan perubahan yang akan terjadi. Sama seperti `compare_config` di NAPALM.
+> [!WARNING]
+> **`--check --diff` (dry-run) sebelum menerapkan adalah wajib** untuk perubahan. `--check` mensimulasikan tanpa mengubah, `--diff` menampilkan perubahan yang akan terjadi. Sama seperti `compare_config` di NAPALM.
 
-💡 **`state: merged`** menambah/mengubah tanpa menghapus yang lain — idempoten dan aman. `state: replaced` mengganti seluruh bagian, `state: overridden` menghapus yang tidak disebutkan. Pahami perbedaannya sebelum memakai.
+> [!TIP]
+> **`state: merged`** menambah/mengubah tanpa menghapus yang lain — idempoten dan aman. `state: replaced` mengganti seluruh bagian, `state: overridden` menghapus yang tidak disebutkan. Pahami perbedaannya sebelum memakai.
 
-### Ansible Vault — kredensial
+### Ansible Vault: kredensial
 
 ```bash
 # Enkripsi file berisi kredensial
@@ -118,7 +120,8 @@ $ ansible-vault edit secrets.yaml
 $ ansible-playbook playbook.yaml --ask-vault-pass
 ```
 
-⚠️ **JANGAN pernah menaruh kredensial plaintext di playbook atau inventory yang masuk Git.** Pakai Ansible Vault, environment variable, atau integrasi dengan vault eksternal (HashiCorp Vault, CyberArk).
+> [!WARNING]
+> **JANGAN pernah menaruh kredensial plaintext di playbook atau inventory yang masuk Git.** Pakai Ansible Vault, environment variable, atau integrasi dengan vault eksternal (HashiCorp Vault, CyberArk).
 
 ### Modul dan collection jaringan
 
@@ -153,7 +156,7 @@ Alternatif: modul RouterOS API (`community.routeros.api`) untuk interaksi lebih 
 
 ---
 
-## 2. Terraform — Infrastructure as Code
+## 2. Terraform: Infrastructure as Code
 
 **Terraform** (HashiCorp) unggul untuk **infrastruktur cloud dan yang punya API deklaratif** — VPC, security group, load balancer, DNS, dan sebagian perangkat jaringan.
 
@@ -211,9 +214,11 @@ $ terraform destroy       # hapus semua yang dibuat
 $ terraform state list    # apa yang dikelola
 ```
 
-⚠️ **`terraform plan` selalu ditampilkan sebelum `apply`** dan **harus di-review** — ia menunjukkan persis resource apa yang akan dibuat, diubah, atau dihapus. `~` = ubah, `+` = buat, `-` = hapus. **Perhatikan `-` (hapus) dengan sangat cermat.**
+> [!WARNING]
+> **`terraform plan` selalu ditampilkan sebelum `apply`** dan **harus di-review** — ia menunjukkan persis resource apa yang akan dibuat, diubah, atau dihapus. `~` = ubah, `+` = buat, `-` = hapus. **Perhatikan `-` (hapus) dengan sangat cermat.**
 
-⚠️ **State file (`terraform.tfstate`) sangat penting dan sensitif** — ia melacak semua resource yang dikelola dan sering berisi data sensitif. Simpan di **remote backend** (S3, Terraform Cloud) dengan locking, jangan di laptop atau Git. Kehilangan state = Terraform "lupa" apa yang sudah dibuat.
+> [!WARNING]
+> **State file (`terraform.tfstate`) sangat penting dan sensitif** — ia melacak semua resource yang dikelola dan sering berisi data sensitif. Simpan di **remote backend** (S3, Terraform Cloud) dengan locking, jangan di laptop atau Git. Kehilangan state = Terraform "lupa" apa yang sudah dibuat.
 
 ### Ansible vs Terraform
 
@@ -223,16 +228,18 @@ $ terraform state list    # apa yang dikelola
 | Fokus | Konfigurasi (perangkat yang ada) | Provisioning (membuat infrastruktur) |
 | State | Tanpa state (memeriksa setiap kali) | **State file** (melacak yang dibuat) |
 | Untuk | Perangkat jaringan, server, konfigurasi | Cloud (VPC, SG), sumber daya API |
-| Agentless | ✅ | ✅ |
+| Agentless | Ya | Ya |
 | Bahasa | YAML | HCL |
 
-💡 **Sering dipakai bersama (CCNA 6.6 menyebut keduanya):** **Terraform** membuat infrastruktur cloud (VPC, subnet, instance), lalu **Ansible** mengonfigurasi apa yang berjalan di dalamnya. Aturan umum: Terraform untuk "membuat/menghancurkan", Ansible untuk "mengonfigurasi".
+> [!TIP]
+> **Sering dipakai bersama (CCNA 6.6 menyebut keduanya):** **Terraform** membuat infrastruktur cloud (VPC, subnet, instance), lalu **Ansible** mengonfigurasi apa yang berjalan di dalamnya. Aturan umum: Terraform untuk "membuat/menghancurkan", Ansible untuk "mengonfigurasi".
 
-⚠️ **CCNA hanya mengharuskan Anda MENGENALI kapabilitas Ansible dan Terraform** (topik 6.6: "recognize the capabilities of configuration management mechanisms such as Ansible and Terraform"), bukan menguasai sintaks mendalam. Pahami: keduanya deklaratif, idempoten, dan mengelola konfigurasi/infrastruktur sebagai kode.
+> [!WARNING]
+> **CCNA hanya mengharuskan Anda MENGENALI kapabilitas Ansible dan Terraform** (topik 6.6: "recognize the capabilities of configuration management mechanisms such as Ansible and Terraform"), bukan menguasai sintaks mendalam. Pahami: keduanya deklaratif, idempoten, dan mengelola konfigurasi/infrastruktur sebagai kode.
 
 ---
 
-## 3. NetBox — Source of Truth
+## 3. NetBox: Source of Truth
 
 **NetBox** adalah basis data otoritatif "apa yang **seharusnya** ada" di jaringan — bukan "apa yang ada".
 
@@ -281,9 +288,11 @@ group_by:
   - sites
 ```
 
-💡 **NetBox memisahkan NIAT dari IMPLEMENTASI.** Anda mengubah jaringan dengan mengubah NetBox (yang bisa di-review, punya API, punya riwayat), lalu otomasi menerapkannya. Perangkat menjadi "cerminan" dari NetBox, bukan sumber kebenaran sendiri. **Nautobot** adalah fork NetBox dengan fokus otomasi tambahan.
+> [!TIP]
+> **NetBox memisahkan NIAT dari IMPLEMENTASI.** Anda mengubah jaringan dengan mengubah NetBox (yang bisa di-review, punya API, punya riwayat), lalu otomasi menerapkannya. Perangkat menjadi "cerminan" dari NetBox, bukan sumber kebenaran sendiri. **Nautobot** adalah fork NetBox dengan fokus otomasi tambahan.
 
-⚠️ **NetBox hanya berguna kalau dijaga akurat.** Kalau orang mengubah perangkat langsung tanpa memperbarui NetBox, SoT menjadi bohong. Disiplin proses (semua perubahan lewat NetBox → otomasi) diperlukan, atau setidaknya audit drift berkala.
+> [!WARNING]
+> **NetBox hanya berguna kalau dijaga akurat.** Kalau orang mengubah perangkat langsung tanpa memperbarui NetBox, SoT menjadi bohong. Disiplin proses (semua perubahan lewat NetBox → otomasi) diperlukan, atau setidaknya audit drift berkala.
 
 ---
 
@@ -325,9 +334,11 @@ $ git push origin tambah-vlan-40
 ✅ Audit trail — untuk kepatuhan
 ```
 
-⚠️ **JANGAN commit kredensial ke Git.** Gunakan `.gitignore`, Ansible Vault, git-secrets scanner, dan environment variable. Kredensial yang pernah masuk Git **tetap ada di riwayat** meski dihapus — harus di-rotasi kalau terlanjur.
+> [!WARNING]
+> **JANGAN commit kredensial ke Git.** Gunakan `.gitignore`, Ansible Vault, git-secrets scanner, dan environment variable. Kredensial yang pernah masuk Git **tetap ada di riwayat** meski dihapus — harus di-rotasi kalau terlanjur.
 
-💡 **Backup konfigurasi ke Git** memberi Anda diff otomatis: `git diff` menunjukkan persis apa yang berubah di setiap perangkat antar-backup — deteksi drift dan perubahan tak terduga secara gratis.
+> [!TIP]
+> **Backup konfigurasi ke Git** memberi Anda diff otomatis: `git diff` menunjukkan persis apa yang berubah di setiap perangkat antar-backup — deteksi drift dan perubahan tak terduga secara gratis.
 
 ---
 
@@ -379,9 +390,11 @@ Menerapkan praktik pengembangan software ke jaringan: **perubahan diuji otomatis
    - Rollback otomatis kalau verifikasi gagal
 ```
 
-💡 **Batfish adalah alat kunci untuk CI/CD jaringan** — ia mem-parsing konfigurasi dan **menjawab pertanyaan tentang jaringan tanpa menyentuh perangkat**: reachability, ACL analysis, dampak perubahan. Ini memungkinkan "unit test" untuk konfigurasi jaringan sebelum deploy.
+> [!TIP]
+> **Batfish adalah alat kunci untuk CI/CD jaringan** — ia mem-parsing konfigurasi dan **menjawab pertanyaan tentang jaringan tanpa menyentuh perangkat**: reachability, ACL analysis, dampak perubahan. Ini memungkinkan "unit test" untuk konfigurasi jaringan sebelum deploy.
 
-⚠️ **CI/CD jaringan lebih sulit daripada software** karena: (a) tidak ada "compile error" — konfigurasi salah baru terlihat saat diterapkan; (b) rollback jaringan lebih berisiko (bisa memutus koneksi ke perangkat itu sendiri); (c) testing membutuhkan lab yang meniru produksi. Karena itu **validasi statis (Batfish) dan testing di lab (Containerlab)** sangat berharga.
+> [!WARNING]
+> **CI/CD jaringan lebih sulit daripada software** karena: (a) tidak ada "compile error" — konfigurasi salah baru terlihat saat diterapkan; (b) rollback jaringan lebih berisiko (bisa memutus koneksi ke perangkat itu sendiri); (c) testing membutuhkan lab yang meniru produksi. Karena itu **validasi statis (Batfish) dan testing di lab (Containerlab)** sangat berharga.
 
 ### Alat CI/CD
 
@@ -425,7 +438,8 @@ deploy:
   only: [main]        # hanya dari branch main
 ```
 
-⚠️ **`when: manual` (approval gate) untuk deploy produksi** — perubahan jaringan sebaiknya tidak di-deploy otomatis tanpa persetujuan manusia, setidaknya sampai pipeline sangat matang dan teruji. Blast radius jaringan terlalu besar untuk deploy buta.
+> [!WARNING]
+> **`when: manual` (approval gate) untuk deploy produksi** — perubahan jaringan sebaiknya tidak di-deploy otomatis tanpa persetujuan manusia, setidaknya sampai pipeline sangat matang dan teruji. Blast radius jaringan terlalu besar untuk deploy buta.
 
 ---
 
@@ -457,9 +471,11 @@ SETELAH:
   □ Rollback otomatis kalau verifikasi gagal
 ```
 
-⚠️ **Blast radius adalah pertimbangan utama.** Otomasi bisa merusak seluruh jaringan dalam detik. Deploy **canary** (satu perangkat dulu, verifikasi, baru lanjut) membatasi dampak kalau ada masalah. Ini prinsip yang sama dengan deployment software modern.
+> [!WARNING]
+> **Blast radius adalah pertimbangan utama.** Otomasi bisa merusak seluruh jaringan dalam detik. Deploy **canary** (satu perangkat dulu, verifikasi, baru lanjut) membatasi dampak kalau ada masalah. Ini prinsip yang sama dengan deployment software modern.
 
-💡 **Approval gate + canary + rollback otomatis** adalah tiga pengaman terpenting. Dengan ketiganya, otomasi menjadi jauh lebih aman daripada perubahan manual — sekaligus lebih cepat dan konsisten.
+> [!TIP]
+> **Approval gate + canary + rollback otomatis** adalah tiga pengaman terpenting. Dengan ketiganya, otomasi menjadi jauh lebih aman daripada perubahan manual — sekaligus lebih cepat dan konsisten.
 
 ---
 
@@ -481,7 +497,8 @@ Untuk berlatih otomasi tanpa risiko:
 5. Cloud gratis tier — AWS/Azure/GCP untuk Terraform
 ```
 
-💡 **Cisco DevNet Sandbox** menyediakan perangkat Cisco nyata di cloud dengan API (RESTCONF, NETCONF, gNMI) yang aktif — sempurna untuk berlatih otomasi tanpa hardware. Gratis dengan akun DevNet.
+> [!TIP]
+> **Cisco DevNet Sandbox** menyediakan perangkat Cisco nyata di cloud dengan API (RESTCONF, NETCONF, gNMI) yang aktif — sempurna untuk berlatih otomasi tanpa hardware. Gratis dengan akun DevNet.
 
 Detail lab di `lab/00-setup-lab.md`.
 
@@ -497,7 +514,7 @@ Detail lab di `lab/00-setup-lab.md`.
 - **CI/CD jaringan**: lint → **validate (Batfish)** → test (Containerlab) → **review/approval** → deploy → **verify (pyATS)**.
 - **Batfish** menganalisis konfigurasi statis (reachability, ACL, dampak perubahan) tanpa menyentuh perangkat — "unit test" untuk jaringan.
 - Perubahan aman: **review, backup, dry-run, validasi, lab, rollback plan, deploy canary bertahap, verifikasi**.
-- ⚠️ **Blast radius**: otomasi memperbesar dampak — **approval gate + canary + rollback otomatis** adalah pengaman terpenting.
+- **Blast radius**: otomasi memperbesar dampak — **approval gate + canary + rollback otomatis** adalah pengaman terpenting.
 - Berlatih di **Containerlab, Cisco DevNet Sandbox, MikroTik CHR** tanpa risiko.
 
 ---
@@ -563,4 +580,4 @@ Detail lab di `lab/00-setup-lab.md`.
 
 ---
 
-**Berikutnya:** `15-otomasi/05-rekayasa-perangkat-lunak` — rekayasa perangkat lunak untuk network engineer: Git, pengujian, pola desain, dan Docker.
+**Berikutnya:** `15-otomasi/05-rekayasa-perangkat-lunak`. Rekayasa perangkat lunak untuk network engineer: Git, pengujian, pola desain, dan Docker.

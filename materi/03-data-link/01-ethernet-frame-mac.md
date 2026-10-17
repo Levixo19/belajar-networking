@@ -1,4 +1,4 @@
-# 03.1 — Ethernet: Frame, MAC Address, dan Error
+# 03.1 Ethernet: Frame, MAC Address, dan Error
 
 > **Prasyarat:** `01-model-referensi/03`, `02-layer-fisik/04`
 > **Tujuan:** Anda bisa membaca setiap field frame Ethernet, memahami MAC address sampai ke tingkat bit, dan mendiagnosis error interface dengan tepat.
@@ -56,7 +56,7 @@ EtherType penting yang wajib dikenal:
 | `0x8809` | LACP / slow protocols |
 | `0x888E` | 802.1X (EAPOL) |
 
-**Payload (46–1500 byte)** — data dari layer atas (biasanya paket IP).
+**Payload (46-1500 byte)** — data dari layer atas (biasanya paket IP).
 - **Minimum 46 byte** — kalau kurang, ditambahkan **padding**.
 - **Maksimum 1500 byte** = MTU standar Ethernet.
 
@@ -81,10 +81,11 @@ Jumbo frame: sampai 9018/9022 byte
 |---|---|---|
 | Field ke-3 | EtherType | Length |
 | Identifikasi protokol | Langsung dari EtherType | Lewat header LLC (DSAP/SSAP) |
-| Overhead | Lebih kecil | Lebih besar (3–8 byte LLC/SNAP) |
+| Overhead | Lebih kecil | Lebih besar (3-8 byte LLC/SNAP) |
 | Dipakai | **99% trafik hari ini** | STP, CDP, beberapa protokol lama |
 
-💡 Praktisnya: kalau Anda melihat "Ethernet II" di Wireshark, itu normal. LLC/SNAP muncul untuk protokol kendali seperti STP dan CDP.
+> [!TIP]
+> Praktisnya: kalau Anda melihat "Ethernet II" di Wireshark, itu normal. LLC/SNAP muncul untuk protokol kendali seperti STP dan CDP.
 
 ---
 
@@ -177,12 +178,14 @@ SW1# show interfaces gi0/1 | include address
 SW1# show mac address-table
 ```
 
-⚠️ **MAC address bisa diubah dengan mudah** (satu perintah). Karena itu:
+> [!WARNING]
+> **MAC address bisa diubah dengan mudah** (satu perintah). Karena itu:
 - MAC filtering **bukan** kontrol keamanan yang serius.
 - Port security memperlambat penyerang, tidak menghentikannya.
 - Untuk keamanan sesungguhnya, gunakan **802.1X** (`12-keamanan/04`).
 
-💡 **MAC randomization** — ponsel modern (iOS 14+, Android 10+) memakai MAC acak per SSID untuk privasi. Ini merusak: DHCP reservation berbasis MAC, MAC filtering, dan pelacakan perangkat. Solusinya: 802.1X, atau meminta pengguna mematikan "private address" untuk SSID korporat.
+> [!TIP]
+> **MAC randomization** — ponsel modern (iOS 14+, Android 10+) memakai MAC acak per SSID untuk privasi. Ini merusak: DHCP reservation berbasis MAC, MAC filtering, dan pelacakan perangkat. Solusinya: 802.1X, atau meminta pengguna mematikan "private address" untuk SSID korporat.
 
 ---
 
@@ -214,7 +217,8 @@ Penghematan overhead: ~44 MB, ditambah CPU interrupt jauh lebih sedikit.
 
 Dipakai di: storage (iSCSI, NFS), backup, replikasi VM, underlay VXLAN, HPC.
 
-⚠️ **Jumbo frame harus diaktifkan di SETIAP perangkat sepanjang jalur** — host, NIC, switch, router. Kalau satu perangkat masih 1500, frame besar akan dibuang tanpa pemberitahuan → **MTU black hole**: ping kecil jalan, transfer besar macet.
+> [!WARNING]
+> **Jumbo frame harus diaktifkan di SETIAP perangkat sepanjang jalur** — host, NIC, switch, router. Kalau satu perangkat masih 1500, frame besar akan dibuang tanpa pemberitahuan → **MTU black hole**: ping kecil jalan, transfer besar macet.
 
 ```
 # Linux
@@ -280,9 +284,11 @@ Dengan switch dan full duplex:
 - Tidak ada perangkat lain di collision domain itu
 - **Tidak mungkin ada collision** → CSMA/CD **dinonaktifkan**
 
-⚠️ **Karena itu:** melihat **collision** pada link full-duplex modern adalah **tanda masalah**, bukan hal normal. Hampir selalu berarti duplex mismatch.
+> [!WARNING]
+> **Karena itu:** melihat **collision** pada link full-duplex modern adalah **tanda masalah**, bukan hal normal. Hampir selalu berarti duplex mismatch.
 
-💡 CSMA/CD masih relevan untuk memahami: (a) kenapa frame minimum 64 byte; (b) kenapa half duplex buruk; (c) kenapa Wi-Fi memakai CSMA/**CA** (Collision *Avoidance* — karena radio tidak bisa mendengar saat mengirim).
+> [!TIP]
+> CSMA/CD masih relevan untuk memahami: (a) kenapa frame minimum 64 byte; (b) kenapa half duplex buruk; (c) kenapa Wi-Fi memakai CSMA/**CA** (Collision *Avoidance* — karena radio tidak bisa mendengar saat mengirim).
 
 ### Broadcast Domain
 
@@ -303,7 +309,7 @@ ROUTER            : setiap interface = broadcast domain sendiri
 
 ---
 
-## 6. Duplex Mismatch — Diagnosis Lengkap
+## 6. Duplex Mismatch: Diagnosis Lengkap
 
 Sudah diperkenalkan di `02-layer-fisik/04`. Di sini cara mengenalinya dari counter.
 
@@ -327,7 +333,8 @@ A mengirim saat B sedang mengirim
 | **Full duplex** | Banyak **input errors**, **CRC/FCS errors**, **runts** |
 | **Half duplex** | Banyak **collisions**, terutama **late collisions** |
 
-⚠️ **Late collision adalah petunjuk paling kuat.** Collision normal terjadi dalam 64 byte pertama. Late collision terjadi **setelah** itu — berarti sisi lain mengirim tanpa mendengarkan (= full duplex), atau kabel terlalu panjang.
+> [!WARNING]
+> **Late collision adalah petunjuk paling kuat.** Collision normal terjadi dalam 64 byte pertama. Late collision terjadi **setelah** itu — berarti sisi lain mengirim tanpa mendengarkan (= full duplex), atau kabel terlalu panjang.
 
 ### Cara memperbaiki
 
@@ -420,7 +427,8 @@ SW1# clear counters gi0/1
 SW1# show interfaces gi0/1 | include error|CRC|collision
 ```
 
-⚠️ **Selalu clear counter sebelum mendiagnosis.** Counter yang menumpuk selama 2 tahun tidak memberi tahu apakah masalahnya terjadi **sekarang**.
+> [!WARNING]
+> **Selalu clear counter sebelum mendiagnosis.** Counter yang menumpuk selama 2 tahun tidak memberi tahu apakah masalahnya terjadi **sekarang**.
 
 Di Linux:
 ```bash
@@ -439,7 +447,8 @@ Pause frame: MAC tujuan 01:80:C2:00:00:01, EtherType 0x8808
 Berisi: berapa lama harus berhenti (dalam quanta)
 ```
 
-⚠️ **Umumnya sebaiknya dinonaktifkan di jaringan modern.** Alasannya: pause frame menghentikan **seluruh** trafik pada link itu, termasuk trafik prioritas tinggi — menyebabkan *head-of-line blocking* yang menyebar (congestion spreading). TCP sudah punya congestion control yang lebih baik.
+> [!WARNING]
+> **Umumnya sebaiknya dinonaktifkan di jaringan modern.** Alasannya: pause frame menghentikan **seluruh** trafik pada link itu, termasuk trafik prioritas tinggi — menyebabkan *head-of-line blocking* yang menyebar (congestion spreading). TCP sudah punya congestion control yang lebih baik.
 
 Pengecualian: **PFC** (*Priority Flow Control*, 802.1Qbb) yang menghentikan hanya kelas trafik tertentu — dipakai untuk RoCE/FCoE di data center yang butuh lossless.
 
@@ -479,7 +488,8 @@ SW1# show interfaces gi0/1 | include pause
 /interface ethernet set ether1 auto-negotiation=no speed=100Mbps full-duplex=yes
 ```
 
-⚠️ **RouterOS membedakan `mtu` dan `l2mtu`.** `mtu` adalah payload L3 (biasanya 1500); **`l2mtu`** adalah ukuran frame L2 maksimum yang bisa ditangani hardware. Untuk VLAN, MPLS, atau tunnel, **`l2mtu` harus cukup besar** (mis. 1598) atau frame bertag akan dibuang. Ini konsep yang tidak ada di Cisco dan sering membingungkan pemula.
+> [!WARNING]
+> **RouterOS membedakan `mtu` dan `l2mtu`.** `mtu` adalah payload L3 (biasanya 1500); **`l2mtu`** adalah ukuran frame L2 maksimum yang bisa ditangani hardware. Untuk VLAN, MPLS, atau tunnel, **`l2mtu` harus cukup besar** (mis. 1598) atau frame bertag akan dibuang. Ini konsep yang tidak ada di Cisco dan sering membingungkan pemula.
 
 ```
 # Cek nilai l2mtu yang didukung hardware
@@ -488,7 +498,8 @@ SW1# show interfaces gi0/1 | include pause
 /interface ethernet set [find] l2mtu=1598
 ```
 
-💡 **Jumbo frame di RouterOS:**
+> [!TIP]
+> **Jumbo frame di RouterOS:**
 ```
 /interface ethernet set [find] mtu=9000 l2mtu=9018
 /interface bridge set bridge-LAN mtu=9000
@@ -499,7 +510,7 @@ SW1# show interfaces gi0/1 | include pause
 ## 9. Ringkasan
 
 - Frame Ethernet: Preamble/SFD (L1) + MAC dest + MAC src + EtherType + payload + FCS.
-- Ukuran 64–1518 byte (1522 dengan VLAN tag); jumbo sampai 9000+.
+- Ukuran 64-1518 byte (1522 dengan VLAN tag); jumbo sampai 9000+.
 - **EtherType** menentukan protokol payload: 0x0800 IPv4, 0x0806 ARP, 0x86DD IPv6, 0x8100 VLAN.
 - MAC 48 bit = OUI (24 bit vendor) + device ID. **I/G bit** menentukan unicast/multicast; **U/L bit** menentukan universal/local.
 - Broadcast = `FF:FF:FF:FF:FF:FF`. Multicast IPv4 = `01:00:5E:...`, IPv6 = `33:33:...`.
@@ -553,4 +564,4 @@ SW1# show interfaces gi0/1 | include pause
 
 ---
 
-**Berikutnya:** `03-data-link/02-switching.md` — bagaimana switch benar-benar bekerja.
+**Berikutnya:** `03-data-link/02-switching.md`. Bagaimana switch benar-benar bekerja.

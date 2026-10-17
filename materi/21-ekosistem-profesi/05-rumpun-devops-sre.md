@@ -1,4 +1,4 @@
-# 21.5 — Rumpun DevOps, SRE & Otomasi
+# 21.5 Rumpun DevOps, SRE & Otomasi
 
 > **Prasyarat:** sudah mengikuti blok otomasi (`15-otomasi/01-mengapa-otomasi` sampai `15-otomasi/04-ansible-cicd`), observability (`14-monitoring-troubleshooting/03-observability`), dan jaringan cloud serta container (`16-datacenter-cloud-sdn/04-cloud-networking`, `16-datacenter-cloud-sdn/05-container-kubernetes`). Akan lebih terasa bila Anda sudah mengerjakan `20-proyek-akhir/08-babak-7-kode-yang-menjaga` dan `20-proyek-akhir/09-babak-8-malam-panjang`.
 > **Tujuan:** Anda memahami empat profesi dalam rumpun Otomatisasi & Integrasi Modern (DevOps Engineer, Site Reliability Engineer, Cloud Infrastructure Engineer, Automation Engineer), tahu apa yang benar-benar mereka kerjakan dan bagaimana keberhasilannya diukur, sertifikasi mana yang masih berlaku per 2026, dan bagaimana seorang network engineer atau network administrator bisa menyeberang ke rumpun ini secara realistis.
@@ -24,7 +24,8 @@ Rumpun ini berisi orang-orang yang **memperlakukan infrastruktur sebagai perangk
 | Posisi masuk realistis | Menengah (dari sysadmin/developer) | Menengah (dari sysadmin/DevOps/backend) | Pemula sampai menengah | Menengah (dari network engineer) |
 | Sertifikasi kunci 2026 | Terraform Associate (004), CKA, AWS DOP-C02, AZ-400 | CKA, Prometheus Certified Associate, Google Professional Cloud DevOps Engineer | AWS SAA-C03, AWS CloudOps Engineer (SOA-C03), AZ-104, Google ACE | CCNA Automation (200-901), CCNP Automation (350-901 AUTOCOR), RHCE in Ansible |
 
-💡 **Batas antarprofesi di dunia nyata kabur.** Di startup 50 orang, satu orang bisa memegang keempat peran sekaligus dengan jabatan "DevOps Engineer". Di perusahaan teknologi besar, peran ini dipisah dan bahkan dipecah lagi menjadi tim *platform*, tim *observability*, tim *cloud foundation*, dan tim *network automation*. Baca deskripsi pekerjaan, bukan hanya judulnya.
+> [!TIP]
+> **Batas antarprofesi di dunia nyata kabur.** Di startup 50 orang, satu orang bisa memegang keempat peran sekaligus dengan jabatan "DevOps Engineer". Di perusahaan teknologi besar, peran ini dipisah dan bahkan dipecah lagi menjadi tim *platform*, tim *observability*, tim *cloud foundation*, dan tim *network automation*. Baca deskripsi pekerjaan, bukan hanya judulnya.
 
 ---
 
@@ -44,7 +45,8 @@ DORA (DevOps Research and Assessment) adalah program riset yang selama bertahun-
 | Instabilitas | Change fail rate | Rasio deploy yang butuh intervensi segera (rollback atau hotfix) |
 | Instabilitas | Deployment rework rate | Rasio deploy tak terencana yang terjadi akibat insiden produksi |
 
-⚠️ **Banyak materi lama masih menyebut "empat metrik DORA" dengan MTTR.** Definisi terkini di dora.dev memakai lima metrik di atas, dan "MTTR" diganti istilah yang lebih sempit: *failed deployment recovery time*. Kalau di wawancara Anda menyebut empat metrik lama, tidak salah total, tetapi menyebut pembaruannya menunjukkan Anda mengikuti perkembangan.
+> [!WARNING]
+> **Banyak materi lama masih menyebut "empat metrik DORA" dengan MTTR.** Definisi terkini di dora.dev memakai lima metrik di atas, dan "MTTR" diganti istilah yang lebih sempit: *failed deployment recovery time*. Kalau di wawancara Anda menyebut empat metrik lama, tidak salah total, tetapi menyebut pembaruannya menunjukkan Anda mengikuti perkembangan.
 
 Laporan DORA 2025 berjudul *State of AI-assisted Software Development*. Pesan utamanya: AI berperan sebagai **penguat** (amplifier). Tim dengan fondasi rapi (pipeline otomatis, pengujian baik, platform internal yang jelas) makin cepat; tim yang berantakan makin cepat berantakan.
 
@@ -166,7 +168,8 @@ Perusahaan yang merekrut DevOps Engineer:
 
 Data Jobstreet Indonesia (berdasarkan rentang gaji yang dicantumkan pemberi kerja di iklan) menunjukkan rentang tipikal DevOps Engineer sekitar **Rp 7,06 juta sampai Rp 8,88 juta per bulan** secara nasional, dengan Jakarta Raya di kisaran Rp 8,5 juta sampai Rp 11,5 juta (diakses Oktober 2026).
 
-⚠️ **Baca angka gaji dari iklan dengan hati-hati.** Perusahaan yang mencantumkan gaji di iklan cenderung perusahaan menengah dan kecil; perusahaan teknologi besar jarang mencantumkannya. Rentang aktual untuk posisi senior di perusahaan besar bisa jauh berbeda. Jangan memakai satu angka sebagai patokan negosiasi tanpa membandingkan beberapa sumber.
+> [!WARNING]
+> **Baca angka gaji dari iklan dengan hati-hati.** Perusahaan yang mencantumkan gaji di iklan cenderung perusahaan menengah dan kecil; perusahaan teknologi besar jarang mencantumkannya. Rentang aktual untuk posisi senior di perusahaan besar bisa jauh berbeda. Jangan memakai satu angka sebagai patokan negosiasi tanpa membandingkan beberapa sumber.
 
 ### 3.7 Belajar dari kurikulum ini
 
@@ -225,7 +228,8 @@ Ukuran keberhasilan:
 - **Porsi waktu untuk toil** (target Google: maksimal 50%, sisanya rekayasa).
 - Persentase tindak lanjut postmortem yang benar-benar selesai.
 
-💡 **SLO yang baik dimulai dari pengalaman pengguna.** "Halaman checkout berhasil dimuat di bawah 800 ms untuk 99% permintaan" jauh lebih berguna daripada "server uptime 99,99%". Server bisa hidup sementara pengguna tetap gagal bayar karena DNS, sertifikat, atau gateway pembayaran bermasalah.
+> [!TIP]
+> **SLO yang baik dimulai dari pengalaman pengguna.** "Halaman checkout berhasil dimuat di bawah 800 ms untuk 99% permintaan" jauh lebih berguna daripada "server uptime 99,99%". Server bisa hidup sementara pengguna tetap gagal bayar karena DNS, sertifikat, atau gateway pembayaran bermasalah.
 
 ### 4.3 Keahlian dan alat
 
@@ -468,7 +472,8 @@ Ringkasan per jenjang:
 | Menengah | CCNP Automation (350-901 AUTOCOR + konsentrasi); RHCE in Ansible (EX200 + EX294) |
 | Senior | Red Hat EX374; CCIE Automation |
 
-⚠️ **Hati-hati dengan materi belajar lama.** Banyak kursus dan buku masih memakai nama "DevNet Associate (DEVASC)" dan "RHCE EX294 untuk RHEL 8/9". Isinya sebagian besar masih berguna, tetapi selalu cocokkan dengan daftar topik ujian terbaru di situs Cisco dan Red Hat sebelum mendaftar.
+> [!WARNING]
+> **Hati-hati dengan materi belajar lama.** Banyak kursus dan buku masih memakai nama "DevNet Associate (DEVASC)" dan "RHCE EX294 untuk RHEL 8/9". Isinya sebagian besar masih berguna, tetapi selalu cocokkan dengan daftar topik ujian terbaru di situs Cisco dan Red Hat sebelum mendaftar.
 
 Jalur kompetensi Indonesia: belum ada SKKNI khusus otomasi jaringan yang kami temukan. Untuk fondasi jaringannya, gunakan skema berbasis SKKNI jaringan yang dibahas di modul rumpun inti, dan untuk otomasi lampirkan portofolio kode sebagai bukti.
 
@@ -525,9 +530,11 @@ Peta enam sampai dua belas bulan yang realistis, sambil tetap bekerja:
 | 9-10 | CI/CD dan observability. | Pipeline yang menguji perubahan jaringan; dashboard Grafana |
 | 11-12 | Satu sertifikasi terarah (CCNA Automation, Terraform Associate, atau cloud associate) dan mulai melamar. | Sertifikat + portofolio terdokumentasi |
 
-💡 **Mulailah dari pekerjaan Anda sendiri.** Cara tercepat membuktikan diri adalah mengotomasi satu hal yang menyebalkan di kantor: backup konfigurasi harian, laporan utilisasi link mingguan, atau pengecekan masa berlaku sertifikat. Satu otomasi kecil yang dipakai tim setiap hari lebih meyakinkan pewawancara daripada lima kursus daring.
+> [!TIP]
+> **Mulailah dari pekerjaan Anda sendiri.** Cara tercepat membuktikan diri adalah mengotomasi satu hal yang menyebalkan di kantor: backup konfigurasi harian, laporan utilisasi link mingguan, atau pengecekan masa berlaku sertifikat. Satu otomasi kecil yang dipakai tim setiap hari lebih meyakinkan pewawancara daripada lima kursus daring.
 
-⚠️ **Jangan menjalankan otomasi langsung ke produksi tanpa izin dan tanpa lab.** Skrip yang salah bisa mengubah 300 perangkat dalam 30 detik. Mulai dari mode baca saja (mengambil data), lalu perubahan di lab, lalu perubahan kecil di produksi dengan persetujuan dan rencana rollback. Prinsip manajemen perubahan di `15-otomasi/04-ansible-cicd` berlaku penuh.
+> [!WARNING]
+> **Jangan menjalankan otomasi langsung ke produksi tanpa izin dan tanpa lab.** Skrip yang salah bisa mengubah 300 perangkat dalam 30 detik. Mulai dari mode baca saja (mengambil data), lalu perubahan di lab, lalu perubahan kecil di produksi dengan persetujuan dan rencana rollback. Prinsip manajemen perubahan di `15-otomasi/04-ansible-cicd` berlaku penuh.
 
 Arah sebaliknya juga terjadi: DevOps Engineer atau SRE yang menyadari bahwa banyak insiden mereka berakar di jaringan (DNS, MTU, BGP, firewall), lalu memperdalam fondasi jaringan lewat kurikulum ini. Kombinasi keduanya, orang yang bisa membaca `tcpdump` sekaligus menulis modul Terraform, termasuk yang paling dicari.
 
@@ -637,4 +644,4 @@ Arah sebaliknya juga terjadi: DevOps Engineer atau SRE yang menyadari bahwa bany
 
 ---
 
-**Berikutnya:** `21-ekosistem-profesi/06-rumpun-dukungan-lapangan` — Rumpun Dukungan & Lapangan: profesi yang memastikan perangkat, kabel, dan pengguna akhir benar-benar terlayani di lokasi.
+**Berikutnya:** `21-ekosistem-profesi/06-rumpun-dukungan-lapangan`. Rumpun Dukungan & Lapangan: profesi yang memastikan perangkat, kabel, dan pengguna akhir benar-benar terlayani di lokasi.

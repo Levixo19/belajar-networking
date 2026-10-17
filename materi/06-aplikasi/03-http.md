@@ -1,7 +1,7 @@
-# 06.3 — HTTP dan Layanan Web
+# 06.3 HTTP dan Layanan Web
 
 > **Prasyarat:** `05-transport/02`, `05-transport/03`
-> **Tujuan:** Anda paham anatomi HTTP, perbedaan HTTP/1.1–2–3, konsep REST/JSON (dibutuhkan untuk otomasi), serta peran proxy, load balancer, dan CDN.
+> **Tujuan:** Anda paham anatomi HTTP, perbedaan HTTP/1.1-2-3, konsep REST/JSON (dibutuhkan untuk otomasi), serta peran proxy, load balancer, dan CDN.
 
 ---
 
@@ -49,15 +49,15 @@ ETag: "a1b2c3"
 
 | Method | Fungsi | Idempoten? | Aman? | Punya body? |
 |---|---|---|---|---|
-| **GET** | Ambil resource | ✅ | ✅ | Tidak |
-| **HEAD** | Seperti GET tanpa body | ✅ | ✅ | Tidak |
-| **POST** | Buat resource / kirim data | ❌ | ❌ | Ya |
-| **PUT** | Ganti resource seluruhnya | ✅ | ❌ | Ya |
-| **PATCH** | Ubah sebagian resource | ❌ | ❌ | Ya |
-| **DELETE** | Hapus resource | ✅ | ❌ | Kadang |
-| **OPTIONS** | Tanya kemampuan (dipakai CORS preflight) | ✅ | ✅ | Tidak |
-| **CONNECT** | Buat tunnel (proxy HTTPS) | ❌ | ❌ | — |
-| **TRACE** | Echo request (sebaiknya dimatikan) | ✅ | ✅ | Tidak |
+| **GET** | Ambil resource | Ya | Ya | Tidak |
+| **HEAD** | Seperti GET tanpa body | Ya | Ya | Tidak |
+| **POST** | Buat resource / kirim data | Tidak | Tidak | Ya |
+| **PUT** | Ganti resource seluruhnya | Ya | Tidak | Ya |
+| **PATCH** | Ubah sebagian resource | Tidak | Tidak | Ya |
+| **DELETE** | Hapus resource | Ya | Tidak | Kadang |
+| **OPTIONS** | Tanya kemampuan (dipakai CORS preflight) | Ya | Ya | Tidak |
+| **CONNECT** | Buat tunnel (proxy HTTPS) | Tidak | Tidak | — |
+| **TRACE** | Echo request (sebaiknya dimatikan) | Ya | Ya | Tidak |
 
 **Aman (safe)** = tidak mengubah state server.
 **Idempoten** = melakukannya berkali-kali punya efek yang sama seperti sekali. Penting karena klien boleh mengulang request idempoten setelah timeout.
@@ -72,7 +72,8 @@ ETag: "a1b2c3"
 | **4xx** | Kesalahan **klien** | `400 Bad Request`, `401 Unauthorized`, `403 Forbidden`, `404 Not Found`, `405 Method Not Allowed`, `409 Conflict`, `413 Payload Too Large`, `429 Too Many Requests` |
 | **5xx** | Kesalahan **server** | `500 Internal Server Error`, `502 Bad Gateway`, `503 Service Unavailable`, `504 Gateway Timeout` |
 
-⚠️ **Yang paling penting untuk network engineer:**
+> [!WARNING]
+> **Yang paling penting untuk network engineer:**
 
 | Kode | Artinya bagi Anda |
 |---|---|
@@ -83,7 +84,8 @@ ETag: "a1b2c3"
 | **503 Service Unavailable** | Backend ada tetapi menolak (overload/maintenance) |
 | **504 Gateway Timeout** | Backend **terlalu lambat** menjawab |
 
-💡 **502/504 hampir selalu masalah di sisi backend atau jaringan antara LB dan backend**, bukan di klien. Ini pembeda diagnosis yang penting.
+> [!TIP]
+> **502/504 hampir selalu masalah di sisi backend atau jaringan antara LB dan backend**, bukan di klien. Ini pembeda diagnosis yang penting.
 
 ### Header yang wajib dikenal
 
@@ -106,7 +108,8 @@ ETag: "a1b2c3"
 | **Alt-Svc** | Iklankan HTTP/3 |
 | **Retry-After** | Kapan boleh mencoba lagi (dengan 429/503) |
 
-⚠️ **`X-Forwarded-For` bisa dipalsukan klien.** Load balancer harus **menimpa**, bukan menambahkan, header ini pada hop pertama. Kalau tidak, log Anda bisa berisi IP palsu dan kontrol berbasis IP bisa dilewati.
+> [!WARNING]
+> **`X-Forwarded-For` bisa dipalsukan klien.** Load balancer harus **menimpa**, bukan menambahkan, header ini pada hop pertama. Kalau tidak, log Anda bisa berisi IP palsu dan kontrol berbasis IP bisa dilewati.
 
 ---
 
@@ -122,7 +125,8 @@ ETag: "a1b2c3"
 - **Chunked transfer encoding** → streaming
 - **Pipelining** — mengirim beberapa request tanpa menunggu; **gagal dalam praktik** karena head-of-line blocking dan dukungan proxy yang buruk. Praktis tidak dipakai.
 
-⚠️ **Head-of-line blocking HTTP/1.1:** dalam satu koneksi, response harus dikirim **berurutan**. Request lambat menahan semua request setelahnya. Solusi browser: buka **6 koneksi paralel per host** — boros dan tetap terbatas.
+> [!WARNING]
+> **Head-of-line blocking HTTP/1.1:** dalam satu koneksi, response harus dikirim **berurutan**. Request lambat menahan semua request setelahnya. Solusi browser: buka **6 koneksi paralel per host** — boros dan tetap terbatas.
 
 ### HTTP/2 (2015, RFC 9113)
 - **Biner**, bukan teks
@@ -131,7 +135,8 @@ ETag: "a1b2c3"
 - **Stream priority**
 - **Server push** — ⚠️ **sudah dicabut** dari Chrome karena jarang bermanfaat dan sering merugikan
 
-⚠️ **Head-of-line blocking berpindah ke TCP.** Satu paket TCP hilang → semua stream berhenti. Di jaringan dengan loss, HTTP/2 bisa lebih lambat daripada HTTP/1.1 dengan 6 koneksi.
+> [!WARNING]
+> **Head-of-line blocking berpindah ke TCP.** Satu paket TCP hilang → semua stream berhenti. Di jaringan dengan loss, HTTP/2 bisa lebih lambat daripada HTTP/1.1 dengan 6 koneksi.
 
 ### HTTP/3 (2022, RFC 9114)
 - Berjalan di atas **QUIC/UDP**
@@ -148,9 +153,9 @@ Detail QUIC ada di `05-transport/03`.
 |---|---|---|---|
 | Transport | TCP | TCP | **QUIC/UDP** |
 | Format | Teks | Biner | Biner |
-| Multiplexing | ❌ | ✅ | ✅ |
+| Multiplexing | Tidak | Ya | Ya |
 | HOL blocking | Ya (aplikasi) | Ya (TCP) | **Tidak** |
-| Kompresi header | ❌ | HPACK | QPACK |
+| Kompresi header | Tidak | HPACK | QPACK |
 | Enkripsi | Opsional | Praktis wajib | **Wajib** |
 | Koneksi per host | 6 | 1 | 1 |
 
@@ -194,9 +199,11 @@ Response:
   Access-Control-Max-Age: 86400
 ```
 
-⚠️ **CORS adalah kontrol di browser, bukan keamanan server.** `curl` dan skrip mengabaikannya sepenuhnya. Jangan mengandalkan CORS untuk melindungi API.
+> [!WARNING]
+> **CORS adalah kontrol di browser, bukan keamanan server.** `curl` dan skrip mengabaikannya sepenuhnya. Jangan mengandalkan CORS untuk melindungi API.
 
-⚠️ `Access-Control-Allow-Origin: *` bersama `Access-Control-Allow-Credentials: true` **dilarang** oleh spesifikasi dan merupakan kesalahan konfigurasi yang berbahaya.
+> [!WARNING]
+> `Access-Control-Allow-Origin: *` bersama `Access-Control-Allow-Credentials: true` **dilarang** oleh spesifikasi dan merupakan kesalahan konfigurasi yang berbahaya.
 
 ### Caching
 
@@ -217,9 +224,9 @@ Server: 304 Not Modified          ← tanpa body! Hemat seluruh file
 
 ---
 
-## 4. REST dan JSON — Fondasi Otomasi Jaringan
+## 4. REST dan JSON: Fondasi Otomasi Jaringan
 
-Ini bagian yang **wajib** untuk `15-otomasi` dan untuk CCNA topik 6.5–6.7.
+Ini bagian yang **wajib** untuk `15-otomasi` dan untuk CCNA topik 6.5-6.7.
 
 ### Prinsip REST
 
@@ -238,7 +245,7 @@ Ciri REST:
 - Memakai status code HTTP secara semantik
 - Representasi biasanya **JSON** (dulu XML)
 
-### JSON — struktur yang wajib dikenali
+### JSON: struktur yang wajib dikenali
 
 ```json
 {
@@ -275,7 +282,8 @@ Ciri REST:
 | **Object** | `{ "key": value }` |
 | **Array** | `[1, 2, 3]` |
 
-⚠️ **Kesalahan JSON yang sering (dan sering muncul di soal ujian):**
+> [!WARNING]
+> **Kesalahan JSON yang sering (dan sering muncul di soal ujian):**
 ```json
 ❌ { 'name': 'sw1' }        ← tanda kutip TUNGGAL tidak valid
 ❌ { "name": "sw1", }       ← koma di akhir (trailing comma) tidak valid
@@ -285,7 +293,7 @@ Ciri REST:
 ✅ { "name": "sw1", "enabled": true, "vlan": 10 }
 ```
 
-### YAML — alternatif yang lebih mudah dibaca
+### YAML: alternatif yang lebih mudah dibaca
 
 Dipakai oleh Ansible, Kubernetes, dan Containerlab.
 
@@ -302,7 +310,8 @@ interfaces:
     allowed_vlans: [10, 20, 30]
 ```
 
-⚠️ **YAML sensitif terhadap indentasi** dan **tidak boleh memakai tab** — hanya spasi.
+> [!WARNING]
+> **YAML sensitif terhadap indentasi** dan **tidak boleh memakai tab** — hanya spasi.
 
 ### Autentikasi API
 
@@ -361,7 +370,8 @@ Detail lengkap otomasi di `15-otomasi/02` dan `15-otomasi/03`.
 | **gRPC** | Dua arah, streaming | **HTTP/2** + Protocol Buffers | RPC antar-layanan, **telemetri jaringan (gNMI)** |
 | **Long polling** | Simulasi push | HTTP biasa | Fallback lama |
 
-💡 **gRPC penting untuk network engineer** karena **gNMI** (gRPC Network Management Interface) adalah standar modern untuk **streaming telemetry** — perangkat mendorong data secara kontinu alih-alih di-poll SNMP (`14-monitoring-troubleshooting/03`, `15-otomasi/02`).
+> [!TIP]
+> **gRPC penting untuk network engineer** karena **gNMI** (gRPC Network Management Interface) adalah standar modern untuk **streaming telemetry** — perangkat mendorong data secara kontinu alih-alih di-poll SNMP (`14-monitoring-troubleshooting/03`, `15-otomasi/02`).
 
 ---
 
@@ -403,7 +413,7 @@ Bertindak atas nama **server**. Kegunaan: TLS termination, caching, kompresi, lo
 | **IP hash** | Hash IP klien → server tetap (session affinity sederhana) |
 | **Consistent hashing** | Meminimalkan perpindahan saat server ditambah/dihapus (penting untuk cache) |
 
-### Health check — bagian terpenting
+### Health check: bagian terpenting
 
 ```
 Passive : perhatikan error dari trafik nyata
@@ -415,7 +425,8 @@ Level:
   L7 : GET /healthz     ← TERBAIK — memeriksa aplikasi sungguhan
 ```
 
-⚠️ **Health check yang terlalu dangkal adalah penyebab umum outage.** Server yang menjawab ping tetapi database-nya mati akan tetap menerima trafik. Selalu pakai health check L7 yang memeriksa dependensi kritis.
+> [!WARNING]
+> **Health check yang terlalu dangkal adalah penyebab umum outage.** Server yang menjawab ping tetapi database-nya mati akan tetap menerima trafik. Selalu pakai health check L7 yang memeriksa dependensi kritis.
 
 ### Contoh nginx sebagai reverse proxy + LB
 
@@ -553,7 +564,8 @@ tls.handshake.type == 1       ← ClientHello
 tls.handshake.extensions_server_name == "example.com"   ← SNI
 ```
 
-⚠️ HTTPS terenkripsi — Wireshark hanya melihat **SNI** (nama host di ClientHello) kecuali Anda punya kunci sesi (`SSLKEYLOGFILE`).
+> [!WARNING]
+> HTTPS terenkripsi — Wireshark hanya melihat **SNI** (nama host di ClientHello) kecuali Anda punya kunci sesi (`SSLKEYLOGFILE`).
 
 ---
 
@@ -579,19 +591,26 @@ Untuk troubleshooting, periksa dari sisi klien dengan `curl`: ambil master playl
 
 ## 9. Kesalahan Umum
 
-⚠️ **1. Mengira 502/504 adalah masalah klien.** Keduanya berarti proxy/LB bermasalah menghubungi backend.
+> [!WARNING]
+> **1. Mengira 502/504 adalah masalah klien.** Keduanya berarti proxy/LB bermasalah menghubungi backend.
 
-⚠️ **2. Mengandalkan CORS sebagai keamanan.** CORS hanya berlaku di browser; `curl` mengabaikannya.
+> [!WARNING]
+> **2. Mengandalkan CORS sebagai keamanan.** CORS hanya berlaku di browser; `curl` mengabaikannya.
 
-⚠️ **3. Mempercayai `X-Forwarded-For` dari klien.** LB harus menimpanya di hop pertama.
+> [!WARNING]
+> **3. Mempercayai `X-Forwarded-For` dari klien.** LB harus menimpanya di hop pertama.
 
-⚠️ **4. Health check yang hanya ping.** Server hidup tetapi aplikasi mati tetap menerima trafik.
+> [!WARNING]
+> **4. Health check yang hanya ping.** Server hidup tetapi aplikasi mati tetap menerima trafik.
 
-⚠️ **5. Trailing comma atau tanda kutip tunggal di JSON.** Parser akan menolak.
+> [!WARNING]
+> **5. Trailing comma atau tanda kutip tunggal di JSON.** Parser akan menolak.
 
-⚠️ **6. Menaruh API key di query string.** Tercatat di log akses, riwayat browser, dan Referer header.
+> [!WARNING]
+> **6. Menaruh API key di query string.** Tercatat di log akses, riwayat browser, dan Referer header.
 
-⚠️ **7. Mengira Base64 pada Basic Auth adalah enkripsi.** Itu hanya encoding — wajib HTTPS.
+> [!WARNING]
+> **7. Mengira Base64 pada Basic Auth adalah enkripsi.** Itu hanya encoding — wajib HTTPS.
 
 ---
 

@@ -155,8 +155,10 @@
 
 ---
 
-💡 **Cara membaca RFC:** mulai dari Abstract & Introduction; RFC "Requirements" (mis. 1122) & "Architecture" memberi gambaran besar. Kata kunci normatif: **MUST/SHOULD/MAY** (RFC 2119). Status "BCP" (Best Current Practice) & "STD" (Standard) paling matang.
+> [!TIP]
+> **Cara membaca RFC:** mulai dari Abstract & Introduction; RFC "Requirements" (mis. 1122) & "Architecture" memberi gambaran besar. Kata kunci normatif: **MUST/SHOULD/MAY** (RFC 2119). Status "BCP" (Best Current Practice) & "STD" (Standard) paling matang.
 
-⚠️ Beberapa RFC lama digantikan (obsoleted) — mis. TCP RFC 793 → **9293**, HTTP RFC 2616 → **9110-9112**. Selalu cek "Obsoleted by" di datatracker untuk versi terkini.
+> [!WARNING]
+> Beberapa RFC lama digantikan (obsoleted) — mis. TCP RFC 793 → **9293**, HTTP RFC 2616 → **9110-9112**. Selalu cek "Obsoleted by" di datatracker untuk versi terkini.
 
 **Lihat juga:** bagian "Sumber" di tiap modul, `referensi/sumber-belajar.md`

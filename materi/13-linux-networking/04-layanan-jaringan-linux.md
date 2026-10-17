@@ -1,9 +1,10 @@
-# 13.4 — Layanan Jaringan di Linux
+# 13.4 Layanan Jaringan di Linux
 
 > **Prasyarat:** `13-linux-networking/01`–`03`, `06-aplikasi/*`
 > **Tujuan:** Anda bisa menjalankan layanan jaringan inti di Linux — DNS, DHCP, reverse proxy/LB, NTP, RADIUS, dan routing daemon.
 
-> 📌 Ini adalah tahap **profesional (P)**. Layanan-layanan ini menggantikan appliance mahal dengan software gratis di atas Linux — pendekatan yang mendominasi cloud dan infrastruktur modern.
+> > [!NOTE]
+> > Ini adalah tahap **profesional (P)**. Layanan-layanan ini menggantikan appliance mahal dengan software gratis di atas Linux — pendekatan yang mendominasi cloud dan infrastruktur modern.
 
 ---
 
@@ -62,9 +63,10 @@ $ dig @127.0.0.1 example.com +dnssec
 $ sudo unbound-control stats_noreset
 ```
 
-⚠️ **`access-control` yang membatasi sumber adalah WAJIB** — open resolver dipakai untuk DNS amplification attack. Sama seperti kesalahan `allow-remote-requests` di MikroTik.
+> [!WARNING]
+> **`access-control` yang membatasi sumber adalah WAJIB** — open resolver dipakai untuk DNS amplification attack. Sama seperti kesalahan `allow-remote-requests` di MikroTik.
 
-### dnsmasq — DNS + DHCP + TFTP ringan (SOHO)
+### dnsmasq: DNS + DHCP + TFTP ringan (SOHO)
 
 `/etc/dnsmasq.conf`:
 ```
@@ -91,7 +93,8 @@ dhcp-option=option:dns-server,192.168.1.1
 dhcp-host=00:11:22:33:44:55,192.168.1.50,nas,infinite
 ```
 
-💡 **dnsmasq sangat populer di router rumahan dan Raspberry Pi** — satu proses menangani DNS, DHCP, dan TFTP dengan konfigurasi minimal. **Pi-hole** dibangun di atasnya untuk ad-blocking berbasis DNS.
+> [!TIP]
+> **dnsmasq sangat populer di router rumahan dan Raspberry Pi** — satu proses menangani DNS, DHCP, dan TFTP dengan konfigurasi minimal. **Pi-hole** dibangun di atasnya untuk ad-blocking berbasis DNS.
 
 ---
 
@@ -128,7 +131,8 @@ $ sudo kea-dhcp4 -t /etc/kea/kea-dhcp4.conf    # uji konfigurasi
 $ sudo systemctl enable --now kea-dhcp4-server
 ```
 
-💡 **Kea mendukung backend database (MySQL/PostgreSQL)** untuk lease — memungkinkan HA dan skala besar. Ini keunggulan besar untuk ISP dan enterprise.
+> [!TIP]
+> **Kea mendukung backend database (MySQL/PostgreSQL)** untuk lease — memungkinkan HA dan skala besar. Ini keunggulan besar untuk ISP dan enterprise.
 
 ---
 
@@ -168,7 +172,7 @@ server {
 }
 ```
 
-### HAProxy — load balancer khusus
+### HAProxy: load balancer khusus
 
 Lebih kuat untuk load balancing L4/L7 dengan fitur canggih.
 
@@ -209,11 +213,13 @@ $ sudo systemctl reload haproxy                   # reload tanpa memutus koneksi
 $ echo "show stat" | sudo socat stdio /run/haproxy/admin.sock
 ```
 
-💡 **HAProxy unggul dalam health check dan reload tanpa downtime.** `reload` memuat konfigurasi baru sambil menyelesaikan koneksi lama — penting untuk zero-downtime deployment.
+> [!TIP]
+> **HAProxy unggul dalam health check dan reload tanpa downtime.** `reload` memuat konfigurasi baru sambil menyelesaikan koneksi lama — penting untuk zero-downtime deployment.
 
-⚠️ **Health check L7 (`option httpchk`) sangat penting** — server yang menjawab TCP tetapi aplikasinya mati akan tetap menerima trafik kalau hanya cek L4. Lihat `06-aplikasi/03`.
+> [!WARNING]
+> **Health check L7 (`option httpchk`) sangat penting** — server yang menjawab TCP tetapi aplikasinya mati akan tetap menerima trafik kalau hanya cek L4. Lihat `06-aplikasi/03`.
 
-### keepalived — VIP dan failover (VRRP)
+### keepalived: VIP dan failover (VRRP)
 
 Untuk membuat load balancer itu sendiri redundan:
 
@@ -235,7 +241,8 @@ vrrp_script chk_haproxy {
 }
 ```
 
-💡 **keepalived + HAProxy = load balancer HA** — VIP berpindah ke node cadangan kalau node utama atau HAProxy-nya mati. Setara VRRP + FHRP di dunia appliance.
+> [!TIP]
+> **keepalived + HAProxy = load balancer HA** — VIP berpindah ke node cadangan kalau node utama atau HAProxy-nya mati. Setara VRRP + FHRP di dunia appliance.
 
 ---
 
@@ -262,7 +269,8 @@ $ chronyc tracking
 $ timedatectl status
 ```
 
-⚠️ **Waktu yang salah merusak TLS, Kerberos (toleransi 5 menit), dan korelasi log.** Chrony memulihkan sinkronisasi jauh lebih cepat daripada ntpd setelah reboot atau drift besar.
+> [!WARNING]
+> **Waktu yang salah merusak TLS, Kerberos (toleransi 5 menit), dan korelasi log.** Chrony memulihkan sinkronisasi jauh lebih cepat daripada ntpd setelah reboot atau drift besar.
 
 ---
 
@@ -305,7 +313,8 @@ $ radtest budi RahasiaKuat 127.0.0.1 0 testing123
 $ sudo systemctl enable --now freeradius
 ```
 
-💡 **`freeradius -X` (mode debug) menampilkan setiap langkah autentikasi** — alat troubleshooting AAA yang tak ternilai. Selalu jalankan ini saat mengonfigurasi 802.1X baru.
+> [!TIP]
+> **`freeradius -X` (mode debug) menampilkan setiap langkah autentikasi** — alat troubleshooting AAA yang tak ternilai. Selalu jalankan ini saat mengonfigurasi 802.1X baru.
 
 **Integrasi umum:**
 ```
@@ -352,9 +361,11 @@ router# show ip bgp summary
 router# show ip route
 ```
 
-💡 **FRR memakai CLI yang hampir identik dengan Cisco IOS** — kalau Anda menguasai OSPF/BGP di Cisco, Anda bisa langsung memakai FRR. Ini menjadikan Linux router yang serius untuk data center (BGP unnumbered di spine-leaf), lab, dan edge.
+> [!TIP]
+> **FRR memakai CLI yang hampir identik dengan Cisco IOS** — kalau Anda menguasai OSPF/BGP di Cisco, Anda bisa langsung memakai FRR. Ini menjadikan Linux router yang serius untuk data center (BGP unnumbered di spine-leaf), lab, dan edge.
 
-⚠️ **Jangan lupa `sudo sysctl -w net.ipv4.ip_forward=1`** — FRR menghitung rute, tetapi kernel yang meneruskan paket.
+> [!WARNING]
+> **Jangan lupa `sudo sysctl -w net.ipv4.ip_forward=1`** — FRR menghitung rute, tetapi kernel yang meneruskan paket.
 
 ### BGP unnumbered dengan FRR (data center)
 
@@ -410,7 +421,8 @@ Komponen:
   ✅ NTP                   → chrony
 ```
 
-💡 **Ini persis yang dilakukan distribusi router seperti VyOS, OPNsense, dan pfSense** — mereka mengemas komponen-komponen ini dengan antarmuka manajemen terpadu. VyOS memakai CLI mirip Junos; OPNsense/pfSense memakai GUI web dan berbasis FreeBSD (bukan Linux, tetapi konsepnya sama).
+> [!TIP]
+> **Ini persis yang dilakukan distribusi router seperti VyOS, OPNsense, dan pfSense** — mereka mengemas komponen-komponen ini dengan antarmuka manajemen terpadu. VyOS memakai CLI mirip Junos; OPNsense/pfSense memakai GUI web dan berbasis FreeBSD (bukan Linux, tetapi konsepnya sama).
 
 ### Distribusi router siap pakai
 
@@ -421,7 +433,8 @@ Komponen:
 | **pfSense** | FreeBSD | GUI web | Firewall UTM, SOHO/SMB |
 | **OpenWrt** | Linux minimal | GUI (LuCI) + CLI | Router rumahan, embedded, IoT gateway |
 
-💡 **OpenWrt** menjadikan router rumahan murah menjadi perangkat yang sangat mampu (SQM/CAKE untuk bufferbloat, WireGuard, VLAN, dll) — alternatif menarik untuk RouterOS pada perangkat non-MikroTik.
+> [!TIP]
+> **OpenWrt** menjadikan router rumahan murah menjadi perangkat yang sangat mampu (SQM/CAKE untuk bufferbloat, WireGuard, VLAN, dll) — alternatif menarik untuk RouterOS pada perangkat non-MikroTik.
 
 ---
 
@@ -446,7 +459,8 @@ $ sudo ss -tulnp | grep unbound
 $ systemctl list-dependencies unbound
 ```
 
-⚠️ **Pastikan layanan `enable`** (bukan hanya `start`) agar berjalan otomatis setelah reboot. Kesalahan umum: layanan jalan sekarang tetapi hilang setelah restart.
+> [!WARNING]
+> **Pastikan layanan `enable`** (bukan hanya `start`) agar berjalan otomatis setelah reboot. Kesalahan umum: layanan jalan sekarang tetapi hilang setelah restart.
 
 ---
 
@@ -464,7 +478,8 @@ $ systemctl list-dependencies unbound
 ✅ Log ke tempat terpusat
 ```
 
-⚠️ **Layanan yang bind ke `0.0.0.0` terekspos ke semua interface** — termasuk WAN. Periksa dengan `ss -tulnp` dan bind ke alamat internal saja kalau layanan tidak seharusnya publik. Ini kesalahan yang sangat umum (mis. database yang tidak sengaja terekspos internet).
+> [!WARNING]
+> **Layanan yang bind ke `0.0.0.0` terekspos ke semua interface** — termasuk WAN. Periksa dengan `ss -tulnp` dan bind ke alamat internal saja kalau layanan tidak seharusnya publik. Ini kesalahan yang sangat umum (mis. database yang tidak sengaja terekspos internet).
 
 ```
 # systemd hardening (contoh unit override)
@@ -490,7 +505,7 @@ CapabilityBoundingSet=CAP_NET_BIND_SERVICE
 - Distribusi router siap pakai: **VyOS** (CLI, otomasi), **OPNsense/pfSense** (GUI, firewall UTM), **OpenWrt** (router rumahan).
 - systemd: **`enable --now`** agar layanan otomatis setelah reboot; `journalctl -u` untuk log.
 - Keamanan: user non-root, bind ke alamat spesifik (bukan `0.0.0.0` sembarangan), TLS, firewall, sandboxing systemd.
-- ⚠️ **Periksa `ss -tulnp`** untuk memastikan layanan tidak terekspos ke WAN secara tidak sengaja.
+- **Periksa `ss -tulnp`** untuk memastikan layanan tidak terekspos ke WAN secara tidak sengaja.
 
 ---
 
@@ -552,4 +567,4 @@ CapabilityBoundingSet=CAP_NET_BIND_SERVICE
 
 ---
 
-**Berikutnya:** `14-monitoring-troubleshooting/01-metodologi.md` — pendekatan sistematis untuk memecahkan masalah jaringan.
+**Berikutnya:** `14-monitoring-troubleshooting/01-metodologi.md`. Pendekatan sistematis untuk memecahkan masalah jaringan.

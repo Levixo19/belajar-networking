@@ -1,4 +1,4 @@
-# 22.4 — L2VPN dan Carrier Ethernet
+# 22.4 L2VPN dan Carrier Ethernet
 
 > **Prasyarat:** `22-service-provider/01-mpls-ldp` (label, LDP, LSP), `22-service-provider/02-mpls-l3vpn` (RD/RT, MP-BGP), `03-data-link/03-vlan`, `03-data-link/04-stp`, `16-datacenter-cloud-sdn/02-overlay-vxlan-evpn` (konsep dasar EVPN)
 > **Tujuan:** Anda paham cara kerja pseudowire sampai level label dan field FEC, bisa membangun dan men-debug VPWS, VPLS (sinyal LDP maupun BGP), dan EVPN-MPLS di beberapa vendor, mengenali layanan MEF (E-Line, E-LAN, E-Tree), menguasai QinQ/PBB, proteksi ring G.8032, serta memakai Ethernet OAM (CFM dan Y.1731) untuk membuktikan SLA kepada pelanggan.
@@ -25,7 +25,8 @@ Contoh nyata kebutuhan seperti ini:
 | Siapa yang men-debug L3 | Operator dan pelanggan bersama | Pelanggan sendiri |
 | Risiko khas | Kebocoran rute antar-VRF | Loop L2, broadcast storm, MTU |
 
-💡 **Sudut pandang yang membantu:** L3VPN menjual *routing*, L2VPN menjual *transport*. Di L2VPN, operator berjanji membawa frame dengan utuh, cepat, dan terukur. Itulah sebabnya bagian OAM dan SLA di modul ini sama pentingnya dengan konfigurasi.
+> [!TIP]
+> **Sudut pandang yang membantu:** L3VPN menjual *routing*, L2VPN menjual *transport*. Di L2VPN, operator berjanji membawa frame dengan utuh, cepat, dan terukur. Itulah sebabnya bagian OAM dan SLA di modul ini sama pentingnya dengan konfigurasi.
 
 ---
 
@@ -72,7 +73,8 @@ Kontrak MEF menyebut kecepatan dengan empat angka, bukan satu:
 
 Frame diwarnai: **hijau** (dalam CIR, dijamin), **kuning** (dalam EIR, boleh dibuang saat padat), **merah** (melebihi keduanya, dibuang). Ini adalah policer dua-laju tiga-warna yang sudah Anda kenal di `11-wan-vpn/03-qos`.
 
-⚠️ **Salah paham yang sering terjadi di lapangan:** pelanggan membeli "Metro-E 100 Mbps" dan mengukur 100 Mbps dengan speedtest, padahal kontraknya CIR 50 Mbps + EIR 50 Mbps. Saat jam sibuk, bagian EIR dibuang dan pelanggan mengira link rusak. Selalu baca dan jelaskan bandwidth profile secara eksplisit.
+> [!WARNING]
+> **Salah paham yang sering terjadi di lapangan:** pelanggan membeli "Metro-E 100 Mbps" dan mengukur 100 Mbps dengan speedtest, padahal kontraknya CIR 50 Mbps + EIR 50 Mbps. Saat jam sibuk, bagian EIR dibuang dan pelanggan mengira link rusak. Selalu baca dan jelaskan bandwidth profile secara eksplisit.
 
 ### Atribut yang diukur dalam SLA
 
@@ -128,7 +130,8 @@ Control word yang diawali `0000` mencegah tebakan itu. Ia juga membawa nomor uru
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ```
 
-💡 **Aturan praktis:** aktifkan control word bila kedua sisi mendukung, terutama jika core memakai ECMP. Kedua PE harus sepakat (bit **C** di FEC). Bila satu sisi meminta dan sisi lain tidak, RFC 8077 mengatur negosiasinya, tetapi dalam praktik ketidakcocokan ini adalah salah satu penyebab PW gagal naik antar-vendor. Untuk load balancing yang lebih baik, banyak operator juga memakai **flow label** (FAT-PW, RFC 6391), label ketiga berisi hash aliran.
+> [!TIP]
+> **Aturan praktis:** aktifkan control word bila kedua sisi mendukung, terutama jika core memakai ECMP. Kedua PE harus sepakat (bit **C** di FEC). Bila satu sisi meminta dan sisi lain tidak, RFC 8077 mengatur negosiasinya, tetapi dalam praktik ketidakcocokan ini adalah salah satu penyebab PW gagal naik antar-vendor. Untuk load balancing yang lebih baik, banyak operator juga memakai **flow label** (FAT-PW, RFC 6391), label ketiga berisi hash aliran.
 
 ### Sinyal LDP: FEC 128 (PWid)
 
@@ -193,7 +196,8 @@ Selain *Label Withdraw*, PE memberi tahu kondisi PW lewat **PW Status TLV** (tip
  = MTU MPLS minimal di link core  : ≥ 1530 byte (lebih bila ada label TE/SR tambahan)
 ```
 
-⚠️ **Dua MTU berbeda, dua gejala berbeda.** (1) **MTU AC** yang diiklankan di FEC harus sama di kedua PE; kalau berbeda, PW **tidak pernah naik** (gejalanya terang-terangan). (2) **MTU link core** yang terlalu kecil membuat PW tetap UP, ping kecil lancar, tetapi frame besar **hilang diam-diam**. Gejala kedua jauh lebih menyesatkan. Praktik operator: MTU core 9000 atau setidaknya beberapa puluh byte di atas MTU layanan terbesar.
+> [!WARNING]
+> **Dua MTU berbeda, dua gejala berbeda.** (1) **MTU AC** yang diiklankan di FEC harus sama di kedua PE; kalau berbeda, PW **tidak pernah naik** (gejalanya terang-terangan). (2) **MTU link core** yang terlalu kecil membuat PW tetap UP, ping kecil lancar, tetapi frame besar **hilang diam-diam**. Gejala kedua jauh lebih menyesatkan. Praktik operator: MTU core 9000 atau setidaknya beberapa puluh byte di atas MTU layanan terbesar.
 
 ---
 
@@ -307,7 +311,8 @@ Karena PW membentuk full mesh, loop sangat mungkin. VPLS tidak menjalankan STP d
 
 Konsekuensinya: **full mesh itu wajib**. Bila satu PW antara PE2 dan PE3 putus, CE2 dan CE3 tidak bisa saling bicara walau keduanya masih terhubung ke PE1, karena PE1 dilarang meneruskan frame dari PW ke PW.
 
-⚠️ Split horizon hanya melindungi **core**. Loop di sisi pelanggan (misalnya pelanggan menyambung dua cabang lewat jalur cadangan sendiri) tetap bisa membuat broadcast storm di seluruh VPLS. Operator biasanya memasang storm control dan batas MAC per AC.
+> [!WARNING]
+> Split horizon hanya melindungi **core**. Loop di sisi pelanggan (misalnya pelanggan menyambung dua cabang lewat jalur cadangan sendiri) tetap bisa membuat broadcast storm di seluruh VPLS. Operator biasanya memasang storm control dan batas MAC per AC.
 
 ### MAC withdrawal
 
@@ -553,7 +558,8 @@ Verifikasi: IOS XR `show evpn evi detail`, `show evpn ethernet-segment detail` (
 
 **MikroTik dan FRR:** di RouterOS 7.24.5, `/routing bgp evpn` hanya punya parameter `vni`, `rd`, `import.route-targets`, `export.route-targets`, dan `vrf`, artinya EVPN di RouterOS memakai **VXLAN**, bukan MPLS. FRR di Linux juga memakai VXLAN sebagai data plane EVPN (dokumentasi FRR, bagian "The Linux (VXLAN) Dataplane"). Untuk praktik EVPN-MPLS sungguhan Anda butuh IOS XR, Junos, atau Nokia SR OS/SR Linux, dan di sinilah batas lab gratis (lihat §11).
 
-💡 **Migrasi VPLS ke EVPN** biasanya dilakukan per layanan: bangun instance EVPN berdampingan, pindahkan AC satu per satu pada jendela pemeliharaan, lalu bongkar VFI lama. Beberapa vendor mendukung interworking VPLS-EVPN pada PE yang sama (RFC 8560) agar migrasi bertahap tidak memutus situs lain.
+> [!TIP]
+> **Migrasi VPLS ke EVPN** biasanya dilakukan per layanan: bangun instance EVPN berdampingan, pindahkan AC satu per satu pada jendela pemeliharaan, lalu bongkar VFI lama. Beberapa vendor mendukung interworking VPLS-EVPN pada PE yang sama (RFC 8560) agar migrasi bertahap tidak memutus situs lain.
 
 ---
 
@@ -690,7 +696,8 @@ l2vpn
 
 Verifikasi umumnya lewat `show ethernet ring g8032 status` dan `show ethernet ring g8032 brief`. Junos mengonfigurasi ERPS di bawah `protocols protection-group ethernet-ring`.
 
-⚠️ **Kejujuran tentang lab:** penulis tidak menemukan cara gratis dan terverifikasi untuk mempraktikkan G.8032. FRR dan kernel Linux tidak mengimplementasikannya, dan RouterOS 7.24.5 di CHR tidak menampilkan menu ERPS atau CFM sama sekali (diperiksa lewat `/console inspect` pada pohon perintah tingkat atas). Pelajari G.8032 dari rekomendasi ITU-T dan dokumentasi vendor, lalu praktikkan di perangkat fisik atau lab vendor bila tersedia.
+> [!WARNING]
+> **Kejujuran tentang lab:** penulis tidak menemukan cara gratis dan terverifikasi untuk mempraktikkan G.8032. FRR dan kernel Linux tidak mengimplementasikannya, dan RouterOS 7.24.5 di CHR tidak menampilkan menu ERPS atau CFM sama sekali (diperiksa lewat `/console inspect` pada pohon perintah tingkat atas). Pelajari G.8032 dari rekomendasi ITU-T dan dokumentasi vendor, lalu praktikkan di perangkat fisik atau lab vendor bila tersedia.
 
 ---
 
@@ -740,7 +747,8 @@ Y.1731 memakai format PDU yang sama dan menambahkan **pengukuran kinerja**, inil
 | **ETH-AIS** | AIS (OpCode 33) | Memberi tahu level di atasnya bahwa ada kegagalan di bawah, menekan alarm berantai |
 | **ETH-LCK** | LCK (OpCode 35) | Menandai layanan sengaja dikunci untuk pengujian |
 
-💡 **DMM satu arah butuh jam tersinkron.** Delay satu arah (1DM) hanya akurat bila kedua ujung sinkron waktu (PTP). Delay dua arah (DMM/DMR) tidak butuh sinkronisasi karena dihitung dari timestamp di satu jam yang sama, dikurangi waktu proses di sisi responder.
+> [!TIP]
+> **DMM satu arah butuh jam tersinkron.** Delay satu arah (1DM) hanya akurat bila kedua ujung sinkron waktu (PTP). Delay dua arah (DMM/DMR) tidak butuh sinkronisasi karena dihitung dari timestamp di satu jam yang sama, dikurangi waktu proses di sisi responder.
 
 ### Contoh konfigurasi Cisco IOS XR (ringkas)
 
@@ -765,7 +773,8 @@ Di Junos, CFM dikonfigurasi di bawah `protocols oam ethernet connectivity-fault-
 
 Jangan tertukar dengan **EFM OAM** (IEEE 802.3ah, kini bagian 802.3 klausul 57). Ia bekerja hanya pada satu link fisik (tidak melewati bridge), untuk discovery, remote loopback, dan pemantauan error link, misalnya antara NTU di gedung pelanggan dan switch akses operator.
 
-⚠️ **Kejujuran tentang lab:** sama seperti G.8032, penulis tidak menemukan implementasi CFM/Y.1731 gratis yang bisa diverifikasi di containerlab dengan FRR atau di RouterOS CHR 7.24.5. Konsep dan konfigurasi di atas ditulis berdasarkan standar dan dokumentasi vendor, bukan hasil lab penulis.
+> [!WARNING]
+> **Kejujuran tentang lab:** sama seperti G.8032, penulis tidak menemukan implementasi CFM/Y.1731 gratis yang bisa diverifikasi di containerlab dengan FRR atau di RouterOS CHR 7.24.5. Konsep dan konfigurasi di atas ditulis berdasarkan standar dan dokumentasi vendor, bukan hasil lab penulis.
 
 ---
 
@@ -1019,7 +1028,8 @@ Topologi sama dengan Lab A, tetapi semua node adalah CHR, link core memakai 10.1
 
 Penulis menguji berkas `.rsc` dengan menjalankan 7 VM CHR 7.24.5 langsung di QEMU (link antar-VM lewat socket UDP), lalu mengimpor setiap berkas dengan `/import`. Berkas `routeros-vpls.clab.yml` sendiri belum dijalankan penulis lewat containerlab, jadi periksa nama tag image Anda dengan `docker images` setelah build vrnetlab.
 
-⚠️ **Jebakan MAC yang penulis temui:** VM QEMU yang dijalankan tanpa opsi `mac=` mendapat MAC ethernet yang **sama** di setiap VM. Selama hanya link routed, hal ini tidak terasa. Begitu ce1, ce2, dan ce3 berada dalam satu domain L2 (VPLS), MAC mereka bentrok dan ARP gagal. Karena itu `ce*.rsc` memasang IP di bridge dengan `admin-mac` unik. Di containerlab/vrnetlab, MAC sudah unik, jadi langkah ini tidak berbahaya tetapi juga tidak wajib.
+> [!WARNING]
+> **Jebakan MAC yang penulis temui:** VM QEMU yang dijalankan tanpa opsi `mac=` mendapat MAC ethernet yang **sama** di setiap VM. Selama hanya link routed, hal ini tidak terasa. Begitu ce1, ce2, dan ce3 berada dalam satu domain L2 (VPLS), MAC mereka bentrok dan ARP gagal. Karena itu `ce*.rsc` memasang IP di bridge dengan `admin-mac` unik. Di containerlab/vrnetlab, MAC sudah unik, jadi langkah ini tidak berbahaya tetapi juga tidak wajib.
 
 ### Langkah (containerlab)
 
@@ -1156,7 +1166,8 @@ Menurut TS 23.501 bagian 6.2.3, UPF antara lain menjadi titik jangkar mobilitas,
 
 Konsekuensi untuk transport: dari sisi jaringan SP, N3 adalah aliran IP biasa antara gNB dan UPF yang bisa dibawa L3VPN (`22-service-provider/02-mpls-l3vpn`), EVPN, atau SR-TE (`22-service-provider/03-te-segment-routing`), dengan kebutuhan latensi rendah dan keandalan yang ketat. Di sisi N6, UPF tampil sebagai router yang mengiklankan prefix alamat pengguna ke internet atau ke VRF pelanggan korporat, sehingga membutuhkan routing, firewall, dan sering NAT seperti perangkat edge lain. Memindahkan UPF ke edge (dekat pengguna) memperpendek jalur dan menurunkan latensi, tetapi memindahkan titik N6 breakout dan kebutuhan transport, serta menambah jumlah lokasi yang harus dioperasikan.
 
-⚠️ Bagian ini hanya menunjukkan batas antara inti seluler dan jaringan transport. Detail RAN, AMF, slicing, dan prosedur sesi PDU di luar cakupan kurikulum ini; rujuk TS 23.501 dan TS 23.502 untuk itu.
+> [!WARNING]
+> Bagian ini hanya menunjukkan batas antara inti seluler dan jaringan transport. Detail RAN, AMF, slicing, dan prosedur sesi PDU di luar cakupan kurikulum ini; rujuk TS 23.501 dan TS 23.502 untuk itu.
 
 ---
 
@@ -1271,4 +1282,4 @@ Konsekuensi untuk transport: dari sisi jaringan SP, N3 adalah aliran IP biasa an
 
 ---
 
-**Berikutnya:** `22-service-provider/05-sp-ketersediaan-keamanan` — membuat jaringan SP tetap hidup saat ada kegagalan dan tetap aman dari serangan: BFD, GR/NSR, BGP PIC, Add-Path, proteksi control plane, dan disiplin operasi.
+**Berikutnya:** `22-service-provider/05-sp-ketersediaan-keamanan`. Membuat jaringan SP tetap hidup saat ada kegagalan dan tetap aman dari serangan: BFD, GR/NSR, BGP PIC, Add-Path, proteksi control plane, dan disiplin operasi.

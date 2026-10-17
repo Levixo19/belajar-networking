@@ -1,14 +1,15 @@
-# Lab 06 — MikroTik RouterOS End-to-End
+# Lab 06: MikroTik RouterOS End-to-End
 
 > **Prasyarat:** Tahap 19, Lab 00 (setup CHR)
 > **Platform:** MikroTik CHR (VirtualBox/VMware/GNS3) + WinBox/SSH
 > **Format:** TUGAS → VERIFIKASI → KRITERIA SUKSES → solusi.
 
-💡 Semua lab pakai CHR gratis (batas 1 Mbps, cukup untuk belajar). Kelola via WinBox (GUI) atau SSH. Skenario dirancang meniru kebutuhan RT-RW-Net/ISP kecil.
+> [!TIP]
+> Semua lab pakai CHR gratis (batas 1 Mbps, cukup untuk belajar). Kelola via WinBox (GUI) atau SSH. Skenario dirancang meniru kebutuhan RT-RW-Net/ISP kecil.
 
 ---
 
-## Lab 6.1 — Setup Awal & Keamanan Router
+## Lab 6.1: Setup Awal & Keamanan Router
 
 **TUGAS:**
 1. Boot CHR, ganti password admin default, buat user admin baru.
@@ -41,7 +42,7 @@ Ini menerapkan hardening `19/03` & `19/01`: firewall input default-deny (terima 
 
 ---
 
-## Lab 6.2 — Bridge, VLAN & Inter-VLAN
+## Lab 6.2: Bridge, VLAN & Inter-VLAN
 
 **TUGAS:**
 1. Buat bridge, tambah beberapa port.
@@ -67,12 +68,13 @@ Ini menerapkan hardening `19/03` & `19/01`: firewall input default-deny (terima 
 /ip address add address=10.0.20.1/24 interface=vlan20
 /interface bridge set bridge1 vlan-filtering=yes     (AKTIFKAN TERAKHIR!)
 ```
-⚠️ **Aktifkan `vlan-filtering=yes` paling akhir** setelah semua benar — salah bisa mengunci Anda keluar (`19/02`). VLAN interface = gateway (≈SVI). Kontrol trafik antar-VLAN dengan firewall `forward` (mis. tamu tak boleh ke staff). Membuktikan `19/02`.
-</details>
+> [!WARNING]
+> **Aktifkan `vlan-filtering=yes` paling akhir** setelah semua benar — salah bisa mengunci Anda keluar (`19/02`). VLAN interface = gateway (≈SVI). Kontrol trafik antar-VLAN dengan firewall `forward` (mis. tamu tak boleh ke staff). Membuktikan `19/02`.
+> </details>
 
 ---
 
-## Lab 6.3 — NAT Internet + DHCP untuk Klien
+## Lab 6.3: NAT Internet + DHCP untuk Klien
 
 **TUGAS:**
 1. Konfigurasi DHCP server untuk LAN.
@@ -98,7 +100,7 @@ Ini menerapkan hardening `19/03` & `19/01`: firewall input default-deny (terima 
 
 ---
 
-## Lab 6.4 — Bandwidth Management (Simple Queue + PCQ + Burst)
+## Lab 6.4: Bandwidth Management (Simple Queue + PCQ + Burst)
 
 **TUGAS:**
 1. Buat simple queue membatasi satu klien ke 5M/5M.
@@ -126,7 +128,7 @@ Ini menerapkan hardening `19/03` & `19/01`: firewall input default-deny (terima 
 
 ---
 
-## Lab 6.5 — PPPoE Server (Skenario ISP)
+## Lab 6.5: PPPoE Server (Skenario ISP)
 
 **TUGAS:**
 1. Buat IP pool + PPP profile dengan `rate-limit` per paket.
@@ -156,7 +158,7 @@ Ini menerapkan hardening `19/03` & `19/01`: firewall input default-deny (terima 
 
 ---
 
-## Lab 6.6 — Hotspot Voucher
+## Lab 6.6: Hotspot Voucher
 
 **TUGAS:**
 1. Jalankan `/ip hotspot setup` di interface LAN.
@@ -181,7 +183,7 @@ Hotspot membuat **captive portal**: klien di-redirect ke halaman login sebelum a
 
 ---
 
-## Lab 6.7 — VPN Site-to-Site (WireGuard) + Monitoring
+## Lab 6.7: VPN Site-to-Site (WireGuard) + Monitoring
 
 **TUGAS:**
 1. Antara dua CHR, buat tunnel **WireGuard**.
@@ -218,6 +220,7 @@ Hotspot membuat **captive portal**: klien di-redirect ke halaman login sebelum a
 
 Anda membangun jaringan MikroTik lengkap ala ISP/RT-RW-Net: hardening, bridge/VLAN, NAT+DHCP+DNS, bandwidth management (queue/PCQ/burst), PPPoE server, hotspot voucher, VPN WireGuard, dan monitoring. Ini mempersiapkan MTCNA (`18/05`) dan pekerjaan nyata di ISP lokal.
 
-💡 **Proyek portofolio kuat:** gabungkan Lab 6.1-6.7 menjadi satu "RT-RW-Net simulasi" terdokumentasi (topologi, config, screenshot) di GitHub (`18/04`). Ini sangat dihargai untuk kerja di ISP Indonesia.
+> [!TIP]
+> **Proyek portofolio kuat:** gabungkan Lab 6.1-6.7 menjadi satu "RT-RW-Net simulasi" terdokumentasi (topologi, config, screenshot) di GitHub (`18/04`). Ini sangat dihargai untuk kerja di ISP Indonesia.
 
-**Berikutnya:** `lab/07-lab-membangun-protokol` — pendalaman: membangun protokol sendiri dengan Python, dari transfer andal sampai distance-vector.
+**Berikutnya:** `lab/07-lab-membangun-protokol`. Pendalaman: membangun protokol sendiri dengan Python, dari transfer andal sampai distance-vector.

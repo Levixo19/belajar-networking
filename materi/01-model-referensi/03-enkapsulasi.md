@@ -1,4 +1,4 @@
-# 01.3 — Enkapsulasi dan Perjalanan Sebuah Paket
+# 01.3 Enkapsulasi dan Perjalanan Sebuah Paket
 
 > **Prasyarat:** `01-model-referensi/01`, `01-model-referensi/02`
 > **Tujuan:** Anda bisa menjelaskan langkah demi langkah apa yang terjadi sejak menekan Enter di browser sampai halaman muncul — dan tahu persis apa yang berubah di setiap hop.
@@ -105,7 +105,8 @@ Ini yang membuat dekapsulasi berantai bekerja:
 | IPv6 | **Next Header** | sama seperti di atas, plus extension header |
 | TCP/UDP | **Port tujuan** | 80 = HTTP, 443 = HTTPS, 53 = DNS, 22 = SSH |
 
-💡 Rantai ini yang Anda baca saat menganalisis paket: EtherType → Protocol → Port. Kalau salah satunya tidak sesuai harapan, di situlah anomalinya.
+> [!TIP]
+> Rantai ini yang Anda baca saat menganalisis paket: EtherType → Protocol → Port. Kalau salah satunya tidak sesuai harapan, di situlah anomalinya.
 
 ---
 
@@ -117,12 +118,12 @@ Ini konsep yang **paling sering salah dipahami** pemula. Hafalkan tabelnya:
 |---|---|---|
 | **MAC sumber** | ✅ **Ya** | Diganti dengan MAC interface router yang mengirim |
 | **MAC tujuan** | ✅ **Ya** | Diganti dengan MAC next hop |
-| **IP sumber** | ❌ Tidak | Identitas pengirim asli (kecuali NAT) |
-| **IP tujuan** | ❌ Tidak | Identitas penerima akhir (kecuali NAT) |
+| **IP sumber** | Tidak | Identitas pengirim asli (kecuali NAT) |
+| **IP tujuan** | Tidak | Identitas penerima akhir (kecuali NAT) |
 | **TTL** | ✅ **Ya** | Dikurangi 1 oleh setiap router |
 | **Checksum header IP** | ✅ **Ya** | Dihitung ulang karena TTL berubah (IPv4 saja) |
-| **Port sumber/tujuan** | ❌ Tidak | Kecuali PAT/NAT |
-| **Data aplikasi** | ❌ Tidak | Kecuali proxy/inspeksi |
+| **Port sumber/tujuan** | Tidak | Kecuali PAT/NAT |
+| **Data aplikasi** | Tidak | Kecuali proxy/inspeksi |
 
 Kalimat yang layak dihafal:
 
@@ -141,7 +142,7 @@ Skenario:
 MAC: aa:aa:aa:aa:aa:aa   MAC: bb:bb:bb:bb:bb:bb
 ```
 
-### Fase 1 — Persiapan Lokal
+### Fase 1: Persiapan Lokal
 
 **Langkah 1. Browser mengurai URL.**
 ```
@@ -199,7 +200,7 @@ Kalau resolver belum tahu, ia melakukan resolusi rekursif: root server → TLD `
 Jawaban: example.com = 93.184.216.34 (TTL 3600)
 ```
 
-### Fase 2 — Menghubungi Server
+### Fase 2: Menghubungi Server
 
 **Langkah 8. PC menentukan: tujuan lokal atau jauh?**
 ```
@@ -210,7 +211,8 @@ Network saya  : 192.168.1.0
 BERBEDA → tujuan JAUH → kirim ke default gateway
 ```
 
-⚠️ **Titik kritis yang harus benar-benar dipahami:**
+> [!WARNING]
+> **Titik kritis yang harus benar-benar dipahami:**
 ```
 IP tujuan di paket  = 93.184.216.34   (tujuan akhir)
 MAC tujuan di frame = bb:bb:bb:bb:bb:bb  (MAC ROUTER, bukan MAC server!)
@@ -242,7 +244,7 @@ User-Agent: ...
 ```
 Isi ini dienkripsi; router di tengah hanya melihat "data TCP acak" ke port 443.
 
-### Fase 3 — Perjalanan Melintasi Jaringan
+### Fase 3: Perjalanan Melintasi Jaringan
 
 **Langkah 12. Di switch lokal.**
 ```
@@ -286,7 +288,7 @@ Tabel NAT mencatat pemetaan agar balasan bisa dikembalikan.
 ```
 Ini **satu-satunya** hal yang mengubah IP sumber di tengah jalan. Detail di `09-nat-acl-firewall/01`.
 
-**Langkah 15. Melintasi banyak router (10–20 hop tipikal).**
+**Langkah 15. Melintasi banyak router (10-20 hop tipikal).**
 Setiap router mengulang Langkah 13:
 ```
 Router ISP     → TTL 62, header L2 baru
@@ -309,7 +311,7 @@ Load balancer / firewall → mungkin mengubah tujuan (DNAT) ke server backend
 Server menerima frame, dekapsulasi sampai L7
 ```
 
-### Fase 4 — Respons Kembali
+### Fase 4: Respons Kembali
 
 **Langkah 17. Server menyusun balasan.**
 ```
@@ -334,11 +336,11 @@ Untuk memuat satu halaman sederhana dengan RTT 20 ms:
 
 | Tahap | RTT | Waktu |
 |---|---|---|
-| DNS lookup (cache miss) | 1–2 | 20–40 ms |
+| DNS lookup (cache miss) | 1-2 | 20-40 ms |
 | TCP handshake | 1 | 20 ms |
 | TLS 1.3 handshake | 1 | 20 ms |
 | HTTP request → byte pertama | 1 | 20 ms |
-| **Total sebelum byte pertama** | **4–5** | **80–100 ms** |
+| **Total sebelum byte pertama** | **4-5** | **80-100 ms** |
 
 Ini menjelaskan banyak hal:
 - **Kenapa DNS caching penting** — menghemat 1 RTT penuh.
@@ -381,7 +383,7 @@ Contoh overhead tunnel lain:
 | Tunnel | Overhead | MTU dalam (dari 1500) |
 |---|---|---|
 | GRE | 24 | 1476 |
-| IPsec ESP (tunnel, AES) | ~56–73 | ~1427–1444 |
+| IPsec ESP (tunnel, AES) | ~56-73 | ~1427-1444 |
 | WireGuard | 60 (IPv4) | 1440 |
 | VXLAN | 50 | 1450 |
 | PPPoE | 8 | 1492 |
@@ -423,17 +425,23 @@ Angkanya akan mencerminkan tabel di §6.
 
 ## 9. Kesalahan Umum
 
-⚠️ **1. Mengira PC tahu MAC address server jauh.** Tidak. PC hanya tahu MAC hop berikutnya.
+> [!WARNING]
+> **1. Mengira PC tahu MAC address server jauh.** Tidak. PC hanya tahu MAC hop berikutnya.
 
-⚠️ **2. Mengira IP berubah tiap hop.** Tidak, kecuali NAT.
+> [!WARNING]
+> **2. Mengira IP berubah tiap hop.** Tidak, kecuali NAT.
 
-⚠️ **3. Lupa ARP diperlukan sebelum paket pertama.** Kalau ARP gagal, tidak ada paket yang bisa keluar — walau routing sempurna.
+> [!WARNING]
+> **3. Lupa ARP diperlukan sebelum paket pertama.** Kalau ARP gagal, tidak ada paket yang bisa keluar — walau routing sempurna.
 
-⚠️ **4. Mengabaikan MTU di tunnel.** Penyebab utama "koneksi jalan tapi transfer besar macet".
+> [!WARNING]
+> **4. Mengabaikan MTU di tunnel.** Penyebab utama "koneksi jalan tapi transfer besar macet".
 
-⚠️ **5. Mengira jalur pergi = jalur pulang.** Sering berbeda. Penting saat menganalisis firewall stateful & traceroute.
+> [!WARNING]
+> **5. Mengira jalur pergi = jalur pulang.** Sering berbeda. Penting saat menganalisis firewall stateful & traceroute.
 
-⚠️ **6. Mengira switch membaca IP.** Switch L2 tidak. Ia hanya membaca MAC (dan header VLAN).
+> [!WARNING]
+> **6. Mengira switch membaca IP.** Switch L2 tidak. Ia hanya membaca MAC (dan header VLAN).
 
 ---
 
@@ -446,7 +454,7 @@ Angkanya akan mencerminkan tabel di §6.
 - Sebelum mengirim, host selalu melakukan AND untuk memutuskan: lokal (kirim langsung) atau jauh (kirim ke gateway).
 - ARP diperlukan untuk mendapatkan MAC hop berikutnya.
 - Router: dekapsulasi L2 → cek TTL → longest prefix match → enkapsulasi L2 baru.
-- Memuat halaman butuh 4–5 RTT sebelum byte pertama; inilah alasan DNS cache, keep-alive, TLS 1.3, QUIC, dan CDN ada.
+- Memuat halaman butuh 4-5 RTT sebelum byte pertama; inilah alasan DNS cache, keep-alive, TLS 1.3, QUIC, dan CDN ada.
 - Tunneling = enkapsulasi bertingkat → MTU efektif berkurang → wajib disesuaikan.
 
 ---
@@ -478,7 +486,7 @@ Angkanya akan mencerminkan tabel di §6.
 
 6. Switch melakukan **flooding**: mengirimkan frame itu ke **semua port dalam VLAN yang sama**, kecuali port asalnya. Ini disebut *unknown unicast flooding*. Saat tujuan menjawab, switch mempelajari lokasinya dan tidak perlu flooding lagi.
 
-7. MTU efektif = 1500 − 50 = **1450 byte**. Praktik standar operator data center: menaikkan MTU fisik pada underlay menjadi **jumbo frame (9000 atau minimal 1550–1600)** sehingga overlay tetap bisa membawa payload 1500 byte penuh tanpa fragmentasi.
+7. MTU efektif = 1500 − 50 = **1450 byte**. Praktik standar operator data center: menaikkan MTU fisik pada underlay menjadi **jumbo frame (9000 atau minimal 1550-1600)** sehingga overlay tetap bisa membawa payload 1500 byte penuh tanpa fragmentasi.
 
 </details>
 
@@ -495,4 +503,4 @@ Angkanya akan mencerminkan tabel di §6.
 
 ---
 
-**Berikutnya:** `02-layer-fisik/01-media-transmisi.md` — memulai perjalanan dari lapisan paling bawah.
+**Berikutnya:** `02-layer-fisik/01-media-transmisi.md`. Memulai perjalanan dari lapisan paling bawah.

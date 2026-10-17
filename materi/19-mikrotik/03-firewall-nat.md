@@ -1,4 +1,4 @@
-# 19.3 — MikroTik: Firewall, NAT & Mangle
+# 19.3 MikroTik: Firewall, NAT & Mangle
 
 > **Prasyarat:** `19-mikrotik/01-02`, `09-nat-acl-firewall` (NAT/ACL/firewall), `12-keamanan/03` (firewall stateful)
 > **Tujuan:** Anda bisa membangun firewall filter, NAT, dan mangle di RouterOS, memahami connection tracking, chain, dan address-list.
@@ -24,7 +24,8 @@ forward  → trafik MELEWATI router (dari satu interface ke lain — trafik pela
 output   → trafik DIHASILKAN oleh router itu sendiri
 ```
 
-⚠️ **Bedakan `input` dan `forward`.** `input` melindungi **router itu sendiri** (akses manajemen). `forward` mengontrol trafik **yang lewat** (antar-jaringan/pelanggan/internet). Salah chain = aturan tidak berpengaruh atau memblokir hal yang salah. Ini padanan langsung netfilter Linux (`13/03`).
+> [!WARNING]
+> **Bedakan `input` dan `forward`.** `input` melindungi **router itu sendiri** (akses manajemen). `forward` mengontrol trafik **yang lewat** (antar-jaringan/pelanggan/internet). Salah chain = aturan tidak berpengaruh atau memblokir hal yang salah. Ini padanan langsung netfilter Linux (`13/03`).
 
 ---
 
@@ -55,9 +56,11 @@ add chain=input action=accept src-address=192.168.1.0/24
 add chain=input action=drop
 ```
 
-💡 **Terima `established,related` di aturan PERTAMA** adalah praktik terbaik: mayoritas paket adalah bagian koneksi yang sudah diizinkan, sehingga diproses cepat tanpa mengevaluasi semua aturan. Ini persis pola stateful yang diajarkan di `12-keamanan/03` dan `13-linux-networking/03`.
+> [!TIP]
+> **Terima `established,related` di aturan PERTAMA** adalah praktik terbaik: mayoritas paket adalah bagian koneksi yang sudah diizinkan, sehingga diproses cepat tanpa mengevaluasi semua aturan. Ini persis pola stateful yang diajarkan di `12-keamanan/03` dan `13-linux-networking/03`.
 
-⚠️ **Aturan diproses BERURUTAN dari atas ke bawah**, paket cocok aturan pertama yang sesuai. **Urutan sangat penting** — aturan `drop` di atas akan memblokir sebelum aturan `accept` di bawahnya sempat dievaluasi. Selalu susun: accept spesifik dulu, drop umum terakhir.
+> [!WARNING]
+> **Aturan diproses BERURUTAN dari atas ke bawah**, paket cocok aturan pertama yang sesuai. **Urutan sangat penting** — aturan `drop` di atas akan memblokir sebelum aturan `accept` di bawahnya sempat dievaluasi. Selalu susun: accept spesifik dulu, drop umum terakhir.
 
 ---
 
@@ -70,7 +73,7 @@ srcnat  → ubah alamat SUMBER (untuk trafik KELUAR) — masquerade/PAT
 dstnat  → ubah alamat TUJUAN (untuk trafik MASUK) — port forwarding
 ```
 
-### Masquerade (PAT keluar — paling umum)
+### Masquerade (PAT keluar: paling umum)
 ```routeros
 # Pelanggan/LAN keluar ke internet lewat IP publik router (PAT)
 /ip firewall nat
@@ -93,11 +96,12 @@ add chain=dstnat protocol=tcp dst-port=80 in-interface=ether1-wan \
 ```
 Setara port forwarding / `ip nat inside source static tcp` Cisco.
 
-💡 **`masquerade` vs `src-nat`:** gunakan **masquerade** untuk IP WAN **dinamis** (otomatis ikut IP interface), **src-nat** untuk IP WAN **statik** (sedikit lebih efisien). Untuk RT-RW-Net dengan IP dari ISP, masquerade paling umum.
+> [!TIP]
+> **`masquerade` vs `src-nat`:** gunakan **masquerade** untuk IP WAN **dinamis** (otomatis ikut IP interface), **src-nat** untuk IP WAN **statik** (sedikit lebih efisien). Untuk RT-RW-Net dengan IP dari ISP, masquerade paling umum.
 
 ---
 
-## 4. Address-List — Kelompok Dinamis
+## 4. Address-List: Kelompok Dinamis
 
 **Address-list** mengelompokkan alamat IP untuk dipakai di banyak aturan — sangat kuat di RouterOS.
 
@@ -123,11 +127,12 @@ add chain=input protocol=tcp dst-port=22 connection-state=new \
 add chain=input src-address-list=SSH-ATTACK action=drop
 ```
 
-💡 **Address-list dinamis** adalah salah satu fitur firewall MikroTik paling berguna — bisa otomatis menambahkan IP mencurigakan (port scanner, brute-forcer) ke daftar blokir dengan timeout. Banyak dipakai untuk proteksi otomatis di ISP.
+> [!TIP]
+> **Address-list dinamis** adalah salah satu fitur firewall MikroTik paling berguna — bisa otomatis menambahkan IP mencurigakan (port scanner, brute-forcer) ke daftar blokir dengan timeout. Banyak dipakai untuk proteksi otomatis di ISP.
 
 ---
 
-## 5. Mangle — Menandai untuk QoS & Routing
+## 5. Mangle: Menandai untuk QoS & Routing
 
 **Mangle** menandai paket/koneksi (mark) yang lalu dipakai oleh queue (QoS, `19.4`) atau routing (PBR/failover).
 
@@ -140,9 +145,11 @@ add chain=forward connection-mark=web-conn \
     action=mark-packet new-packet-mark=web-pkt
 ```
 
-💡 **Pola mark-connection lalu mark-packet** adalah standar: tandai koneksi sekali (efisien), lalu tandai semua paket koneksi itu. Packet-mark dipakai queue tree untuk QoS (`19.4`) atau routing-mark untuk PBR/failover multi-WAN.
+> [!TIP]
+> **Pola mark-connection lalu mark-packet** adalah standar: tandai koneksi sekali (efisien), lalu tandai semua paket koneksi itu. Packet-mark dipakai queue tree untuk QoS (`19.4`) atau routing-mark untuk PBR/failover multi-WAN.
 
-⚠️ Mangle bekerja sebelum/berdampingan dengan queue dan routing — urutan dan chain (prerouting/forward/output) penting. Untuk QoS pelanggan, umumnya di chain `forward`.
+> [!WARNING]
+> Mangle bekerja sebelum/berdampingan dengan queue dan routing — urutan dan chain (prerouting/forward/output) penting. Untuk QoS pelanggan, umumnya di chain `forward`.
 
 ---
 
@@ -231,7 +238,8 @@ add chain=input action=drop connection-state=invalid
 
 Dokumentasi DDoS Protection MikroTik memakai pembagian kerja yang sama: aturan filter mendeteksi penyerang (dengan `dst-limit`) dan memasukkannya ke address-list, sedangkan aturan RAW yang men-drop paket dari address-list itu. Deteksi butuh state, pembuangan tidak.
 
-⚠️ RAW tidak tahu apakah paket adalah balasan koneksi yang sah. Jangan men-drop di RAW sesuatu yang Anda butuhkan untuk balasan (misalnya "drop semua UDP dari WAN" juga akan membuang balasan DNS ke router). Simpan logika "izinkan yang established" di filter.
+> [!WARNING]
+> RAW tidak tahu apakah paket adalah balasan koneksi yang sah. Jangan men-drop di RAW sesuatu yang Anda butuhkan untuk balasan (misalnya "drop semua UDP dari WAN" juga akan membuang balasan DNS ke router). Simpan logika "izinkan yang established" di filter.
 
 ### 6.3 FastTrack: cepat, tetapi melompati banyak hal
 
@@ -314,7 +322,8 @@ Catatan desain:
 - Port ketukan jangan berurutan naik (1000, 1001, 1002): pemindai yang menyapu rentang port bisa lulus tanpa sengaja. Dokumentasi MikroTik juga menyarankan daftar hitam untuk port jebakan.
 - Port knocking adalah lapisan tambahan, bukan pengganti password kuat, pembatasan `/ip service ... address=`, dan pembaruan RouterOS.
 
-⚠️ **Gunakan Safe Mode** (Ctrl+X di terminal, atau tombol Safe Mode di WinBox) saat menyusun aturan `input`. Saat menyiapkan contoh di atas, aturan `drop` untuk `in-interface-list=!LAN` sempat memutus sesi SSH manajemen yang datang dari antarmuka di luar list LAN, dan akses harus dipulihkan lewat konsol serial. Safe Mode akan membatalkan perubahan secara otomatis bila sesi Anda terputus.
+> [!WARNING]
+> **Gunakan Safe Mode** (Ctrl+X di terminal, atau tombol Safe Mode di WinBox) saat menyusun aturan `input`. Saat menyiapkan contoh di atas, aturan `drop` untuk `in-interface-list=!LAN` sempat memutus sesi SSH manajemen yang datang dari antarmuka di luar list LAN, dan akses harus dipulihkan lewat konsol serial. Safe Mode akan membatalkan perubahan secara otomatis bila sesi Anda terputus.
 
 ### 6.5 Sertifikat untuk HTTPS (WebFig) dan SSTP
 
@@ -351,11 +360,13 @@ Menurut dokumentasi Certificates, nama domain harus mengarah ke router dan TCP p
     default-profile=default-encryption tls-version=only-1.2 pfs=yes
 ```
 
-⚠️ `www-ssl` dan SSTP server sama-sama memakai **port 443** secara bawaan. Di CHR 7.24.5, mengaktifkan SSTP saat `www-ssl` sudah aktif di 443 gagal dengan pesan `can't bind, check if port is not used by other service!`. Pindahkan salah satunya (contoh di atas memindahkan SSTP ke 4443) atau matikan `www-ssl` bila WebFig tidak dipakai dari luar.
+> [!WARNING]
+> `www-ssl` dan SSTP server sama-sama memakai **port 443** secara bawaan. Di CHR 7.24.5, mengaktifkan SSTP saat `www-ssl` sudah aktif di 443 gagal dengan pesan `can't bind, check if port is not used by other service!`. Pindahkan salah satunya (contoh di atas memindahkan SSTP ke 4443) atau matikan `www-ssl` bila WebFig tidak dipakai dari luar.
 
 Di sisi klien SSTP RouterOS, aktifkan `verify-server-certificate=yes` (dan bila perlu `verify-server-address-from-certificate=yes`) setelah mengimpor CA. Dokumentasi SSTP menjelaskan bahwa tanpa verifikasi sertifikat, terowongan antar dua MikroTik memakai DH anonim yang rentan serangan man-in-the-middle. Klien Windows memang mewajibkan sertifikat server yang dipercaya. Dokumentasi juga mencatat bahwa klien Windows tidak bisa memakai sertifikat klien untuk SSTP.
 
-💡 Pola keamanan manajemen yang lengkap untuk router di lokasi pelanggan: layanan manajemen hanya dari VPN (SSTP atau WireGuard, lihat `19-mikrotik/06-vpn-tunnel`) dengan sertifikat terverifikasi, port knocking sebagai pintu darurat dari internet, dan RAW untuk membuang alamat yang masuk daftar hitam sebelum menyentuh connection tracking.
+> [!TIP]
+> Pola keamanan manajemen yang lengkap untuk router di lokasi pelanggan: layanan manajemen hanya dari VPN (SSTP atau WireGuard, lihat `19-mikrotik/06-vpn-tunnel`) dengan sertifikat terverifikasi, port knocking sebagai pintu darurat dari internet, dan RAW untuk membuang alamat yang masuk daftar hitam sebelum menyentuh connection tracking.
 
 ---
 
@@ -380,7 +391,8 @@ set winbox address=192.168.1.0/24   # batasi Winbox ke subnet admin
 set ssh port=2200              # ganti port default (opsional)
 ```
 
-⚠️ **Amankan router MikroTik sejak awal** — RouterOS default cukup terbuka. Nonaktifkan Telnet/FTP/layanan tak terpakai, batasi Winbox/SSH ke subnet admin, ganti password default, dan pasang firewall `input` default-deny. Router ISP yang terekspos tanpa proteksi cepat diserang (brute-force, botnet). Lihat juga `12-keamanan/05` (hardening).
+> [!WARNING]
+> **Amankan router MikroTik sejak awal** — RouterOS default cukup terbuka. Nonaktifkan Telnet/FTP/layanan tak terpakai, batasi Winbox/SSH ke subnet admin, ganti password default, dan pasang firewall `input` default-deny. Router ISP yang terekspos tanpa proteksi cepat diserang (brute-force, botnet). Lihat juga `12-keamanan/05` (hardening).
 
 ---
 
@@ -469,4 +481,4 @@ set ssh port=2200              # ganti port default (opsional)
 
 ---
 
-**Berikutnya:** `19-mikrotik/04-qos-queue-hotspot.md` — QoS, queue, dan hotspot RouterOS.
+**Berikutnya:** `19-mikrotik/04-qos-queue-hotspot.md`. QoS, queue, dan hotspot RouterOS.

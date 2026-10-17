@@ -1,9 +1,10 @@
-# 19.1 — Pengenalan MikroTik dan RouterOS
+# 19.1 Pengenalan MikroTik dan RouterOS
 
 > **Prasyarat:** `04-network-layer/05`, `03-data-link/03`
 > **Tujuan:** Anda paham arsitektur RouterOS, bisa mengakses dan mengonfigurasi perangkat MikroTik, dan memahami filosofi CLI-nya.
 
-> 📌 **Kenapa MikroTik penting di Indonesia?** MikroTik mendominasi pasar ISP kecil-menengah, RT/RW-Net, warnet, hotel, dan UKM karena harganya jauh lebih murah daripada Cisco dengan fitur yang setara atau lebih lengkap. Banyak lowongan network engineer di Indonesia mensyaratkan MikroTik, bukan Cisco.
+> > [!NOTE]
+> > **Kenapa MikroTik penting di Indonesia?** MikroTik mendominasi pasar ISP kecil-menengah, RT/RW-Net, warnet, hotel, dan UKM karena harganya jauh lebih murah daripada Cisco dengan fitur yang setara atau lebih lengkap. Banyak lowongan network engineer di Indonesia mensyaratkan MikroTik, bukan Cisco.
 
 ---
 
@@ -19,7 +20,7 @@
 
 | Aspek | MikroTik | Cisco |
 |---|---|---|
-| Harga | Sangat murah (Rp 300 rb – 20 jt) | Mahal (Rp 5 jt – ratusan juta) |
+| Harga | Sangat murah (Rp 300 rb - 20 jt) | Mahal (Rp 5 jt - ratusan juta) |
 | Lisensi | Sekali beli, semua fitur | Bertingkat, banyak fitur berbayar |
 | OS | Linux-based, satu image untuk semua | IOS/IOS-XE/NX-OS berbeda per platform |
 | Fitur | Sangat lengkap sejak level dasar | Bergantung lisensi & model |
@@ -28,9 +29,11 @@
 | Dukungan | Forum komunitas | TAC berbayar |
 | Sertifikasi | MTCNA → MTCRE/MTCWE/... | CCNA → CCNP → CCIE |
 
-💡 **Filosofi MikroTik: berikan semua fitur, biarkan pengguna yang mengaturnya.** Ini memberi fleksibilitas luar biasa tetapi juga berarti lebih mudah salah konfigurasi.
+> [!TIP]
+> **Filosofi MikroTik: berikan semua fitur, biarkan pengguna yang mengaturnya.** Ini memberi fleksibilitas luar biasa tetapi juga berarti lebih mudah salah konfigurasi.
 
-⚠️ **Konsekuensi harga murah:** kualitas hardware bervariasi, dan sebagian model punya CPU lemah. Untuk trafik besar, perhatikan spesifikasi CPU dan apakah fitur yang dipakai didukung **fast path**/**FastTrack** (offload) atau harus diproses per-paket.
+> [!WARNING]
+> **Konsekuensi harga murah:** kualitas hardware bervariasi, dan sebagian model punya CPU lemah. Untuk trafik besar, perhatikan spesifikasi CPU dan apakah fitur yang dipakai didukung **fast path**/**FastTrack** (offload) atau harus diproses per-paket.
 
 ---
 
@@ -46,7 +49,8 @@
 | **Wireless** | Outdoor, PtP, PtMP | SXT, LHG, Wireless Wire, mANT |
 | **CHR (Cloud Hosted Router)** | Virtual machine | Berjalan di VMware/KVM/Hyper-V/cloud |
 
-💡 **CHR gratis** dalam mode trial dengan batas 1 Mbps per interface — sangat cocok untuk **belajar dan lab**. Lisensi berbayar membuka kecepatan penuh.
+> [!TIP]
+> **CHR gratis** dalam mode trial dengan batas 1 Mbps per interface — sangat cocok untuk **belajar dan lab**. Lisensi berbayar membuka kecepatan penuh.
 
 ### Versi RouterOS
 
@@ -73,13 +77,15 @@ RouterOS v7  → versi saat ini; menambah dukungan container, WireGuard,
 | **REST API** | HTTPS (v7) | Modern |
 | **Console/serial** | — | Untuk pemulihan |
 
-💡 **WinBox lewat MAC address adalah penyelamat.** Kalau Anda salah konfigurasi dan kehilangan akses IP, WinBox tetap bisa terhubung lewat layer 2 selama Anda berada di segmen yang sama. Ini fitur yang tidak dimiliki Cisco.
+> [!TIP]
+> **WinBox lewat MAC address adalah penyelamat.** Kalau Anda salah konfigurasi dan kehilangan akses IP, WinBox tetap bisa terhubung lewat layer 2 selama Anda berada di segmen yang sama. Ini fitur yang tidak dimiliki Cisco.
 
 ```
 WinBox → tab "Neighbors" → pilih perangkat berdasarkan MAC → Connect
 ```
 
-⚠️ **Amankan akses ini di produksi:**
+> [!WARNING]
+> **Amankan akses ini di produksi:**
 ```
 /tool mac-server set allowed-interface-list=none
 /tool mac-server mac-winbox set allowed-interface-list=MGMT
@@ -93,7 +99,8 @@ Password  : (kosong) pada RouterOS lama
             atau tertera di stiker perangkat (RouterOS 6.45+)
 ```
 
-⚠️ **Langkah pertama SELALU:** ganti password admin dan buat user baru.
+> [!WARNING]
+> **Langkah pertama SELALU:** ganti password admin dan buat user baru.
 
 ---
 
@@ -164,7 +171,8 @@ Tab                autocomplete
 /ip firewall filter remove [find comment="lama"]
 ```
 
-💡 **`[find ...]` adalah fitur paling kuat di RouterOS CLI** — memungkinkan operasi massal berdasarkan kriteria, mirip pipe di Linux.
+> [!TIP]
+> **`[find ...]` adalah fitur paling kuat di RouterOS CLI** — memungkinkan operasi massal berdasarkan kriteria, mirip pipe di Linux.
 
 ### Konfigurasi sebagai teks
 
@@ -187,16 +195,18 @@ Tab                autocomplete
 /system backup load name=backup-lengkap
 ```
 
-⚠️ **Perbedaan `/export` dan `/system backup`:**
+> [!WARNING]
+> **Perbedaan `/export` dan `/system backup`:**
 | | `/export` | `/system backup` |
 |---|---|---|
 | Format | Teks (perintah RouterOS) | Biner |
-| Bisa dibaca/diedit | ✅ Ya | ❌ Tidak |
-| Bisa dipulihkan ke perangkat lain | ✅ Ya | ⚠️ Terbatas (harus model sama) |
-| Berisi password | Tidak (dengan `hide-sensitive`) | ✅ Ya |
+| Bisa dibaca/diedit | Ya | Tidak |
+| Bisa dipulihkan ke perangkat lain | Ya | ⚠️ Terbatas (harus model sama) |
+| Berisi password | Tidak (dengan `hide-sensitive`) | Ya |
 | Untuk | Dokumentasi, migrasi, version control | Pemulihan cepat |
 
-💡 **Praktik terbaik: gunakan keduanya.** `/export` untuk disimpan di Git, `/system backup` untuk pemulihan cepat.
+> [!TIP]
+> **Praktik terbaik: gunakan keduanya.** `/export` untuk disimpan di Git, `/system backup` untuk pemulihan cepat.
 
 ---
 
@@ -253,7 +263,8 @@ Perangkat MikroTik baru sering datang dengan **konfigurasi default** (bridge LAN
 /system reset-configuration
 ```
 
-⚠️ **`no-defaults=yes` menghapus SEMUANYA**, termasuk konfigurasi IP. Setelah reset, akses hanya lewat **WinBox MAC** atau console. Pastikan Anda bisa menjangkaunya secara fisik atau lewat layer 2.
+> [!WARNING]
+> **`no-defaults=yes` menghapus SEMUANYA**, termasuk konfigurasi IP. Setelah reset, akses hanya lewat **WinBox MAC** atau console. Pastikan Anda bisa menjangkaunya secara fisik atau lewat layer 2.
 
 ---
 
@@ -330,7 +341,8 @@ Perangkat MikroTik baru sering datang dengan **konfigurasi default** (bridge LAN
 /ip route print detail
 ```
 
-⚠️ **Di RouterOS v7, menu routing berubah:**
+> [!WARNING]
+> **Di RouterOS v7, menu routing berubah:**
 ```
 v6: /ip route
 v7: /ip route  (masih ada, tetapi routing protocol pindah ke /routing)
@@ -351,7 +363,8 @@ v7: /ip route  (masih ada, tetapi routing protocol pindah ke /routing)
     down-script="/ip route disable [find comment=ISP-A]"
 ```
 
-💡 **`check-gateway=ping`** membuat RouterOS memantau gateway dan menonaktifkan rute otomatis kalau tidak merespons — setara IP SLA sederhana di Cisco.
+> [!TIP]
+> **`check-gateway=ping`** membuat RouterOS memantau gateway dan menonaktifkan rute otomatis kalau tidak merespons — setara IP SLA sederhana di Cisco.
 
 ---
 
@@ -389,13 +402,15 @@ Tabel ini akan sangat membantu Anda berpindah antar-platform.
 | Neighbor discovery | CDP/LLDP | `/ip neighbor print` (MNDP+LLDP+CDP) | `lldpctl` |
 | Debug | `debug ip packet` | `/log print` + `/tool sniffer` | `tcpdump` |
 
-⚠️ **Perbedaan paling penting: RouterOS MENYIMPAN KONFIGURASI OTOMATIS.** Tidak ada `write memory`. Begitu Anda menekan Enter, konfigurasi tersimpan permanen — **termasuk kesalahan yang mengunci Anda dari perangkat**.
+> [!WARNING]
+> **Perbedaan paling penting: RouterOS MENYIMPAN KONFIGURASI OTOMATIS.** Tidak ada `write memory`. Begitu Anda menekan Enter, konfigurasi tersimpan permanen — **termasuk kesalahan yang mengunci Anda dari perangkat**.
 
-💡 **Karena itu gunakan `/system scheduler` atau Safe Mode** saat mengubah konfigurasi kritis dari jarak jauh (lihat §9).
+> [!TIP]
+> **Karena itu gunakan `/system scheduler` atau Safe Mode** saat mengubah konfigurasi kritis dari jarak jauh (lihat §9).
 
 ---
 
-## 9. Safe Mode — Fitur Penyelamat
+## 9. Safe Mode: Fitur Penyelamat
 
 Safe Mode membatalkan semua perubahan otomatis kalau koneksi Anda terputus.
 
@@ -412,9 +427,11 @@ Safe Mode membatalkan semua perubahan otomatis kalau koneksi Anda terputus.
 
 Di WinBox: klik tombol **"Safe Mode"** di pojok kiri atas.
 
-💡 **SELALU gunakan Safe Mode** saat mengubah firewall, NAT, atau konfigurasi interface dari jarak jauh. Ini menyelamatkan Anda dari perjalanan ke lokasi perangkat.
+> [!TIP]
+> **SELALU gunakan Safe Mode** saat mengubah firewall, NAT, atau konfigurasi interface dari jarak jauh. Ini menyelamatkan Anda dari perjalanan ke lokasi perangkat.
 
-⚠️ Safe Mode punya batas jumlah perubahan yang bisa dilacak. Untuk perubahan besar, gunakan scheduler:
+> [!WARNING]
+> Safe Mode punya batas jumlah perubahan yang bisa dilacak. Untuk perubahan besar, gunakan scheduler:
 ```
 # Jadwalkan reboot 5 menit lagi; batalkan kalau perubahan berhasil
 /system scheduler add name=safety-reboot start-time=startup interval=5m \
@@ -461,29 +478,39 @@ Di WinBox: klik tombol **"Safe Mode"** di pojok kiri atas.
 /system resource monitor
 ```
 
-⚠️ **Selalu update RouterOS sebelum firmware RouterBOARD**, dan reboot di antaranya. Urutan terbalik bisa menyebabkan perangkat tidak bisa boot.
+> [!WARNING]
+> **Selalu update RouterOS sebelum firmware RouterBOARD**, dan reboot di antaranya. Urutan terbalik bisa menyebabkan perangkat tidak bisa boot.
 
-⚠️ **RouterOS punya riwayat kerentanan keamanan yang serius** (mis. CVE-2018-14847 yang memungkinkan pengambilalihan penuh). **Selalu jalankan versi terbaru** dan jangan pernah mengekspos WinBox/API ke internet.
+> [!WARNING]
+> **RouterOS punya riwayat kerentanan keamanan yang serius** (mis. CVE-2018-14847 yang memungkinkan pengambilalihan penuh). **Selalu jalankan versi terbaru** dan jangan pernah mengekspos WinBox/API ke internet.
 
 ---
 
 ## 11. Kesalahan Umum Pemula MikroTik
 
-⚠️ **1. Lupa bahwa konfigurasi tersimpan otomatis.** Tidak ada "batalkan" — gunakan **Safe Mode**.
+> [!WARNING]
+> **1. Lupa bahwa konfigurasi tersimpan otomatis.** Tidak ada "batalkan" — gunakan **Safe Mode**.
 
-⚠️ **2. Firewall `chain=input` yang memblokir diri sendiri.** Aturan `drop` di chain input tanpa mengizinkan akses manajemen akan mengunci Anda.
+> [!WARNING]
+> **2. Firewall `chain=input` yang memblokir diri sendiri.** Aturan `drop` di chain input tanpa mengizinkan akses manajemen akan mengunci Anda.
 
-⚠️ **3. Mengekspos WinBox (8291) dan API (8728) ke internet.** Target serangan utama. Batasi dengan `/ip service set winbox address=`.
+> [!WARNING]
+> **3. Mengekspos WinBox (8291) dan API (8728) ke internet.** Target serangan utama. Batasi dengan `/ip service set winbox address=`.
 
-⚠️ **4. Memakai `masquerade` di interface yang salah.** Menyebabkan seluruh trafik LAN di-NAT ke dirinya sendiri.
+> [!WARNING]
+> **4. Memakai `masquerade` di interface yang salah.** Menyebabkan seluruh trafik LAN di-NAT ke dirinya sendiri.
 
-⚠️ **5. Salah urutan aturan firewall.** RouterOS memproses **dari atas ke bawah** — aturan pertama yang cocok menang. Gunakan `/ip firewall filter move`.
+> [!WARNING]
+> **5. Salah urutan aturan firewall.** RouterOS memproses **dari atas ke bawah** — aturan pertama yang cocok menang. Gunakan `/ip firewall filter move`.
 
-⚠️ **6. Tidak memakai interface list.** Menulis aturan per interface membuat konfigurasi sulit dipelihara. Gunakan `/interface list`.
+> [!WARNING]
+> **6. Tidak memakai interface list.** Menulis aturan per interface membuat konfigurasi sulit dipelihara. Gunakan `/interface list`.
 
-⚠️ **7. Lupa `check-gateway`** pada rute failover — rute tetap aktif walau gateway mati.
+> [!WARNING]
+> **7. Lupa `check-gateway`** pada rute failover — rute tetap aktif walau gateway mati.
 
-⚠️ **8. Tidak mengganti password default** dan tidak menonaktifkan user `admin`.
+> [!WARNING]
+> **8. Tidak mengganti password default** dan tidak menonaktifkan user `admin`.
 
 ---
 
@@ -493,7 +520,7 @@ Di WinBox: klik tombol **"Safe Mode"** di pojok kiri atas.
 - Akses: **WinBox (8291, bisa lewat MAC address!)**, WebFig, SSH, API, REST API.
 - CLI berbentuk **hierarki menu**; perintah inti: `print`, `add`, `set`, `remove`, `enable`, `disable`, `move`, `find`, `export`, `comment`.
 - **`[find ...]`** memungkinkan operasi massal berdasarkan kriteria.
-- ⚠️ **Konfigurasi tersimpan OTOMATIS** — tidak ada `write memory`, dan tidak ada undo. Gunakan **Safe Mode (Ctrl+X)** untuk perubahan berisiko dari jarak jauh.
+- **Konfigurasi tersimpan OTOMATIS** — tidak ada `write memory`, dan tidak ada undo. Gunakan **Safe Mode (Ctrl+X)** untuk perubahan berisiko dari jarak jauh.
 - **`/export`** menghasilkan konfigurasi teks (untuk Git dan dokumentasi); **`/system backup`** menghasilkan file biner (untuk pemulihan cepat).
 - Konfigurasi awal wajib: ganti identitas, buat user baru + nonaktifkan `admin`, set NTP & zona waktu, matikan layanan tidak terpakai, batasi MAC server dan neighbor discovery.
 - **`distance`** di RouterOS setara **administrative distance** di Cisco; **`check-gateway=ping`** memberi failover otomatis.

@@ -1,9 +1,10 @@
-# 12.2 — Serangan Layer 2 dan Mitigasinya
+# 12.2 Serangan Layer 2 dan Mitigasinya
 
 > **Prasyarat:** `03-data-link/02`–`04`, `06-aplikasi/02`
 > **Tujuan:** Anda bisa mengenali setiap serangan layer 2 dan mengonfigurasi seluruh fitur mitigasinya di Cisco dan MikroTik.
 
-> ⚠️ **Layer 2 adalah lapisan yang paling sering diabaikan.** Semua enkripsi dan firewall di lapisan atas menjadi tidak berarti kalau penyerang bisa mengendalikan layer 2 — ia dapat melakukan MITM terhadap seluruh trafik sebelum enkripsi diterapkan.
+> > [!WARNING]
+> > **Layer 2 adalah lapisan yang paling sering diabaikan.** Semua enkripsi dan firewall di lapisan atas menjadi tidak berarti kalau penyerang bisa mengendalikan layer 2 — ia dapat melakukan MITM terhadap seluruh trafik sebelum enkripsi diterapkan.
 
 ---
 
@@ -19,7 +20,8 @@
 5. Penyerang menangkap SELURUH trafik segmen itu
 ```
 
-⚠️ Efeknya: **switch berperilaku seperti hub.** Alat seperti `macof` (bagian dari dsniff) mengirim 155.000 MAC palsu per menit.
+> [!WARNING]
+> Efeknya: **switch berperilaku seperti hub.** Alat seperti `macof` (bagian dari dsniff) mengirim 155.000 MAC palsu per menit.
 
 ### Mitigasi: Port Security
 
@@ -38,13 +40,15 @@ SW1(config-if)# switchport port-security aging type inactivity
 
 | Mode | Membuang trafik | Kirim SNMP/syslog | Naikkan counter | Shutdown port |
 |---|---|---|---|---|
-| **protect** | ✅ | ❌ | ❌ | ❌ |
-| **restrict** | ✅ | ✅ | ✅ | ❌ |
-| **shutdown** (default) | ✅ | ✅ | ✅ | ✅ (err-disabled) |
+| **protect** | Ya | Tidak | Tidak | Tidak |
+| **restrict** | Ya | Ya | Ya | Tidak |
+| **shutdown** (default) | Ya | Ya | Ya | ✅ (err-disabled) |
 
-💡 **`restrict` sering lebih baik daripada `shutdown` di produksi** — Anda mendapat peringatan tanpa memutus pengguna karena kesalahan kecil (mis. seseorang memindahkan laptop).
+> [!TIP]
+> **`restrict` sering lebih baik daripada `shutdown` di produksi** — Anda mendapat peringatan tanpa memutus pengguna karena kesalahan kecil (mis. seseorang memindahkan laptop).
 
-⚠️ **`maximum 1` terlalu ketat** kalau ada telepon IP dengan PC di belakangnya, atau VM di laptop. Gunakan `maximum 2` atau 3.
+> [!WARNING]
+> **`maximum 1` terlalu ketat** kalau ada telepon IP dengan PC di belakangnya, atau VM di laptop. Gunakan `maximum 2` atau 3.
 
 ```
 SW1# show port-security
@@ -68,13 +72,14 @@ SW1(config)# errdisable recovery interval 300
     src-mac-address=!00:11:22:33:44:55/FF:FF:FF:FF:FF:FF action=drop
 ```
 
-⚠️ **RouterOS tidak punya port security selengkap Cisco.** Alternatif yang lebih baik: **DHCP snooping + ARP reply-only** (lihat §3), atau **802.1X**.
+> [!WARNING]
+> **RouterOS tidak punya port security selengkap Cisco.** Alternatif yang lebih baik: **DHCP snooping + ARP reply-only** (lihat §3), atau **802.1X**.
 
 ---
 
 ## 2. ARP Spoofing / ARP Poisoning
 
-### Serangan — MITM klasik
+### Serangan: MITM klasik
 
 ```
 Normal:
@@ -92,7 +97,8 @@ Serangan:
          ←──           ←──
 ```
 
-⚠️ **ARP tidak punya autentikasi sama sekali.** Setiap host memercayai ARP Reply apa pun yang diterimanya — bahkan yang tidak diminta.
+> [!WARNING]
+> **ARP tidak punya autentikasi sama sekali.** Setiap host memercayai ARP Reply apa pun yang diterimanya — bahkan yang tidak diminta.
 
 **Dampak:** penyadapan seluruh trafik, SSL stripping, injeksi konten, pencurian kredensial, DoS.
 
@@ -120,7 +126,8 @@ SW1(config-if-range)# ip arp inspection limit rate 15
 SW1(config)# ip arp inspection validate src-mac dst-mac ip
 ```
 
-⚠️ **DAI BERGANTUNG pada DHCP snooping binding table.** Host dengan **IP statis** tidak ada di tabel itu → ARP-nya akan **dibuang**. Solusinya: ARP ACL.
+> [!WARNING]
+> **DAI BERGANTUNG pada DHCP snooping binding table.** Host dengan **IP statis** tidak ada di tabel itu → ARP-nya akan **dibuang**. Solusinya: ARP ACL.
 
 ```
 SW1(config)# arp access-list SERVER-STATIS
@@ -146,9 +153,11 @@ SW1# show ip dhcp snooping binding
     interface=bridge-LAN comment="Server file"
 ```
 
-💡 **Ini kombinasi yang sangat efektif dan sederhana:** router **hanya** mengenali host yang alamatnya diberikan oleh DHCP server-nya sendiri (atau didaftarkan manual). Host yang memasang IP statis sendiri atau melakukan ARP spoofing **tidak akan bisa berkomunikasi sama sekali**. Sangat umum dipakai di RT/RW-Net dan hotspot Indonesia.
+> [!TIP]
+> **Ini kombinasi yang sangat efektif dan sederhana:** router **hanya** mengenali host yang alamatnya diberikan oleh DHCP server-nya sendiri (atau didaftarkan manual). Host yang memasang IP statis sendiri atau melakukan ARP spoofing **tidak akan bisa berkomunikasi sama sekali**. Sangat umum dipakai di RT/RW-Net dan hotspot Indonesia.
 
-⚠️ Konsekuensinya: setiap perangkat dengan IP statis (server, printer, AP) **harus** didaftarkan di `/ip arp` atau diberi lease statis di DHCP.
+> [!WARNING]
+> Konsekuensinya: setiap perangkat dengan IP statis (server, printer, AP) **harus** didaftarkan di `/ip arp` atau diberi lease statis di DHCP.
 
 ---
 
@@ -163,7 +172,8 @@ Penyerang menjalankan DHCP server palsu
 → MITM SEMPURNA untuk seluruh trafik
 ```
 
-⚠️ **Sering terjadi TANPA niat jahat** — karyawan mencolokkan router Wi-Fi rumahan dengan port LAN (bukan WAN) ke jaringan kantor. Router itu langsung menjadi DHCP server untuk seluruh segmen.
+> [!WARNING]
+> **Sering terjadi TANPA niat jahat** — karyawan mencolokkan router Wi-Fi rumahan dengan port LAN (bukan WAN) ke jaringan kantor. Router itu langsung menjadi DHCP server untuk seluruh segmen.
 
 ### Serangan 2: DHCP Starvation
 
@@ -242,7 +252,8 @@ SW1(config-if)# ip verify source port-security      ← periksa IP + MAC
 SW1# show ip verify source
 ```
 
-⚠️ Sama seperti DAI, **IP Source Guard bergantung pada DHCP snooping**. Host statis butuh entri binding manual:
+> [!WARNING]
+> Sama seperti DAI, **IP Source Guard bergantung pada DHCP snooping**. Host statis butuh entri binding manual:
 ```
 SW1(config)# ip source binding 0011.2233.4455 vlan 10 192.168.10.50 interface gi0/6
 ```
@@ -261,7 +272,8 @@ R1(config-if)# ip verify unicast source reachable-via any     ← loose mode
 | **Strict** | Alamat sumber harus dapat dijangkau **lewat interface yang sama** | Link single-homed, edge pelanggan |
 | **Loose** | Alamat sumber harus ada di routing table (interface mana pun) | Link multi-homed, asymmetric routing |
 
-⚠️ **Strict mode merusak asymmetric routing** — gunakan loose mode kalau ada beberapa jalur.
+> [!WARNING]
+> **Strict mode merusak asymmetric routing** — gunakan loose mode kalau ada beberapa jalur.
 
 ```
 # MikroTik
@@ -269,7 +281,8 @@ R1(config-if)# ip verify unicast source reachable-via any     ← loose mode
 /interface set ether1 ... 
 ```
 
-💡 **BCP 38** (RFC 2827) mewajibkan setiap operator memfilter paket dengan alamat sumber yang tidak sah dari jaringannya. Kalau semua operator melakukannya, **amplification attack berbasis spoofing akan hilang**. Ini bagian dari MANRS.
+> [!TIP]
+> **BCP 38** (RFC 2827) mewajibkan setiap operator memfilter paket dengan alamat sumber yang tidak sah dari jaringannya. Kalau semua operator melakukannya, **amplification attack berbasis spoofing akan hilang**. Ini bagian dari MANRS.
 
 ---
 
@@ -290,7 +303,8 @@ SW1(config-if)# switchport mode access      ← paksa mode access
 SW1(config-if)# switchport nonegotiate      ← MATIKAN DTP
 ```
 
-⚠️ **`switchport nonegotiate` wajib pada semua port** — access maupun trunk. DTP tidak memberi manfaat yang sepadan dengan risikonya.
+> [!WARNING]
+> **`switchport nonegotiate` wajib pada semua port** — access maupun trunk. DTP tidak memberi manfaat yang sepadan dengan risikonya.
 
 ### Serangan 2: Double Tagging
 
@@ -304,7 +318,8 @@ Penyerang mengirim frame dengan DUA tag VLAN:
 → Penyerang mengirim ke VLAN 20 padahal ia di VLAN 1
 ```
 
-⚠️ **Serangan ini bersifat SATU ARAH** (tidak ada jalur balik), tetapi cukup untuk DoS atau injeksi.
+> [!WARNING]
+> **Serangan ini bersifat SATU ARAH** (tidak ada jalur balik), tetapi cukup untuk DoS atau injeksi.
 
 **Mitigasi:**
 ```
@@ -398,7 +413,8 @@ SW1(config-if-range)# no cdp enable
 SW1(config-if-range)# no lldp transmit
 ```
 
-⚠️ **Telepon IP Cisco memerlukan CDP** untuk mengetahui voice VLAN. Untuk port telepon, biarkan CDP aktif atau gunakan **LLDP-MED**.
+> [!WARNING]
+> **Telepon IP Cisco memerlukan CDP** untuk mengetahui voice VLAN. Untuk port telepon, biarkan CDP aktif atau gunakan **LLDP-MED**.
 
 ```
 # MikroTik
@@ -420,7 +436,8 @@ SW1(config-if)# storm-control action shutdown       ← atau trap
 SW1# show storm-control
 ```
 
-💡 Storm control adalah **jaring pengaman** untuk broadcast storm yang lolos dari STP — misalnya karena loop di perangkat downstream yang tidak menjalankan STP.
+> [!TIP]
+> Storm control adalah **jaring pengaman** untuk broadcast storm yang lolos dari STP — misalnya karena loop di perangkat downstream yang tidak menjalankan STP.
 
 ---
 
@@ -453,11 +470,12 @@ Detail di `03-data-link/03`.
    ← port dengan horizon sama tidak bisa saling berkomunikasi
 ```
 
-💡 **Isolasi port sangat penting untuk jaringan tamu, hotel, apartemen, dan IoT** — mencegah satu perangkat terinfeksi menyerang tetangganya.
+> [!TIP]
+> **Isolasi port sangat penting untuk jaringan tamu, hotel, apartemen, dan IoT** — mencegah satu perangkat terinfeksi menyerang tetangganya.
 
 ---
 
-## 10. 802.1X — Kontrol Akses Berbasis Port
+## 10. 802.1X (Kontrol Akses Berbasis Port)
 
 Solusi paling kuat untuk layer 2: **tidak ada perangkat yang bisa berkomunikasi sebelum terautentikasi**.
 
@@ -502,11 +520,14 @@ SW1(config-if-range)# spanning-tree portfast
 | **Dynamic VLAN** | RADIUS menentukan VLAN berdasarkan identitas |
 | **dACL** | RADIUS mengirimkan ACL per pengguna |
 
-⚠️ **MAB tidak aman** — MAC address mudah dipalsukan. Ia hanya "memperlambat", bukan menghentikan. Gunakan untuk perangkat yang benar-benar tidak bisa 802.1X, dan kombinasikan dengan profiling dan segmentasi ketat.
+> [!WARNING]
+> **MAB tidak aman** — MAC address mudah dipalsukan. Ia hanya "memperlambat", bukan menghentikan. Gunakan untuk perangkat yang benar-benar tidak bisa 802.1X, dan kombinasikan dengan profiling dan segmentasi ketat.
 
-⚠️ **Selalu konfigurasikan critical VLAN.** Kalau RADIUS server mati dan tidak ada fallback, **seluruh kantor tidak bisa terhubung ke jaringan** — outage total.
+> [!WARNING]
+> **Selalu konfigurasikan critical VLAN.** Kalau RADIUS server mati dan tidak ada fallback, **seluruh kantor tidak bisa terhubung ke jaringan** — outage total.
 
-💡 **Terapkan 802.1X secara bertahap:** mulai dengan mode `monitor` (open mode) yang mencatat tetapi tidak memblokir, analisis perangkat apa saja yang ada, baru aktifkan enforcement.
+> [!TIP]
+> **Terapkan 802.1X secara bertahap:** mulai dengan mode `monitor` (open mode) yang mencatat tetapi tidak memblokir, analisis perangkat apa saja yang ada, baru aktifkan enforcement.
 
 ```
 SW1(config-if)# authentication open        ← monitor mode
@@ -594,7 +615,7 @@ interface range gi0/21-23
  shutdown
 ```
 
-### MikroTik — padanan
+### MikroTik: padanan
 
 ```
 # DHCP snooping
@@ -657,7 +678,7 @@ interface range gi0/21-23
 <details>
 <summary>Jawaban</summary>
 
-1. **MAC flooding** mengirim ribuan frame dengan **MAC address sumber palsu yang berbeda-beda** (alat seperti `macof` mengirim >150.000 per menit). Switch mempelajari setiap MAC sumber dan memasukkannya ke **MAC address table**, yang kapasitasnya terbatas (8.000–32.000 entri).
+1. **MAC flooding** mengirim ribuan frame dengan **MAC address sumber palsu yang berbeda-beda** (alat seperti `macof` mengirim >150.000 per menit). Switch mempelajari setiap MAC sumber dan memasukkannya ke **MAC address table**, yang kapasitasnya terbatas (8.000-32.000 entri).
    Ketika tabel penuh, switch **tidak bisa lagi mempelajari MAC baru**. Akibatnya, ketika frame datang untuk MAC tujuan yang tidak ada di tabel, switch melakukan **unknown unicast flooding** — mengirimkannya ke **semua port** dalam VLAN itu. Karena hampir semua MAC yang sah sudah tersingkir dari tabel, hampir semua trafik menjadi flooding. Penyerang yang terhubung di segmen itu dapat menangkap **seluruh trafik**, persis seperti pada hub.
 
 2. **Akar masalahnya: ARP tidak punya mekanisme autentikasi sama sekali.** Protokol ini dirancang tahun 1982 untuk jaringan yang seluruhnya dipercaya. Setiap host **menerima dan memercayai ARP Reply apa pun** yang diterimanya — bahkan yang tidak pernah ia minta (gratuitous ARP), dan bahkan yang bertentangan dengan entri yang sudah ada. Tidak ada tanda tangan, tidak ada verifikasi, tidak ada state.
@@ -788,4 +809,4 @@ interface range gi0/21-23
 
 ---
 
-**Berikutnya:** `12-keamanan/03-serangan-l3-l7.md` — serangan dari layer 3 sampai aplikasi.
+**Berikutnya:** `12-keamanan/03-serangan-l3-l7.md`. Serangan dari layer 3 sampai aplikasi.

@@ -1,4 +1,4 @@
-# 00.5 — Topologi Jaringan
+# 00.5 Topologi Jaringan
 
 > **Prasyarat:** `00-fondasi/01`
 > **Tujuan:** Anda bisa memilih topologi yang tepat untuk sebuah kebutuhan, menghitung jumlah link, dan menjelaskan trade-off antara biaya, keandalan, dan kinerja.
@@ -20,7 +20,8 @@ Contoh modern: **Wi-Fi**. Secara fisik tidak ada kabel sama sekali; secara logis
 
 Contoh yang paling sering Anda temui: **VLAN**. Secara fisik semua PC menancap ke switch yang sama (star). Secara logis mereka berada di jaringan-jaringan terpisah yang tidak bisa saling bicara tanpa router.
 
-💡 Saat membuat dokumentasi, Anda hampir selalu perlu **dua diagram**: diagram fisik (rak, kabel, port) dan diagram logis (subnet, VLAN, routing). Dibahas di `17-desain-arsitektur/03`.
+> [!TIP]
+> Saat membuat dokumentasi, Anda hampir selalu perlu **dua diagram**: diagram fisik (rak, kabel, port) dan diagram logis (subnet, VLAN, routing). Dibahas di `17-desain-arsitektur/03`.
 
 ---
 
@@ -48,7 +49,7 @@ Semua node menempel pada satu kabel bersama (backbone) yang ujung-ujungnya diber
        [A]     [B]     [C]     [D]
 ```
 
-- **Dipakai dulu:** Ethernet 10BASE5 (thicknet) dan 10BASE2 (thinnet), 1980–90-an.
+- **Dipakai dulu:** Ethernet 10BASE5 (thicknet) dan 10BASE2 (thinnet), 1980-90-an.
 - **Kelebihan:** hemat kabel, murah.
 - **Kekurangan yang mematikan:**
   - Satu kabel putus → **seluruh jaringan mati**.
@@ -58,7 +59,8 @@ Semua node menempel pada satu kabel bersama (backbone) yang ujung-ujungnya diber
 
 **Status: mati total.** Anda perlu mengenalnya hanya untuk memahami dari mana CSMA/CD berasal (`03-data-link/01`) dan untuk ujian sertifikasi.
 
-⚠️ Catatan penting: sebuah **hub** menciptakan bus secara logis meskipun kabelnya berbentuk star. Semua kelemahan bus di atas berlaku pada hub.
+> [!WARNING]
+> Catatan penting: sebuah **hub** menciptakan bus secara logis meskipun kabelnya berbentuk star. Semua kelemahan bus di atas berlaku pada hub.
 
 ### 2.3 Ring
 
@@ -74,7 +76,8 @@ Setiap node terhubung ke dua tetangga; data berputar satu arah (atau dua arah pa
 - **Kelebihan:** tidak ada tabrakan (token menentukan giliran); dual ring memberi jalur cadangan otomatis.
 - **Kekurangan:** satu node/link putus memutus cincin (kecuali dual ring); menambah node harus memutus cincin sementara.
 
-💡 Meski Token Ring mati, **topologi cincin fisik sangat hidup** di jaringan operator serat: ring memberi dua jalur ke setiap titik dengan kabel jauh lebih hemat daripada mesh.
+> [!TIP]
+> Meski Token Ring mati, **topologi cincin fisik sangat hidup** di jaringan operator serat: ring memberi dua jalur ke setiap titik dengan kabel jauh lebih hemat daripada mesh.
 
 ### 2.4 Star (Bintang)
 
@@ -178,7 +181,7 @@ Kombinasi — inilah kenyataan hampir semua jaringan:
 
 ## 3. Topologi Arsitektural (Yang Diuji di CCNA)
 
-### 3.1 Three-Tier (Core – Distribution – Access)
+### 3.1 Three-Tier (Core: Distribution – Access)
 
 ```
    ┌──────────────── CORE ────────────────┐
@@ -207,7 +210,7 @@ Kenapa dipisah? Karena setiap lapisan punya **kebutuhan berbeda**: access butuh 
 
 ### 3.2 Two-Tier (Collapsed Core)
 
-Core dan distribution digabung. Untuk jaringan kecil–menengah (satu gedung, < ~1.000 user).
+Core dan distribution digabung. Untuk jaringan kecil-menengah (satu gedung, < ~1.000 user).
 
 ```
    ┌──── COLLAPSED CORE / DISTRIBUTION ────┐
@@ -257,12 +260,12 @@ Rasio 3:1 umum untuk workload biasa; 1:1 (non-blocking) untuk HPC/AI.
 
 | | Three-tier | Two-tier | Spine-leaf |
 |---|---|---|---|
-| Untuk | Kampus besar | Kantor kecil–menengah | Data center |
+| Untuk | Kampus besar | Kantor kecil-menengah | Data center |
 | Trafik dominan | North-south | North-south | East-west |
 | Hop antar-endpoint | Bervariasi | Sedikit | Selalu sama (2) |
 | Loop prevention | STP | STP | Routing L3 + ECMP |
 | Skala | Vertikal (perangkat lebih besar) | Terbatas | Horizontal (tambah spine/leaf) |
-| Biaya awal | Tinggi | Rendah | Sedang–tinggi |
+| Biaya awal | Tinggi | Rendah | Sedang-tinggi |
 
 ---
 
@@ -322,7 +325,8 @@ Total = 1 − (0,001)² = 99,9999%
 
 Pelajaran: **rantai seri menurunkan keandalan; paralel menaikkannya secara dramatis.** Karena itu redundansi bernilai besar — asal tidak ada SPOF tersembunyi yang membuat "paralel" itu semu (mis. dua switch tapi satu catu daya bersama).
 
-⚠️ Redundansi juga menambah **kompleksitas**, dan kompleksitas menyebabkan outage. Banyak insiden besar berasal dari mekanisme failover yang gagal atau salah konfigurasi, bukan dari perangkat yang mati. Uji failover secara berkala — redundansi yang tidak pernah diuji adalah asumsi, bukan fakta.
+> [!WARNING]
+> Redundansi juga menambah **kompleksitas**, dan kompleksitas menyebabkan outage. Banyak insiden besar berasal dari mekanisme failover yang gagal atau salah konfigurasi, bukan dari perangkat yang mati. Uji failover secara berkala — redundansi yang tidak pernah diuji adalah asumsi, bukan fakta.
 
 ---
 
@@ -331,7 +335,7 @@ Pelajaran: **rantai seri menurunkan keandalan; paralel menaikkannya secara drama
 | Kebutuhan | Topologi |
 |---|---|
 | Rumah / kantor < 20 user | Star tunggal (satu switch + AP) |
-| Kantor 20–200 user, 1 gedung | Two-tier (collapsed core) |
+| Kantor 20-200 user, 1 gedung | Two-tier (collapsed core) |
 | Kampus/gedung banyak, > 500 user | Three-tier |
 | Data center, trafik east-west | Spine-leaf |
 | WAN banyak cabang, kontrol terpusat | Hub-and-spoke |
@@ -340,7 +344,7 @@ Pelajaran: **rantai seri menurunkan keandalan; paralel menaikkannya secara drama
 | Cakupan area luas tanpa kabel | Wi-Fi mesh |
 
 Pertanyaan yang menentukan pilihan:
-1. Berapa banyak endpoint sekarang, dan dalam 3–5 tahun?
+1. Berapa banyak endpoint sekarang, dan dalam 3-5 tahun?
 2. Pola trafiknya ke mana — keluar (north-south) atau antar-internal (east-west)?
 3. Berapa lama downtime yang bisa diterima? (menentukan level redundansi)
 4. Berapa anggaran, termasuk biaya operasional & keahlian tim?
@@ -371,23 +375,30 @@ SW1# show spanning-tree           ← memperlihatkan topologi logis L2 setelah S
 R1#  show ip route                ← topologi logis L3
 ```
 
-💡 **Gabungan `show cdp neighbors` di setiap switch = peta topologi fisik.** Ini cara cepat membuat dokumentasi jaringan yang tidak terdokumentasi. Otomasinya dibahas di `15-otomasi/03`.
+> [!TIP]
+> **Gabungan `show cdp neighbors` di setiap switch = peta topologi fisik.** Ini cara cepat membuat dokumentasi jaringan yang tidak terdokumentasi. Otomasinya dibahas di `15-otomasi/03`.
 
 ---
 
 ## 7. Kesalahan Umum
 
-⚠️ **1. Menyamakan diagram fisik dan logis.** Dua PC di switch yang sama bisa berada di jaringan yang sepenuhnya terpisah (VLAN berbeda).
+> [!WARNING]
+> **1. Menyamakan diagram fisik dan logis.** Dua PC di switch yang sama bisa berada di jaringan yang sepenuhnya terpisah (VLAN berbeda).
 
-⚠️ **2. Redundansi tanpa memeriksa jalur bersama.** Dua uplink ke switch yang sama bukan redundansi terhadap kegagalan switch. Dua serat di satu duct bukan redundansi terhadap galian.
+> [!WARNING]
+> **2. Redundansi tanpa memeriksa jalur bersama.** Dua uplink ke switch yang sama bukan redundansi terhadap kegagalan switch. Dua serat di satu duct bukan redundansi terhadap galian.
 
-⚠️ **3. Menganggap full mesh selalu terbaik.** Biaya dan kompleksitasnya tumbuh kuadratik; partial mesh biasanya pilihan rasional.
+> [!WARNING]
+> **3. Menganggap full mesh selalu terbaik.** Biaya dan kompleksitasnya tumbuh kuadratik; partial mesh biasanya pilihan rasional.
 
-⚠️ **4. Memakai spine-leaf untuk kantor biasa.** Spine-leaf memecahkan masalah east-west di data center; di kantor ia hanya menambah biaya.
+> [!WARNING]
+> **4. Memakai spine-leaf untuk kantor biasa.** Spine-leaf memecahkan masalah east-west di data center; di kantor ia hanya menambah biaya.
 
-⚠️ **5. Lupa bahwa Wi-Fi adalah media bersama.** Menambah AP tanpa merencanakan kanal justru menurunkan kinerja karena co-channel interference (`10-wireless/01`).
+> [!WARNING]
+> **5. Lupa bahwa Wi-Fi adalah media bersama.** Menambah AP tanpa merencanakan kanal justru menurunkan kinerja karena co-channel interference (`10-wireless/01`).
 
-⚠️ **6. Failure domain terlalu besar.** Satu VLAN untuk seluruh perusahaan = satu masalah untuk seluruh perusahaan.
+> [!WARNING]
+> **6. Failure domain terlalu besar.** Satu VLAN untuk seluruh perusahaan = satu masalah untuk seluruh perusahaan.
 
 ---
 
@@ -418,7 +429,7 @@ R1#  show ip route                ← topologi logis L3
 
 1. n=8: 8×7/2 = **28 link**. n=12: 12×11/2 = **66 link**. Penambahan 4 router menambah 38 link — inilah pertumbuhan kuadratik.
 
-2. **Two-tier / collapsed core**: sepasang switch distribution/core (redundan, di-stack atau MLAG) + 6 switch access, masing-masing dengan dua uplink ke pasangan core. Alasan: 180 user dalam satu gedung tidak memerlukan pemisahan core–distribution; two-tier lebih murah, lebih sedikit hop, lebih sederhana dikelola, dan tetap menghilangkan SPOF di lapisan agregasi.
+2. **Two-tier / collapsed core**: sepasang switch distribution/core (redundan, di-stack atau MLAG) + 6 switch access, masing-masing dengan dua uplink ke pasangan core. Alasan: 180 user dalam satu gedung tidak memerlukan pemisahan core-distribution; two-tier lebih murah, lebih sedikit hop, lebih sederhana dikelola, dan tetap menghilangkan SPOF di lapisan agregasi.
 
 3. (a) Keduanya di **VLAN berbeda** — fisik satu switch, logis dua jaringan terpisah; butuh routing. (b) Keduanya di VLAN sama tapi **subnet IP berbeda** (salah konfigurasi alamat). Kemungkinan lain: port protection/private VLAN, ACL, atau firewall host.
 
@@ -441,4 +452,4 @@ R1#  show ip route                ← topologi logis L3
 
 ---
 
-**Berikutnya:** `01-model-referensi/01-osi.md` — kerangka berpikir yang akan Anda pakai seumur karier.
+**Berikutnya:** `01-model-referensi/01-osi.md`. Kerangka berpikir yang akan Anda pakai seumur karier.

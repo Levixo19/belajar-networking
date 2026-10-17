@@ -1,9 +1,10 @@
-# 14.1 — Metodologi Troubleshooting
+# 14.1 Metodologi Troubleshooting
 
 > **Prasyarat:** `01-model-referensi/01` (OSI sebagai kerangka), pemahaman seluruh tahap sebelumnya
 > **Tujuan:** Anda punya pendekatan sistematis untuk memecahkan masalah jaringan apa pun, bukan menebak-nebak.
 
-> 📌 **Ini modul terpenting untuk pekerjaan nyata.** Perbedaan antara teknisi junior dan senior bukan pada hafalan perintah, tetapi pada **cara berpikir** saat menghadapi masalah.
+> > [!NOTE]
+> > **Ini modul terpenting untuk pekerjaan nyata.** Perbedaan antara teknisi junior dan senior bukan pada hafalan perintah, tetapi pada **cara berpikir** saat menghadapi masalah.
 
 ---
 
@@ -23,7 +24,8 @@ PENDEKATAN SISTEMATIS:
   → konsisten, dapat diulang, mengajar, mencegah kambuh
 ```
 
-⚠️ **"Restart saja" sering menyembunyikan akar masalah** yang akan kambuh — dan menghapus bukti (log, state) yang Anda butuhkan untuk memahaminya. Restart adalah pilihan terakhir, bukan pertama, kecuali dalam keadaan darurat produksi.
+> [!WARNING]
+> **"Restart saja" sering menyembunyikan akar masalah** yang akan kambuh — dan menghapus bukti (log, state) yang Anda butuhkan untuk memahaminya. Restart adalah pilihan terakhir, bukan pertama, kecuali dalam keadaan darurat produksi.
 
 ---
 
@@ -59,7 +61,8 @@ Kerangka standar yang diuji di Network+ dan berlaku universal.
 7. DOKUMENTASIKAN temuan, tindakan, dan hasil
 ```
 
-💡 **Langkah 1 (identifikasi) dan 7 (dokumentasi) paling sering dilewati** — dan itulah yang paling penting. Identifikasi yang buruk membuang waktu berjam-jam; dokumentasi yang buruk membuat masalah yang sama diselesaikan berulang kali dari nol.
+> [!TIP]
+> **Langkah 1 (identifikasi) dan 7 (dokumentasi) paling sering dilewati** — dan itulah yang paling penting. Identifikasi yang buruk membuang waktu berjam-jam; dokumentasi yang buruk membuat masalah yang sama diselesaikan berulang kali dari nol.
 
 ---
 
@@ -105,11 +108,12 @@ Mulai dari L3 (ping) — layer paling informatif
 
 **Kapan:** pengalaman menyarankan titik awal tertentu; ini yang paling sering dipakai praktisi berpengalaman.
 
-💡 **Praktisi berpengalaman biasanya memakai divide-and-conquer** dengan intuisi tentang di mana memulai — tetapi selalu siap kembali ke bottom-up kalau intuisi meleset.
+> [!TIP]
+> **Praktisi berpengalaman biasanya memakai divide-and-conquer** dengan intuisi tentang di mana memulai — tetapi selalu siap kembali ke bottom-up kalau intuisi meleset.
 
 ---
 
-## 4. Menentukan Scope — Pertanyaan Kunci
+## 4. Menentukan Scope: Pertanyaan Kunci
 
 Sebelum menyentuh apa pun, tentukan **seberapa luas** masalahnya. Ini memangkas ruang pencarian secara dramatis.
 
@@ -136,7 +140,8 @@ ARAH mana?
 └── Keduanya         → konektivitas dasar
 ```
 
-⚠️ **"Apa yang baru berubah?" adalah pertanyaan paling produktif.** Sebagian besar masalah produksi disebabkan **perubahan** — deploy, update, perubahan konfigurasi, penambahan perangkat. Selalu periksa change log terlebih dahulu.
+> [!WARNING]
+> **"Apa yang baru berubah?" adalah pertanyaan paling produktif.** Sebagian besar masalah produksi disebabkan **perubahan** — deploy, update, perubahan konfigurasi, penambahan perangkat. Selalu periksa change log terlebih dahulu.
 
 ---
 
@@ -152,7 +157,8 @@ GEJALA (yang dilihat pengguna):    PENYEBAB (yang sebenarnya):
 "Email tidak terkirim"           → SPF/DKIM/DMARC, port 25 diblokir, PTR, reputasi
 ```
 
-⚠️ **Jangan memperbaiki gejala.** "Internet lambat" yang diperbaiki dengan restart router mungkin sebenarnya masalah DNS yang akan kambuh. Selalu cari **kenapa**.
+> [!WARNING]
+> **Jangan memperbaiki gejala.** "Internet lambat" yang diperbaiki dengan restart router mungkin sebenarnya masalah DNS yang akan kambuh. Selalu cari **kenapa**.
 
 ### Teknik "5 Whys"
 
@@ -168,7 +174,7 @@ GEJALA (yang dilihat pengguna):    PENYEBAB (yang sebenarnya):
 
 ---
 
-## 6. Baseline — Tahu Apa yang "Normal"
+## 6. Baseline: Tahu Apa yang "Normal"
 
 Anda tidak bisa mengenali "abnormal" tanpa tahu "normal".
 
@@ -182,13 +188,15 @@ Baseline yang perlu diketahui:
 - Jumlah rute normal (BGP, OSPF)
 ```
 
-💡 **Monitoring yang baik memberi baseline otomatis.** "Latency ke DNS naik dari 5 ms ke 200 ms sejak pukul 14:00" jauh lebih berguna daripada "DNS terasa lambat". Ini alasan `14-monitoring-troubleshooting/03` (observability) sangat penting — Anda tidak bisa men-troubleshoot dengan baik tanpa data historis.
+> [!TIP]
+> **Monitoring yang baik memberi baseline otomatis.** "Latency ke DNS naik dari 5 ms ke 200 ms sejak pukul 14:00" jauh lebih berguna daripada "DNS terasa lambat". Ini alasan `14-monitoring-troubleshooting/03` (observability) sangat penting — Anda tidak bisa men-troubleshoot dengan baik tanpa data historis.
 
-⚠️ **Change correlation** — kalau masalah mulai pukul 14:00, apa lagi yang terjadi pukul 14:00? Deploy? Perubahan config? Perangkat baru? Perubahan trafik? Grafik monitoring yang menampilkan semua metrik pada garis waktu yang sama sangat mempercepat diagnosis.
+> [!WARNING]
+> **Change correlation** — kalau masalah mulai pukul 14:00, apa lagi yang terjadi pukul 14:00? Deploy? Perubahan config? Perangkat baru? Perubahan trafik? Grafik monitoring yang menampilkan semua metrik pada garis waktu yang sama sangat mempercepat diagnosis.
 
 ---
 
-## 7. Isolasi Masalah — Teknik
+## 7. Isolasi Masalah: Teknik
 
 ### Substitusi
 
@@ -210,7 +218,8 @@ Cek di titik TENGAH (C):
 Ulangi → menemukan titik masalah dengan cepat
 ```
 
-💡 **`traceroute`/`mtr` adalah binary search otomatis** untuk masalah jalur — menunjukkan di hop mana masalah muncul.
+> [!TIP]
+> **`traceroute`/`mtr` adalah binary search otomatis** untuk masalah jalur — menunjukkan di hop mana masalah muncul.
 
 ### Eliminasi
 
@@ -222,7 +231,8 @@ Nonaktifkan variabel satu per satu untuk mengisolasi:
 - Coba tujuan lain → masalah tujuan atau sumber?
 ```
 
-⚠️ **Berhati-hatilah menonaktifkan kontrol keamanan** (firewall) untuk diagnosis di produksi — bisa membuka celah. Lebih baik menambahkan aturan log/permit sementara yang sempit.
+> [!WARNING]
+> **Berhati-hatilah menonaktifkan kontrol keamanan** (firewall) untuk diagnosis di produksi — bisa membuka celah. Lebih baik menambahkan aturan log/permit sementara yang sempit.
 
 ### Uji dari beberapa titik
 
@@ -262,7 +272,8 @@ Langkah 7 OK, langkah 8 gagal → firewall atau layanan mati
 Langkah 8 OK, langkah 9 gagal → aplikasi atau sertifikat
 ```
 
-💡 **"It's always DNS."** Kalau ping ke IP berhasil tetapi ke nama gagal, itu DNS. Ini penyebab nomor satu masalah "internet mati" yang sebenarnya bukan tentang konektivitas sama sekali.
+> [!TIP]
+> **"It's always DNS."** Kalau ping ke IP berhasil tetapi ke nama gagal, itu DNS. Ini penyebab nomor satu masalah "internet mati" yang sebenarnya bukan tentang konektivitas sama sekali.
 
 ---
 
@@ -305,7 +316,8 @@ $ mtr --report-cycles 1000 -r 8.8.8.8
 $ sudo tcpdump -ni eth0 -w cap-%Y%m%d-%H%M%S.pcap -G 300 -W 12 'port 443'
 ```
 
-💡 **Untuk masalah intermiten, monitoring adalah segalanya.** Anda tidak bisa men-troubleshoot apa yang tidak Anda tangkap. Siapkan pengumpulan data yang berjalan terus **sebelum** masalah kambuh.
+> [!TIP]
+> **Untuk masalah intermiten, monitoring adalah segalanya.** Anda tidak bisa men-troubleshoot apa yang tidak Anda tangkap. Siapkan pengumpulan data yang berjalan terus **sebelum** masalah kambuh.
 
 ---
 
@@ -325,7 +337,8 @@ Setelah masalah selesai, dokumentasikan:
 
 ### Postmortem Blameless
 
-⚠️ **Fokus pada SISTEM dan PROSES, bukan menyalahkan orang.** Budaya menyalahkan membuat orang menyembunyikan kesalahan — yang jauh lebih berbahaya.
+> [!WARNING]
+> **Fokus pada SISTEM dan PROSES, bukan menyalahkan orang.** Budaya menyalahkan membuat orang menyembunyikan kesalahan — yang jauh lebih berbahaya.
 
 ```
 ❌ "Budi merusak jaringan karena salah ketik"
@@ -333,7 +346,8 @@ Setelah masalah selesai, dokumentasikan:
     kita perlu proses change control dan Safe Mode/revert timer"
 ```
 
-💡 **Kesalahan manusia adalah gejala masalah sistem.** Kalau satu salah ketik bisa melumpuhkan jaringan, masalahnya bukan orang yang salah ketik — melainkan tidak adanya pengaman (review, staging, rollback otomatis, Safe Mode).
+> [!TIP]
+> **Kesalahan manusia adalah gejala masalah sistem.** Kalau satu salah ketik bisa melumpuhkan jaringan, masalahnya bukan orang yang salah ketik — melainkan tidak adanya pengaman (review, staging, rollback otomatis, Safe Mode).
 
 ### Eskalasi dan komunikasi saat outage
 
@@ -347,25 +361,33 @@ Selama outage:
 6. Jangan ubah banyak hal sekaligus (sulit tahu apa yang berhasil)
 ```
 
-⚠️ **Saat outage, jangan mengubah banyak variabel sekaligus** — kalau berhasil, Anda tidak tahu mana yang memperbaikinya, dan kalau memperburuk, Anda tidak tahu mana penyebabnya. Ubah satu hal, verifikasi, lanjut.
+> [!WARNING]
+> **Saat outage, jangan mengubah banyak variabel sekaligus** — kalau berhasil, Anda tidak tahu mana yang memperbaikinya, dan kalau memperburuk, Anda tidak tahu mana penyebabnya. Ubah satu hal, verifikasi, lanjut.
 
 ---
 
 ## 11. Kesalahan Berpikir yang Umum
 
-⚠️ **Confirmation bias** — mencari bukti yang mendukung teori Anda dan mengabaikan yang bertentangan. Uji teori Anda dengan mencoba **menyangkalnya**.
+> [!WARNING]
+> **Confirmation bias** — mencari bukti yang mendukung teori Anda dan mengabaikan yang bertentangan. Uji teori Anda dengan mencoba **menyangkalnya**.
 
-⚠️ **Anchoring** — terpaku pada teori pertama. Kalau bukti tidak cocok, buat teori baru, jangan memaksakan.
+> [!WARNING]
+> **Anchoring** — terpaku pada teori pertama. Kalau bukti tidak cocok, buat teori baru, jangan memaksakan.
 
-⚠️ **Menyalahkan yang terakhir berubah tanpa bukti** — sering benar, tetapi verifikasi. Korelasi bukan kausalitas.
+> [!WARNING]
+> **Menyalahkan yang terakhir berubah tanpa bukti** — sering benar, tetapi verifikasi. Korelasi bukan kausalitas.
 
-⚠️ **Mengabaikan yang "tidak mungkin"** — kabel yang "pasti baik", perangkat yang "pasti menyala". Verifikasi asumsi, jangan percaya begitu saja.
+> [!WARNING]
+> **Mengabaikan yang "tidak mungkin"** — kabel yang "pasti baik", perangkat yang "pasti menyala". Verifikasi asumsi, jangan percaya begitu saja.
 
-⚠️ **Terlalu cepat menyalahkan jaringan** — sering masalahnya di aplikasi, server, DNS, atau kesalahan pengguna. Kumpulkan bukti sebelum menyimpulkan "ini masalah jaringan".
+> [!WARNING]
+> **Terlalu cepat menyalahkan jaringan** — sering masalahnya di aplikasi, server, DNS, atau kesalahan pengguna. Kumpulkan bukti sebelum menyimpulkan "ini masalah jaringan".
 
-⚠️ **Overengineering diagnosis** — kadang jawabannya sederhana (kabel dicabut, caps lock, salah URL). Periksa yang sederhana dulu.
+> [!WARNING]
+> **Overengineering diagnosis** — kadang jawabannya sederhana (kabel dicabut, caps lock, salah URL). Periksa yang sederhana dulu.
 
-💡 **"Kalau mendengar derap kaki, pikirkan kuda, bukan zebra."** Mulai dari penyebab yang paling umum dan sederhana. Tetapi kalau bukti menunjuk zebra, jangan abaikan.
+> [!TIP]
+> **"Kalau mendengar derap kaki, pikirkan kuda, bukan zebra."** Mulai dari penyebab yang paling umum dan sederhana. Tetapi kalau bukti menunjuk zebra, jangan abaikan.
 
 ---
 
@@ -407,7 +429,7 @@ Selama outage:
 3. **Scope:** apakah lambat untuk satu pengguna atau semua? Satu aplikasi (mis. hanya video call) atau semua? Sejak kapan? Ke tujuan tertentu atau semua tujuan? Dari satu lokasi atau semua? Uji dari beberapa perangkat/lokasi.
    **Gejala vs penyebab:** "lambat" adalah gejala; penyebabnya bisa banyak — bufferbloat (ping naik saat ada download), DNS lambat (halaman lama dibuka tetapi transfer cepat setelah tersambung), satu perangkat rakus (torrent), congestion link, Wi-Fi buruk (SNR rendah), atau MTU. Ukur: latency saat idle vs beban (bufferbloat), waktu resolusi DNS (`dig`), utilisasi link, dan uji dengan kabel vs Wi-Fi. Jangan langsung "tambah bandwidth" — sering bukan itu masalahnya.
 
-4. **DNS.** Ping ke IP berhasil berarti konektivitas L1–L3 ke internet baik; yang gagal hanya resolusi nama. Perbaikan: periksa server DNS yang dikonfigurasi (`/etc/resolv.conf`, setelan DHCP), uji dengan `dig @1.1.1.1 google.com`, periksa apakah DNS server terjangkau dan merespons.
+4. **DNS.** Ping ke IP berhasil berarti konektivitas L1-L3 ke internet baik; yang gagal hanya resolusi nama. Perbaikan: periksa server DNS yang dikonfigurasi (`/etc/resolv.conf`, setelan DHCP), uji dengan `dig @1.1.1.1 google.com`, periksa apakah DNS server terjangkau dan merespons.
 
 5. Karena masalah **intermiten** tidak bisa direproduksi sesuka hati, kunci utamanya adalah **menangkapnya saat terjadi** dengan monitoring kontinu: (a) jalankan **ping/mtr berkelanjutan dengan timestamp** ke tujuan yang relevan, catat ke file; (b) siapkan **capture ring buffer** (tcpdump dengan rotasi) yang berjalan terus sehingga saat kejadian, buktinya tertangkap; (c) pastikan **syslog terpusat** dan **SNMP/telemetry interval pendek** aktif; (d) setelah tertangkap, **korelasikan dengan waktu** (pola jam? hari? setelah uptime tertentu?) dan **dengan kondisi** (saat trafik puncak? saat perangkat panas? saat ada transfer besar? di kanal DFS?). Penyebab intermiten umum: interferensi, congestion, bufferbloat, DFS event, flapping, timeout/aging, kebocoran memori, dan thermal. Tanpa data yang tertangkap, Anda hanya menebak.
 
@@ -431,4 +453,4 @@ Selama outage:
 
 ---
 
-**Berikutnya:** `14-monitoring-troubleshooting/02-tools.md` — alat troubleshooting dan cara menafsirkannya dengan benar.
+**Berikutnya:** `14-monitoring-troubleshooting/02-tools.md`. Alat troubleshooting dan cara menafsirkannya dengan benar.

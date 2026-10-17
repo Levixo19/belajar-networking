@@ -1,4 +1,4 @@
-# Lab 03 — IP Services: DHCP, DNS, NAT, ACL
+# Lab 03: IP Services (DHCP, DNS, NAT, ACL)
 
 > **Prasyarat:** Tahap 6, 9, Lab 02
 > **Platform:** Packet Tracer / GNS3
@@ -6,7 +6,7 @@
 
 ---
 
-## Lab 3.1 — DHCP Server & Relay
+## Lab 3.1: DHCP Server & Relay
 
 **Topologi:** R1 sebagai DHCP server; PC di LAN mendapat IP otomatis. Lalu tambah LAN kedua yang butuh **relay**.
 
@@ -33,7 +33,7 @@ Untuk LAN kedua yang DHCP server-nya "jauh" (beda subnet): pada interface LAN ke
 
 ---
 
-## Lab 3.2 — DNS Sederhana
+## Lab 3.2: DNS Sederhana
 
 **Topologi:** server DNS + web server + PC (di PT gunakan Server device).
 
@@ -53,7 +53,7 @@ Di Server (PT): Services → DNS → On, tambah record A `www.lab.local` = IP we
 
 ---
 
-## Lab 3.3 — NAT/PAT ke "Internet"
+## Lab 3.3: NAT/PAT ke "Internet"
 
 **Topologi:** LAN privat `192.168.1.0/24` → R1 (NAT) → "internet" (R2 dengan IP publik simulasi).
 
@@ -81,7 +81,7 @@ R1(config)# ip nat inside source list 1 interface gi0/1 overload
 
 ---
 
-## Lab 3.4 — Standard & Extended ACL
+## Lab 3.4: Standard & Extended ACL
 
 **Topologi:** dari Lab 02/03 (beberapa LAN + server).
 
@@ -112,12 +112,13 @@ R1(config-ext-nacl)# permit ip any any
 R1(config)# interface gi0/0
 R1(config-if)# ip access-group SRV in
 ```
-⚠️ **Ada `deny any` implisit di akhir setiap ACL** — selalu sertakan `permit` yang diperlukan atau semua trafik terblokir. **Standard ACL** dekat **tujuan** (hanya lihat sumber); **Extended** dekat **sumber** (efisien, buang trafik lebih awal). `show access-lists` menampilkan hit count. Membuktikan `09-nat-acl-firewall/02`. Urutan baris penting (top-down, first match).
-</details>
+> [!WARNING]
+> **Ada `deny any` implisit di akhir setiap ACL** — selalu sertakan `permit` yang diperlukan atau semua trafik terblokir. **Standard ACL** dekat **tujuan** (hanya lihat sumber); **Extended** dekat **sumber** (efisien, buang trafik lebih awal). `show access-lists` menampilkan hit count. Membuktikan `09-nat-acl-firewall/02`. Urutan baris penting (top-down, first match).
+> </details>
 
 ---
 
-## Lab 3.5 — NTP & SSH (Manajemen Aman)
+## Lab 3.5: NTP & SSH (Manajemen Aman)
 
 **TUGAS:**
 1. Konfigurasi R1 sebagai NTP client (sinkron ke server NTP).
@@ -149,6 +150,7 @@ NTP menjaga **waktu sinkron** — kritis untuk korelasi log & sertifikat (`06-ap
 
 Anda mempraktikkan: DHCP (server + relay), DNS, NAT/PAT, ACL (standard & extended), NTP & SSH. Ini inti CCNA domain 4.0 (IP Services) dan bagian keamanan/manajemen.
 
-💡 Gabungkan dengan Lab 02: bangun jaringan lengkap dengan routing + DHCP + NAT ke internet + ACL keamanan + SSH — mendekati desain nyata (`17/04`).
+> [!TIP]
+> Gabungkan dengan Lab 02: bangun jaringan lengkap dengan routing + DHCP + NAT ke internet + ACL keamanan + SSH — mendekati desain nyata (`17/04`).
 
-**Berikutnya:** `lab/04-lab-keamanan-wireless.md` — keamanan L2, port security, dan WLAN.
+**Berikutnya:** `lab/04-lab-keamanan-wireless.md`. Keamanan L2, port security, dan WLAN.

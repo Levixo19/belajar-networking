@@ -1,4 +1,4 @@
-# 03.2 — Cara Kerja Switch
+# 03.2 Cara Kerja Switch
 
 > **Prasyarat:** `03-data-link/01`
 > **Tujuan:** Anda bisa menjelaskan proses forwarding switch langkah demi langkah, membaca MAC address table, dan memahami keterbatasan hardware switch.
@@ -97,7 +97,8 @@ Skenario: PC-A (`aaaa.aaaa.aaaa`) di port Gi0/1 mengirim ke PC-B (`bbbb.bbbb.bbb
 
 Semua frame A↔B sekarang diteruskan langsung tanpa flooding. Inilah keunggulan switch dibanding hub.
 
-💡 **Poin kunci:** switch belajar dari **source MAC**, dan memutuskan berdasarkan **destination MAC**. Ini sering tertukar oleh pemula.
+> [!TIP]
+> **Poin kunci:** switch belajar dari **source MAC**, dan memutuskan berdasarkan **destination MAC**. Ini sering tertukar oleh pemula.
 
 ---
 
@@ -120,10 +121,12 @@ SW1(config)# mac address-table aging-time 600
 SW1# show mac address-table aging-time
 ```
 
-⚠️ **Aging time terlalu lama** → tabel penuh dengan entri basi, perangkat yang pindah tidak terjangkau sampai entri kedaluwarsa.
-⚠️ **Aging time terlalu pendek** → sering flooding, membuang bandwidth.
+> [!WARNING]
+> **Aging time terlalu lama** → tabel penuh dengan entri basi, perangkat yang pindah tidak terjangkau sampai entri kedaluwarsa.
+> ⚠️ **Aging time terlalu pendek** → sering flooding, membuang bandwidth.
 
-💡 **Interaksi dengan ARP cache:** ARP cache host biasanya 4 jam (Linux) atau 2 jam, sementara MAC table switch hanya 5 menit. Ini bisa menyebabkan **unicast flooding terus-menerus**: host masih tahu MAC tujuan (dari ARP cache) sehingga mengirim unicast, tetapi switch sudah melupakan port-nya sehingga harus flooding. Solusinya: samakan aging time MAC table dengan ARP timeout, atau perpendek ARP timeout.
+> [!TIP]
+> **Interaksi dengan ARP cache:** ARP cache host biasanya 4 jam (Linux) atau 2 jam, sementara MAC table switch hanya 5 menit. Ini bisa menyebabkan **unicast flooding terus-menerus**: host masih tahu MAC tujuan (dari ARP cache) sehingga mengirim unicast, tetapi switch sudah melupakan port-nya sehingga harus flooding. Solusinya: samakan aging time MAC table dengan ARP timeout, atau perpendek ARP timeout.
 
 ---
 
@@ -146,7 +149,8 @@ Penyebab:
 3. Konfigurasi NIC teaming/bonding yang tidak tepat
 4. Perangkat berpindah cepat (roaming wireless — bisa normal)
 
-⚠️ **MAC flapping adalah alarm.** Kalau muncul, curigai loop terlebih dahulu — periksa STP.
+> [!WARNING]
+> **MAC flapping adalah alarm.** Kalau muncul, curigai loop terlebih dahulu — periksa STP.
 
 ---
 
@@ -194,7 +198,8 @@ ASIC         : meneruskan frame
                → "data plane"
 ```
 
-⚠️ **Konsekuensi penting:** trafik yang harus diproses CPU (disebut *punted* atau *process-switched*) jauh lebih lambat. Contoh: ACL yang tidak didukung hardware, paket dengan IP options, trafik ke alamat switch sendiri, atau debug yang aktif. Ini bisa membuat CPU switch 100% dan seluruh manajemen tidak responsif.
+> [!WARNING]
+> **Konsekuensi penting:** trafik yang harus diproses CPU (disebut *punted* atau *process-switched*) jauh lebih lambat. Contoh: ACL yang tidak didukung hardware, paket dengan IP options, trafik ke alamat switch sendiri, atau debug yang aktif. Ini bisa membuat CPU switch 100% dan seluruh manajemen tidak responsif.
 
 ### Istilah kapasitas
 
@@ -225,18 +230,20 @@ Kalau menyebut "88 Gbps" → blocking pada beban penuh
 Kalau spesifikasi menyebut "Forwarding rate 130 Mpps" → aman ✅
 ```
 
-💡 Vendor sering mengiklankan angka backplane yang besar tetapi forwarding rate yang rendah. Untuk trafik dengan banyak paket kecil (VoIP, telemetri, DDoS), **forwarding rate (pps) lebih menentukan daripada bandwidth (Gbps)**.
+> [!TIP]
+> Vendor sering mengiklankan angka backplane yang besar tetapi forwarding rate yang rendah. Untuk trafik dengan banyak paket kecil (VoIP, telemetri, DDoS), **forwarding rate (pps) lebih menentukan daripada bandwidth (Gbps)**.
 
 ### Ukuran MAC address table
 
 | Kelas switch | Kapasitas tipikal |
 |---|---|
-| SOHO / unmanaged | 1.000–8.000 |
-| Access enterprise | 8.000–32.000 |
-| Distribution/core | 32.000–128.000 |
-| Data center | 128.000–1.000.000+ |
+| SOHO / unmanaged | 1.000-8.000 |
+| Access enterprise | 8.000-32.000 |
+| Distribution/core | 32.000-128.000 |
+| Data center | 128.000-1.000.000+ |
 
-⚠️ Tabel penuh → switch mulai flooding semua trafik unknown unicast → kinerja jatuh dan trafik terekspos ke semua port. Inilah dasar serangan **MAC flooding** (`12-keamanan/02`).
+> [!WARNING]
+> Tabel penuh → switch mulai flooding semua trafik unknown unicast → kinerja jatuh dan trafik terekspos ke semua port. Inilah dasar serangan **MAC flooding** (`12-keamanan/02`).
 
 ```
 SW1# show mac address-table count
@@ -291,7 +298,8 @@ SW1(config-if)# no shutdown
 
 Sekarang switch bisa merutekan antara VLAN 10 dan 20 — di hardware (ASIC), sehingga sangat cepat.
 
-⚠️ SVI hanya **up** jika: (a) VLAN-nya ada di database VLAN, dan (b) minimal satu port aktif di VLAN itu (atau trunk yang membawa VLAN itu). Ini sumber kebingungan umum: SVI dikonfigurasi tetapi tetap `down/down`.
+> [!WARNING]
+> SVI hanya **up** jika: (a) VLAN-nya ada di database VLAN, dan (b) minimal satu port aktif di VLAN itu (atau trunk yang membawa VLAN itu). Ini sumber kebingungan umum: SVI dikonfigurasi tetapi tetap `down/down`.
 
 ### Routed Port
 
@@ -378,17 +386,23 @@ $ sudo ip link set br0 up
 
 ## 10. Kesalahan Umum
 
-⚠️ **1. Mengira switch membaca IP address.** Switch L2 hanya membaca MAC (dan tag VLAN). Ia tidak tahu apa itu subnet.
+> [!WARNING]
+> **1. Mengira switch membaca IP address.** Switch L2 hanya membaca MAC (dan tag VLAN). Ia tidak tahu apa itu subnet.
 
-⚠️ **2. Mengira flooding = broadcast.** Berbeda. Flooding adalah **perilaku switch** terhadap unicast yang tujuannya belum diketahui; broadcast adalah **jenis alamat tujuan**.
+> [!WARNING]
+> **2. Mengira flooding = broadcast.** Berbeda. Flooding adalah **perilaku switch** terhadap unicast yang tujuannya belum diketahui; broadcast adalah **jenis alamat tujuan**.
 
-⚠️ **3. Lupa `ip routing` pada multilayer switch.** SVI dikonfigurasi tetapi routing tidak jalan.
+> [!WARNING]
+> **3. Lupa `ip routing` pada multilayer switch.** SVI dikonfigurasi tetapi routing tidak jalan.
 
-⚠️ **4. Mengabaikan MAC flapping.** Hampir selalu berarti loop — masalah serius yang bisa melumpuhkan jaringan.
+> [!WARNING]
+> **4. Mengabaikan MAC flapping.** Hampir selalu berarti loop — masalah serius yang bisa melumpuhkan jaringan.
 
-⚠️ **5. Menilai kapasitas hanya dari Gbps.** Untuk paket kecil, **pps** yang menentukan.
+> [!WARNING]
+> **5. Menilai kapasitas hanya dari Gbps.** Untuk paket kecil, **pps** yang menentukan.
 
-⚠️ **6. Menganggap "utilisasi 20%" berarti tidak ada congestion.** Microburst tidak terlihat di rata-rata 5 menit. Periksa `output drops`.
+> [!WARNING]
+> **6. Menganggap "utilisasi 20%" berarti tidak ada congestion.** Microburst tidak terlihat di rata-rata 5 menit. Periksa `output drops`.
 
 ---
 
@@ -418,7 +432,8 @@ Di RouterOS, fungsi switch dilakukan oleh **bridge**. Pada perangkat dengan swit
    # perhatikan kolom "hw-offload" atau "H" pada flags
 ```
 
-⚠️ **Hardware offload sangat penting untuk kinerja.** Kalau bridge tidak di-offload, setiap frame diproses **CPU** — throughput bisa turun dari gigabit menjadi puluhan Mbps. Fitur tertentu (mis. beberapa konfigurasi VLAN, bridge filter) **mematikan offload**. Selalu verifikasi:
+> [!WARNING]
+> **Hardware offload sangat penting untuk kinerja.** Kalau bridge tidak di-offload, setiap frame diproses **CPU** — throughput bisa turun dari gigabit menjadi puluhan Mbps. Fitur tertentu (mis. beberapa konfigurasi VLAN, bridge filter) **mematikan offload**. Selalu verifikasi:
 
 ```
 /interface bridge port print
@@ -439,7 +454,8 @@ Di RouterOS, fungsi switch dilakukan oleh **bridge**. Pada perangkat dengan swit
    ← port dengan horizon sama TIDAK bisa saling berkomunikasi
 ```
 
-💡 **`horizon`** adalah cara MikroTik melakukan port isolation — setara `switchport protected` di Cisco, tetapi lebih fleksibel karena berbasis nomor grup.
+> [!TIP]
+> **`horizon`** adalah cara MikroTik melakukan port isolation — setara `switchport protected` di Cisco, tetapi lebih fleksibel karena berbasis nomor grup.
 
 ### Padanan istilah
 
@@ -508,4 +524,4 @@ Di RouterOS, fungsi switch dilakukan oleh **bridge**. Pada perangkat dengan swit
 
 ---
 
-**Berikutnya:** `03-data-link/03-vlan.md` — memisahkan satu switch fisik menjadi banyak jaringan logis.
+**Berikutnya:** `03-data-link/03-vlan.md`. Memisahkan satu switch fisik menjadi banyak jaringan logis.

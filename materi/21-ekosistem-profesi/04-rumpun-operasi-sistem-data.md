@@ -1,4 +1,4 @@
-# 21.4 — Rumpun Administrasi Sistem & Data
+# 21.4 Rumpun Administrasi Sistem & Data
 
 > **Prasyarat:** sudah membaca `21-ekosistem-profesi/01-peta-ekosistem`, memahami layanan dasar (`06-aplikasi/01-dns`, `06-aplikasi/02-dhcp`, `06-aplikasi/05-layanan-lain`), Linux networking (`13-linux-networking/01-iproute2`, `13-linux-networking/04-layanan-jaringan-linux`), serta jaringan storage dan virtualisasi (`16-datacenter-cloud-sdn/03-storage-virtualisasi`).
 > **Tujuan:** Anda mengenal lima profesi yang menjaga server, data, dan operasional TI sehari-hari (system administrator, database administrator, storage administrator, system engineer, IT operations manager): apa yang mereka kerjakan, bagaimana keberhasilannya diukur, sertifikasi yang masih berlaku per 2026, jalur masuk di Indonesia, dan modul kurikulum yang paling penting untuk masing-masing.
@@ -19,9 +19,11 @@ Bagi orang jaringan, rumpun ini adalah tetangga terdekat. Banyak tiket "jaringan
 | System Engineer | Merancang dan membangun platform server, virtualisasi, otomasi | Menengah | RHCE, VCP-VCF Administrator (2V0-17.25), AZ-104 | System integrator, distributor dan vendor, bank, startup, penyedia cloud |
 | IT Operations Manager | Layanan TI berjalan sesuai SLA, tim, proses, anggaran | Senior | ITIL Foundation (Version 5) lalu ITIL Practice Manager | Bank, BUMN, perusahaan multinasional, managed service provider, pemerintah |
 
-💡 **Baca tabel ini sebagai tangga.** Jalan yang paling sering terlihat di Indonesia: masuk sebagai system administrator (sering dengan judul "IT Support" atau "IT Infrastructure Staff"), lalu memilih spesialisasi (database, storage, atau virtualisasi sebagai system engineer), dan setelah beberapa tahun memimpin tim menjadi IT operations manager. Network administrator bisa masuk di tengah tangga, karena separuh pekerjaan sysadmin adalah layanan jaringan.
+> [!TIP]
+> **Baca tabel ini sebagai tangga.** Jalan yang paling sering terlihat di Indonesia: masuk sebagai system administrator (sering dengan judul "IT Support" atau "IT Infrastructure Staff"), lalu memilih spesialisasi (database, storage, atau virtualisasi sebagai system engineer), dan setelah beberapa tahun memimpin tim menjadi IT operations manager. Network administrator bisa masuk di tengah tangga, karena separuh pekerjaan sysadmin adalah layanan jaringan.
 
-⚠️ **Judul di lowongan Indonesia sangat cair.** "System Engineer" di system integrator sering berarti engineer implementasi yang ke lokasi klien, sementara "System Engineer" di bank bisa berarti sysadmin senior. "IT Infrastructure Staff" di perusahaan manufaktur biasanya mencakup jaringan, server, backup, sekaligus printer. Baca daftar tugasnya, bukan judulnya.
+> [!WARNING]
+> **Judul di lowongan Indonesia sangat cair.** "System Engineer" di system integrator sering berarti engineer implementasi yang ke lokasi klien, sementara "System Engineer" di bank bisa berarti sysadmin senior. "IT Infrastructure Staff" di perusahaan manufaktur biasanya mencakup jaringan, server, backup, sekaligus printer. Baca daftar tugasnya, bukan judulnya.
 
 ---
 
@@ -62,7 +64,8 @@ Aturan 3-2-1 yang dipopulerkan dalam panduan CISA (badan keamanan siber AS) berb
 
 Indonesia punya contoh yang mahal. Pada Juni 2024, Pusat Data Nasional Sementara (PDNS) 2 di Surabaya terkena ransomware Brain Cipher. Menurut kronologi Menkominfo, gangguan terdeteksi sejak 17 Juni 2024, pelaku meminta tebusan USD 8 juta, dan 239 instansi terdampak (30 kementerian/lembaga, 15 provinsi, 148 kabupaten, 48 kota). Sesudahnya, BSSN dan DPR menyoroti bahwa sebagian besar data di PDNS 2 tidak memiliki cadangan, sehingga pemulihan berlangsung lama. Pelajarannya: backup yang tidak pernah diuji pemulihannya dan tidak terpisah dari jaringan produksi bukanlah backup.
 
-⚠️ **Backup yang benar diukur dari restore, bukan dari laporan "job sukses".** Jadwalkan uji pemulihan berkala, catat berapa lama restore berjalan, dan bandingkan dengan RTO yang dijanjikan.
+> [!WARNING]
+> **Backup yang benar diukur dari restore, bukan dari laporan "job sukses".** Jadwalkan uji pemulihan berkala, catat berapa lama restore berjalan, dan bandingkan dengan RTO yang dijanjikan.
 
 ### 2.4 Change management
 
@@ -124,7 +127,8 @@ O*NET (basis data okupasi Departemen Tenaga Kerja AS) memasukkan peran ini ke ko
 | Menengah | **CompTIA Server+ (SK0-005)** | Netral vendor, fokus perangkat keras dan operasi server |
 | Menengah | **RHCE** | Sejak restrukturisasi Red Hat 2026 ada dua jalur: RHCE in Enterprise Linux (EX200 + EX342) dan RHCE in Ansible (EX200 + EX294) |
 
-⚠️ **Perhatikan perubahan jalur Microsoft.** Banyak materi kursus di internet masih menyebut "Windows Server Hybrid Administrator Associate (AZ-800 + AZ-801)". Per Oktober 2026 halaman resmi Microsoft Learn menyatakan kedua ujian itu sudah pensiun pada 30 September 2026, dan nama sertifikasinya kini **Windows Server Administrator Associate** dengan satu ujian **AZ-802**. Cakupannya: AD DS, manajemen hybrid (Azure Arc), mesin virtual Hyper-V, jaringan on-premises dan hybrid, storage dan file services, keamanan, serta monitoring.
+> [!WARNING]
+> **Perhatikan perubahan jalur Microsoft.** Banyak materi kursus di internet masih menyebut "Windows Server Hybrid Administrator Associate (AZ-800 + AZ-801)". Per Oktober 2026 halaman resmi Microsoft Learn menyatakan kedua ujian itu sudah pensiun pada 30 September 2026, dan nama sertifikasinya kini **Windows Server Administrator Associate** dengan satu ujian **AZ-802**. Cakupannya: AD DS, manajemen hybrid (Azure Arc), mesin virtual Hyper-V, jaringan on-premises dan hybrid, storage dan file services, keamanan, serta monitoring.
 
 **Jalur Indonesia:** SKKNI Bidang Administrasi Sistem ditetapkan lewat Kepmenaker Nomor 82 Tahun 2017. Unit-unitnya berkode `J.63SAM00` (25 unit, mulai dari mengumpulkan kebutuhan pengguna, merancang arsitektur dan keamanan server, menginstal sistem operasi dan layanan jaringan, sampai memantau dan memulihkan sistem). LSP berlisensi BNSP, misalnya LSP TIK Indonesia, menawarkan skema "System Administrator" berbasis unit-unit itu. Sertifikat BNSP berguna terutama untuk tender pemerintah dan BUMN yang mensyaratkan tenaga ahli bersertifikat kompetensi.
 
@@ -269,7 +273,8 @@ Contoh satu hari di penyedia colocation dan cloud lokal di Jabodetabek:
 | Menengah | **Sertifikasi produk Dell**, misalnya PowerMax Operate (D-PVM-OE-01) | Pilih sesuai perangkat yang dipakai pemberi kerja |
 | Menengah sampai senior | **VCAP-VCF Storage (3V0-23.25)** | Storage tingkat lanjut di VMware Cloud Foundation 9 |
 
-⚠️ **Tentang SNIA.** Organisasi industri storage SNIA pernah punya program sertifikasi netral vendor (SNCP). Per Oktober 2026 halaman sertifikasi di situs SNIA sudah tidak ditemukan, sedangkan SNIA Educational Library tetap aktif dan gratis. Gunakan perpustakaan itu sebagai bahan belajar, dan pakai D-ISM-FN-02 sebagai sertifikasi dasar yang netral teknologi.
+> [!WARNING]
+> **Tentang SNIA.** Organisasi industri storage SNIA pernah punya program sertifikasi netral vendor (SNCP). Per Oktober 2026 halaman sertifikasi di situs SNIA sudah tidak ditemukan, sedangkan SNIA Educational Library tetap aktif dan gratis. Gunakan perpustakaan itu sebagai bahan belajar, dan pakai D-ISM-FN-02 sebagai sertifikasi dasar yang netral teknologi.
 
 **Jalur Indonesia:** belum ada SKKNI khusus storage administrator. Unit `J.62DMS00.021.1` (back-up and restore) dan `J.62DMS00.022.1` (keamanan data) dalam SKKNI Data Management, serta unit backup dan pemulihan di SKKNI Administrasi Sistem, adalah yang paling dekat.
 
@@ -421,7 +426,8 @@ Contoh satu hari di divisi TI sebuah bank daerah:
 | Senior | **ITIL Managing Professional** atau **ITIL Strategic Leader (Version 5)** | MP: Product, Service, Experience, Transformation. SL: Strategy dan Transformation |
 | Pelengkap | **ITIL AI Governance (Version 5)** | Modul ekstensi tanpa prasyarat |
 
-⚠️ **ITIL 4 sedang dalam masa transisi.** PeopleCert meluncurkan ITIL (Version 5) pada 2026 dan, menurut FAQ resminya, berencana menghentikan seluruh modul ITIL 4 pada 31 Desember 2027. Jika Anda baru mulai, ambil ITIL Foundation (Version 5). Jika sudah memegang ITIL 4 Foundation, sertifikat itu tetap bernilai di lowongan, dan jalur Bridge tersedia.
+> [!WARNING]
+> **ITIL 4 sedang dalam masa transisi.** PeopleCert meluncurkan ITIL (Version 5) pada 2026 dan, menurut FAQ resminya, berencana menghentikan seluruh modul ITIL 4 pada 31 Desember 2027. Jika Anda baru mulai, ambil ITIL Foundation (Version 5). Jika sudah memegang ITIL 4 Foundation, sertifikat itu tetap bernilai di lowongan, dan jalur Bridge tersedia.
 
 **Jalur Indonesia:** SKKNI Bidang Manajemen Layanan Teknologi Informasi kini ditetapkan lewat Kepmenaker Nomor 30 Tahun 2025, menggantikan Kepmenaker 610 Tahun 2012. Standar ini menjadi acuan skema sertifikasi BNSP untuk jabatan di manajemen layanan TI.
 
@@ -467,7 +473,8 @@ Untuk jabatan manajer, portofolio berupa dokumen dan cerita, bukan konfigurasi.
 | Database Administrator | Jauh | TCP, latensi, firewall, TLS, load balancer | SQL, internal mesin database, backup, replikasi | Belajar PostgreSQL dan SQL, lalu EDB Essentials |
 | IT Operations Manager | Jauh dalam waktu, dekat dalam keterampilan | Penanganan insiden multi-pihak, eskalasi vendor | ITIL, anggaran, kepemimpinan, wawasan lintas lapisan | ITIL Foundation (Version 5), memimpin satu proses di tempat kerja |
 
-💡 **Anda tidak harus meninggalkan jaringan.** Di perusahaan menengah Indonesia, profil "network dan system administrator" termasuk yang paling sering dicari. Menambah lapisan server membuat Anda lebih sulit digantikan.
+> [!TIP]
+> **Anda tidak harus meninggalkan jaringan.** Di perusahaan menengah Indonesia, profil "network dan system administrator" termasuk yang paling sering dicari. Menambah lapisan server membuat Anda lebih sulit digantikan.
 
 ---
 
@@ -579,4 +586,4 @@ Untuk jabatan manajer, portofolio berupa dokumen dan cerita, bukan konfigurasi.
 
 ---
 
-**Berikutnya:** `21-ekosistem-profesi/05-rumpun-devops-sre` — Rumpun DevOps, SRE & Otomasi: profesi yang mengubah pekerjaan operasional menjadi kode, pipeline, dan target keandalan yang terukur.
+**Berikutnya:** `21-ekosistem-profesi/05-rumpun-devops-sre`. Rumpun DevOps, SRE & Otomasi: profesi yang mengubah pekerjaan operasional menjadi kode, pipeline, dan target keandalan yang terukur.

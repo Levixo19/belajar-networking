@@ -1,4 +1,4 @@
-# 17.2 — Desain per Domain
+# 17.2 Desain per Domain
 
 > **Prasyarat:** `17.1`, dan modul domain terkait (03 VLAN, 07 routing, 10 wireless, 11 WAN, 16 DC)
 > **Tujuan:** Anda bisa menerapkan prinsip desain ke setiap domain: kampus, WAN, data center, wireless, dan keamanan.
@@ -30,7 +30,8 @@ ACCESS (L2)
 - **EtherChannel** untuk uplink access→distribution (agregasi + redundansi tanpa STP blocking).
 - Pertimbangkan **routed access** (L3 sampai access) untuk konvergensi cepat.
 
-⚠️ **Trust boundary QoS** biasanya di access (percaya marking dari IP phone via CDP/LLDP, tidak percaya dari PC). Tandai/ulang-tandai di tepi sebelum trafik masuk ke jaringan. Lihat `11-wan-vpn/03`.
+> [!WARNING]
+> **Trust boundary QoS** biasanya di access (percaya marking dari IP phone via CDP/LLDP, tidak percaya dari PC). Tandai/ulang-tandai di tepi sebelum trafik masuk ke jaringan. Lihat `11-wan-vpn/03`.
 
 ---
 
@@ -52,7 +53,8 @@ Metro-E        — Ethernet antar-lokasi dalam kota
 - **Enkripsi** — IPsec untuk semua yang lewat internet.
 - **DMVPN/SD-WAN** untuk topologi hub-spoke berskala dengan spoke-to-spoke dinamis.
 
-💡 **SD-WAN** menjadi default untuk WAN multi-cabang modern: memanfaatkan internet murah dengan reliabilitas mendekati MPLS lewat pemilihan jalur dinamis, terpusat (controller), dan aman (enkripsi otomatis).
+> [!TIP]
+> **SD-WAN** menjadi default untuk WAN multi-cabang modern: memanfaatkan internet murah dengan reliabilitas mendekati MPLS lewat pemilihan jalur dinamis, terpusat (controller), dan aman (enkripsi otomatis).
 
 ---
 
@@ -70,7 +72,8 @@ Lihat `16-datacenter-cloud-sdn` untuk detail. Ringkas prinsip:
 - Storage network terpisah/QoS (16.3)
 ```
 
-⚠️ **Server dual-homed** (terhubung ke dua leaf) butuh **MLAG/vPC** (Multi-chassis LACP) agar dua leaf tampak sebagai satu ke server — memberi redundansi tanpa STP blocking. Ini padanan EtherChannel yang membentang dua switch fisik.
+> [!WARNING]
+> **Server dual-homed** (terhubung ke dua leaf) butuh **MLAG/vPC** (Multi-chassis LACP) agar dua leaf tampak sebagai satu ke server — memberi redundansi tanpa STP blocking. Ini padanan EtherChannel yang membentang dua switch fisik.
 
 ---
 
@@ -89,7 +92,8 @@ Lihat `10-wireless/04` untuk detail site survey. Ringkas prinsip:
 - VLAN/SSID mapping: SSID korporat, guest (terisolasi), IoT
 ```
 
-💡 **Desain untuk kapasitas, bukan hanya coverage.** Di area padat (aula, kelas), kebutuhan bukan "sinyal sampai" tetapi "cukup AP untuk jumlah klien". Satu AP melayani terbatas klien aktif — hitung kepadatan.
+> [!TIP]
+> **Desain untuk kapasitas, bukan hanya coverage.** Di area padat (aula, kelas), kebutuhan bukan "sinyal sampai" tetapi "cukup AP untuk jumlah klien". Satu AP melayani terbatas klien aktif — hitung kepadatan.
 
 ---
 
@@ -120,9 +124,11 @@ Lihat `10-wireless/04` untuk detail site survey. Ringkas prinsip:
 - **Management** — VLAN/jaringan terpisah untuk akses admin (idealnya out-of-band).
 - **Guest** — terisolasi total dari internal.
 
-⚠️ **DMZ** memisahkan server publik sehingga bila diretas, penyerang tidak langsung masuk jaringan internal. Trafik: outside→DMZ diizinkan (port layanan), DMZ→inside sangat dibatasi, inside→DMZ diizinkan. Jangan taruh server publik langsung di jaringan internal.
+> [!WARNING]
+> **DMZ** memisahkan server publik sehingga bila diretas, penyerang tidak langsung masuk jaringan internal. Trafik: outside→DMZ diizinkan (port layanan), DMZ→inside sangat dibatasi, inside→DMZ diizinkan. Jangan taruh server publik langsung di jaringan internal.
 
-💡 **Menuju Zero Trust** (`12-keamanan/05`): segmentasi berbasis identitas (bukan hanya lokasi/VLAN), mikrosegmentasi, verifikasi setiap akses. Desain modern bergerak dari "perimeter keras, dalam lunak" ke "tidak percaya siapa pun secara default".
+> [!TIP]
+> **Menuju Zero Trust** (`12-keamanan/05`): segmentasi berbasis identitas (bukan hanya lokasi/VLAN), mikrosegmentasi, verifikasi setiap akses. Desain modern bergerak dari "perimeter keras, dalam lunak" ke "tidak percaya siapa pun secara default".
 
 ---
 
@@ -181,4 +187,4 @@ Sering terlupa, tetapi kritis:
 
 ---
 
-**Berikutnya:** `17-desain-arsitektur/03-perencanaan-dokumentasi.md` — perencanaan IP, penamaan, dan dokumentasi.
+**Berikutnya:** `17-desain-arsitektur/03-perencanaan-dokumentasi.md`. Perencanaan IP, penamaan, dan dokumentasi.

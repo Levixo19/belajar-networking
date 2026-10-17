@@ -1,4 +1,4 @@
-# 19.9 — MPLS di RouterOS (MTCINE)
+# 19.9 MPLS di RouterOS (MTCINE)
 
 > **Prasyarat:** `19-mikrotik/08-routing-v7` (OSPF, BGP instance, VRF di v7), `22-service-provider/01-mpls-ldp` (label, LDP, PHP), `22-service-provider/02-mpls-l3vpn` (RD, RT, VPNv4), `22-service-provider/04-l2vpn-carrier-ethernet` (pseudowire, VPLS)
 > **Tujuan:** Anda bisa membangun backbone MPLS dengan RouterOS v7: LDP dan filter label, L3VPN dengan VRF dan BGP VPNv4 (PE-CE eBGP dan OSPF, alamat pelanggan tumpang tindih), VPLS bersinyal LDP maupun BGP, tunnel RSVP-TE, menghitung MTU MPLS dengan benar, merancang backbone ISP kecil di Indonesia dengan perangkat MikroTik, memahami batas CCR dan CHR, serta mendiagnosis gangguan MPLS secara sistematis.
@@ -25,7 +25,8 @@ Halaman yang sama juga jujur menyebut apa yang **belum** ada:
 
 Dokumentasi MPLS resmi juga tidak mencantumkan Segment Routing. Jadi jika desain Anda butuh TI-LFA, SR-TE, atau RSVP FRR (lihat `22-service-provider/03-te-segment-routing`), MikroTik bukan pilihan untuk peran P atau PE di jalur itu. Untuk ISP lokal yang butuh L3VPN, VPLS, dan sedikit rekayasa lalu lintas, fitur yang ada sudah mencukupi.
 
-⚠️ MPLS tidak didukung pada perangkat berarsitektur SMIPS (hAP lite, hAP lite TC, hAP mini). Periksa arsitektur perangkat sebelum merencanakan.
+> [!WARNING]
+> MPLS tidak didukung pada perangkat berarsitektur SMIPS (hAP lite, hAP lite TC, hAP mini). Periksa arsitektur perangkat sebelum merencanakan.
 
 ---
 
@@ -96,9 +97,11 @@ Setelah itu paket 1500 byte dengan DF lewat tanpa masalah. Di perangkat fisik Ro
 | VPLS dengan frame pelanggan ber-VLAN | 30 | 1530 |
 | VPLS di atas tunnel TE dengan label tambahan | +4 per label | (hitung ulang) |
 
-💡 Tetapkan MPLS MTU yang **sama** di semua router dalam awan MPLS, dan pilih nilai terkecil yang didukung semua link (termasuk link wireless dan switch di tengah jalan). Dokumentasi resmi menekankan hal ini karena MTU yang berbeda membuat paket di-drop di tengah LSP tanpa jejak.
+> [!TIP]
+> Tetapkan MPLS MTU yang **sama** di semua router dalam awan MPLS, dan pilih nilai terkecil yang didukung semua link (termasuk link wireless dan switch di tengah jalan). Dokumentasi resmi menekankan hal ini karena MTU yang berbeda membuat paket di-drop di tengah LSP tanpa jejak.
 
-⚠️ Perilaku saat paket terlalu besar berbeda menurut posisinya. Di tengah LSP (router P), jika paket berlabel melebihi MPLS MTU dan isinya IP, router mengirim ICMP yang diteruskan sampai ujung LSP. Jika isinya bukan IP (misalnya frame Ethernet VPLS), paket langsung dibuang. Pada ingress VPLS, RouterOS memfragmentasi frame dengan control word agar sesuai MPLS MTU, lalu menyatukannya kembali di ujung pseudowire. Dalam pengujian, ping 1472 byte dengan DF lewat VPLS tetap berhasil walau MTU inti 1500, karena mekanisme fragmentasi ini. Fragmentasi menambah beban CPU dan, menurut dokumentasi, fragmen yang datang tidak berurutan dibuang. Jangan mengandalkannya sebagai desain.
+> [!WARNING]
+> Perilaku saat paket terlalu besar berbeda menurut posisinya. Di tengah LSP (router P), jika paket berlabel melebihi MPLS MTU dan isinya IP, router mengirim ICMP yang diteruskan sampai ujung LSP. Jika isinya bukan IP (misalnya frame Ethernet VPLS), paket langsung dibuang. Pada ingress VPLS, RouterOS memfragmentasi frame dengan control word agar sesuai MPLS MTU, lalu menyatukannya kembali di ujung pseudowire. Dalam pengujian, ping 1472 byte dengan DF lewat VPLS tetap berhasil walau MTU inti 1500, karena mekanisme fragmentasi ini. Fragmentasi menambah beban CPU dan, menurut dokumentasi, fragmen yang datang tidak berurutan dibuang. Jangan mengandalkannya sebagai desain.
 
 ### Pengaturan MPLS global
 
@@ -146,7 +149,8 @@ add prefix=0.0.0.0/0 advertise=no
 
 Baris kedua wajib, karena tanpa aturan yang cocok, perilaku default-nya mengizinkan. Ada juga `/mpls ldp accept-filter` dengan logika yang sama untuk sisi terima. Perubahan filter tidak memengaruhi mapping yang sudah ada; reset sesi LDP (nonaktifkan lalu aktifkan entri `/mpls ldp`) agar filter berlaku.
 
-💡 Di lab, filter ini juga mencegah label untuk jaringan manajemen 10.0.2.0/24 yang ada di setiap CHR. Tanpa filter, alamat itu muncul di daftar alamat tetangga LDP dan label-nya ikut didistribusikan.
+> [!TIP]
+> Di lab, filter ini juga mencegah label untuk jaringan manajemen 10.0.2.0/24 yang ada di setiap CHR. Tanpa filter, alamat itu muncul di daftar alamat tetangga LDP dan label-nya ikut didistribusikan.
 
 ### Verifikasi
 
@@ -287,9 +291,11 @@ Penjelasan bagian demi bagian:
 
 Dua parameter di connection PE-CE itu terbukti wajib saat pengujian:
 
-⚠️ **`output.redistribute=bgp-mpls-vpn` diperlukan agar PE mengirim rute VPN ke CE.** Rute yang diimpor dari VPNv4 bertanda `y` (BGP-MPLS-VPN), bukan `b` (BGP). Saat parameter ini dihapus dari connection `ce-a2` di PE2, CE-A2 tidak menerima satu rute BGP pun, walaupun sesi tetap established.
+> [!WARNING]
+> **`output.redistribute=bgp-mpls-vpn` diperlukan agar PE mengirim rute VPN ke CE.** Rute yang diimpor dari VPNv4 bertanda `y` (BGP-MPLS-VPN), bukan `b` (BGP). Saat parameter ini dihapus dari connection `ce-a2` di PE2, CE-A2 tidak menerima satu rute BGP pun, walaupun sesi tetap established.
 
-⚠️ **`output.as-override=yes` diperlukan jika semua situs pelanggan memakai AS yang sama.** CE-A1 dan CE-A2 sama-sama AS 65100. Tanpa as-override, CE-A2 melihat AS 65100 di AS-path rute 192.168.1.0/24 dan menolaknya sebagai loop. Dengan as-override, PE mengganti AS pelanggan dengan AS provider, sehingga CE-A2 menerima `as-path="65000,65000"`. Alternatif yang sama sahnya: beri setiap situs AS privat berbeda, atau di sisi CE pakai `input.allow-as=1`.
+> [!WARNING]
+> **`output.as-override=yes` diperlukan jika semua situs pelanggan memakai AS yang sama.** CE-A1 dan CE-A2 sama-sama AS 65100. Tanpa as-override, CE-A2 melihat AS 65100 di AS-path rute 192.168.1.0/24 dan menolaknya sebagai loop. Dengan as-override, PE mengganti AS pelanggan dengan AS provider, sehingga CE-A2 menerima `as-path="65000,65000"`. Alternatif yang sama sahnya: beri setiap situs AS privat berbeda, atau di sisi CE pakai `input.allow-as=1`.
 
 ### Verifikasi L3VPN
 
@@ -332,7 +338,8 @@ Dari sisi pelanggan:
     sent=3 received=3 packet-loss=0%
 ```
 
-💡 **Ping dari PE ke dalam VRF: selalu isi `src-address`.** Dalam pengujian, `/ping 192.168.2.1 vrf=pelanggan-b` dari PE1 gagal, sedangkan `/ping 192.168.2.1 vrf=pelanggan-b src-address=192.168.1.1` berhasil. Tanpa alamat sumber eksplisit, router memilih alamat yang tidak diekspor ke VPN, sehingga balasan tidak punya jalan pulang.
+> [!TIP]
+> **Ping dari PE ke dalam VRF: selalu isi `src-address`.** Dalam pengujian, `/ping 192.168.2.1 vrf=pelanggan-b` dari PE1 gagal, sedangkan `/ping 192.168.2.1 vrf=pelanggan-b src-address=192.168.1.1` berhasil. Tanpa alamat sumber eksplisit, router memilih alamat yang tidak diekspor ke VPN, sehingga balasan tidak punya jalan pulang.
 
 ### Menyembunyikan route target dari pelanggan
 
@@ -362,7 +369,8 @@ add area=pa-backbone interfaces=ether3 type=ptp
 
 Hasil: PE1 belajar 10.99.1.0/24 dari CE-A1 lewat OSPF di VRF, mengekspornya ke VPNv4, dan CE-A2 menerimanya lewat BGP. Ke arah CE-A1, rute VPN dari situs lain muncul sebagai LSA eksternal tipe 1 di instance `ospf-pa`. Instance OSPF di VRF punya parameter `domain-id` dan `use-dn` untuk perilaku RFC 4577 (penandaan domain dan bit DN untuk mencegah loop pada pelanggan multihomed); periksa dokumentasi OSPF versi Anda sebelum mengandalkannya di pelanggan dengan banyak PE.
 
-⚠️ Saat pengujian, RouterOS mengizinkan dua instance OSPF dengan **nama yang sama**. Menghapus salah satunya ternyata menghancurkan instance yang sedang dipakai area. Beri nama unik dan periksa `/routing ospf instance print` sebelum mengubah apa pun.
+> [!WARNING]
+> Saat pengujian, RouterOS mengizinkan dua instance OSPF dengan **nama yang sama**. Menghapus salah satunya ternyata menghancurkan instance yang sedang dipakai area. Beri nama unik dan periksa `/routing ospf instance print` sebelum mengubah apa pun.
 
 ### Akses internet untuk pelanggan VRF
 
@@ -412,7 +420,8 @@ Verifikasi:
 
 `local-label` dan `remote-label` adalah label pseudowire hasil pertukaran LDP; `nexthops` menunjukkan label transport (17) menuju PE2 lewat P1. Jika `remote-label` kosong, PE seberang belum mengiklankan label untuk vpls-id ini. Periksa vpls-id, alamat peer, dan sesi LDP targeted.
 
-💡 Bridge host table menunjukkan alamat MAC situs seberang dipelajari di interface VPLS (`/interface bridge host print where bridge=br-vpls-c`). Ini cara cepat membuktikan bahwa frame benar-benar melintasi pseudowire. Saat membangun lab dengan VM, pastikan setiap NIC punya MAC unik; pengujian awal modul ini gagal justru karena semua VM QEMU memakai MAC default yang sama.
+> [!TIP]
+> Bridge host table menunjukkan alamat MAC situs seberang dipelajari di interface VPLS (`/interface bridge host print where bridge=br-vpls-c`). Ini cara cepat membuktikan bahwa frame benar-benar melintasi pseudowire. Saat membangun lab dengan VM, pastikan setiap NIC punya MAC unik; pengujian awal modul ini gagal justru karena semua VM QEMU memakai MAC default yang sama.
 
 ### VPLS bersinyal BGP (RFC 4761)
 
@@ -568,7 +577,8 @@ Keputusan yang paling berpengaruh:
 6. **VRF manajemen.** Pisahkan akses NOC ke router dari tabel pelanggan.
 7. **Pilih layanan yang tepat.** VPLS terasa mudah dijual ("seperti satu switch"), tetapi satu loop di sisi pelanggan bisa membanjiri seluruh pseudowire. Untuk pelanggan yang hanya butuh konektivitas IP antar-cabang, L3VPN lebih aman dan lebih mudah dioperasikan.
 
-💡 Tidak semua ISP kecil butuh MPLS. Jika layanan Anda hanya broadband dan dedicated internet di satu tabel routing, OSPF plus BGP di tepi (seperti lab `19-mikrotik/08-routing-v7`) sudah cukup. MPLS mulai bernilai ketika Anda menjual layanan terisolasi untuk banyak pelanggan, butuh alamat tumpang tindih, atau ingin memisahkan lalu lintas manajemen dan pelanggan tanpa menarik kabel baru.
+> [!TIP]
+> Tidak semua ISP kecil butuh MPLS. Jika layanan Anda hanya broadband dan dedicated internet di satu tabel routing, OSPF plus BGP di tepi (seperti lab `19-mikrotik/08-routing-v7`) sudah cukup. MPLS mulai bernilai ketika Anda menjual layanan terisolasi untuk banyak pelanggan, butuh alamat tumpang tindih, atau ingin memisahkan lalu lintas manajemen dan pelanggan tanpa menarik kabel baru.
 
 ### Alternatif yang perlu Anda ketahui
 
@@ -731,23 +741,32 @@ Hapus aturan debug setelah selesai agar log tidak penuh.
 
 ## 11. Kesalahan Umum
 
-⚠️ **Menjalankan LDP di interface pelanggan.** Pelanggan bisa membentuk sesi LDP dengan PE dan menerima label infrastruktur. Aktifkan LDP hanya di interface inti dan blokir port 646 dari arah pelanggan.
+> [!WARNING]
+> **Menjalankan LDP di interface pelanggan.** Pelanggan bisa membentuk sesi LDP dengan PE dan menerima label infrastruktur. Aktifkan LDP hanya di interface inti dan blokir port 646 dari arah pelanggan.
 
-⚠️ **Alamat transport LDP bukan loopback.** Sesi bergantung pada satu interface, dan PHP bisa berperilaku salah untuk lalu lintas berlabel ganda.
+> [!WARNING]
+> **Alamat transport LDP bukan loopback.** Sesi bergantung pada satu interface, dan PHP bisa berperilaku salah untuk lalu lintas berlabel ganda.
 
-⚠️ **Lupa `disabled=no` pada `/interface vpls add`.** Interface VPLS dibuat dalam keadaan nonaktif.
+> [!WARNING]
+> **Lupa `disabled=no` pada `/interface vpls add`.** Interface VPLS dibuat dalam keadaan nonaktif.
 
-⚠️ **RD sama di semua PE.** Bekerja, tetapi konvergensi pelanggan multihomed lebih lambat. Gunakan RD unik per PE per VRF.
+> [!WARNING]
+> **RD sama di semua PE.** Bekerja, tetapi konvergensi pelanggan multihomed lebih lambat. Gunakan RD unik per PE per VRF.
 
-⚠️ **Lupa `bgp` di `export.redistribute`.** Rute yang dipelajari dari CE lewat eBGP tidak pernah sampai ke situs lain.
+> [!WARNING]
+> **Lupa `bgp` di `export.redistribute`.** Rute yang dipelajari dari CE lewat eBGP tidak pernah sampai ke situs lain.
 
-⚠️ **Menganggap MTU 1500 cukup.** Pelanggan VPN mengalami gangguan aneh pada paket besar. Hitung overhead layanan dan seragamkan MPLS MTU.
+> [!WARNING]
+> **Menganggap MTU 1500 cukup.** Pelanggan VPN mengalami gangguan aneh pada paket besar. Hitung overhead layanan dan seragamkan MPLS MTU.
 
-⚠️ **Mencari konfigurasi TE dengan sintaks v6.** `/interface traffic-eng` tidak ada di v7; gunakan `/mpls traffic-eng`.
+> [!WARNING]
+> **Mencari konfigurasi TE dengan sintaks v6.** `/interface traffic-eng` tidak ada di v7; gunakan `/mpls traffic-eng`.
 
-⚠️ **Mengandalkan TE untuk proteksi cepat.** RouterOS tidak punya RSVP FRR. Gunakan BFD di IGP dan rancang jalur cadangan dengan cost IGP.
+> [!WARNING]
+> **Mengandalkan TE untuk proteksi cepat.** RouterOS tidak punya RSVP FRR. Gunakan BFD di IGP dan rancang jalur cadangan dengan cost IGP.
 
-⚠️ **Menjual VPLS tanpa batas MAC dan proteksi loop di sisi pelanggan.** Satu loop di LAN pelanggan menyebar ke semua situs lewat pseudowire. Pertimbangkan L3VPN atau batasi dengan horizon, STP di sisi pelanggan, dan pemantauan broadcast.
+> [!WARNING]
+> **Menjual VPLS tanpa batas MAC dan proteksi loop di sisi pelanggan.** Satu loop di LAN pelanggan menyebar ke semua situs lewat pseudowire. Pertimbangkan L3VPN atau batasi dengan horizon, STP di sisi pelanggan, dan pemantauan broadcast.
 
 ---
 
@@ -830,4 +849,4 @@ Hapus aturan debug setelah selesai agar log tidak penuh.
 
 ---
 
-**Berikutnya:** `19-mikrotik/10-user-manager-radius` — AAA di RouterOS: RADIUS, User Manager v7, dan CoA untuk layanan pelanggan.
+**Berikutnya:** `19-mikrotik/10-user-manager-radius`. AAA di RouterOS: RADIUS, User Manager v7, dan CoA untuk layanan pelanggan.

@@ -1,4 +1,4 @@
-# 10.3 — Keamanan Wireless
+# 10.3 Keamanan Wireless
 
 > **Prasyarat:** `10-wireless/02`, `06-aplikasi/04` (kripto dasar)
 > **Tujuan:** Anda paham evolusi keamanan Wi-Fi, bisa memilih dan mengonfigurasi yang tepat, serta mengenali dan memitigasi serangan wireless.
@@ -13,7 +13,8 @@ Wireless : sinyal menyebar melewati dinding, ke jalan, ke gedung sebelah
            → siapa pun dalam jangkauan bisa MENDENGAR dan MENGIRIM
 ```
 
-⚠️ **Setiap frame wireless dapat ditangkap oleh siapa pun dengan adapter murah dalam mode monitor.** Enkripsi bukan pilihan — ia keharusan mutlak.
+> [!WARNING]
+> **Setiap frame wireless dapat ditangkap oleh siapa pun dengan adapter murah dalam mode monitor.** Enkripsi bukan pilihan — ia keharusan mutlak.
 
 ---
 
@@ -21,7 +22,7 @@ Wireless : sinyal menyebar melewati dinding, ke jalan, ke gedung sebelah
 
 | Standar | Tahun | Enkripsi | Integritas | Status |
 |---|---|---|---|---|
-| **Open** | — | ❌ Tidak ada | ❌ | ⚠️ Hanya untuk hotspot publik dengan captive portal |
+| **Open** | — | Tidak ada | Tidak | ⚠️ Hanya untuk hotspot publik dengan captive portal |
 | **WEP** | 1999 | RC4 (40/104 bit) | CRC-32 | ❌ **RUSAK TOTAL** — dipecahkan dalam menit |
 | **WPA** | 2003 | RC4 + **TKIP** | Michael MIC | ❌ Usang, rentan |
 | **WPA2** | 2004 | **AES-CCMP** | CCM | ⚠️ Masih dipakai luas; rentan KRACK & offline attack |
@@ -40,9 +41,10 @@ Wireless : sinyal menyebar melewati dinding, ke jalan, ke gedung sebelah
 → Dengan aircrack-ng, kunci WEP dipecahkan dalam 2–10 MENIT
 ```
 
-⚠️ **Kalau Anda menemukan WEP di lapangan, itu darurat keamanan.** Ganti segera.
+> [!WARNING]
+> **Kalau Anda menemukan WEP di lapangan, itu darurat keamanan.** Ganti segera.
 
-### WPA2 — masih dominan tetapi punya kelemahan
+### WPA2: masih dominan tetapi punya kelemahan
 
 **Kelemahan 1 — Offline dictionary attack (PSK):**
 ```
@@ -62,7 +64,7 @@ Penyerang bisa mendapat material untuk brute force **tanpa perlu menunggu klien 
 
 ---
 
-## 3. WPA3 — Standar Saat Ini
+## 3. WPA3 (Standar Saat Ini)
 
 ### WPA3-Personal: SAE menggantikan PSK
 
@@ -71,13 +73,15 @@ Penyerang bisa mendapat material untuk brute force **tanpa perlu menunggu klien 
 | Aspek | WPA2-PSK | WPA3-SAE |
 |---|---|---|
 | Offline dictionary attack | ✅ Mungkin | ❌ **Tidak mungkin** |
-| Forward secrecy | ❌ Tidak | ✅ **Ya** |
+| Forward secrecy | Tidak | ✅ **Ya** |
 | Passphrase lemah | Sangat berbahaya | Masih tidak disarankan, tetapi tidak bisa di-brute-force offline |
 | Protected Management Frames | Opsional | **Wajib** |
 
-💡 **Keunggulan terbesar SAE: setiap percobaan tebakan harus dilakukan ONLINE dengan AP** — sehingga rate limiting dan deteksi bekerja. Penyerang tidak bisa lagi menangkap handshake lalu menyerangnya di rumah dengan GPU.
+> [!TIP]
+> **Keunggulan terbesar SAE: setiap percobaan tebakan harus dilakukan ONLINE dengan AP** — sehingga rate limiting dan deteksi bekerja. Penyerang tidak bisa lagi menangkap handshake lalu menyerangnya di rumah dengan GPU.
 
-💡 **Forward secrecy** berarti kalau passphrase bocor besok, trafik yang direkam hari ini **tetap tidak bisa didekripsi**.
+> [!TIP]
+> **Forward secrecy** berarti kalau passphrase bocor besok, trafik yang direkam hari ini **tetap tidak bisa didekripsi**.
 
 ### WPA3-Enterprise
 
@@ -91,7 +95,7 @@ WPA3-Enterprise 192-bit   : mode keamanan tinggi (CNSA)
     → untuk pemerintahan, keuangan, pertahanan
 ```
 
-### OWE — Enhanced Open
+### OWE (Enhanced Open)
 
 Untuk jaringan **publik tanpa password**, OWE (*Opportunistic Wireless Encryption*, RFC 8110) memberikan **enkripsi tanpa autentikasi**.
 
@@ -101,9 +105,11 @@ OWE        : setiap klien menegosiasikan kunci unik lewat Diffie-Hellman
              → trafik TERENKRIPSI meski tanpa password
 ```
 
-⚠️ **OWE tidak mengautentikasi AP** — masih rentan evil twin. Tetapi jauh lebih baik daripada open biasa yang sepenuhnya plaintext.
+> [!WARNING]
+> **OWE tidak mengautentikasi AP** — masih rentan evil twin. Tetapi jauh lebih baik daripada open biasa yang sepenuhnya plaintext.
 
-💡 **Untuk Wi-Fi tamu di kafe/hotel, OWE adalah pilihan yang benar** — pengguna tidak perlu password, tetapi trafiknya tetap terenkripsi.
+> [!TIP]
+> **Untuk Wi-Fi tamu di kafe/hotel, OWE adalah pilihan yang benar** — pengguna tidak perlu password, tetapi trafiknya tetap terenkripsi.
 
 ### Transition Mode
 
@@ -111,9 +117,11 @@ OWE        : setiap klien menegosiasikan kunci unik lewat Diffie-Hellman
 WPA2/WPA3 mixed → mendukung klien lama dan baru
 ```
 
-⚠️ **Transition mode mewarisi kelemahan WPA2** — penyerang bisa memaksa klien turun ke WPA2 (downgrade attack). Gunakan hanya selama masa migrasi, dan tetapkan tanggal untuk beralih ke WPA3-only.
+> [!WARNING]
+> **Transition mode mewarisi kelemahan WPA2** — penyerang bisa memaksa klien turun ke WPA2 (downgrade attack). Gunakan hanya selama masa migrasi, dan tetapkan tanggal untuk beralih ke WPA3-only.
 
-⚠️ **Band 6 GHz WAJIB WPA3** — tidak boleh open, tidak boleh WPA2, tidak boleh transition mode.
+> [!WARNING]
+> **Band 6 GHz WAJIB WPA3** — tidak boleh open, tidak boleh WPA2, tidak boleh transition mode.
 
 ---
 
@@ -149,11 +157,12 @@ PTK  → Pairwise Transient Key (unik per sesi klien)
 GTK  → Group Temporal Key (mengenkripsi broadcast/multicast, SAMA untuk semua klien)
 ```
 
-⚠️ **GTK sama untuk semua klien di SSID itu.** Artinya klien yang sah bisa mendekripsi trafik broadcast/multicast klien lain. Untuk isolasi sejati, aktifkan **client isolation**.
+> [!WARNING]
+> **GTK sama untuk semua klien di SSID itu.** Artinya klien yang sah bisa mendekripsi trafik broadcast/multicast klien lain. Untuk isolasi sejati, aktifkan **client isolation**.
 
 ---
 
-## 5. 802.1X / EAP — Autentikasi Enterprise
+## 5. 802.1X / EAP: Autentikasi Enterprise
 
 Untuk lingkungan korporat, PSK tidak memadai: satu passphrase bersama untuk semua orang berarti mengganti password saat ada karyawan keluar berarti mengonfigurasi ulang semua perangkat.
 
@@ -168,16 +177,18 @@ Untuk lingkungan korporat, PSK tidak memadai: satu passphrase bersama untuk semu
 
 | Metode | Kredensial klien | Sertifikat server | Keamanan |
 |---|---|---|---|
-| **EAP-TLS** | **Sertifikat** | ✅ Wajib | ⭐⭐⭐⭐⭐ Terbaik |
-| **PEAP-MSCHAPv2** | Username/password | ✅ Wajib | ⭐⭐⭐ Umum |
-| **EAP-TTLS** | Username/password | ✅ Wajib | ⭐⭐⭐ |
-| **EAP-FAST** | PAC / kredensial | Opsional | ⭐⭐ Cisco |
-| EAP-MD5 | Password | ❌ | ❌ Jangan dipakai |
-| LEAP | Password | ❌ | ❌ Rusak |
+| **EAP-TLS** | **Sertifikat** | ✅ Wajib | Terbaik (5/5) |
+| **PEAP-MSCHAPv2** | Username/password | ✅ Wajib | Umum (3/5) |
+| **EAP-TTLS** | Username/password | ✅ Wajib | 3/5 |
+| **EAP-FAST** | PAC / kredensial | Opsional | Cisco (2/5) |
+| EAP-MD5 | Password | Tidak | ❌ Jangan dipakai |
+| LEAP | Password | Tidak | ❌ Rusak |
 
-⚠️ **PEAP-MSCHAPv2 rentan jika klien tidak memvalidasi sertifikat server.** Penyerang bisa mendirikan AP palsu dengan RADIUS palsu, menangkap MSCHAPv2 challenge/response, lalu memecahkannya offline (MSCHAPv2 dapat direduksi ke satu DES). **Klien HARUS dikonfigurasi untuk memvalidasi CA server** — dan pengguna tidak boleh diizinkan mengeklik "trust" pada sertifikat yang tidak dikenal.
+> [!WARNING]
+> **PEAP-MSCHAPv2 rentan jika klien tidak memvalidasi sertifikat server.** Penyerang bisa mendirikan AP palsu dengan RADIUS palsu, menangkap MSCHAPv2 challenge/response, lalu memecahkannya offline (MSCHAPv2 dapat direduksi ke satu DES). **Klien HARUS dikonfigurasi untuk memvalidasi CA server** — dan pengguna tidak boleh diizinkan mengeklik "trust" pada sertifikat yang tidak dikenal.
 
-💡 **EAP-TLS adalah pilihan terbaik** karena memakai sertifikat di kedua sisi — tidak ada password yang bisa dicuri atau ditebak. Biayanya: perlu PKI dan proses penyediaan sertifikat ke setiap perangkat (biasanya lewat MDM).
+> [!TIP]
+> **EAP-TLS adalah pilihan terbaik** karena memakai sertifikat di kedua sisi — tidak ada password yang bisa dicuri atau ditebak. Biayanya: perlu PKI dan proses penyediaan sertifikat ke setiap perangkat (biasanya lewat MDM).
 
 ### Manfaat 802.1X di luar keamanan
 
@@ -221,7 +232,8 @@ Penyerang mendirikan AP dengan SSID yang SAMA dan sinyal lebih kuat
 → MITM penuh: semua trafik lewat penyerang
 ```
 
-⚠️ **Sangat efektif** karena klien memilih AP berdasarkan kekuatan sinyal, dan sebagian besar pengguna tidak memeriksa apa pun.
+> [!WARNING]
+> **Sangat efektif** karena klien memilih AP berdasarkan kekuatan sinyal, dan sebagian besar pengguna tidak memeriksa apa pun.
 
 **Mitigasi:**
 ```
@@ -247,7 +259,8 @@ Karyawan menancapkan router Wi-Fi rumahan ke port jaringan kantor.
 
 **WPS** (Wi-Fi Protected Setup) dengan PIN 8 digit punya kelemahan desain: PIN divalidasi dalam dua bagian terpisah, sehingga ruang pencarian turun dari 10⁸ menjadi **11.000** — dapat dipecahkan dalam beberapa jam.
 
-⚠️ **MATIKAN WPS.** Selalu. Tidak ada alasan memakainya.
+> [!WARNING]
+> **MATIKAN WPS.** Selalu. Tidak ada alasan memakainya.
 
 ### PMKID Attack
 
@@ -289,7 +302,8 @@ Prinsip:
 8. Logging untuk kepatuhan
 ```
 
-⚠️ **Kesalahan paling umum: tamu bisa mencapai LAN internal.** Selalu verifikasi dengan mencoba akses dari perangkat tamu ke server internal.
+> [!WARNING]
+> **Kesalahan paling umum: tamu bisa mencapai LAN internal.** Selalu verifikasi dengan mencoba akses dari perangkat tamu ke server internal.
 
 ```
 # MikroTik — jaringan tamu lengkap
@@ -304,7 +318,7 @@ add chain=forward in-interface-list=TAMU action=drop comment="Tamu HANYA ke inte
 
 ## 8. Konfigurasi
 
-### MikroTik (RouterOS v6 — wireless)
+### MikroTik (RouterOS v6: wireless)
 
 ```
 # WPA2-PSK
@@ -331,7 +345,7 @@ add name=dot1x-kantor mode=dynamic-keys authentication-types=wpa2-eap \
 /interface wireless set wlan1 default-forwarding=no
 ```
 
-### MikroTik (RouterOS v7 — wifi)
+### MikroTik (RouterOS v7: wifi)
 
 ```
 /interface wifi security
@@ -345,7 +359,7 @@ add name=cfg-kantor ssid=KANTOR security=wpa3-kantor country=Indonesia
 /interface wifi set wifi1 configuration=cfg-kantor
 ```
 
-### Cisco WLC (konsep GUI — topik CCNA 2.9)
+### Cisco WLC (konsep GUI: topik CCNA 2.9)
 
 ```
 WLANs → Create New
@@ -384,7 +398,8 @@ Advanced tab:
   Coverage Hole Detection : Enabled
 ```
 
-⚠️ **Topik CCNA 2.9 secara eksplisit menguji kemampuan menafsirkan konfigurasi WLAN GUI ini** — pelajari nama field dan artinya.
+> [!WARNING]
+> **Topik CCNA 2.9 secara eksplisit menguji kemampuan menafsirkan konfigurasi WLAN GUI ini** — pelajari nama field dan artinya.
 
 ---
 
@@ -417,7 +432,8 @@ Advanced tab:
 ❌ JANGAN buat 8 SSID (setiap SSID mengirim beacon 10×/detik → boros airtime)
 ```
 
-⚠️ **Setiap SSID tambahan memakan airtime.** Dengan 8 SSID dan 3 AP di kanal yang sama, beacon saja bisa memakan 20–30% airtime sebelum ada data apa pun yang dikirim. **Maksimal 3–4 SSID per band.**
+> [!WARNING]
+> **Setiap SSID tambahan memakan airtime.** Dengan 8 SSID dan 3 AP di kanal yang sama, beacon saja bisa memakan 20–30% airtime sebelum ada data apa pun yang dikirim. **Maksimal 3–4 SSID per band.**
 
 ---
 
@@ -433,7 +449,7 @@ Advanced tab:
 - Serangan utama: **deauth** (mitigasi: PMF), **evil twin** (mitigasi: 802.1X + validasi sertifikat, WIPS), **WPS** (matikan), **PMKID** (mitigasi: WPA3), **Karma** (mitigasi: jangan hidden SSID, hapus jaringan tersimpan).
 - **Hidden SSID dan MAC filtering bukan keamanan.**
 - Jaringan tamu: VLAN terpisah + isolasi klien + firewall ke internet saja + rate limit + logging.
-- **Batasi jumlah SSID (maks 3–4)** — setiap SSID memakan airtime.
+- **Batasi jumlah SSID (maks 3-4)** — setiap SSID memakan airtime.
 
 ---
 
@@ -451,7 +467,7 @@ Advanced tab:
 <details>
 <summary>Jawaban</summary>
 
-1. Karena beberapa kelemahan desain yang saling memperkuat: (a) **IV hanya 24 bit**, sehingga berulang setelah ~5.000 paket pada jaringan sibuk — dan IV dikirim dalam plaintext, memungkinkan penyerang mengumpulkan pasangan IV/ciphertext; (b) **RC4 punya kelemahan statistik** pada byte awal keystream (serangan FMS/PTW) yang memungkinkan pemulihan kunci dari IV yang cukup banyak; (c) **CRC-32 bersifat linear**, sehingga penyerang bisa memodifikasi paket dan menyesuaikan checksum tanpa mengetahui kunci — memungkinkan serangan injeksi untuk **mempercepat** pengumpulan IV; (d) **kunci statis** tidak pernah dirotasi. Dengan `aireplay-ng` untuk injeksi dan `aircrack-ng` untuk analisis, kunci WEP 104-bit dipecahkan dalam **2–10 menit**.
+1. Karena beberapa kelemahan desain yang saling memperkuat: (a) **IV hanya 24 bit**, sehingga berulang setelah ~5.000 paket pada jaringan sibuk — dan IV dikirim dalam plaintext, memungkinkan penyerang mengumpulkan pasangan IV/ciphertext; (b) **RC4 punya kelemahan statistik** pada byte awal keystream (serangan FMS/PTW) yang memungkinkan pemulihan kunci dari IV yang cukup banyak; (c) **CRC-32 bersifat linear**, sehingga penyerang bisa memodifikasi paket dan menyesuaikan checksum tanpa mengetahui kunci — memungkinkan serangan injeksi untuk **mempercepat** pengumpulan IV; (d) **kunci statis** tidak pernah dirotasi. Dengan `aireplay-ng` untuk injeksi dan `aircrack-ng` untuk analisis, kunci WEP 104-bit dipecahkan dalam **2-10 menit**.
 
 2. Pada **WPA2-PSK**, penyerang cukup menangkap **4-way handshake** (satu kali, bisa dipaksa dengan deauth) yang berisi MIC. Dari situ ia dapat menghitung apakah sebuah tebakan passphrase menghasilkan MIC yang sama — **seluruhnya secara offline**, di komputernya sendiri, dengan GPU yang menguji miliaran tebakan per detik. AP tidak pernah tahu.
    **WPA3-SAE** memakai pertukaran Dragonfly berbasis kurva eliptik di mana setiap percobaan autentikasi **harus dilakukan secara interaktif dengan AP**. Material yang ditangkap penyerang tidak memungkinkan verifikasi tebakan secara offline. Akibatnya, penyerang hanya bisa mencoba satu tebakan per interaksi — sehingga **rate limiting dan deteksi di AP menjadi efektif**. SAE juga memberikan **forward secrecy**: passphrase yang bocor kemudian tidak membuka trafik yang direkam sebelumnya.
@@ -482,14 +498,14 @@ Advanced tab:
    Band steering : dorong ke 5 GHz
    Maksimal SSID : 1 untuk tamu (jangan buat terpisah per band)
    ```
-   ⚠️ Verifikasi secara aktif bahwa perangkat tamu **tidak bisa** menjangkau sistem PMS, POS, CCTV, atau jaringan staf — ini pelanggaran paling umum dan paling berbahaya di hotel.
+   **Perhatian:** Verifikasi secara aktif bahwa perangkat tamu **tidak bisa** menjangkau sistem PMS, POS, CCTV, atau jaringan staf — ini pelanggaran paling umum dan paling berbahaya di hotel.
 
 7. **Setiap SSID mengirim beacon frame ~10 kali per detik pada rate dasar (rendah)**, dan setiap beacon memakan airtime. Dengan 8 SSID:
    - 80 beacon/detik per AP per band
    - Beacon dikirim pada rate rendah (mis. 6 Mbps) agar semua klien bisa membacanya, sehingga memakan airtime jauh lebih lama daripada data
-   - Dengan beberapa AP di kanal yang sama, beacon saja bisa memakan **20–30% airtime** sebelum ada data apa pun
+   - Dengan beberapa AP di kanal yang sama, beacon saja bisa memakan **20-30% airtime** sebelum ada data apa pun
    - Setiap SSID juga menambah beban probe response, dan memperbesar kemungkinan klien memilih SSID yang salah
-   **Perbaikan:** kurangi menjadi **maksimal 3–4 SSID per band**. Gunakan **VLAN dinamis lewat 802.1X** untuk memisahkan kelompok pengguna dalam satu SSID, alih-alih membuat SSID terpisah untuk setiap departemen.
+   **Perbaikan:** kurangi menjadi **maksimal 3-4 SSID per band**. Gunakan **VLAN dinamis lewat 802.1X** untuk memisahkan kelompok pengguna dalam satu SSID, alih-alih membuat SSID terpisah untuk setiap departemen.
 
 8. **OWE (Opportunistic Wireless Encryption, RFC 8110)** dipakai untuk **jaringan publik yang tidak memerlukan password**: kafe, hotel, bandara, ruang publik. Ia memberikan **enkripsi per-klien** lewat pertukaran Diffie-Hellman, sehingga trafik tidak lagi plaintext — pengalaman pengguna tetap sama (tidak perlu memasukkan apa pun), tetapi penyadap di sekitar tidak bisa membaca trafik.
    **Keterbatasannya:** OWE **tidak mengautentikasi AP**. Karena tidak ada kredensial bersama, klien tidak bisa memverifikasi bahwa AP yang ia hubungi adalah yang sah — sehingga **evil twin tetap mungkin**. Penyerang bisa mendirikan AP OWE dengan SSID yang sama dan melakukan MITM.
@@ -511,4 +527,4 @@ Advanced tab:
 
 ---
 
-**Berikutnya:** `10-wireless/04-desain-wlan.md` — arsitektur dan perencanaan WLAN.
+**Berikutnya:** `10-wireless/04-desain-wlan.md`. Arsitektur dan perencanaan WLAN.

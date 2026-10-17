@@ -1,9 +1,10 @@
-# 07.4 — OSPF
+# 07.4 OSPF
 
 > **Prasyarat:** `07-routing-lanjutan/02`
 > **Tujuan:** Anda bisa mengonfigurasi single-area dan multi-area OSPF, memahami LSA dan tipe area, serta mendiagnosis kegagalan adjacency dengan sistematis.
 
-> 📌 **OSPF adalah topik routing terpenting di CCNA (topik 3.4) dan protokol IGP yang paling banyak dipakai di enterprise.** Kuasai modul ini dengan baik.
+> > [!NOTE]
+> > **OSPF adalah topik routing terpenting di CCNA (topik 3.4) dan protokol IGP yang paling banyak dipakai di enterprise.** Kuasai modul ini dengan baik.
 
 ---
 
@@ -41,7 +42,8 @@ R1(config-router)# router-id 1.1.1.1
 R1# clear ip ospf process          ← perlu untuk menerapkan RID baru
 ```
 
-💡 **Praktik terbaik: selalu set RID eksplisit** dan gunakan skema yang bermakna (mis. `1.1.1.1` untuk R1). Alasannya:
+> [!TIP]
+> **Praktik terbaik: selalu set RID eksplisit** dan gunakan skema yang bermakna (mis. `1.1.1.1` untuk R1). Alasannya:
 - RID yang berasal dari interface fisik bisa **berubah** kalau interface itu down → memicu rekalkulasi dan gangguan
 - RID yang bermakna sangat memudahkan troubleshooting
 - Loopback selalu up, sehingga stabil
@@ -51,7 +53,8 @@ R1(config)# interface loopback0
 R1(config-if)# ip address 1.1.1.1 255.255.255.255
 ```
 
-⚠️ **Perubahan RID tidak berlaku sampai proses OSPF di-restart** (`clear ip ospf process`) — dan itu memutus semua adjacency sementara. Rencanakan di jendela pemeliharaan.
+> [!WARNING]
+> **Perubahan RID tidak berlaku sampai proses OSPF di-restart** (`clear ip ospf process`) — dan itu memutus semua adjacency sementara. Rencanakan di jendela pemeliharaan.
 
 ---
 
@@ -72,7 +75,8 @@ LOADING    → meminta LSA yang kurang (LSR/LSU/LSAck)
 FULL       → LSDB identik → adjacency lengkap ✅
 ```
 
-⚠️ **Pada jaringan broadcast, tidak semua router mencapai FULL satu sama lain.** Router non-DR/BDR hanya mencapai **2-WAY** dengan sesama router non-DR — dan itu **normal**. Mereka mencapai FULL hanya dengan DR dan BDR.
+> [!WARNING]
+> **Pada jaringan broadcast, tidak semua router mencapai FULL satu sama lain.** Router non-DR/BDR hanya mencapai **2-WAY** dengan sesama router non-DR — dan itu **normal**. Mereka mencapai FULL hanya dengan DR dan BDR.
 
 ```
 R1# show ip ospf neighbor
@@ -99,13 +103,15 @@ Semua ini **harus cocok**, atau adjacency tidak terbentuk:
 ✓ Network type kompatibel
 ```
 
-⚠️ **MTU mismatch adalah penyebab klasik adjacency macet di EXSTART/EXCHANGE.** Gejalanya: neighbor terlihat tetapi tidak pernah mencapai FULL. Cek dengan `show ip ospf interface` dan bandingkan MTU di kedua sisi.
+> [!WARNING]
+> **MTU mismatch adalah penyebab klasik adjacency macet di EXSTART/EXCHANGE.** Gejalanya: neighbor terlihat tetapi tidak pernah mencapai FULL. Cek dengan `show ip ospf interface` dan bandingkan MTU di kedua sisi.
 
 Solusi darurat (bukan perbaikan sesungguhnya):
 ```
 R1(config-if)# ip ospf mtu-ignore
 ```
-⚠️ Ini menyembunyikan gejala. Perbaikan yang benar adalah menyamakan MTU.
+> [!WARNING]
+> Ini menyembunyikan gejala. Perbaikan yang benar adalah menyamakan MTU.
 
 ---
 
@@ -113,10 +119,10 @@ R1(config-if)# ip ospf mtu-ignore
 
 | Tipe | Default pada | DR/BDR? | Hello/Dead | Neighbor |
 |---|---|---|---|---|
-| **Broadcast** | Ethernet | ✅ Ya | **10/40** | Otomatis (multicast) |
-| **Point-to-Point** | Serial (PPP/HDLC), subinterface P2P | ❌ Tidak | **10/40** | Otomatis |
-| **Non-Broadcast (NBMA)** | Frame Relay | ✅ Ya | **30/120** | Manual |
-| **Point-to-Multipoint** | — (harus diset) | ❌ Tidak | 30/120 | Otomatis |
+| **Broadcast** | Ethernet | Ya | **10/40** | Otomatis (multicast) |
+| **Point-to-Point** | Serial (PPP/HDLC), subinterface P2P | Tidak | **10/40** | Otomatis |
+| **Non-Broadcast (NBMA)** | Frame Relay | Ya | **30/120** | Manual |
+| **Point-to-Multipoint** | — (harus diset) | Tidak | 30/120 | Otomatis |
 | **Loopback** | Interface loopback | — | — | Diiklankan sebagai /32 |
 
 ```
@@ -126,9 +132,11 @@ R1(config-if)# ip ospf hello-interval 5
 R1(config-if)# ip ospf dead-interval 20
 ```
 
-💡 **Trik yang sering dipakai:** mengubah link Ethernet point-to-point (antara dua router saja) menjadi `network point-to-point` menghilangkan proses pemilihan DR/BDR dan mempercepat konvergensi. Sangat umum di data center.
+> [!TIP]
+> **Trik yang sering dipakai:** mengubah link Ethernet point-to-point (antara dua router saja) menjadi `network point-to-point` menghilangkan proses pemilihan DR/BDR dan mempercepat konvergensi. Sangat umum di data center.
 
-⚠️ **Network type harus cocok di kedua sisi.** Broadcast vs point-to-point tidak akan membentuk adjacency (karena hello interval berbeda dan ekspektasi DR berbeda).
+> [!WARNING]
+> **Network type harus cocok di kedua sisi.** Broadcast vs point-to-point tidak akan membentuk adjacency (karena hello interval berbeda dan ekspektasi DR berbeda).
 
 ---
 
@@ -159,7 +167,8 @@ Pada segmen broadcast dengan N router, full mesh adjacency membutuhkan `N(N−1)
 2. Kalau seri → Router ID TERTINGGI menang
 ```
 
-⚠️ **DR bersifat NON-PREEMPTIVE.** Kalau router dengan priority lebih tinggi muncul **setelah** DR terpilih, ia **tidak** mengambil alih. DR baru hanya dipilih jika DR lama mati. Ini disengaja — untuk mencegah gangguan berulang.
+> [!WARNING]
+> **DR bersifat NON-PREEMPTIVE.** Kalau router dengan priority lebih tinggi muncul **setelah** DR terpilih, ia **tidak** mengambil alih. DR baru hanya dipilih jika DR lama mati. Ini disengaja — untuk mencegah gangguan berulang.
 
 ```
 R1(config-if)# ip ospf priority 255      ← paksa menjadi DR
@@ -167,7 +176,8 @@ R2(config-if)# ip ospf priority 100      ← kandidat BDR
 R3(config-if)# ip ospf priority 0        ← TIDAK PERNAH jadi DR/BDR
 ```
 
-💡 **Praktik terbaik:** set priority secara sengaja — DR sebaiknya router yang paling stabil dan kuat (biasanya switch distribution/core), bukan hasil kebetulan RID tertinggi.
+> [!TIP]
+> **Praktik terbaik:** set priority secara sengaja — DR sebaiknya router yang paling stabil dan kuat (biasanya switch distribution/core), bukan hasil kebetulan RID tertinggi.
 
 ### Multicast address
 
@@ -196,13 +206,15 @@ Default reference bandwidth = 100 Mbps (100.000.000 bps)
 | **10 Gbps** | **1** ⚠️ | 10 |
 | **100 Gbps** | **1** ⚠️ | 1 |
 
-⚠️ **Dengan setelan default, semua link ≥100 Mbps punya cost 1** — OSPF tidak bisa membedakannya.
+> [!WARNING]
+> **Dengan setelan default, semua link ≥100 Mbps punya cost 1** — OSPF tidak bisa membedakannya.
 
 ```
 R1(config-router)# auto-cost reference-bandwidth 100000    ← 100 Gbps
 ```
 
-⚠️ **Harus SAMA di semua router** dalam domain OSPF, atau perhitungan jalur menjadi tidak konsisten. IOS akan menampilkan peringatan.
+> [!WARNING]
+> **Harus SAMA di semua router** dalam domain OSPF, atau perhitungan jalur menjadi tidak konsisten. IOS akan menampilkan peringatan.
 
 **Cost manual per interface:**
 ```
@@ -231,14 +243,16 @@ R1(config-router)# no passive-interface gi0/1
 R1(config-router)# auto-cost reference-bandwidth 100000
 ```
 
-⚠️ **Perhatikan: OSPF memakai WILDCARD MASK, bukan subnet mask.**
+> [!WARNING]
+> **Perhatikan: OSPF memakai WILDCARD MASK, bukan subnet mask.**
 ```
 Subnet 10.0.0.0/24  → wildcard 0.0.0.255
 Subnet 10.0.0.0/30  → wildcard 0.0.0.3
 Satu interface saja → wildcard 0.0.0.0 (host spesifik)
 ```
 
-💡 **Perintah `network` melakukan dua hal sekaligus:**
+> [!TIP]
+> **Perintah `network` melakukan dua hal sekaligus:**
 1. Mengaktifkan OSPF pada interface yang alamatnya cocok
 2. Mengiklankan subnet interface itu ke OSPF
 
@@ -262,7 +276,8 @@ R1(config)# interface loopback0
 R1(config-if)# ip ospf 1 area 0
 ```
 
-💡 Metode ini **lebih disukai di jaringan modern** karena eksplisit dan tidak ada kejutan dari wildcard mask.
+> [!TIP]
+> Metode ini **lebih disukai di jaringan modern** karena eksplisit dan tidak ada kejutan dari wildcard mask.
 
 ### Default route
 
@@ -293,7 +308,7 @@ R1(config-if)# ip ospf authentication key-chain OSPF-KEYS
 
 ---
 
-## 8. Area — Kunci Skalabilitas
+## 8. Area: Kunci Skalabilitas
 
 ### Kenapa area diperlukan
 
@@ -343,7 +358,8 @@ R2(config-router)# network 10.1.1.0 0.0.0.255 area 1
 
 ### Summarization
 
-⚠️ **Summarization hanya bisa dilakukan di ABR atau ASBR**, bukan di router internal.
+> [!WARNING]
+> **Summarization hanya bisa dilakukan di ABR atau ASBR**, bukan di router internal.
 
 ```
 # Di ABR: ringkas rute dari area 1 sebelum masuk area 0
@@ -353,7 +369,8 @@ R2(config-router)# area 1 range 192.168.0.0 255.255.252.0
 R3(config-router)# summary-address 172.16.0.0 255.255.0.0
 ```
 
-💡 Summarization sangat penting karena: menyembunyikan flapping di dalam area (perubahan di area 1 tidak memicu SPF di area 0), mengecilkan LSDB, dan mempercepat konvergensi.
+> [!TIP]
+> Summarization sangat penting karena: menyembunyikan flapping di dalam area (perubahan di area 1 tidak memicu SPF di area 0), mengecilkan LSDB, dan mempercepat konvergensi.
 
 ---
 
@@ -388,7 +405,8 @@ O E2 172.16.0.0/16 → External type 2 (HANYA cost eksternal) ← DEFAULT
 O N1 / O N2        → NSSA external
 ```
 
-⚠️ **Perbedaan E1 dan E2 penting:**
+> [!WARNING]
+> **Perbedaan E1 dan E2 penting:**
 - **E2 (default)**: metrik tidak berubah saat menyebar. Semua router melihat cost yang sama, sehingga pemilihan ASBR terdekat tidak otomatis.
 - **E1**: metrik eksternal **ditambah** cost internal ke ASBR. Router otomatis memilih ASBR terdekat.
 
@@ -405,11 +423,11 @@ Tujuannya mengurangi ukuran LSDB pada area yang tidak butuh detail penuh.
 
 | Tipe area | LSA 1,2 | LSA 3 | LSA 4,5 | LSA 7 | Default route |
 |---|---|---|---|---|---|
-| **Standard** | ✅ | ✅ | ✅ | — | Opsional |
-| **Stub** | ✅ | ✅ | ❌ | ❌ | ✅ Otomatis dari ABR |
-| **Totally Stubby** | ✅ | ❌ | ❌ | ❌ | ✅ Otomatis |
-| **NSSA** | ✅ | ✅ | ❌ | ✅ | Opsional |
-| **Totally NSSA** | ✅ | ❌ | ❌ | ✅ | ✅ Otomatis |
+| **Standard** | Ya | Ya | Ya | — | Opsional |
+| **Stub** | Ya | Ya | Tidak | Tidak | ✅ Otomatis dari ABR |
+| **Totally Stubby** | Ya | Tidak | Tidak | Tidak | ✅ Otomatis |
+| **NSSA** | Ya | Ya | Tidak | Ya | Opsional |
+| **Totally NSSA** | Ya | Tidak | Tidak | Ya | ✅ Otomatis |
 
 ```
 # Stub (di SEMUA router dalam area itu)
@@ -425,15 +443,17 @@ R2(config-router)# area 1 nssa
 R2(config-router)# area 1 nssa no-summary
 ```
 
-⚠️ **Semua router dalam satu area harus sepakat tipe area-nya.** Kalau tidak, adjacency **tidak akan terbentuk** (stub flag adalah bagian dari hello).
+> [!WARNING]
+> **Semua router dalam satu area harus sepakat tipe area-nya.** Kalau tidak, adjacency **tidak akan terbentuk** (stub flag adalah bagian dari hello).
 
-💡 **Kapan memakai apa:**
+> [!TIP]
+> **Kapan memakai apa:**
 - **Stub/Totally Stubby**: area cabang tanpa koneksi eksternal sendiri → LSDB jauh lebih kecil
 - **NSSA**: area cabang yang punya link ke ISP atau jaringan mitra (perlu menyuntikkan rute eksternal), tetapi tidak perlu menerima rute eksternal dari area lain
 
 ---
 
-## 11. Virtual Link — Solusi Darurat
+## 11. Virtual Link: Solusi Darurat
 
 Ketika sebuah area tidak bisa terhubung langsung ke area 0 (mis. setelah merger perusahaan):
 
@@ -443,7 +463,8 @@ R3(config-router)# area 1 virtual-link 2.2.2.2
      ↑ RID router seberang, melintasi area 1 sebagai transit area
 ```
 
-⚠️ **Virtual link adalah tambalan, bukan desain.** Ia menambah kompleksitas, sulit di-troubleshoot, dan menyembunyikan masalah desain. Perbaiki topologinya kalau memungkinkan (mis. tambahkan link fisik atau tunnel GRE ke area 0).
+> [!WARNING]
+> **Virtual link adalah tambalan, bukan desain.** Ia menambah kompleksitas, sulit di-troubleshoot, dan menyembunyikan masalah desain. Perbaiki topologinya kalau memungkinkan (mis. tambahkan link fisik atau tunnel GRE ke area 0).
 
 ---
 
@@ -501,7 +522,8 @@ R1# show ipv6 route ospf
 | Adjacency | Berdasarkan alamat IPv4 | Berdasarkan **link-local** |
 | Address family | IPv4 saja | IPv4 **dan** IPv6 (dengan AF) |
 
-⚠️ **OSPFv3 membentuk adjacency memakai alamat link-local**, sehingga interface tidak perlu punya alamat global IPv6 untuk membentuk tetangga.
+> [!WARNING]
+> **OSPFv3 membentuk adjacency memakai alamat link-local**, sehingga interface tidak perlu punya alamat global IPv6 untuk membentuk tetangga.
 
 ---
 
@@ -585,7 +607,8 @@ Semua parameter yang harus cocok terlihat di sini: **Area, Network Type, Hello, 
 
 ## MikroTik RouterOS
 
-⚠️ **Sintaks OSPF berbeda drastis antara RouterOS v6 dan v7.** Selalu periksa versi: `/system resource print`.
+> [!WARNING]
+> **Sintaks OSPF berbeda drastis antara RouterOS v6 dan v7.** Selalu periksa versi: `/system resource print`.
 
 ### RouterOS v7 (menu `/routing/ospf`)
 
@@ -636,7 +659,8 @@ Semua parameter yang harus cocok terlihat di sini: **Area, Network Type, Hello, 
 | `cost` | dihitung otomatis dari bandwidth, atau set manual |
 | Reference bandwidth | ⚠️ RouterOS memakai perhitungan berbeda; **set cost manual** untuk konsistensi dengan Cisco |
 
-⚠️ **Interoperabilitas MikroTik ↔ Cisco:** OSPF adalah standar terbuka dan bekerja dengan baik antar-vendor, **tetapi** perhatikan:
+> [!WARNING]
+> **Interoperabilitas MikroTik ↔ Cisco:** OSPF adalah standar terbuka dan bekerja dengan baik antar-vendor, **tetapi** perhatikan:
 - **MTU harus cocok** — MikroTik dan Cisco menghitung MTU sedikit berbeda; kalau adjacency macet di ExStart, samakan MTU atau set `/routing ospf interface-template set ... ` dengan MTU yang sesuai
 - **Cost tidak dihitung dengan formula yang sama** — set manual di kedua sisi untuk hasil yang dapat diprediksi
 - **Autentikasi** — pastikan tipe dan key identik
@@ -718,7 +742,7 @@ Semua parameter yang harus cocok terlihat di sini: **Area, Network Type, Hello, 
    ```
    R1# clear ip ospf process
    ```
-   ⚠️ Perintah ini **memutus semua adjacency OSPF sementara** dan memicu rekalkulasi di seluruh area — lakukan di jendela pemeliharaan. Alternatif untuk router yang belum produksi: `reload`.
+   **Perhatian:** Perintah ini **memutus semua adjacency OSPF sementara** dan memicu rekalkulasi di seluruh area — lakukan di jendela pemeliharaan. Alternatif untuk router yang belum produksi: `reload`.
 
 </details>
 
@@ -735,4 +759,4 @@ Semua parameter yang harus cocok terlihat di sini: **Area, Network Type, Hello, 
 
 ---
 
-**Berikutnya:** `07-routing-lanjutan/05-eigrp.md` — protokol Cisco dengan konvergensi tercepat.
+**Berikutnya:** `07-routing-lanjutan/05-eigrp.md`. Protokol Cisco dengan konvergensi tercepat.

@@ -1,11 +1,11 @@
-# 04.3 — VLSM, CIDR, Summarization, dan Wildcard Mask
+# 04.3 VLSM, CIDR, Summarization, dan Wildcard Mask
 
 > **Prasyarat:** `04-network-layer/02` (subnetting harus lancar)
 > **Tujuan:** Anda bisa merancang IP plan efisien dengan VLSM, meringkas rute, dan menghitung wildcard mask untuk ACL dan OSPF.
 
 ---
 
-## 1. VLSM — Variable Length Subnet Mask
+## 1. VLSM (Variable Length Subnet Mask)
 
 Subnetting biasa (**FLSM**, *Fixed Length*) membagi jaringan menjadi potongan **sama besar**. VLSM membagi menjadi potongan **berbeda ukuran** sesuai kebutuhan.
 
@@ -55,7 +55,8 @@ Total alamat terpakai: 128 + 64 + 32 + 16 + 4 + 4 + 4 = **252 dari 256** ✅
 
 ## 2. Aturan Emas VLSM: Alokasikan dari Besar ke Kecil
 
-⚠️ **Ini aturan yang tidak boleh dilanggar.** Kalau Anda mengalokasikan subnet kecil dulu, subnet besar tidak akan muat karena batas alignment.
+> [!WARNING]
+> **Ini aturan yang tidak boleh dilanggar.** Kalau Anda mengalokasikan subnet kecil dulu, subnet besar tidak akan muat karena batas alignment.
 
 ### Contoh alokasi lengkap dari `192.168.1.0/24`
 
@@ -152,7 +153,7 @@ Wi-Fi Tamu:  50 host
 <details>
 <summary>Solusi lengkap</summary>
 
-`172.16.0.0/22` = 172.16.0.0 – 172.16.3.255 (1024 alamat)
+`172.16.0.0/22` = 172.16.0.0-172.16.3.255 (1024 alamat)
 
 **Urutkan besar ke kecil:**
 ```
@@ -166,7 +167,8 @@ P2P ×4      2 → /30 (2 host, 4 alamat) × 4 = 16 alamat
 ```
 Total = 512 + 256 + 128 + 64 + 64 + 32 + 16 = **1072 alamat**
 
-⚠️ **1072 > 1024 — TIDAK CUKUP!**
+> [!WARNING]
+> **1072 > 1024 — TIDAK CUKUP!**
 
 Ini pelajaran penting: **selalu jumlahkan dulu sebelum mulai mengalokasikan.**
 
@@ -175,7 +177,7 @@ Opsi perbaikan:
 - (b) Kurangi ruang tumbuh: Gedung A dipecah menjadi dua VLAN /24, Wi-Fi tamu dipakaikan /26 yang sama dengan lab
 - (c) Pakai alamat privat lain untuk sebagian kebutuhan
 
-**Solusi dengan /21** (`172.16.0.0/21` = 172.16.0.0 – 172.16.7.255, 2048 alamat):
+**Solusi dengan /21** (`172.16.0.0/21` = 172.16.0.0-172.16.7.255, 2048 alamat):
 ```
 Gedung A   : 172.16.0.0/23     (host 172.16.0.1   – 172.16.1.254)
 Gedung B   : 172.16.2.0/24     (host 172.16.2.1   – 172.16.2.254)
@@ -220,7 +222,8 @@ Manfaat:
 3. **Konvergensi lebih cepat**
 4. **Bandwidth control plane lebih hemat**
 
-💡 Ini yang menjaga internet tetap bisa dikelola: tanpa CIDR, tabel routing global akan berisi jutaan entri /24 alih-alih ~1 juta entri agregat.
+> [!TIP]
+> Ini yang menjaga internet tetap bisa dikelola: tanpa CIDR, tabel routing global akan berisi jutaan entri /24 alih-alih ~1 juta entri agregat.
 
 ### Cara menghitung summary route
 
@@ -252,7 +255,8 @@ SUMMARY = 192.168.0.0/22
 SUMMARY = 10.0.0.0/14
 ```
 
-⚠️ **Perhatikan:** `10.0.0.0/14` mencakup `10.0.0.0` – `10.3.255.255` — termasuk **10.0.0.0/16 yang tidak ada dalam daftar**. Ini disebut **over-summarization**.
+> [!WARNING]
+> **Perhatikan:** `10.0.0.0/14` mencakup `10.0.0.0` – `10.3.255.255` — termasuk **10.0.0.0/16 yang tidak ada dalam daftar**. Ini disebut **over-summarization**.
 
 ### Bahaya over-summarization
 
@@ -283,7 +287,8 @@ Contoh: 4 jaringan /24 → log₂(4) = 2 → summary = /22
         2 jaringan /24 → log₂(2) = 1 → summary = /23
 ```
 
-⚠️ **Syarat:** jaringan harus **berurutan** dan **selaras (aligned)** pada batas blok summary.
+> [!WARNING]
+> **Syarat:** jaringan harus **berurutan** dan **selaras (aligned)** pada batas blok summary.
 ```
 ✅ Bisa diringkas: 192.168.0.0/24, .1.0/24, .2.0/24, .3.0/24 → /22
 ❌ Tidak bisa    : 192.168.1.0/24, .2.0/24, .3.0/24, .4.0/24
@@ -329,7 +334,8 @@ Perusahaan: 10.0.0.0/8
 
 Dengan skema ini, router core cukup menyimpan satu rute per kota, bukan ratusan rute per lantai.
 
-⚠️ **Ini keputusan desain yang harus dibuat di awal.** Mengubah skema alamat setelah jaringan berjalan adalah proyek besar.
+> [!WARNING]
+> **Ini keputusan desain yang harus dibuat di awal.** Mengubah skema alamat setelah jaringan berjalan adalah proyek besar.
 
 ---
 
@@ -401,7 +407,8 @@ Wildcard: 254 = 11111110
 access-list 10 permit 192.168.0.0 0.0.254.255
 ```
 
-💡 Trik ini berguna untuk ACL yang ringkas, tetapi **kurangi pemakaiannya** — sulit dibaca orang lain dan mudah salah. Kejelasan lebih penting daripada keringkasan pada konfigurasi produksi.
+> [!TIP]
+> Trik ini berguna untuk ACL yang ringkas, tetapi **kurangi pemakaiannya** — sulit dibaca orang lain dan mudah salah. Kejelasan lebih penting daripada keringkasan pada konfigurasi produksi.
 
 ---
 
@@ -441,9 +448,11 @@ R1(config-if)# ip address 10.0.0.0 255.255.255.254
 R2(config-if)# ip address 10.0.0.1 255.255.255.254
 ```
 
-⚠️ Beberapa perangkat dan software lama tidak mendukung /31. Uji dulu sebelum menerapkannya luas. Didukung: Cisco IOS/IOS-XE/NX-OS, Juniper, Arista, Linux, FRR.
+> [!WARNING]
+> Beberapa perangkat dan software lama tidak mendukung /31. Uji dulu sebelum menerapkannya luas. Didukung: Cisco IOS/IOS-XE/NX-OS, Juniper, Arista, Linux, FRR.
 
-💡 **Alternatif modern:** **unnumbered interface** — link P2P tidak diberi alamat sama sekali, meminjam alamat loopback router.
+> [!TIP]
+> **Alternatif modern:** **unnumbered interface** — link P2P tidak diberi alamat sama sekali, meminjam alamat loopback router.
 ```
 R1(config-if)# ip unnumbered loopback0
 ```
@@ -506,19 +515,26 @@ print('wildcard:', ipaddress.ip_address(int(ipaddress.ip_address('255.255.255.25
 
 ## 8. Kesalahan Umum
 
-⚠️ **1. Mengalokasikan VLSM dari kecil ke besar.** Subnet besar tidak akan muat karena alignment.
+> [!WARNING]
+> **1. Mengalokasikan VLSM dari kecil ke besar.** Subnet besar tidak akan muat karena alignment.
 
-⚠️ **2. Tidak menjumlahkan kebutuhan total dulu.** Baru sadar kekurangan alamat setelah setengah jalan.
+> [!WARNING]
+> **2. Tidak menjumlahkan kebutuhan total dulu.** Baru sadar kekurangan alamat setelah setengah jalan.
 
-⚠️ **3. Over-summarization.** Mengiklankan blok yang mencakup jaringan milik pihak lain → black hole.
+> [!WARNING]
+> **3. Over-summarization.** Mengiklankan blok yang mencakup jaringan milik pihak lain → black hole.
 
-⚠️ **4. Meringkas jaringan yang tidak aligned.** `192.168.1.0`–`.4.0` tidak bisa menjadi satu /22.
+> [!WARNING]
+> **4. Meringkas jaringan yang tidak aligned.** `192.168.1.0`–`.4.0` tidak bisa menjadi satu /22.
 
-⚠️ **5. Tertukar subnet mask dan wildcard mask** di ACL/OSPF. Cisco menerima keduanya di beberapa konteks, sehingga kesalahan tidak selalu langsung terlihat.
+> [!WARNING]
+> **5. Tertukar subnet mask dan wildcard mask** di ACL/OSPF. Cisco menerima keduanya di beberapa konteks, sehingga kesalahan tidak selalu langsung terlihat.
 
-⚠️ **6. Alokasi alamat yang tidak hierarkis.** Membuat summarization mustahil di kemudian hari.
+> [!WARNING]
+> **6. Alokasi alamat yang tidak hierarkis.** Membuat summarization mustahil di kemudian hari.
 
-⚠️ **7. Membuat subnet terlalu pas tanpa ruang tumbuh.**
+> [!WARNING]
+> **7. Membuat subnet terlalu pas tanpa ruang tumbuh.**
 
 ---
 
@@ -561,11 +577,11 @@ print('wildcard:', ipaddress.ip_address(int(ipaddress.ip_address('255.255.255.25
    ```
 
 2. Empat jaringan /24 berurutan dan aligned (mulai dari .4 yang merupakan kelipatan 4).
-   log₂(4) = 2 → 24 − 2 = **/22** → **`172.16.4.0/22`** (mencakup 172.16.4.0 – 172.16.7.255).
+   log₂(4) = 2 → 24 − 2 = **/22** → **`172.16.4.0/22`** (mencakup 172.16.4.0-172.16.7.255).
 
-3. **Tidak bisa menjadi satu blok.** Empat jaringan berurutan membutuhkan /14, tetapi batas /14 ada di 10.0, 10.4, 10.8, ... — sehingga 10.1–10.4 tidak aligned.
-   - `10.0.0.0/14` mencakup 10.0–10.3 (memasukkan 10.0 yang tidak dimiliki, dan tidak mencakup 10.4).
-   - Ringkasan yang benar: **`10.1.0.0/16` + `10.2.0.0/15` + `10.4.0.0/16`** (tiga rute), atau terima over-summarization `10.0.0.0/13` (10.0–10.7) jika seluruh blok itu memang milik Anda.
+3. **Tidak bisa menjadi satu blok.** Empat jaringan berurutan membutuhkan /14, tetapi batas /14 ada di 10.0, 10.4, 10.8, ... — sehingga 10.1-10.4 tidak aligned.
+   - `10.0.0.0/14` mencakup 10.0-10.3 (memasukkan 10.0 yang tidak dimiliki, dan tidak mencakup 10.4).
+   - Ringkasan yang benar: **`10.1.0.0/16` + `10.2.0.0/15` + `10.4.0.0/16`** (tiga rute), atau terima over-summarization `10.0.0.0/13` (10.0-10.7) jika seluruh blok itu memang milik Anda.
 
 4. 255−255, 255−255, 255−252, 255−0 → **`0.0.3.255`**.
 
@@ -615,4 +631,4 @@ print('wildcard:', ipaddress.ip_address(int(ipaddress.ip_address('255.255.255.25
 
 ---
 
-**Berikutnya:** `04-network-layer/04-arp-icmp.md` — protokol pendamping yang membuat IP bekerja.
+**Berikutnya:** `04-network-layer/04-arp-icmp.md`. Protokol pendamping yang membuat IP bekerja.

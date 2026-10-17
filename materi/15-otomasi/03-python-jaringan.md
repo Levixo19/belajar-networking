@@ -1,9 +1,10 @@
-# 15.3 — Python untuk Otomasi Jaringan
+# 15.3 Python untuk Otomasi Jaringan
 
 > **Prasyarat:** `15-otomasi/02`, dasar pemrograman membantu
 > **Tujuan:** Anda bisa memakai library Python utama untuk otomasi jaringan: Netmiko, NAPALM, Nornir, ncclient, Jinja2, dan requests.
 
-> 📌 **Python adalah bahasa dominan otomasi jaringan.** Anda tidak perlu menjadi programmer ahli — cukup menguasai dasar dan library jaringan. Modul ini fokus pada penerapan, bukan teori pemrograman.
+> > [!NOTE]
+> > **Python adalah bahasa dominan otomasi jaringan.** Anda tidak perlu menjadi programmer ahli — cukup menguasai dasar dan library jaringan. Modul ini fokus pada penerapan, bukan teori pemrograman.
 
 ---
 
@@ -37,13 +38,15 @@ except Exception as e:
 # $ pip install netmiko napalm nornir
 ```
 
-⚠️ **Selalu pakai virtual environment (`venv`).** Menginstal library langsung ke Python sistem menyebabkan konflik dependensi dan bisa merusak alat sistem. Setiap proyek otomasi punya `venv` sendiri.
+> [!WARNING]
+> **Selalu pakai virtual environment (`venv`).** Menginstal library langsung ke Python sistem menyebabkan konflik dependensi dan bisa merusak alat sistem. Setiap proyek otomasi punya `venv` sendiri.
 
-💡 **Error handling bukan opsional di otomasi jaringan.** Perangkat bisa tidak terjangkau, kredensial salah, atau perintah gagal. Skrip tanpa `try/except` yang menyentuh 200 perangkat akan berhenti di perangkat pertama yang bermasalah — dan Anda tidak tahu mana yang berhasil.
+> [!TIP]
+> **Error handling bukan opsional di otomasi jaringan.** Perangkat bisa tidak terjangkau, kredensial salah, atau perintah gagal. Skrip tanpa `try/except` yang menyentuh 200 perangkat akan berhenti di perangkat pertama yang bermasalah — dan Anda tidak tahu mana yang berhasil.
 
 ---
 
-## 2. Netmiko — SSH Multi-Vendor
+## 2. Netmiko: SSH Multi-Vendor
 
 Library paling populer untuk **CLI over SSH**. Menyederhanakan Paramiko dan menangani perbedaan vendor.
 
@@ -109,9 +112,11 @@ with ThreadPoolExecutor(max_workers=10) as executor:
         print(r)
 ```
 
-💡 **`use_textfsm=True` mengubah output CLI menjadi data terstruktur** (list of dict) — sehingga Anda tidak perlu mem-parse teks secara manual. Netmiko memakai template TextFSM dari proyek `ntc-templates`.
+> [!TIP]
+> **`use_textfsm=True` mengubah output CLI menjadi data terstruktur** (list of dict) — sehingga Anda tidak perlu mem-parse teks secara manual. Netmiko memakai template TextFSM dari proyek `ntc-templates`.
 
-⚠️ **Netmiko adalah CLI scraping** — rapuh terhadap perubahan format output antar-versi. Untuk perangkat yang mendukung NETCONF/RESTCONF, itu lebih andal. Tetapi Netmiko tetap dominan karena bekerja di **semua** perangkat yang punya SSH.
+> [!WARNING]
+> **Netmiko adalah CLI scraping** — rapuh terhadap perubahan format output antar-versi. Untuk perangkat yang mendukung NETCONF/RESTCONF, itu lebih andal. Tetapi Netmiko tetap dominan karena bekerja di **semua** perangkat yang punya SSH.
 
 ### MikroTik dengan Netmiko
 
@@ -129,7 +134,7 @@ conn.send_config_set(["/ip address add address=10.0.0.1/24 interface=ether2"])
 
 ---
 
-## 3. NAPALM — Abstraksi Multi-Vendor
+## 3. NAPALM (Abstraksi Multi-Vendor)
 
 **NAPALM** (Network Automation and Programmability Abstraction Layer with Multivendor support) memberi **API yang sama** untuk vendor berbeda.
 
@@ -158,7 +163,8 @@ device.get_environment()
 device.close()
 ```
 
-💡 **Keunggulan NAPALM: getter yang sama untuk semua vendor.** `get_bgp_neighbors()` mengembalikan struktur data yang identik apakah perangkatnya Cisco IOS, Arista EOS, atau Junos — sehingga skrip Anda portabel. Ini mengatasi kelemahan Netmiko yang output-nya berbeda per vendor.
+> [!TIP]
+> **Keunggulan NAPALM: getter yang sama untuk semua vendor.** `get_bgp_neighbors()` mengembalikan struktur data yang identik apakah perangkatnya Cisco IOS, Arista EOS, atau Junos — sehingga skrip Anda portabel. Ini mengatasi kelemahan Netmiko yang output-nya berbeda per vendor.
 
 ### Konfigurasi dengan diff dan rollback
 
@@ -178,13 +184,14 @@ if diff:
 device.close()
 ```
 
-⚠️ **`compare_config()` (diff) sebelum commit adalah praktik terbaik** — Anda melihat persis apa yang akan berubah sebelum menerapkannya. NAPALM juga mendukung **rollback** ke konfigurasi sebelumnya di banyak platform.
+> [!WARNING]
+> **`compare_config()` (diff) sebelum commit adalah praktik terbaik** — Anda melihat persis apa yang akan berubah sebelum menerapkannya. NAPALM juga mendukung **rollback** ke konfigurasi sebelumnya di banyak platform.
 
 ---
 
 ## 4. Scrapli dan ncclient
 
-### Scrapli — alternatif Netmiko yang lebih cepat
+### Scrapli: alternatif Netmiko yang lebih cepat
 
 ```python
 from scrapli import Scrapli
@@ -203,9 +210,10 @@ with Scrapli(**device) as conn:
     parsed = response.textfsm_parse_output()
 ```
 
-💡 **Scrapli lebih cepat dan modern daripada Netmiko**, dengan dukungan async. **scrapli-netconf** menangani NETCONF. Untuk proyek baru, banyak yang memilih Scrapli.
+> [!TIP]
+> **Scrapli lebih cepat dan modern daripada Netmiko**, dengan dukungan async. **scrapli-netconf** menangani NETCONF. Untuk proyek baru, banyak yang memilih Scrapli.
 
-### ncclient — NETCONF
+### ncclient: NETCONF
 
 ```python
 from ncclient import manager
@@ -219,7 +227,7 @@ with manager.connect(host="192.168.1.1", port=830, username="admin",
 
 ---
 
-## 5. Jinja2 — Templating Konfigurasi
+## 5. Jinja2: Templating Konfigurasi
 
 Memisahkan **template** (struktur) dari **data** (nilai) — kunci konfigurasi yang konsisten dan skalabel.
 
@@ -282,13 +290,15 @@ interface GigabitEthernet0/24
  no shutdown
 ```
 
-💡 **Templating adalah dasar konfigurasi konsisten.** Anda menulis template sekali, lalu menghasilkan konfigurasi untuk ratusan perangkat dari data yang berbeda. Perubahan pada standar cukup diubah di template, bukan di setiap perangkat.
+> [!TIP]
+> **Templating adalah dasar konfigurasi konsisten.** Anda menulis template sekali, lalu menghasilkan konfigurasi untuk ratusan perangkat dari data yang berbeda. Perubahan pada standar cukup diubah di template, bukan di setiap perangkat.
 
-⚠️ **`trim_blocks` dan `lstrip_blocks`** mengontrol whitespace — tanpa itu, template menghasilkan baris kosong dan spasi yang tidak diinginkan. Selalu uji output template sebelum menerapkannya.
+> [!WARNING]
+> **`trim_blocks` dan `lstrip_blocks`** mengontrol whitespace — tanpa itu, template menghasilkan baris kosong dan spasi yang tidak diinginkan. Selalu uji output template sebelum menerapkannya.
 
 ---
 
-## 6. requests dan httpx — REST API
+## 6. requests dan httpx: REST API
 
 Untuk berinteraksi dengan controller (Catalyst Center, Meraki, ACI) dan RESTCONF.
 
@@ -316,9 +326,11 @@ r = requests.get(
 data = r.json()
 ```
 
-💡 **httpx** adalah alternatif modern requests dengan dukungan async dan HTTP/2 — berguna untuk API yang lambat atau banyak request paralel. Untuk sebagian besar kasus, requests sudah cukup.
+> [!TIP]
+> **httpx** adalah alternatif modern requests dengan dukungan async dan HTTP/2 — berguna untuk API yang lambat atau banyak request paralel. Untuk sebagian besar kasus, requests sudah cukup.
 
-⚠️ **Jangan hard-code kredensial di skrip.** Gunakan environment variable, vault, atau file terpisah yang tidak masuk Git:
+> [!WARNING]
+> **Jangan hard-code kredensial di skrip.** Gunakan environment variable, vault, atau file terpisah yang tidak masuk Git:
 ```python
 import os
 API_KEY = os.environ["MERAKI_API_KEY"]   # dari env var
@@ -326,7 +338,7 @@ API_KEY = os.environ["MERAKI_API_KEY"]   # dari env var
 
 ---
 
-## 7. Nornir — Framework Orkestrasi
+## 7. Nornir: Framework Orkestrasi
 
 **Nornir** adalah framework Python murni untuk otomasi jaringan — menangani **inventory, konkurensi, dan orkestrasi**, lalu memanggil Netmiko/NAPALM/Scrapli sebagai plugin.
 
@@ -369,7 +381,8 @@ core:
     role: core
 ```
 
-💡 **Nornir memberi struktur** untuk otomasi skala besar: inventory terkelola, konkurensi otomatis, filtering perangkat, dan hasil terstruktur. Ia adalah "kerangka" yang memanggil Netmiko/NAPALM sebagai "mesin". Bisa memakai NetBox sebagai sumber inventory dinamis.
+> [!TIP]
+> **Nornir memberi struktur** untuk otomasi skala besar: inventory terkelola, konkurensi otomatis, filtering perangkat, dan hasil terstruktur. Ia adalah "kerangka" yang memanggil Netmiko/NAPALM sebagai "mesin". Bisa memakai NetBox sebagai sumber inventory dinamis.
 
 ---
 
@@ -438,11 +451,12 @@ if __name__ == "__main__":
     main()
 ```
 
-💡 **Skrip audit read-only seperti ini adalah titik awal yang aman** untuk otomasi — tidak mengubah apa pun, hanya membaca dan melaporkan. Bangun kepercayaan dengan tugas read-only sebelum ke perubahan.
+> [!TIP]
+> **Skrip audit read-only seperti ini adalah titik awal yang aman** untuk otomasi — tidak mengubah apa pun, hanya membaca dan melaporkan. Bangun kepercayaan dengan tugas read-only sebelum ke perubahan.
 
 ---
 
-## 9. Scapy — Membuat dan Menganalisis Paket
+## 9. Scapy: Membuat dan Menganalisis Paket
 
 Untuk memahami protokol dan membuat paket kustom (lihat juga `12-keamanan/06`).
 
@@ -470,11 +484,12 @@ for _, rcv in ans:
     print(rcv[ARP].psrc, rcv[Ether].src)
 ```
 
-💡 **Scapy sangat berguna untuk BELAJAR protokol** — Anda bisa membuat paket apa pun dan melihat responsnya, memahami header secara langsung. Untuk network engineer, ini alat pendidikan yang luar biasa. ⚠️ Ingat batasan hukum untuk pengujian (`12-keamanan/06`).
+> [!TIP]
+> **Scapy sangat berguna untuk BELAJAR protokol** — Anda bisa membuat paket apa pun dan melihat responsnya, memahami header secara langsung. Untuk network engineer, ini alat pendidikan yang luar biasa. ⚠️ Ingat batasan hukum untuk pengujian (`12-keamanan/06`).
 
 ---
 
-## 10. pyATS/Genie — Testing dan Validasi Cisco
+## 10. pyATS/Genie: Testing dan Validasi Cisco
 
 Framework testing jaringan dari Cisco.
 
@@ -497,7 +512,8 @@ device.learn("bgp")     # pelajari state BGP
 # bandingkan sebelum/sesudah untuk validasi
 ```
 
-💡 **pyATS/Genie unggul untuk validasi** — mengambil "snapshot" state jaringan (routing, BGP, interface) sebelum perubahan, lalu membandingkan setelahnya untuk memastikan tidak ada yang rusak. Ribuan parser bawaan mengubah output CLI Cisco menjadi struktur.
+> [!TIP]
+> **pyATS/Genie unggul untuk validasi** — mengambil "snapshot" state jaringan (routing, BGP, interface) sebelum perubahan, lalu membandingkan setelahnya untuk memastikan tidak ada yang rusak. Ribuan parser bawaan mengubah output CLI Cisco menjadi struktur.
 
 ---
 
@@ -527,7 +543,8 @@ device.learn("bgp")     # pelajari state BGP
 ❌ JANGAN buat koneksi baru berulang tanpa batas konkurensi
 ```
 
-⚠️ **Blast radius:** skrip yang menyentuh 500 perangkat bisa merusak 500 perangkat. Selalu (a) uji di lab, (b) jalankan pada 1-2 perangkat dulu, (c) perluas bertahap, (d) siapkan rollback, (e) punya batas konkurensi agar tidak membanjiri jaringan atau AAA server.
+> [!WARNING]
+> **Blast radius:** skrip yang menyentuh 500 perangkat bisa merusak 500 perangkat. Selalu (a) uji di lab, (b) jalankan pada 1-2 perangkat dulu, (c) perluas bertahap, (d) siapkan rollback, (e) punya batas konkurensi agar tidak membanjiri jaringan atau AAA server.
 
 ---
 
@@ -543,7 +560,7 @@ device.learn("bgp")     # pelajari state BGP
 - **Scapy**: membuat/menganalisis paket — alat belajar protokol yang luar biasa.
 - **pyATS/Genie**: testing dan validasi Cisco dengan snapshot state sebelum/sesudah.
 - **Mulai read-only** (backup, audit), lalu perluas bertahap. **Dry-run, diff, lab, subset kecil** sebelum produksi.
-- ⚠️ **Blast radius**: otomasi memperbesar dampak kesalahan — batasi konkurensi, uji bertahap, siapkan rollback.
+- **Blast radius**: otomasi memperbesar dampak kesalahan — batasi konkurensi, uji bertahap, siapkan rollback.
 
 ---
 
@@ -600,4 +617,4 @@ device.learn("bgp")     # pelajari state BGP
 
 ---
 
-**Berikutnya:** `15-otomasi/04-ansible-cicd.md` — otomasi deklaratif dan CI/CD jaringan.
+**Berikutnya:** `15-otomasi/04-ansible-cicd.md`. Otomasi deklaratif dan CI/CD jaringan.

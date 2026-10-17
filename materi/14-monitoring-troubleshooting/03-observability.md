@@ -1,9 +1,10 @@
-# 14.3 — Observability: Monitoring Proaktif
+# 14.3 Observability: Monitoring Proaktif
 
 > **Prasyarat:** `06-aplikasi/05` (SNMP, syslog), `14-monitoring-troubleshooting/01`
 > **Tujuan:** Anda paham cara memantau jaringan secara proaktif, memilih metode dan alat yang tepat, dan mendesain sistem monitoring yang bermakna.
 
-> 📌 **Monitoring mengubah troubleshooting dari reaktif menjadi proaktif** — dari "kenapa ini rusak?" menjadi "ini akan bermasalah dalam seminggu, mari perbaiki sekarang". Tanpa data historis, sebagian besar masalah (terutama intermiten dan tren) tidak dapat didiagnosis.
+> > [!NOTE]
+> > **Monitoring mengubah troubleshooting dari reaktif menjadi proaktif** — dari "kenapa ini rusak?" menjadi "ini akan bermasalah dalam seminggu, mari perbaiki sekarang". Tanpa data historis, sebagian besar masalah (terutama intermiten dan tren) tidak dapat didiagnosis.
 
 ---
 
@@ -20,11 +21,12 @@
 
 Untuk jaringan, **metrics dan logs** adalah yang utama.
 
-⚠️ **Monitoring ≠ observability.** Monitoring memberi tahu **apakah** sistem sehat (dashboard, alert). Observability memungkinkan Anda **menanyakan pertanyaan baru** tentang perilaku sistem tanpa harus mendeploy ulang instrumentasi. Keduanya penting.
+> [!WARNING]
+> **Monitoring ≠ observability.** Monitoring memberi tahu **apakah** sistem sehat (dashboard, alert). Observability memungkinkan Anda **menanyakan pertanyaan baru** tentang perilaku sistem tanpa harus mendeploy ulang instrumentasi. Keduanya penting.
 
 ---
 
-## 2. SNMP — Polling Klasik
+## 2. SNMP (Polling Klasik)
 
 Sudah dibahas di `06-aplikasi/05`. Di sini fokus pada penerapan monitoring.
 
@@ -48,14 +50,16 @@ ifOutDiscards      .1.3.6.1.2.1.2.2.1.19
 cpmCPUTotal5minRev .1.3.6.1.4.1.9.9.109...    CPU Cisco
 ```
 
-⚠️ **WAJIB pakai counter 64-bit (`ifHC*`).** Counter 32-bit **wrap dalam 34 detik** di link 1 Gbps dan **3,4 detik** di 10 Gbps — dengan polling 5 menit, grafik utilisasi Anda akan salah total. Ini kesalahan monitoring paling umum.
+> [!WARNING]
+> **WAJIB pakai counter 64-bit (`ifHC*`).** Counter 32-bit **wrap dalam 34 detik** di link 1 Gbps dan **3,4 detik** di 10 Gbps — dengan polling 5 menit, grafik utilisasi Anda akan salah total. Ini kesalahan monitoring paling umum.
 
 ```bash
 $ snmpwalk -v3 -l authPriv -u monitoring -a SHA -A AuthPass \
     -x AES -X PrivPass 192.168.1.1 ifHCInOctets
 ```
 
-⚠️ **Gunakan SNMPv3.** SNMPv2c mengirim community string plaintext — siapa pun yang menyadap bisa membacanya, dan community RW memungkinkan **mengubah konfigurasi perangkat**.
+> [!WARNING]
+> **Gunakan SNMPv3.** SNMPv2c mengirim community string plaintext — siapa pun yang menyadap bisa membacanya, dan community RW memungkinkan **mengubah konfigurasi perangkat**.
 
 ### Cara utilisasi dihitung
 
@@ -67,11 +71,12 @@ rate (bps) = (counter_baru − counter_lama) × 8 / interval_detik
 utilisasi (%) = rate / bandwidth_link × 100
 ```
 
-⚠️ **Karena rate dihitung dari rata-rata interval polling, MICROBURST tidak terlihat.** Grafik menunjukkan utilisasi 20% padahal ada lonjakan mikrodetik yang menyebabkan drop. Kalau `output drops` naik padahal utilisasi rata-rata rendah, curigai microburst (lihat `03-data-link/02`).
+> [!WARNING]
+> **Karena rate dihitung dari rata-rata interval polling, MICROBURST tidak terlihat.** Grafik menunjukkan utilisasi 20% padahal ada lonjakan mikrodetik yang menyebabkan drop. Kalau `output drops` naik padahal utilisasi rata-rata rendah, curigai microburst (lihat `03-data-link/02`).
 
 ---
 
-## 3. Streaming Telemetry — Pengganti Modern
+## 3. Streaming Telemetry: Pengganti Modern
 
 ```
 Model PUSH: perangkat MENDORONG data ke collector secara kontinu
@@ -81,7 +86,7 @@ Model PUSH: perangkat MENDORONG data ke collector secara kontinu
 | | **SNMP (pull)** | **Streaming Telemetry (push)** |
 |---|---|---|
 | Model | Poll berkala | Subscribe + push kontinu |
-| Interval | 1–5 menit | Detik atau sub-detik |
+| Interval | 1-5 menit | Detik atau sub-detik |
 | Beban perangkat | Tinggi (setiap poll = kerja CPU) | Rendah (sekali subscribe) |
 | Granularitas | Kasar | **Halus** — menangkap microburst |
 | Format | ASN.1/BER | **Protobuf/JSON** (gNMI, gRPC) |
@@ -93,9 +98,11 @@ Protokol: gNMI (gRPC Network Management Interface), NETCONF, RESTCONF
 Model data: OpenConfig, YANG
 ```
 
-💡 **Streaming telemetry adalah arah masa depan** karena SNMP tidak bisa memberi granularitas detik pada skala besar. gNMI dengan model OpenConfig memungkinkan monitoring yang jauh lebih detail dan real-time — penting untuk mendeteksi microburst dan masalah transien.
+> [!TIP]
+> **Streaming telemetry adalah arah masa depan** karena SNMP tidak bisa memberi granularitas detik pada skala besar. gNMI dengan model OpenConfig memungkinkan monitoring yang jauh lebih detail dan real-time — penting untuk mendeteksi microburst dan masalah transien.
 
-⚠️ **SNMP masih dominan** karena didukung semua perangkat dan alat monitoring. Realitanya: kebanyakan jaringan memakai SNMP, dan streaming telemetry diadopsi bertahap di perangkat/lingkungan modern.
+> [!WARNING]
+> **SNMP masih dominan** karena didukung semua perangkat dan alat monitoring. Realitanya: kebanyakan jaringan memakai SNMP, dan streaming telemetry diadopsi bertahap di perangkat/lingkungan modern.
 
 Detail gNMI di `15-otomasi/02`.
 
@@ -126,7 +133,8 @@ Monitoring **alur** — siapa berbicara dengan siapa, tanpa membaca isi paket.
 - Anomali trafik dari baseline
 ```
 
-💡 **Flow monitoring adalah jembatan antara jaringan dan keamanan** — ia memberi visibilitas ke **pola** trafik tanpa perlu menyimpan payload (yang mahal dan sering terenkripsi). Sangat berharga untuk deteksi C2 dan eksfiltrasi.
+> [!TIP]
+> **Flow monitoring adalah jembatan antara jaringan dan keamanan** — ia memberi visibilitas ke **pola** trafik tanpa perlu menyimpan payload (yang mahal dan sering terenkripsi). Sangat berharga untuk deteksi C2 dan eksfiltrasi.
 
 ### Field record NetFlow
 
@@ -180,7 +188,8 @@ Sudah dibahas di `06-aplikasi/05`. Prinsip monitoring:
 ✅ Parsing dan indexing untuk pencarian cepat
 ```
 
-⚠️ **Log yang tidak dikumpulkan terpusat hampir tidak berguna.** Saat perangkat crash atau diretas, log lokalnya hilang atau tidak dapat diakses. Dan mencari lintas 50 perangkat satu per satu saat outage tidak praktis.
+> [!WARNING]
+> **Log yang tidak dikumpulkan terpusat hampir tidak berguna.** Saat perangkat crash atau diretas, log lokalnya hilang atau tidak dapat diakses. Dan mencari lintas 50 perangkat satu per satu saat outage tidak praktis.
 
 ### Kejadian yang harus dipantau/di-alert
 
@@ -251,7 +260,8 @@ ip sla 2
  frequency 300
 ```
 
-💡 **Synthetic monitoring menangkap masalah SEBELUM pengguna melaporkannya** — dan memberi baseline objektif ("latency ke DNS naik dari 5 ms ke 200 ms pukul 14:00") yang jauh lebih berguna daripada laporan subjektif ("internet terasa lambat").
+> [!TIP]
+> **Synthetic monitoring menangkap masalah SEBELUM pengguna melaporkannya** — dan memberi baseline objektif ("latency ke DNS naik dari 5 ms ke 200 ms pukul 14:00") yang jauh lebih berguna daripada laporan subjektif ("internet terasa lambat").
 
 ---
 
@@ -295,7 +305,8 @@ groups:
     expr: probe_ssl_earliest_cert_expiry - time() < 86400 * 14
 ```
 
-💡 **Prometheus (pull) cocok untuk metrik**; untuk jaringan tradisional, `snmp_exporter` menjembatani SNMP ke Prometheus. Grafana bisa memvisualkan dari banyak sumber (Prometheus, InfluxDB, Elasticsearch).
+> [!TIP]
+> **Prometheus (pull) cocok untuk metrik**; untuk jaringan tradisional, `snmp_exporter` menjembatani SNMP ke Prometheus. Grafana bisa memvisualkan dari banyak sumber (Prometheus, InfluxDB, Elasticsearch).
 
 ### Alternatif populer
 
@@ -309,13 +320,15 @@ Nagios/Icinga→ klasik, berbasis check
 The Dude     → gratis dari MikroTik, untuk jaringan MikroTik
 ```
 
-💡 **Untuk jaringan yang didominasi SNMP, LibreNMS atau Zabbix adalah titik awal yang sangat baik** — auto-discovery, dashboard bawaan, dan alerting tanpa banyak konfigurasi. **The Dude** cocok untuk lingkungan MikroTik.
+> [!TIP]
+> **Untuk jaringan yang didominasi SNMP, LibreNMS atau Zabbix adalah titik awal yang sangat baik** — auto-discovery, dashboard bawaan, dan alerting tanpa banyak konfigurasi. **The Dude** cocok untuk lingkungan MikroTik.
 
 ---
 
 ## 8. Menyusun Dashboard yang Bermakna
 
-⚠️ **Dashboard yang penuh grafik tanpa fokus JUSTRU mengaburkan masalah.** Rancang dengan tujuan.
+> [!WARNING]
+> **Dashboard yang penuh grafik tanpa fokus JUSTRU mengaburkan masalah.** Rancang dengan tujuan.
 
 ```
 Prinsip dashboard yang baik:
@@ -337,9 +350,10 @@ Level 4 — Investigasi      : metrik spesifik + log + flow pada garis waktu sam
 
 ---
 
-## 9. Alerting — Melakukannya dengan Benar
+## 9. Alerting: Melakukannya dengan Benar
 
-⚠️ **Alerting yang buruk lebih berbahaya daripada tidak ada alerting.** Terlalu banyak alert palsu → **alert fatigue** → orang mengabaikan semua alert, termasuk yang penting.
+> [!WARNING]
+> **Alerting yang buruk lebih berbahaya daripada tidak ada alerting.** Terlalu banyak alert palsu → **alert fatigue** → orang mengabaikan semua alert, termasuk yang penting.
 
 ```
 Prinsip alerting yang baik:
@@ -360,7 +374,8 @@ Prinsip alerting yang baik:
 ❌ JANGAN alert pada hal yang tidak akan Anda tindaklanjuti pukul 3 pagi
 ```
 
-💡 **Aturan: setiap alert harus bisa dijawab dengan "apa yang harus saya lakukan sekarang?".** Kalau jawabannya "tidak ada" atau "tunggu saja", itu bukan alert — jadikan dashboard/laporan.
+> [!TIP]
+> **Aturan: setiap alert harus bisa dijawab dengan "apa yang harus saya lakukan sekarang?".** Kalau jawabannya "tidak ada" atau "tunggu saja", itu bukan alert — jadikan dashboard/laporan.
 
 ### SLA, SLO, SLI
 
@@ -374,7 +389,8 @@ Error budget = 100% − SLO
   → memandu keputusan: perbaiki keandalan vs kirim fitur baru
 ```
 
-💡 **Error budget mengubah keandalan dari "sebanyak mungkin" menjadi keputusan berbasis data.** Kalau SLO 99,9% (43 menit/bulan) dan Anda sudah memakai 40 menit, jangan lakukan perubahan berisiko.
+> [!TIP]
+> **Error budget mengubah keandalan dari "sebanyak mungkin" menjadi keputusan berbasis data.** Kalau SLO 99,9% (43 menit/bulan) dan Anda sudah memakai 40 menit, jangan lakukan perubahan berisiko.
 
 ---
 
@@ -401,9 +417,11 @@ Metode billing/kapasitas umum:
 → Mengabaikan lonjakan singkat, mencerminkan penggunaan yang berkelanjutan
 ```
 
-⚠️ **95th percentile mengabaikan burst 5% teratas** — berguna untuk billing dan kapasitas normal, tetapi **tidak menangkap microburst** yang menyebabkan drop. Untuk analisis kualitas, lihat juga puncak dan drop.
+> [!WARNING]
+> **95th percentile mengabaikan burst 5% teratas** — berguna untuk billing dan kapasitas normal, tetapi **tidak menangkap microburst** yang menyebabkan drop. Untuk analisis kualitas, lihat juga puncak dan drop.
 
-💡 **Rencanakan upgrade SEBELUM link mencapai jenuh.** Aturan umum: mulai rencanakan upgrade saat utilisasi puncak konsisten melewati 70–80%. Menunggu sampai 100% berarti pengguna sudah menderita sebelum Anda bertindak.
+> [!TIP]
+> **Rencanakan upgrade SEBELUM link mencapai jenuh.** Aturan umum: mulai rencanakan upgrade saat utilisasi puncak konsisten melewati 70–80%. Menunggu sampai 100% berarti pengguna sudah menderita sebelum Anda bertindak.
 
 ---
 
@@ -421,31 +439,42 @@ Integrasi dengan `12-keamanan/06`:
 - Monitoring integritas konfigurasi (config drift)
 ```
 
-💡 **NetFlow + log DNS + log firewall yang dikorelasikan** memberi deteksi keamanan yang kuat tanpa perlu membaca payload (yang sering terenkripsi). Beaconing, koneksi ke domain baru, dan volume upload tidak wajar terlihat jelas dari metadata.
+> [!TIP]
+> **NetFlow + log DNS + log firewall yang dikorelasikan** memberi deteksi keamanan yang kuat tanpa perlu membaca payload (yang sering terenkripsi). Beaconing, koneksi ke domain baru, dan volume upload tidak wajar terlihat jelas dari metadata.
 
 ---
 
 ## 12. Kesalahan Umum Monitoring
 
-⚠️ **1. Counter 32-bit di link cepat** → grafik utilisasi salah (wrap). Pakai `ifHC*` 64-bit.
+> [!WARNING]
+> **1. Counter 32-bit di link cepat** → grafik utilisasi salah (wrap). Pakai `ifHC*` 64-bit.
 
-⚠️ **2. Tidak ada baseline** → tidak bisa mengenali abnormal.
+> [!WARNING]
+> **2. Tidak ada baseline** → tidak bisa mengenali abnormal.
 
-⚠️ **3. Waktu tidak tersinkronisasi** → korelasi antar-perangkat mustahil.
+> [!WARNING]
+> **3. Waktu tidak tersinkronisasi** → korelasi antar-perangkat mustahil.
 
-⚠️ **4. Log lokal, tidak terpusat** → hilang saat crash, tidak bisa dicari.
+> [!WARNING]
+> **4. Log lokal, tidak terpusat** → hilang saat crash, tidak bisa dicari.
 
-⚠️ **5. Alert fatigue** → terlalu banyak alert palsu, yang penting terabaikan.
+> [!WARNING]
+> **5. Alert fatigue** → terlalu banyak alert palsu, yang penting terabaikan.
 
-⚠️ **6. Monitoring "up/down" saja** → tidak menangkap degradasi (lambat tetapi masih up).
+> [!WARNING]
+> **6. Monitoring "up/down" saja** → tidak menangkap degradasi (lambat tetapi masih up).
 
-⚠️ **7. Interval polling terlalu panjang** → microburst dan transien tidak terlihat.
+> [!WARNING]
+> **7. Interval polling terlalu panjang** → microburst dan transien tidak terlihat.
 
-⚠️ **8. SNMPv2c dengan community default** → risiko keamanan.
+> [!WARNING]
+> **8. SNMPv2c dengan community default** → risiko keamanan.
 
-⚠️ **9. Memantau perangkat, bukan LAYANAN** → CPU router 50% tidak berarti apa-apa bagi pengguna; latency aplikasi berarti.
+> [!WARNING]
+> **9. Memantau perangkat, bukan LAYANAN** → CPU router 50% tidak berarti apa-apa bagi pengguna; latency aplikasi berarti.
 
-⚠️ **10. Tidak memantau sertifikat TLS** → sertifikat kedaluwarsa menyebabkan outage yang mudah dicegah.
+> [!WARNING]
+> **10. Tidak memantau sertifikat TLS** → sertifikat kedaluwarsa menyebabkan outage yang mudah dicegah.
 
 ---
 
@@ -462,8 +491,8 @@ Integrasi dengan `12-keamanan/06`:
 - Stack modern: **Prometheus + Grafana + Alertmanager**; alternatif jaringan: **Zabbix, LibreNMS, The Dude**.
 - **Alert hanya pada yang actionable** — alert fatigue lebih berbahaya daripada tidak ada alert.
 - **SLI/SLO/SLA + error budget** mengubah keandalan menjadi keputusan berbasis data.
-- **95th percentile** untuk billing/kapasitas (tetapi mengabaikan microburst). Rencanakan upgrade di ~70–80% utilisasi.
-- ⚠️ **Pantau LAYANAN, bukan hanya perangkat** — dan jangan lupa **sertifikat TLS**.
+- **95th percentile** untuk billing/kapasitas (tetapi mengabaikan microburst). Rencanakan upgrade di ~70-80% utilisasi.
+- **Pantau LAYANAN, bukan hanya perangkat** — dan jangan lupa **sertifikat TLS**.
 
 ---
 
@@ -508,7 +537,7 @@ Integrasi dengan `12-keamanan/06`:
 
 ## 15. Sumber
 
-- RFC 3411–3418 — SNMPv3 · RFC 7011 — IPFIX · RFC 3176 — sFlow
+- RFC 3411-3418 — SNMPv3 · RFC 7011 — IPFIX · RFC 3176 — sFlow
 - gNMI / OpenConfig — https://www.openconfig.net/
 - Prometheus — https://prometheus.io/docs/ · Grafana — https://grafana.com/docs/
 - Zabbix — https://www.zabbix.com/documentation · LibreNMS — https://docs.librenms.org/
@@ -517,4 +546,4 @@ Integrasi dengan `12-keamanan/06`:
 
 ---
 
-**Berikutnya:** `14-monitoring-troubleshooting/04-studi-kasus.md` — 15 skenario troubleshooting nyata dengan solusinya.
+**Berikutnya:** `14-monitoring-troubleshooting/04-studi-kasus.md`. 15 skenario troubleshooting nyata dengan solusinya.

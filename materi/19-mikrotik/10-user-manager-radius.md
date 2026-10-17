@@ -1,4 +1,4 @@
-# 19.10 — User Manager dan RADIUS (MTCUME)
+# 19.10 User Manager dan RADIUS (MTCUME)
 
 > **Prasyarat:** `19-mikrotik/04-qos-queue-hotspot` (hotspot, simple queue), `19-mikrotik/06-vpn-tunnel` (PPPoE server, PPP profile), `12-keamanan/04-aaa-identitas` (konsep AAA, RADIUS vs TACACS+)
 > **Tujuan:** Anda bisa menjelaskan cara kerja RADIUS sampai tingkat paket (kode, authenticator, atribut, accounting, CoA/Disconnect), membangun server User Manager v7 dengan profile dan limitation, menghubungkan PPPoE server dan Hotspot ke server itu, membuat voucher dan billing sederhana untuk RT-RW Net atau kafe, memakai FreeRADIUS sebagai alternatif, mengamankan jalur RADIUS, dan mendiagnosis kegagalan autentikasi secara sistematis.
@@ -217,7 +217,8 @@ Di RouterOS, interval diatur di tiga tempat:
 /ip hotspot profile set hsprof-kafe radius-interim-update=received
 ```
 
-💡 Lima menit adalah kompromi yang masuk akal untuk 100 sampai 1.000 pelanggan. Interval satu menit membuat server menerima ribuan paket per menit dan basis data User Manager di flash tumbuh cepat. Interval satu jam membuat kuota bisa terlampaui jauh sebelum pemutusan.
+> [!TIP]
+> Lima menit adalah kompromi yang masuk akal untuk 100 sampai 1.000 pelanggan. Interval satu menit membuat server menerima ribuan paket per menit dan basis data User Manager di flash tumbuh cepat. Interval satu jam membuat kuota bisa terlampaui jauh sebelum pemutusan.
 
 ---
 
@@ -238,7 +239,8 @@ Penerima CoA di RouterOS adalah menu `/radius incoming`:
 /radius incoming set accept=yes port=3799
 ```
 
-⚠️ **Jangan mengandalkan nilai bawaan.** `accept` bawaan `/radius incoming` adalah `no`, jadi tanpa perintah di atas NAS mengabaikan semua CoA. Untuk port, halaman RADIUS di dokumentasi RouterOS masih menulis bawaan **1700**, tetapi router CHR 7.24.5 yang baru dipasang di lab modul ini menampilkan `port: 3799` pada `/radius incoming print`, sama dengan `coa-port` bawaan di `/user-manager router` dan dengan RFC 5176. Karena sumber resmi dan perilaku nyata tidak sama, dan perangkat lama atau server RADIUS lain bisa memakai 1700, setel port secara eksplisit di kedua sisi dan periksa dengan `/radius incoming print`. Modul ini memakai 3799.
+> [!WARNING]
+> **Jangan mengandalkan nilai bawaan.** `accept` bawaan `/radius incoming` adalah `no`, jadi tanpa perintah di atas NAS mengabaikan semua CoA. Untuk port, halaman RADIUS di dokumentasi RouterOS masih menulis bawaan **1700**, tetapi router CHR 7.24.5 yang baru dipasang di lab modul ini menampilkan `port: 3799` pada `/radius incoming print`, sama dengan `coa-port` bawaan di `/user-manager router` dan dengan RFC 5176. Karena sumber resmi dan perilaku nyata tidak sama, dan perangkat lama atau server RADIUS lain bisa memakai 1700, setel port secara eksplisit di kedua sisi dan periksa dengan `/radius incoming print`. Modul ini memakai 3799.
 
 NAS hanya menerima CoA dari alamat yang terdaftar di `/radius` dengan secret yang sama. Paket dari alamat lain dihitung sebagai `bad-requests` dan tidak dijawab.
 
@@ -286,7 +288,8 @@ Received Disconnect-NAK Id 188 ...
 
 `bad-requests: 1` di atas berasal dari percobaan pertama, sebelum alamat pengirim didaftarkan di `/radius`. Itulah gejala khas CoA yang "tidak berbuat apa-apa".
 
-💡 Pemakaian CoA yang paling berguna di RT-RW Net: menurunkan kecepatan pelanggan yang menunggak menjadi 512k/512k dan mengalihkan web-nya ke halaman tagihan (lewat `Mikrotik-Address-List` atau `Filter-Id`), tanpa harus menunggu modem pelanggan reconnect.
+> [!TIP]
+> Pemakaian CoA yang paling berguna di RT-RW Net: menurunkan kecepatan pelanggan yang menunggak menjadi 512k/512k dan mengalihkan web-nya ke halaman tagihan (lewat `Mikrotik-Address-List` atau `Filter-Id`), tanpa harus menunggu modem pelanggan reconnect.
 
 ---
 
@@ -389,7 +392,8 @@ User Manager dibatasi tingkat lisensi RouterOS. Tabel lisensi di dokumentasi Mik
 | HotSpot active users | 1 | 200 | 500 | tidak terbatas |
 | PPPoE tunnels | 200 | 200 | 500 | tidak terbatas |
 
-⚠️ Angka ini sering mengejutkan. Router level 4 (misalnya banyak seri hAP dan RB) hanya bisa melayani 20 sesi aktif User Manager. Untuk RT-RW Net 200 pelanggan, User Manager harus berjalan di perangkat level 6 (seri CCR umumnya) atau di CHR, atau Anda memakai FreeRADIUS. Dokumentasi menyatakan tabel level ini tidak berlaku untuk CHR; CHR punya skema lisensi sendiri yang membatasi kecepatan per antarmuka (free 1 Mbit, P1 1 Gbit, P10 10 Gbit, P-Unlimited tanpa batas). Selalu periksa tabel lisensi terbaru sebelum membeli perangkat.
+> [!WARNING]
+> Angka ini sering mengejutkan. Router level 4 (misalnya banyak seri hAP dan RB) hanya bisa melayani 20 sesi aktif User Manager. Untuk RT-RW Net 200 pelanggan, User Manager harus berjalan di perangkat level 6 (seri CCR umumnya) atau di CHR, atau Anda memakai FreeRADIUS. Dokumentasi menyatakan tabel level ini tidak berlaku untuk CHR; CHR punya skema lisensi sendiri yang membatasi kecepatan per antarmuka (free 1 Mbit, P1 1 Gbit, P10 10 Gbit, P-Unlimited tanpa batas). Selalu periksa tabel lisensi terbaru sebelum membeli perangkat.
 
 ### 7.4 Memasang paket
 
@@ -615,9 +619,11 @@ Flags: R - RADIUS
 | `cookie`, `mac-cookie` | Login ulang otomatis selama cookie berlaku | Kenyamanan pengguna ponsel |
 | `trial` | Akses gratis sementara, diatur `trial-uptime` | Promosi kafe |
 
-⚠️ Sejak RouterOS 7.5 (changelog), Hotspot otomatis menolak permintaan HTTPS dari pengguna yang belum login. Ponsel modern mendeteksi captive portal lewat permintaan HTTP khusus atau lewat opsi DHCP captive portal (dokumentasi menyebut RFC 7710; opsi ini dikirim bila Hotspot punya `dns-name` dan sertifikat SSL yang valid). Bila pengguna mengeluh "halaman login tidak muncul", minta mereka membuka situs HTTP biasa, lalu periksa apakah DNS hotspot dan sertifikat sudah benar.
+> [!WARNING]
+> Sejak RouterOS 7.5 (changelog), Hotspot otomatis menolak permintaan HTTPS dari pengguna yang belum login. Ponsel modern mendeteksi captive portal lewat permintaan HTTP khusus atau lewat opsi DHCP captive portal (dokumentasi menyebut RFC 7710; opsi ini dikirim bila Hotspot punya `dns-name` dan sertifikat SSL yang valid). Bila pengguna mengeluh "halaman login tidak muncul", minta mereka membuka situs HTTP biasa, lalu periksa apakah DNS hotspot dan sertifikat sudah benar.
 
-⚠️ Sejak RouterOS 7.17, perangkat baru dikirim dengan **device-mode**. Mode `home` dan `basic` mematikan Hotspot. Bila `/ip hotspot` menolak dengan "not allowed by device-mode", Anda harus menjalankan `/system device-mode update hotspot=yes` lalu mengonfirmasi dengan menekan tombol reset atau mencabut daya dalam waktu yang ditentukan. CHR yang dipakai di lab ini berjalan di mode `advanced` dengan `hotspot: yes`.
+> [!WARNING]
+> Sejak RouterOS 7.17, perangkat baru dikirim dengan **device-mode**. Mode `home` dan `basic` mematikan Hotspot. Bila `/ip hotspot` menolak dengan "not allowed by device-mode", Anda harus menjalankan `/system device-mode update hotspot=yes` lalu mengonfirmasi dengan menekan tombol reset atau mencabut daya dalam waktu yang ditentukan. CHR yang dipakai di lab ini berjalan di mode `advanced` dengan `hotspot: yes`.
 
 ### 10.2 IP binding dan walled garden
 
@@ -716,7 +722,8 @@ Laporan pemakaian untuk bagian keuangan:
 
 Fitur "beli profile" di halaman `/um/` saat ini hanya mendukung **PayPal** (dokumentasi: "currently PayPal only"). Untuk pasar Indonesia yang memakai transfer bank, dompet digital, atau QRIS, Anda tetap perlu proses di luar User Manager: kasir atau aplikasi billing pihak ketiga yang menambahkan user-profile setelah pembayaran terkonfirmasi, misalnya lewat REST API RouterOS (`19-mikrotik/07-monitoring-scripting`).
 
-⚠️ Menjual kembali akses internet kepada tetangga atau pengunjung adalah kegiatan usaha telekomunikasi. Pastikan model usaha Anda (misalnya kemitraan dengan ISP berizin) sesuai ketentuan yang berlaku di Indonesia, dan catatan sesi yang Anda simpan diperlakukan sebagai data pribadi.
+> [!WARNING]
+> Menjual kembali akses internet kepada tetangga atau pengunjung adalah kegiatan usaha telekomunikasi. Pastikan model usaha Anda (misalnya kemitraan dengan ISP berizin) sesuai ketentuan yang berlaku di Indonesia, dan catatan sesi yang Anda simpan diperlakukan sebagai data pribadi.
 
 ---
 
@@ -1054,4 +1061,4 @@ Langkah 1 sampai 8 dijalankan pada 13 Oktober 2026 dengan CHR 7.24.5 di QEMU/KVM
 
 ---
 
-**Berikutnya:** `19-mikrotik/11-crs-switching` — switch chip CRS3xx/5xx, offload L2 dan L3, isolasi port, MSTP, LACP, dan SwOS.
+**Berikutnya:** `19-mikrotik/11-crs-switching`. Switch chip CRS3xx/5xx, offload L2 dan L3, isolasi port, MSTP, LACP, dan SwOS.

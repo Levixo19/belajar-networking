@@ -1,4 +1,4 @@
-# 21.2 — Rumpun Infrastruktur: Jaringan, Telekomunikasi & Cloud
+# 21.2 Rumpun Infrastruktur: Jaringan, Telekomunikasi & Cloud
 
 > **Prasyarat:** sudah membaca modul 21.1 (rumpun inti: network engineer dan network administrator), serta paham dasar routing (`07-routing-lanjutan/04-ospf`, `07-routing-lanjutan/06-bgp`) dan desain (`17-desain-arsitektur/01-prinsip-desain`).
 > **Tujuan:** Anda mengenal tujuh profesi di rumpun infrastruktur (network architect, cloud network engineer, wireless network engineer, telecom engineer, VoIP engineer, data center engineer, NOC technician): pekerjaan hariannya, ukuran keberhasilannya, sertifikasi terkini, jalur masuk di Indonesia, dan modul kurikulum yang harus Anda kuasai untuk masing-masing.
@@ -21,9 +21,11 @@ Yang menyatukan mereka: semuanya membangun atau menjaga **jalan** yang dilewati 
 | Cloud Network Engineer | VPC/VNet, konektivitas hybrid, IaC | Menengah | AZ-700, Google PCNE, AWS SAA-C03, AWS ANS-C01 (pensiun akhir 2026) | Startup, bank digital, perusahaan migrasi cloud, partner AWS/Azure/GCP |
 | Network Architect | Desain menyeluruh, standar, keputusan teknologi | Senior | CCNP Enterprise, CCDE, CCIE Enterprise Infrastructure | Bank, BUMN, operator, system integrator besar, konsultan |
 
-💡 **Baca tabel itu dari atas ke bawah sebagai satu lintasan yang mungkin.** Banyak orang memulai di NOC, pindah ke peran spesialis (wireless, telekomunikasi, data center, cloud, VoIP), lalu setelah bertahun-tahun pengalaman lintas domain naik menjadi arsitek. Itu bukan satu-satunya jalan, tetapi itu jalan yang paling sering terlihat di Indonesia.
+> [!TIP]
+> **Baca tabel itu dari atas ke bawah sebagai satu lintasan yang mungkin.** Banyak orang memulai di NOC, pindah ke peran spesialis (wireless, telekomunikasi, data center, cloud, VoIP), lalu setelah bertahun-tahun pengalaman lintas domain naik menjadi arsitek. Itu bukan satu-satunya jalan, tetapi itu jalan yang paling sering terlihat di Indonesia.
 
-⚠️ **Nama jabatan di lowongan Indonesia tidak seragam.** "Network Engineer" di satu ISP bisa berarti pekerjaan NOC, sementara "NOC Engineer" di operator lain bisa berarti engineer level 2 yang mengonfigurasi BGP. Selalu baca deskripsi tugasnya, bukan judulnya.
+> [!WARNING]
+> **Nama jabatan di lowongan Indonesia tidak seragam.** "Network Engineer" di satu ISP bisa berarti pekerjaan NOC, sementara "NOC Engineer" di operator lain bisa berarti engineer level 2 yang mengonfigurasi BGP. Selalu baca deskripsi tugasnya, bukan judulnya.
 
 ---
 
@@ -61,7 +63,7 @@ O*NET (basis data okupasi Departemen Tenaga Kerja AS) merangkum tugas arsitek ja
 | Jenjang | Sertifikasi | Catatan |
 |---|---|---|
 | Menengah | **CCNP Enterprise**: ujian inti 350-401 ENCOR + satu konsentrasi, idealnya **300-420 ENSLD** (desain) | Konsentrasi lain: ENARSI, ENSDWI, ENAUTO, ENCC, ENNA |
-| Menengah | **AWS Certified Solutions Architect – Associate (SAA-C03)** | Arsitek modern harus paham cloud |
+| Menengah | **AWS Certified Solutions Architect - Associate (SAA-C03)** | Arsitek modern harus paham cloud |
 | Senior | **CCDE**: ujian tertulis 400-007 + ujian praktik 8 jam (v3.1) | Satu-satunya sertifikasi expert Cisco yang murni desain |
 | Senior | **CCIE Enterprise Infrastructure**: 350-401 ENCOR + lab 8 jam (v1.1) | Bukti kedalaman implementasi |
 
@@ -127,13 +129,14 @@ Contoh skenario di sebuah fintech yang memakai AWS region Jakarta dan Azure Indo
 
 | Jenjang | Sertifikasi | Status per Oktober 2026 |
 |---|---|---|
-| Pemula/menengah | **AWS Certified Solutions Architect – Associate (SAA-C03)** | Aktif |
+| Pemula/menengah | **AWS Certified Solutions Architect - Associate (SAA-C03)** | Aktif |
 | Menengah | **Microsoft Certified: Azure Network Engineer Associate (AZ-700)** | Aktif; diperpanjang gratis tiap 12 bulan lewat asesmen daring |
 | Menengah/senior | **Google Cloud Professional Cloud Network Engineer** | Aktif; disarankan 3+ tahun pengalaman industri, termasuk 1+ tahun di Google Cloud |
 | Menengah | **CCNP Enterprise** dengan konsentrasi **300-440 ENCC** (Designing and Implementing Secure Cloud Connectivity) | Aktif |
-| Senior | **AWS Certified Advanced Networking – Specialty (ANS-C01)** | **Sedang dipensiunkan.** Hari terakhir ujian 31 Desember 2026, tanpa pengganti yang diumumkan |
+| Senior | **AWS Certified Advanced Networking - Specialty (ANS-C01)** | **Sedang dipensiunkan.** Hari terakhir ujian 31 Desember 2026, tanpa pengganti yang diumumkan |
 
-⚠️ **Jangan memulai persiapan ANS-C01 sekarang kecuali Anda yakin bisa ujian sebelum 31 Desember 2026.** Sertifikasi yang sudah diraih tetap berlaku, tetapi AWS tidak akan menerbitkannya lagi setelah tanggal itu. Untuk jalur AWS, SAA-C03 ditambah pengalaman nyata membangun konektivitas hybrid adalah bukti yang lebih tahan lama.
+> [!WARNING]
+> **Jangan memulai persiapan ANS-C01 sekarang kecuali Anda yakin bisa ujian sebelum 31 Desember 2026.** Sertifikasi yang sudah diraih tetap berlaku, tetapi AWS tidak akan menerbitkannya lagi setelah tanggal itu. Untuk jalur AWS, SAA-C03 ditambah pengalaman nyata membangun konektivitas hybrid adalah bukti yang lebih tahan lama.
 
 **Jalur Indonesia:** program Digital Talent Scholarship (Komdigi) secara berkala membuka pelatihan bertema cloud dan jaringan bersama mitra penyedia cloud. Periksa jadwalnya di situs resmi DTS.
 
@@ -205,7 +208,8 @@ Contoh proyek di sebuah rumah sakit swasta di Surabaya:
 | Senior | **CWDP (CWDP-305)**, **CWSP (CWSP-208)**, **CWAP** | Ketiganya mensyaratkan CWNA yang masih berlaku |
 | Expert | **CWNE**, **CCIE Wireless** | Untuk spesialis puncak |
 
-💡 **Cisco mengembalikan jalur wireless yang mandiri pada 2026.** Sebelumnya, konsentrasi wireless (300-425 ENWLSD dan 300-430 ENWLSI) menumpang di CCNP Enterprise. Kini ada CCNP Wireless dengan ujian inti sendiri, dan menurut pengumuman Cisco, ENCOR tidak lagi mencakup konsep wireless. Jika Anda membaca buku persiapan lama, periksa kode ujiannya.
+> [!TIP]
+> **Cisco mengembalikan jalur wireless yang mandiri pada 2026.** Sebelumnya, konsentrasi wireless (300-425 ENWLSD dan 300-430 ENWLSI) menumpang di CCNP Enterprise. Kini ada CCNP Wireless dengan ujian inti sendiri, dan menurut pengumuman Cisco, ENCOR tidak lagi mencakup konsep wireless. Jika Anda membaca buku persiapan lama, periksa kode ujiannya.
 
 ### 4.5 Jalur masuk dan progresi
 
@@ -348,7 +352,8 @@ Contoh hari di system integrator yang menangani contact center sebuah perusahaan
 | Menengah | **CCNP Collaboration**: inti **350-801 CLCOR** + salah satu dari **300-815 CLACC**, **300-820 CLHCT**, **300-830 CLCCE** | Konsentrasi: call control on-premise, hybrid/cloud, atau contact center cloud |
 | Menengah | **Microsoft 365 Certified: Collaboration Communications Systems Engineer Associate (MS-721)** | Menggantikan Teams Voice Engineer (MS-720) yang pensiun Juni 2023; perlu perpanjangan tiap 12 bulan |
 
-⚠️ **Portofolio Cisco Collaboration berubah pada Februari 2026.** Beberapa ujian lama (misalnya 300-810 CLICA dan 300-835 CLAUTO) mencapai akhir masa berlaku, dan Cisco menambahkan fokus cloud dan hybrid. Selalu periksa daftar ujian di situs Cisco sebelum membeli materi belajar.
+> [!WARNING]
+> **Portofolio Cisco Collaboration berubah pada Februari 2026.** Beberapa ujian lama (misalnya 300-810 CLICA dan 300-835 CLAUTO) mencapai akhir masa berlaku, dan Cisco menambahkan fokus cloud dan hybrid. Selalu periksa daftar ujian di situs Cisco sebelum membeli materi belajar.
 
 ### 6.5 Jalur masuk dan progresi
 
@@ -403,7 +408,8 @@ Contoh shift di penyedia colocation di Cikarang:
 - **ANSI/TIA-942.** Revisi terbarunya, **TIA-942-C**, terbit Mei 2024. Standar ini memakai peringkat Rated-1 sampai Rated-4 dan menilai subsistem telekomunikasi, arsitektur, listrik, dan mekanikal secara terpisah; peringkat keseluruhan mengikuti subsistem yang paling rendah.
 - **Kabel terstruktur:** keluarga TIA-568 untuk tembaga dan fiber, serta praktik pelabelan dan dokumentasi.
 
-💡 **Tier (Uptime) dan Rated (TIA-942) bukan hal yang sama**, walaupun konsepnya mirip. Di wawancara, menyebut keduanya dengan tepat langsung menunjukkan Anda pernah membaca standarnya, bukan hanya brosur pemasaran.
+> [!TIP]
+> **Tier (Uptime) dan Rated (TIA-942) bukan hal yang sama**, walaupun konsepnya mirip. Di wawancara, menyebut keduanya dengan tepat langsung menunjukkan Anda pernah membaca standarnya, bukan hanya brosur pemasaran.
 
 ### 7.4 Keahlian dan alat
 
@@ -474,7 +480,8 @@ Contoh shift malam (22.00 sampai 07.00) di ISP regional:
 - Mengelola tiket sesuai proses ITSM (insiden, masalah, perubahan).
 - **Ukuran:** MTTD (*mean time to detect*), MTTA (waktu sampai alarm diakui), MTTR, persentase tiket yang diselesaikan di level 1, kepatuhan SLA respons, dan kualitas catatan tiket.
 
-💡 **NOC yang baik bukan yang paling banyak menutup tiket, melainkan yang mengurangi kebisingan.** Jika Anda bisa mengusulkan perbaikan ambang alarm sehingga 300 alarm palsu per minggu menjadi 30, Anda sedang melakukan pekerjaan engineer, dan atasan Anda akan melihatnya.
+> [!TIP]
+> **NOC yang baik bukan yang paling banyak menutup tiket, melainkan yang mengurangi kebisingan.** Jika Anda bisa mengusulkan perbaikan ambang alarm sehingga 300 alarm palsu per minggu menjadi 30, Anda sedang melakukan pekerjaan engineer, dan atasan Anda akan melihatnya.
 
 ### 8.3 Keahlian dan alat
 
@@ -501,7 +508,8 @@ Ini adalah pintu masuk paling realistis ke dunia jaringan profesional bagi lulus
 
 Progresi: NOC level 1 → NOC level 2 (mulai mengonfigurasi) → **network engineer** atau **network administrator**. Jalur lateral: **cybersecurity analyst** di SOC (pola kerjanya mirip: pemantauan, triase, eskalasi), atau **field network technician**. Berapa lama Anda bertahan di NOC sangat bergantung pada seberapa aktif Anda belajar di luar shift.
 
-⚠️ **Risiko terbesar di NOC adalah terjebak.** Shift malam yang melelahkan bisa membuat Anda hanya "menjaga layar" selama bertahun-tahun. Gunakan jam tenang untuk lab, baca setiap laporan insiden engineer level 3, dan minta ikut proyek perubahan.
+> [!WARNING]
+> **Risiko terbesar di NOC adalah terjebak.** Shift malam yang melelahkan bisa membuat Anda hanya "menjaga layar" selama bertahun-tahun. Gunakan jam tenang untuk lab, baca setiap laporan insiden engineer level 3, dan minta ikut proyek perubahan.
 
 ### 8.6 Pasar kerja Indonesia
 
@@ -602,8 +610,8 @@ Perekrut: ISP besar dan regional, operator seluler, penyedia data center, bank (
 - Cisco: CCNP Data Center Exams and Training: https://www.cisco.com/site/us/en/learn/training-certifications/certifications/datacenter/ccnp-data-center/exams-and-training.html
 - Cisco: 350-501 SPCOR: https://www.cisco.com/site/us/en/learn/training-certifications/exams/spcor.html
 - Cisco: CCNA 200-301: https://www.cisco.com/site/us/en/learn/training-certifications/exams/ccna.html
-- AWS Certified Advanced Networking – Specialty: https://aws.amazon.com/certification/certified-advanced-networking-specialty/
-- AWS Certified Solutions Architect – Associate: https://aws.amazon.com/certification/certified-solutions-architect-associate/
+- AWS Certified Advanced Networking - Specialty: https://aws.amazon.com/certification/certified-advanced-networking-specialty/
+- AWS Certified Solutions Architect - Associate: https://aws.amazon.com/certification/certified-solutions-architect-associate/
 - Microsoft Learn: Azure Network Engineer Associate (AZ-700): https://learn.microsoft.com/en-us/credentials/certifications/azure-network-engineer-associate/
 - Microsoft Learn: Collaboration Communications Systems Engineer Associate (MS-721): https://learn.microsoft.com/en-us/credentials/certifications/m365-collaboration-communications-systems-engineer/
 - Google Cloud: Professional Cloud Network Engineer: https://cloud.google.com/learn/certification/cloud-network-engineer
@@ -634,4 +642,4 @@ Perekrut: ISP besar dan regional, operator seluler, penyedia data center, bank (
 
 ---
 
-**Berikutnya:** `21-ekosistem-profesi/03-rumpun-keamanan` — profesi di rumpun keamanan: network security engineer, cybersecurity analyst, penetration tester, security architect, dan incident responder.
+**Berikutnya:** `21-ekosistem-profesi/03-rumpun-keamanan`. Profesi di rumpun keamanan: network security engineer, cybersecurity analyst, penetration tester, security architect, dan incident responder.

@@ -1,4 +1,4 @@
-# 16.2 — Overlay: VXLAN & EVPN
+# 16.2 Overlay: VXLAN & EVPN
 
 > **Prasyarat:** `16.1`, `03-data-link/03` (VLAN), `07-routing-lanjutan/06` (BGP)
 > **Tujuan:** Anda paham bagaimana VXLAN membangun L2 di atas L3, kenapa VLAN tradisional tidak cukup untuk DC/cloud, dan peran EVPN sebagai control plane.
@@ -16,11 +16,12 @@ VLAN (802.1Q) punya batasan fundamental untuk DC dan cloud multi-tenant:
 | **STP** | Membatasi skala dan membuang link (lihat `16.1`) |
 | **Mobilitas VM** | Migrasi VM antar-rak butuh L2 yang sama — sulit di fabric L3 |
 
-⚠️ **Batas 4094 VLAN** adalah pembunuh utama di lingkungan cloud multi-tenant. Satu penyedia cloud bisa punya puluhan ribu pelanggan yang masing-masing butuh segmen terisolasi.
+> [!WARNING]
+> **Batas 4094 VLAN** adalah pembunuh utama di lingkungan cloud multi-tenant. Satu penyedia cloud bisa punya puluhan ribu pelanggan yang masing-masing butuh segmen terisolasi.
 
 ---
 
-## 2. VXLAN — L2 di Atas L3
+## 2. VXLAN (L2 di Atas L3)
 
 **VXLAN (Virtual eXtensible LAN, RFC 7348)** membungkus frame Ethernet di dalam paket **UDP/IP**, sehingga segmen L2 dapat membentang di atas jaringan L3 (underlay).
 
@@ -50,9 +51,11 @@ Dibungkus VXLAN saat keluar dari VTEP:
                 VM-A dan VM-B merasa di satu LAN (VNI 5000)
 ```
 
-💡 **VNI menggantikan VLAN ID di overlay** — 16 juta segmen vs 4094. VM-A dan VM-B di rak berbeda, terhubung lewat routing L3, tetapi **merasa berada di satu segmen L2 yang sama** karena VXLAN membungkus frame mereka. Inilah yang memungkinkan mobilitas VM dan multi-tenancy skala besar.
+> [!TIP]
+> **VNI menggantikan VLAN ID di overlay** — 16 juta segmen vs 4094. VM-A dan VM-B di rak berbeda, terhubung lewat routing L3, tetapi **merasa berada di satu segmen L2 yang sama** karena VXLAN membungkus frame mereka. Inilah yang memungkinkan mobilitas VM dan multi-tenancy skala besar.
 
-⚠️ **VXLAN menambah overhead ~50 byte** (IP+UDP+VXLAN header). Karena itu MTU underlay harus dinaikkan (jumbo frames, mis. 9000) agar frame overlay 1500 byte tidak terfragmentasi. Lupa menaikkan MTU underlay adalah penyebab umum masalah performa/PMTUD di fabric VXLAN.
+> [!WARNING]
+> **VXLAN menambah overhead ~50 byte** (IP+UDP+VXLAN header). Karena itu MTU underlay harus dinaikkan (jumbo frames, mis. 9000) agar frame overlay 1500 byte tidak terfragmentasi. Lupa menaikkan MTU underlay adalah penyebab umum masalah performa/PMTUD di fabric VXLAN.
 
 ---
 
@@ -66,7 +69,7 @@ VXLAN saja hanya mendefinisikan **data plane** (cara membungkus). Pertanyaannya:
 
 ---
 
-## 4. EVPN — Control Plane untuk VXLAN
+## 4. EVPN (Control Plane untuk VXLAN)
 
 **EVPN (Ethernet VPN)** memakai **MP-BGP** (Multiprotocol BGP) untuk mendistribusikan informasi MAC dan IP antar-VTEP — sehingga tidak perlu flood-and-learn.
 
@@ -82,9 +85,11 @@ CONTROL PLANE: EVPN via MP-BGP (siapa di mana — MAC/IP ke VTEP)
 - **ARP suppression** — VTEP bisa menjawab ARP lokal karena sudah tahu MAC/IP dari BGP, mengurangi broadcast ARP.
 - Mendukung **routing antar-VNI** (integrated routing and bridging / IRB).
 
-💡 **"VXLAN adalah amplop, EVPN adalah buku alamat."** VXLAN tahu cara membungkus dan mengirim paket; EVPN (lewat BGP) memberi tahu setiap VTEP alamat siapa ada di mana, sehingga pengiriman efisien tanpa flooding buta.
+> [!TIP]
+> **"VXLAN adalah amplop, EVPN adalah buku alamat."** VXLAN tahu cara membungkus dan mengirim paket; EVPN (lewat BGP) memberi tahu setiap VTEP alamat siapa ada di mana, sehingga pengiriman efisien tanpa flooding buta.
 
-⚠️ **EVPN-VXLAN adalah standar de-facto data center modern** (menggantikan flood-and-learn dan solusi proprietary). Kombinasi ini: underlay BGP/OSPF + overlay VXLAN + control plane EVPN. Cisco, Arista, Juniper, Nokia, dan Cumulus/NVIDIA semuanya mendukungnya secara interoperabel.
+> [!WARNING]
+> **EVPN-VXLAN adalah standar de-facto data center modern** (menggantikan flood-and-learn dan solusi proprietary). Kombinasi ini: underlay BGP/OSPF + overlay VXLAN + control plane EVPN. Cisco, Arista, Juniper, Nokia, dan Cumulus/NVIDIA semuanya mendukungnya secara interoperabel.
 
 ---
 
@@ -151,4 +156,4 @@ Ini yang berjalan di balik Cisco ACI/NX-OS, Arista, dan fabric cloud. CCNA menye
 
 ---
 
-**Berikutnya:** `16-datacenter-cloud-sdn/03-storage-virtualisasi.md` — jaringan storage dan virtualisasi.
+**Berikutnya:** `16-datacenter-cloud-sdn/03-storage-virtualisasi.md`. Jaringan storage dan virtualisasi.

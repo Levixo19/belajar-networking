@@ -1,4 +1,4 @@
-# 19.5 — MikroTik: Wireless (CAPsMAN & Konfigurasi)
+# 19.5 MikroTik: Wireless (CAPsMAN & Konfigurasi)
 
 > **Prasyarat:** `19-mikrotik/01-02`, `10-wireless/01-04` (RF, 802.11, keamanan, desain)
 > **Tujuan:** Anda bisa mengonfigurasi wireless RouterOS (AP, station, security profile), memahami CAPsMAN untuk manajemen AP terpusat, dan mode wireless untuk skenario PTP/PTMP (backhaul ISP).
@@ -11,7 +11,8 @@ RouterOS mendukung berbagai mode wireless. Perhatikan: ada dua "generasi" paket 
 - **paket `wireless`** (lama, tetapi masih luas dipakai; mendukung fitur khas MikroTik seperti Nstreme/Nv2).
 - **paket `wifiwave2` / `wifi`** (baru, untuk perangkat Wi-Fi 5/6, konfigurasi berbeda).
 
-⚠️ **Perintah berbeda antara paket lama (`/interface wireless`) dan baru (`/interface wifi`).** Cek perangkat & RouterOS Anda. Modul ini memakai contoh paket `wireless` klasik (paling umum di lapangan ISP); konsepnya serupa di `wifi`.
+> [!WARNING]
+> **Perintah berbeda antara paket lama (`/interface wireless`) dan baru (`/interface wifi`).** Cek perangkat & RouterOS Anda. Modul ini memakai contoh paket `wireless` klasik (paling umum di lapangan ISP); konsepnya serupa di `wifi`.
 
 ```routeros
 # Lihat interface wireless
@@ -40,7 +41,8 @@ PTMP (Point-to-Multipoint):
    Satu tower melayani banyak pelanggan (WISP)
 ```
 
-💡 **station-bridge** memungkinkan bridging L2 transparan pada sisi klien (hanya antar-perangkat MikroTik) — penting untuk backhaul WISP di mana Anda ingin L2 tembus. Untuk klien non-MikroTik, keterbatasan bridging pada mode `station` biasa (karena wireless station standar tidak bisa mem-bridge banyak MAC) diatasi dengan station-bridge atau fitur seperti EoIP.
+> [!TIP]
+> **station-bridge** memungkinkan bridging L2 transparan pada sisi klien (hanya antar-perangkat MikroTik) — penting untuk backhaul WISP di mana Anda ingin L2 tembus. Untuk klien non-MikroTik, keterbatasan bridging pada mode `station` biasa (karena wireless station standar tidak bisa mem-bridge banyak MAC) diatasi dengan station-bridge atau fitur seperti EoIP.
 
 ---
 
@@ -62,9 +64,11 @@ set wlan1 mode=ap-bridge ssid="WiFi-Kantor" band=2ghz-b/g/n \
 /interface bridge port add bridge=bridge1 interface=wlan1
 ```
 
-⚠️ **Pilih frekuensi/kanal non-overlap** (2.4 GHz: 1/6/11 → 2412/2437/2462 MHz) untuk menghindari interferensi — konsep dari `10-wireless/01`. Gunakan **frequency scan** dan **spectral scan** RouterOS untuk melihat kanal yang ramai sebelum memilih.
+> [!WARNING]
+> **Pilih frekuensi/kanal non-overlap** (2.4 GHz: 1/6/11 → 2412/2437/2462 MHz) untuk menghindari interferensi — konsep dari `10-wireless/01`. Gunakan **frequency scan** dan **spectral scan** RouterOS untuk melihat kanal yang ramai sebelum memilih.
 
-💡 **`band`** menentukan standar & pita (mis. `2ghz-b/g/n`, `5ghz-a/n/ac`). Sesuaikan dengan perangkat dan kebutuhan. Untuk banyak klien, 5 GHz (lebih banyak kanal non-overlap, lebih sedikit interferensi) lebih baik bila jangkauan mencukupi.
+> [!TIP]
+> **`band`** menentukan standar & pita (mis. `2ghz-b/g/n`, `5ghz-a/n/ac`). Sesuaikan dengan perangkat dan kebutuhan. Untuk banyak klien, 5 GHz (lebih banyak kanal non-overlap, lebih sedikit interferensi) lebih baik bila jangkauan mencukupi.
 
 ---
 
@@ -90,7 +94,7 @@ Konsep keamanan (WPA2/WPA3, SAE, 802.1X/EAP) dijelaskan di `10-wireless/03`. ⚠
 
 ---
 
-## 5. CAPsMAN — Manajemen AP Terpusat
+## 5. CAPsMAN: Manajemen AP Terpusat
 
 **CAPsMAN (Controlled Access Point system Manager)** memusatkan manajemen banyak AP MikroTik dari satu controller — setara konsep **WLC** (`10-wireless/04`).
 
@@ -114,9 +118,11 @@ set enabled=yes interfaces=wlan1 discovery-interfaces=bridge1 \
     caps-man-addresses=192.168.1.1
 ```
 
-💡 **CAPsMAN = WLC-nya MikroTik.** AP menjadi "CAP" (Controlled AP) yang mengambil konfigurasi (SSID, security, channel) dari controller terpusat — memudahkan mengelola puluhan AP secara konsisten, mendukung roaming, dan channel management otomatis. Untuk deployment banyak AP (hotel, kampus, kantor besar), CAPsMAN sangat menghemat kerja. (Paket `wifi` baru punya padanannya sendiri.)
+> [!TIP]
+> **CAPsMAN = WLC-nya MikroTik.** AP menjadi "CAP" (Controlled AP) yang mengambil konfigurasi (SSID, security, channel) dari controller terpusat — memudahkan mengelola puluhan AP secara konsisten, mendukung roaming, dan channel management otomatis. Untuk deployment banyak AP (hotel, kampus, kantor besar), CAPsMAN sangat menghemat kerja. (Paket `wifi` baru punya padanannya sendiri.)
 
-⚠️ **Datapath**: putuskan apakah trafik klien di-forward lokal di AP (**local forwarding**) atau di-tunnel ke controller (**central forwarding**) — pilihan yang sama seperti CAPWAP local/central switching di `10-wireless/04`. Local forwarding lebih efisien untuk trafik lokal; central untuk kebijakan terpusat.
+> [!WARNING]
+> **Datapath**: putuskan apakah trafik klien di-forward lokal di AP (**local forwarding**) atau di-tunnel ke controller (**central forwarding**) — pilihan yang sama seperti CAPWAP local/central switching di `10-wireless/04`. Local forwarding lebih efisien untuk trafik lokal; central untuk kebijakan terpusat.
 
 ---
 
@@ -129,9 +135,11 @@ Nv2 (NV2)   → TDMA-based, lebih baik untuk PTMP (banyak klien), kurangi
 Nstreme dual→ dua antena/radio untuk full-duplex PTP jarak jauh
 ```
 
-💡 **Nv2 (TDMA)** dirancang MikroTik untuk **PTMP WISP** — memakai time-division (bukan CSMA/CA 802.11 biasa) sehingga mengurangi tabrakan dan masalah hidden node saat satu tower melayani banyak pelanggan berjauhan. ⚠️ Nstreme/Nv2 **hanya bekerja antar-perangkat MikroTik** (proprietary) — tidak kompatibel dengan klien Wi-Fi standar.
+> [!TIP]
+> **Nv2 (TDMA)** dirancang MikroTik untuk **PTMP WISP** — memakai time-division (bukan CSMA/CA 802.11 biasa) sehingga mengurangi tabrakan dan masalah hidden node saat satu tower melayani banyak pelanggan berjauhan. ⚠️ Nstreme/Nv2 **hanya bekerja antar-perangkat MikroTik** (proprietary) — tidak kompatibel dengan klien Wi-Fi standar.
 
-⚠️ **Regulasi frekuensi**: daya pancar dan kanal yang boleh dipakai (terutama 5 GHz) **diatur** (di Indonesia oleh Komdigi/Kominfo — lihat `10-wireless/03`). Untuk link outdoor/WISP, patuhi batas daya dan alokasi frekuensi yang diizinkan; frekuensi tertentu perlu izin. Jangan melebihi EIRP yang diizinkan.
+> [!WARNING]
+> **Regulasi frekuensi**: daya pancar dan kanal yang boleh dipakai (terutama 5 GHz) **diatur** (di Indonesia oleh Komdigi/Kominfo — lihat `10-wireless/03`). Untuk link outdoor/WISP, patuhi batas daya dan alokasi frekuensi yang diizinkan; frekuensi tertentu perlu izin. Jangan melebihi EIRP yang diizinkan.
 
 ---
 
@@ -156,7 +164,7 @@ Nstreme dual→ dua antena/radio untuk full-duplex PTP jarak jauh
 - Pilih **kanal non-overlap** (1/6/11 di 2.4 GHz); pakai frequency/spectral scan.
 - **CAPsMAN** = WLC MikroTik: AP jadi **CAP** ambil konfigurasi terpusat; pilih **local vs central forwarding** (datapath).
 - Fitur ISP: **Nstreme** (PTP), **Nv2/TDMA** (PTMP, kurangi hidden node) — **proprietary, antar-MikroTik saja**.
-- ⚠️ Patuhi **regulasi frekuensi & daya** (Komdigi/Kominfo) untuk link outdoor/WISP.
+- **Perhatian:** Patuhi **regulasi frekuensi & daya** (Komdigi/Kominfo) untuk link outdoor/WISP.
 
 ---
 
@@ -194,4 +202,4 @@ Nstreme dual→ dua antena/radio untuk full-duplex PTP jarak jauh
 
 ---
 
-**Berikutnya:** `19-mikrotik/06-vpn-tunnel.md` — VPN & tunneling RouterOS (PPPoE, IPsec, WireGuard, EoIP).
+**Berikutnya:** `19-mikrotik/06-vpn-tunnel.md`. VPN & tunneling RouterOS (PPPoE, IPsec, WireGuard, EoIP).

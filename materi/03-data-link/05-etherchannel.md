@@ -1,4 +1,4 @@
-# 03.5 — EtherChannel / Link Aggregation
+# 03.5 EtherChannel / Link Aggregation
 
 > **Prasyarat:** `03-data-link/04`
 > **Tujuan:** Anda bisa mengonfigurasi EtherChannel dengan LACP, memahami mengapa satu aliran tidak bisa melebihi satu link, dan mendiagnosis kegagalan bundling.
@@ -61,7 +61,8 @@ Empat transfer dari server berbeda ke tujuan berbeda:
 
 **Kenapa begitu?** Kalau satu aliran TCP dipecah ke beberapa link, paket bisa tiba **tidak berurutan** (karena link punya latency sedikit berbeda). TCP akan menafsirkan out-of-order sebagai kehilangan paket → fast retransmit → throughput justru **turun drastis**. Jadi EtherChannel sengaja menjaga setiap aliran tetap di satu link.
 
-⚠️ **Konsekuensi praktis:** kalau Anda perlu satu aliran 10 Gbps, EtherChannel 10 × 1 Gbps **tidak akan membantu**. Anda butuh link fisik 10 Gbps.
+> [!WARNING]
+> **Konsekuensi praktis:** kalau Anda perlu satu aliran 10 Gbps, EtherChannel 10 × 1 Gbps **tidak akan membantu**. Anda butuh link fisik 10 Gbps.
 
 ---
 
@@ -93,7 +94,8 @@ SW1# show etherchannel load-balance
 
 ### Masalah distribusi tidak merata
 
-⚠️ **Skenario klasik:** EtherChannel antara switch dan router, hash memakai `src-dst-mac`.
+> [!WARNING]
+> **Skenario klasik:** EtherChannel antara switch dan router, hash memakai `src-dst-mac`.
 
 ```
 Semua trafik dari LAN ke internet:
@@ -105,9 +107,11 @@ Kalau hash memakai dst-mac saja → semua trafik masuk ke SATU link!
 
 Solusi: gunakan hash berbasis IP atau IP+port, yang jauh lebih bervariasi.
 
-⚠️ **Skenario kedua:** hanya ada beberapa aliran besar (mis. dua server melakukan replikasi). Berapa pun metode hash-nya, dua aliran hanya bisa menempati dua link. Distribusi merata butuh **banyak aliran yang beragam**.
+> [!WARNING]
+> **Skenario kedua:** hanya ada beberapa aliran besar (mis. dua server melakukan replikasi). Berapa pun metode hash-nya, dua aliran hanya bisa menempati dua link. Distribusi merata butuh **banyak aliran yang beragam**.
 
-⚠️ **Jumlah link idealnya pangkat 2** (2, 4, 8). Dengan 3 link, hash mod 3 mendistribusikan tidak merata pada banyak implementasi (beberapa link mendapat porsi lebih besar). Ini keterbatasan hardware pada sebagian platform.
+> [!WARNING]
+> **Jumlah link idealnya pangkat 2** (2, 4, 8). Dengan 3 link, hash mod 3 mendistribusikan tidak merata pada banyak implementasi (beberapa link mendapat porsi lebih besar). Ini keterbatasan hardware pada sebagian platform.
 
 ### Verifikasi distribusi
 ```
@@ -123,7 +127,7 @@ SW1# show interfaces gi0/2 | include rate
 
 Ada tiga cara membentuk EtherChannel:
 
-### LACP — IEEE 802.3ad / 802.1AX (standar, direkomendasikan)
+### LACP (IEEE 802.3ad / 802.1AX (standar, direkomendasikan))
 
 Protokol terbuka; bekerja antar-vendor.
 
@@ -137,7 +141,8 @@ Protokol terbuka; bekerja antar-vendor.
 | **active** | ✅ Terbentuk | ✅ Terbentuk |
 | **passive** | ✅ Terbentuk | ❌ **Tidak terbentuk** |
 
-⚠️ Dua sisi `passive` tidak akan membentuk channel — sama seperti dua `dynamic auto` pada DTP.
+> [!WARNING]
+> Dua sisi `passive` tidak akan membentuk channel — sama seperti dua `dynamic auto` pada DTP.
 
 ```
 SW1(config)# interface range gi0/1-2
@@ -172,7 +177,8 @@ Sama seperti LACP: `auto` + `auto` = tidak terbentuk.
 SW1(config-if-range)# channel-group 1 mode desirable
 ```
 
-💡 **Gunakan LACP, bukan PAgP**, kecuali ada alasan khusus. LACP standar dan bekerja dengan semua vendor.
+> [!TIP]
+> **Gunakan LACP, bukan PAgP**, kecuali ada alasan khusus. LACP standar dan bekerja dengan semua vendor.
 
 ### Static / "on" (tanpa negosiasi)
 
@@ -180,17 +186,18 @@ SW1(config-if-range)# channel-group 1 mode desirable
 SW1(config-if-range)# channel-group 1 mode on
 ```
 
-⚠️ **Berisiko.** Tidak ada verifikasi apa pun. Kalau satu sisi `on` dan sisi lain tidak dikonfigurasi (atau salah), tidak ada mekanisme yang mencegahnya → **loop**. Hanya gunakan jika perangkat lawan tidak mendukung LACP.
+> [!WARNING]
+> **Berisiko.** Tidak ada verifikasi apa pun. Kalau satu sisi `on` dan sisi lain tidak dikonfigurasi (atau salah), tidak ada mekanisme yang mencegahnya → **loop**. Hanya gunakan jika perangkat lawan tidak mendukung LACP.
 
 ### Matriks kompatibilitas
 
 | | on | active | passive | desirable | auto |
 |---|---|---|---|---|---|
-| **on** | ✅ | ❌ | ❌ | ❌ | ❌ |
-| **active** | ❌ | ✅ | ✅ | ❌ | ❌ |
-| **passive** | ❌ | ✅ | ❌ | ❌ | ❌ |
-| **desirable** | ❌ | ❌ | ❌ | ✅ | ✅ |
-| **auto** | ❌ | ❌ | ❌ | ✅ | ❌ |
+| **on** | Ya | Tidak | Tidak | Tidak | Tidak |
+| **active** | Tidak | Ya | Ya | Tidak | Tidak |
+| **passive** | Tidak | Ya | Tidak | Tidak | Tidak |
+| **desirable** | Tidak | Tidak | Tidak | Ya | Ya |
+| **auto** | Tidak | Tidak | Tidak | Ya | Tidak |
 
 **LACP dan PAgP tidak bisa dicampur.**
 
@@ -211,7 +218,8 @@ Semua port anggota **harus identik** dalam hal:
 ✓ Konfigurasi STP yang sama (cost, priority)
 ```
 
-⚠️ Kalau ada perbedaan, port akan **suspended** atau channel tidak terbentuk.
+> [!WARNING]
+> Kalau ada perbedaan, port akan **suspended** atau channel tidak terbentuk.
 
 ### Praktik konfigurasi yang benar
 
@@ -238,7 +246,8 @@ SW1(config)# interface range gi0/1-2
 SW1(config-if-range)# no shutdown
 ```
 
-💡 **Konfigurasikan Port-channel interface, bukan port fisik**, untuk pengaturan L2/L3. Perubahan pada Port-channel otomatis diterapkan ke semua anggota. Mengubah port fisik satu per satu justru menyebabkan inkonsistensi.
+> [!TIP]
+> **Konfigurasikan Port-channel interface, bukan port fisik**, untuk pengaturan L2/L3. Perubahan pada Port-channel otomatis diterapkan ke semua anggota. Mengubah port fisik satu per satu justru menyebabkan inkonsistensi.
 
 ---
 
@@ -262,7 +271,8 @@ SW1(config-if)# no switchport
 SW1(config-if)# ip address 10.0.0.1 255.255.255.252
 ```
 
-⚠️ Urutan penting: `no switchport` harus dilakukan pada port fisik **sebelum** memasukkannya ke channel-group, atau channel akan terbentuk sebagai L2.
+> [!WARNING]
+> Urutan penting: `no switchport` harus dilakukan pada port fisik **sebelum** memasukkannya ke channel-group, atau channel akan terbentuk sebagai L2.
 
 L3 EtherChannel dipakai untuk link antar-switch core/distribution dalam desain routed.
 
@@ -343,7 +353,7 @@ Jika switch mendeteksi BPDU yang tidak konsisten dari anggota channel (tanda kon
 
 ---
 
-## 9. MLAG / vPC / VSS / Stacking — Agregasi Lintas Chassis
+## 9. MLAG / vPC / VSS / Stacking: Agregasi Lintas Chassis
 
 EtherChannel biasa hanya bisa antara **dua perangkat**. Bagaimana kalau ingin redundansi terhadap kegagalan **switch**?
 
@@ -387,7 +397,8 @@ vPC domain      : identitas pasangan
 consistency check: memastikan konfigurasi kedua switch cocok
 ```
 
-⚠️ **Split-brain** — jika peer-link putus tetapi kedua switch masih hidup, keduanya bisa mengira yang lain mati dan mengambil alih peran yang sama → duplikasi trafik dan MAC flapping. Peer-keepalive di jalur **terpisah** ada untuk mencegah ini.
+> [!WARNING]
+> **Split-brain** — jika peer-link putus tetapi kedua switch masih hidup, keduanya bisa mengira yang lain mati dan mengambil alih peran yang sama → duplikasi trafik dan MAC flapping. Peer-keepalive di jalur **terpisah** ada untuk mencegah ini.
 
 ---
 
@@ -416,9 +427,11 @@ $ cat /proc/net/bonding/bond0
 $ ip -d link show bond0
 ```
 
-💡 **Mode 1 (active-backup) tidak memerlukan konfigurasi apa pun di switch** — berguna kalau Anda tidak mengendalikan switch, atau kalau kedua NIC terhubung ke switch berbeda tanpa MLAG. Mode 4 (LACP) memberi bandwidth agregat tetapi **harus** dipasangkan dengan EtherChannel di switch (atau MLAG jika ke dua switch berbeda).
+> [!TIP]
+> **Mode 1 (active-backup) tidak memerlukan konfigurasi apa pun di switch** — berguna kalau Anda tidak mengendalikan switch, atau kalau kedua NIC terhubung ke switch berbeda tanpa MLAG. Mode 4 (LACP) memberi bandwidth agregat tetapi **harus** dipasangkan dengan EtherChannel di switch (atau MLAG jika ke dua switch berbeda).
 
-⚠️ Mode 0 (balance-rr) memecah satu aliran ke banyak link → paket out-of-order → kinerja TCP bisa **lebih buruk** daripada satu link. Hindari kecuali untuk kasus khusus.
+> [!WARNING]
+> Mode 0 (balance-rr) memecah satu aliran ke banyak link → paket out-of-order → kinerja TCP bisa **lebih buruk** daripada satu link. Hindari kecuali untuk kasus khusus.
 
 ---
 
@@ -458,9 +471,11 @@ Link aggregation di RouterOS disebut **bonding**.
      lacp-partner-system-id: ...
 ```
 
-⚠️ **`mode=802.3ad` memerlukan LACP dikonfigurasi di sisi lawan.** Kalau lawan tidak mendukung, gunakan `active-backup` (tidak butuh dukungan switch) atau `balance-xor` (butuh static LAG).
+> [!WARNING]
+> **`mode=802.3ad` memerlukan LACP dikonfigurasi di sisi lawan.** Kalau lawan tidak mendukung, gunakan `active-backup` (tidak butuh dukungan switch) atau `balance-xor` (butuh static LAG).
 
-⚠️ Sama seperti EtherChannel, **satu aliran tetap di satu link**. Bonding 2×1 Gbps tidak memberi 2 Gbps untuk satu transfer.
+> [!WARNING]
+> Sama seperti EtherChannel, **satu aliran tetap di satu link**. Bonding 2×1 Gbps tidak memberi 2 Gbps untuk satu transfer.
 
 ### Padanan istilah
 
@@ -529,4 +544,4 @@ Link aggregation di RouterOS disebut **bonding**.
 
 ---
 
-**Berikutnya:** `03-data-link/06-discovery-dan-l2-lain.md` — CDP/LLDP dan protokol layer 2 lainnya.
+**Berikutnya:** `03-data-link/06-discovery-dan-l2-lain.md`. CDP/LLDP dan protokol layer 2 lainnya.

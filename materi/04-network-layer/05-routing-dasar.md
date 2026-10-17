@@ -1,4 +1,4 @@
-# 04.5 — Routing: Konsep Dasar
+# 04.5 Routing: Konsep Dasar
 
 > **Prasyarat:** `04-network-layer/01`–`04`
 > **Tujuan:** Anda bisa membaca routing table baris demi baris, memprediksi keputusan forwarding router, dan memahami pemisahan control plane/data plane.
@@ -26,7 +26,8 @@ Prosesnya:
 10. Kirim
 ```
 
-⚠️ Perhatikan langkah 9: **header L2 selalu dibuat baru.** Router membuang header Ethernet lama sepenuhnya. Inilah kenapa MAC berubah setiap hop.
+> [!WARNING]
+> Perhatikan langkah 9: **header L2 selalu dibuat baru.** Router membuang header Ethernet lama sepenuhnya. Inilah kenapa MAC berubah setiap hop.
 
 ---
 
@@ -82,7 +83,8 @@ O        10.2.2.0/24 [110/20] via 10.1.1.2, 00:15:23, GigabitEthernet0/0
 | **R** | RIP | Dipelajari lewat RIP |
 | **i** | IS-IS | Dipelajari lewat IS-IS |
 
-💡 **Perbedaan C dan L:**
+> [!TIP]
+> **Perbedaan C dan L:**
 ```
 C  10.1.1.0/24  → seluruh SUBNET yang terhubung langsung
 L  10.1.1.1/32  → alamat IP ROUTER ITU SENDIRI di subnet tersebut
@@ -91,9 +93,10 @@ Rute L memungkinkan router mengenali paket yang ditujukan kepada dirinya sendiri
 
 ---
 
-## 3. Longest Prefix Match — Aturan Nomor Satu
+## 3. Longest Prefix Match: Aturan Nomor Satu
 
-⚠️ **Ini aturan terpenting dalam routing.** Ketika beberapa rute cocok dengan tujuan, router memilih yang **prefix-nya paling panjang** (paling spesifik).
+> [!WARNING]
+> **Ini aturan terpenting dalam routing.** Ketika beberapa rute cocok dengan tujuan, router memilih yang **prefix-nya paling panjang** (paling spesifik).
 
 ```
 Routing table:
@@ -120,7 +123,8 @@ Paket ke 8.8.8.8:
   → PILIH /0 (default route) → via 203.0.113.1
 ```
 
-⚠️ **Longest prefix match diperiksa SEBELUM administrative distance dan metric.** Rute /25 dari RIP (AD 120) akan mengalahkan rute /24 dari OSPF (AD 110) untuk tujuan yang cocok keduanya — karena /25 lebih spesifik.
+> [!WARNING]
+> **Longest prefix match diperiksa SEBELUM administrative distance dan metric.** Rute /25 dari RIP (AD 120) akan mengalahkan rute /24 dari OSPF (AD 110) untuk tujuan yang cocok keduanya — karena /25 lebih spesifik.
 
 **Urutan keputusan router:**
 ```
@@ -165,7 +169,8 @@ Router menerima rute 192.168.10.0/24 dari:
    jika rute EIGRP hilang
 ```
 
-⚠️ **Metric TIDAK dibandingkan antar-protokol.** Metric OSPF (cost) dan metric EIGRP (composite) memakai skala yang sama sekali berbeda — membandingkannya tidak bermakna. Karena itu AD dipakai sebagai pemisah tingkat pertama.
+> [!WARNING]
+> **Metric TIDAK dibandingkan antar-protokol.** Metric OSPF (cost) dan metric EIGRP (composite) memakai skala yang sama sekali berbeda — membandingkannya tidak bermakna. Karena itu AD dipakai sebagai pemisah tingkat pertama.
 
 ### Mengubah AD
 
@@ -186,10 +191,10 @@ Ukuran "biaya" jalur **dalam satu protokol**.
 
 | Protokol | Metric | Rentang |
 |---|---|---|
-| **RIP** | Hop count | 1–15 (16 = tak terjangkau) |
-| **OSPF** | Cost = ref_bw / bandwidth | 1–65535 |
+| **RIP** | Hop count | 1-15 (16 = tak terjangkau) |
+| **OSPF** | Cost = ref_bw / bandwidth | 1-65535 |
 | **EIGRP** | Composite: bandwidth + delay (+ reliability, load, MTU jika K diubah) | Besar (mis. 30720) |
-| **IS-IS** | Cost | 1–16777215 (wide metric) |
+| **IS-IS** | Cost | 1-16777215 (wide metric) |
 | **BGP** | Path attributes (bukan metric tunggal) | — |
 
 ### Contoh perbedaan filosofi
@@ -217,7 +222,8 @@ R1(config-if)# no shutdown
 → C 10.1.1.0/24 is directly connected, GigabitEthernet0/0
 → L 10.1.1.1/32 is directly connected, GigabitEthernet0/0
 ```
-⚠️ Kalau interface `down`, rute connected **hilang** dari tabel.
+> [!WARNING]
+> Kalau interface `down`, rute connected **hilang** dari tabel.
 
 ### Static Route
 ```
@@ -277,7 +283,8 @@ Router harus melakukan **recursive lookup**:
 3. Ketemu C 10.1.1.0/24 via Gi0/0 → interface keluar Gi0/0
 ```
 
-⚠️ Kalau rute ke `10.1.1.2` hilang, rute ini menjadi **tidak dapat dipakai** dan dihapus dari tabel.
+> [!WARNING]
+> Kalau rute ke `10.1.1.2` hilang, rute ini menjadi **tidak dapat dipakai** dan dihapus dari tabel.
 
 ### Exit interface saja
 ```
@@ -341,7 +348,8 @@ R1# show ip cef exact-route 10.1.1.10 10.2.2.20   ← jalur nyata untuk aliran t
 | **Fast switching** | Paket pertama diproses CPU, sisanya memakai cache | Sedang |
 | **CEF** (*Cisco Express Forwarding*) | FIB dibangun di awal; semua paket diteruskan hardware | **Sangat cepat** ← default |
 
-⚠️ **"Punting to CPU"** — beberapa paket harus diproses CPU walaupun CEF aktif:
+> [!WARNING]
+> **"Punting to CPU"** — beberapa paket harus diproses CPU walaupun CEF aktif:
 - Paket dengan IP options
 - Paket yang butuh fragmentasi
 - Paket untuk router itu sendiri (SSH, routing protocol)
@@ -773,21 +781,29 @@ PS> New-NetRoute -DestinationPrefix 10.0.0.0/8 -NextHop 192.168.1.254 -Interface
 
 ## 14. Kesalahan Umum
 
-⚠️ **1. Mengira AD dibandingkan sebelum longest prefix match.** Prefix terpanjang selalu menang lebih dulu.
+> [!WARNING]
+> **1. Mengira AD dibandingkan sebelum longest prefix match.** Prefix terpanjang selalu menang lebih dulu.
 
-⚠️ **2. Membandingkan metric antar-protokol.** Tidak bermakna; itulah gunanya AD.
+> [!WARNING]
+> **2. Membandingkan metric antar-protokol.** Tidak bermakna; itulah gunanya AD.
 
-⚠️ **3. Memakai exit interface saja pada link Ethernet.** Menyebabkan ARP berlebihan.
+> [!WARNING]
+> **3. Memakai exit interface saja pada link Ethernet.** Menyebabkan ARP berlebihan.
 
-⚠️ **4. Lupa rute balik.** Paket sampai, tetapi balasan tidak bisa kembali. **Selalu periksa routing di KEDUA arah.**
+> [!WARNING]
+> **4. Lupa rute balik.** Paket sampai, tetapi balasan tidak bisa kembali. **Selalu periksa routing di KEDUA arah.**
 
-⚠️ **5. Lupa mengaktifkan `ip routing` pada multilayer switch.**
+> [!WARNING]
+> **5. Lupa mengaktifkan `ip routing` pada multilayer switch.**
 
-⚠️ **6. Memakai per-packet load balancing.** Menyebabkan out-of-order dan merusak kinerja TCP.
+> [!WARNING]
+> **6. Memakai per-packet load balancing.** Menyebabkan out-of-order dan merusak kinerja TCP.
 
-⚠️ **7. Mengabaikan asymmetric routing saat ada firewall stateful.**
+> [!WARNING]
+> **7. Mengabaikan asymmetric routing saat ada firewall stateful.**
 
-⚠️ **8. Static route yang tidak muncul di tabel.** Biasanya recursive lookup gagal atau interface down.
+> [!WARNING]
+> **8. Static route yang tidak muncul di tabel.** Biasanya recursive lookup gagal atau interface down.
 
 ---
 
@@ -831,7 +847,8 @@ Flags: X - disabled, A - active, D - dynamic, C - connect, S - static,
 /ip route add dst-address=0.0.0.0/0 gateway=203.0.113.9,198.51.100.9
 ```
 
-⚠️ **`check-gateway=ping` hanya menguji GATEWAY, bukan konektivitas internet.** Kalau gateway ISP hidup tetapi upstream-nya mati, rute tetap aktif. Untuk pengujian end-to-end, gunakan **recursive route**:
+> [!WARNING]
+> **`check-gateway=ping` hanya menguji GATEWAY, bukan konektivitas internet.** Kalau gateway ISP hidup tetapi upstream-nya mati, rute tetap aktif. Untuk pengujian end-to-end, gunakan **recursive route**:
 
 ```
 # Probe ke 8.8.8.8 dipaksa lewat ISP-A
@@ -843,7 +860,8 @@ Flags: X - disabled, A - active, D - dynamic, C - connect, S - static,
 /ip route add dst-address=0.0.0.0/0 gateway=198.51.100.9 distance=10 comment="ISP-B"
 ```
 
-💡 **`scope` dan `target-scope`** adalah mekanisme khas RouterOS untuk mengontrol resolusi rekursif. Aturannya: sebuah rute dapat memakai gateway kalau **`target-scope` rute itu ≥ `scope` rute yang menyediakan gateway tersebut**. Default: `scope=30`, `target-scope=10`.
+> [!TIP]
+> **`scope` dan `target-scope`** adalah mekanisme khas RouterOS untuk mengontrol resolusi rekursif. Aturannya: sebuah rute dapat memakai gateway kalau **`target-scope` rute itu ≥ `scope` rute yang menyediakan gateway tersebut**. Default: `scope=30`, `target-scope=10`.
 
 ### Routing table terpisah (setara VRF/PBR)
 
@@ -862,7 +880,8 @@ Flags: X - disabled, A - active, D - dynamic, C - connect, S - static,
 /ip route print where routing-table=via-ISP-B
 ```
 
-⚠️ **Di RouterOS v6 sintaksnya berbeda:** memakai `routing-mark=` alih-alih `routing-table=`, dan tabel dibuat implisit. Selalu periksa versi dengan `/system resource print`.
+> [!WARNING]
+> **Di RouterOS v6 sintaksnya berbeda:** memakai `routing-mark=` alih-alih `routing-table=`, dan tabel dibuat implisit. Selalu periksa versi dengan `/system resource print`.
 
 ### Padanan istilah
 
@@ -967,4 +986,4 @@ Subbagian 9.1, 9.4, dan 9.8 mengadaptasi sebagian penjelasan dari *Computer Netw
 
 ---
 
-**Berikutnya:** `05-transport/01-port-socket.md` — masuk ke Layer 4.
+**Berikutnya:** `05-transport/01-port-socket.md`. Masuk ke Layer 4.

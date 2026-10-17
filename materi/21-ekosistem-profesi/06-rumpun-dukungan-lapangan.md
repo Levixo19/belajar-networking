@@ -1,4 +1,4 @@
-# 21.6 — Rumpun Dukungan Teknis & Lapangan
+# 21.6 Rumpun Dukungan Teknis & Lapangan
 
 > **Prasyarat:** `18-karier-sertifikasi/01-peta-sertifikasi`, `02-layer-fisik/02-kabel-copper`, `02-layer-fisik/03-fiber`, dan `14-monitoring-troubleshooting/01-metodologi`
 > **Tujuan:** Anda memahami empat profesi di rumpun dukungan (IT support technician, field network technician, hardware engineer, IT asset manager): apa yang sebenarnya dikerjakan, cara mengukur keberhasilannya, sertifikasi yang masih berlaku per 2025-2026, jalur kompetensi Indonesia (SKKNI/BNSP, K3), dan jalur nyata dari helpdesk atau teknisi lapangan menuju network administrator.
@@ -15,7 +15,8 @@ Kalau Anda bertanya kepada network engineer senior di Indonesia bagaimana mereka
 
 Rumpun ini juga punya sisi yang sering terlupakan: **perangkat dan aset**. Hardware engineer merancang, menguji, dan memperbaiki perangkat yang menjadi tulang punggung jaringan, sedangkan IT asset manager memastikan setiap laptop, switch, lisensi, dan modul SFP tercatat, terpakai dengan benar, dan dimusnahkan dengan aman di akhir umurnya.
 
-💡 Anggap modul ini sebagai peta, bukan vonis. Banyak orang hanya singgah satu atau dua tahun di rumpun ini lalu naik ke administrator. Sebagian lain justru menetap dan menjadi ahli yang sangat dicari (misalnya spesialis fiber outside plant atau ITAM di perusahaan multinasional). Keduanya jalur yang sah.
+> [!TIP]
+> Anggap modul ini sebagai peta, bukan vonis. Banyak orang hanya singgah satu atau dua tahun di rumpun ini lalu naik ke administrator. Sebagian lain justru menetap dan menjadi ahli yang sangat dicari (misalnya spesialis fiber outside plant atau ITAM di perusahaan multinasional). Keduanya jalur yang sah.
 
 ---
 
@@ -93,7 +94,8 @@ Metrik yang biasa dipakai:
 
 Angka di kolom target hanyalah contoh untuk menggambarkan bentuk SLA. Setiap organisasi menetapkan angka sendiri di dokumen SLA atau OLA mereka, jadi jangan menghafal angka, pahami cara membacanya.
 
-⚠️ Metrik bisa menyesatkan. Tim yang dikejar "tiket ditutup cepat" cenderung menutup tiket sebelum masalah benar-benar selesai, sehingga reopen rate naik. IT support yang baik menutup tiket dengan **bukti verifikasi** ("pengguna sudah mencoba login dan berhasil pukul 08.32").
+> [!WARNING]
+> Metrik bisa menyesatkan. Tim yang dikejar "tiket ditutup cepat" cenderung menutup tiket sebelum masalah benar-benar selesai, sehingga reopen rate naik. IT support yang baik menutup tiket dengan **bukti verifikasi** ("pengguna sudah mencoba login dan berhasil pukul 08.32").
 
 ### 3.3 Keahlian teknis, non-teknis, dan alat
 
@@ -117,7 +119,8 @@ Angka di kolom target hanyalah contoh untuk menggambarkan bentuk SLA. Setiap org
 
 **Jalur Indonesia:** Kemnaker menetapkan **SKKNI Bidang Computer Technical Support** lewat Kepmenaker Nomor 285 Tahun 2016 (8 November 2016, berstatus berlaku). SKKNI ini menjadi acuan skema sertifikasi di Lembaga Sertifikasi Profesi (LSP) yang berlisensi BNSP. Sebelum mendaftar, cek LSP dan jadwal uji kompetensinya di situs BNSP, dan pastikan skemanya memang mengacu ke SKKNI yang sesuai dengan pekerjaan Anda.
 
-💡 Kalau anggaran terbatas, urutan yang masuk akal adalah: Google IT Support (atau materi gratis setara) untuk fondasi, lalu CompTIA A+ bila perusahaan target memang mensyaratkannya, lalu langsung ke Network+ atau CCNA. Jangan mengoleksi sertifikat level pemula terlalu banyak.
+> [!TIP]
+> Kalau anggaran terbatas, urutan yang masuk akal adalah: Google IT Support (atau materi gratis setara) untuk fondasi, lalu CompTIA A+ bila perusahaan target memang mensyaratkannya, lalu langsung ke Network+ atau CCNA. Jangan mengoleksi sertifikat level pemula terlalu banyak.
 
 ### 3.5 Jalur masuk dan progresi
 
@@ -217,7 +220,8 @@ Untuk teknisi jaringan gedung, isi harinya lain: menarik kabel Cat6/Cat6A di pla
 
 Contoh hitung cepat: jalur GPON 5 km (1310 nm) dengan splitter 1:32, 4 sambungan, dan 4 pasang konektor. Fiber 5 x 0,4 = 2,0 dB; sambungan 4 x 0,3 = 1,2 dB; konektor 4 x 0,75 = 3,0 dB; splitter 1:32 kira-kira 17 dB (cek datasheet splitter Anda). Total sekitar 23 dB, masih di bawah 28 dB dengan margin sekitar 5 dB. Kalau teknisi menemukan pelanggan dengan rugi jauh di atas perkiraan ini, ada sambungan, tekukan, atau konektor yang bermasalah.
 
-⚠️ Nilai TIA di atas adalah **batas maksimum standar**, bukan target kerja. Banyak operator menetapkan target internal yang lebih ketat. Selalu ikuti spesifikasi teknis proyek atau operator tempat Anda bekerja.
+> [!WARNING]
+> Nilai TIA di atas adalah **batas maksimum standar**, bukan target kerja. Banyak operator menetapkan target internal yang lebih ketat. Selalu ikuti spesifikasi teknis proyek atau operator tempat Anda bekerja.
 
 **Standar kabel tembaga:** keluarga **ANSI/TIA-568** (revisi E). Bagian 568.2 mengatur kabel twisted-pair; revisi **568.2-E** dirilis TIA pada November 2024. Pola T568A dan T568B sama-sama sah; yang menentukan kualitas adalah konsistensi dalam satu instalasi dan hasil uji yang lolos. Detail pinout ada di `02-layer-fisik/02-kabel-copper`.
 
@@ -229,7 +233,8 @@ Pekerjaan teknisi lapangan mengandung risiko yang **bisa membunuh**: jatuh dari 
 - **Permenaker Nomor 12 Tahun 2015** tentang K3 Listrik di Tempat Kerja (diubah dengan Permenaker 33/2015) relevan karena teknisi sering bekerja dekat instalasi listrik, panel, dan catu daya perangkat.
 - **Keselamatan fiber:** jangan pernah menatap ujung konektor atau port yang mungkin aktif; gunakan power meter atau inspection scope. Serpihan fiber hasil cleaving dibuang ke wadah khusus, bukan ke lantai.
 
-⚠️ Jangan pernah naik tiang tanpa harness yang terkait ke angkur, dan jangan bekerja di tiang saat hujan petir. Tidak ada SLA yang sepadan dengan nyawa Anda. Perusahaan yang baik akan mendukung keputusan Anda menunda pekerjaan karena kondisi tidak aman.
+> [!WARNING]
+> Jangan pernah naik tiang tanpa harness yang terkait ke angkur, dan jangan bekerja di tiang saat hujan petir. Tidak ada SLA yang sepadan dengan nyawa Anda. Perusahaan yang baik akan mendukung keputusan Anda menunda pekerjaan karena kondisi tidak aman.
 
 ### 4.4 Keahlian teknis, non-teknis, dan alat
 
@@ -253,7 +258,8 @@ Pekerjaan teknisi lapangan mengandung risiko yang **bisa membunuh**: jatuh dari 
 | Menengah | MikroTik MTCNA; CompTIA Network+ (N10-009) | Jembatan ke administrasi jaringan, lihat `18-karier-sertifikasi/05-peta-mikrotik` |
 | Senior | BICSI Technician (TECH) | Diperpanjang tiap 3 tahun dengan minimal 18 jam CEC |
 
-💡 Di Indonesia, sertifikat BNSP dan lisensi K3 sering lebih berpengaruh di tender proyek dan syarat mitra operator daripada sertifikat internasional. Sertifikat FOA atau BICSI menambah nilai bila Anda menyasar system integrator besar, data center, atau proyek dengan klien multinasional.
+> [!TIP]
+> Di Indonesia, sertifikat BNSP dan lisensi K3 sering lebih berpengaruh di tender proyek dan syarat mitra operator daripada sertifikat internasional. Sertifikat FOA atau BICSI menambah nilai bila Anda menyasar system integrator besar, data center, atau proyek dengan klien multinasional.
 
 ### 4.6 Jalur masuk dan progresi
 
@@ -275,7 +281,8 @@ Helper / Teknisi pasang baru
 
 Perekrut utama: operator dan grup operator (sejak 1 Juli 2023 IndiHome diintegrasikan ke Telkomsel dalam inisiatif fixed mobile convergence), anak usaha infrastruktur seperti Telkom Akses (berdiri 12 Desember 2012, fokus perencanaan, konstruksi, dan pemeliharaan jaringan akses fiber), ISP nasional dan regional, perusahaan penyedia jaringan fiber, kontraktor mitra operator, system integrator (structured cabling gedung dan data center), dan program pemerintah daerah. Data Jobstreet Indonesia (Oktober 2026) untuk peran "Teknisi Jaringan" menunjukkan rata-rata nasional sekitar Rp2,85-3,9 juta per bulan dari iklan lowongan, dengan rata-rata tertinggi di beberapa wilayah Jakarta sekitar Rp5,7 juta. Banyak posisi lapangan juga memberi uang lembur atau insentif per work order, yang tidak selalu tercermin di angka iklan.
 
-⚠️ Status kerja di lapangan beragam: karyawan tetap, kontrak, atau mitra dengan bayaran per pekerjaan. Tanyakan dengan jelas soal BPJS Ketenagakerjaan, asuransi kecelakaan kerja, dan siapa yang menyediakan APD sebelum menandatangani kontrak.
+> [!WARNING]
+> Status kerja di lapangan beragam: karyawan tetap, kontrak, atau mitra dengan bayaran per pekerjaan. Tanyakan dengan jelas soal BPJS Ketenagakerjaan, asuransi kecelakaan kerja, dan siapa yang menyediakan APD sebelum menandatangani kontrak.
 
 ### 4.8 Belajar dari kurikulum ini
 
@@ -532,9 +539,11 @@ IT Support kantor (1-2 th) ---> Network/System Admin internal
 Helpdesk outsourcing bank -----> Tier 2 network support -----> Network Admin
 ```
 
-⚠️ Jebakan yang sering terjadi: terlalu nyaman di tier 1 karena pekerjaannya sudah dikuasai. Jika setelah dua tahun Anda belum pernah menyentuh konfigurasi perangkat jaringan sama sekali, sudah waktunya bicara dengan atasan atau mencari lingkungan yang memberi ruang belajar.
+> [!WARNING]
+> Jebakan yang sering terjadi: terlalu nyaman di tier 1 karena pekerjaannya sudah dikuasai. Jika setelah dua tahun Anda belum pernah menyentuh konfigurasi perangkat jaringan sama sekali, sudah waktunya bicara dengan atasan atau mencari lingkungan yang memberi ruang belajar.
 
-💡 Network administrator yang dulu bekerja di helpdesk atau di lapangan biasanya punya dua keunggulan yang sulit diajarkan: mereka tahu rasanya menjadi pengguna yang terdampak, dan mereka tahu kabel di dunia nyata tidak serapi diagram.
+> [!TIP]
+> Network administrator yang dulu bekerja di helpdesk atau di lapangan biasanya punya dua keunggulan yang sulit diajarkan: mereka tahu rasanya menjadi pengguna yang terdampak, dan mereka tahu kabel di dunia nyata tidak serapi diagram.
 
 ---
 
@@ -628,4 +637,4 @@ Helpdesk outsourcing bank -----> Tier 2 network support -----> Network Admin
 
 ---
 
-**Berikutnya:** `21-ekosistem-profesi/07-rumpun-tata-kelola-konsultasi` — rumpun tata kelola dan konsultasi: IT consultant, IT auditor, disaster recovery specialist, solution architect, dan scrum master infrastruktur.
+**Berikutnya:** `21-ekosistem-profesi/07-rumpun-tata-kelola-konsultasi`. Rumpun tata kelola dan konsultasi: IT consultant, IT auditor, disaster recovery specialist, solution architect, dan scrum master infrastruktur.

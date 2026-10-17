@@ -595,13 +595,13 @@ a.tile:hover, button.tile:hover { border-color: var(--border-strong); box-shadow
 .callout-ico { display: none; }
 .callout-label { font-weight: 600; color: var(--text); margin-right: 0.15rem; }
 .callout-warn .callout-label { color: var(--warn); }
-.callout-ok .callout-label { color: var(--ok); }
+.callout-note .callout-label { color: var(--primary); }
 .callout-no .callout-label { color: var(--no); }
 .callout-body > *:first-child { margin-top: 0; }
 .callout-body > *:last-child { margin-bottom: 0; }
 .callout-warn { background: var(--warn-soft); border-color: color-mix(in srgb, var(--warn) 22%, transparent); }
 .callout-tip { background: var(--surface-2); }
-.callout-ok { background: var(--ok-soft); border-color: color-mix(in srgb, var(--ok) 22%, transparent); }
+.callout-note { background: var(--primary-soft); border-color: var(--primary-border); }
 .callout-no { background: var(--no-soft); border-color: color-mix(in srgb, var(--no) 22%, transparent); }
 
 /* Details tanpa kotak: pemisah tipis, tanda plus/minus */

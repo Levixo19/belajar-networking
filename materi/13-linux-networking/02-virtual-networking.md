@@ -1,13 +1,14 @@
-# 13.2 — Virtual Networking di Linux
+# 13.2 Virtual Networking di Linux
 
 > **Prasyarat:** `13-linux-networking/01`, `03-data-link/02`, `03-data-link/03`
 > **Tujuan:** Anda paham blok bangunan jaringan virtual Linux dan bisa membangun topologi lengkap (router, switch, VLAN) hanya dengan Linux — fondasi container dan cloud.
 
-> 📌 **Kenapa ini penting?** Semua jaringan container (Docker, Kubernetes) dan cloud dibangun dari primitif ini: namespace, veth, bridge, VLAN, dan tunnel. Memahaminya membuat jaringan container/cloud tidak lagi menjadi kotak hitam.
+> > [!NOTE]
+> > **Kenapa ini penting?** Semua jaringan container (Docker, Kubernetes) dan cloud dibangun dari primitif ini: namespace, veth, bridge, VLAN, dan tunnel. Memahaminya membuat jaringan container/cloud tidak lagi menjadi kotak hitam.
 
 ---
 
-## 1. Network Namespace — Jaringan Terisolasi
+## 1. Network Namespace: Jaringan Terisolasi
 
 **Network namespace** memberi proses **stack jaringan yang terpisah total**: interface, routing table, ARP table, firewall, dan socket sendiri.
 
@@ -23,7 +24,8 @@
         └───────────────────────────────────────┘
 ```
 
-💡 **Inilah yang membuat container terisolasi.** Setiap container Docker adalah proses dalam network namespace sendiri — punya `eth0`, IP, dan routing table sendiri, tetapi berbagi kernel dengan host.
+> [!TIP]
+> **Inilah yang membuat container terisolasi.** Setiap container Docker adalah proses dalam network namespace sendiri — punya `eth0`, IP, dan routing table sendiri, tetapi berbagi kernel dengan host.
 
 ```bash
 # Buat namespace
@@ -45,14 +47,15 @@ $ sudo ip netns exec merah bash
 $ sudo ip netns del merah
 ```
 
-⚠️ **Setiap namespace baru hanya punya interface `lo` yang DOWN.** Anda harus mengaktifkannya dan menambahkan konektivitas:
+> [!WARNING]
+> **Setiap namespace baru hanya punya interface `lo` yang DOWN.** Anda harus mengaktifkannya dan menambahkan konektivitas:
 ```bash
 $ sudo ip netns exec merah ip link set lo up
 ```
 
 ---
 
-## 2. veth — Kabel Virtual
+## 2. veth: Kabel Virtual
 
 **veth pair** adalah sepasang interface virtual yang terhubung seperti kabel — apa yang masuk satu ujung keluar ujung lainnya. Dipakai untuk menghubungkan namespace.
 
@@ -82,11 +85,12 @@ $ sudo ip link set veth-host up
 $ sudo ip netns exec merah ping 10.0.0.254
 ```
 
-💡 **Docker membuat veth pair untuk setiap container** — satu ujung di namespace container (bernama `eth0` di dalam), satu ujung di host (terhubung ke bridge `docker0`).
+> [!TIP]
+> **Docker membuat veth pair untuk setiap container** — satu ujung di namespace container (bernama `eth0` di dalam), satu ujung di host (terhubung ke bridge `docker0`).
 
 ---
 
-## 3. Linux Bridge — Switch Virtual
+## 3. Linux Bridge: Switch Virtual
 
 **Bridge** adalah switch layer 2 dalam software. Ia mempelajari MAC address dan meneruskan frame antar-port — persis seperti switch fisik.
 
@@ -125,13 +129,15 @@ $ sudo ip link set br0 type bridge stp_state 1
 $ sudo ip link set eth1 nomaster
 ```
 
-⚠️ **Kalau Anda memberi IP ke bridge, berikan ke `br0`, bukan ke interface anggotanya.** Interface yang menjadi anggota bridge beroperasi di layer 2; alamat IP-nya diabaikan.
+> [!WARNING]
+> **Kalau Anda memberi IP ke bridge, berikan ke `br0`, bukan ke interface anggotanya.** Interface yang menjadi anggota bridge beroperasi di layer 2; alamat IP-nya diabaikan.
 
 ```bash
 $ sudo ip addr add 192.168.1.1/24 dev br0    # IP di bridge, bukan di eth1
 ```
 
-💡 **`docker0` adalah Linux bridge.** Semua container di jaringan bridge default terhubung ke sana, dan bridge itu terhubung ke jaringan host lewat NAT (iptables/nftables masquerade).
+> [!TIP]
+> **`docker0` adalah Linux bridge.** Semua container di jaringan bridge default terhubung ke sana, dan bridge itu terhubung ke jaringan host lewat NAT (iptables/nftables masquerade).
 
 ---
 
@@ -190,9 +196,11 @@ sudo ip netns exec host-a ping -c3 10.2.2.10
 sudo ip netns exec host-a traceroute -n 10.2.2.10
 ```
 
-💡 **Ini adalah router sungguhan** — hanya dalam software. Anda bisa menambahkan OSPF/BGP (FRR), firewall (nftables), dan NAT ke namespace router untuk membuat lab jaringan lengkap tanpa perangkat fisik. Inilah dasar **Containerlab** dan **GNS3** (lihat `lab/00-setup-lab.md`).
+> [!TIP]
+> **Ini adalah router sungguhan** — hanya dalam software. Anda bisa menambahkan OSPF/BGP (FRR), firewall (nftables), dan NAT ke namespace router untuk membuat lab jaringan lengkap tanpa perangkat fisik. Inilah dasar **Containerlab** dan **GNS3** (lihat `lab/00-setup-lab.md`).
 
-⚠️ **`ip_forward` diatur per-namespace.** Mengaktifkannya di host tidak otomatis berlaku di namespace.
+> [!WARNING]
+> **`ip_forward` diatur per-namespace.** Mengaktifkannya di host tidak otomatis berlaku di namespace.
 
 ---
 
@@ -216,7 +224,8 @@ $ cat /proc/net/vlan/config
 $ sudo ip link del eth0.10
 ```
 
-💡 **Ini setara router-on-a-stick** — satu interface fisik membawa banyak VLAN, masing-masing menjadi subinterface dengan subnet sendiri. Linux merutekan di antaranya (dengan `ip_forward=1`).
+> [!TIP]
+> **Ini setara router-on-a-stick** — satu interface fisik membawa banyak VLAN, masing-masing menjadi subinterface dengan subnet sendiri. Linux merutekan di antaranya (dengan `ip_forward=1`).
 
 ### VLAN + Bridge (untuk trunk ke switch)
 
@@ -232,7 +241,7 @@ $ bridge vlan show
 
 ---
 
-## 6. Bonding dan Teaming — Link Aggregation
+## 6. Bonding dan Teaming: Link Aggregation
 
 Sudah dibahas di `03-data-link/05`. Ringkasan primitifnya:
 
@@ -271,7 +280,8 @@ $ sudo ip addr add 192.168.1.100/24 dev mac0
 $ sudo ip link set mac0 up
 ```
 
-⚠️ **Keterbatasan macvlan:** host **tidak bisa berkomunikasi** dengan container macvlan-nya sendiri (secara desain). Dan switch fisik harus mengizinkan **banyak MAC per port** — beberapa switch (dan Wi-Fi) memblokirnya.
+> [!WARNING]
+> **Keterbatasan macvlan:** host **tidak bisa berkomunikasi** dengan container macvlan-nya sendiri (secara desain). Dan switch fisik harus mengizinkan **banyak MAC per port** — beberapa switch (dan Wi-Fi) memblokirnya.
 
 ### ipvlan
 
@@ -282,11 +292,12 @@ $ sudo ip link add ipv0 link eth0 type ipvlan mode l2
 $ sudo ip addr add 192.168.1.101/24 dev ipv0
 ```
 
-💡 **Pakai ipvlan kalau switch/Wi-Fi membatasi jumlah MAC per port**, atau kalau MAC berlebihan menjadi masalah. Pakai macvlan kalau butuh MAC unik per container.
+> [!TIP]
+> **Pakai ipvlan kalau switch/Wi-Fi membatasi jumlah MAC per port**, atau kalau MAC berlebihan menjadi masalah. Pakai macvlan kalau butuh MAC unik per container.
 
 ---
 
-## 8. TUN/TAP — Interface Virtual untuk VPN
+## 8. TUN/TAP (Interface Virtual untuk VPN)
 
 | | **TUN** | **TAP** |
 |---|---|---|
@@ -304,7 +315,8 @@ $ sudo ip tuntap add mode tap tap0
 $ sudo ip link set tap0 master br0    # tap bisa masuk bridge
 ```
 
-💡 WireGuard membuat interface tipe `wireguard`, OpenVPN membuat `tun0`/`tap0`, dan VM (QEMU/KVM) sering memakai `tap` yang terhubung ke bridge host.
+> [!TIP]
+> WireGuard membuat interface tipe `wireguard`, OpenVPN membuat `tun0`/`tap0`, dan VM (QEMU/KVM) sering memakai `tap` yang terhubung ke bridge host.
 
 ---
 
@@ -484,4 +496,4 @@ Detail lengkap di `16-datacenter-cloud-sdn/05`.
 
 ---
 
-**Berikutnya:** `13-linux-networking/03-nftables-firewall.md` — firewall Linux modern.
+**Berikutnya:** `13-linux-networking/03-nftables-firewall.md`. Firewall Linux modern.

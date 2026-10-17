@@ -1,4 +1,4 @@
-# 07.7 — Redistribusi dan Routing Policy
+# 07.7 Redistribusi dan Routing Policy
 
 > **Prasyarat:** `07-routing-lanjutan/04`–`06`
 > **Tujuan:** Anda bisa meredistribusikan rute antar-protokol dengan aman, mencegah routing loop, dan menerapkan kebijakan dengan route-map dan PBR.
@@ -18,7 +18,8 @@ Situasi nyata:
 
 **Redistribusi** = mengambil rute dari satu sumber routing dan memasukkannya ke protokol lain.
 
-⚠️ **Redistribusi adalah salah satu operasi paling berbahaya di jaringan.** Kesalahan redistribusi dapat menyebabkan routing loop, black hole, dan suboptimal routing yang sangat sulit dilacak. Lakukan dengan sangat hati-hati.
+> [!WARNING]
+> **Redistribusi adalah salah satu operasi paling berbahaya di jaringan.** Kesalahan redistribusi dapat menyebabkan routing loop, black hole, dan suboptimal routing yang sangat sulit dilacak. Lakukan dengan sangat hati-hati.
 
 ---
 
@@ -44,7 +45,8 @@ R1(config-router-af)# redistribute ospf 1
 R1(config-router)# redistribute bgp 65001 subnets
 ```
 
-⚠️ **`subnets` wajib untuk OSPF.** Tanpa kata kunci ini, OSPF **hanya** meredistribusikan rute classful (/8, /16, /24) dan mengabaikan sisanya secara diam-diam. Ini kesalahan yang sangat sering terjadi.
+> [!WARNING]
+> **`subnets` wajib untuk OSPF.** Tanpa kata kunci ini, OSPF **hanya** meredistribusikan rute classful (/8, /16, /24) dan mengabaikan sisanya secara diam-diam. Ini kesalahan yang sangat sering terjadi.
 
 ---
 
@@ -60,7 +62,8 @@ Setiap protokol punya sistem metrik yang berbeda dan **tidak sebanding**. Saat r
 | **BGP** | Metrik IGP → MED | |
 | **IS-IS** | 0 | |
 
-⚠️ **EIGRP dan RIP memerlukan metrik eksplisit.** Tanpa itu, redistribusi tampak berhasil di konfigurasi tetapi tidak ada rute yang benar-benar diiklankan — gejala yang sangat membingungkan.
+> [!WARNING]
+> **EIGRP dan RIP memerlukan metrik eksplisit.** Tanpa itu, redistribusi tampak berhasil di konfigurasi tetapi tidak ada rute yang benar-benar diiklankan — gejala yang sangat membingungkan.
 
 ```
 # EIGRP: bandwidth delay reliability load MTU
@@ -91,7 +94,8 @@ metric-type 2 (E2) → HANYA cost eksternal (DEFAULT)
                      → semua router melihat cost sama
 ```
 
-💡 **Kalau ada beberapa ASBR yang meredistribusikan rute yang sama, gunakan E1** agar trafik keluar lewat pintu terdekat. E2 bisa menyebabkan trafik memutar jauh untuk mencapai ASBR yang "kebetulan" dipilih.
+> [!TIP]
+> **Kalau ada beberapa ASBR yang meredistribusikan rute yang sama, gunakan E1** agar trafik keluar lewat pintu terdekat. E2 bisa menyebabkan trafik memutar jauh untuk mencapai ASBR yang "kebetulan" dipilih.
 
 ---
 
@@ -139,7 +143,8 @@ redistribute bgp 65001 into OSPF
   → seluruh domain OSPF runtuh
 ```
 
-⚠️ **JANGAN PERNAH meredistribusi tabel BGP penuh ke IGP.** Kalau butuh konektivitas internet dari internal, gunakan **default route**.
+> [!WARNING]
+> **JANGAN PERNAH meredistribusi tabel BGP penuh ke IGP.** Kalau butuh konektivitas internet dari internal, gunakan **default route**.
 
 ---
 
@@ -168,7 +173,8 @@ R2(config)# router eigrp 100
 R2(config-router)# redistribute ospf 1 route-map OSPF-TO-EIGRP metric 10000 100 255 1 1500
 ```
 
-💡 **Tagging adalah teknik terbaik** karena bekerja otomatis tanpa harus mendaftar setiap prefix. Terapkan tag di **semua** titik redistribusi.
+> [!TIP]
+> **Tagging adalah teknik terbaik** karena bekerja otomatis tanpa harus mendaftar setiap prefix. Terapkan tag di **semua** titik redistribusi.
 
 ### Teknik 2: Filtering dengan Prefix-List
 
@@ -189,7 +195,8 @@ R1(config-router)# distance ospf external 180
 R1(config-router)# distance 200 10.0.0.2 0.0.0.0 PREFIX-LIST-NAME
 ```
 
-⚠️ Manipulasi AD kuat tetapi **sulit dipahami orang lain**. Dokumentasikan dengan sangat jelas.
+> [!WARNING]
+> Manipulasi AD kuat tetapi **sulit dipahami orang lain**. Dokumentasikan dengan sangat jelas.
 
 ### Teknik 4: Distribute-List
 
@@ -202,7 +209,7 @@ R1(config-router)# distribute-list 10 in
 
 ---
 
-## 6. Redistribusi Satu Arah — Lebih Aman
+## 6. Redistribusi Satu Arah: Lebih Aman
 
 Kalau memungkinkan, hindari **mutual redistribution** (dua arah di dua titik).
 
@@ -221,11 +228,12 @@ R1(config)# router eigrp 100
 R1(config-router)# redistribute static metric 10000 100 255 1 1500
 ```
 
-💡 **Kalau Anda harus melakukan mutual redistribution di lebih dari satu titik**, tagging menjadi **wajib**, bukan opsional.
+> [!TIP]
+> **Kalau Anda harus melakukan mutual redistribution di lebih dari satu titik**, tagging menjadi **wajib**, bukan opsional.
 
 ---
 
-## 7. Route-Map — Bahasa Kebijakan Routing
+## 7. Route-Map: Bahasa Kebijakan Routing
 
 ### Struktur
 
@@ -245,7 +253,8 @@ route-map NAMA {permit | deny} SEQ
 4. Kalau tidak ada yang cocok sama sekali → IMPLICIT DENY
 ```
 
-⚠️ **Implicit deny di akhir route-map** adalah sumber masalah nomor satu. Kalau Anda hanya menulis satu `permit 10` untuk memberi tag pada sebagian rute, **sisanya akan dibuang diam-diam**.
+> [!WARNING]
+> **Implicit deny di akhir route-map** adalah sumber masalah nomor satu. Kalau Anda hanya menulis satu `permit 10` untuk memberi tag pada sebagian rute, **sisanya akan dibuang diam-diam**.
 
 ```
 ❌ SALAH — rute selain 10.1.0.0/16 hilang:
@@ -343,7 +352,8 @@ R1(config-if)# ip policy route-map PBR-TAMU
 R1(config)# ip local policy route-map PBR-LOKAL
 ```
 
-⚠️ **PBR diterapkan pada interface INGRESS** (tempat trafik masuk), bukan egress.
+> [!WARNING]
+> **PBR diterapkan pada interface INGRESS** (tempat trafik masuk), bukan egress.
 
 ### PBR dengan verifikasi ketersediaan
 
@@ -363,7 +373,8 @@ R1# show route-map
 R1# debug ip policy
 ```
 
-⚠️ **PBR sering diproses CPU** pada beberapa platform (bukan hardware), sehingga bisa menurunkan throughput drastis. Verifikasi bahwa platform Anda mendukung PBR di hardware sebelum menerapkannya pada trafik volume tinggi.
+> [!WARNING]
+> **PBR sering diproses CPU** pada beberapa platform (bukan hardware), sehingga bisa menurunkan throughput drastis. Verifikasi bahwa platform Anda mendukung PBR di hardware sebelum menerapkannya pada trafik volume tinggi.
 
 ---
 
@@ -416,7 +427,8 @@ R1# traceroute vrf PELANGGAN-A 10.0.0.2
 R1# telnet 10.0.0.2 /vrf PELANGGAN-A
 ```
 
-⚠️ **`vrf forwarding` menghapus konfigurasi IP pada interface.** Konfigurasikan VRF terlebih dahulu, baru pasang alamat IP.
+> [!WARNING]
+> **`vrf forwarding` menghapus konfigurasi IP pada interface.** Konfigurasikan VRF terlebih dahulu, baru pasang alamat IP.
 
 ### Route leaking antar-VRF
 
@@ -428,7 +440,8 @@ R1(config-vrf-af)# route-target import 65001:200
 ```
 Membutuhkan MP-BGP. Untuk kasus sederhana, bisa memakai static route antar-VRF.
 
-💡 **VRF-Lite** = VRF tanpa MPLS (isolasi lokal per perangkat). **VRF dengan MPLS L3VPN** memungkinkan isolasi menyeberang jaringan provider (`11-wan-vpn/01`).
+> [!TIP]
+> **VRF-Lite** = VRF tanpa MPLS (isolasi lokal per perangkat). **VRF dengan MPLS L3VPN** memungkinkan isolasi menyeberang jaringan provider (`11-wan-vpn/01`).
 
 ---
 
@@ -513,4 +526,4 @@ Membutuhkan MP-BGP. Untuk kasus sederhana, bisa memakai static route antar-VRF.
 
 ---
 
-**Berikutnya:** `07-routing-lanjutan/08-fhrp.md` — redundansi default gateway.
+**Berikutnya:** `07-routing-lanjutan/08-fhrp.md`. Redundansi default gateway.

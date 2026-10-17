@@ -1,4 +1,4 @@
-# Cheatsheet — Cisco IOS
+# Cheatsheet: Cisco IOS
 
 > Rujukan cepat perintah Cisco IOS/IOS-XE untuk CCNA. Format: `mode` → perintah.
 > Mode: `>` user EXEC, `#` privileged EXEC, `(config)#` global config.
@@ -17,7 +17,7 @@ do <cmd>                          jalankan perintah EXEC dari mode config
 ?                                 bantuan; <tab> autocomplete
 ```
 
-## Verifikasi (show) — paling sering dipakai
+## Verifikasi (show): paling sering dipakai
 
 ```
 show running-config               konfigurasi aktif (RAM)
@@ -220,9 +220,11 @@ terminal monitor                   tampilkan log/debug di sesi SSH
 show logging                       buffer log
 ```
 
-💡 **Perintah tersering CCNA:** `show ip interface brief`, `show ip route`, `show vlan brief`, `show interfaces trunk`, `show spanning-tree`, `show ip ospf neighbor`, `show running-config`. Hafalkan `no shutdown` — interface router default mati.
+> [!TIP]
+> **Perintah tersering CCNA:** `show ip interface brief`, `show ip route`, `show vlan brief`, `show interfaces trunk`, `show spanning-tree`, `show ip ospf neighbor`, `show running-config`. Hafalkan `no shutdown` — interface router default mati.
 
-⚠️ **Selalu `copy run start`** setelah konfigurasi — perubahan di RAM hilang saat reload bila belum disimpan.
+> [!WARNING]
+> **Selalu `copy run start`** setelah konfigurasi — perubahan di RAM hilang saat reload bila belum disimpan.
 
 ---
 

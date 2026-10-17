@@ -108,7 +108,8 @@
 | Rate limit | policer/shaper | simple queue / queue tree | tc htb |
 | Pembagian adil | WFQ | **PCQ** | fq_codel/CAKE |
 
-💡 **Pelajaran utama:** setiap "fitur vendor" adalah implementasi dari **konsep universal**. Kalau Anda paham konsepnya (VLAN, routing, NAT, stateful firewall, QoS), Anda bisa menerapkannya di platform mana pun hanya dengan mencari sintaksnya. Inilah kenapa kurikulum ini mengajarkan konsep dulu, lalu tiga platform.
+> [!TIP]
+> **Pelajaran utama:** setiap "fitur vendor" adalah implementasi dari **konsep universal**. Kalau Anda paham konsepnya (VLAN, routing, NAT, stateful firewall, QoS), Anda bisa menerapkannya di platform mana pun hanya dengan mencari sintaksnya. Inilah kenapa kurikulum ini mengajarkan konsep dulu, lalu tiga platform.
 
 ---
 

@@ -1,4 +1,4 @@
-# 05.1 — Port dan Socket
+# 05.1 Port dan Socket
 
 > **Prasyarat:** `04-network-layer/05`
 > **Tujuan:** Anda paham bagaimana banyak aplikasi berbagi satu alamat IP, hafal port penting, dan bisa membaca output `ss`/`netstat` dengan tepat.
@@ -34,7 +34,7 @@ Analogi pos:
 
 ## 2. Port Number
 
-- **16 bit** → rentang **0–65535**
+- **16 bit** → rentang **0-65535**
 - Ada di header TCP maupun UDP: **port sumber** dan **port tujuan**
 - Port TCP 80 dan port UDP 80 adalah **dua hal berbeda**
 
@@ -42,11 +42,12 @@ Analogi pos:
 
 | Rentang | Nama | Keterangan |
 |---|---|---|
-| **0–1023** | **Well-known / System ports** | Layanan standar. Di Unix butuh **root** untuk listening |
-| **1024–49151** | **Registered ports** | Didaftarkan ke IANA oleh vendor aplikasi |
-| **49152–65535** | **Dynamic / Ephemeral / Private** | Dipakai klien sebagai port sumber sementara |
+| **0-1023** | **Well-known / System ports** | Layanan standar. Di Unix butuh **root** untuk listening |
+| **1024-49151** | **Registered ports** | Didaftarkan ke IANA oleh vendor aplikasi |
+| **49152-65535** | **Dynamic / Ephemeral / Private** | Dipakai klien sebagai port sumber sementara |
 
-⚠️ Rentang ephemeral aktual berbeda per OS:
+> [!WARNING]
+> Rentang ephemeral aktual berbeda per OS:
 ```bash
 # Linux (default 32768–60999)
 $ cat /proc/sys/net/ipv4/ip_local_port_range
@@ -104,7 +105,8 @@ TCP 203.0.113.5:443 ← 5.6.7.8:60001      klien beda
 5. Saat koneksi ditutup, port dikembalikan ke pool
 ```
 
-⚠️ **Port ephemeral bisa habis.** Server proxy atau load balancer yang membuat ribuan koneksi keluar ke satu backend bisa kehabisan:
+> [!WARNING]
+> **Port ephemeral bisa habis.** Server proxy atau load balancer yang membuat ribuan koneksi keluar ke satu backend bisa kehabisan:
 ```
 Backend tunggal 10.0.0.5:8080
 Port ephemeral tersedia: 32768–60999 = 28.232
@@ -190,7 +192,8 @@ DATABASE: 1433 (MSSQL), 3306 (MySQL), 5432 (PostgreSQL), 1521 (Oracle),
           27017 (MongoDB), 6379 (Redis)
 ```
 
-💡 **Pola aman vs tidak aman:**
+> [!TIP]
+> **Pola aman vs tidak aman:**
 ```
 HTTP  80  → HTTPS 443
 FTP   21  → FTPS  990 (atau SFTP 22)
@@ -248,7 +251,8 @@ udp   UNCONN 0      0       127.0.0.53%lo:53          0.0.0.0:*      users:(("sy
 [::]:443        → semua interface IPv6
 ```
 
-⚠️ **Ini penyebab masalah "aplikasi jalan tapi tidak bisa diakses dari luar" yang paling umum.** Aplikasi listening di `127.0.0.1` saja. Perbaikannya di konfigurasi aplikasi (`bind_address`, `listen`, `host`), bukan di firewall.
+> [!WARNING]
+> **Ini penyebab masalah "aplikasi jalan tapi tidak bisa diakses dari luar" yang paling umum.** Aplikasi listening di `127.0.0.1` saja. Perbaikannya di konfigurasi aplikasi (`bind_address`, `listen`, `host`), bukan di firewall.
 
 ### Contoh pemakaian
 ```bash
@@ -320,7 +324,8 @@ $ telnet example.com 443
 | **Connection refused** | Host **dapat dijangkau**, tetapi tidak ada yang listening di port itu (RST dikirim) |
 | **Timeout / no route** | Paket tidak sampai — firewall drop, routing salah, atau host mati |
 
-⚠️ Perbedaan **refused** vs **timeout** sangat informatif:
+> [!WARNING]
+> Perbedaan **refused** vs **timeout** sangat informatif:
 - *Refused* → jaringan sehat sampai host; masalah di aplikasi.
 - *Timeout* → ada yang memblokir atau tidak ada jalur.
 
@@ -352,32 +357,40 @@ Detail di `09-nat-acl-firewall/01`.
 
 ### Port yang tidak boleh dipakai
 
-⚠️ Jangan menjalankan layanan di port yang sudah dipakai layanan standar, walau teknis bisa. Ini membingungkan firewall, IDS, dan orang lain.
+> [!WARNING]
+> Jangan menjalankan layanan di port yang sudah dipakai layanan standar, walau teknis bisa. Ini membingungkan firewall, IDS, dan orang lain.
 
-⚠️ Beberapa browser **memblokir port tertentu** untuk mencegah serangan cross-protocol (mis. port 25, 110, 143, 6667). Menjalankan web server di port itu akan gagal diakses dari browser.
+> [!WARNING]
+> Beberapa browser **memblokir port tertentu** untuk mencegah serangan cross-protocol (mis. port 25, 110, 143, 6667). Menjalankan web server di port itu akan gagal diakses dari browser.
 
 ---
 
 ## 9. Kesalahan Umum
 
-⚠️ **1. Mengira port TCP dan UDP dengan nomor sama adalah hal yang sama.** TCP 53 dan UDP 53 adalah dua socket berbeda.
+> [!WARNING]
+> **1. Mengira port TCP dan UDP dengan nomor sama adalah hal yang sama.** TCP 53 dan UDP 53 adalah dua socket berbeda.
 
-⚠️ **2. Lupa bahwa DNS juga memakai TCP.** Memblokir TCP 53 merusak DNSSEC dan jawaban besar.
+> [!WARNING]
+> **2. Lupa bahwa DNS juga memakai TCP.** Memblokir TCP 53 merusak DNSSEC dan jawaban besar.
 
-⚠️ **3. Aplikasi listening di `127.0.0.1` lalu bingung kenapa tidak bisa diakses dari luar.** Periksa `ss -tulnp` sebelum menyalahkan firewall.
+> [!WARNING]
+> **3. Aplikasi listening di `127.0.0.1` lalu bingung kenapa tidak bisa diakses dari luar.** Periksa `ss -tulnp` sebelum menyalahkan firewall.
 
-⚠️ **4. Membuat aturan firewall berdasarkan port sumber.** Port sumber klien acak.
+> [!WARNING]
+> **4. Membuat aturan firewall berdasarkan port sumber.** Port sumber klien acak.
 
-⚠️ **5. Mengabaikan habisnya port ephemeral** pada proxy/LB dengan banyak koneksi keluar.
+> [!WARNING]
+> **5. Mengabaikan habisnya port ephemeral** pada proxy/LB dengan banyak koneksi keluar.
 
-⚠️ **6. Menganggap `nc -zuv` andal untuk UDP.** UDP tidak wajib menjawab; hasil "open" pada UDP sering berarti "tidak ada jawaban", yang ambigu.
+> [!WARNING]
+> **6. Menganggap `nc -zuv` andal untuk UDP.** UDP tidak wajib menjawab; hasil "open" pada UDP sering berarti "tidak ada jawaban", yang ambigu.
 
 ---
 
 ## 10. Ringkasan
 
-- **Port** (16 bit, 0–65535) memungkinkan banyak aplikasi berbagi satu IP.
-- Rentang: well-known (0–1023, butuh root), registered (1024–49151), **ephemeral** (49152+ / 32768+ di Linux).
+- **Port** (16 bit, 0-65535) memungkinkan banyak aplikasi berbagi satu IP.
+- Rentang: well-known (0-1023, butuh root), registered (1024-49151), **ephemeral** (49152+ / 32768+ di Linux).
 - **Socket** = IP + port + protokol. **5-tuple** (protokol, IP src, port src, IP dst, port dst) mengidentifikasi koneksi secara unik.
 - Klien memakai port sumber acak → itulah cara banyak tab ke situs yang sama bisa dibedakan.
 - Hafalkan port inti: 22 SSH, 53 DNS (TCP **dan** UDP), 67/68 DHCP, 80/443 web, 123 NTP, 161/162 SNMP, 179 BGP, 389 LDAP, 514 syslog, 1812 RADIUS, 3389 RDP.
@@ -400,7 +413,7 @@ Detail di `09-nat-acl-firewall/01`.
 <details>
 <summary>Jawaban</summary>
 
-1. Secara teori dibatasi oleh jumlah **port ephemeral** yang tersedia, karena IP sumber, IP tujuan, port tujuan, dan protokol semuanya tetap — hanya port sumber yang bervariasi. Di Linux default (32768–60999) itu **~28.232 koneksi**. Batas praktis lebih rendah karena socket dalam state `TIME_WAIT` masih menahan port selama ~60 detik. Bisa diperbesar dengan memperluas `ip_local_port_range`, mengaktifkan `tcp_tw_reuse`, atau menambah IP sumber.
+1. Secara teori dibatasi oleh jumlah **port ephemeral** yang tersedia, karena IP sumber, IP tujuan, port tujuan, dan protokol semuanya tetap — hanya port sumber yang bervariasi. Di Linux default (32768-60999) itu **~28.232 koneksi**. Batas praktis lebih rendah karena socket dalam state `TIME_WAIT` masih menahan port selama ~60 detik. Bisa diperbesar dengan memperluas `ip_local_port_range`, mengaktifkan `tcp_tw_reuse`, atau menambah IP sumber.
 
 2. Aplikasi **hanya listening di loopback** (`127.0.0.1`), sehingga hanya bisa diakses dari komputer itu sendiri. Ini bukan masalah firewall. Perbaikan: ubah konfigurasi aplikasi agar bind ke `0.0.0.0` (semua interface) atau ke IP spesifik yang menghadap jaringan — cari opsi seperti `bind`, `listen`, `host`, atau `--bind-address`. Setelah itu barulah periksa firewall.
 
@@ -428,4 +441,4 @@ Detail di `09-nat-acl-firewall/01`.
 
 ---
 
-**Berikutnya:** `05-transport/02-tcp.md` — protokol yang membawa sebagian besar trafik internet.
+**Berikutnya:** `05-transport/02-tcp.md`. Protokol yang membawa sebagian besar trafik internet.

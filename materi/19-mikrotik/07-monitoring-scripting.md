@@ -1,4 +1,4 @@
-# 19.7 — MikroTik: Monitoring, Tools & Scripting
+# 19.7 MikroTik: Monitoring, Tools & Scripting
 
 > **Prasyarat:** `19-mikrotik/01-06`, `14-monitoring-troubleshooting/02-03` (tools & observability), `15-otomasi/01` (otomasi)
 > **Tujuan:** Anda bisa memantau dan men-troubleshoot RouterOS dengan tools bawaan, dan mengotomasi tugas dengan scripting & scheduler.
@@ -30,13 +30,15 @@ RouterOS punya banyak tools diagnostik (setara `ping`/`traceroute`/`tcpdump` —
 /tool profile
 ```
 
-💡 **Torch** adalah salah satu tools paling berguna — menampilkan **trafik real-time** per-interface dipecah per src/dst/protokol/port. Saat "internet lambat", torch langsung menunjukkan **siapa/apa yang memakan bandwidth** — jauh lebih cepat daripada menebak. Setara analisis flow tetapi instan.
+> [!TIP]
+> **Torch** adalah salah satu tools paling berguna — menampilkan **trafik real-time** per-interface dipecah per src/dst/protokol/port. Saat "internet lambat", torch langsung menunjukkan **siapa/apa yang memakan bandwidth** — jauh lebih cepat daripada menebak. Setara analisis flow tetapi instan.
 
-⚠️ **Bandwidth-test membebani CPU/link** — jangan jalankan di jam sibuk pada router produksi; ia bisa menjenuhkan link dan CPU. Gunakan untuk uji terkontrol saja.
+> [!WARNING]
+> **Bandwidth-test membebani CPU/link** — jangan jalankan di jam sibuk pada router produksi; ia bisa menjenuhkan link dan CPU. Gunakan untuk uji terkontrol saja.
 
 ---
 
-## 2. Netwatch — Pemantauan Otomatis
+## 2. Netwatch: Pemantauan Otomatis
 
 **Netwatch** memantau host dan menjalankan **aksi** saat status berubah (up/down) — dasar untuk failover, alert, dan otomasi reaktif.
 
@@ -47,7 +49,8 @@ add host=8.8.8.8 interval=10s \
     down-script="/log warning \"WAN DOWN\"; /ip route enable [find comment=backup]"
 ```
 
-💡 **Netwatch untuk failover WAN**: pantau gateway ISP utama; bila **down**, jalankan skrip yang mengaktifkan rute backup (atau ubah distance). Bila **up** lagi, kembalikan. Ini pola failover populer di RouterOS (selain recursive routing/route with check-gateway). Bisa juga trigger notifikasi (email/Telegram via API).
+> [!TIP]
+> **Netwatch untuk failover WAN**: pantau gateway ISP utama; bila **down**, jalankan skrip yang mengaktifkan rute backup (atau ubah distance). Bila **up** lagi, kembalikan. Ini pola failover populer di RouterOS (selain recursive routing/route with check-gateway). Bisa juga trigger notifikasi (email/Telegram via API).
 
 ---
 
@@ -65,7 +68,8 @@ add name=remote target=remote remote=192.168.1.50 remote-port=514
 add topics=info,error,warning action=remote
 ```
 
-⚠️ **Sentralisasi log ke syslog server** (`14-monitoring-troubleshooting/03`) penting — memori log lokal RouterOS terbatas dan hilang saat reboot. Untuk audit, troubleshooting historis, dan korelasi antar-perangkat, kirim ke collector terpusat (dan pastikan **NTP sinkron** agar timestamp akurat).
+> [!WARNING]
+> **Sentralisasi log ke syslog server** (`14-monitoring-troubleshooting/03`) penting — memori log lokal RouterOS terbatas dan hilang saat reboot. Untuk audit, troubleshooting historis, dan korelasi antar-perangkat, kirim ke collector terpusat (dan pastikan **NTP sinkron** agar timestamp akurat).
 
 ---
 
@@ -80,7 +84,8 @@ add topics=info,error,warning action=remote
 # The Dude = NMS gratis dari MikroTik (peta jaringan, grafik, alert)
 ```
 
-💡 **The Dude** adalah NMS (Network Management System) gratis dari MikroTik: memetakan jaringan otomatis, grafik pemakaian, dan alert bila perangkat/link down. Cocok untuk ISP kecil yang butuh monitoring visual tanpa biaya. Untuk skala lebih besar/modern, ekspor SNMP ke **Prometheus/Grafana** atau NMS lain (`14/03`).
+> [!TIP]
+> **The Dude** adalah NMS (Network Management System) gratis dari MikroTik: memetakan jaringan otomatis, grafik pemakaian, dan alert bila perangkat/link down. Cocok untuk ISP kecil yang butuh monitoring visual tanpa biaya. Untuk skala lebih besar/modern, ekspor SNMP ke **Prometheus/Grafana** atau NMS lain (`14/03`).
 
 ---
 
@@ -112,11 +117,12 @@ add name=backup-harian source={
 [find ...]          → cari item (mengembalikan id)
 ```
 
-💡 **Backup ada dua jenis**: `/system backup` (binary, lengkap, hanya restore ke perangkat sama) dan `/export` (teks, dapat dibaca/di-diff/di-versi di Git, portabel sebagian). Untuk **version control** (`15-otomasi/04`), `/export` yang berbasis teks lebih berguna — bisa disimpan di Git dan di-diff.
+> [!TIP]
+> **Backup ada dua jenis**: `/system backup` (binary, lengkap, hanya restore ke perangkat sama) dan `/export` (teks, dapat dibaca/di-diff/di-versi di Git, portabel sebagian). Untuk **version control** (`15-otomasi/04`), `/export` yang berbasis teks lebih berguna — bisa disimpan di Git dan di-diff.
 
 ---
 
-## 6. Scheduler — Jalankan Otomatis
+## 6. Scheduler: Jalankan Otomatis
 
 **Scheduler** menjalankan skrip pada waktu/interval tertentu (setara cron).
 
@@ -128,7 +134,8 @@ add name=backup-tiap-hari interval=1d start-time=02:00:00 \
 # Reboot terjadwal, update address-list, dll juga bisa dijadwalkan
 ```
 
-💡 **Scheduler + script** = otomasi asli RouterOS: backup terjadwal, pembersihan, update daftar blokir, cek & failover, notifikasi. Untuk otomasi **multi-perangkat** dan **version control**, gabungkan dengan pendekatan eksternal (Ansible `community.routeros`, atau skrip Python via API/SSH — `15-otomasi/03-04`).
+> [!TIP]
+> **Scheduler + script** = otomasi asli RouterOS: backup terjadwal, pembersihan, update daftar blokir, cek & failover, notifikasi. Untuk otomasi **multi-perangkat** dan **version control**, gabungkan dengan pendekatan eksternal (Ansible `community.routeros`, atau skrip Python via API/SSH — `15-otomasi/03-04`).
 
 ---
 
@@ -154,7 +161,8 @@ with ConnectHandler(**dev) as conn:
     open("192.168.1.1.rsc", "w").write(out)
 ```
 
-💡 **Untuk ISP dengan banyak router**, otomasi eksternal (Python/Ansible + Git + NetBox — Tahap 15) mengalahkan scripting per-perangkat: konfigurasi konsisten, backup terpusat ter-versi, dan perubahan massal aman. Scripting internal RouterOS untuk tugas **lokal/reaktif** (failover netwatch, backup lokal); otomasi eksternal untuk **manajemen armada**.
+> [!TIP]
+> **Untuk ISP dengan banyak router**, otomasi eksternal (Python/Ansible + Git + NetBox — Tahap 15) mengalahkan scripting per-perangkat: konfigurasi konsisten, backup terpusat ter-versi, dan perubahan massal aman. Scripting internal RouterOS untuk tugas **lokal/reaktif** (failover netwatch, backup lokal); otomasi eksternal untuk **manajemen armada**.
 
 ---
 
@@ -217,4 +225,4 @@ with ConnectHandler(**dev) as conn:
 
 ---
 
-**Berikutnya:** `19-mikrotik/08-routing-v7` — routing RouterOS v7 tingkat MTCRE: OSPF, BGP, VRF, dan policy routing.
+**Berikutnya:** `19-mikrotik/08-routing-v7`. Routing RouterOS v7 tingkat MTCRE: OSPF, BGP, VRF, dan policy routing.

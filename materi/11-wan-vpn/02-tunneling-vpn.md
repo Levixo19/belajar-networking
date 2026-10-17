@@ -1,4 +1,4 @@
-# 11.2 — Tunneling dan VPN
+# 11.2 Tunneling dan VPN
 
 > **Prasyarat:** `11-wan-vpn/01`, `06-aplikasi/04` (kripto), `04-network-layer/04` (MTU)
 > **Tujuan:** Anda bisa memilih, mengonfigurasi, dan mendiagnosis semua jenis VPN utama di Cisco, MikroTik, dan Linux.
@@ -23,7 +23,7 @@
 | **Enkapsulasi** | Membungkus paket asli |
 | **Endpoint** | Titik awal/akhir tunnel |
 
-### ⚠️ MTU — masalah nomor satu pada tunnel
+### MTU: masalah nomor satu pada tunnel
 
 Setiap lapisan enkapsulasi mengurangi ruang untuk data.
 
@@ -31,8 +31,8 @@ Setiap lapisan enkapsulasi mengurangi ruang untuk data.
 |---|---|---|---|
 | GRE | 24 | 1476 | 1436 |
 | IPIP | 20 | 1480 | 1440 |
-| IPsec ESP transport (AES) | ~38–56 | ~1444 | ~1404 |
-| IPsec ESP tunnel (AES) | ~58–73 | ~1427 | ~1387 |
+| IPsec ESP transport (AES) | ~38-56 | ~1444 | ~1404 |
+| IPsec ESP tunnel (AES) | ~58-73 | ~1427 | ~1387 |
 | GRE over IPsec | ~82 | ~1418 | ~1378 |
 | **WireGuard** (IPv4) | 60 | **1440** | 1400 |
 | WireGuard (IPv6) | 80 | 1420 | 1380 |
@@ -74,11 +74,12 @@ $ sudo nft add rule inet filter forward tcp flags syn \
     tcp option maxseg size set rt mtu
 ```
 
-💡 **Nilai aman universal: MTU 1400, MSS 1360.** Sedikit tidak optimal tetapi hampir selalu bekerja.
+> [!TIP]
+> **Nilai aman universal: MTU 1400, MSS 1360.** Sedikit tidak optimal tetapi hampir selalu bekerja.
 
 ---
 
-## 2. GRE — Generic Routing Encapsulation
+## 2. GRE (Generic Routing Encapsulation)
 
 Tunnel paling sederhana. **Tidak mengenkripsi** — hanya membungkus.
 
@@ -119,7 +120,8 @@ $ sudo ip link set gre1 up mtu 1476
 $ sudo ip addr add 10.255.255.1/30 dev gre1
 ```
 
-⚠️ **Recursive routing** — jika rute ke `tunnel destination` mengarah **melalui tunnel itu sendiri**, tunnel akan flapping terus-menerus:
+> [!WARNING]
+> **Recursive routing** — jika rute ke `tunnel destination` mengarah **melalui tunnel itu sendiri**, tunnel akan flapping terus-menerus:
 ```
 %TUN-5-RECURDOWN: Tunnel0 temporarily disabled due to recursive routing
 ```
@@ -141,7 +143,8 @@ Kerangka enkripsi standar di layer 3.
 | Melewati NAT | ❌ **Tidak bisa** | ✅ Dengan NAT-T |
 | Dipakai | Praktis tidak | **Hampir selalu** |
 
-⚠️ **AH tidak bisa melewati NAT** karena ia mengautentikasi header IP yang justru diubah NAT. **Gunakan ESP.**
+> [!WARNING]
+> **AH tidak bisa melewati NAT** karena ia mengautentikasi header IP yang justru diubah NAT. **Gunakan ESP.**
 
 ### Dua mode
 
@@ -157,7 +160,7 @@ TUNNEL MODE:
   → untuk site-to-site (standar)
 ```
 
-### IKE — Negosiasi Kunci
+### IKE (Negosiasi Kunci)
 
 **IKEv2** [RFC 7296] adalah standar saat ini; IKEv1 sudah usang.
 
@@ -190,9 +193,11 @@ Phase 2 (IPsec SA / Child SA):
   - Proxy ID / traffic selector : jaringan yang dilindungi
 ```
 
-⚠️ **Ketidakcocokan satu parameter saja membuat tunnel gagal.** Ini penyebab masalah IPsec nomor satu.
+> [!WARNING]
+> **Ketidakcocokan satu parameter saja membuat tunnel gagal.** Ini penyebab masalah IPsec nomor satu.
 
-⚠️ **JANGAN pakai DH group 1, 2, atau 5** (768/1024/1536-bit) — sudah lemah. Minimum **group 14**; sebaiknya **19/20** (ECP 256/384).
+> [!WARNING]
+> **JANGAN pakai DH group 1, 2, atau 5** (768/1024/1536-bit) — sudah lemah. Minimum **group 14**; sebaiknya **19/20** (ECP 256/384).
 
 ### NAT Traversal (NAT-T)
 
@@ -219,14 +224,15 @@ Port yang harus dibuka untuk IPsec:
 | Menentukan trafik | ACL "interesting traffic" | **Routing table** |
 | Interface | Tidak ada interface tunnel | Ada (VTI/tunnel) |
 | Routing dinamis | ❌ Sulit | ✅ **Bisa** (OSPF/BGP lewat tunnel) |
-| Multicast | ❌ | ✅ |
+| Multicast | Tidak | Ya |
 | QoS per tunnel | Sulit | ✅ Mudah |
 | Troubleshooting | Sulit | **Jauh lebih mudah** |
 | Interop | Universal | Perlu dukungan kedua sisi |
 
-💡 **Gunakan route-based (VTI) kalau memungkinkan.** Jauh lebih mudah dikelola, mendukung routing dinamis, dan interface tunnel memberi visibilitas (`show interface`, counter, QoS).
+> [!TIP]
+> **Gunakan route-based (VTI) kalau memungkinkan.** Jauh lebih mudah dikelola, mendukung routing dinamis, dan interface tunnel memberi visibilitas (`show interface`, counter, QoS).
 
-### Konfigurasi Cisco — Route-based (VTI)
+### Konfigurasi Cisco: Route-based (VTI)
 
 ```
 ! IKEv2 proposal & policy
@@ -280,7 +286,7 @@ debug crypto ikev2
 debug crypto ipsec
 ```
 
-### Konfigurasi MikroTik — IPsec
+### Konfigurasi MikroTik: IPsec
 
 ```
 # Profile (Phase 1)
@@ -319,13 +325,15 @@ debug crypto ipsec
 /log print where topics~"ipsec"
 ```
 
-⚠️ **Kesalahan MikroTik paling umum: lupa mengecualikan trafik IPsec dari NAT.** Kalau aturan `masquerade` diproses lebih dulu, alamat sumber diubah sebelum dicocokkan dengan policy IPsec, sehingga tunnel tidak pernah terbentuk untuk trafik itu. **Selalu letakkan aturan `accept` sebelum `masquerade`.**
+> [!WARNING]
+> **Kesalahan MikroTik paling umum: lupa mengecualikan trafik IPsec dari NAT.** Kalau aturan `masquerade` diproses lebih dulu, alamat sumber diubah sebelum dicocokkan dengan policy IPsec, sehingga tunnel tidak pernah terbentuk untuk trafik itu. **Selalu letakkan aturan `accept` sebelum `masquerade`.**
 
-💡 **RouterOS v7 juga mendukung route-based IPsec** dengan interface IPsec, yang lebih mudah dikelola.
+> [!TIP]
+> **RouterOS v7 juga mendukung route-based IPsec** dengan interface IPsec, yang lebih mudah dikelola.
 
 ---
 
-## 4. WireGuard — VPN Modern
+## 4. WireGuard: VPN Modern
 
 WireGuard [RFC belum, tetapi sudah di kernel Linux sejak 5.6] jauh lebih sederhana dan cepat daripada IPsec.
 
@@ -341,9 +349,10 @@ Kripto tetap (tidak dinegosiasikan):
   SipHash24 (hashtable)
 ```
 
-💡 **"Crypto agility" sengaja dihilangkan** — tidak ada negosiasi algoritma, sehingga tidak ada downgrade attack dan tidak ada kesalahan konfigurasi parameter. Kalau ada kelemahan ditemukan, versi protokol diganti seluruhnya.
+> [!TIP]
+> **"Crypto agility" sengaja dihilangkan** — tidak ada negosiasi algoritma, sehingga tidak ada downgrade attack dan tidak ada kesalahan konfigurasi parameter. Kalau ada kelemahan ditemukan, versi protokol diganti seluruhnya.
 
-### Cryptokey Routing — konsep inti
+### Cryptokey Routing: konsep inti
 
 ```
 Setiap peer punya:
@@ -356,7 +365,8 @@ AllowedIPs berfungsi GANDA:
                         alamat sumbernya ada dalam AllowedIPs
 ```
 
-⚠️ **Ini konsep yang harus dipahami.** `AllowedIPs = 0.0.0.0/0` berarti "kirim semua trafik ke peer ini **dan** terima paket dengan alamat sumber apa pun dari peer ini" — hanya boleh untuk peer yang sepenuhnya dipercaya.
+> [!WARNING]
+> **Ini konsep yang harus dipahami.** `AllowedIPs = 0.0.0.0/0` berarti "kirim semua trafik ke peer ini **dan** terima paket dengan alamat sumber apa pun dari peer ini" — hanya boleh untuk peer yang sepenuhnya dipercaya.
 
 ### Konfigurasi Linux
 
@@ -407,7 +417,8 @@ $ sudo wg show
 $ sudo systemctl enable wg-quick@wg0
 ```
 
-💡 **`PersistentKeepalive = 25`** wajib jika salah satu sisi di belakang NAT — menjaga entri NAT tetap hidup. Tanpa itu, koneksi hanya bekerja satu arah setelah beberapa menit idle.
+> [!TIP]
+> **`PersistentKeepalive = 25`** wajib jika salah satu sisi di belakang NAT — menjaga entri NAT tetap hidup. Tanpa itu, koneksi hanya bekerja satu arah setelah beberapa menit idle.
 
 ### WireGuard di MikroTik (RouterOS v7)
 
@@ -430,7 +441,8 @@ $ sudo systemctl enable wg-quick@wg0
 /interface wireguard peers print
 ```
 
-⚠️ **WireGuard tidak tersedia di RouterOS v6** — hanya v7 ke atas.
+> [!WARNING]
+> **WireGuard tidak tersedia di RouterOS v6** — hanya v7 ke atas.
 
 ### Perbandingan VPN
 
@@ -444,7 +456,8 @@ $ sudo systemctl enable wg-quick@wg0
 | Ukuran kode | Sangat besar | Besar | **~4.000 baris** | Sedang | Besar |
 | Auditability | Sulit | Sedang | **Mudah** | Sedang | Sulit |
 
-💡 **Pilihan praktis:**
+> [!TIP]
+> **Pilihan praktis:**
 ```
 Site-to-site antar-vendor        → IPsec IKEv2 (route-based/VTI)
 Site-to-site MikroTik/Linux      → WireGuard
@@ -455,7 +468,7 @@ Interop dengan perangkat lama    → IPsec IKEv1 (terpaksa)
 
 ---
 
-## 5. DMVPN — Dynamic Multipoint VPN
+## 5. DMVPN (Dynamic Multipoint VPN)
 
 Memecahkan masalah hub-and-spoke: **tunnel spoke-to-spoke dibangun otomatis saat dibutuhkan**.
 
@@ -508,7 +521,8 @@ interface Tunnel0
  tunnel protection ipsec profile IPSEC-PROF
 ```
 
-💡 **DMVPN adalah pendahulu SD-WAN** — memecahkan masalah yang sama (tunnel dinamis, hemat tunnel manual), tetapi tanpa kontrol terpusat dan application awareness.
+> [!TIP]
+> **DMVPN adalah pendahulu SD-WAN** — memecahkan masalah yang sama (tunnel dinamis, hemat tunnel manual), tetapi tanpa kontrol terpusat dan application awareness.
 
 ---
 
@@ -524,7 +538,8 @@ interface Tunnel0
 | **WireGuard** | UDP 51820 | Cepat, klien ringan |
 | **ZTNA** | HTTPS | Pengganti VPN modern (`12-keamanan/05`) |
 
-⚠️ **PPTP sudah RUSAK TOTAL** — MS-CHAPv2 dapat dipecahkan dalam hitungan jam. **Jangan pernah dipakai.** MikroTik masih menyediakannya untuk kompatibilitas; nonaktifkan.
+> [!WARNING]
+> **PPTP sudah RUSAK TOTAL** — MS-CHAPv2 dapat dipecahkan dalam hitungan jam. **Jangan pernah dipakai.** MikroTik masih menyediakannya untuk kompatibilitas; nonaktifkan.
 
 ```
 /interface pptp-server server set enabled=no
@@ -548,7 +563,8 @@ SPLIT TUNNEL:
   ❌ Risiko: perangkat terhubung ke jaringan perusahaan DAN internet sekaligus
 ```
 
-💡 **Praktik saat ini condong ke split tunnel + keamanan endpoint (EDR) + SASE** — memaksa semua trafik lewat VPN pusat tidak lagi praktis di era SaaS.
+> [!TIP]
+> **Praktik saat ini condong ke split tunnel + keamanan endpoint (EDR) + SASE** — memaksa semua trafik lewat VPN pusat tidak lagi praktis di era SaaS.
 
 ### Konfigurasi remote access di MikroTik
 
@@ -578,7 +594,7 @@ SPLIT TUNNEL:
 
 ## 7. Troubleshooting VPN
 
-### IPsec — alur diagnosis
+### IPsec: alur diagnosis
 
 ```
 1. Apakah Phase 1 (IKE) terbentuk?
@@ -643,7 +659,8 @@ $ sudo wg show
     transfer: 1.23 MiB received, 4.56 MiB sent
 ```
 
-⚠️ **`latest handshake` kosong pada WireGuard** berarti handshake tidak pernah berhasil — periksa: port UDP terbuka, endpoint benar, public key benar (tertukar antara sisi?), dan jam sistem (WireGuard sensitif terhadap waktu).
+> [!WARNING]
+> **`latest handshake` kosong pada WireGuard** berarti handshake tidak pernah berhasil — periksa: port UDP terbuka, endpoint benar, public key benar (tertukar antara sisi?), dan jam sistem (WireGuard sensitif terhadap waktu).
 
 ### Tabel gejala VPN
 
@@ -667,7 +684,7 @@ $ sudo wg show
 - **IPsec**: pakai **ESP** (protokol 50), bukan AH (tidak bisa lewat NAT). **Tunnel mode** untuk site-to-site. **NAT-T** memakai **UDP 4500**.
 - **IKEv2** lebih baik daripada IKEv1. Minimum **DH group 14**; sebaiknya 19/20. Semua parameter **harus cocok** di kedua sisi.
 - **Route-based (VTI) lebih baik daripada policy-based** — mendukung routing dinamis, multicast, QoS, dan jauh lebih mudah di-troubleshoot.
-- ⚠️ **Kesalahan MikroTik #1: lupa mengecualikan trafik IPsec dari NAT** — letakkan aturan `accept` sebelum `masquerade`.
+- **Kesalahan MikroTik #1: lupa mengecualikan trafik IPsec dari NAT** — letakkan aturan `accept` sebelum `masquerade`.
 - **WireGuard**: ~4.000 baris kode, kripto tetap (tanpa negosiasi), **cryptokey routing** di mana `AllowedIPs` berfungsi sebagai routing **dan** firewall. Butuh `PersistentKeepalive` di belakang NAT. **Hanya RouterOS v7**.
 - **DMVPN** membangun tunnel spoke-to-spoke otomatis lewat **mGRE + NHRP** — pendahulu SD-WAN.
 - **PPTP rusak total** — jangan pernah dipakai. **SSTP (TCP 443)** paling mudah melewati firewall ketat.
@@ -699,7 +716,7 @@ $ sudo wg show
    - **Untuk trafik KELUAR (routing):** ketika kernel perlu mengirim paket ke alamat X, ia mencari peer yang `AllowedIPs`-nya mencakup X, lalu mengenkripsi paket dengan kunci peer itu dan mengirimkannya ke endpoint peer tersebut.
    - **Untuk trafik MASUK (firewall):** ketika paket terdekripsi diterima dari sebuah peer, WireGuard memeriksa apakah **alamat sumbernya** ada dalam `AllowedIPs` peer itu. Kalau tidak, paket **dibuang**.
    Konsep ini disebut **cryptokey routing** dan menghilangkan kebutuhan konfigurasi firewall terpisah untuk anti-spoofing: peer secara kriptografis hanya boleh mengirim atas nama alamat yang telah ditetapkan untuknya.
-   ⚠️ Karena itu `AllowedIPs = 0.0.0.0/0` berarti "kirim semua ke peer ini **dan** terima paket dengan alamat sumber apa pun darinya" — hanya untuk peer yang sepenuhnya dipercaya.
+   **Perhatian:** Karena itu `AllowedIPs = 0.0.0.0/0` berarti "kirim semua ke peer ini **dan** terima paket dengan alamat sumber apa pun darinya" — hanya untuk peer yang sepenuhnya dipercaya.
 
 4. Beberapa alasan yang saling menguatkan: (a) **mendukung routing dinamis** — OSPF/BGP/EIGRP bisa berjalan lewat interface tunnel, sehingga penambahan subnet tidak memerlukan perubahan konfigurasi VPN; pada policy-based, setiap subnet baru berarti mengubah ACL di **kedua** sisi. (b) **Mendukung multicast** — penting untuk routing protocol dan beberapa aplikasi. (c) **Visibilitas dan troubleshooting jauh lebih mudah** — ada interface nyata dengan counter, status up/down, dan bisa di-`ping`. (d) **QoS dan monitoring per tunnel** mudah diterapkan pada interface. (e) **Failover lebih bersih** — tunnel down terlihat sebagai interface down yang langsung memengaruhi routing.
    Policy-based masih dipakai terutama untuk **interoperabilitas dengan perangkat lama** atau vendor yang tidak mendukung VTI.
@@ -730,7 +747,7 @@ $ sudo wg show
 
 ## 10. Sumber
 
-- RFC 4301–4303 — IPsec Architecture, AH, ESP
+- RFC 4301-4303 — IPsec Architecture, AH, ESP
 - RFC 7296 — IKEv2 · RFC 3948 — UDP Encapsulation of ESP (NAT-T)
 - RFC 2784 — Generic Routing Encapsulation (GRE)
 - RFC 2332 — NHRP (dasar DMVPN)
@@ -740,4 +757,4 @@ $ sudo wg show
 
 ---
 
-**Berikutnya:** `11-wan-vpn/03-qos.md` — memprioritaskan trafik saat bandwidth terbatas.
+**Berikutnya:** `11-wan-vpn/03-qos.md`. Memprioritaskan trafik saat bandwidth terbatas.

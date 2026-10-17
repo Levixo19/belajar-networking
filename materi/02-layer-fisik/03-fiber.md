@@ -1,4 +1,4 @@
-# 02.3 — Serat Optik
+# 02.3 Serat Optik
 
 > **Prasyarat:** `02-layer-fisik/01`, `02-layer-fisik/02`
 > **Tujuan:** Anda bisa memilih jenis serat & transceiver yang tepat, menghitung power budget optik, dan mendiagnosis masalah link fiber.
@@ -20,7 +20,7 @@ Serat optik membawa **cahaya**, bukan listrik. Prinsipnya **total internal refle
    ─────────────── COATING / BUFFER ──────────────────────────
 ```
 
-Cahaya masuk dengan sudut tertentu, memantul terus di batas core–cladding, dan merambat sampai ujung. Karena tidak ada arus listrik:
+Cahaya masuk dengan sudut tertentu, memantul terus di batas core-cladding, dan merambat sampai ujung. Karena tidak ada arus listrik:
 - **Kebal EMI/RFI sepenuhnya**
 - **Tidak memancarkan sinyal** → sangat sulit disadap tanpa terdeteksi
 - **Isolasi listrik sempurna** → aman untuk antar-gedung
@@ -43,19 +43,19 @@ Perbedaan terpenting yang harus Anda kuasai.
 
 | | **Single-mode (SMF)** | **Multimode (MMF)** |
 |---|---|---|
-| Diameter core | **8–10 µm** (sangat kecil) | **50 µm** atau 62,5 µm |
+| Diameter core | **8-10 µm** (sangat kecil) | **50 µm** atau 62,5 µm |
 | Cladding | 125 µm | 125 µm |
 | Jalur cahaya | Satu jalur lurus | Banyak jalur memantul |
 | Sumber cahaya | Laser (mahal, presisi) | LED atau VCSEL (murah) |
 | Panjang gelombang | 1310 nm, 1550 nm | 850 nm, 1300 nm |
-| Jarak | **10 km – 100+ km** | 100 m – 2 km |
+| Jarak | **10 km - 100+ km** | 100 m - 2 km |
 | Bandwidth | Sangat besar | Terbatas oleh dispersi modal |
 | Harga kabel | Lebih murah | Sedikit lebih mahal |
 | Harga transceiver | **Lebih mahal** | Lebih murah |
 | Warna jaket (konvensi) | **Kuning** | Oranye (OM1/OM2), **Aqua** (OM3/OM4), **Magenta/ungu** (OM5) |
 | Untuk | Antar-gedung, WAN, backbone jauh | Dalam gedung, dalam data center |
 
-### Dispersi Modal — kenapa MMF terbatas jarak
+### Dispersi Modal: kenapa MMF terbatas jarak
 
 Pada MMF, cahaya masuk dengan banyak sudut berbeda ("mode"). Cahaya yang memantul dengan sudut tajam menempuh jarak lebih panjang daripada yang lurus.
 
@@ -85,7 +85,8 @@ Pada SMF, core sangat kecil sehingga hanya satu mode yang bisa merambat — tida
 - **OM3 minimum, OM4 direkomendasikan** untuk data center.
 - **OM5** mendukung SWDM (beberapa panjang gelombang di MMF) — adopsi terbatas.
 
-⚠️ **Jangan mencampur OM1 (62,5 µm) dengan OM3/OM4 (50 µm)** dalam satu jalur. Perbedaan diameter core menyebabkan rugi daya besar (terutama arah 62,5 → 50 µm) dan link tidak akan stabil.
+> [!WARNING]
+> **Jangan mencampur OM1 (62,5 µm) dengan OM3/OM4 (50 µm)** dalam satu jalur. Perbedaan diameter core menyebabkan rugi daya besar (terutama arah 62,5 → 50 µm) dan link tidak akan stabil.
 
 ### Kategori SMF (OS = Optical Single-mode)
 
@@ -94,7 +95,7 @@ Pada SMF, core sangat kecil sehingga hanya satu mode yang bisa merambat — tida
 | **OS1** | ≤1,0 dB/km | Indoor, tight-buffered |
 | **OS2** | ≤0,4 dB/km | Outdoor, loose tube, jarak jauh |
 
-Standar serat SMF yang paling umum: **ITU-T G.652.D** (low water peak, cocok untuk semua panjang gelombang 1260–1625 nm).
+Standar serat SMF yang paling umum: **ITU-T G.652.D** (low water peak, cocok untuk semua panjang gelombang 1260-1625 nm).
 
 ---
 
@@ -117,14 +118,16 @@ Standar serat SMF yang paling umum: **ITU-T G.652.D** (low water peak, cocok unt
 | **UPC** (Ultra PC) | ~−50 dB | **Biru** | Standar data (Ethernet) |
 | **APC** (Angled PC, 8°) | ~−60 dB | **Hijau** | FTTH, video RF, aplikasi sensitif pantulan |
 
-⚠️ **JANGAN mencolokkan APC ke UPC.** Ujung APC bersudut 8°, ujung UPC datar — menyambungkannya menyebabkan celah udara: rugi daya besar dan bisa merusak permukaan konektor secara permanen. Ingat: **hijau hanya dengan hijau, biru hanya dengan biru.**
+> [!WARNING]
+> **JANGAN mencolokkan APC ke UPC.** Ujung APC bersudut 8°, ujung UPC datar — menyambungkannya menyebabkan celah udara: rugi daya besar dan bisa merusak permukaan konektor secara permanen. Ingat: **hijau hanya dengan hijau, biru hanya dengan biru.**
 
 ### Simplex vs Duplex
 
 - **Simplex** — satu serat, satu arah. Dipakai dengan BiDi transceiver.
 - **Duplex** — dua serat: satu TX, satu RX. Standar untuk kebanyakan Ethernet fiber.
 
-⚠️ **Kesalahan paling umum pada link fiber baru: TX dan RX tertukar.** Gejalanya: link tidak naik sama sekali, dan `show interfaces transceiver` menunjukkan RX power sangat rendah (mis. −40 dBm). Solusinya: balik salah satu ujung. Ini kesalahan yang wajar dan cepat diperbaiki — periksa ini **sebelum** menuduh SFP rusak.
+> [!WARNING]
+> **Kesalahan paling umum pada link fiber baru: TX dan RX tertukar.** Gejalanya: link tidak naik sama sekali, dan `show interfaces transceiver` menunjukkan RX power sangat rendah (mis. −40 dBm). Solusinya: balik salah satu ujung. Ini kesalahan yang wajar dan cepat diperbaiki — periksa ini **sebelum** menuduh SFP rusak.
 
 ---
 
@@ -142,17 +145,17 @@ Standar serat SMF yang paling umum: **ITU-T G.652.D** (low water peak, cocok unt
 | QSFP56 | 200 G | MPO | |
 | **QSFP-DD** | 400 G / 800 G | MPO-16 | Data center terbaru |
 | OSFP | 400 G / 800 G / 1,6 T | MPO | Alternatif QSFP-DD |
-| CFP/CFP2/CFP4 | 40–400 G | Beragam | Telekomunikasi |
+| CFP/CFP2/CFP4 | 40-400 G | Beragam | Telekomunikasi |
 
 ### Kode jarak pada transceiver
 
 | Kode | Arti | Jarak tipikal | Serat |
 |---|---|---|---|
-| **SR** | Short Reach | 26–400 m | MMF |
+| **SR** | Short Reach | 26-400 m | MMF |
 | **LR** | Long Reach | 10 km | SMF |
 | **ER** | Extended Reach | 40 km | SMF |
 | **ZR** | 80 km | 80 km | SMF |
-| LX/LH | Long haul | 10–70 km | SMF |
+| LX/LH | Long haul | 10-70 km | SMF |
 | **BiDi** | Bidirectional | bervariasi | **1 serat** (2 λ) |
 | CWDM/DWDM | Multiplexing λ | bervariasi | SMF |
 
@@ -164,7 +167,7 @@ Standar serat SMF yang paling umum: **ITU-T G.652.D** (low water peak, cocok unt
 25GBASE-SR    →  25 Gbps, Short Reach (MMF)
 ```
 
-### BiDi — hemat serat
+### BiDi: hemat serat
 
 Transceiver BiDi memakai **satu serat** dengan dua panjang gelombang berbeda:
 ```
@@ -183,11 +186,12 @@ Cisco:  service unsupported-transceiver     ← mengizinkan SFP non-Cisco (mengh
         no errdisable detect cause gbic-invalid
 ```
 
-💡 SFP pihak ketiga yang di-coding untuk merek tertentu umumnya bekerja baik dan jauh lebih murah, tetapi periksa kebijakan garansi/dukungan Anda sebelum memakainya di lingkungan produksi kritis.
+> [!TIP]
+> SFP pihak ketiga yang di-coding untuk merek tertentu umumnya bekerja baik dan jauh lebih murah, tetapi periksa kebijakan garansi/dukungan Anda sebelum memakainya di lingkungan produksi kritis.
 
 ---
 
-## 5. Power Budget Optik — Perhitungan Wajib
+## 5. Power Budget Optik: Perhitungan Wajib
 
 Ini keterampilan yang membedakan teknisi dan engineer.
 
@@ -210,10 +214,10 @@ Margin harus ≥ 3 dB untuk penuaan komponen, kotoran, dan perbaikan di masa dep
 | SMF @1550 nm | 0,22 dB/km |
 | MMF @850 nm | 3,0 dB/km |
 | MMF @1300 nm | 1,0 dB/km |
-| Konektor (mated pair) | 0,3–0,75 dB |
+| Konektor (mated pair) | 0,3-0,75 dB |
 | Fusion splice | 0,1 dB |
 | Mechanical splice | 0,3 dB |
-| Patch panel (sepasang konektor) | 0,5–0,75 dB |
+| Patch panel (sepasang konektor) | 0,5-0,75 dB |
 
 ### Contoh 1: Link antar-gedung 3 km
 
@@ -253,7 +257,8 @@ Margin = 3,8 − 2,75 = 1,05 dB  ⚠️ TERLALU KETAT
 ```
 Kesimpulan: link ini akan bekerja hari ini, tetapi satu konektor kotor atau satu patch tambahan akan mematikannya. Perbaikan: kurangi jumlah konektor (jalur langsung), gunakan OM4, atau pindah ke SMF/LR.
 
-💡 **Pelajaran penting:** link 10G/25G/100G di MMF punya budget yang jauh lebih sempit daripada 1G. Kebersihan konektor menjadi kritis, bukan opsional.
+> [!TIP]
+> **Pelajaran penting:** link 10G/25G/100G di MMF punya budget yang jauh lebih sempit daripada 1G. Kebersihan konektor menjadi kritis, bukan opsional.
 
 ### Verifikasi daya optik nyata
 
@@ -282,7 +287,7 @@ $ ethtool -m enp3s0
 
 ---
 
-## 6. Kebersihan Serat — Hal yang Paling Sering Diabaikan
+## 6. Kebersihan Serat: Hal yang Paling Sering Diabaikan
 
 > **Sebagian besar masalah link fiber disebabkan oleh konektor kotor.**
 
@@ -324,17 +329,17 @@ Serat **bend-insensitive** (G.657.A2/B3) lebih toleran, tetapi tetap ada batasny
 
 | Metode | Rugi | Kecepatan | Alat | Untuk |
 |---|---|---|---|---|
-| **Fusion splice** | 0,02–0,1 dB | Cepat setelah terlatih | Fusion splicer (mahal) | Permanen, kualitas terbaik |
-| **Mechanical splice** | 0,1–0,5 dB | Cepat | Murah | Perbaikan sementara/darurat |
+| **Fusion splice** | 0,02-0,1 dB | Cepat setelah terlatih | Fusion splicer (mahal) | Permanen, kualitas terbaik |
+| **Mechanical splice** | 0,1-0,5 dB | Cepat | Murah | Perbaikan sementara/darurat |
 | **Pigtail + fusion** | 0,1 dB | Sedang | Fusion splicer | Terminasi ODF standar |
-| **Field-installable connector** | 0,3–0,75 dB | Cepat | Kit murah | Instalasi kecil |
+| **Field-installable connector** | 0,3-0,75 dB | Cepat | Kit murah | Instalasi kecil |
 | **Pre-terminated** | Terjamin pabrik | Instan | — | Data center (MPO trunk) |
 
 **Praktik standar untuk instalasi permanen:** kabel outdoor ditarik ke **ODF** (*Optical Distribution Frame*), lalu setiap serat di-**fusion splice** ke **pigtail** yang sudah punya konektor pabrik. Patch cord menghubungkan ODF ke perangkat.
 
 ---
 
-## 8. WDM — Banyak Sinyal dalam Satu Serat
+## 8. WDM (Banyak Sinyal dalam Satu Serat)
 
 **WDM** (*Wavelength Division Multiplexing*) mengirim beberapa panjang gelombang (warna cahaya) berbeda dalam satu serat secara bersamaan.
 
@@ -342,8 +347,8 @@ Serat **bend-insensitive** (G.657.A2/B3) lebih toleran, tetapi tetap ada batasny
 |---|---|---|
 | Kepanjangan | Coarse WDM | Dense WDM |
 | Jarak antar-kanal | 20 nm | 0,8 nm / 0,4 nm (100/50 GHz) |
-| Jumlah kanal | 8–18 | 40–96+ (bahkan 160) |
-| Rentang | 1270–1610 nm | Band C (1530–1565 nm), band L |
+| Jumlah kanal | 8-18 | 40-96+ (bahkan 160) |
+| Rentang | 1270-1610 nm | Band C (1530-1565 nm), band L |
 | Laser | Tidak perlu pendingin | **Butuh laser terkontrol suhu** |
 | Amplifikasi | Sulit | Bisa pakai EDFA |
 | Biaya | Lebih murah | Mahal |
@@ -363,7 +368,8 @@ Isi spesifikasinya, menurut OIF-400ZR-03.0 (8 Oktober 2024): antarmuka digital k
 
 Perbedaan cara menghitung anggaran link penting. Pada optik biasa (bagian 5) Anda menghitung dB redaman terhadap power budget. Pada link amplified 400ZR, jangkauan ditentukan oleh **OSNR** (*optical signal-to-noise ratio*) di penerima, karena setiap amplifier EDFA menambah derau. IA menggambarkan lintasan di antara kedua modul sebagai *black link* dengan sifat spektral tertentu, yaitu semua yang ada di antara modul (multiplexer, amplifier, serat) dianggap satu kotak hitam. Praktisnya, pada aplikasi amplified modul 400ZR dihubungkan ke sistem DWDM berisi mux dan EDFA; pada aplikasi unamplified, dua modul dihubungkan langsung oleh serat pada satu panjang gelombang selama redamannya masih tertampung.
 
-💡 **400ZR hanya untuk Ethernet 400G, titik-ke-titik, jarak metro.** Jarak lebih jauh, topologi multi-span, atau laju lain ditangani oleh varian dan keluarga lain (misalnya ZR+ atau standar sesudahnya); cek spesifikasi vendor sebelum membeli. Modul koheren juga lebih panas dan lebih haus daya daripada optik LR biasa, jadi periksa anggaran daya dan pendinginan chassis.
+> [!TIP]
+> **400ZR hanya untuk Ethernet 400G, titik-ke-titik, jarak metro.** Jarak lebih jauh, topologi multi-span, atau laju lain ditangani oleh varian dan keluarga lain (misalnya ZR+ atau standar sesudahnya); cek spesifikasi vendor sebelum membeli. Modul koheren juga lebih panas dan lebih haus daya daripada optik LR biasa, jadi periksa anggaran daya dan pendinginan chassis.
 
 ---
 
@@ -395,7 +401,8 @@ Perbedaan cara menghitung anggaran link penting. Pada optik biasa (bagian 5) And
    → Cek apakah ada rugi paket → periksa Rx power dan kebersihan
 ```
 
-⚠️ **Optical overload** — masalah yang sering terlewat: memakai transceiver LR (10 km) untuk link 5 meter di dalam rak. Daya TX terlalu besar untuk penerima → saturasi → error. Solusinya: pasang **attenuator** (5–10 dB) atau gunakan transceiver SR yang sesuai jarak.
+> [!WARNING]
+> **Optical overload** — masalah yang sering terlewat: memakai transceiver LR (10 km) untuk link 5 meter di dalam rak. Daya TX terlalu besar untuk penerima → saturasi → error. Solusinya: pasang **attenuator** (5–10 dB) atau gunakan transceiver SR yang sesuai jarak.
 
 ### Alat
 
@@ -412,7 +419,7 @@ Perbedaan cara menghitung anggaran link penting. Pada optik biasa (bagian 5) And
 ## 11. Ringkasan
 
 - Serat membawa cahaya via total internal reflection: kebal EMI, aman antar-gedung, sulit disadap, jangkauan jauh.
-- **SMF** (core 9 µm, kuning): jauh (10–100+ km), transceiver mahal. **MMF** (core 50 µm, aqua): dekat (≤400 m), transceiver murah.
+- **SMF** (core 9 µm, kuning): jauh (10-100+ km), transceiver mahal. **MMF** (core 50 µm, aqua): dekat (≤400 m), transceiver murah.
 - MMF terbatas oleh **dispersi modal**; OM3 minimum, OM4 direkomendasikan.
 - Konektor: **LC** paling umum; MPO untuk 40G+. **UPC biru, APC hijau — jangan dicampur.**
 - Transceiver: SFP (1G), SFP+ (10G), SFP28 (25G), QSFP28 (100G), QSFP-DD (400G+). SR=MMF pendek, LR=SMF 10 km.
@@ -449,7 +456,7 @@ Perbedaan cara menghitung anggaran link penting. Pada optik biasa (bagian 5) And
 
 5. Karena diameter core berbeda: OM1 = 62,5 µm, OM3 = 50 µm. Saat cahaya berpindah dari core besar ke core kecil (62,5 → 50), sebagian besar cahaya tidak masuk → rugi daya besar (bisa >3 dB). Arah sebaliknya menyebabkan masalah eksitasi mode. Selain itu karakteristik bandwidth berbeda sehingga jarak maksimum tidak dapat dijamin.
 
-6. **Optical overload** — daya TX dari transceiver ER (dirancang untuk melawan rugi 40 km) jauh melebihi batas maksimum penerima pada jarak 10 m. Akibatnya: saturasi penerima, CRC error tinggi, link tidak stabil, dan bisa merusak penerima dalam jangka panjang. Perbaikan: pasang **attenuator optik** (biasanya 10–15 dB) di sisi RX, atau — lebih baik — ganti dengan transceiver **SR/LR** yang sesuai jarak.
+6. **Optical overload** — daya TX dari transceiver ER (dirancang untuk melawan rugi 40 km) jauh melebihi batas maksimum penerima pada jarak 10 m. Akibatnya: saturasi penerima, CRC error tinggi, link tidak stabil, dan bisa merusak penerima dalam jangka panjang. Perbaikan: pasang **attenuator optik** (biasanya 10-15 dB) di sisi RX, atau — lebih baik — ganti dengan transceiver **SR/LR** yang sesuai jarak.
 
 7. (a) **Isolasi listrik** — mencegah kerusakan akibat perbedaan potensial tanah antar-gedung dan sambaran petir, yang bisa merusak perangkat dan membahayakan orang; (b) **jarak** — tembaga terbatas 100 m, serat bisa kilometer; (c) **kekebalan EMI** — jalur luar ruangan melewati banyak sumber interferensi; (d) tambahan: kapasitas masa depan jauh lebih besar tanpa mengganti kabel.
 
@@ -462,7 +469,7 @@ Perbedaan cara menghitung anggaran link penting. Pada optik biasa (bagian 5) And
 ## 13. Sumber
 
 - ITU-T G.652 / G.657 — karakteristik serat single-mode
-- TIA-492 / ISO/IEC 11801 — klasifikasi OM1–OM5
+- TIA-492 / ISO/IEC 11801 — klasifikasi OM1-OM5
 - IEEE 802.3 clause 38, 52, 86 — spesifikasi Ethernet optik
 - IEC 61300-3-35 — standar inspeksi kebersihan konektor serat
 - Cisco *Transceiver Module Compatibility Matrix*
@@ -471,4 +478,4 @@ Perbedaan cara menghitung anggaran link penting. Pada optik biasa (bagian 5) And
 
 ---
 
-**Berikutnya:** `02-layer-fisik/04-encoding-modulasi.md` — bagaimana bit benar-benar diubah menjadi sinyal.
+**Berikutnya:** `02-layer-fisik/04-encoding-modulasi.md`. Bagaimana bit benar-benar diubah menjadi sinyal.

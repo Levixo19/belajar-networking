@@ -1,4 +1,4 @@
-# 09.3 — Firewall: Stateful, NGFW, dan IDS/IPS
+# 09.3 Firewall: Stateful, NGFW, dan IDS/IPS
 
 > **Prasyarat:** `09-nat-acl-firewall/02`, `05-transport/02`
 > **Tujuan:** Anda paham evolusi firewall, bisa merancang kebijakan yang benar, dan mengonfigurasi firewall stateful di Cisco/MikroTik/Linux.
@@ -17,7 +17,7 @@
 
 ---
 
-## 2. Stateful Inspection — Konsep Inti
+## 2. Stateful Inspection: Konsep Inti
 
 Firewall **stateless** memeriksa setiap paket secara terpisah. Firewall **stateful** mengingat **koneksi**.
 
@@ -46,9 +46,11 @@ Paket dari 93.184.216.34:443 → 10.0.0.5:9999 (port berbeda)
 | **invalid** | Tidak cocok dengan state mana pun — **selalu buang** |
 | **untracked** | Sengaja dikecualikan dari tracking (untuk kinerja) |
 
-💡 **Inilah kenapa firewall stateful jauh lebih mudah dikonfigurasi:** Anda hanya perlu mengizinkan **arah inisiasi**; balasan ditangani otomatis.
+> [!TIP]
+> **Inilah kenapa firewall stateful jauh lebih mudah dikonfigurasi:** Anda hanya perlu mengizinkan **arah inisiasi**; balasan ditangani otomatis.
 
-⚠️ **Asymmetric routing merusak firewall stateful.** Kalau paket pergi lewat satu jalur dan balasan lewat firewall yang berbeda, firewall kedua tidak punya entri koneksi → membuang trafik sah. Ini penyebab masalah yang sangat sulit didiagnosis.
+> [!WARNING]
+> **Asymmetric routing merusak firewall stateful.** Kalau paket pergi lewat satu jalur dan balasan lewat firewall yang berbeda, firewall kedua tidak punya entri koneksi → membuang trafik sah. Ini penyebab masalah yang sangat sulit didiagnosis.
 
 ---
 
@@ -91,7 +93,8 @@ DMZ → LAN        : TOLAK SEMUA ← paling penting!
 DMZ → Internet   : sangat terbatas (update, DNS)
 ```
 
-⚠️ **`DMZ → LAN` harus ditolak.** Kalau server DMZ diretas (dan itu memang tujuan DMZ: mengasumsikan ia akan diretas), penyerang tidak boleh bisa melompat ke jaringan internal.
+> [!WARNING]
+> **`DMZ → LAN` harus ditolak.** Kalau server DMZ diretas (dan itu memang tujuan DMZ: mengasumsikan ia akan diretas), penyerang tidak boleh bisa melompat ke jaringan internal.
 
 ---
 
@@ -188,9 +191,11 @@ add chain=forward action=drop comment="Default deny forward"
 add chain=srcnat out-interface-list=WAN action=masquerade comment="NAT keluar"
 ```
 
-⚠️ **`action=fasttrack-connection` sangat menaikkan throughput** dengan melewatkan pemrosesan penuh untuk koneksi yang sudah dikenal. **Tetapi** paket yang di-fasttrack **melewati mangle, queue, dan sebagian besar filter** — sehingga QoS/pembatasan bandwidth tidak berlaku untuknya.
+> [!WARNING]
+> **`action=fasttrack-connection` sangat menaikkan throughput** dengan melewatkan pemrosesan penuh untuk koneksi yang sudah dikenal. **Tetapi** paket yang di-fasttrack **melewati mangle, queue, dan sebagian besar filter** — sehingga QoS/pembatasan bandwidth tidak berlaku untuknya.
 
-💡 **Kalau Anda memakai Simple Queue atau Queue Tree, JANGAN aktifkan FastTrack** untuk trafik yang ingin dibatasi, atau kecualikan trafik itu:
+> [!TIP]
+> **Kalau Anda memakai Simple Queue atau Queue Tree, JANGAN aktifkan FastTrack** untuk trafik yang ingin dibatasi, atau kecualikan trafik itu:
 ```
 add chain=forward action=accept connection-mark=perlu-queue
 add chain=forward action=fasttrack-connection connection-state=established,related
@@ -227,7 +232,8 @@ add chain=prerouting action=drop src-address-list=BOGON in-interface-list=WAN
 add chain=prerouting action=drop src-address-list=ddos-blacklist
 ```
 
-💡 **Table `raw` memproses paket SEBELUM connection tracking** — sangat efisien untuk membuang trafik serangan volume tinggi tanpa membebani tabel koneksi. Ini pertahanan pertama terhadap DDoS.
+> [!TIP]
+> **Table `raw` memproses paket SEBELUM connection tracking** — sangat efisien untuk membuang trafik serangan volume tinggi tanpa membebani tabel koneksi. Ini pertahanan pertama terhadap DDoS.
 
 ### Verifikasi
 
@@ -280,7 +286,8 @@ R1# show zone-pair security
 R1# show policy-map type inspect zone-pair
 ```
 
-⚠️ **Aturan ZBF yang penting:**
+> [!WARNING]
+> **Aturan ZBF yang penting:**
 - Trafik **antar-zona** ditolak secara default kecuali ada zone-pair
 - Trafik **dalam zona yang sama** diizinkan secara default
 - Interface **tanpa zona** tidak bisa berkomunikasi dengan interface yang punya zona
@@ -372,7 +379,8 @@ Detail lengkap di `13-linux-networking/03-nftables-firewall.md`.
 
 **Vendor utama:** Palo Alto, Fortinet FortiGate, Check Point, Cisco Firepower/FTD, Sophos.
 
-⚠️ **NGFW membutuhkan TLS inspection untuk sebagian besar fiturnya** — dengan semua implikasi keamanan dan privasi yang dibahas di `06-aplikasi/04`. Tanpa dekripsi, NGFW hanya melihat SNI dan metadata.
+> [!WARNING]
+> **NGFW membutuhkan TLS inspection untuk sebagian besar fiturnya** — dengan semua implikasi keamanan dan privasi yang dibahas di `06-aplikasi/04`. Tanpa dekripsi, NGFW hanya melihat SNI dan metadata.
 
 ### IDS vs IPS
 
@@ -395,7 +403,8 @@ Reputation      → berdasarkan reputasi IP/domain
 
 **Open source:** Snort, Suricata (IDS/IPS), Zeek (network security monitoring).
 
-⚠️ **IPS yang baru dipasang sebaiknya dijalankan dalam mode IDS (alert-only) dulu** selama beberapa minggu untuk menyetel false positive. Langsung mengaktifkan blocking hampir pasti memutus aplikasi bisnis yang sah.
+> [!WARNING]
+> **IPS yang baru dipasang sebaiknya dijalankan dalam mode IDS (alert-only) dulu** selama beberapa minggu untuk menyetel false positive. Langsung mengaktifkan blocking hampir pasti memutus aplikasi bisnis yang sah.
 
 ### WAF
 
@@ -478,7 +487,8 @@ Firewall khusus aplikasi web — memeriksa HTTP untuk SQL injection, XSS, dan se
 /ip firewall filter remove [find log-prefix="DEBUG-10.0.0.5"]
 ```
 
-⚠️ **Selalu hapus aturan debug setelah selesai.** Aturan log pada trafik volume tinggi bisa membanjiri CPU dan disk.
+> [!WARNING]
+> **Selalu hapus aturan debug setelah selesai.** Aturan log pada trafik volume tinggi bisa membanjiri CPU dan disk.
 
 ---
 
@@ -489,7 +499,7 @@ Firewall khusus aplikasi web — memeriksa HTTP untuk SQL injection, XSS, dan se
 - Connection state: **new, established, related, invalid** (selalu buang yang invalid).
 - Prinsip: **default deny**, least privilege, segmentasi. **DMZ → LAN harus ditolak.**
 - **MikroTik chain**: `input` (ke router), `forward` (melewati router), `output` (dari router). Tabel: `filter`, `nat`, `mangle`, `raw`.
-- ⚠️ **MikroTik tidak punya implicit deny** — tambahkan `action=drop` eksplisit di akhir setiap chain.
+- **MikroTik tidak punya implicit deny** — tambahkan `action=drop` eksplisit di akhir setiap chain.
 - **FastTrack** menaikkan throughput drastis tetapi **melewati queue dan mangle** — jangan pakai untuk trafik yang di-QoS.
 - **Table `raw`** membuang paket sebelum conntrack — pertahanan efisien terhadap DDoS.
 - **Address list dinamis** MikroTik memungkinkan blacklist otomatis untuk brute force dan port scan.
@@ -512,7 +522,7 @@ Firewall khusus aplikasi web — memeriksa HTTP untuk SQL injection, XSS, dan se
 <details>
 <summary>Jawaban</summary>
 
-1. **Stateless** memeriksa setiap paket secara terpisah tanpa konteks. Untuk mengizinkan browsing web, Anda harus membuat **dua** aturan: satu mengizinkan paket keluar ke port 443, dan satu lagi mengizinkan paket masuk dari port 443 ke port ephemeral tinggi (1024–65535). Aturan kedua ini **sangat longgar** — siapa pun yang mengirim dari port 443 ke port tinggi akan lolos.
+1. **Stateless** memeriksa setiap paket secara terpisah tanpa konteks. Untuk mengizinkan browsing web, Anda harus membuat **dua** aturan: satu mengizinkan paket keluar ke port 443, dan satu lagi mengizinkan paket masuk dari port 443 ke port ephemeral tinggi (1024-65535). Aturan kedua ini **sangat longgar** — siapa pun yang mengirim dari port 443 ke port tinggi akan lolos.
    **Stateful** mengingat koneksi dalam tabel. Anda cukup mengizinkan **arah inisiasi** (LAN → internet port 443); ketika balasan datang, firewall mencocokkannya dengan entri yang ada dan mengizinkannya otomatis. Paket dari port 443 yang **tidak** cocok dengan koneksi mana pun akan dibuang. Jauh lebih aman dan jauh lebih sedikit aturan.
 
 2. Karena **DMZ dirancang dengan asumsi ia akan diretas.** Server di DMZ (web, mail) menerima koneksi langsung dari internet, sehingga permukaan serangannya paling besar. Kalau salah satunya jatuh, penyerang mendapat pijakan di jaringan Anda.
@@ -605,4 +615,4 @@ Firewall khusus aplikasi web — memeriksa HTTP untuk SQL injection, XSS, dan se
 
 ---
 
-**Berikutnya:** `10-wireless/01-rf-dasar.md` — memasuki dunia nirkabel.
+**Berikutnya:** `10-wireless/01-rf-dasar.md`. Memasuki dunia nirkabel.

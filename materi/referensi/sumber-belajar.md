@@ -130,9 +130,11 @@ Video cepat usang. Selalu cek **tanggal unggah** dan cocokkan dengan blueprint a
 6. Bergabung dengan **komunitas**. Bertanya dan menjawab mempercepat belajar.
 7. Ikuti perkembangan. Jaringan terus berevolusi (Wi-Fi 7, SDN, otomasi, cloud).
 
-💡 **Kombinasi terbaik untuk pemula Indonesia:** kurikulum ini (konsep dan tiga platform), lalu Jeremy's IT Lab (video CCNA), lalu Packet Tracer dan MikroTik CHR (praktik), lalu sertifikasi (CCNA atau MTCNA), portofolio GitHub, dan komunitas. Fokus pada pemahaman dan praktik, bukan mengejar banyak sertifikat.
+> [!TIP]
+> **Kombinasi terbaik untuk pemula Indonesia:** kurikulum ini (konsep dan tiga platform), lalu Jeremy's IT Lab (video CCNA), lalu Packet Tracer dan MikroTik CHR (praktik), lalu sertifikasi (CCNA atau MTCNA), portofolio GitHub, dan komunitas. Fokus pada pemahaman dan praktik, bukan mengejar banyak sertifikat.
 
-⚠️ **Hati-hati dengan sumber usang atau salah.** Jaringan berubah, jadi verifikasi terhadap sumber primer dan tanggal terbaru. Kurikulum ini disusun dari blueprint dan standar terkini, tetapi selalu cek pembaruan resmi sebelum ujian.
+> [!WARNING]
+> **Hati-hati dengan sumber usang atau salah.** Jaringan berubah, jadi verifikasi terhadap sumber primer dan tanggal terbaru. Kurikulum ini disusun dari blueprint dan standar terkini, tetapi selalu cek pembaruan resmi sebelum ujian.
 
 ---
 

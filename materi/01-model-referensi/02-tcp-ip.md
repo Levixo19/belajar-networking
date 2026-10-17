@@ -1,4 +1,4 @@
-# 01.2 — Model TCP/IP
+# 01.2 Model TCP/IP
 
 > **Prasyarat:** `01-model-referensi/01`
 > **Tujuan:** Anda paham model yang benar-benar dipakai internet, bisa memetakannya ke OSI, dan tahu kapan memakai istilah yang mana.
@@ -10,16 +10,16 @@
 Sejarah singkat yang menjelaskan kebingungan ini:
 
 - **1970-an:** ARPANET mengembangkan TCP/IP secara praktis — bangun dulu, standarkan kemudian.
-- **1977–1984:** ISO mengembangkan OSI secara teoretis — rancang dulu dengan sempurna, implementasi kemudian.
+- **1977-1984:** ISO mengembangkan OSI secara teoretis — rancang dulu dengan sempurna, implementasi kemudian.
 - **1983:** ARPANET beralih ke TCP/IP. Sudah bekerja, sudah dipakai, gratis.
-- **1980–90-an:** Pemerintah AS dan Eropa sempat mewajibkan OSI (GOSIP). Gagal.
+- **1980-90-an:** Pemerintah AS dan Eropa sempat mewajibkan OSI (GOSIP). Gagal.
 - **Hasil akhir:** **TCP/IP menang sebagai implementasi. OSI menang sebagai kosakata.**
 
 Itulah kenapa hari ini orang berkata "masalah layer 3" (istilah OSI) sambil menunjuk paket IP (protokol TCP/IP).
 
 ---
 
-## 2. Model TCP/IP — Versi 4 Layer
+## 2. Model TCP/IP: Versi 4 Layer
 
 Ini versi resmi menurut [RFC 1122].
 
@@ -66,7 +66,7 @@ Perbedaan intinya:
 
 ---
 
-## 3. Model TCP/IP — Versi 5 Layer (Hybrid)
+## 3. Model TCP/IP: Versi 5 Layer (Hybrid)
 
 Karena menggabungkan physical dan data link menyulitkan pengajaran (kabel dan MAC address jelas hal berbeda), banyak buku memakai versi 5 layer:
 
@@ -108,7 +108,8 @@ Pendamping IP:
 - **IGMP / MLD** — manajemen keanggotaan grup multicast.
 - **IPsec** — enkripsi & autentikasi di layer internet.
 
-⚠️ ICMP **bukan** protokol layer 4. Ia berjalan langsung di dalam IP (protokol nomor 1) dan merupakan bagian tak terpisahkan dari layer internet.
+> [!WARNING]
+> ICMP **bukan** protokol layer 4. Ia berjalan langsung di dalam IP (protokol nomor 1) dan merupakan bagian tak terpisahkan dari layer internet.
 
 ### 4.3 Transport Layer
 
@@ -328,7 +329,8 @@ Panduan praktis untuk komunikasi profesional:
 | Bicara dengan developer aplikasi | **Nama protokol langsung** ("ini masalah TLS") |
 | Membaca spesifikasi vendor | Keduanya muncul; perhatikan konteks |
 
-💡 Ungkapan industri yang sering Anda dengar:
+> [!TIP]
+> Ungkapan industri yang sering Anda dengar:
 - **"Layer 8 problem"** — masalahnya pengguna. (Layer 8 tidak ada di standar mana pun; ini lelucon.)
 - **"Layer 9/10"** — politik dan anggaran organisasi.
 - **"Layer 2,5"** — MPLS.
@@ -376,15 +378,20 @@ Angka-angka ini muncul di field **Protocol** header IPv4. Saat Anda melihat `pro
 
 ## 10. Kesalahan Umum
 
-⚠️ **1. Mengira TCP/IP hanya berarti TCP dan IP.** Itu nama *suite* — mencakup UDP, ICMP, ARP, DNS, HTTP, dan puluhan protokol lain.
+> [!WARNING]
+> **1. Mengira TCP/IP hanya berarti TCP dan IP.** Itu nama *suite* — mencakup UDP, ICMP, ARP, DNS, HTTP, dan puluhan protokol lain.
 
-⚠️ **2. Mencari "session layer" di TCP/IP.** Tidak ada layer terpisah; fungsinya ada di dalam aplikasi.
+> [!WARNING]
+> **2. Mencari "session layer" di TCP/IP.** Tidak ada layer terpisah; fungsinya ada di dalam aplikasi.
 
-⚠️ **3. Menempatkan ICMP di layer 4.** ICMP ada di internet layer (L3), berjalan langsung di dalam IP.
+> [!WARNING]
+> **3. Menempatkan ICMP di layer 4.** ICMP ada di internet layer (L3), berjalan langsung di dalam IP.
 
-⚠️ **4. Mengira IP menjamin pengiriman.** IP adalah best-effort. Jaminan datang dari TCP atau dari aplikasi.
+> [!WARNING]
+> **4. Mengira IP menjamin pengiriman.** IP adalah best-effort. Jaminan datang dari TCP atau dari aplikasi.
 
-⚠️ **5. Bingung karena vendor memakai istilah berbeda.** Cisco cenderung OSI, dokumen IETF cenderung TCP/IP. Keduanya menggambarkan hal yang sama.
+> [!WARNING]
+> **5. Bingung karena vendor memakai istilah berbeda.** Cisco cenderung OSI, dokumen IETF cenderung TCP/IP. Keduanya menggambarkan hal yang sama.
 
 ---
 
@@ -464,4 +471,4 @@ Subbagian 7.1 dan 7.3 mengadaptasi sebagian penjelasan dari *Computer Networks: 
 
 ---
 
-**Berikutnya:** `01-model-referensi/03-enkapsulasi.md` — perjalanan lengkap satu paket, langkah demi langkah.
+**Berikutnya:** `01-model-referensi/03-enkapsulasi.md`. Perjalanan lengkap satu paket, langkah demi langkah.

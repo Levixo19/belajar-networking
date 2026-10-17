@@ -75,11 +75,12 @@ Bit host tersisa (h) → 2^h − 2 host usable per subnet
 Contoh /26 dari /24: pinjam 2 bit → 4 subnet, sisa 6 bit → 62 host
 ```
 
-💡 **Kunci kecepatan:** hafalkan **blok/increment** (256 − nilai mask). Blok memberi tahu di mana batas tiap subnet. Untuk IP di oktet mana pun, cari kelipatan blok terdekat di bawah nilai oktet tersebut = alamat network.
+> [!TIP]
+> **Kunci kecepatan:** hafalkan **blok/increment** (256 − nilai mask). Blok memberi tahu di mana batas tiap subnet. Untuk IP di oktet mana pun, cari kelipatan blok terdekat di bawah nilai oktet tersebut = alamat network.
 
 ---
 
-## 7. VLSM — Alokasi Efisien (contoh)
+## 7. VLSM (Alokasi Efisien (contoh))
 
 Diberi `192.168.1.0/24`, alokasikan: LAN-A 100 host, LAN-B 50 host, LAN-C 25 host, link P2P 2 host. **Urutkan dari terbesar:**
 
@@ -89,7 +90,8 @@ LAN-B (50 host)  → butuh /26 (62 host)  → 192.168.1.128/26 (.128-.191)
 LAN-C (25 host)  → butuh /27 (30 host)  → 192.168.1.192/27 (.192-.223)
 P2P (2 host)     → butuh /30 (2 host)   → 192.168.1.224/30 (.224-.227)
 ```
-⚠️ **Selalu alokasikan dari kebutuhan TERBESAR ke terkecil** untuk menghindari fragmentasi. Pilih prefix terkecil yang **cukup** menampung host (bulatkan ke atas ke kekuatan 2).
+> [!WARNING]
+> **Selalu alokasikan dari kebutuhan TERBESAR ke terkecil** untuk menghindari fragmentasi. Pilih prefix terkecil yang **cukup** menampung host (bulatkan ke atas ke kekuatan 2).
 
 ---
 
@@ -138,7 +140,8 @@ EUI-64: MAC → interface ID (sisipkan fffe di tengah, flip bit U/L ke-7)
 | 16 | 00010000 | 10 | | 254 | 11111110 | FE |
 | 10 | 00001010 | 0A | | 255 | 11111111 | FF |
 
-💡 **Nibble (4 bit) = 1 digit hex.** Pecah oktet menjadi dua nibble untuk konversi hex cepat: `192 = 1100 0000 = C0`.
+> [!TIP]
+> **Nibble (4 bit) = 1 digit hex.** Pecah oktet menjadi dua nibble untuk konversi hex cepat: `192 = 1100 0000 = C0`.
 
 ---
 

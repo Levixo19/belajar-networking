@@ -1,4 +1,4 @@
-# 20.4 — Babak 3: Teka-teki Alamat
+# 20.4 Babak 3: Teka-teki Alamat
 
 > **Prasyarat:** `20.3`, ditambah `04` (IP, subnetting, VLSM) dan `08` (IPv6)
 > **Tujuan:** Menyusun rencana pengalamatan IPv4 dan IPv6 untuk 23 lokasi di bawah batasan yang saling menekan, lalu membuktikan sendiri bahwa hitungannya benar tanpa melihat kunci jawaban.
@@ -13,7 +13,8 @@ Bentuknya teka-teki: batasan diberikan, ruangnya sempit, dan ada satu jebakan ya
 
 Yang membedakan babak ini: **Anda bisa memeriksa pekerjaan sendiri dengan checksum.** Kalau angka Anda cocok, hitungan Anda hampir pasti benar. Kalau tidak cocok, Anda tahu harus mengulang — tanpa pernah melihat kunci.
 
-⏱ Mode Ujian: 90 menit untuk IPv4, 45 menit untuk IPv6. Boleh pakai `referensi/tabel-subnetting.md` dan kalkulator subnet.
+> [!NOTE]
+> Mode Ujian: 90 menit untuk IPv4, 45 menit untuk IPv6. Boleh pakai `referensi/tabel-subnetting.md` dan kalkulator subnet.
 
 ---
 
@@ -25,7 +26,8 @@ Yang membedakan babak ini: **Anda bisa memeriksa pekerjaan sendiri dengan checks
 | Blok IPv6 dari ISP | **`2001:db8:5e4a::/48`** |
 | Alamat publik IPv4 | `203.0.113.8/29` di HQ (untuk DMZ & NAT) |
 
-⛔ **Lubang yang tidak boleh disentuh:** mitra logistik ekspor sudah memakai `10.66.0.0/16` di jaringan mereka, dan BNS terhubung ke mereka lewat VPN antar-perusahaan. Alamat itu tidak boleh dipakai, tidak boleh tumpang tindih, dan tidak boleh ikut dalam prefix apa pun yang BNS iklankan ke mereka.
+> [!CAUTION]
+> **Lubang yang tidak boleh disentuh:** mitra logistik ekspor sudah memakai `10.66.0.0/16` di jaringan mereka, dan BNS terhubung ke mereka lewat VPN antar-perusahaan. Alamat itu tidak boleh dipakai, tidak boleh tumpang tindih, dan tidak boleh ikut dalam prefix apa pun yang BNS iklankan ke mereka.
 
 ---
 
@@ -173,7 +175,8 @@ Kerjakan dulu, cocokkan kemudian. Kalau tidak cocok, **jangan lihat kunci** — 
 | C7 | Jumlah oktet ketiga dari 20 subnet dasar TPI (bila TPI-01 = `10.72.1.0/24` dst.) | **210** |
 | C8 | Jumlah `/64` IPv6 yang benar-benar terpakai di seluruh perusahaan (20 TPI penuh) | **150** |
 
-💡 C1–C5 hanya cocok bila Anda benar-benar memilih **prefix terkecil yang cukup**. Satu subnet yang terlalu longgar akan membuat jumlahnya lebih kecil; satu yang kekecilan membuatnya lebih besar. Checksum ini menangkap kesalahan yang mata Anda lewatkan — termasuk jebakan di §7.
+> [!TIP]
+> C1–C5 hanya cocok bila Anda benar-benar memilih **prefix terkecil yang cukup**. Satu subnet yang terlalu longgar akan membuat jumlahnya lebih kecil; satu yang kekecilan membuatnya lebih besar. Checksum ini menangkap kesalahan yang mata Anda lewatkan — termasuk jebakan di §7.
 
 ---
 
@@ -181,11 +184,14 @@ Kerjakan dulu, cocokkan kemudian. Kalau tidak cocok, **jangan lihat kunci** — 
 
 Ada tiga tempat di mana orang yang sudah paham subnetting tetap jatuh.
 
-⚠️ **Jebakan pertama — kurang dua.** Satu segmen di pabrik butuh tepat 128 alamat setelah dikali dua. `/25` terdengar pas: 128 alamat. Tapi network dan broadcast tidak bisa dipakai host, jadi `/25` hanya memberi **126**. Jawabannya `/24`. Cek setiap baris Anda yang kebutuhannya pas di batas: 2, 6, 14, 30, 62, 126, 254.
+> [!WARNING]
+> **Jebakan pertama — kurang dua.** Satu segmen di pabrik butuh tepat 128 alamat setelah dikali dua. `/25` terdengar pas: 128 alamat. Tapi network dan broadcast tidak bisa dipakai host, jadi `/25` hanya memberi **126**. Jawabannya `/24`. Cek setiap baris Anda yang kebutuhannya pas di batas: 2, 6, 14, 30, 62, 126, 254.
 
-⚠️ **Jebakan kedua — lubang di tengah.** Cara paling wajar membagi adalah "situs ke-n dapat `10.(64+n).0.0/16`". Cara itu akan mendaratkan salah satu situs tepat di `10.66.0.0/16`. Lebih jauh lagi: lubang di tengah blok membuat `10.64.0.0/12` **tidak bisa** diiklankan sebagai satu ringkasan — dan banyak orang baru menyadarinya setelah rute mitra tertelan.
+> [!WARNING]
+> **Jebakan kedua — lubang di tengah.** Cara paling wajar membagi adalah "situs ke-n dapat `10.(64+n).0.0/16`". Cara itu akan mendaratkan salah satu situs tepat di `10.66.0.0/16`. Lebih jauh lagi: lubang di tengah blok membuat `10.64.0.0/12` **tidak bisa** diiklankan sebagai satu ringkasan — dan banyak orang baru menyadarinya setelah rute mitra tertelan.
 
-⚠️ **Jebakan ketiga — kolam DHCP, bukan subnet.** Subnet yang cukup besar tidak menjamin DHCP tidak kehabisan. Sensor di TPI dapat `/27` (30 alamat usable) untuk 10 perangkat — terlihat aman. Tapi bila masa sewa 3 hari dan perangkat sering berganti alamat, kolam bisa penuh oleh sewa yang sudah tidak dipakai. Tuliskan **ukuran kolam dan masa sewa per VLAN**, bukan hanya ukuran subnet. (Anda akan bertemu akibat kelalaian ini di Babak 8.)
+> [!WARNING]
+> **Jebakan ketiga — kolam DHCP, bukan subnet.** Subnet yang cukup besar tidak menjamin DHCP tidak kehabisan. Sensor di TPI dapat `/27` (30 alamat usable) untuk 10 perangkat — terlihat aman. Tapi bila masa sewa 3 hari dan perangkat sering berganti alamat, kolam bisa penuh oleh sewa yang sudah tidak dipakai. Tuliskan **ukuran kolam dan masa sewa per VLAN**, bukan hanya ukuran subnet. (Anda akan bertemu akibat kelalaian ini di Babak 8.)
 
 ---
 
@@ -200,7 +206,7 @@ Ada tiga tempat di mana orang yang sudah paham subnetting tetap jatuh.
 
 ---
 
-## 9. Latihan — Pembuktian Hitungan
+## 9. Latihan: Pembuktian Hitungan
 
 1. Tunjukkan mengapa `10.64.0.0/12` tidak bisa diiklankan sebagai satu prefix ke mitra, lalu turunkan himpunan prefix **seminimal mungkin** yang mencakup seluruh ruang BNS tanpa menyentuh `10.66.0.0/16`. Sebutkan berapa prefix yang Anda butuhkan dan buktikan tidak ada himpunan yang lebih kecil.
 2. Segmen CCTV pabrik: 64 kamera sekarang, aturan ruang tumbuh 100%. Tentukan prefixnya, lalu jelaskan kenapa banyak orang menjawab `/25` dan kenapa itu salah. Sebutkan tiga angka kebutuhan lain di tabel §3 yang punya sifat batas serupa.
@@ -211,13 +217,13 @@ Ada tiga tempat di mana orang yang sudah paham subnetting tetap jatuh.
 <details>
 <summary>Jawaban</summary>
 
-1. Karena `10.64.0.0/12` mencakup `10.64.0.0`–`10.79.255.255`, dan `10.66.0.0/16` berada **di tengahnya**. Mengiklankan `/12` berarti memberi tahu mitra "kirimkan semua lalu lintas untuk 10.64–10.79 ke saya", termasuk alamat milik mitra sendiri — akibatnya lalu lintas internal mitra bisa tertarik ke arah BNS (atau, tergantung pemilihan rute terpanjang, menimbulkan perilaku yang membingungkan dan sulit didiagnosis). Himpunan minimal yang mencakup 64–79 kecuali 66: **`10.64.0.0/15`** (64–65) + **`10.67.0.0/16`** (67) + **`10.68.0.0/14`** (68–71) + **`10.72.0.0/13`** (72–79) — **empat prefix**. Buktinya tidak ada yang lebih kecil: batas-batas blok biner memaksa demikian. Di sisi bawah lubang tersisa dua nilai (64, 65) yang selaras sebagai satu `/15`; di sisi atas tersisa 67 sendirian — 67 bernilai ganjil sehingga tidak bisa digabung dengan 68 dalam satu blok selaras (blok `/15` harus mulai di angka genap), jadi 67 wajib berdiri sebagai `/16`; lalu 68–71 adalah empat nilai selaras (`/14`) dan 72–79 delapan nilai selaras (`/13`). Tiga prefix tidak mungkin karena setiap penggabungan yang lebih besar akan menelan 66. Checksum pemeriksa: 64+67+68+72 = **271**, dan 15+16+14+13 = **58**. Pelajaran umum: **satu alamat yang "dipinjam" pihak lain di tengah blok Anda bisa mengubah satu baris tabel rute menjadi empat** — karena itu, saat merancang, letakkan blok yang dipakai pihak luar di **tepi**, bukan di tengah.
+1. Karena `10.64.0.0/12` mencakup `10.64.0.0`–`10.79.255.255`, dan `10.66.0.0/16` berada **di tengahnya**. Mengiklankan `/12` berarti memberi tahu mitra "kirimkan semua lalu lintas untuk 10.64-10.79 ke saya", termasuk alamat milik mitra sendiri — akibatnya lalu lintas internal mitra bisa tertarik ke arah BNS (atau, tergantung pemilihan rute terpanjang, menimbulkan perilaku yang membingungkan dan sulit didiagnosis). Himpunan minimal yang mencakup 64-79 kecuali 66: **`10.64.0.0/15`** (64-65) + **`10.67.0.0/16`** (67) + **`10.68.0.0/14`** (68-71) + **`10.72.0.0/13`** (72-79) — **empat prefix**. Buktinya tidak ada yang lebih kecil: batas-batas blok biner memaksa demikian. Di sisi bawah lubang tersisa dua nilai (64, 65) yang selaras sebagai satu `/15`; di sisi atas tersisa 67 sendirian — 67 bernilai ganjil sehingga tidak bisa digabung dengan 68 dalam satu blok selaras (blok `/15` harus mulai di angka genap), jadi 67 wajib berdiri sebagai `/16`; lalu 68-71 adalah empat nilai selaras (`/14`) dan 72-79 delapan nilai selaras (`/13`). Tiga prefix tidak mungkin karena setiap penggabungan yang lebih besar akan menelan 66. Checksum pemeriksa: 64+67+68+72 = **271**, dan 15+16+14+13 = **58**. Pelajaran umum: **satu alamat yang "dipinjam" pihak lain di tengah blok Anda bisa mengubah satu baris tabel rute menjadi empat** — karena itu, saat merancang, letakkan blok yang dipakai pihak luar di **tepi**, bukan di tengah.
 
 2. CCTV pabrik: 64 sekarang → butuh ≥ 128 usable. `/25` memberi 2⁷ = 128 alamat total, tetapi **usable = 128 − 2 = 126**, kurang dua dari kebutuhan. Jadi jawabannya **`/24`** (254 usable). Orang menjawab `/25` karena mencocokkan kebutuhan dengan **ukuran blok**, bukan dengan **jumlah host yang bisa dipakai** — kesalahan yang muncul justru pada angka yang "kelihatan pas" (128, 256, 64). Angka lain di §3 dengan sifat batas serupa setelah dikali dua: **Voice HQ 240 → 480** (bukan `/24` yang hanya 254, harus `/23`), **Wi-Fi karyawan HQ 400 → 800** (bukan `/23` yang 510, harus `/22`), **Staf lantai 2 HQ 70 → 140** (bukan `/25` yang 126, harus `/24`), dan **Server basis data 6 → 12** (bukan `/29` yang 6, harus `/28`). Kebiasaan yang menyelamatkan: hafal daftar usable — `/30`:2, `/29`:6, `/28`:14, `/27`:30, `/26`:62, `/25`:126, `/24`:254, `/23`:510, `/22`:1022 — lalu bandingkan kebutuhan terhadap daftar itu, bukan terhadap pangkat dua.
 
 3. `/30` memakai 4 alamat per tautan (2 usable), `/31` memakai 2 (keduanya dipakai, sesuai RFC 3021). Untuk 14 tautan: `/30` menghabiskan 56 alamat, `/31` menghabiskan 28 — **hemat 28 alamat**, dan yang lebih berharga: `/31` membuat rencana lebih rapi karena satu `/24` dapat memuat 128 tautan alih-alih 64. Kapan `/31` bermasalah: pada perangkat atau versi perangkat lunak lama yang tidak mendukungnya, pada tautan **multi-akses** (Ethernet dengan lebih dari dua perangkat — `/31` hanya sah untuk titik-ke-titik sejati), pada tautan yang butuh alamat ketiga (misalnya untuk FHRP, atau untuk perangkat pemantau/penyadap di segmen yang sama), dan saat perangkat lunak pemantau/IPAM lama salah menafsirkan alamat network sebagai tidak dapat dipakai. Di kasus BNS: pakai `/31` untuk tautan antar-switch inti dan antar-router yang sudah pasti modern; tetap pakai **`/30`** pada tautan menuju perangkat lama yang masih dipertahankan sementara di pabrik, pada tautan yang menghadap perangkat pihak ketiga (mitra/ISP) yang tidak bisa Anda kontrol atau uji, dan pada tautan yang direncanakan menampung perangkat ketiga. Alasan yang harus ditulis di dokumen: keseragaman lebih berharga daripada penghematan 28 alamat — jadi pilih satu sebagai standar dan daftarkan pengecualiannya secara eksplisit.
 
-4. Skema yang memenuhi: `/48` memberi 16 bit ruang subnet = empat digit heksadesimal pada kelompok keempat. Bagi menjadi **`R S V V`** — `R` satu digit untuk region, `S` satu digit untuk situs di dalam region, dan `VV` dua digit untuk VLAN. Artinya setiap region memegang `2001:db8:5e4a:R000::/52` (16 region), setiap situs memegang `2001:db8:5e4a:RS00::/56` (16 situs per region, 256 situs total), dan setiap VLAN memegang satu `/64`. Pemetaan contoh: region 1 = Jakarta, 2 = Surabaya, 3 = Makassar, 8 dan 9 = TPI. Maka **HQ VLAN 20 = `2001:db8:5e4a:1020::/64`**, **pabrik VLAN 70 = `2001:db8:5e4a:2070::/64`**, **depo Makassar VLAN 99 = `2001:db8:5e4a:3099::/64`**, dan **TPI-04 VLAN 10 = `2001:db8:5e4a:8410::/64`** (region 8, situs 4). Total `/64` terpakai: 14 + 10 + 6 + (20 × 6) = **150**. Batasan yang dipaksakan: karena nomor VLAN ditulis apa adanya sebagai dua digit heksadesimal agar terbaca manusia, **nomor VLAN Anda harus tetap 0–99 dan tidak boleh memakai digit heksadesimal a–f** — jadi penomoran VLAN 10, 20, 24, 28, 29, 40, 50, 51, 52, 60, 70, 99 masih aman, tetapi VLAN 100 tidak muat dalam dua digit. Bila suatu saat muncul VLAN 120, pilihannya: **(a)** jangan pakai nomor itu — tetapkan aturan penomoran VLAN maksimum 99 sebagai bagian dari standar; **(b)** ubah pembagian menjadi `R VVV` (satu digit region, tiga digit VLAN sampai 999) dengan konsekuensi hanya 16 region dan tidak ada digit situs — perlu region berbeda per situs; atau **(c)** terima bahwa digit subnet tidak lagi mencerminkan nomor VLAN untuk VLAN di atas 99 dan dokumentasikan pengecualiannya. Yang **tidak boleh** dilakukan: menyisipkan begitu saja sehingga dua VLAN berbeda memetakan ke `/64` yang sama. Pelajaran nyatanya: **rencana IPv6 yang enak dibaca manusia menempatkan syarat pada rencana VLAN Anda** — kedua rencana harus dirancang bersama, bukan berurutan.
+4. Skema yang memenuhi: `/48` memberi 16 bit ruang subnet = empat digit heksadesimal pada kelompok keempat. Bagi menjadi **`R S V V`** — `R` satu digit untuk region, `S` satu digit untuk situs di dalam region, dan `VV` dua digit untuk VLAN. Artinya setiap region memegang `2001:db8:5e4a:R000::/52` (16 region), setiap situs memegang `2001:db8:5e4a:RS00::/56` (16 situs per region, 256 situs total), dan setiap VLAN memegang satu `/64`. Pemetaan contoh: region 1 = Jakarta, 2 = Surabaya, 3 = Makassar, 8 dan 9 = TPI. Maka **HQ VLAN 20 = `2001:db8:5e4a:1020::/64`**, **pabrik VLAN 70 = `2001:db8:5e4a:2070::/64`**, **depo Makassar VLAN 99 = `2001:db8:5e4a:3099::/64`**, dan **TPI-04 VLAN 10 = `2001:db8:5e4a:8410::/64`** (region 8, situs 4). Total `/64` terpakai: 14 + 10 + 6 + (20 × 6) = **150**. Batasan yang dipaksakan: karena nomor VLAN ditulis apa adanya sebagai dua digit heksadesimal agar terbaca manusia, **nomor VLAN Anda harus tetap 0-99 dan tidak boleh memakai digit heksadesimal a-f** — jadi penomoran VLAN 10, 20, 24, 28, 29, 40, 50, 51, 52, 60, 70, 99 masih aman, tetapi VLAN 100 tidak muat dalam dua digit. Bila suatu saat muncul VLAN 120, pilihannya: **(a)** jangan pakai nomor itu — tetapkan aturan penomoran VLAN maksimum 99 sebagai bagian dari standar; **(b)** ubah pembagian menjadi `R VVV` (satu digit region, tiga digit VLAN sampai 999) dengan konsekuensi hanya 16 region dan tidak ada digit situs — perlu region berbeda per situs; atau **(c)** terima bahwa digit subnet tidak lagi mencerminkan nomor VLAN untuk VLAN di atas 99 dan dokumentasikan pengecualiannya. Yang **tidak boleh** dilakukan: menyisipkan begitu saja sehingga dua VLAN berbeda memetakan ke `/64` yang sama. Pelajaran nyatanya: **rencana IPv6 yang enak dibaca manusia menempatkan syarat pada rencana VLAN Anda** — kedua rencana harus dirancang bersama, bukan berurutan.
    - Keputusan per segmen: server, PLC/HMI, timbangan, printer label, dan perangkat jaringan → **statis** (atau DHCPv6 dengan pemesanan) supaya aturan firewall dan log stabil; staf, Wi-Fi karyawan, Wi-Fi tamu → **SLAAC** (tambah DHCPv6 stateless untuk opsi DNS/NTP bila klien memerlukannya, dan matikan *privacy extensions* pada perangkat yang dikelola agar alamatnya bisa dilacak di log); sensor suhu dan kamera yang **tidak mendukung IPv6** → tetap IPv4 saja pada VLAN-nya (dual-stack di sisi gateway), jangan dipaksakan; ICMPv6 tidak boleh diblokir menyeluruh karena NDP dan Path MTU Discovery bergantung padanya; dan siapkan pengamanan hop pertama (RA Guard, DHCPv6 Guard, IPv6 snooping) karena RA liar adalah salah satu cara termudah membajak lalu lintas — hal yang akan diuji di Babak 6.
 
 5. Empat alasan dari empat sudut:
@@ -236,7 +242,7 @@ Ada tiga tempat di mana orang yang sudah paham subnetting tetap jatuh.
 |---|---|---|
 | Pembagian tingkat pertama | 20 | Lubang dihindari & didokumentasikan, ada ruang tumbuh, TPI terkumpul |
 | Himpunan prefix iklan minimal | 15 | Empat prefix, checksum C6 cocok |
-| Tabel subnet per situs | 30 | Checksum C1–C5 cocok, tidak ada tumpang tindih (diuji skrip §6.1) |
+| Tabel subnet per situs | 30 | Checksum C1-C5 cocok, tidak ada tumpang tindih (diuji skrip §6.1) |
 | Template TPI & keterbacaan | 15 | Nomor TPI terbaca dari alamat, checksum C7 cocok |
 | Rencana IPv6 | 25 | Skema bermakna, keputusan per segmen, checksum C8 cocok, batasannya disadari |
 | Nama, DNS, NTP | 15 | Zona internal masuk akal, sumber waktu tetap ada saat WAN mati |
@@ -256,4 +262,4 @@ Nilai < 80 berarti ulangi `04-network-layer/02` dan `03`, serta `08-ipv6`, lalu 
 
 ---
 
-**Berikutnya:** `20-proyek-akhir/05-babak-4-bangun-di-lab.md` — turun ke perangkat, dan buktikan dengan uji terima.
+**Berikutnya:** `20-proyek-akhir/05-babak-4-bangun-di-lab.md`. Turun ke perangkat, dan buktikan dengan uji terima.

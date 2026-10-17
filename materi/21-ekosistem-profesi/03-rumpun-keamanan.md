@@ -1,4 +1,4 @@
-# 21.3 — Rumpun Keamanan Jaringan & Siber
+# 21.3 Rumpun Keamanan Jaringan & Siber
 
 > **Prasyarat:** `09-nat-acl-firewall/03-firewall`, seluruh tahap `12-keamanan` (mulai `12-keamanan/01-konsep-keamanan` sampai `12-keamanan/06-tools-keamanan`), dan `18-karier-sertifikasi/01-peta-sertifikasi`
 > **Tujuan:** Anda memahami apa yang benar-benar dikerjakan lima profesi keamanan (network security engineer, cybersecurity analyst, penetration tester, security architect, incident responder), sertifikasi dan regulasi yang berlaku per 2026, batas etika dan hukumnya di Indonesia, serta jalur realistis untuk masuk dari latar belakang jaringan.
@@ -33,7 +33,8 @@ Tabel berikut adalah ringkasan seluruh modul. Kembalilah ke sini setelah membaca
 | Kerangka acuan | CIS Benchmark, zero trust | MITRE ATT&CK | OWASP, PTES, ATT&CK | NIST CSF 2.0, ISO/IEC 27001:2022 | NIST SP 800-61r3, Peraturan BSSN 1/2024 |
 | Jarak dari network engineer | Paling dekat | Dekat | Sedang | Jauh (butuh pengalaman) | Sedang |
 
-💡 Kalau Anda datang dari jaringan, **network security engineer** dan **SOC analyst** adalah pintu yang paling dekat. Pengetahuan ACL, NAT, VLAN, VPN, dan membaca paket langsung terpakai sejak hari pertama.
+> [!TIP]
+> Kalau Anda datang dari jaringan, **network security engineer** dan **SOC analyst** adalah pintu yang paling dekat. Pengetahuan ACL, NAT, VLAN, VPN, dan membaca paket langsung terpakai sejak hari pertama.
 
 ---
 
@@ -60,7 +61,8 @@ Kelima profesi berbicara dalam "bahasa" yang sama. Sebelum masuk ke tiap peran, 
 | **POJK 11/POJK.03/2022** (Penyelenggaraan TI oleh Bank Umum) dan **SEOJK 29/SEOJK.03/2022** (Ketahanan dan Keamanan Siber bagi Bank Umum) | Bank wajib menilai risiko inheren dan maturitas keamanan siber tiap tahun, melakukan pengujian berbasis kerentanan (dilanjutkan *penetration test*) dan pengujian berbasis skenario minimal setahun sekali. Notifikasi awal insiden ke OJK **paling lama 24 jam**, laporan lengkap **paling lama 5 hari kerja**. Unit keamanan siber harus **independen dari fungsi pengelola TI**. |
 | **KUHP baru (UU 1/2023, sebagaimana diubah UU 1/2026)**, berlaku 2 Januari 2026, dan **UU ITE** (perubahan kedua: UU 1/2024) | Akses ilegal ke komputer atau sistem elektronik kini diatur di Pasal 332 KUHP. Mengakses dengan melanggar, menerobos, melampaui, atau menjebol sistem pengamanan diancam pidana penjara paling lama 8 tahun atau denda paling banyak kategori VI. Ketentuan UU ITE lain (misalnya mengubah atau merusak informasi elektronik) tetap relevan. |
 
-⚠️ Kata kuncinya adalah **"tanpa hak atau melawan hukum"**. Yang membedakan seorang penetration tester dari pelaku kejahatan bukan alatnya, melainkan **izin tertulis yang sah dari pemilik sistem** dan kepatuhan pada cakupan izin itu. Memindai IP kantor lain "sekadar iseng", menguji situs pemerintah tanpa program resmi, atau "membuktikan" celah aplikasi teman tanpa izin tertulis dapat menyeret Anda ke ranah pidana.
+> [!WARNING]
+> Kata kuncinya adalah **"tanpa hak atau melawan hukum"**. Yang membedakan seorang penetration tester dari pelaku kejahatan bukan alatnya, melainkan **izin tertulis yang sah dari pemilik sistem** dan kepatuhan pada cakupan izin itu. Memindai IP kantor lain "sekadar iseng", menguji situs pemerintah tanpa program resmi, atau "membuktikan" celah aplikasi teman tanpa izin tertulis dapat menyeret Anda ke ranah pidana.
 
 ### 2.3 Jalur kompetensi Indonesia (SKKNI dan BNSP)
 
@@ -73,7 +75,8 @@ Standar Kompetensi Kerja Nasional Indonesia (SKKNI) yang relevan untuk rumpun in
 
 Sertifikasi kompetensi berbasis SKKNI diterbitkan oleh Lembaga Sertifikasi Profesi (LSP) berlisensi BNSP. **LSP BSSN** memperoleh lisensi BNSP pada 15 Februari 2023 untuk skema *Junior Penetration Tester*, *Asisten Auditor Keamanan Informasi*, dan *Level 1 SOC Analyst*, lalu pada 2024 menguji skema baru seperti *Level 2 SOC Analyst*, *Penetration Tester*, dan *Associate Digital Evidence First Responder*. Ketersediaan skema untuk peserta umum (bukan pegawai BSSN) dapat berubah, jadi cek langsung ke LSP terkait. Selain LSP BSSN, beberapa LSP perguruan tinggi dan LSP industri TIK juga membuka skema keamanan.
 
-💡 Di instansi pemerintah dan BUMN, sertifikat BNSP kadang menjadi syarat administratif (misalnya untuk jabatan fungsional atau tender), sedangkan di perusahaan swasta dan multinasional, sertifikasi vendor dan internasional lebih sering dilihat. Banyak praktisi memegang keduanya.
+> [!TIP]
+> Di instansi pemerintah dan BUMN, sertifikat BNSP kadang menjadi syarat administratif (misalnya untuk jabatan fungsional atau tender), sedangkan di perusahaan swasta dan multinasional, sertifikasi vendor dan internasional lebih sering dilihat. Banyak praktisi memegang keduanya.
 
 ---
 
@@ -169,7 +172,8 @@ Memantau, men-triase, menginvestigasi, mendokumentasikan, dan mengeskalasi. Di S
 
 KPI umum: **MTTD** (*mean time to detect*), waktu triase per alert terhadap SLA kontrak (MSSP biasanya punya SLA respons per tingkat keparahan), rasio *false positive*, akurasi eskalasi (berapa eskalasi yang memang insiden), kualitas catatan kasus, dan cakupan deteksi terhadap teknik MITRE ATT&CK yang relevan.
 
-⚠️ Jebakan terbesar SOC adalah **kelelahan alert**. Analis yang menutup alert secepat mungkin demi angka KPI justru berbahaya. Pemberi kerja yang baik menilai ketelitian, bukan hanya kecepatan.
+> [!WARNING]
+> Jebakan terbesar SOC adalah **kelelahan alert**. Analis yang menutup alert secepat mungkin demi angka KPI justru berbahaya. Pemberi kerja yang baik menilai ketelitian, bukan hanya kecepatan.
 
 ### 4.3 Keahlian dan alat
 
@@ -235,7 +239,8 @@ Untuk bank, pengujian ini bukan pilihan: SEOJK 29/2022 mengatur pengujian keaman
 
 ### 5.2 Etika dan legalitas: bagian yang tidak bisa ditawar
 
-⚠️ **Tanpa izin tertulis, tidak ada pentest.** Yang ada hanya akses ilegal. Pasal 332 KUHP (berlaku sejak 2 Januari 2026) mengancam akses ke sistem elektronik orang lain secara tanpa hak, termasuk dengan menjebol sistem pengamanan, dengan pidana penjara hingga 8 tahun. Niat baik tidak menggantikan izin.
+> [!WARNING]
+> **Tanpa izin tertulis, tidak ada pentest.** Yang ada hanya akses ilegal. Pasal 332 KUHP (berlaku sejak 2 Januari 2026) mengancam akses ke sistem elektronik orang lain secara tanpa hak, termasuk dengan menjebol sistem pengamanan, dengan pidana penjara hingga 8 tahun. Niat baik tidak menggantikan izin.
 
 Prinsip kerja yang harus menjadi kebiasaan:
 
@@ -246,7 +251,8 @@ Prinsip kerja yang harus menjadi kebiasaan:
 5. **Hentikan dan laporkan** jika menemukan tanda pembobolan nyata oleh pihak lain. Itu sudah menjadi kasus insiden, bukan lagi pentest.
 6. **Bug bounty dan pengungkapan kerentanan** hanya dalam program resmi yang menyebut cakupan dan aturan tertulis. Menemukan celah di luar program lalu meminta imbalan dapat dianggap pemerasan.
 
-💡 Untuk belajar, gunakan lingkungan yang memang dibuat untuk diserang: lab pribadi, mesin sengaja rentan (OWASP Juice Shop, DVWA), atau platform latihan legal seperti Hack The Box, TryHackMe, dan OffSec Proving Grounds. Modul ini sengaja tidak memuat langkah eksploitasi; fokusnya pada metodologi, pelaporan, dan batas hukum.
+> [!TIP]
+> Untuk belajar, gunakan lingkungan yang memang dibuat untuk diserang: lab pribadi, mesin sengaja rentan (OWASP Juice Shop, DVWA), atau platform latihan legal seperti Hack The Box, TryHackMe, dan OffSec Proving Grounds. Modul ini sengaja tidak memuat langkah eksploitasi; fokusnya pada metodologi, pelaporan, dan batas hukum.
 
 ### 5.3 Tanggung jawab dan ukuran keberhasilan
 
@@ -454,7 +460,8 @@ Urutan yang realistis untuk seorang network administrator dengan 1-2 tahun penga
 4. Bangun satu proyek portofolio dari bagian peran yang Anda incar.
 5. Setelah 1-2 tahun, pilih spesialisasi: membangun (NSE), mendeteksi (SOC), menguji (pentest), atau menangani (IR). Arsitek datang belakangan.
 
-⚠️ Hindari jebakan "mengoleksi sertifikat". Pewawancara keamanan hampir selalu menanyakan skenario. Satu sertifikasi ditambah satu proyek yang bisa Anda ceritakan secara mendalam lebih meyakinkan daripada lima sertifikat tanpa cerita.
+> [!WARNING]
+> Hindari jebakan "mengoleksi sertifikat". Pewawancara keamanan hampir selalu menanyakan skenario. Satu sertifikasi ditambah satu proyek yang bisa Anda ceritakan secara mendalam lebih meyakinkan daripada lima sertifikat tanpa cerita.
 
 ---
 
@@ -536,4 +543,4 @@ Urutan yang realistis untuk seorang network administrator dengan 1-2 tahun penga
 
 ---
 
-**Berikutnya:** `21-ekosistem-profesi/04-rumpun-operasi-sistem-data` — rumpun operasi sistem dan data: system administrator, database administrator, storage administrator, system engineer, dan IT operations manager.
+**Berikutnya:** `21-ekosistem-profesi/04-rumpun-operasi-sistem-data`. Rumpun operasi sistem dan data: system administrator, database administrator, storage administrator, system engineer, dan IT operations manager.

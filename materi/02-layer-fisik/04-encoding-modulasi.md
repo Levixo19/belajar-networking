@@ -1,4 +1,4 @@
-# 02.4 — Encoding dan Modulasi
+# 02.4 Encoding dan Modulasi
 
 > **Prasyarat:** `02-layer-fisik/01`, `00-fondasi/02`
 > **Tujuan:** Anda paham bagaimana bit menjadi sinyal, kenapa ada overhead encoding, dan kenapa kecepatan link terus naik tanpa kabel berubah.
@@ -43,9 +43,9 @@ Bit    :  1     0     1     1     0     0     0
 Sinyal : ┘  └────────┘     └──────────────────
 ```
 
-- ✅ Sederhana, efisien (1 bit per simbol).
-- ❌ Tidak self-clocking (deretan panjang bit sama = tidak ada transisi).
-- ❌ Tidak DC balanced.
+- **Benar:** Sederhana, efisien (1 bit per simbol).
+- **Hindari:** Tidak self-clocking (deretan panjang bit sama = tidak ada transisi).
+- **Hindari:** Tidak DC balanced.
 
 Dipakai sebagai **dasar** di banyak standar, tetapi selalu dikombinasikan dengan scrambling atau block coding.
 
@@ -77,9 +77,9 @@ Sinyal :  │ └─┐ ─┘ │   ─┘ │  ─┘ │
           ┘   └───┐│    ─┐│    ─┐
 ```
 
-- ✅ **Sempurna self-clocking** — transisi di setiap bit.
-- ✅ DC balanced.
-- ❌ **Efisiensi hanya 50%** — butuh baud rate 2× bit rate.
+- **Sempurna self-clocking** — transisi di setiap bit.
+- **Benar:** DC balanced.
+- **Efisiensi hanya 50%** — butuh baud rate 2× bit rate.
 
 Dipakai di **10BASE-T** (10 Mbps butuh 20 MHz sinyal) dan Ethernet lama. Tidak dipakai untuk kecepatan tinggi karena boros bandwidth.
 
@@ -89,7 +89,7 @@ Transisi di tengah selalu ada (untuk clock), sedangkan **ada/tidaknya transisi d
 
 ---
 
-## 3. Block Coding — Solusi Modern
+## 3. Block Coding: Solusi Modern
 
 Ide: terjemahkan blok bit data ke blok simbol yang lebih panjang, dipilih sedemikian rupa sehingga selalu punya cukup transisi dan DC balance.
 
@@ -142,7 +142,7 @@ Overhead ~0,4%. Dipakai di 200G/400G bersama FEC.
 
 ---
 
-## 4. Multi-Level Signaling — Lebih Banyak Bit per Simbol
+## 4. Multi-Level Signaling: Lebih Banyak Bit per Simbol
 
 Sampai sini kita masih 1 bit per simbol. Untuk naik lebih cepat tanpa menaikkan frekuensi, gunakan **lebih banyak level tegangan**.
 
@@ -189,7 +189,7 @@ PAM16 dengan DSP canggih + LDPC FEC
 Butuh bandwidth 400–500 MHz → karena itu wajib Cat6A
 ```
 
-Ini juga menjelaskan kenapa 10GBASE-T memakan **daya jauh lebih besar** (2–5 W per port) daripada 10G fiber (~1 W): DSP-nya bekerja sangat keras.
+Ini juga menjelaskan kenapa 10GBASE-T memakan **daya jauh lebih besar** (2-5 W per port) daripada 10G fiber (~1 W): DSP-nya bekerja sangat keras.
 
 ---
 
@@ -205,7 +205,7 @@ FSK (Frequency Shift Keying)  — ubah frekuensi
 PSK (Phase Shift Keying)      — ubah fase
 ```
 
-### QAM — Kombinasi Amplitudo dan Fase
+### QAM (Kombinasi Amplitudo dan Fase)
 
 **QAM** (*Quadrature Amplitude Modulation*) menggabungkan perubahan amplitudo **dan** fase, sehingga satu simbol bisa membawa banyak bit.
 
@@ -239,7 +239,7 @@ Digambarkan sebagai **constellation diagram** — setiap titik = satu kombinasi 
 
 Proses turun-naik modulasi ini disebut **rate adaptation** atau *rate shifting*, dan terjadi otomatis puluhan kali per detik.
 
-### OFDM — Membagi Kanal Menjadi Banyak Subcarrier
+### OFDM (Membagi Kanal Menjadi Banyak Subcarrier)
 
 **OFDM** (*Orthogonal Frequency Division Multiplexing*) memecah satu kanal lebar menjadi ratusan subcarrier sempit yang dimodulasi terpisah.
 
@@ -257,7 +257,7 @@ Keunggulan:
 
 ---
 
-## 6. FEC — Forward Error Correction
+## 6. FEC (Forward Error Correction)
 
 Pada kecepatan sangat tinggi, error tidak bisa dihindari. Mengirim ulang terlalu lambat. Solusinya: **kirim informasi redundan sehingga penerima bisa memperbaiki error sendiri.**
 
@@ -276,9 +276,10 @@ Jenis FEC yang dipakai:
 | Trellis coding | 1000BASE-T |
 | Convolutional | Wi-Fi lama, satelit |
 
-**Trade-off:** FEC menambah overhead (biasanya 2–7%) dan **latency** (butuh mengumpulkan blok sebelum bisa mendekode). Untuk aplikasi latency-kritis (HFT, beberapa aplikasi AI/HPC), ada mode "FEC bypass" atau FEC ringan.
+**Trade-off:** FEC menambah overhead (biasanya 2-7%) dan **latency** (butuh mengumpulkan blok sebelum bisa mendekode). Untuk aplikasi latency-kritis (HFT, beberapa aplikasi AI/HPC), ada mode "FEC bypass" atau FEC ringan.
 
-⚠️ **Masalah interoperabilitas nyata:** mode FEC yang tidak cocok antara dua ujung link 25G/100G menyebabkan link tidak naik atau naik dengan error tinggi. Ini penyebab umum masalah 25G di data center.
+> [!WARNING]
+> **Masalah interoperabilitas nyata:** mode FEC yang tidak cocok antara dua ujung link 25G/100G menyebabkan link tidak naik atau naik dengan error tinggi. Ini penyebab umum masalah 25G di data center.
 ```
 SW1(config-if)# fec rs-fec        ← paksa mode yang sama di kedua ujung
 SW1# show interface eth1/1 | include FEC
@@ -327,7 +328,7 @@ Hasil: Switch full duplex, PC half duplex → DUPLEX MISMATCH
 **Gejalanya sangat menipu:**
 - Link naik normal, lampu hijau
 - `ping` kecil berhasil
-- Transfer besar sangat lambat (bisa 10–100× lebih lambat)
+- Transfer besar sangat lambat (bisa 10-100× lebih lambat)
 - Sisi half melihat banyak **collision** dan **late collision**
 - Sisi full melihat banyak **CRC/FCS error** dan **runts**
 
@@ -343,7 +344,8 @@ SW1# show interfaces gi0/1 | include duplex|collision|error
   1523 input errors, 1401 CRC, 122 frame
   0 output errors, 8734 collisions, 445 late collision
 ```
-⚠️ **Late collision adalah tanda paling khas duplex mismatch** (atau kabel terlalu panjang).
+> [!WARNING]
+> **Late collision adalah tanda paling khas duplex mismatch** (atau kabel terlalu panjang).
 
 ---
 
@@ -408,15 +410,20 @@ SW1# show interfaces counters errors
 
 ## 10. Kesalahan Umum
 
-⚠️ **1. Mematikan auto-negotiation di satu sisi saja.** Penyebab duplex mismatch nomor satu.
+> [!WARNING]
+> **1. Mematikan auto-negotiation di satu sisi saja.** Penyebab duplex mismatch nomor satu.
 
-⚠️ **2. Hard-code kecepatan pada 1000BASE-T.** Standar mewajibkan auto-negotiation untuk gigabit (dibutuhkan untuk penentuan master/slave). Mematikannya bisa membuat link tidak naik sama sekali.
+> [!WARNING]
+> **2. Hard-code kecepatan pada 1000BASE-T.** Standar mewajibkan auto-negotiation untuk gigabit (dibutuhkan untuk penentuan master/slave). Mematikannya bisa membuat link tidak naik sama sekali.
 
-⚠️ **3. Mengabaikan mode FEC di 25G/100G.** Mismatch FEC = link gagal atau error tinggi.
+> [!WARNING]
+> **3. Mengabaikan mode FEC di 25G/100G.** Mismatch FEC = link gagal atau error tinggi.
 
-⚠️ **4. Mengira "link naik = semuanya baik".** Duplex mismatch memberi link yang naik tetapi kinerja hancur.
+> [!WARNING]
+> **4. Mengira "link naik = semuanya baik".** Duplex mismatch memberi link yang naik tetapi kinerja hancur.
 
-⚠️ **5. Mengharapkan Wi-Fi mencapai kecepatan maksimum di semua jarak.** Modulasi turun otomatis seiring SNR menurun — ini fitur, bukan bug.
+> [!WARNING]
+> **5. Mengharapkan Wi-Fi mencapai kecepatan maksimum di semua jarak.** Modulasi turun otomatis seiring SNR menurun — ini fitur, bukan bug.
 
 ---
 
@@ -473,4 +480,4 @@ SW1# show interfaces counters errors
 
 ---
 
-**Berikutnya:** `03-data-link/01-ethernet-frame-mac.md` — masuk ke Layer 2, tempat sebagian besar pekerjaan harian network engineer berada.
+**Berikutnya:** `03-data-link/01-ethernet-frame-mac.md`. Masuk ke Layer 2, tempat sebagian besar pekerjaan harian network engineer berada.

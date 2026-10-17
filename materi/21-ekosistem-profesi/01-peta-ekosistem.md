@@ -1,4 +1,4 @@
-# 21.1 — Peta Ekosistem Profesi Jaringan
+# 21.1 Peta Ekosistem Profesi Jaringan
 
 > **Prasyarat:** tidak ada yang wajib. Modul ini lebih bermakna jika Anda sudah membaca `18-karier-sertifikasi/01-peta-sertifikasi` dan `18-karier-sertifikasi/04-portofolio-interview`, serta mengenal dasar dari `00-fondasi/01-apa-itu-jaringan`.
 > **Tujuan:** Anda bisa membedakan network engineer dan network administrator secara tegas, membaca peta 32 profesi di sekitar jaringan dalam 6 rumpun, merencanakan transisi karier yang realistis, dan memakai kerangka kompetensi resmi (NICE, SFIA, SKKNI, O*NET) untuk menilai diri sendiri.
@@ -19,7 +19,8 @@ Itulah alasan modul ini menyebut network engineer dan network administrator seba
 
 Skala kebutuhannya di Indonesia juga besar. Survei APJII 2025 mencatat pengguna internet Indonesia sekitar 229,43 juta orang, atau 80,66% dari populasi 284,43 juta. Di sisi penyedia, situs APJII per Oktober 2026 menampilkan 1.631 anggota APJII dan 4.442 pengguna Nomor PI (pemegang sumber daya alamat yang dikelola lewat IDNIC). Setiap organisasi itu, dari ISP kabupaten sampai operator besar, membutuhkan orang yang bisa mengonfigurasi router, menjaga BGP, dan memadamkan gangguan pukul dua pagi.
 
-💡 Analogi yang membantu: jaringan adalah jalan raya, simpang, dan lampu lalu lintas sebuah kota. Profesi lain adalah penghuni gedung di sepanjang jalan itu. Penghuni bisa sangat ahli di gedungnya sendiri, tetapi kalau jalan macet total, tidak ada barang yang sampai. Network administrator adalah petugas yang menjaga lampu dan membuka simpang yang macet setiap hari. Network engineer adalah perencana yang memutuskan di mana jalan layang dibangun dan bagaimana arus dialihkan saat konstruksi.
+> [!TIP]
+> Analogi yang membantu: jaringan adalah jalan raya, simpang, dan lampu lalu lintas sebuah kota. Profesi lain adalah penghuni gedung di sepanjang jalan itu. Penghuni bisa sangat ahli di gedungnya sendiri, tetapi kalau jalan macet total, tidak ada barang yang sampai. Network administrator adalah petugas yang menjaga lampu dan membuka simpang yang macet setiap hari. Network engineer adalah perencana yang memutuskan di mana jalan layang dibangun dan bagaimana arus dialihkan saat konstruksi.
 
 ---
 
@@ -46,7 +47,8 @@ Kerangka resmi juga mengonfirmasi bahwa batasnya kabur:
 - **SKKNI bidang Jaringan Komputer** (Kepmenaker No. 321 Tahun 2016) membagi lingkup kerja menjadi tiga bidang: **perencanaan** (analisis dan perancangan), **implementasi** (pemasangan dan konfigurasi), dan **pemeliharaan** (mencari dan memperbaiki masalah). Network engineer berat di perencanaan dan implementasi; network administrator berat di implementasi dan pemeliharaan.
 - **SFIA 9** memisahkan keterampilan **Network support (NTAS)**, yang didefinisikan pada level 1 sampai 5, dari **Network design (NTDS)**, yang didefinisikan pada level 2 sampai 6. Pola levelnya sudah bercerita: dukungan jaringan berhenti di level 5, sedangkan desain jaringan naik sampai level 6 (menetapkan kebijakan desain untuk organisasi).
 
-⚠️ Saat melamar, baca bagian "tanggung jawab" di iklan dan cocokkan dengan tabel di atas. Lowongan "Network Engineer" yang isinya "standby shift, instalasi ONT, laporan harian" adalah pekerjaan teknisi atau administrator. Itu tidak salah dan bisa menjadi pintu masuk yang baik, tetapi negosiasikan gaji dan ekspektasi berdasarkan isi pekerjaannya, bukan judulnya.
+> [!WARNING]
+> Saat melamar, baca bagian "tanggung jawab" di iklan dan cocokkan dengan tabel di atas. Lowongan "Network Engineer" yang isinya "standby shift, instalasi ONT, laporan harian" adalah pekerjaan teknisi atau administrator. Itu tidak salah dan bisa menjadi pintu masuk yang baik, tetapi negosiasikan gaji dan ekspektasi berdasarkan isi pekerjaannya, bukan judulnya.
 
 ---
 
@@ -243,7 +245,8 @@ Sedikit penjelasan per rumpun:
 
 **Tata kelola & konsultasi.** IT consultant, IT auditor, disaster recovery specialist, solution architect, dan scrum master untuk tim infrastruktur. Mereka mungkin jarang mengetik perintah CLI, tetapi keputusan mereka (apa yang diaudit, berapa RTO, solusi apa yang dibeli) membentuk pekerjaan tim jaringan bertahun-tahun.
 
-💡 Pola penting: semakin jauh sebuah rumpun dari "inti", semakin besar porsi pekerjaan non-teknis (komunikasi, analisis risiko, pengelolaan orang). Fondasi jaringan tidak hilang; ia berubah dari "keahlian utama" menjadi "keahlian pembeda".
+> [!TIP]
+> Pola penting: semakin jauh sebuah rumpun dari "inti", semakin besar porsi pekerjaan non-teknis (komunikasi, analisis risiko, pengelolaan orang). Fondasi jaringan tidak hilang; ia berubah dari "keahlian utama" menjadi "keahlian pembeda".
 
 ---
 
@@ -331,7 +334,8 @@ Halaman gaji Jobstreet (di-refresh 1 Oktober 2026) memberi gambaran kasar tangga
 | Administrator Jaringan | Rentang rata-rata Rp 4,92 juta sampai Rp 6,325 juta |
 | Insinyur Jaringan | Rentang rata-rata Rp 6 juta sampai Rp 9 juta |
 
-⚠️ Jangan memperlakukan angka di atas sebagai "harga pasar" Anda. Data berasal dari iklan yang mencantumkan gaji, yang cenderung didominasi posisi junior dan perusahaan menengah. Gaji sangat dipengaruhi kota, sektor (bank dan perusahaan tambang biasanya lebih tinggi), dan kemampuan negosiasi. Untuk posisi senior dan kepemimpinan, laporan gaji perusahaan rekrutmen lebih relevan. Sebagai gambaran plafon, Michael Page Indonesia dalam panduan gaji 2026 menyebut Cybersecurity Director di sektor teknologi dapat menerima sekitar Rp 200 juta per bulan.
+> [!WARNING]
+> Jangan memperlakukan angka di atas sebagai "harga pasar" Anda. Data berasal dari iklan yang mencantumkan gaji, yang cenderung didominasi posisi junior dan perusahaan menengah. Gaji sangat dipengaruhi kota, sektor (bank dan perusahaan tambang biasanya lebih tinggi), dan kemampuan negosiasi. Untuk posisi senior dan kepemimpinan, laporan gaji perusahaan rekrutmen lebih relevan. Sebagai gambaran plafon, Michael Page Indonesia dalam panduan gaji 2026 menyebut Cybersecurity Director di sektor teknologi dapat menerima sekitar Rp 200 juta per bulan.
 
 ---
 
@@ -353,9 +357,11 @@ Sebelum memilih, jawab pertanyaan di bawah dengan jujur. Tidak ada jawaban benar
 | Bagaimana sikap Anda pada aturan dan dokumen? | Suka keteraturan, checklist, bukti | Audit, DR, ITSM, keamanan defensif |
 | | Lebih suka bereksperimen dan membangun | Engineering, otomasi, DevOps |
 
-💡 Jangan memilih hanya dari tabel. Lakukan **eksperimen 30 hari**: ambil satu proyek kecil dari rumpun yang Anda pertimbangkan (misalnya memasang Zabbix untuk rumpun infrastruktur, menulis playbook Ansible untuk DevOps, atau menganalisis PCAP serangan untuk keamanan). Perhatikan proyek mana yang membuat Anda ingin terus lanjut setelah jam belajar selesai. Itu sinyal yang lebih jujur daripada tren gaji.
+> [!TIP]
+> Jangan memilih hanya dari tabel. Lakukan **eksperimen 30 hari**: ambil satu proyek kecil dari rumpun yang Anda pertimbangkan (misalnya memasang Zabbix untuk rumpun infrastruktur, menulis playbook Ansible untuk DevOps, atau menganalisis PCAP serangan untuk keamanan). Perhatikan proyek mana yang membuat Anda ingin terus lanjut setelah jam belajar selesai. Itu sinyal yang lebih jujur daripada tren gaji.
 
-⚠️ Hindari memilih rumpun hanya karena sedang ramai dibicarakan. Keamanan siber dan cloud memang sedang naik daun, tetapi keduanya menuntut fondasi jaringan yang kuat. Orang yang melompat ke sana tanpa fondasi biasanya tersendat di tingkat menengah.
+> [!WARNING]
+> Hindari memilih rumpun hanya karena sedang ramai dibicarakan. Keamanan siber dan cloud memang sedang naik daun, tetapi keduanya menuntut fondasi jaringan yang kuat. Orang yang melompat ke sana tanpa fondasi biasanya tersendat di tingkat menengah.
 
 ---
 
@@ -392,7 +398,8 @@ SKKNI (Standar Kompetensi Kerja Nasional Indonesia) ditetapkan lewat Keputusan M
 
 Di atas SKKNI ada **Peta Okupasi Nasional bidang TIK** yang diluncurkan Kementerian Kominfo pada 27 Juli 2017, berisi 125 okupasi dalam 14 area fungsi. Skema sertifikasi okupasi seperti Network Administrator merujuk pada SKKNI dan daftar unit okupasi dalam KKNI bidang TIK ini.
 
-💡 Uji kompetensi BNSP menilai bukti per unit kompetensi. Jika Anda mendokumentasikan lab dan pekerjaan nyata (seperti yang dianjurkan di `18-karier-sertifikasi/04-portofolio-interview`), petakan setiap bukti ke kode unitnya. Misalnya, laporan lab backup dan restore konfigurasi menjadi bukti untuk J.611000.022.01.
+> [!TIP]
+> Uji kompetensi BNSP menilai bukti per unit kompetensi. Jika Anda mendokumentasikan lab dan pekerjaan nyata (seperti yang dianjurkan di `18-karier-sertifikasi/04-portofolio-interview`), petakan setiap bukti ke kode unitnya. Misalnya, laporan lab backup dan restore konfigurasi menjadi bukti untuk J.611000.022.01.
 
 ### 9.4 O*NET
 
@@ -529,4 +536,4 @@ Tiga pengamatan praktis:
 
 ---
 
-**Berikutnya:** `21-ekosistem-profesi/02-rumpun-infrastruktur` — tujuh profesi yang memperdalam jaringan ke domain khusus: architect, cloud, wireless, telko, VoIP, data center, dan NOC.
+**Berikutnya:** `21-ekosistem-profesi/02-rumpun-infrastruktur`. Tujuh profesi yang memperdalam jaringan ke domain khusus: architect, cloud, wireless, telko, VoIP, data center, dan NOC.

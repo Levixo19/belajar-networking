@@ -1,9 +1,10 @@
-# 06.1 — DNS
+# 06.1 DNS
 
 > **Prasyarat:** `05-transport/01`, `04-network-layer/01`
 > **Tujuan:** Anda paham seluruh alur resolusi DNS, bisa membaca semua record type, mendiagnosis dengan `dig`, dan membangun resolver sendiri.
 
-> 💡 **Aturan lapangan:** *"It's always DNS."* Ketika ada masalah jaringan yang tidak jelas penyebabnya, DNS adalah tersangka nomor satu. Modul ini panjang karena DNS memang sepenting itu.
+> > [!TIP]
+> > **Aturan lapangan:** *"It's always DNS."* Ketika ada masalah jaringan yang tidak jelas penyebabnya, DNS adalah tersangka nomor satu. Modul ini panjang karena DNS memang sepenting itu.
 
 ---
 
@@ -26,7 +27,8 @@ Komputer: 104.18.x.x
 
 **Solusi DNS (1983, Paul Mockapetris, RFC 1034/1035):** basis data **terdistribusi** dan **hierarkis** dengan **delegasi otoritas**.
 
-💡 File hosts masih ada dan **diperiksa lebih dulu** daripada DNS:
+> [!TIP]
+> File hosts masih ada dan **diperiksa lebih dulu** daripada DNS:
 ```
 Linux/macOS : /etc/hosts
 Windows     : C:\Windows\System32\drivers\etc\hosts
@@ -64,7 +66,8 @@ Windows     : C:\Windows\System32\drivers\etc\hosts
 | **Zone** | `example.com` | Bagian namespace yang dikelola satu otoritas |
 | **Label** | `www`, `example`, `com` | Satu bagian antar-titik |
 
-⚠️ **Titik di akhir (`example.com.`) menandakan FQDN absolut.** Tanpa titik, resolver bisa menambahkan **search domain** dari konfigurasi:
+> [!WARNING]
+> **Titik di akhir (`example.com.`) menandakan FQDN absolut.** Tanpa titik, resolver bisa menambahkan **search domain** dari konfigurasi:
 ```
 /etc/resolv.conf:
   search perusahaan.local
@@ -92,7 +95,8 @@ Ini penyebab masalah yang membingungkan ketika search domain salah dikonfigurasi
 | **Authoritative server** | Menyimpan data zona sesungguhnya. Jawabannya adalah kebenaran |
 | **Forwarder** | Meneruskan query ke resolver lain alih-alih melakukan rekursi sendiri |
 
-⚠️ **Root server ada 13 *nama*, bukan 13 mesin.** Setiap nama diumumkan lewat **anycast** dari ratusan lokasi di dunia (lebih dari 1.500 instance total). Batas 13 berasal dari ukuran maksimum respons DNS 512 byte pada masa itu.
+> [!WARNING]
+> **Root server ada 13 *nama*, bukan 13 mesin.** Setiap nama diumumkan lewat **anycast** dari ratusan lokasi di dunia (lebih dari 1.500 instance total). Batas 13 berasal dari ukuran maksimum respons DNS 512 byte pada masa itu.
 
 ---
 
@@ -152,7 +156,8 @@ Skenario: Anda mengetik `www.example.com` dan tidak ada cache di mana pun.
 | Dipakai antara | Klien → recursive resolver | Recursive resolver → root/TLD/authoritative |
 | Beban kerja | Di resolver | Di klien (resolver) |
 
-⚠️ **Root dan TLD server TIDAK melakukan rekursi.** Mereka hanya memberi referral. Kalau mereka melakukan rekursi untuk semua orang, mereka akan langsung kewalahan.
+> [!WARNING]
+> **Root dan TLD server TIDAK melakukan rekursi.** Mereka hanya memberi referral. Kalau mereka melakukan rekursi untuk semua orang, mereka akan langsung kewalahan.
 
 ### Caching
 
@@ -164,7 +169,8 @@ TTL 3600   (1 jam)     → keseimbangan umum
 TTL 86400  (1 hari)    → beban rendah; perubahan lambat menyebar
 ```
 
-💡 **Praktik saat migrasi:** turunkan TTL ke 300 detik **beberapa hari sebelum** perubahan, lakukan perubahan, verifikasi, lalu naikkan lagi. Kalau Anda menurunkan TTL bersamaan dengan perubahan, resolver masih memegang nilai TTL lama yang panjang.
+> [!TIP]
+> **Praktik saat migrasi:** turunkan TTL ke 300 detik **beberapa hari sebelum** perubahan, lakukan perubahan, verifikasi, lalu naikkan lagi. Kalau Anda menurunkan TTL bersamaan dengan perubahan, resolver masih memegang nilai TTL lama yang panjang.
 
 **Negative caching** [RFC 2308] — jawaban NXDOMAIN juga di-cache, dengan durasi dari field **minimum** di record SOA.
 
@@ -196,7 +202,7 @@ www.example.com.  3600  IN     A      93.184.216.34
 | **DNSKEY/DS/RRSIG/NSEC** | DNSSEC | — |
 | **SVCB/HTTPS** | Parameter layanan (ALPN, ECH, IP hint) | `@  IN HTTPS 1 . alpn="h3,h2"` |
 
-### SOA — Start of Authority
+### SOA (Start of Authority)
 
 ```
 example.com.  3600  IN  SOA  ns1.example.com. admin.example.com. (
@@ -217,11 +223,13 @@ example.com.  3600  IN  SOA  ns1.example.com. admin.example.com. (
 | **Expire** | Setelah sekian lama tanpa kontak, secondary berhenti melayani zona |
 | **Minimum** | TTL untuk negative caching (NXDOMAIN) |
 
-⚠️ **Serial yang tidak dinaikkan adalah kesalahan paling umum** saat mengelola zona manual. Secondary tidak akan menarik perubahan. Konvensi: `YYYYMMDDNN` (mis. `2026091001`).
+> [!WARNING]
+> **Serial yang tidak dinaikkan adalah kesalahan paling umum** saat mengelola zona manual. Secondary tidak akan menarik perubahan. Konvensi: `YYYYMMDDNN` (mis. `2026091001`).
 
 ### Aturan CNAME yang sering dilanggar
 
-⚠️ **1. CNAME tidak boleh berdampingan dengan record lain untuk nama yang sama.**
+> [!WARNING]
+> **1. CNAME tidak boleh berdampingan dengan record lain untuk nama yang sama.**
 ```
 ❌ SALAH:
    blog  IN CNAME  www.example.com.
@@ -230,7 +238,8 @@ example.com.  3600  IN  SOA  ns1.example.com. admin.example.com. (
 ✅ BENAR: pilih salah satu
 ```
 
-⚠️ **2. CNAME tidak boleh di apex zona (`example.com` itu sendiri).**
+> [!WARNING]
+> **2. CNAME tidak boleh di apex zona (`example.com` itu sendiri).**
 ```
 ❌ example.com.  IN CNAME  target.cdn.net.
 ```
@@ -238,7 +247,8 @@ Karena apex **wajib** punya record SOA dan NS, sementara CNAME melarang record l
 
 **Solusi:** banyak penyedia DNS menawarkan **ALIAS**, **ANAME**, atau **CNAME flattening** — record proprietary yang berperilaku seperti CNAME di apex tetapi diselesaikan di sisi server menjadi A/AAAA.
 
-⚠️ **3. Rantai CNAME memperlambat resolusi.** Setiap hop adalah lookup tambahan. Batasi maksimal satu tingkat.
+> [!WARNING]
+> **3. Rantai CNAME memperlambat resolusi.** Setiap hop adalah lookup tambahan. Batasi maksimal satu tingkat.
 
 ### Reverse DNS (PTR)
 
@@ -255,7 +265,8 @@ IPv6: 2001:db8::1
 - Logging dan audit yang mudah dibaca
 - Beberapa layanan memverifikasinya
 
-⚠️ **PTR dikelola oleh pemilik blok IP** (ISP/RIR), bukan pemilik domain. Untuk mengubahnya, Anda harus meminta ke ISP — kecuali Anda memiliki blok IP sendiri.
+> [!WARNING]
+> **PTR dikelola oleh pemilik blok IP** (ISP/RIR), bukan pemilik domain. Untuk mengubahnya, Anda harus meminta ke ISP — kecuali Anda memiliki blok IP sendiri.
 
 ---
 
@@ -278,7 +289,8 @@ Cara secondary (slave) menyalin zona dari primary (master).
 5. Secondary memperbarui zona
 ```
 
-⚠️ **Zone transfer HARUS dibatasi.** Zona yang bisa di-transfer siapa saja membocorkan seluruh peta jaringan internal Anda kepada penyerang.
+> [!WARNING]
+> **Zone transfer HARUS dibatasi.** Zona yang bisa di-transfer siapa saja membocorkan seluruh peta jaringan internal Anda kepada penyerang.
 
 ```
 # BIND
@@ -322,9 +334,11 @@ example.com            ← DNSKEY-nya diverifikasi dengan DS di .com
 www.example.com A 93.184.216.34   ← TERVERIFIKASI ✅
 ```
 
-⚠️ **DNSSEC hanya menjamin integritas dan autentisitas, BUKAN kerahasiaan.** Query dan jawaban tetap dikirim dalam plaintext. Untuk privasi, butuh DoT/DoH/DoQ.
+> [!WARNING]
+> **DNSSEC hanya menjamin integritas dan autentisitas, BUKAN kerahasiaan.** Query dan jawaban tetap dikirim dalam plaintext. Untuk privasi, butuh DoT/DoH/DoQ.
 
-⚠️ **DNSSEC menaikkan risiko operasional.** Kunci yang kedaluwarsa atau DS yang tidak sinkron akan membuat domain **hilang total** dari internet — bukan sekadar "peringatan". Otomasi rollover kunci sangat penting.
+> [!WARNING]
+> **DNSSEC menaikkan risiko operasional.** Kunci yang kedaluwarsa atau DS yang tidak sinkron akan membuat domain **hilang total** dari internet — bukan sekadar "peringatan". Otomasi rollover kunci sangat penting.
 
 ```bash
 $ dig +dnssec example.com
@@ -348,7 +362,8 @@ DNS tradisional dikirim **plaintext** di UDP/TCP 53 — siapa pun di jalur bisa 
 
 ### Implikasi operasional
 
-⚠️ **DoH menimbulkan tantangan nyata bagi jaringan perusahaan:**
+> [!WARNING]
+> **DoH menimbulkan tantangan nyata bagi jaringan perusahaan:**
 - Browser bisa memakai DoH **sendiri**, mengabaikan setelan DNS jaringan
 - Kebijakan filtering berbasis DNS (parental control, blokir malware) **dilewati**
 - Split-horizon DNS internal tidak berfungsi → nama internal tidak resolve
@@ -366,7 +381,7 @@ DNS tradisional dikirim **plaintext** di UDP/TCP 53 — siapa pun di jalur bisa 
 
 ---
 
-## 9. `dig` — Alat Diagnostik DNS Utama
+## 9. `dig`: Alat Diagnostik DNS Utama
 
 ```bash
 # Query dasar
@@ -451,13 +466,14 @@ example.com.		3600	IN	A	93.184.216.34
 | `ad` | **Authenticated data** — tervalidasi DNSSEC |
 | `tc` | **Truncated** — jawaban terpotong, harus diulang lewat TCP |
 
-⚠️ **`SERVFAIL` yang paling sering** disebabkan kegagalan validasi DNSSEC. Uji dengan `dig +cd` (checking disabled) — kalau berhasil dengan `+cd`, masalahnya di DNSSEC.
+> [!WARNING]
+> **`SERVFAIL` yang paling sering** disebabkan kegagalan validasi DNSSEC. Uji dengan `dig +cd` (checking disabled) — kalau berhasil dengan `+cd`, masalahnya di DNSSEC.
 
 ---
 
 ## 10. Membangun DNS Resolver Sendiri
 
-### Unbound (validating recursive resolver — direkomendasikan)
+### Unbound (validating recursive resolver: direkomendasikan)
 
 ```bash
 $ sudo apt install unbound        # atau: dnf install unbound
@@ -624,13 +640,15 @@ Klien eksternal → www.perusahaan.com = 203.0.113.50  (alamat publik)
 
 Kegunaan: menghindari hairpin NAT, menyembunyikan topologi internal, mempercepat akses internal.
 
-⚠️ Tantangannya: klien VPN dan perangkat yang memakai DoH bisa mendapat jawaban yang salah.
+> [!WARNING]
+> Tantangannya: klien VPN dan perangkat yang memakai DoH bisa mendapat jawaban yang salah.
 
 ### GeoDNS
 
 Jawaban berbeda berdasarkan lokasi geografis penanya. Dipakai CDN untuk mengarahkan pengguna ke edge terdekat.
 
-⚠️ Tidak selalu akurat karena resolver mungkin jauh dari pengguna. **EDNS Client Subnet (ECS)** mengirimkan sebagian prefix klien untuk memperbaiki akurasi — dengan biaya privasi.
+> [!WARNING]
+> Tidak selalu akurat karena resolver mungkin jauh dari pengguna. **EDNS Client Subnet (ECS)** mengirimkan sebagian prefix klien untuk memperbaiki akurasi — dengan biaya privasi.
 
 ### DNS Load Balancing (Round Robin)
 
@@ -641,7 +659,8 @@ www  IN  A  192.0.2.3
 ```
 Server merotasi urutan jawaban.
 
-⚠️ **Bukan load balancer sungguhan:** tidak ada health check (server mati tetap diberikan), cache memengaruhi distribusi, dan klien bisa memilih sendiri. Gunakan load balancer atau anycast untuk kebutuhan serius.
+> [!WARNING]
+> **Bukan load balancer sungguhan:** tidak ada health check (server mati tetap diberikan), cache memengaruhi distribusi, dan klien bisa memilih sendiri. Gunakan load balancer atau anycast untuk kebutuhan serius.
 
 ### Anycast DNS
 
@@ -758,14 +777,16 @@ chrome://net-internals/#dns
 /certificate import file-name=cloudflare-ca.pem
 ```
 
-⚠️ **`allow-remote-requests=yes` membuat router menjadi DNS resolver terbuka.** Kalau interface WAN tidak difilter, router Anda akan dipakai untuk **DNS amplification attack**. **Selalu blokir UDP/TCP 53 dari WAN:**
+> [!WARNING]
+> **`allow-remote-requests=yes` membuat router menjadi DNS resolver terbuka.** Kalau interface WAN tidak difilter, router Anda akan dipakai untuk **DNS amplification attack**. **Selalu blokir UDP/TCP 53 dari WAN:**
 
 ```
 /ip firewall filter add chain=input in-interface-list=WAN protocol=udp dst-port=53 action=drop
 /ip firewall filter add chain=input in-interface-list=WAN protocol=tcp dst-port=53 action=drop
 ```
 
-💡 **Memaksa semua klien memakai DNS router** (mencegah bypass dengan DNS publik):
+> [!TIP]
+> **Memaksa semua klien memakai DNS router** (mencegah bypass dengan DNS publik):
 ```
 /ip firewall nat add chain=dstnat in-interface-list=LAN protocol=udp dst-port=53 \
     action=redirect to-ports=53 comment="Paksa DNS ke router"
@@ -774,7 +795,8 @@ chrome://net-internals/#dns
 ```
 Ini teknik umum di hotspot dan jaringan sekolah untuk menegakkan filtering DNS.
 
-⚠️ Teknik ini **tidak menghentikan DoH** — browser yang memakai DNS over HTTPS akan melewatinya. Untuk itu perlu memblokir IP resolver DoH yang dikenal.
+> [!WARNING]
+> Teknik ini **tidak menghentikan DoH** — browser yang memakai DNS over HTTPS akan melewatinya. Untuk itu perlu memblokir IP resolver DoH yang dikenal.
 
 ### Address list dinamis dari DNS
 
@@ -784,7 +806,8 @@ Ini teknik umum di hotspot dan jaringan sekolah untuk menegakkan filtering DNS.
    ← RouterOS otomatis me-resolve dan memperbarui alamatnya
 ```
 
-💡 Fitur ini sangat berguna untuk memblokir atau memprioritaskan layanan berdasarkan **nama domain**, bukan IP — yang berubah-ubah pada layanan besar.
+> [!TIP]
+> Fitur ini sangat berguna untuk memblokir atau memprioritaskan layanan berdasarkan **nama domain**, bukan IP — yang berubah-ubah pada layanan besar.
 
 ### Padanan istilah
 
@@ -867,4 +890,4 @@ Ini teknik umum di hotspot dan jaringan sekolah untuk menegakkan filtering DNS.
 
 ---
 
-**Berikutnya:** `06-aplikasi/02-dhcp.md` — bagaimana perangkat mendapat alamat secara otomatis.
+**Berikutnya:** `06-aplikasi/02-dhcp.md`. Bagaimana perangkat mendapat alamat secara otomatis.

@@ -1,4 +1,4 @@
-# 06.4 — TLS, Sertifikat, dan PKI
+# 06.4 TLS, Sertifikat, dan PKI
 
 > **Prasyarat:** `06-aplikasi/03`, `05-transport/02`
 > **Tujuan:** Anda paham dasar kriptografi yang relevan, bisa membaca sertifikat, mendiagnosis error TLS, dan memahami implikasi TLS inspection.
@@ -37,7 +37,8 @@ Tanda tangan dengan kunci PRIVAT → siapa pun bisa verifikasi dengan kunci PUBL
 
 Algoritma: **RSA** (2048/4096 bit), **ECDSA** (P-256/P-384), **Ed25519**.
 
-💡 **TLS memakai keduanya:** asimetris untuk menyepakati kunci sesi, lalu simetris untuk data. Ini disebut *hybrid cryptosystem*.
+> [!TIP]
+> **TLS memakai keduanya:** asimetris untuk menyepakati kunci sesi, lalu simetris untuk data. Ini disebut *hybrid cryptosystem*.
 
 ### Hash
 
@@ -56,7 +57,8 @@ Algoritma: **SHA-256/384/512**, SHA-3. ⚠️ **MD5 dan SHA-1 sudah rusak** — 
 - **HMAC** — hash dengan kunci; membuktikan pesan tidak diubah **dan** berasal dari pemegang kunci.
 - **AEAD** (*Authenticated Encryption with Associated Data*) — mengenkripsi **dan** mengautentikasi dalam satu operasi. Contoh: **AES-GCM**, **ChaCha20-Poly1305**.
 
-💡 TLS 1.3 **hanya mengizinkan AEAD** — menghilangkan seluruh kelas kerentanan yang berasal dari kombinasi enkripsi dan MAC yang salah.
+> [!TIP]
+> TLS 1.3 **hanya mengizinkan AEAD** — menghilangkan seluruh kelas kerentanan yang berasal dari kombinasi enkripsi dan MAC yang salah.
 
 ### Diffie-Hellman dan Forward Secrecy
 
@@ -75,13 +77,14 @@ Penyadap melihat g^a dan g^b, tetapi tidak bisa menghitung g^(ab)
 Ini memberi **Perfect Forward Secrecy (PFS)**:
 > Kalau kunci privat server dicuri **besok**, penyerang **tidak bisa** mendekripsi trafik yang direkam **hari ini** — karena kunci sesinya sudah dibuang dan tidak pernah diturunkan dari kunci privat server.
 
-⚠️ Ini alasan penting mengapa cipher suite tanpa forward secrecy (RSA key exchange) sudah dihapus dari TLS 1.3.
+> [!WARNING]
+> Ini alasan penting mengapa cipher suite tanpa forward secrecy (RSA key exchange) sudah dihapus dari TLS 1.3.
 
 ---
 
 ## 2. TLS Handshake
 
-### TLS 1.3 (RFC 8446) — 1 RTT
+### TLS 1.3 (RFC 8446): 1 RTT
 
 ```
 Klien                                          Server
@@ -116,7 +119,7 @@ Klien                                          Server
 5. **Forward secrecy wajib** — tidak ada lagi RSA key exchange
 6. **Cipher suite disederhanakan** dari puluhan menjadi 5
 
-### TLS 1.2 — 2 RTT
+### TLS 1.2: 2 RTT
 ```
 ClientHello → ServerHello + Certificate + ServerKeyExchange + ServerHelloDone
 → ClientKeyExchange + ChangeCipherSpec + Finished
@@ -146,7 +149,8 @@ TLS_AES_128_CCM_SHA256
 TLS_AES_128_CCM_8_SHA256
 ```
 
-⚠️ **Yang harus dinonaktifkan:**
+> [!WARNING]
+> **Yang harus dinonaktifkan:**
 ```
 SSLv2, SSLv3          ← rusak total (POODLE)
 TLS 1.0, TLS 1.1      ← usang; PCI DSS melarang
@@ -169,7 +173,8 @@ CBC mode (TLS 1.2)    ← rentan berbagai serangan (Lucky13, dll)
 | **OCSP stapling** | Server melampirkan bukti sertifikat masih valid |
 | **Session resumption** | PSK/session ticket → handshake lebih cepat |
 
-⚠️ **SNI dikirim dalam plaintext** (kecuali dengan ECH). Karena itu firewall dan ISP bisa melihat situs apa yang Anda kunjungi walaupun isinya terenkripsi — dan inilah dasar pemblokiran berbasis SNI. **ECH** mengubah ini, dan sedang menimbulkan diskusi besar di kalangan operator jaringan.
+> [!WARNING]
+> **SNI dikirim dalam plaintext** (kecuali dengan ECH). Karena itu firewall dan ISP bisa melihat situs apa yang Anda kunjungi walaupun isinya terenkripsi — dan inilah dasar pemblokiran berbasis SNI. **ECH** mengubah ini, dan sedang menimbulkan diskusi besar di kalangan operator jaringan.
 
 ---
 
@@ -210,7 +215,8 @@ Certificate:
                 OCSP - URI:http://r3.o.lencr.org
 ```
 
-⚠️ **Browser modern mengabaikan field CN dan hanya memeriksa SAN.** Sertifikat tanpa SAN akan ditolak, walaupun CN-nya benar. Ini kesalahan yang masih sering terjadi pada sertifikat internal yang dibuat manual.
+> [!WARNING]
+> **Browser modern mengabaikan field CN dan hanya memeriksa SAN.** Sertifikat tanpa SAN akan ditolak, walaupun CN-nya benar. Ini kesalahan yang masih sering terjadi pada sertifikat internal yang dibuat manual.
 
 ### Chain of Trust
 
@@ -226,7 +232,8 @@ Server certificate         ← untuk example.com
 
 **Kenapa ada intermediate?** Kunci privat root CA disimpan **offline** di HSM dalam brankas — sangat aman tetapi tidak praktis untuk penandatanganan harian. Intermediate menjadi perantara yang bisa dicabut kalau bocor, tanpa harus mencabut root.
 
-⚠️ **Kesalahan konfigurasi paling umum: intermediate certificate tidak dikirim.** Gejalanya menipu:
+> [!WARNING]
+> **Kesalahan konfigurasi paling umum: intermediate certificate tidak dikirim.** Gejalanya menipu:
 ```
 ✅ Berfungsi di browser desktop (yang punya cache intermediate dari kunjungan lain)
 ❌ Gagal di ponsel, aplikasi mobile, curl, Java, dan skrip
@@ -248,7 +255,8 @@ $ curl -v https://example.com          # perhatikan pesan verifikasi
 | **OV** (Organization Validated) | Domain + keberadaan organisasi | Hari | Info organisasi tercantum |
 | **EV** (Extended Validation) | Verifikasi hukum menyeluruh | Minggu | Browser **tidak lagi** menampilkan bilah hijau |
 
-💡 **DV sudah cukup untuk enkripsi.** EV tidak memberi keamanan kriptografis tambahan; nilainya semata reputasi, dan browser sudah menghapus indikator visualnya.
+> [!TIP]
+> **DV sudah cukup untuk enkripsi.** EV tidak memberi keamanan kriptografis tambahan; nilainya semata reputasi, dan browser sudah menghapus indikator visualnya.
 
 ### Jenis berdasarkan cakupan
 
@@ -322,7 +330,8 @@ $ sudo certbot renew --dry-run
 | **DNS-01** | TXT record `_acme-challenge.example.com` | **Bisa wildcard**; server tidak perlu terekspos |
 | **TLS-ALPN-01** | Respons TLS khusus di port 443 | Tidak butuh port 80 |
 
-💡 **Masa berlaku 90 hari disengaja** — memaksa otomasi. Sertifikat yang diperbarui manual pasti akan terlupa suatu hari. Industri bergerak ke masa berlaku lebih pendek lagi (rencana 47 hari pada 2029).
+> [!TIP]
+> **Masa berlaku 90 hari disengaja** — memaksa otomasi. Sertifikat yang diperbarui manual pasti akan terlupa suatu hari. Industri bergerak ke masa berlaku lebih pendek lagi (rencana 47 hari pada 2029).
 
 ### Revocation
 
@@ -336,7 +345,8 @@ Bagaimana membatalkan sertifikat yang kunci privatnya bocor?
 | **CRLite / CRLSets** | Browser menyematkan ringkasan kompak | Dipakai Firefox/Chrome |
 | **Short-lived certs** | Sertifikat berumur pendek → tidak perlu revocation | Arah masa depan |
 
-⚠️ **Revocation pada dasarnya rapuh.** Banyak klien melakukan *soft-fail*: kalau pengecekan OCSP gagal, mereka tetap melanjutkan koneksi — sehingga penyerang yang bisa memblokir OCSP bisa memakai sertifikat yang sudah dicabut. Inilah alasan industri beralih ke **sertifikat berumur pendek**.
+> [!WARNING]
+> **Revocation pada dasarnya rapuh.** Banyak klien melakukan *soft-fail*: kalau pengecekan OCSP gagal, mereka tetap melanjutkan koneksi — sehingga penyerang yang bisa memblokir OCSP bisa memakai sertifikat yang sudah dicabut. Inilah alasan industri beralih ke **sertifikat berumur pendek**.
 
 ```nginx
 # Aktifkan OCSP stapling
@@ -367,7 +377,8 @@ ssl_verify_depth 2;
 
 Aplikasi menyematkan sertifikat/kunci publik tertentu dan menolak yang lain — bahkan jika ditandatangani CA yang sah.
 
-⚠️ **Berisiko:** kalau kunci berubah (rotasi, insiden) dan aplikasi belum diperbarui, layanan **mati total**. HPKP (versi HTTP header) sudah **dihapus** dari browser karena terlalu berbahaya. Pinning masih dipakai di aplikasi mobile dengan mekanisme cadangan yang hati-hati.
+> [!WARNING]
+> **Berisiko:** kalau kunci berubah (rotasi, insiden) dan aplikasi belum diperbarui, layanan **mati total**. HPKP (versi HTTP header) sudah **dihapus** dari browser karena terlalu berbahaya. Pinning masih dipakai di aplikasi mobile dengan mekanisme cadangan yang hati-hati.
 
 ---
 
@@ -387,7 +398,8 @@ Aplikasi menyematkan sertifikat/kunci publik tertentu dan menolak yang lain — 
 | `revoked` | Sertifikat dicabut | Terbitkan baru; selidiki mengapa dicabut |
 | Timeout saat handshake | Port 443 diblokir; MTU/fragmentasi | Cek firewall dan MTU |
 
-⚠️ **"Certificate is not yet valid" hampir selalu berarti jam sistem salah.** Ini sangat sering terjadi pada perangkat embedded, VM yang baru di-restore, dan perangkat jaringan yang kehilangan NTP. Periksa waktu **sebelum** menyalahkan sertifikat.
+> [!WARNING]
+> **"Certificate is not yet valid" hampir selalu berarti jam sistem salah.** Ini sangat sering terjadi pada perangkat embedded, VM yang baru di-restore, dan perangkat jaringan yang kehilangan NTP. Periksa waktu **sebelum** menyalahkan sertifikat.
 
 ### Perintah diagnostik
 
@@ -485,15 +497,20 @@ Firewall menerbitkan sertifikat "palsu" untuk setiap situs, ditandatangani CA in
 
 ### Masalah dan batasan
 
-⚠️ **1. Melemahkan keamanan.** Firewall menjadi titik tunggal yang melihat **semua** trafik terdekripsi organisasi — target bernilai sangat tinggi.
+> [!WARNING]
+> **1. Melemahkan keamanan.** Firewall menjadi titik tunggal yang melihat **semua** trafik terdekripsi organisasi — target bernilai sangat tinggi.
 
-⚠️ **2. Merusak certificate pinning.** Aplikasi mobile perbankan, Windows Update, banyak aplikasi native akan **gagal total**.
+> [!WARNING]
+> **2. Merusak certificate pinning.** Aplikasi mobile perbankan, Windows Update, banyak aplikasi native akan **gagal total**.
 
-⚠️ **3. Masalah privasi dan hukum.** Trafik perbankan, kesehatan, dan pribadi karyawan ikut terdekripsi. Banyak yurisdiksi mengharuskan pemberitahuan eksplisit dan pengecualian kategori tertentu.
+> [!WARNING]
+> **3. Masalah privasi dan hukum.** Trafik perbankan, kesehatan, dan pribadi karyawan ikut terdekripsi. Banyak yurisdiksi mengharuskan pemberitahuan eksplisit dan pengecualian kategori tertentu.
 
-⚠️ **4. QUIC/HTTP3 sering tidak didukung** oleh perangkat inspeksi → harus memblokir UDP/443 agar klien fallback ke TCP.
+> [!WARNING]
+> **4. QUIC/HTTP3 sering tidak didukung** oleh perangkat inspeksi → harus memblokir UDP/443 agar klien fallback ke TCP.
 
-⚠️ **5. ECH akan menyulitkan lebih jauh** — SNI yang selama ini terlihat akan terenkripsi.
+> [!WARNING]
+> **5. ECH akan menyulitkan lebih jauh** — SNI yang selama ini terlihat akan terenkripsi.
 
 **Praktik yang bertanggung jawab:**
 ```
@@ -538,7 +555,8 @@ server {
 }
 ```
 
-💡 Gunakan **Mozilla SSL Configuration Generator** (https://ssl-config.mozilla.org/) untuk konfigurasi yang selalu mutakhir sesuai server dan tingkat kompatibilitas yang Anda butuhkan.
+> [!TIP]
+> Gunakan **Mozilla SSL Configuration Generator** (https://ssl-config.mozilla.org/) untuk konfigurasi yang selalu mutakhir sesuai server dan tingkat kompatibilitas yang Anda butuhkan.
 
 ### HSTS
 
@@ -547,7 +565,8 @@ Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
 ```
 Browser akan **menolak** koneksi HTTP ke domain ini selama masa itu — mencegah SSL stripping.
 
-⚠️ **Hati-hati dengan `includeSubDomains` dan `preload`.** Kalau ada subdomain yang belum siap HTTPS, ia akan **tidak bisa diakses**. `preload` sulit dibatalkan (butuh berbulan-bulan).
+> [!WARNING]
+> **Hati-hati dengan `includeSubDomains` dan `preload`.** Kalau ada subdomain yang belum siap HTTPS, ia akan **tidak bisa diakses**. `preload` sulit dibatalkan (butuh berbulan-bulan).
 
 ---
 
@@ -618,4 +637,4 @@ Browser akan **menolak** koneksi HTTP ke domain ini selama masa itu — mencegah
 
 ---
 
-**Berikutnya:** `06-aplikasi/05-layanan-lain.md` — email, SSH, NTP, SNMP, syslog, dan layanan infrastruktur lain.
+**Berikutnya:** `06-aplikasi/05-layanan-lain.md`. Email, SSH, NTP, SNMP, syslog, dan layanan infrastruktur lain.

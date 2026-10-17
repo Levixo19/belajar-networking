@@ -1,4 +1,4 @@
-# 19.4 — MikroTik: QoS, Queue & Hotspot
+# 19.4 MikroTik: QoS, Queue & Hotspot
 
 > **Prasyarat:** `19-mikrotik/03` (mangle), `11-wan-vpn/03` (QoS), `06-aplikasi/02` (DHCP)
 > **Tujuan:** Anda bisa mengelola bandwidth dengan simple queue dan queue tree (PCQ, burst), dan membangun hotspot dengan voucher — inti kebutuhan ISP/RT-RW-Net.
@@ -25,13 +25,15 @@ add name="pelanggan-01" target=192.168.1.10/32 \
 add name="paket-5mbps" target=192.168.10.0/24 max-limit=5M/5M
 ```
 
-⚠️ **Format `max-limit` adalah `upload/download`** (dari perspektif router: TX/RX target). Kesalahan umum membalik keduanya. `max-limit=3M/10M` = 3 Mbps upload, 10 Mbps download.
+> [!WARNING]
+> **Format `max-limit` adalah `upload/download`** (dari perspektif router: TX/RX target). Kesalahan umum membalik keduanya. `max-limit=3M/10M` = 3 Mbps upload, 10 Mbps download.
 
-💡 Untuk **RT-RW-Net**, simple queue per-pelanggan (atau per-IP) adalah cara termudah menjual paket bandwidth (5 Mbps, 10 Mbps, dst.). Kombinasikan dengan PPPoE (`19.6`) agar limit mengikuti profil pelanggan otomatis.
+> [!TIP]
+> Untuk **RT-RW-Net**, simple queue per-pelanggan (atau per-IP) adalah cara termudah menjual paket bandwidth (5 Mbps, 10 Mbps, dst.). Kombinasikan dengan PPPoE (`19.6`) agar limit mengikuti profil pelanggan otomatis.
 
 ---
 
-## 2. PCQ — Pembagian Adil Otomatis
+## 2. PCQ (Pembagian Adil Otomatis)
 
 **PCQ (Per Connection Queue)** membagi bandwidth **secara adil dan dinamis** di antara banyak pengguna/koneksi — tanpa harus membuat queue per-orang.
 
@@ -52,11 +54,12 @@ add name=pcq-upload   kind=pcq pcq-classifier=src-address pcq-rate=0
 # Pakai di queue tree (butuh packet-mark dari mangle) atau simple queue
 ```
 
-💡 **PCQ dengan `pcq-rate=0`** membagi total bandwidth **rata** ke semua pengguna aktif — solusi klasik agar satu pengguna tidak memonopoli link bersama. `pcq-classifier=dst-address` untuk download (bedakan per-IP tujuan/pelanggan), `src-address` untuk upload. Ini fitur QoS MikroTik yang paling dihargai untuk jaringan berbagi.
+> [!TIP]
+> **PCQ dengan `pcq-rate=0`** membagi total bandwidth **rata** ke semua pengguna aktif — solusi klasik agar satu pengguna tidak memonopoli link bersama. `pcq-classifier=dst-address` untuk download (bedakan per-IP tujuan/pelanggan), `src-address` untuk upload. Ini fitur QoS MikroTik yang paling dihargai untuk jaringan berbagi.
 
 ---
 
-## 3. Burst — Pengalaman "Cepat"
+## 3. Burst: Pengalaman "Cepat"
 
 **Burst** mengizinkan kecepatan **melebihi max-limit sementara** saat trafik baru dimulai — membuat browsing/loading terasa cepat, lalu turun ke limit untuk transfer besar.
 
@@ -74,7 +77,8 @@ Efek: buka web / file kecil → dapat sampai 10Mbps (terasa ngebut)
       unduh besar berkelanjutan → turun ke 5Mbps (limit paket)
 ```
 
-💡 **Burst menyeimbangkan "terasa cepat" dengan "batas adil".** Pelanggan merasa koneksi responsif (browsing, buka aplikasi) karena burst, tetapi unduhan besar tetap dibatasi paket mereka. Sangat populer untuk paket ISP retail. ⚠️ Logika burst (threshold vs limit vs time) membingungkan — burst aktif selama **rata-rata pemakaian** dalam `burst-time` masih di bawah `burst-threshold`.
+> [!TIP]
+> **Burst menyeimbangkan "terasa cepat" dengan "batas adil".** Pelanggan merasa koneksi responsif (browsing, buka aplikasi) karena burst, tetapi unduhan besar tetap dibatasi paket mereka. Sangat populer untuk paket ISP retail. ⚠️ Logika burst (threshold vs limit vs time) membingungkan — burst aktif selama **rata-rata pemakaian** dalam `burst-time` masih di bawah `burst-threshold`.
 
 ---
 
@@ -98,7 +102,8 @@ add name=lain parent=total packet-mark=no-mark priority=8 max-limit=100M
 - **`priority`** 1 (tertinggi) – 8 (terendah): trafik prioritas tinggi dilayani dulu saat kongesti.
 - **`limit-at`** = bandwidth terjamin (minimum); **`max-limit`** = maksimum bila tersedia.
 
-💡 **`limit-at` (jaminan) vs `max-limit` (batas):** VoIP diberi `limit-at` tinggi + priority 1 → selalu dapat bandwidth minimum meski link penuh. Konsep sama dengan LLQ/CBWFQ Cisco (`11-wan-vpn/03`).
+> [!TIP]
+> **`limit-at` (jaminan) vs `max-limit` (batas):** VoIP diberi `limit-at` tinggi + priority 1 → selalu dapat bandwidth minimum meski link penuh. Konsep sama dengan LLQ/CBWFQ Cisco (`11-wan-vpn/03`).
 
 ---
 
@@ -115,7 +120,8 @@ Menurut diagram packet flow (`19-mikrotik/03-firewall-nat` bagian 6), ada dua te
 
 Tanpa queue apa pun, setiap antarmuka tetap punya antrean bawaan, terlihat di `/queue interface print`. Di CHR 7.24.5, antarmuka ethernet memakai `only-hardware-queue`; begitu ada queue tree ber-parent antarmuka, kolom `ACTIVE-QUEUE` berubah menjadi `queue-tree`.
 
-⚠️ Paket dari koneksi yang di-FastTrack **melewati simple queue dan queue tree ber-parent global** (lihat `19-mikrotik/03-firewall-nat` bagian 6.3). Semua perhitungan di bagian ini hanya berlaku untuk trafik yang tidak di-fasttrack.
+> [!WARNING]
+> Paket dari koneksi yang di-FastTrack **melewati simple queue dan queue tree ber-parent global** (lihat `19-mikrotik/03-firewall-nat` bagian 6.3). Semua perhitungan di bagian ini hanya berlaku untuk trafik yang tidak di-fasttrack.
 
 ### 5.2 Inner queue dan leaf queue
 
@@ -251,7 +257,8 @@ PCQ (bagian 2) bekerja dalam tiga langkah menurut dokumentasi: memilah paket ke 
 | `pcq-dst-address-mask`, `pcq-src-address-mask` | Mengelompokkan alamat; 32 berarti per alamat | Mask 24 berarti satu sub-aliran per /24 (misalnya per kantor cabang) |
 | `pcq-burst-rate`, `pcq-burst-threshold`, `pcq-burst-time` | Burst per sub-aliran, logikanya sama dengan simple queue | |
 
-⚠️ **Hitung `pcq-total-limit`.** Dengan 100 pelanggan aktif dan `pcq-limit=50KiB`, kebutuhan antrean bisa mencapai 100 × 50 = 5000 KiB, sedangkan bawaan total hanya 2000 KiB. Saat jam sibuk, batas total tercapai lebih dulu dan paket dibuang walaupun antrean tiap pelanggan belum penuh. Naikkan total (misalnya 8000KiB, seperti di contoh di bawah) dan pantau memori router.
+> [!WARNING]
+> **Hitung `pcq-total-limit`.** Dengan 100 pelanggan aktif dan `pcq-limit=50KiB`, kebutuhan antrean bisa mencapai 100 × 50 = 5000 KiB, sedangkan bawaan total hanya 2000 KiB. Saat jam sibuk, batas total tercapai lebih dulu dan paket dibuang walaupun antrean tiap pelanggan belum penuh. Naikkan total (misalnya 8000KiB, seperti di contoh di bawah) dan pantau memori router.
 
 ### 5.7 Desain bandwidth RT-RW Net 100 pelanggan
 
@@ -326,11 +333,12 @@ Hasil ini sah secara HTB, tetapi mungkin bukan yang Anda inginkan secara bisnis.
 
 `print stats` menampilkan laju, paket yang dibuang (`dropped`), dan isi antrean (`queued-packets`). Leaf yang terus-menerus `dropped` naik saat link belum penuh menandakan antrean terlalu kecil atau `pcq-total-limit` tercapai. Leaf yang lajunya jauh di atas `max-limit` hampir pasti dilewati FastTrack.
 
-💡 Lisensi CHR free membatasi upload 1 Mbps per antarmuka, jadi CHR cukup untuk menguji sintaks dan struktur, bukan angka throughput. Untuk melihat pembagian HTB dengan angka nyata, pakai router fisik atau lisensi trial CHR, dan bangkitkan beban dengan `/tool bandwidth-test` atau iperf3 dari beberapa klien.
+> [!TIP]
+> Lisensi CHR free membatasi upload 1 Mbps per antarmuka, jadi CHR cukup untuk menguji sintaks dan struktur, bukan angka throughput. Untuk melihat pembagian HTB dengan angka nyata, pakai router fisik atau lisensi trial CHR, dan bangkitkan beban dengan `/tool bandwidth-test` atau iperf3 dari beberapa klien.
 
 ---
 
-## 6. Hotspot — Login Portal & Voucher
+## 6. Hotspot: Login Portal & Voucher
 
 **Hotspot** RouterOS memberi **captive portal**: pengguna harus login (voucher/username) sebelum akses internet. Inti bisnis warnet, kafe, wifi publik, RT-RW-Net voucher.
 
@@ -359,9 +367,11 @@ add name="paket-2jam" rate-limit=2M/2M session-timeout=2h shared-users=1
 add name=voucher001 password=abc123 profile="paket-2jam"
 ```
 
-💡 **Walled garden** penting: izinkan akses ke halaman pembayaran/informasi/DNS tertentu **tanpa login** — agar pengguna bisa membeli voucher atau melihat info sebelum autentikasi. Tanpa ini, portal pembayaran online tidak bisa diakses dari halaman login.
+> [!TIP]
+> **Walled garden** penting: izinkan akses ke halaman pembayaran/informasi/DNS tertentu **tanpa login** — agar pengguna bisa membeli voucher atau melihat info sebelum autentikasi. Tanpa ini, portal pembayaran online tidak bisa diakses dari halaman login.
 
-⚠️ **Hotspot melakukan intersepsi & NAT** — pastikan tidak bentrok dengan aturan firewall/NAT lain. Untuk skala besar (banyak pelanggan/lokasi), integrasikan dengan **RADIUS** eksternal (`19.6`, `12-keamanan/04`) untuk manajemen user & billing terpusat, alih-alih user lokal.
+> [!WARNING]
+> **Hotspot melakukan intersepsi & NAT** — pastikan tidak bentrok dengan aturan firewall/NAT lain. Untuk skala besar (banyak pelanggan/lokasi), integrasikan dengan **RADIUS** eksternal (`19.6`, `12-keamanan/04`) untuk manajemen user & billing terpusat, alih-alih user lokal.
 
 ---
 
@@ -447,4 +457,4 @@ Umum:
 
 ---
 
-**Berikutnya:** `19-mikrotik/05-wireless-mikrotik.md` — wireless RouterOS (CAPsMAN, security, band).
+**Berikutnya:** `19-mikrotik/05-wireless-mikrotik.md`. Wireless RouterOS (CAPsMAN, security, band).

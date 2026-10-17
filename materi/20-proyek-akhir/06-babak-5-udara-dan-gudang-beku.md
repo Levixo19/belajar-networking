@@ -1,4 +1,4 @@
-# 20.6 — Babak 5: Udara & Gudang Beku
+# 20.6 Babak 5: Udara & Gudang Beku
 
 > **Prasyarat:** `20.5`, ditambah `02` (layer fisik & sinyal) dan `10` (wireless)
 > **Tujuan:** Menghitung — bukan menebak — anggaran daya radio, jumlah titik akses, rencana kanal, dan kapasitas penyimpanan CCTV di lingkungan yang secara fisik memusuhi gelombang radio.
@@ -11,7 +11,8 @@ Babak ini **matematika dan fisika**. Tidak ada konfigurasi, tidak ada perdebatan
 
 Alasannya sederhana: nirkabel adalah satu-satunya bagian jaringan di mana **membeli perangkat lebih banyak sering memperburuk keadaan**. Tanpa hitungan, orang memasang AP sampai "sinyalnya penuh" lalu bingung kenapa terminal forklift tetap terputus.
 
-⏱ Mode Ujian: 90 menit. Kalkulator wajib, tabel logaritma tidak perlu.
+> [!NOTE]
+> Mode Ujian: 90 menit. Kalkulator wajib, tabel logaritma tidak perlu.
 
 ---
 
@@ -38,7 +39,7 @@ Alasannya sederhana: nirkabel adalah satu-satunya bagian jaringan di mana **memb
 | 4 lantai | masing-masing ±1.200 m², partisi gipsum, beberapa dinding beton |
 | Perangkat Wi-Fi karyawan | 400 sekarang (laptop + ponsel), rencana 800 |
 | Wi-Fi tamu | 80 perangkat, hanya butuh internet |
-| Ruang rapat | 4 ruang, video conference, 12–20 orang |
+| Ruang rapat | 4 ruang, video conference, 12-20 orang |
 | AP sekarang | 4 AP konsumer, satu per lantai |
 
 ### 2.3 Perangkat yang akan dipakai (asumsi kasus)
@@ -55,7 +56,8 @@ Alasannya sederhana: nirkabel adalah satu-satunya bagian jaringan di mana **memb
 | Target SNR untuk MCS tinggi | ≥ 25 dB |
 | Redaman satu rak penuh ikan beku | ±10 dB pada 5 GHz (asumsi kasus) |
 
-⚠️ Angka regulasi daya dan alokasi kanal 5 GHz di Indonesia berubah dari waktu ke waktu. Untuk proyek ini, **setiap keputusan kanal dan daya wajib Anda sertai catatan "diverifikasi terhadap peraturan Kominfo yang berlaku"**, dengan rujukannya. Auditor akan menanyakan itu, dan menjawab "saya pakai angka dari tutorial" bukan jawaban.
+> [!WARNING]
+> Angka regulasi daya dan alokasi kanal 5 GHz di Indonesia berubah dari waktu ke waktu. Untuk proyek ini, **setiap keputusan kanal dan daya wajib Anda sertai catatan "diverifikasi terhadap peraturan Kominfo yang berlaku"**, dengan rujukannya. Auditor akan menanyakan itu, dan menjawab "saya pakai angka dari tutorial" bukan jawaban.
 
 ---
 
@@ -107,7 +109,8 @@ Cocokkan setelah Anda menghitung sendiri. Toleransi ±0,3 dB dan ±2%.
 | C8 | 64 kamera per hari / retensi 30 hari | **1,38 TB/hari** / **41,5 TB** |
 | C9 | Umur simpan NVR 7,3 TB | **±5,3 hari** |
 
-💡 C9 adalah jawaban untuk tiket T-915 ("rekaman hanya 4 hari, kontrak bilang 30 hari"). Perhatikan: itu **bukan** kerusakan dan **bukan** kesalahan vendor CCTV — itu aritmetika yang tidak pernah dikerjakan siapa pun sebelum membeli. Setelah Anda menghitungnya, Anda punya tiga pilihan nyata, dan semuanya adalah keputusan bisnis. Tuliskan ketiganya beserta konsekuensinya.
+> [!TIP]
+> C9 adalah jawaban untuk tiket T-915 ("rekaman hanya 4 hari, kontrak bilang 30 hari"). Perhatikan: itu **bukan** kerusakan dan **bukan** kesalahan vendor CCTV — itu aritmetika yang tidak pernah dikerjakan siapa pun sebelum membeli. Setelah Anda menghitungnya, Anda punya tiga pilihan nyata, dan semuanya adalah keputusan bisnis. Tuliskan ketiganya beserta konsekuensinya.
 
 ---
 
@@ -121,7 +124,7 @@ Setiap keputusan wajib disertai angka atau alasan fisik.
 
 **c. Jumlah AP kantor HQ: kapasitas atau cakupan?** Hitung keduanya lalu ambil yang lebih besar:
 - **Cakupan**: luas lantai ÷ luas efektif satu AP (pakai radius yang Anda dapat dari hitungan RSSI di lingkungan kantor).
-- **Kapasitas**: jumlah perangkat ÷ target perangkat per radio (25–30 untuk beban campuran).
+- **Kapasitas**: jumlah perangkat ÷ target perangkat per radio (25-30 untuk beban campuran).
 Yang mana yang menentukan di kasus HQ, dan apa akibatnya bila Anda hanya menghitung cakupan?
 
 **d. Lebar kanal.** 20, 40, atau 80 MHz. Untuk gudang dengan 36 perangkat bergerak, dan untuk kantor dengan 800 perangkat — jawabannya bisa berbeda. Pertahankan dengan konsep jumlah kanal non-tumpang-tindih dan interferensi co-channel.
@@ -149,7 +152,7 @@ Yang mana yang menentukan di kasus HQ, dan apa akibatnya bila Anda hanya menghit
 
 ---
 
-## 7. Latihan — Pembuktian Angka
+## 7. Latihan: Pembuktian Angka
 
 1. Bandingkan H4 dan H5. Nyatakan dalam satu paragraf mengapa memindahkan AP dari koridor ke dalam lorong memberi perbaikan yang jauh lebih besar daripada menaikkan daya pancar AP sampai batas maksimum, dan hitung kira-kira berapa dB yang bisa Anda peroleh dari masing-masing tindakan.
 2. Tiket T-881 mengatakan "Wi-Fi hilang setiap kali forklift masuk lorong 3". Berikan penjelasan fisik yang lengkap sampai ke mekanismenya, dan sebutkan satu pengukuran lapangan yang membuktikan penjelasan Anda benar.
@@ -160,14 +163,14 @@ Yang mana yang menentukan di kasus HQ, dan apa akibatnya bila Anda hanya menghit
 <details>
 <summary>Jawaban</summary>
 
-1. Hasil hitungan: **H4** (AP di koridor, jarak 30 m, melewati 2 rak) memberi RSSI **−73,6 dBm** dan SNR **18,4 dB** — di bawah target RSSI −67 dBm dan jauh di bawah target SNR 25 dB, artinya perangkat akan turun ke MCS rendah, sering mengulang kirim, dan terputus saat ada pergerakan. **H5** (AP di dalam lorong, jarak terjauh 15 m, tanpa rak menghalangi) memberi RSSI ≈ 23,2 − 70,8 = **−47,6 dBm** dan SNR ≈ **44 dB** — sangat baik. Perbaikannya **±26 dB**, yang berasal dari dua sumber: menghilangkan 20 dB halangan rak dan mengurangi 6 dB rugi jarak (30 m → 15 m). Sebaliknya, menaikkan daya pancar hanya bisa memberi sekitar **3–6 dB** sebelum menabrak batas regulasi EIRP, dan itu pun membawa tiga kerugian: (a) tautan menjadi **tidak simetris** — AP terdengar oleh klien, tetapi daya pancar klien (terminal kecil, antena 0 dBi) tidak naik, sehingga arah balik tetap gagal; (b) sel menjadi lebih luas sehingga **interferensi co-channel** dan masalah klien lengket bertambah; (c) daya tidak mengubah SNR di sisi klien bila sumber derau ikut naik. Kesimpulan yang bisa dibawa ke kasus lain: **pada masalah nirkabel, geometri dan halangan hampir selalu memberi puluhan dB, sedangkan daya memberi beberapa dB.** Karena itu jawaban pertama untuk cakupan buruk adalah memindahkan atau menambah AP dan memilih antena yang tepat, bukan menaikkan daya.
+1. Hasil hitungan: **H4** (AP di koridor, jarak 30 m, melewati 2 rak) memberi RSSI **−73,6 dBm** dan SNR **18,4 dB** — di bawah target RSSI −67 dBm dan jauh di bawah target SNR 25 dB, artinya perangkat akan turun ke MCS rendah, sering mengulang kirim, dan terputus saat ada pergerakan. **H5** (AP di dalam lorong, jarak terjauh 15 m, tanpa rak menghalangi) memberi RSSI ≈ 23,2 − 70,8 = **−47,6 dBm** dan SNR ≈ **44 dB** — sangat baik. Perbaikannya **±26 dB**, yang berasal dari dua sumber: menghilangkan 20 dB halangan rak dan mengurangi 6 dB rugi jarak (30 m → 15 m). Sebaliknya, menaikkan daya pancar hanya bisa memberi sekitar **3-6 dB** sebelum menabrak batas regulasi EIRP, dan itu pun membawa tiga kerugian: (a) tautan menjadi **tidak simetris** — AP terdengar oleh klien, tetapi daya pancar klien (terminal kecil, antena 0 dBi) tidak naik, sehingga arah balik tetap gagal; (b) sel menjadi lebih luas sehingga **interferensi co-channel** dan masalah klien lengket bertambah; (c) daya tidak mengubah SNR di sisi klien bila sumber derau ikut naik. Kesimpulan yang bisa dibawa ke kasus lain: **pada masalah nirkabel, geometri dan halangan hampir selalu memberi puluhan dB, sedangkan daya memberi beberapa dB.** Karena itu jawaban pertama untuk cakupan buruk adalah memindahkan atau menambah AP dan memilih antena yang tepat, bukan menaikkan daya.
 
-2. Mekanismenya: sinyal dari AP di koridor mencapai lorong 3 lewat **satu jalur sempit** — celah antar-rak atau pantulan dari dinding logam — bukan lewat garis pandang. Sinyal seperti itu berada tepat di ambang batas (H4 menunjukkan −73,6 dBm, hanya beberapa dB di atas titik perangkat menyerah). Ketika forklift — massa logam besar setinggi 2–3 m dengan operator dan muatan — masuk ke lorong, ia **menghalangi satu-satunya jalur yang tersisa** dan sekaligus mengubah pola pantulan di ruang yang dipenuhi permukaan logam, sehingga terjadi pelemahan mendalam (fading) pada posisi tertentu. Ditambah lagi antena terminal berada **di badan forklift itu sendiri**, jadi tubuh forklift dan muatan ikut menghalangi arah ke AP. Karena RSSI sudah marginal, kehilangan 10–15 dB seketika membuat tautan gagal — bukan melambat, tetapi putus, lalu perangkat mencari AP lain dan tidak menemukan yang lebih baik. Pengukuran yang membuktikan: jalankan **ping berkelanjutan sambil berjalan** (`ping -i 0.2`) bersamaan dengan perekaman RSSI/SNR dari sisi klien atau alat survei, **dengan gudang dalam keadaan rak penuh**, sekali tanpa forklift dan sekali dengan forklift melintas di titik yang sama; bukti yang dicari adalah penurunan RSSI 10 dB atau lebih yang bertepatan waktu dengan lewatnya forklift, disertai kehilangan paket, pada titik-titik tertentu di lorong (bukan merata). Bukti pendukung: hitungan ulang percobaan perpindahan pada log AP di detik-detik yang sama. Hal yang **bukan** penjelasan: "interferensi dari mesin" saja — walau mungkin ada, ia tidak menjelaskan keterkaitan waktu yang tepat dengan lewatnya forklift.
+2. Mekanismenya: sinyal dari AP di koridor mencapai lorong 3 lewat **satu jalur sempit** — celah antar-rak atau pantulan dari dinding logam — bukan lewat garis pandang. Sinyal seperti itu berada tepat di ambang batas (H4 menunjukkan −73,6 dBm, hanya beberapa dB di atas titik perangkat menyerah). Ketika forklift — massa logam besar setinggi 2-3 m dengan operator dan muatan — masuk ke lorong, ia **menghalangi satu-satunya jalur yang tersisa** dan sekaligus mengubah pola pantulan di ruang yang dipenuhi permukaan logam, sehingga terjadi pelemahan mendalam (fading) pada posisi tertentu. Ditambah lagi antena terminal berada **di badan forklift itu sendiri**, jadi tubuh forklift dan muatan ikut menghalangi arah ke AP. Karena RSSI sudah marginal, kehilangan 10-15 dB seketika membuat tautan gagal — bukan melambat, tetapi putus, lalu perangkat mencari AP lain dan tidak menemukan yang lebih baik. Pengukuran yang membuktikan: jalankan **ping berkelanjutan sambil berjalan** (`ping -i 0.2`) bersamaan dengan perekaman RSSI/SNR dari sisi klien atau alat survei, **dengan gudang dalam keadaan rak penuh**, sekali tanpa forklift dan sekali dengan forklift melintas di titik yang sama; bukti yang dicari adalah penurunan RSSI 10 dB atau lebih yang bertepatan waktu dengan lewatnya forklift, disertai kehilangan paket, pada titik-titik tertentu di lorong (bukan merata). Bukti pendukung: hitungan ulang percobaan perpindahan pada log AP di detik-detik yang sama. Hal yang **bukan** penjelasan: "interferensi dari mesin" saja — walau mungkin ada, ia tidak menjelaskan keterkaitan waktu yang tepat dengan lewatnya forklift.
 
 3. Kebutuhan retensi 30 hari pada konfigurasi sekarang = **41,5 TB** (1,38 TB/hari), sedangkan NVR punya 7,3 TB yang hanya cukup **±5,3 hari**. Tiga pilihan nyata:
    - **Tambah kapasitas penyimpanan.** Butuh ±41,5 TB data ditambah margin pertumbuhan dan ruang bebas untuk kesehatan sistem berkas — rencanakan **±50 TB usable** (dan bila memakai RAID dengan redundansi, kapasitas mentahnya lebih besar lagi). Paling sederhana, tidak mengubah mutu bukti visual, tetapi paling mahal dan menambah beban jaringan tetap 128 Mbps rata-rata.
-   - **Turunkan laju data per kamera.** Dari 2 Mbps menjadi 1 Mbps (turunkan fps dari 25 ke 12–15, atau naikkan kompresi/atur kualitas per zona) → kebutuhan menjadi 20,75 TB untuk 30 hari, sehingga ±25 TB usable sudah cukup. Konsekuensi: rekaman kurang mulus dan detail berkurang — dapat diterima untuk koridor, **tidak** dapat diterima untuk titik yang dipakai membuktikan penanganan produk.
-   - **Rekam berbasis peristiwa dengan retensi berjenjang.** Rekaman terus-menerus disimpan 7 hari (9,7 TB), dan setelah itu hanya menyimpan segmen bertanda peristiwa (pintu dibuka, deteksi gerak, pemuatan kontainer) selama 30–90 hari. Kebutuhan turun drastis, tetapi menambah kompleksitas dan **risiko kepatuhan**: rekaman yang dibutuhkan auditor bisa terhapus bila aturan penandaan peristiwanya salah.
+   - **Turunkan laju data per kamera.** Dari 2 Mbps menjadi 1 Mbps (turunkan fps dari 25 ke 12-15, atau naikkan kompresi/atur kualitas per zona) → kebutuhan menjadi 20,75 TB untuk 30 hari, sehingga ±25 TB usable sudah cukup. Konsekuensi: rekaman kurang mulus dan detail berkurang — dapat diterima untuk koridor, **tidak** dapat diterima untuk titik yang dipakai membuktikan penanganan produk.
+   - **Rekam berbasis peristiwa dengan retensi berjenjang.** Rekaman terus-menerus disimpan 7 hari (9,7 TB), dan setelah itu hanya menyimpan segmen bertanda peristiwa (pintu dibuka, deteksi gerak, pemuatan kontainer) selama 30-90 hari. Kebutuhan turun drastis, tetapi menambah kompleksitas dan **risiko kepatuhan**: rekaman yang dibutuhkan auditor bisa terhapus bila aturan penandaan peristiwanya salah.
    - **Rekomendasi untuk BNS: gabungan pilihan kedua dan ketiga, dengan pengecualian eksplisit** — kamera di titik kritis rantai dingin (pintu cold storage, area pemuatan kontainer, ruang timbang) tetap 2 Mbps dan **retensi penuh 30 hari**, kamera lain diturunkan ke 1 Mbps dengan retensi berjenjang. Alasan kepatuhan: yang perlu dibuktikan kepada auditor bukan "semua sudut gudang selama 30 hari", melainkan **penanganan produk pada titik yang menentukan mutu**; jadi anggaran diarahkan ke titik yang menghasilkan bukti. Apa pun pilihannya, tuliskan **kebijakan retensi resmi** dan pantau kapasitas sebagai metrik dengan alarm — karena kegagalan senyap inilah yang membuat T-915 bertahan bertahun-tahun.
 
 4. Urutan kejadiannya: AP yang bekerja pada kanal DFS wajib menjalankan deteksi radar terus-menerus. Saat pola radar terdeteksi, AP **harus** berhenti memancar di kanal itu dalam waktu yang ditentukan regulasi (ratusan milidetik), lalu pindah ke kanal lain dan **tidak boleh kembali** ke kanal tersebut selama periode tertentu (umumnya 30 menit). Dari sisi klien: koneksi hilang seketika tanpa peringatan; perangkat harus memindai ulang, menemukan AP di kanal baru, melakukan autentikasi dan asosiasi ulang (dan bila memakai 802.1X, autentikasi penuh lagi kecuali ada mekanisme percepatan). Untuk terminal forklift yang sedang memindai barang: sesi aplikasi terputus di tengah transaksi — pemindaian terakhir bisa hilang atau terkirim dua kali, operator harus mengulang, dan bila aplikasi tidak idempoten, data batch bisa ganda. Buruknya lagi, seluruh AP di ruang itu bisa terpengaruh bersamaan, sehingga tidak ada AP tetangga yang bisa dituju. **Sikap di pabrik: hindari kanal DFS** untuk SSID operasional (forklift, HT, sensor) dan pakai kanal non-DFS; bila jumlah kanal non-DFS tidak cukup, pilih lebar kanal 20 MHz untuk memperbanyak kanal, dan rancang agar kanal DFS hanya dipakai SSID yang tahan gangguan. **Sikap di HQ: DFS boleh dipakai** — kantor punya kebutuhan kapasitas tinggi sehingga tambahan kanal berharga, pengguna duduk dan aplikasinya tahan sambungan ulang sesaat, dan risiko radar di lokasi kantor umumnya lebih rendah. Jawaban berbeda karena **yang menentukan bukan tekniknya, melainkan apakah aplikasi di atasnya tahan terputus tiba-tiba** — dan itulah cara berpikir yang benar tentang pilihan kanal.
@@ -185,7 +188,7 @@ Yang mana yang menentukan di kasus HQ, dan apa akibatnya bila Anda hanya menghit
 
 | Aspek | Poin | Kriteria |
 |---|---|---|
-| Hitungan H1–H7 | 35 | Checksum C1–C9 cocok, langkah hitungan ditulis |
+| Hitungan H1-H7 | 35 | Checksum C1-C9 cocok, langkah hitungan ditulis |
 | Letak & jumlah AP cold storage | 15 | Dibenarkan oleh hitungan, bukan oleh kebiasaan |
 | Penanganan lingkungan −25 °C & kondensasi | 10 | Pilihan teknis nyata beserta konsekuensi kabel/rugi daya |
 | Jumlah AP HQ: kapasitas vs cakupan | 10 | Keduanya dihitung, yang menentukan diidentifikasi |
@@ -207,4 +210,4 @@ Yang mana yang menentukan di kasus HQ, dan apa akibatnya bila Anda hanya menghit
 
 ---
 
-**Berikutnya:** `20-proyek-akhir/07-babak-6-tim-merah-tim-biru.md` — sepuluh serangan nyata, Anda yang harus bertahan.
+**Berikutnya:** `20-proyek-akhir/07-babak-6-tim-merah-tim-biru.md`. Sepuluh serangan nyata, Anda yang harus bertahan.

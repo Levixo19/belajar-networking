@@ -1,9 +1,10 @@
-# 07.3 — RIP
+# 07.3 RIP
 
 > **Prasyarat:** `07-routing-lanjutan/02`
 > **Tujuan:** Anda memahami RIP sebagai contoh konkret distance vector, bisa mengonfigurasinya, dan tahu kenapa ia tidak dipakai lagi di produksi.
 
-> 💡 **Kenapa masih mempelajari RIP?** Tiga alasan: (a) ia contoh distance vector yang paling mudah dipahami; (b) masih muncul di ujian sertifikasi; (c) Anda mungkin menemuinya di jaringan warisan. Anda **tidak** akan mendesain jaringan baru dengan RIP.
+> > [!TIP]
+> > **Kenapa masih mempelajari RIP?** Tiga alasan: (a) ia contoh distance vector yang paling mudah dipahami; (b) masih muncul di ujian sertifikasi; (c) Anda mungkin menemuinya di jaringan warisan. Anda **tidak** akan mendesain jaringan baru dengan RIP.
 
 ---
 
@@ -12,7 +13,7 @@
 | Aspek | Nilai |
 |---|---|
 | Jenis | Distance vector |
-| Metrik | **Hop count** (1–15; **16 = tak terjangkau**) |
+| Metrik | **Hop count** (1-15; **16 = tak terjangkau**) |
 | Administrative Distance | **120** |
 | Update | Setiap **30 detik**, penuh (seluruh routing table) |
 | Transport | **UDP port 520** (RIPng: 521) |
@@ -29,7 +30,8 @@
 | **Holddown** | 180 detik | Abaikan informasi baru tentang rute ini |
 | **Flush** | 240 detik | Hapus rute dari tabel |
 
-⚠️ **Konvergensi RIP bisa memakan 3–5 menit.** Ini tidak dapat diterima di jaringan modern.
+> [!WARNING]
+> **Konvergensi RIP bisa memakan 3–5 menit.** Ini tidak dapat diterima di jaringan modern.
 
 ---
 
@@ -39,12 +41,13 @@
 |---|---|---|---|
 | RFC | 1058 | 2453 | 2080 |
 | Classful/classless | **Classful** | **Classless** (VLSM ✅) | Classless |
-| Subnet mask dikirim? | ❌ Tidak | ✅ Ya | ✅ Ya |
+| Subnet mask dikirim? | Tidak | Ya | Ya |
 | Pengiriman | Broadcast | **Multicast 224.0.0.9** | Multicast FF02::9 |
-| Autentikasi | ❌ | ✅ (plaintext/MD5) | Memakai IPsec |
+| Autentikasi | Tidak | ✅ (plaintext/MD5) | Memakai IPsec |
 | Untuk | IPv4 (usang) | IPv4 | **IPv6** |
 
-⚠️ **RIPv1 tidak mengirimkan subnet mask** — karena itu tidak mendukung VLSM dan tidak boleh dipakai sama sekali. Kalau menemuinya di jaringan warisan, upgrade ke v2.
+> [!WARNING]
+> **RIPv1 tidak mengirimkan subnet mask** — karena itu tidak mendukung VLSM dan tidak boleh dipakai sama sekali. Kalau menemuinya di jaringan warisan, upgrade ke v2.
 
 ---
 
@@ -62,7 +65,8 @@ R1(config-router)# passive-interface default
 R1(config-router)# no passive-interface gi0/1
 ```
 
-⚠️ **Perintah `network` di RIP memakai alamat CLASSFUL.** Anda tidak bisa menyebut subnet spesifik:
+> [!WARNING]
+> **Perintah `network` di RIP memakai alamat CLASSFUL.** Anda tidak bisa menyebut subnet spesifik:
 ```
 R1(config-router)# network 10.1.1.0
    → IOS mengubahnya secara diam-diam menjadi: network 10.0.0.0
@@ -70,7 +74,8 @@ R1(config-router)# network 10.1.1.0
 ```
 Ini sering mengejutkan: Anda bermaksud mengaktifkan RIP di satu subnet, tetapi ia aktif di semuanya.
 
-⚠️ **`no auto-summary` wajib.** Dengan auto-summary aktif, RIP meringkas rute ke batas classful saat melintasi batas jaringan mayor — menyebabkan routing salah pada jaringan discontiguous:
+> [!WARNING]
+> **`no auto-summary` wajib.** Dengan auto-summary aktif, RIP meringkas rute ke batas classful saat melintasi batas jaringan mayor — menyebabkan routing salah pada jaringan discontiguous:
 ```
 Dengan auto-summary:
   R1 punya 10.1.1.0/24, R2 punya 10.2.2.0/24, dipisah oleh 192.168.1.0/24
@@ -102,7 +107,8 @@ R1(config)# ipv6 router rip RIPPROC
 R1(config)# interface gi0/1
 R1(config-if)# ipv6 rip RIPPROC enable
 ```
-⚠️ RIPng tidak memakai perintah `network` — diaktifkan **per interface**.
+> [!WARNING]
+> RIPng tidak memakai perintah `network` — diaktifkan **per interface**.
 
 ### Verifikasi
 
@@ -138,7 +144,7 @@ R1# undebug all
 |---|---|
 | **Maksimum 15 hop** | Jaringan besar tidak mungkin |
 | **Metrik hanya hop count** | Jalur 2 hop × 10 Mbps dipilih daripada 3 hop × 10 Gbps |
-| **Konvergensi 3–5 menit** | Tidak dapat diterima |
+| **Konvergensi 3-5 menit** | Tidak dapat diterima |
 | **Update penuh setiap 30 detik** | Boros bandwidth |
 | **Rentan loop** | Butuh split horizon, poison reverse, holddown |
 | **Load balancing terbatas** | Hanya equal-cost, maksimum 4 (bisa 6) jalur |
@@ -158,7 +164,7 @@ OSPF memilih B (cost jauh lebih kecil) ✅
 ## 5. Ringkasan
 
 - RIP: distance vector, metrik **hop count** (maks 15), **AD 120**, UDP 520, update penuh setiap 30 detik.
-- Timer: update 30, invalid 180, holddown 180, flush 240 → konvergensi 3–5 menit.
+- Timer: update 30, invalid 180, holddown 180, flush 240 → konvergensi 3-5 menit.
 - **RIPv1 classful (jangan dipakai)**; **RIPv2 classless** dengan multicast 224.0.0.9 dan autentikasi; **RIPng** untuk IPv6, diaktifkan per interface.
 - Perintah `network` memakai alamat **classful** — mengaktifkan RIP di semua interface dalam jaringan mayor itu.
 - **`no auto-summary` wajib** untuk mendukung jaringan discontiguous.
@@ -184,7 +190,7 @@ OSPF memilih B (cost jauh lebih kecil) ✅
 
 3. Dengan **auto-summary aktif**, RIP secara otomatis meringkas rute ke batas classful ketika mengiklankannya melintasi batas jaringan mayor. Pada jaringan **discontiguous** — misalnya `10.1.1.0/24` di satu sisi dan `10.2.2.0/24` di sisi lain, dipisahkan oleh `192.168.1.0/24` — kedua router akan mengiklankan ringkasan `10.0.0.0/8` yang identik. Router penerima tidak bisa membedakan subnet mana ada di arah mana, sehingga trafik dikirim ke arah yang salah atau di-load-balance secara keliru. `no auto-summary` mempertahankan prefix asli sehingga routing benar.
 
-4. Waktu itu berasal dari **rantai timer RIP**: setelah link putus, router yang kehilangan tetangga menunggu **invalid timer 180 detik** tanpa menerima update sebelum menandai rute sebagai tidak valid (metrik 16). Setelah itu **holddown timer 180 detik** membuatnya mengabaikan informasi baru tentang rute tersebut, dan **flush timer 240 detik** menghapusnya dari tabel. Ditambah waktu propagasi update ke router lain (setiap 30 detik per hop), total pemulihan mudah mencapai 3–5 menit. Triggered update mempercepat sebagian kasus, tetapi holddown tetap menjadi penghambat utama.
+4. Waktu itu berasal dari **rantai timer RIP**: setelah link putus, router yang kehilangan tetangga menunggu **invalid timer 180 detik** tanpa menerima update sebelum menandai rute sebagai tidak valid (metrik 16). Setelah itu **holddown timer 180 detik** membuatnya mengabaikan informasi baru tentang rute tersebut, dan **flush timer 240 detik** menghapusnya dari tabel. Ditambah waktu propagasi update ke router lain (setiap 30 detik per hop), total pemulihan mudah mencapai 3-5 menit. Triggered update mempercepat sebagian kasus, tetapi holddown tetap menjadi penghambat utama.
 
 5. (a) **Metrik berbasis bandwidth** — OSPF memilih jalur berdasarkan cost yang mencerminkan kapasitas link, bukan sekadar jumlah hop, sehingga jalur yang dipilih benar-benar optimal. (b) **Konvergensi jauh lebih cepat** — hitungan detik alih-alih menit, karena LSA di-flood segera saat ada perubahan tanpa holddown timer. (c) **Skalabilitas** — tidak ada batas 15 hop, dan konsep **area** membatasi cakupan flooding serta perhitungan SPF sehingga jaringan besar tetap dapat dikelola. (d) Tambahan: OSPF mendukung autentikasi yang lebih kuat, summarization terkontrol di ABR, dan merupakan standar terbuka multi-vendor yang matang.
 
@@ -201,4 +207,4 @@ OSPF memilih B (cost jauh lebih kecil) ✅
 
 ---
 
-**Berikutnya:** `07-routing-lanjutan/04-ospf.md` — protokol IGP yang paling penting untuk dikuasai.
+**Berikutnya:** `07-routing-lanjutan/04-ospf.md`. Protokol IGP yang paling penting untuk dikuasai.

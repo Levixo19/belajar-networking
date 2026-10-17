@@ -1,4 +1,4 @@
-# 08.1 — Dasar IPv6
+# 08.1 Dasar IPv6
 
 > **Prasyarat:** `04-network-layer/01`, `00-fondasi/02`
 > **Tujuan:** Anda bisa membaca dan menyingkat alamat IPv6, mengenali setiap tipe alamat, dan memahami header IPv6.
@@ -36,7 +36,8 @@ Untuk memberi gambaran skala: **setiap orang di bumi bisa mendapat 4,3 × 10²�
 - **CGNAT** — dua lapis NAT di sisi ISP
 - **Pasar alamat IPv4** — harga per alamat terus naik
 
-⚠️ Semua ini adalah **tambalan** dengan biaya nyata: NAT merusak model end-to-end, menyulitkan P2P dan VoIP, menambah kompleksitas, dan menyembunyikan identitas pengguna dari log.
+> [!WARNING]
+> Semua ini adalah **tambalan** dengan biaya nyata: NAT merusak model end-to-end, menyulitkan P2P dan VoIP, menambah kompleksitas, dan menyembunyikan identitas pengguna dari log.
 
 ### Keunggulan IPv6 di luar jumlah alamat
 
@@ -114,7 +115,8 @@ Asli   : 0:0:0:0:0:0:0:0
 ✅ 2001:db8:0:0:0:0:0:1 → 2001:db8::1
 ```
 
-⚠️ **Dua `::` dalam satu alamat adalah ILEGAL** karena ambigu — tidak jelas berapa kelompok nol yang diwakili masing-masing.
+> [!WARNING]
+> **Dua `::` dalam satu alamat adalah ILEGAL** karena ambigu — tidak jelas berapa kelompok nol yang diwakili masing-masing.
 
 ### Prefix
 
@@ -146,9 +148,10 @@ Notasi CIDR sama seperti IPv4, tetapi **tidak ada subnet mask bertitik** di IPv6
 | **Teredo** | 2001::/32 | Tunneling (usang) |
 | **6to4** | 2002::/16 | Tunneling (usang) |
 
-⚠️ **TIDAK ADA BROADCAST di IPv6.** Fungsinya digantikan multicast — yang jauh lebih efisien karena hanya host yang berlangganan yang memprosesnya.
+> [!WARNING]
+> **TIDAK ADA BROADCAST di IPv6.** Fungsinya digantikan multicast — yang jauh lebih efisien karena hanya host yang berlangganan yang memprosesnya.
 
-### GUA — Global Unicast Address
+### GUA (Global Unicast Address)
 
 ```
 2001:db8:acad:0001:0000:0000:0000:0001/64
@@ -165,16 +168,18 @@ Struktur alokasi tipikal:
 /64  → SATU subnet (standar untuk LAN)
 ```
 
-⚠️ **`/64` adalah standar mutlak untuk LAN.** Ini bukan pemborosan — ini **persyaratan** karena:
+> [!WARNING]
+> **`/64` adalah standar mutlak untuk LAN.** Ini bukan pemborosan — ini **persyaratan** karena:
 - **SLAAC memerlukan interface ID 64 bit** untuk membentuk alamat
 - Beberapa fitur (mis. privacy extension, EUI-64) mengasumsikan /64
 - Alamat IPv6 tidak akan pernah habis, jadi tidak perlu berhemat
 
-💡 Satu `/64` berisi **18 kuintiliun alamat** — lebih banyak daripada seluruh alamat IPv4 dikalikan 4 miliar. Jangan pernah memakai /112, /120, atau /126 untuk LAN.
+> [!TIP]
+> Satu `/64` berisi **18 kuintiliun alamat** — lebih banyak daripada seluruh alamat IPv4 dikalikan 4 miliar. Jangan pernah memakai /112, /120, atau /126 untuk LAN.
 
 **Pengecualian yang lazim:** link point-to-point antar-router boleh memakai **`/127`** [RFC 6164] untuk mencegah serangan *neighbor discovery exhaustion*.
 
-### ULA — Unique Local Address
+### ULA (Unique Local Address)
 
 ```
 fd00::/8 → praktis semua ULA memakai ini
@@ -198,11 +203,13 @@ print(f'fd{gid[:2]}:{gid[2:6]}:{gid[6:10]}::/48')
 fd7a:3c91:e4f2::/48
 ```
 
-⚠️ **`fc00::/8` dicadangkan** untuk alokasi terpusat yang tidak pernah terjadi. Dalam praktik, semua ULA memakai `fd00::/8`.
+> [!WARNING]
+> **`fc00::/8` dicadangkan** untuk alokasi terpusat yang tidak pernah terjadi. Dalam praktik, semua ULA memakai `fd00::/8`.
 
-⚠️ **ULA bukan pengganti GUA.** Jangan memakai ULA + NAT66 untuk meniru pola IPv4 — itu membuang seluruh keunggulan IPv6. Gunakan GUA untuk konektivitas internet, dan ULA hanya untuk komunikasi internal yang harus stabil walau prefix ISP berubah.
+> [!WARNING]
+> **ULA bukan pengganti GUA.** Jangan memakai ULA + NAT66 untuk meniru pola IPv4 — itu membuang seluruh keunggulan IPv6. Gunakan GUA untuk konektivitas internet, dan ULA hanya untuk komunikasi internal yang harus stabil walau prefix ISP berubah.
 
-### LLA — Link-Local Address
+### LLA (Link-Local Address)
 
 ```
 fe80::/10 (praktis: fe80::/64)
@@ -216,7 +223,8 @@ fe80::/10 (praktis: fe80::/64)
 - **Next hop** pada routing (OSPFv3, EIGRPv6, BGP unnumbered)
 - Komunikasi dalam satu link tanpa perlu alamat global
 
-⚠️ **Alamat link-local tidak unik secara global** — `fe80::1` bisa ada di banyak interface. Karena itu, saat memakainya Anda **harus menyebut interface (zone ID)**:
+> [!WARNING]
+> **Alamat link-local tidak unik secara global** — `fe80::1` bisa ada di banyak interface. Karena itu, saat memakainya Anda **harus menyebut interface (zone ID)**:
 ```bash
 $ ping6 fe80::1%eth0            ← Linux/macOS
 PS> ping fe80::1%12             ← Windows (angka = interface index)
@@ -260,7 +268,7 @@ ff02::1:ff00:0/104 → SOLICITED-NODE (untuk NDP)
 ff02::fb       → mDNS
 ```
 
-### Solicited-Node Multicast — konsep penting
+### Solicited-Node Multicast: konsep penting
 
 Setiap alamat unicast IPv6 punya alamat solicited-node yang berasosiasi dengannya:
 
@@ -304,7 +312,8 @@ Hasil: 021A:2BFF:FE3C:4D5E
 Alamat lengkap: 2001:db8:acad:1:021a:2bff:fe3c:4d5e
 ```
 
-⚠️ **Masalah privasi:** MAC address terekspos dalam alamat IPv6, sehingga perangkat bisa **dilacak** ke mana pun ia pergi — bahkan saat berganti jaringan. Karena itu EUI-64 tidak lagi menjadi default.
+> [!WARNING]
+> **Masalah privasi:** MAC address terekspos dalam alamat IPv6, sehingga perangkat bisa **dilacak** ke mana pun ia pergi — bahkan saat berganti jaringan. Karena itu EUI-64 tidak lagi menjadi default.
 
 **Cara membalik bit ke-7 dengan cepat:**
 ```
@@ -336,7 +345,8 @@ $ sudo sysctl -w net.ipv6.conf.all.use_tempaddr=2
 PS> netsh interface ipv6 set privacy state=enabled
 ```
 
-⚠️ **Implikasi operasional:** alamat yang berubah-ubah menyulitkan firewall berbasis IP, logging, dan pelacakan aset. Di jaringan enterprise, sering dinonaktifkan dan diganti dengan **stable privacy address** (RFC 7217) yang stabil per-jaringan tetapi tidak mengungkap MAC.
+> [!WARNING]
+> **Implikasi operasional:** alamat yang berubah-ubah menyulitkan firewall berbasis IP, logging, dan pelacakan aset. Di jaringan enterprise, sering dinonaktifkan dan diganti dengan **stable privacy address** (RFC 7217) yang stabil per-jaringan tetapi tidak mengungkap MAC.
 
 ### Stable Privacy Address (RFC 7217)
 
@@ -405,7 +415,8 @@ Untuk server dan perangkat infrastruktur, gunakan alamat manual yang mudah diing
 ❌ Options              → pindah ke Extension Header
 ```
 
-⚠️ **Karena tidak ada checksum header, checksum di UDP menjadi WAJIB pada IPv6** (di IPv4 opsional).
+> [!WARNING]
+> **Karena tidak ada checksum header, checksum di UDP menjadi WAJIB pada IPv6** (di IPv4 opsional).
 
 ### Extension Header
 
@@ -430,7 +441,8 @@ Opsi ditempatkan sebagai **header terpisah yang dirantai** lewat field `Next Hea
 8. Upper layer: TCP(6) / UDP(17) / ICMPv6(58)
 ```
 
-⚠️ **Extension header adalah masalah keamanan dan kinerja nyata:**
+> [!WARNING]
+> **Extension header adalah masalah keamanan dan kinerja nyata:**
 - Rantai panjang bisa dipakai untuk **mengelabui firewall** (header L4 terdorong jauh sehingga tidak terinspeksi)
 - **Type 0 Routing Header sudah dilarang** (RFC 5095) karena bisa dipakai untuk amplification attack
 - Banyak perangkat memproses paket dengan extension header di **CPU**, bukan hardware → celah DoS
@@ -444,7 +456,8 @@ Opsi ditempatkan sebagai **header terpisah yang dirantai** lewat field `Next Hea
 
 ## 6. Fragmentasi di IPv6
 
-⚠️ **Router IPv6 TIDAK PERNAH memfragmentasi paket.** Ini perubahan mendasar dari IPv4.
+> [!WARNING]
+> **Router IPv6 TIDAK PERNAH memfragmentasi paket.** Ini perubahan mendasar dari IPv4.
 
 ```
 Paket terlalu besar untuk link berikutnya:
@@ -460,7 +473,8 @@ Paket terlalu besar untuk link berikutnya:
 
 **MTU minimum IPv6 = 1280 byte** (IPv4: 68 byte). Setiap link yang membawa IPv6 harus mendukung minimal 1280.
 
-⚠️ **JANGAN memblokir ICMPv6.** Berbeda dari IPv4 di mana memblokir ICMP "hanya" merusak PMTUD dan traceroute, di IPv6 ICMPv6 membawa **NDP** (pengganti ARP), **RA**, **DAD**, dan **Packet Too Big**. Memblokirnya berarti IPv6 **berhenti bekerja total**.
+> [!WARNING]
+> **JANGAN memblokir ICMPv6.** Berbeda dari IPv4 di mana memblokir ICMP "hanya" merusak PMTUD dan traceroute, di IPv6 ICMPv6 membawa **NDP** (pengganti ARP), **RA**, **DAD**, dan **Packet Too Big**. Memblokirnya berarti IPv6 **berhenti bekerja total**.
 
 Yang **minimal harus diizinkan** [RFC 4890]:
 ```
@@ -499,7 +513,8 @@ R1# show ipv6 neighbors
 R1# ping ipv6 2001:db8:acad:1::2
 ```
 
-⚠️ **Tanpa `ipv6 unicast-routing`, router tidak akan meneruskan paket IPv6 sama sekali** — walaupun alamat dan rute sudah dikonfigurasi. Ini penyebab masalah IPv6 paling umum di lab.
+> [!WARNING]
+> **Tanpa `ipv6 unicast-routing`, router tidak akan meneruskan paket IPv6 sama sekali** — walaupun alamat dan rute sudah dikonfigurasi. Ini penyebab masalah IPv6 paling umum di lab.
 
 ### Linux
 
@@ -541,19 +556,26 @@ PS> Test-NetConnection -ComputerName ipv6.google.com
 
 ## 8. Kesalahan Umum
 
-⚠️ **1. Lupa `ipv6 unicast-routing`.** Penyebab masalah nomor satu di lab.
+> [!WARNING]
+> **1. Lupa `ipv6 unicast-routing`.** Penyebab masalah nomor satu di lab.
 
-⚠️ **2. Memakai subnet lebih kecil dari /64 di LAN.** Merusak SLAAC. Selalu /64.
+> [!WARNING]
+> **2. Memakai subnet lebih kecil dari /64 di LAN.** Merusak SLAAC. Selalu /64.
 
-⚠️ **3. Memblokir ICMPv6.** IPv6 berhenti bekerja total, bukan sekadar terganggu.
+> [!WARNING]
+> **3. Memblokir ICMPv6.** IPv6 berhenti bekerja total, bukan sekadar terganggu.
 
-⚠️ **4. Mencoba meniru NAT IPv4 dengan ULA + NAT66.** Membuang keunggulan IPv6 dan menambah kompleksitas tanpa manfaat keamanan nyata.
+> [!WARNING]
+> **4. Mencoba meniru NAT IPv4 dengan ULA + NAT66.** Membuang keunggulan IPv6 dan menambah kompleksitas tanpa manfaat keamanan nyata.
 
-⚠️ **5. Lupa menyebut interface saat memakai alamat link-local.** `ping6 fe80::1` akan gagal tanpa `%eth0`.
+> [!WARNING]
+> **5. Lupa menyebut interface saat memakai alamat link-local.** `ping6 fe80::1` akan gagal tanpa `%eth0`.
 
-⚠️ **6. Menganggap "IPv6 tidak aktif" berarti aman.** Sebagian besar OS mengaktifkan IPv6 secara default dan lebih mengutamakannya daripada IPv4 (Happy Eyeballs). Jaringan yang mengabaikan IPv6 sering punya **celah keamanan** karena firewall IPv6 tidak dikonfigurasi.
+> [!WARNING]
+> **6. Menganggap "IPv6 tidak aktif" berarti aman.** Sebagian besar OS mengaktifkan IPv6 secara default dan lebih mengutamakannya daripada IPv4 (Happy Eyeballs). Jaringan yang mengabaikan IPv6 sering punya **celah keamanan** karena firewall IPv6 tidak dikonfigurasi.
 
-⚠️ **7. Menulis alamat dengan huruf besar atau nol di depan.** Bukan error teknis, tetapi melanggar RFC 5952 dan menyulitkan pencarian di log.
+> [!WARNING]
+> **7. Menulis alamat dengan huruf besar atau nol di depan.** Bukan error teknis, tetapi melanggar RFC 5952 dan menyulitkan pencarian di log.
 
 ---
 
@@ -586,9 +608,11 @@ PS> Test-NetConnection -ComputerName ipv6.google.com
 /tool traceroute 2606:4700:4700::1111
 ```
 
-⚠️ **Paket `ipv6` tidak selalu aktif secara default** di RouterOS. Kalau menu `/ipv6` tidak ada, aktifkan dengan `/system package enable ipv6` lalu reboot. Ini penyebab kebingungan yang sangat umum.
+> [!WARNING]
+> **Paket `ipv6` tidak selalu aktif secara default** di RouterOS. Kalau menu `/ipv6` tidak ada, aktifkan dengan `/system package enable ipv6` lalu reboot. Ini penyebab kebingungan yang sangat umum.
 
-⚠️ **`advertise=yes` pada alamat** membuat RouterOS mengumumkan prefix itu lewat Router Advertisement — setara `ipv6 nd prefix` di Cisco. Tanpa ini, klien tidak akan mendapat alamat lewat SLAAC.
+> [!WARNING]
+> **`advertise=yes` pada alamat** membuat RouterOS mengumumkan prefix itu lewat Router Advertisement — setara `ipv6 nd prefix` di Cisco. Tanpa ini, klien tidak akan mendapat alamat lewat SLAAC.
 
 ### Padanan istilah
 
@@ -663,7 +687,7 @@ PS> Test-NetConnection -ComputerName ipv6.google.com
    - **Router Advertisement** (tipe 134) → host tidak dapat default gateway dan prefix → SLAAC gagal
    - **DAD** → deteksi duplikasi alamat gagal
    - **Packet Too Big** (tipe 2) → PMTUD gagal → **MTU black hole**, karena router IPv6 tidak boleh memfragmentasi
-   Sesuai RFC 4890, izinkan minimal tipe 1, 2, 3, 4, 128, 129, dan 133–136.
+   Sesuai RFC 4890, izinkan minimal tipe 1, 2, 3, 4, 128, 129, dan 133-136.
 
 8. Header IPv4 punya checksum yang harus **dihitung ulang di setiap router** karena TTL berubah — pekerjaan yang memakan siklus CPU pada setiap hop. IPv6 menghapusnya dengan alasan: lapisan bawah (Ethernet FCS) sudah mendeteksi korupsi di setiap link, dan lapisan atas (TCP/UDP checksum) mendeteksi korupsi end-to-end. Menghilangkan checksum header membuat forwarding lebih cepat dan sederhana.
    **Konsekuensi bagi UDP:** di IPv4, checksum UDP bersifat **opsional** (boleh diisi nol) karena header IP masih melindungi alamat. Di IPv6 tidak ada perlindungan itu, sehingga **checksum UDP menjadi WAJIB** — datagram UDP IPv6 dengan checksum nol harus dibuang penerima. (Pengecualian: RFC 6935/6936 mengizinkan checksum nol untuk tunnel tertentu dengan syarat ketat.)
@@ -685,4 +709,4 @@ PS> Test-NetConnection -ComputerName ipv6.google.com
 
 ---
 
-**Berikutnya:** `08-ipv6/02-ndp-slaac-dhcpv6.md` — bagaimana host IPv6 mengonfigurasi dirinya sendiri.
+**Berikutnya:** `08-ipv6/02-ndp-slaac-dhcpv6.md`. Bagaimana host IPv6 mengonfigurasi dirinya sendiri.

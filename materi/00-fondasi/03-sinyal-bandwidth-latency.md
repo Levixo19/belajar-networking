@@ -1,4 +1,4 @@
-# 00.3 — Sinyal, Bandwidth, Latency, dan Metrik Kinerja
+# 00.3 Sinyal, Bandwidth, Latency, dan Metrik Kinerja
 
 > **Prasyarat:** `00-fondasi/01`, `00-fondasi/02`
 > **Tujuan:** Anda bisa membedakan bandwidth/throughput/latency/jitter, menghitung waktu transfer, dan menjelaskan mengapa "internet cepat" bisa tetap terasa lambat.
@@ -12,7 +12,7 @@ Bit adalah konsep. Yang benar-benar melintasi kabel adalah **sinyal fisik**.
 | Media | Sinyal fisiknya |
 |---|---|
 | Kabel tembaga | Perubahan tegangan listrik (mis. +2,5 V vs −2,5 V) |
-| Serat optik | Kedipan cahaya (LED/laser nyala–mati, atau perubahan fase) |
+| Serat optik | Kedipan cahaya (LED/laser nyala-mati, atau perubahan fase) |
 | Nirkabel | Gelombang radio yang dimodulasi (amplitudo/frekuensi/fase) |
 
 **Encoding** adalah aturan penerjemahan bit ↔ sinyal. Contoh paling sederhana:
@@ -38,7 +38,8 @@ Keunggulan digital: **bisa direkonstruksi sempurna.** Sinyal analog yang melemah
 - **Baseband** — seluruh kapasitas media dipakai satu sinyal digital. Ethernet adalah baseband — itulah arti "BASE" di `1000BASE-T`.
 - **Broadband** — media dibagi menjadi banyak kanal frekuensi yang dipakai bersamaan. TV kabel, DOCSIS, DSL, dan Wi-Fi (OFDM) memakai prinsip ini.
 
-⚠️ Kata "broadband" dalam iklan ISP artinya berbeda: di sana ia cuma berarti "internet cepat & selalu terhubung". Dalam konteks teknis, arti aslinya adalah pembagian frekuensi.
+> [!WARNING]
+> Kata "broadband" dalam iklan ISP artinya berbeda: di sana ia cuma berarti "internet cepat & selalu terhubung". Dalam konteks teknis, arti aslinya adalah pembagian frekuensi.
 
 ### Bit rate vs Baud rate
 
@@ -149,7 +150,7 @@ Propagasi = jarak / kecepatan sinyal
 Kecepatan sinyal:
 - Di ruang hampa (cahaya): 300.000 km/s
 - Di serat optik: ~200.000 km/s (~2/3 c, karena indeks refraksi kaca)
-- Di kabel tembaga: ~180.000–200.000 km/s
+- Di kabel tembaga: ~180.000-200.000 km/s
 
 **Contoh: Jakarta → Singapura (~900 km serat)**
 ```
@@ -162,7 +163,8 @@ RTT minimum ≈ 9 ms
 14.000 / 200.000 = 70 ms satu arah → RTT ≈ 140 ms
 ```
 
-⚠️ **Ini tidak bisa dipercepat dengan uang.** Anda bisa membeli bandwidth 100 Gbps, tapi tidak bisa membeli kecepatan cahaya. Ini alasan utama keberadaan **CDN**: dekatkan datanya, bukan percepat kabelnya.
+> [!WARNING]
+> **Ini tidak bisa dipercepat dengan uang.** Anda bisa membeli bandwidth 100 Gbps, tapi tidak bisa membeli kecepatan cahaya. Ini alasan utama keberadaan **CDN**: dekatkan datanya, bukan percepat kabelnya.
 
 ### 3.2 Delay transmisi (serialization delay)
 
@@ -237,7 +239,8 @@ Baca hasilnya:
 - `mdev 0,32` — deviasi = indikator **jitter**. Kecil = bagus.
 - `0% packet loss` — bagus.
 
-⚠️ RTT ≠ 2 × latency satu arah, karena jalur pergi dan balik bisa berbeda (asymmetric routing) dan beban tiap arah berbeda.
+> [!WARNING]
+> RTT ≠ 2 × latency satu arah, karena jalur pergi dan balik bisa berbeda (asymmetric routing) dan beban tiap arah berbeda.
 
 ### Jitter
 
@@ -253,7 +256,7 @@ Paket 2: 95 ms   │ jitter besar → suara terputus-putus
 Paket 3: 18 ms   ┘
 ```
 
-Aplikasi real-time (VoIP, video call, game) **lebih terganggu jitter daripada latency tinggi yang stabil.** Panggilan dengan latency stabil 150 ms terdengar jauh lebih baik daripada latency berayun 30–200 ms.
+Aplikasi real-time (VoIP, video call, game) **lebih terganggu jitter daripada latency tinggi yang stabil.** Panggilan dengan latency stabil 150 ms terdengar jauh lebih baik daripada latency berayun 30-200 ms.
 
 Penerima memakai **jitter buffer** — menahan paket sedikit agar keluar dengan tempo rata. Buffer ini menambah latency, jadi ada trade-off.
 
@@ -278,11 +281,12 @@ Dampaknya berbeda per protokol:
 - **TCP** — mendeteksi & mengirim ulang. Data selamat, tapi throughput jatuh (dan bisa jatuh dramatis: loss 1% bisa memotong throughput jauh lebih dari 1%).
 - **UDP** — hilang selamanya kecuali aplikasi menanganinya. VoIP kehilangan potongan suara.
 
-💡 Loss 0,1% terlihat "kecil" tapi bisa merusak transfer file besar. Selalu curigai loss saat throughput jauh di bawah bandwidth.
+> [!TIP]
+> Loss 0,1% terlihat "kecil" tapi bisa merusak transfer file besar. Selalu curigai loss saat throughput jauh di bawah bandwidth.
 
 ---
 
-## 5. Bandwidth-Delay Product (BDP) — Konsep Penting yang Sering Dilewatkan
+## 5. Bandwidth-Delay Product (BDP): Konsep Penting yang Sering Dilewatkan
 
 BDP = berapa banyak data yang bisa "berada di dalam pipa" pada satu saat.
 
@@ -437,7 +441,8 @@ Koneksi bersamaan = 2.000 × 3 = 6.000
 
 Angka ini yang dipakai untuk mengukur kapasitas tabel sesi load balancer, `nf_conntrack_max`, atau tabel NAT, bukan jumlah koneksi per detik saja.
 
-💡 **BDP (bagian 5) adalah Little's law.** Data yang "berada di dalam pipa" = laju (throughput) × waktu tinggal (RTT). Begitu Anda mengenali polanya, rumus ini muncul di mana-mana.
+> [!TIP]
+> **BDP (bagian 5) adalah Little's law.** Data yang "berada di dalam pipa" = laju (throughput) × waktu tinggal (RTT). Begitu Anda mengenali polanya, rumus ini muncul di mana-mana.
 
 ### 6.4 Model M/M/1 dan kurva utilisasi vs delay
 
@@ -578,9 +583,11 @@ Link-nya sama, beban dan throughput unggahannya sama. Yang berubah hanya cara an
 - **Half duplex** butuh mekanisme menghindari tabrakan (CSMA/CD di Ethernet lama, CSMA/CA di Wi-Fi).
 - **Full duplex** di Ethernet dimungkinkan karena ada pasangan kabel terpisah untuk kirim dan terima — tidak ada tabrakan, sehingga CSMA/CD dimatikan.
 
-⚠️ **Wi-Fi selalu half duplex.** Radio tidak bisa mengirim dan menerima di frekuensi yang sama pada waktu sama. Karena itu "Wi-Fi 1 Gbps" secara praktis memberikan throughput jauh lebih rendah, dan makin banyak klien makin turun. Detail di `10-wireless/02`.
+> [!WARNING]
+> **Wi-Fi selalu half duplex.** Radio tidak bisa mengirim dan menerima di frekuensi yang sama pada waktu sama. Karena itu "Wi-Fi 1 Gbps" secara praktis memberikan throughput jauh lebih rendah, dan makin banyak klien makin turun. Detail di `10-wireless/02`.
 
-⚠️ **Duplex mismatch** (satu sisi full, satu sisi half) adalah salah satu bug jaringan paling menipu: koneksi tetap "jalan", tapi lambat luar biasa dan penuh error. Deteksinya di `03-data-link/01`.
+> [!WARNING]
+> **Duplex mismatch** (satu sisi full, satu sisi half) adalah salah satu bug jaringan paling menipu: koneksi tetap "jalan", tapi lambat luar biasa dan penuh error. Deteksinya di `03-data-link/01`.
 
 ---
 
@@ -614,7 +621,7 @@ Karena itu HTTP/2 memakai multiplexing dan HTTP/3 memakai QUIC — mereka mengur
 
 ---
 
-## 9. MTU — Sekilas
+## 9. MTU (Sekilas)
 
 **MTU** (*Maximum Transmission Unit*) = ukuran payload terbesar yang bisa dibawa satu frame.
 - Ethernet standar: **1500 byte**.
@@ -670,17 +677,23 @@ $ ping -c 5 -s 1400 8.8.8.8     # paket besar → RTT sedikit lebih tinggi
 
 ## 11. Kesalahan Umum
 
-⚠️ **1. "Tambah bandwidth pasti lebih cepat."** Tidak, kalau masalahnya latency, loss, atau window TCP.
+> [!WARNING]
+> **1. "Tambah bandwidth pasti lebih cepat."** Tidak, kalau masalahnya latency, loss, atau window TCP.
 
-⚠️ **2. Menyimpulkan jaringan buruk dari satu `ping` tinggi.** ICMP sering diberi prioritas rendah atau di-rate-limit. Router bisa lambat menjawab ping tapi cepat meneruskan trafik.
+> [!WARNING]
+> **2. Menyimpulkan jaringan buruk dari satu `ping` tinggi.** ICMP sering diberi prioritas rendah atau di-rate-limit. Router bisa lambat menjawab ping tapi cepat meneruskan trafik.
 
-⚠️ **3. Mengabaikan arah.** Banyak link asimetris (mis. 100/20 Mbps). Uji kedua arah (`iperf3 -R`).
+> [!WARNING]
+> **3. Mengabaikan arah.** Banyak link asimetris (mis. 100/20 Mbps). Uji kedua arah (`iperf3 -R`).
 
-⚠️ **4. Mengukur throughput dengan satu stream TCP saja.** Satu stream sensitif terhadap loss & window; pakai `-P 4` untuk melihat kapasitas jalur.
+> [!WARNING]
+> **4. Mengukur throughput dengan satu stream TCP saja.** Satu stream sensitif terhadap loss & window; pakai `-P 4` untuk melihat kapasitas jalur.
 
-⚠️ **5. Mengira 0% loss berarti sehat.** Bufferbloat memberi 0% loss dengan latency 500 ms.
+> [!WARNING]
+> **5. Mengira 0% loss berarti sehat.** Bufferbloat memberi 0% loss dengan latency 500 ms.
 
-⚠️ **6. Lupa bottleneck bisa bukan di jaringan.** Disk lambat atau CPU enkripsi bisa jadi batasnya.
+> [!WARNING]
+> **6. Lupa bottleneck bisa bukan di jaringan.** Disk lambat atau CPU enkripsi bisa jadi batasnya.
 
 ---
 
@@ -707,7 +720,7 @@ $ ping -c 5 -s 1400 8.8.8.8     # paket besar → RTT sedikit lebih tinggi
 2. RTT ke server 40 ms, bandwidth 500 Mbps. Berapa BDP dalam KB?
 3. Jelaskan kenapa `iperf3` di link 1 Gbps memberi 941 Mbps dan itu normal.
 4. Aplikasi VoIP mengeluh suara "robotik dan terputus". Latency stabil 60 ms, loss 0%. Apa dugaan Anda?
-5. Serat Jakarta–Surabaya ~800 km. Hitung RTT minimum teoretis.
+5. Serat Jakarta-Surabaya ~800 km. Hitung RTT minimum teoretis.
 6. Kenapa paket 1500 byte butuh 1,2 ms di link 10 Mbps tapi hanya 12 µs di link 1 Gbps?
 7. Kantor punya link 1 Gbps ke kantor cabang dengan RTT 180 ms. Transfer file selalu ~3 Mbps walau link kosong. Apa penyebab paling mungkin dan bagaimana memperbaikinya?
 8. Kantor cabang di Makassar punya uplink WAN 50 Mbps, paket rata-rata 1.000 byte, dan beban rata-rata 40 Mbps. Dengan model M/M/1, hitung utilisasi, waktu rata-rata di sistem (T), dan jumlah rata-rata paket di sistem (N). Lalu hitung ulang kalau beban naik ke 45 Mbps. Apa yang Anda sampaikan ke manajer yang berkata "kan hanya naik 12,5%"?
@@ -724,7 +737,7 @@ $ ping -c 5 -s 1400 8.8.8.8     # paket besar → RTT sedikit lebih tinggi
 
 4. **Jitter.** Latency rata-rata bagus dan tidak ada loss, tapi variasi latency membuat jitter buffer kehabisan/kelebihan paket. Periksa `ping` dengan `mdev` besar, cek antrean/QoS, cek apakah ada trafik bulk yang membanjiri link (bufferbloat).
 
-5. 800 km / 200.000 km/s = 4 ms satu arah → **RTT minimum ≈ 8 ms**. Kenyataannya lebih besar (jalur fiber tidak lurus, ada perangkat perantara) — biasanya 12–20 ms.
+5. 800 km / 200.000 km/s = 4 ms satu arah → **RTT minimum ≈ 8 ms**. Kenyataannya lebih besar (jalur fiber tidak lurus, ada perangkat perantara) — biasanya 12-20 ms.
 
 6. Delay transmisi = ukuran/bandwidth. 12.000 bit ÷ 10 Mbps = 1,2 ms; 12.000 bit ÷ 1 Gbps = 12 µs. Bandwidth 100× lebih besar → waktu menuangkan bit ke kabel 100× lebih singkat.
 
@@ -761,4 +774,4 @@ Subbagian 6.1 dan 6.4 mengadaptasi sebagian penjelasan dari *Computer Networks: 
 
 ---
 
-**Berikutnya:** `00-fondasi/04-sejarah-dan-standar.md` — siapa yang membuat aturan jaringan dan cara membaca standarnya.
+**Berikutnya:** `00-fondasi/04-sejarah-dan-standar.md`. Siapa yang membuat aturan jaringan dan cara membaca standarnya.

@@ -1,4 +1,4 @@
-# 20.11 — Sidang Akhir & Penilaian
+# 20.11 Sidang Akhir & Penilaian
 
 > **Prasyarat:** `20.1`–`20.10` selesai, semua deliverable ada di repositori
 > **Tujuan:** Menguji kedalaman pemahaman lewat tanya jawab dan mengajar, menghitung nilai total secara jujur, lalu menentukan apa yang harus Anda ulang dan apa yang harus Anda kerjakan selanjutnya.
@@ -15,13 +15,14 @@ Dua bagian yang tidak bisa diakali:
 
 **Cara menjalankan sidang tanpa penguji:** rekam suara Anda menjawab, satu pertanyaan satu rekaman, **tanpa membuka catatan dan tanpa berhenti**. Batas 2 menit per pertanyaan. Dengarkan kembali besoknya dan nilai sendiri — jeda panjang, kalimat berputar, dan "pokoknya" adalah tanda pemahaman berlubang. Kalau ada teman atau atasan yang bersedia, jauh lebih baik: minta ia bertanya balik setiap kali jawaban Anda terdengar hafalan.
 
-⚠️ Aturan yang paling penting di seluruh proyek ini: **jawaban "saya tidak tahu, tetapi begini cara saya mencarinya" bernilai penuh.** Yang bernilai nol adalah karangan yang terdengar yakin. Dalam pekerjaan nyata, orang yang mengarang lebih berbahaya daripada orang yang tidak tahu.
+> [!WARNING]
+> Aturan yang paling penting di seluruh proyek ini: **jawaban "saya tidak tahu, tetapi begini cara saya mencarinya" bernilai penuh.** Yang bernilai nol adalah karangan yang terdengar yakin. Dalam pekerjaan nyata, orang yang mengarang lebih berbahaya daripada orang yang tidak tahu.
 
 ---
 
 ## 2. Empat Puluh Pertanyaan Sidang
 
-### Kelompok A — Lapisan 1 & 2 (fisik dan data link)
+### Kelompok A: Lapisan 1 & 2 (fisik dan data link)
 
 1. Di pabrik Anda mengganti switch tak terkelola dengan yang terkelola. Sebutkan tiga hal yang **baru bisa** Anda lakukan setelah penggantian itu, dan satu hal yang tetap tidak bisa Anda lakukan.
 2. Tunjukkan di desain Anda, port mana yang boleh menjadi trunk dan kenapa port lainnya tidak — lalu jelaskan apa yang terjadi bila satu port akses berubah menjadi trunk tanpa Anda ketahui.
@@ -29,7 +30,7 @@ Dua bagian yang tidak bisa diakali:
 4. Kenapa STP masih penting di jaringan yang sudah Anda rancang tanpa loop? Jawab dengan menyebut satu kejadian dari Babak 8.
 5. Terminal forklift berpindah antar-AP sambil bergerak. Jelaskan apa yang terjadi di lapisan 2 saat perpindahan itu, dan mengapa VLAN yang sama harus tersedia di semua AP di area itu.
 
-### Kelompok B — Lapisan 3 (alamat dan rute)
+### Kelompok B: Lapisan 3 (alamat dan rute)
 
 6. Tunjuk satu subnet di rencana Anda dan jelaskan kenapa prefixnya bukan satu tingkat lebih besar dan bukan satu tingkat lebih kecil.
 7. Kenapa blok TPI Anda bisa diringkas sementara seluruh blok korporat tidak? Jelaskan dari sifat bilangan binernya.
@@ -37,7 +38,7 @@ Dua bagian yang tidak bisa diakali:
 9. Jelaskan apa yang dilakukan router di pabrik terhadap paket dari VLAN sensor menuju pengumpul lokal — langkah demi langkah, termasuk keputusan yang tidak melibatkan routing.
 10. Kenapa Anda memilih protokol routing yang Anda pilih, dan pada skala berapa pilihan itu akan berhenti tepat?
 
-### Kelompok C — Lapisan 4 sampai 7
+### Kelompok C: Lapisan 4 sampai 7
 
 11. Kenapa masalah WAN di Babak 8 Tiket 3 terdengar di VoIP tetapi tidak terlihat di ERP? Jelaskan dari sifat protokol transportnya.
 12. Sensor mengirim lewat HTTPS. Sebutkan semua hal yang harus benar sebelum satu byte data suhu tersimpan — dan mana di antaranya yang paling sering salah di lapangan.
@@ -45,7 +46,7 @@ Dua bagian yang tidak bisa diakali:
 14. Jelaskan peran DNS internal di desain Anda, dan apa yang terjadi pada pengiriman data suhu bila resolver internal tidak bisa dijangkau dari TPI.
 15. Kenapa MSS/MTU pada terowongan penting, dan kenapa gejalanya berupa "koneksi menggantung" bukan "tidak bisa terhubung"?
 
-### Kelompok D — Keamanan
+### Kelompok D: Keamanan
 
 16. Tunjuk satu sel "diizinkan" di matriks zona Anda yang paling berisiko, jelaskan kenapa tetap Anda izinkan, dan kontrol apa yang mengurangi risikonya.
 17. Kenapa 802.1X tidak menyelesaikan masalah keamanan zona OT? Apa yang menyelesaikannya?
@@ -53,7 +54,7 @@ Dua bagian yang tidak bisa diakali:
 19. Seseorang mengusulkan membuka satu port dari internet ke NVR agar vendor CCTV bisa memeriksa. Jawab usulan itu dalam tiga kalimat, dengan alternatif.
 20. Bagaimana Anda tahu, bulan depan, bahwa kontrol keamanan yang Anda pasang masih aktif? Sebutkan mekanismenya, bukan niatnya.
 
-### Kelompok E — Nirkabel dan fisik
+### Kelompok E: Nirkabel dan fisik
 
 21. Kenapa menaikkan daya pancar AP bukan jawaban untuk cakupan buruk di cold storage? Jawab dengan angka dari Babak 5.
 22. Jelaskan kepada manajer gudang, tanpa istilah teknis, kenapa Wi-Fi di ruang beku lebih mahal daripada Wi-Fi di kantor.
@@ -61,7 +62,7 @@ Dua bagian yang tidak bisa diakali:
 24. Kenapa Anda memilih (atau menolak) kanal DFS di pabrik? Apa yang berubah bila jawabannya untuk kantor?
 25. Satu perangkat lama menurunkan kinerja seluruh sel. Jelaskan mekanismenya, lalu jelaskan kenapa solusi paling efektif justru bisa membuat perangkat itu tidak bisa terhubung sama sekali.
 
-### Kelompok F — Linux, otomasi, observability
+### Kelompok F: Linux, otomasi, observability
 
 26. Jelaskan arti idempoten dengan satu contoh dari playbook Anda sendiri yang hampir tidak idempoten.
 27. Kenapa skrip audit Anda harus menganggap "tidak bisa dihubungi" sebagai temuan? Apa yang terjadi bila tidak?
@@ -69,7 +70,7 @@ Dua bagian yang tidak bisa diakali:
 29. Kenapa alarm Anda memantau ketiadaan data, bukan nilai data? Jelaskan dengan kejadian Babak 8 Tiket 4.
 30. Siapa yang memberi tahu Anda bila sistem pemantauan mati? Jelaskan mekanismenya dan kenapa ia harus berada di luar infrastruktur BNS.
 
-### Kelompok G — Desain, WAN, cloud
+### Kelompok G: Desain, WAN, cloud
 
 31. Sebutkan satu keputusan arsitektur Anda yang akan Anda ubah bila jumlah pengguna HQ naik menjadi 600. Apa pemicu peninjauannya?
 32. Kenapa data suhu tidak sepenuhnya dipindahkan ke cloud, padahal cloud lebih andal daripada server di pabrik? Jawab tanpa merendahkan cloud.
@@ -77,7 +78,7 @@ Dua bagian yang tidak bisa diakali:
 34. Apa yang membuat dua langganan internet **bukan** redundansi? Bagaimana Anda memastikan milik BNS benar-benar redundan?
 35. Bila BNS membuka depo keempat bulan depan, langkah apa saja yang Anda lakukan, dan berapa dari langkah itu yang sudah otomatis?
 
-### Kelompok H — Operasional, risiko, komunikasi
+### Kelompok H: Operasional, risiko, komunikasi
 
 36. Bukti suhu hilang 30 menit. Apa yang Anda lakukan dalam 10 menit pertama, dan apa yang tidak pernah Anda lakukan?
 37. Siapa pemilik risiko untuk firewall tanpa pasangan HA setelah pemotongan anggaran? Kenapa bukan Anda?
@@ -89,14 +90,15 @@ Dua bagian yang tidak bisa diakali:
 
 | Kelompok | Ciri jawaban kuat | Ciri jawaban lemah |
 |---|---|---|
-| A–C | Menyebut perangkat, header, dan keputusan yang terjadi berurutan; tahu di mana sesuatu bisa gagal | Menyebut nama protokol tanpa mekanisme; "pokoknya dia mencari jalan terbaik" |
+| A-C | Menyebut perangkat, header, dan keputusan yang terjadi berurutan; tahu di mana sesuatu bisa gagal | Menyebut nama protokol tanpa mekanisme; "pokoknya dia mencari jalan terbaik" |
 | D | Membedakan pencegahan dari deteksi; menyebut siapa yang berwenang | "Sudah ada firewall"; menyebut alat, bukan kontrol |
 | E | Membawa angka dB dan hitungan kapasitas | "Sinyalnya kurang, tambah AP saja" |
 | F | Menyebut cara membuktikan, bukan cara memasang | "Sudah dipantau kok"; tidak bisa menyebut ambang alarm |
 | G | Menyebut pemicu peninjauan dan alternatif yang ditolak | Membela pilihan seolah tanpa kelemahan |
 | H | Membedakan keputusan teknis dari keputusan bisnis; berani menyebut ketidaktahuan | Mengambil keputusan bisnis sendiri; tidak punya satu pun keraguan |
 
-💡 Pertanyaan 39 dan 40 bernilai dua kali lipat dalam penilaian mengajar di §3. Orang yang tidak punya jawaban untuk keduanya biasanya belum benar-benar mengerjakan proyeknya, atau belum jujur pada dirinya.
+> [!TIP]
+> Pertanyaan 39 dan 40 bernilai dua kali lipat dalam penilaian mengajar di §3. Orang yang tidak punya jawaban untuk keduanya biasanya belum benar-benar mengerjakan proyeknya, atau belum jujur pada dirinya.
 
 ---
 
@@ -135,12 +137,13 @@ Tiga sesi, masing-masing 15 menit, kepada orang yang **tidak** paham jaringan (p
 | Nilai | Tingkat | Artinya |
 |---|---|---|
 | < 615 | **Belum siap** | Fondasinya ada, penerapannya belum. Ulangi babak dengan nilai terendah, bukan seluruhnya. |
-| 615–799 | **Cukup** | Paham materi, masih butuh kedalaman pada penerapan dan pertahanan keputusan. |
-| 800–999 | **Baik** | Setara siap bekerja sebagai network engineer dan lulus wawancara teknis menengah. |
-| 1000–1129 | **Sangat baik** | Bisa memimpin proyek jaringan skala menengah dan mempertahankannya di depan manajemen. |
+| 615-799 | **Cukup** | Paham materi, masih butuh kedalaman pada penerapan dan pertahanan keputusan. |
+| 800-999 | **Baik** | Setara siap bekerja sebagai network engineer dan lulus wawancara teknis menengah. |
+| 1000-1129 | **Sangat baik** | Bisa memimpin proyek jaringan skala menengah dan mempertahankannya di depan manajemen. |
 | ≥ 1130 | **Istimewa** | Sudah bekerja seperti arsitek. Pertimbangkan sertifikasi tingkat profesional dan mentoring orang lain. |
 
-⚠️ **Dua syarat keras yang mengalahkan nilai total:**
+> [!WARNING]
+> **Dua syarat keras yang mengalahkan nilai total:**
 
 - **Tidak ada babak di bawah 50% poinnya.** Nilai total 900 dengan Babak 3 hanya 40 poin berarti rencana alamat Anda tidak bisa dipakai — dan segalanya di atasnya rapuh. Ulangi babak itu.
 - **Babak 8 minimal 70 poin.** Kalau Anda tidak bisa mendiagnosis gangguan, kemampuan mendesain tidak akan pernah terpakai di pekerjaan nyata. Ini syarat yang paling sering gagal dipenuhi orang dengan nilai desain tinggi.
@@ -156,7 +159,7 @@ Nilai rendah bukan hukuman, tapi peta. Cari babak terendah Anda, kerjakan kolom 
 | 1 — Audit | `03`, `09`, `12`, `13`, `19/03` | Ambil konfigurasi perangkat mana pun di internet, cari 20 cacat; bandingkan dengan CIS Benchmark |
 | 2 — Arsitektur | `17` seluruhnya, `16`, `11` | Tulis 5 ADR untuk jaringan rumah/kantor Anda sendiri, termasuk alternatif yang ditolak |
 | 3 — Alamat | `04/02`, `04/03`, `08/01-02` | 50 soal subnetting bertempo di `arena`, lalu rancang ulang alamat satu kantor fiktif dengan blok sempit |
-| 4 — Lab | `lab/01`–`lab/06`, `03`, `07` | Ulangi lab 1–3 tanpa membuka panduan; tulis uji terimanya sendiri lebih dulu |
+| 4 — Lab | `lab/01`–`lab/06`, `03`, `07` | Ulangi lab 1-3 tanpa membuka panduan; tulis uji terimanya sendiri lebih dulu |
 | 5 — Nirkabel | `02/03`, `10` seluruhnya | Hitung anggaran daya untuk 5 skenario berbeda; ukur RSSI rumah Anda sendiri dan bandingkan dengan hitungan |
 | 6 — Keamanan | `12` seluruhnya, `09`, `03/03` | Buat matriks zona untuk kantor fiktif; petakan 10 teknik MITRE ke kontrol yang Anda punya |
 | 7 — Otomasi | `15` seluruhnya, `14/03` | Otomatiskan satu tugas nyata milik Anda sendiri sampai idempoten dan berkode keluar benar |
@@ -184,13 +187,14 @@ Merancang SLO dan alarm berbasis gejala untuk pemantauan suhu; memperpendek wakt
 deteksi kegagalan pencatatan dari 73 menit menjadi target 5 menit dengan uji alarm bulanan.
 ```
 
-⚠️ Tulis apa adanya: ini **proyek studi kasus**, bukan pekerjaan berbayar. Sebutkan begitu. Pewawancara menghargai proyek studi yang dikerjakan serius, dan langsung kehilangan kepercayaan pada kandidat yang membesar-besarkan.
+> [!WARNING]
+> Tulis apa adanya: ini **proyek studi kasus**, bukan pekerjaan berbayar. Sebutkan begitu. Pewawancara menghargai proyek studi yang dikerjakan serius, dan langsung kehilangan kepercayaan pada kandidat yang membesar-besarkan.
 
 **c. Peta ke sertifikasi.** Pekerjaan Anda di babak ini memetakan langsung ke:
 
 | Babak | CCNA 200-301 | Network+ N10-009 | MikroTik |
 |---|---|---|---|
-| 1, 4 | Domain 1–2 (dasar & akses) | Domain 1–2 | MTCNA |
+| 1, 4 | Domain 1-2 (dasar & akses) | Domain 1-2 | MTCNA |
 | 3 | Domain 1 (pengalamatan) | Domain 1 | MTCNA |
 | 4 | Domain 3 (konektivitas IP) | Domain 2 | MTCRE |
 | 5 | Domain 2 (nirkabel) | Domain 2 | MTCWE |
@@ -233,7 +237,7 @@ Satu hal yang masih membuat saya tidak yakin: ______________
 
 ---
 
-## 8. Latihan — Lima Pertanyaan Penutup
+## 8. Latihan: Lima Pertanyaan Penutup
 
 1. Runut satu paket data suhu dari sensor di TPI-07 sampai tersimpan di basis data HQ. Sebutkan setiap perangkat yang dilewati, setiap perubahan pada paketnya, dan setiap titik yang bisa membuatnya gagal.
 2. Sebutkan tiga keputusan dalam desain Anda yang akan berubah bila salah satu kebutuhan berubah: (a) semua TPI mendapat alamat publik tetap, (b) auditor menuntut retensi data suhu 7 tahun, (c) pabrik menambah 300 pekerja. Tunjukkan ADR mana yang sudah mengantisipasinya.

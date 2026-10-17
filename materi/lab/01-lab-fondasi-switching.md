@@ -1,12 +1,12 @@
-# Lab 01 — Fondasi & Switching
+# Lab 01: Fondasi & Switching
 
-> **Prasyarat:** Tahap 0–3, `lab/00-setup-lab.md`
+> **Prasyarat:** Tahap 0-3, `lab/00-setup-lab.md`
 > **Platform:** Packet Tracer / GNS3 (Cisco). Tugas MikroTik & Linux ada di lab tersendiri.
 > **Format:** setiap lab punya TUGAS → VERIFIKASI → KRITERIA SUKSES → solusi (dalam `<details>`).
 
 ---
 
-## Lab 1.1 — Alamat IP & Konektivitas Dasar
+## Lab 1.1: Alamat IP & Konektivitas Dasar
 
 **Topologi:** 2 PC + 1 switch (2960).
 
@@ -26,7 +26,7 @@ Di PC (Desktop → IP Configuration): set IP dan subnet mask. Tidak perlu gatewa
 
 ---
 
-## Lab 1.2 — VLAN & Access Port
+## Lab 1.2: VLAN & Access Port
 
 **Topologi:** 4 PC + 1 switch. PC1,PC2 → VLAN 10; PC3,PC4 → VLAN 20.
 
@@ -59,7 +59,7 @@ Verifikasi: `show vlan brief` menampilkan port di VLAN masing-masing. PC1 tak bi
 
 ---
 
-## Lab 1.3 — Trunk 802.1Q antar-Switch
+## Lab 1.3: Trunk 802.1Q antar-Switch
 
 **Topologi:** 2 switch dihubungkan; VLAN 10 & 20 ada di keduanya; PC di tiap switch.
 
@@ -87,7 +87,7 @@ SW1(config-if)# switchport trunk allowed vlan 10,20,99
 
 ---
 
-## Lab 1.4 — STP: Amati Root Bridge & Redundansi
+## Lab 1.4: Amati Root Bridge & Redundansi STP
 
 **Topologi:** 3 switch dihubungkan membentuk **loop segitiga** (SW1-SW2-SW3-SW1).
 
@@ -114,7 +114,7 @@ Tanpa priority, root dipilih berdasarkan bridge ID terendah (priority+MAC). STP 
 
 ---
 
-## Lab 1.5 — EtherChannel (LACP)
+## Lab 1.5: EtherChannel (LACP)
 
 **Topologi:** 2 switch dihubungkan dengan **2 link paralel**.
 
@@ -144,6 +144,7 @@ SW1(config-if)# switchport mode trunk
 
 Anda telah mempraktikkan: konektivitas IP dasar, VLAN & isolasi, trunk 802.1Q + native VLAN, STP (root bridge, blocking, konvergensi), dan EtherChannel/LACP. Ini fondasi switching CCNA domain 2.0.
 
-💡 **Simpan konfigurasi & screenshot** tiap lab untuk portofolio (`18/04`). Coba variasikan: tambah VLAN, ubah root bridge ke switch lain, tambah link ketiga ke EtherChannel.
+> [!TIP]
+> **Simpan konfigurasi & screenshot** tiap lab untuk portofolio (`18/04`). Coba variasikan: tambah VLAN, ubah root bridge ke switch lain, tambah link ketiga ke EtherChannel.
 
-**Berikutnya:** `lab/02-lab-routing.md` — static routing, OSPF, inter-VLAN, dan BGP.
+**Berikutnya:** `lab/02-lab-routing.md`. Static routing, OSPF, inter-VLAN, dan BGP.

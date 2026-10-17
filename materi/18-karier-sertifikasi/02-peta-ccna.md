@@ -1,4 +1,4 @@
-# 18.2 — Peta Kurikulum ke CCNA 200-301 v1.1
+# 18.2 Peta Kurikulum ke CCNA 200-301 v1.1
 
 > **Prasyarat:** idealnya sudah mempelajari sebagian besar kurikulum
 > **Tujuan:** Memetakan setiap topik blueprint CCNA 200-301 v1.1 ke modul kurikulum ini, sebagai panduan persiapan ujian.
@@ -24,14 +24,15 @@ Berikutnya: v2.0 mulai diuji 3 Februari 2027 (v1.1 terakhir 2 Februari 2027)
 
 | Domain | Bobot | Modul utama |
 |---|---|---|
-| **1.0 Network Fundamentals** | **20%** | Tahap 0–5, 8, 10 |
+| **1.0 Network Fundamentals** | **20%** | Tahap 0-5, 8, 10 |
 | **2.0 Network Access** | **20%** | Tahap 3, 10 |
 | **3.0 IP Connectivity** | **25%** | Tahap 4, 7 |
 | **4.0 IP Services** | **10%** | Tahap 6, 9, 11, 14 |
 | **5.0 Security Fundamentals** | **15%** | Tahap 9, 12, 10 |
 | **6.0 Automation & Programmability** | **10%** | Tahap 15, 16 |
 
-⚠️ **CCNA v2.0 sudah diumumkan.** Kode ujian tetap 200-301 dan durasi tetap 120 menit, tetapi blueprint dirombak: v1.1 hanya bisa diambil sampai 2 Februari 2027, dan sejak 3 Februari 2027 yang tersedia adalah v2.0. Peta di bab ini mengikuti **v1.1**, yang masih berlaku saat tulisan ini diperiksa (15 Oktober 2026). Kalau Anda berencana ujian setelah 2 Februari 2027, belajarlah dari blueprint v2.0 di bawah.
+> [!WARNING]
+> **CCNA v2.0 sudah diumumkan.** Kode ujian tetap 200-301 dan durasi tetap 120 menit, tetapi blueprint dirombak: v1.1 hanya bisa diambil sampai 2 Februari 2027, dan sejak 3 Februari 2027 yang tersedia adalah v2.0. Peta di bab ini mengikuti **v1.1**, yang masih berlaku saat tulisan ini diperiksa (15 Oktober 2026). Kalau Anda berencana ujian setelah 2 Februari 2027, belajarlah dari blueprint v2.0 di bawah.
 
 | Domain v2.0 | Bobot |
 |---|---|
@@ -43,11 +44,12 @@ Berikutnya: v2.0 mulai diuji 3 Februari 2027 (v1.1 terakhir 2 Februari 2027)
 
 Perubahan yang terlihat di daftar topik resmi v2.0: ada soal troubleshooting (diagnosis kabel/fiber, IPv4/IPv6, DHCPv4, DNS, show log, ping, traceroute, packet capture), ada topik AI (agentic AI, menyusun prompt untuk generative AI), OSPFv3 untuk IPv6, HSRP dan VRRP, SFTP/SCP, RA guard dan storm control, serta DNS record (A, AAAA, CNAME, MX, NS, PTR). Topik v1.1 seperti REST API/JSON, QoS PHB, NTP, TFTP/FTP, GUI WLAN, dan SDN/controller-based tidak muncul lagi dalam daftar v2.0. Pemetaan rinci ke modul kurikulum untuk v2.0 belum disusun di bab ini.
 
-💡 **Domain 3.0 (IP Connectivity, 25%) adalah bobot terbesar** — routing, OSPF, static, komponen tabel routing. Domain 1.0 dan 2.0 masing-masing 20%. Fokuskan waktu belajar sesuai bobot, tetapi jangan abaikan domain kecil (6.0 otomasi sering terlupa padahal 10%).
+> [!TIP]
+> **Domain 3.0 (IP Connectivity, 25%) adalah bobot terbesar** — routing, OSPF, static, komponen tabel routing. Domain 1.0 dan 2.0 masing-masing 20%. Fokuskan waktu belajar sesuai bobot, tetapi jangan abaikan domain kecil (6.0 otomasi sering terlupa padahal 10%).
 
 ---
 
-## 2. Domain 1.0 — Network Fundamentals (20%)
+## 2. Domain 1.0: Network Fundamentals (20%)
 
 | Topik CCNA | Modul |
 |---|---|
@@ -67,7 +69,7 @@ Perubahan yang terlihat di daftar topik resmi v2.0: ada soal troubleshooting (di
 
 ---
 
-## 3. Domain 2.0 — Network Access (20%)
+## 3. Domain 2.0: Network Access (20%)
 
 | Topik CCNA | Modul |
 |---|---|
@@ -83,7 +85,7 @@ Perubahan yang terlihat di daftar topik resmi v2.0: ada soal troubleshooting (di
 
 ---
 
-## 4. Domain 3.0 — IP Connectivity (25%) ★ terbesar
+## 4. Domain 3.0: IP Connectivity (25%) ★ terbesar
 
 | Topik CCNA | Modul |
 |---|---|
@@ -93,11 +95,12 @@ Perubahan yang terlihat di daftar topik resmi v2.0: ada soal troubleshooting (di
 | 3.4 Single-area OSPFv2 (adjacency, P2P, broadcast DR/BDR, router ID) | `07/04` |
 | 3.5 FHRP (tujuan, fungsi, konsep) | `07/08` |
 
-💡 Domain terbesar. **OSPF (3.4)** dan **komponen tabel routing + keputusan forwarding (3.1-3.2)** adalah inti — kuasai betul. Static routing termasuk **floating static** (AD lebih tinggi untuk backup).
+> [!TIP]
+> Domain terbesar. **OSPF (3.4)** dan **komponen tabel routing + keputusan forwarding (3.1-3.2)** adalah inti — kuasai betul. Static routing termasuk **floating static** (AD lebih tinggi untuk backup).
 
 ---
 
-## 5. Domain 4.0 — IP Services (10%)
+## 5. Domain 4.0: IP Services (10%)
 
 | Topik CCNA | Modul |
 |---|---|
@@ -113,7 +116,7 @@ Perubahan yang terlihat di daftar topik resmi v2.0: ada soal troubleshooting (di
 
 ---
 
-## 6. Domain 5.0 — Security Fundamentals (15%)
+## 6. Domain 5.0: Security Fundamentals (15%)
 
 | Topik CCNA | Modul |
 |---|---|
@@ -130,7 +133,7 @@ Perubahan yang terlihat di daftar topik resmi v2.0: ada soal troubleshooting (di
 
 ---
 
-## 7. Domain 6.0 — Automation & Programmability (10%)
+## 7. Domain 6.0: Automation & Programmability (10%)
 
 | Topik CCNA | Modul |
 |---|---|
@@ -142,7 +145,8 @@ Perubahan yang terlihat di daftar topik resmi v2.0: ada soal troubleshooting (di
 | 6.6 Configuration management (Ansible, Terraform) | `15/04` |
 | 6.7 Komponen data JSON | `06/03`, `15/02` |
 
-⚠️ **Domain 6.0 sering diremehkan** karena "bukan jaringan tradisional", tetapi 10% bobot itu signifikan dan soalnya relatif mudah bila sudah paham konsep (JSON, REST, Ansible/Terraform, SDN). Jangan lewatkan — ini "poin mudah".
+> [!WARNING]
+> **Domain 6.0 sering diremehkan** karena "bukan jaringan tradisional", tetapi 10% bobot itu signifikan dan soalnya relatif mudah bila sudah paham konsep (JSON, REST, Ansible/Terraform, SDN). Jangan lewatkan — ini "poin mudah".
 
 ---
 
@@ -159,9 +163,11 @@ Perubahan yang terlihat di daftar topik resmi v2.0: ada soal troubleshooting (di
 6. Fokus ekstra: OSPF, subnetting, VLAN/trunk, ACL, tabel routing.
 ```
 
-💡 **CCNA menguji kemampuan praktik**, termkasuk soal simulasi di mana Anda mengonfigurasi perangkat virtual. **Packet Tracer** (gratis) cukup untuk sebagian besar praktik CCNA. Jangan hanya membaca — konfigurasikan sendiri.
+> [!TIP]
+> **CCNA menguji kemampuan praktik**, termkasuk soal simulasi di mana Anda mengonfigurasi perangkat virtual. **Packet Tracer** (gratis) cukup untuk sebagian besar praktik CCNA. Jangan hanya membaca — konfigurasikan sendiri.
 
-⚠️ **Subnetting harus cepat dan otomatis.** Soal berwaktu tidak memberi waktu menghitung lambat. Latih sampai bisa menentukan subnet/host/range dalam hitungan detik (lihat `04-network-layer/02` dan `referensi/tabel-subnetting.md`).
+> [!WARNING]
+> **Subnetting harus cepat dan otomatis.** Soal berwaktu tidak memberi waktu menghitung lambat. Latih sampai bisa menentukan subnet/host/range dalam hitungan detik (lihat `04-network-layer/02` dan `referensi/tabel-subnetting.md`).
 
 ---
 
@@ -189,7 +195,7 @@ Perubahan yang terlihat di daftar topik resmi v2.0: ada soal troubleshooting (di
 
 1. **Domain 3.0 — IP Connectivity (25%)** adalah yang terbesar. Isinya: **3.1** interpretasi komponen tabel routing (kode protokol, prefix, network mask, next-hop, administrative distance, metric, gateway of last resort); **3.2** bagaimana router membuat keputusan forwarding secara default (longest prefix match, administrative distance, metric protokol); **3.3** konfigurasi dan verifikasi static routing IPv4 dan IPv6 (default route, network route, host route, floating static); **3.4** konfigurasi dan verifikasi single-area OSPFv2 (neighbor adjacency, point-to-point, broadcast dengan pemilihan DR/BDR, router ID); dan **3.5** tujuan, fungsi, dan konsep FHRP (first hop redundancy protocols seperti HSRP). Intinya adalah **routing** — inti dari fungsi Layer 3.
 
-2. Karena meskipun **Domain 6.0 (Automation & Programmability) "hanya" 10%**, itu tetap porsi signifikan (sekitar 10% dari isi ujian) yang bisa menentukan lulus/tidak, dan **soalnya relatif mudah** bila konsepnya sudah dipahami: mengenali komponen JSON, karakteristik REST API (HTTP verb/CRUD/autentikasi/encoding), perbedaan jaringan tradisional vs controller-based, konsep SDN (pemisahan control/data plane, overlay/underlay/fabric, northbound/southbound API), peran AI/ML, dan kapabilitas Ansible/Terraform. Ini sebagian besar **konseptual** (bukan konfigurasi rumit), sehingga menjadi "poin mudah" yang sering ditinggalkan peserta yang hanya fokus pada routing/switching tradisional. Mengabaikannya berarti membuang poin yang mudah didapat. Kurikulum Tahap 15–16 menyiapkan domain ini.
+2. Karena meskipun **Domain 6.0 (Automation & Programmability) "hanya" 10%**, itu tetap porsi signifikan (sekitar 10% dari isi ujian) yang bisa menentukan lulus/tidak, dan **soalnya relatif mudah** bila konsepnya sudah dipahami: mengenali komponen JSON, karakteristik REST API (HTTP verb/CRUD/autentikasi/encoding), perbedaan jaringan tradisional vs controller-based, konsep SDN (pemisahan control/data plane, overlay/underlay/fabric, northbound/southbound API), peran AI/ML, dan kapabilitas Ansible/Terraform. Ini sebagian besar **konseptual** (bukan konfigurasi rumit), sehingga menjadi "poin mudah" yang sering ditinggalkan peserta yang hanya fokus pada routing/switching tradisional. Mengabaikannya berarti membuang poin yang mudah didapat. Kurikulum Tahap 15-16 menyiapkan domain ini.
 
 3. Karena **CCNA secara eksplisit menguji kemampuan konfigurasi dan verifikasi**, bukan hanya pengetahuan teori — ujian mencakup **soal simulasi (sim/simlet)** di mana Anda harus benar-benar mengonfigurasi perangkat virtual (mis. menyiapkan VLAN/trunk, OSPF, ACL, atau NAT) dan memverifikasi hasilnya dengan perintah `show`. Banyak topik (subnetting, urutan perintah, output `show` yang harus diinterpretasi) hanya benar-benar melekat ketika Anda **mengetiknya sendiri** dan melihat hasilnya. Membaca saja meninggalkan celah: Anda mungkin "paham" konsep tetapi tidak tahu perintah persisnya, urutannya, atau cara membaca output verifikasi — yang semuanya diuji. Alat seperti **Packet Tracer** (gratis dari Cisco) atau GNS3/CML memungkinkan latihan ini tanpa hardware.
 
@@ -213,4 +219,4 @@ Perubahan yang terlihat di daftar topik resmi v2.0: ada soal troubleshooting (di
 
 ---
 
-**Berikutnya:** `18-karier-sertifikasi/03-peta-networkplus.md` — pemetaan ke CompTIA Network+ N10-009.
+**Berikutnya:** `18-karier-sertifikasi/03-peta-networkplus.md`. Pemetaan ke CompTIA Network+ N10-009.

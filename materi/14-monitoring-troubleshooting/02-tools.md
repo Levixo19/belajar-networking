@@ -1,13 +1,14 @@
-# 14.2 — Alat Troubleshooting dan Cara Menafsirkannya
+# 14.2 Alat Troubleshooting dan Cara Menafsirkannya
 
 > **Prasyarat:** `14-monitoring-troubleshooting/01`, `04-network-layer/04`, `05-transport/02`
 > **Tujuan:** Anda menguasai alat diagnostik utama dan — yang lebih penting — bisa **menafsirkan hasilnya dengan benar**.
 
-> 📌 **Yang membedakan pemula dan ahli bukan mengetahui perintahnya, tetapi tahu cara MEMBACA hasilnya.** Modul ini fokus pada penafsiran.
+> > [!NOTE]
+> > **Yang membedakan pemula dan ahli bukan mengetahui perintahnya, tetapi tahu cara MEMBACA hasilnya.** Modul ini fokus pada penafsiran.
 
 ---
 
-## 1. ping — dan Cara Salah Menafsirkannya
+## 1. ping: dan Cara Salah Menafsirkannya
 
 ```bash
 $ ping -c 5 8.8.8.8
@@ -25,7 +26,8 @@ mdev 14.2  → deviasi = indikator JITTER (tinggi = buruk untuk real-time)
 0% loss    → bagus (tetapi lihat peringatan di bawah)
 ```
 
-⚠️ **Kesalahan penafsiran ping yang umum:**
+> [!WARNING]
+> **Kesalahan penafsiran ping yang umum:**
 
 1. **"Ping gagal = host mati"** — SALAH. Firewall sering memblokir ICMP; host bisa hidup dan melayani trafik lain. Uji dengan `nc -zv host port` sebagai gantinya.
 
@@ -33,7 +35,7 @@ mdev 14.2  → deviasi = indikator JITTER (tinggi = buruk untuk real-time)
 
 3. **"0% loss = jaringan sehat"** — TIDAK CUKUP. **Bufferbloat** memberi 0% loss dengan latency 2000 ms. Selalu periksa latency **di bawah beban**, bukan hanya saat idle.
 
-4. **"Latency stabil"** — periksa `mdev`. Latency rata-rata 20 ms dengan mdev 15 ms (berayun 5–45 ms) jauh lebih buruk untuk VoIP daripada latency stabil 50 ms.
+4. **"Latency stabil"** — periksa `mdev`. Latency rata-rata 20 ms dengan mdev 15 ms (berayun 5-45 ms) jauh lebih buruk untuk VoIP daripada latency stabil 50 ms.
 
 ```bash
 # Opsi penting
@@ -47,7 +49,7 @@ $ ping -f host                       # flood (root; hati-hati)
 
 ---
 
-## 2. traceroute / mtr — dan Salah Tafsir yang Fatal
+## 2. traceroute / mtr: dan Salah Tafsir yang Fatal
 
 ```bash
 $ traceroute -n 8.8.8.8
@@ -59,10 +61,11 @@ $ traceroute -n 8.8.8.8
  6  8.8.8.8         12.6 ms  12.6 ms  12.6 ms
 ```
 
-⚠️ **Empat kesalahan penafsiran traceroute yang FATAL:**
+> [!WARNING]
+> **Empat kesalahan penafsiran traceroute yang FATAL:**
 
 **1. `* * *` bukan berarti masalah.**
-Router bisa: dikonfigurasi tidak mengirim ICMP Time Exceeded, melakukan rate limiting ICMP, atau berada di dalam MPLS cloud. **Kalau hop SETELAHNYA menjawab normal, jalur baik-baik saja.** Dalam contoh, hop 3 tidak menjawab tetapi hop 4–6 normal → tidak ada masalah.
+Router bisa: dikonfigurasi tidak mengirim ICMP Time Exceeded, melakukan rate limiting ICMP, atau berada di dalam MPLS cloud. **Kalau hop SETELAHNYA menjawab normal, jalur baik-baik saja.** Dalam contoh, hop 3 tidak menjawab tetapi hop 4-6 normal → tidak ada masalah.
 
 **2. Latency tinggi di hop tengah bukan berarti hop itu bermasalah.**
 Hop 5 menunjukkan 450 ms di kolom pertama tetapi 12,5 ms di kolom lain, dan hop 6 (tujuan) hanya 12,6 ms. Ini **normal** — router hop 5 lambat **menjawab** ICMP (prioritas rendah) tetapi **meneruskan** trafik dengan cepat. **Yang penting latency di hop TERAKHIR.**
@@ -78,7 +81,7 @@ Hop 5 menunjukkan 450 ms di kolom pertama tetapi 12,5 ms di kolom lain, dan hop 
 **4. Jalur pergi ≠ jalur pulang.**
 Traceroute hanya menunjukkan jalur **pergi**. Latency tinggi bisa berasal dari jalur **pulang** yang berbeda dan tidak terlihat.
 
-### mtr — traceroute + statistik berkelanjutan
+### mtr: traceroute + statistik berkelanjutan
 
 ```bash
 $ mtr -n -r -c 100 8.8.8.8
@@ -89,7 +92,8 @@ HOST: laptop            Loss%   Snt   Last   Avg  Best  Wrst StDev
   4.|-- 8.8.8.8          0.0%   100   12.6  12.8  12.3  18.9   0.8
 ```
 
-⚠️ **Kesalahan penafsiran mtr:**
+> [!WARNING]
+> **Kesalahan penafsiran mtr:**
 ```
 Loss di hop TENGAH yang tidak muncul di hop AKHIR = NORMAL
 → hop 3 menunjukkan 12% loss, tetapi hop 4 (tujuan) 0%
@@ -99,7 +103,8 @@ Loss yang PERSISTEN dari satu hop sampai AKHIR = masalah nyata
 → kalau hop 3 dan 4 keduanya 12% loss → ada masalah mulai hop 3
 ```
 
-💡 **Aturan emas traceroute/mtr: fokus pada HOP TERAKHIR (tujuan).** Hop perantara sering menampilkan angka yang menyesatkan.
+> [!TIP]
+> **Aturan emas traceroute/mtr: fokus pada HOP TERAKHIR (tujuan).** Hop perantara sering menampilkan angka yang menyesatkan.
 
 ```bash
 $ traceroute -I 8.8.8.8              # mode ICMP (kalau UDP diblokir)
@@ -130,7 +135,8 @@ SERVFAIL  → server gagal (sering DNSSEC gagal — uji dengan +cd)
 REFUSED   → server menolak (bukan otoritatif, rekursi tidak diizinkan)
 ```
 
-⚠️ **`SERVFAIL` paling sering karena kegagalan validasi DNSSEC.** Uji dengan `dig +cd` — kalau berhasil dengan `+cd`, masalahnya di DNSSEC.
+> [!WARNING]
+> **`SERVFAIL` paling sering karena kegagalan validasi DNSSEC.** Uji dengan `dig +cd` — kalau berhasil dengan `+cd`, masalahnya di DNSSEC.
 
 Detail di `06-aplikasi/01`.
 
@@ -155,14 +161,16 @@ $ curl -Isv --connect-timeout 3 https://host
 $ telnet host 443
 ```
 
-⚠️ **Bedakan tiga hasil (sangat informatif):**
+> [!WARNING]
+> **Bedakan tiga hasil (sangat informatif):**
 ```
 "succeeded" / "connected"  → port terbuka, aplikasi listening
 "Connection refused"       → host DIJANGKAU, tetapi tidak ada yang listening (RST)
 "timeout" / "no route"     → paket tidak sampai (firewall drop, routing, host mati)
 ```
 
-💡 **"Refused" vs "timeout" memberi tahu banyak:** refused = jaringan sehat sampai host, masalah di aplikasi; timeout = ada yang memblokir atau tidak ada jalur.
+> [!TIP]
+> **"Refused" vs "timeout" memberi tahu banyak:** refused = jaringan sehat sampai host, masalah di aplikasi; timeout = ada yang memblokir atau tidak ada jalur.
 
 ---
 
@@ -175,17 +183,19 @@ $ ss -s                              # ringkasan
 $ ss -tin dst 1.2.3.4                # info TCP detail (cwnd, rtt, retransmit)
 ```
 
-⚠️ **Perhatikan alamat listening:**
+> [!WARNING]
+> **Perhatikan alamat listening:**
 ```
 0.0.0.0:80      → semua interface → bisa diakses dari luar
 127.0.0.1:5432  → localhost saja → TIDAK bisa dari luar
 ```
 
-💡 **"Aplikasi jalan tetapi tidak bisa diakses dari luar"** paling sering karena bind ke `127.0.0.1`. Periksa `ss -tulnp` sebelum menyalahkan firewall. Detail di `05-transport/01`.
+> [!TIP]
+> **"Aplikasi jalan tetapi tidak bisa diakses dari luar"** paling sering karena bind ke `127.0.0.1`. Periksa `ss -tulnp` sebelum menyalahkan firewall. Detail di `05-transport/01`.
 
 ---
 
-## 6. tcpdump — Menangkap Paket
+## 6. tcpdump: Menangkap Paket
 
 ```bash
 # Dasar
@@ -205,7 +215,7 @@ $ sudo tcpdump -ni eth0 arp
 $ sudo tcpdump -ni eth0 'vlan 10'
 ```
 
-### ⚠️ Menangkap di titik yang TEPAT
+### Menangkap di titik yang TEPAT
 
 Ini keterampilan yang paling menentukan keberhasilan analisis paket.
 
@@ -221,13 +231,15 @@ Capture di B:  apakah paket SAMPAI ke B?
 └── Tidak keluar dari A           → masalah di A (routing, firewall lokal)
 ```
 
-💡 **Capture di KEDUA ujung sekaligus** mengungkap di mana paket hilang — teknik diagnosis paling kuat untuk masalah "tidak bisa terhubung".
+> [!TIP]
+> **Capture di KEDUA ujung sekaligus** mengungkap di mana paket hilang — teknik diagnosis paling kuat untuk masalah "tidak bisa terhubung".
 
-⚠️ **Matikan offload sebelum capture untuk analisis akurat** (`ethtool -K eth0 gro off tso off`) — kalau tidak, Anda melihat "paket raksasa" yang sudah digabung NIC, bukan paket sesungguhnya di kabel.
+> [!WARNING]
+> **Matikan offload sebelum capture untuk analisis akurat** (`ethtool -K eth0 gro off tso off`) — kalau tidak, Anda melihat "paket raksasa" yang sudah digabung NIC, bukan paket sesungguhnya di kabel.
 
 ---
 
-## 7. Wireshark — Analisis Mendalam
+## 7. Wireshark: Analisis Mendalam
 
 ### Display filter penting
 
@@ -282,9 +294,11 @@ Follow → TCP/HTTP Stream        → rekonstruksi percakapan
 | **Previous segment not captured** | Paket hilang sebelum titik capture |
 | Jeda besar sebelum respons | **Server lambat memproses** (bukan jaringan) |
 
-💡 **Aturan penting: kalau retransmisi terlihat di KEDUA titik capture, loss ada di ANTARA keduanya.** Kalau hanya di sisi pengirim, loss dekat pengirim.
+> [!TIP]
+> **Aturan penting: kalau retransmisi terlihat di KEDUA titik capture, loss ada di ANTARA keduanya.** Kalau hanya di sisi pengirim, loss dekat pengirim.
 
-⚠️ **Zero window dan jeda sebelum respons menunjuk ke APLIKASI/SERVER, bukan jaringan.** Ini membantu menghentikan "menyalahkan jaringan" yang tidak perlu.
+> [!WARNING]
+> **Zero window dan jeda sebelum respons menunjuk ke APLIKASI/SERVER, bukan jaringan.** Ini membantu menghentikan "menyalahkan jaringan" yang tidak perlu.
 
 Detail di `05-transport/02`.
 
@@ -307,7 +321,8 @@ $ iperf3 -c server -u -b 100M -t 30
                                           ^jitter    ^loss
 ```
 
-⚠️ **Kesalahan pengukuran throughput:**
+> [!WARNING]
+> **Kesalahan pengukuran throughput:**
 
 1. **Satu stream TCP menyesatkan** — sensitif terhadap loss dan window. Pakai `-P 4` untuk mengukur **kapasitas jalur** yang sebenarnya.
 
@@ -364,11 +379,14 @@ monitor session 1 source interface gi0/1 both
 monitor session 1 destination interface gi0/24
 ```
 
-⚠️ **Selalu `clear counters` sebelum diagnosis** — counter yang menumpuk selama 2 tahun tidak memberi tahu apakah masalahnya terjadi **sekarang**.
+> [!WARNING]
+> **Selalu `clear counters` sebelum diagnosis** — counter yang menumpuk selama 2 tahun tidak memberi tahu apakah masalahnya terjadi **sekarang**.
 
-⚠️ **`ping ... source` sangat penting** — tanpa menentukan sumber, router memakai IP interface keluar yang mungkin tidak punya rute balik. Banyak "ping gagal dari router tetapi PC bisa" berasal dari sini.
+> [!WARNING]
+> **`ping ... source` sangat penting** — tanpa menentukan sumber, router memakai IP interface keluar yang mungkin tidak punya rute balik. Banyak "ping gagal dari router tetapi PC bisa" berasal dari sini.
 
-⚠️ **`debug` bisa melumpuhkan router** — setiap paket diproses CPU dan dicatat. Jangan pernah `debug ip packet` di produksi tanpa ACL pembatas yang sangat sempit, dan selalu siapkan `undebug all`.
+> [!WARNING]
+> **`debug` bisa melumpuhkan router** — setiap paket diproses CPU dan dicatat. Jangan pernah `debug ip packet` di produksi tanpa ACL pembatas yang sangat sempit, dan selalu siapkan `undebug all`.
 
 ---
 
@@ -414,9 +432,11 @@ monitor session 1 destination interface gi0/24
 /tool bandwidth-test address=10.0.0.2 direction=both
 ```
 
-💡 **`/tool torch` adalah alat andalan MikroTik** — menampilkan trafik real-time per alamat/port/protokol, sangat cepat menemukan "siapa yang memakan bandwidth". **`/tool profile`** menemukan proses yang membebani CPU.
+> [!TIP]
+> **`/tool torch` adalah alat andalan MikroTik** — menampilkan trafik real-time per alamat/port/protokol, sangat cepat menemukan "siapa yang memakan bandwidth". **`/tool profile`** menemukan proses yang membebani CPU.
 
-💡 **`/tool sniffer` dengan streaming** mengirim paket langsung ke Wireshark di komputer Anda (protokol TZSP) — capture penuh tanpa perlu SPAN.
+> [!TIP]
+> **`/tool sniffer` dengan streaming** mengirim paket langsung ke Wireshark di komputer Anda (protokol TZSP) — capture penuh tanpa perlu SPAN.
 
 ---
 
@@ -536,8 +556,8 @@ Observability (14.3):
    # Terminal 2: ukur latency SAAT beban berjalan
    ping 8.8.8.8
    ```
-   Yang dicari: **latency yang melonjak drastis saat ada transfer** (mis. dari 20 ms saat idle menjadi 800–2000 ms saat download), dengan **0% packet loss**. Itu tanda pasti bufferbloat — buffer besar di modem/router ISP terisi penuh sehingga semua paket (termasuk ping) mengantre di belakangnya.
-   Alat khusus: **Waveform Bufferbloat Test** atau **DSLReports** (memberi grade A–F). Perbaikan: pasang AQM (fq_codel/CAKE) di router yang Anda kendalikan dan shape ke ~90–95% kapasitas link, sehingga antrean terbentuk di perangkat Anda (yang punya AQM) alih-alih di modem ISP. Lihat `05-transport/04`.
+   Yang dicari: **latency yang melonjak drastis saat ada transfer** (mis. dari 20 ms saat idle menjadi 800-2000 ms saat download), dengan **0% packet loss**. Itu tanda pasti bufferbloat — buffer besar di modem/router ISP terisi penuh sehingga semua paket (termasuk ping) mengantre di belakangnya.
+   Alat khusus: **Waveform Bufferbloat Test** atau **DSLReports** (memberi grade A-F). Perbaikan: pasang AQM (fq_codel/CAKE) di router yang Anda kendalikan dan shape ke ~90-95% kapasitas link, sehingga antrean terbentuk di perangkat Anda (yang punya AQM) alih-alih di modem ISP. Lihat `05-transport/04`.
 
 </details>
 
@@ -554,4 +574,4 @@ Observability (14.3):
 
 ---
 
-**Berikutnya:** `14-monitoring-troubleshooting/03-observability.md` — memantau jaringan secara proaktif.
+**Berikutnya:** `14-monitoring-troubleshooting/03-observability.md`. Memantau jaringan secara proaktif.

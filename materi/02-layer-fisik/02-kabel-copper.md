@@ -1,4 +1,4 @@
-# 02.2 — Kabel Tembaga: UTP, Kategori, Pinout, dan PoE
+# 02.2 Kabel Tembaga: UTP, Kategori, Pinout, dan PoE
 
 > **Prasyarat:** `02-layer-fisik/01`
 > **Tujuan:** Anda bisa memilih kategori kabel yang benar, membuat kabel straight-through/crossover, memahami PoE sampai ke perhitungan power budget, dan mendiagnosis masalah kabel.
@@ -58,7 +58,8 @@ U/FTP  = tanpa pelindung keseluruhan, tiap pasang berfoil
 S/FTP  = braid keseluruhan + foil tiap pasang (paling terlindungi)
 ```
 
-⚠️ **Kabel bershield HARUS di-grounding dengan benar** di salah satu ujung (atau keduanya, sesuai standar yang dipakai). Shield yang tidak di-grounding justru menjadi **antena** dan memperburuk keadaan. Ini kesalahan instalasi yang sangat umum.
+> [!WARNING]
+> **Kabel bershield HARUS di-grounding dengan benar** di salah satu ujung (atau keduanya, sesuai standar yang dipakai). Shield yang tidak di-grounding justru menjadi **antena** dan memperburuk keadaan. Ini kesalahan instalasi yang sangat umum.
 
 Kapan pakai shielded:
 - Lingkungan industri (pabrik, dekat motor besar, inverter, las)
@@ -89,7 +90,7 @@ Kapan pakai shielded:
 4. **Cat8 hanya 30 m** — dirancang untuk koneksi pendek dalam rak data center, bukan untuk kabel gedung.
 5. **Kategori kabel harus konsisten dengan seluruh komponen**: patch panel, keystone jack, patch cord. Rantai sekuat mata rantai terlemah — Cat6A dengan jack Cat5e = kinerja Cat5e.
 
-### CCA — jebakan pasar
+### CCA: jebakan pasar
 
 **CCA** (*Copper Clad Aluminum*) adalah kabel aluminium berlapis tembaga tipis, dijual murah dengan label "Cat6".
 
@@ -99,7 +100,8 @@ Masalahnya:
 - Tidak memenuhi standar TIA/ISO — gagal uji sertifikasi
 - Kadang terbakar pada PoE++ berdaya tinggi
 
-💡 Cara mendeteksi: kabel tembaga murni terasa lebih berat dan lebih lentur; CCA lebih ringan, kaku, dan kawatnya patah saat ditekuk berulang. Kabel asli mencantumkan "solid copper" atau memenuhi "ETL verified".
+> [!TIP]
+> Cara mendeteksi: kabel tembaga murni terasa lebih berat dan lebih lentur; CCA lebih ringan, kaku, dan kawatnya patah saat ditekuk berulang. Kabel asli mencantumkan "solid copper" atau memenuhi "ETL verified".
 
 ### Solid vs Stranded
 
@@ -111,7 +113,8 @@ Masalahnya:
 | Kelenturan | Kaku | Lentur, tahan tekuk berulang |
 | Atenuasi | Lebih rendah | Sedikit lebih tinggi |
 
-⚠️ Memakai kabel solid untuk patch cord yang sering digerakkan → kawat patah. Memakai stranded untuk jalur panjang permanen → atenuasi lebih besar dan punch-down tidak andal.
+> [!WARNING]
+> Memakai kabel solid untuk patch cord yang sering digerakkan → kawat patah. Memakai stranded untuk jalur panjang permanen → atenuasi lebih besar dan punch-down tidak andal.
 
 ---
 
@@ -155,9 +158,11 @@ Konektor **RJ45** (nama teknisnya 8P8C) punya 8 pin.
 
 **Perbedaannya hanya:** pasangan oranye dan hijau ditukar (pin 1-2 ↔ 3-6).
 
-💡 Mnemonic T568B: **"Putih-Oranye, Oranye, Putih-Hijau, Biru, Putih-Biru, Hijau, Putih-Coklat, Coklat."** Ucapkan berulang sampai hafal — ini akan Anda pakai seumur karier.
+> [!TIP]
+> Mnemonic T568B: **"Putih-Oranye, Oranye, Putih-Hijau, Biru, Putih-Biru, Hijau, Putih-Coklat, Coklat."** Ucapkan berulang sampai hafal — ini akan Anda pakai seumur karier.
 
-⚠️ Perhatikan pin 4-5 dan 3-6: pasang biru menempati pin 4-5 (berdampingan) tetapi pasang hijau **terpisah** di pin 3 dan 6. Ini bukan kesalahan desain — ini untuk kompatibilitas mundur dengan telepon analog yang memakai pin 4-5.
+> [!WARNING]
+> Perhatikan pin 4-5 dan 3-6: pasang biru menempati pin 4-5 (berdampingan) tetapi pasang hijau **terpisah** di pin 3 dan 6. Ini bukan kesalahan desain — ini untuk kompatibilitas mundur dengan telepon analog yang memakai pin 4-5.
 
 ### Straight-through vs Crossover vs Rollover
 
@@ -169,7 +174,8 @@ Konektor **RJ45** (nama teknisnya 8P8C) punya 8 pin.
 
 **Aturan lama:** perangkat "berbeda level" pakai straight-through; "sama level" pakai crossover.
 
-⚠️ **Tetapi sejak Auto-MDI/MDIX, ini hampir tidak relevan lagi.** Hampir semua perangkat gigabit modern otomatis mendeteksi dan menyesuaikan. Anda tetap harus tahu konsepnya untuk ujian dan untuk perangkat lama.
+> [!WARNING]
+> **Tetapi sejak Auto-MDI/MDIX, ini hampir tidak relevan lagi.** Hampir semua perangkat gigabit modern otomatis mendeteksi dan menyesuaikan. Anda tetap harus tahu konsepnya untuk ujian dan untuk perangkat lama.
 
 Perangkat yang masih butuh perhatian:
 - Switch/router lama tanpa auto-MDIX
@@ -185,7 +191,8 @@ Perangkat yang masih butuh perhatian:
 | **1000BASE-T** | **4 pasang, dua arah** | Semua kawat harus tersambung benar |
 | 10GBASE-T | 4 pasang, dua arah | Butuh Cat6A |
 
-💡 Ini menjelaskan gejala klasik: **kabel dengan satu pasang rusak tetap jalan di 100 Mbps tetapi tidak bisa 1 Gbps.** Kalau link tiba-tiba "turun" ke 100 Mbps, curigai kabel/konektor, bukan konfigurasi.
+> [!TIP]
+> Ini menjelaskan gejala klasik: **kabel dengan satu pasang rusak tetap jalan di 100 Mbps tetapi tidak bisa 1 Gbps.** Kalau link tiba-tiba "turun" ke 100 Mbps, curigai kabel/konektor, bukan konfigurasi.
 
 ---
 
@@ -225,9 +232,10 @@ Delay skew         : selisih waktu antar-pasang
 DC resistance      : penting untuk PoE
 ```
 
-⚠️ **Split pair** — kesalahan yang lolos dari tester murah. Kawat tersambung ke pin yang benar, tetapi memakai kawat dari pasangan yang salah. Continuity tester bilang "OK", tetapi crosstalk parah dan gigabit gagal. Hanya tester bagus yang mendeteksinya.
+> [!WARNING]
+> **Split pair** — kesalahan yang lolos dari tester murah. Kawat tersambung ke pin yang benar, tetapi memakai kawat dari pasangan yang salah. Continuity tester bilang "OK", tetapi crosstalk parah dan gigabit gagal. Hanya tester bagus yang mendeteksinya.
 
-### TDR — Time Domain Reflectometer
+### TDR (Time Domain Reflectometer)
 
 Mengirim pulsa dan mengukur pantulannya untuk menemukan **lokasi** kerusakan.
 
@@ -246,16 +254,16 @@ Ini menghemat berjam-jam pencarian fisik.
 
 ---
 
-## 6. PoE — Power over Ethernet
+## 6. PoE: Power over Ethernet
 
 ### Standar
 
 | Standar | Nama umum | Daya di PSE | Daya di PD | Pasangan | Tegangan |
 |---|---|---|---|---|---|
-| **802.3af** | PoE | 15,4 W | 12,95 W | 2 pasang | 44–57 V |
-| **802.3at** | PoE+ | 30 W | 25,5 W | 2 pasang | 50–57 V |
-| **802.3bt Type 3** | PoE++ / 4PPoE | 60 W | 51 W | **4 pasang** | 50–57 V |
-| **802.3bt Type 4** | PoE++ / HDBaseT | 90–100 W | 71,3 W | **4 pasang** | 52–57 V |
+| **802.3af** | PoE | 15,4 W | 12,95 W | 2 pasang | 44-57 V |
+| **802.3at** | PoE+ | 30 W | 25,5 W | 2 pasang | 50-57 V |
+| **802.3bt Type 3** | PoE++ / 4PPoE | 60 W | 51 W | **4 pasang** | 50-57 V |
+| **802.3bt Type 4** | PoE++ / HDBaseT | 90-100 W | 71,3 W | **4 pasang** | 52-57 V |
 
 Selisih daya PSE vs PD adalah **rugi daya di kabel** — makin panjang dan makin tipis kabelnya, makin besar rugi.
 
@@ -307,7 +315,7 @@ PD wajib mendukung keduanya. 802.3bt memakai **keempat pasang** sekaligus.
 - **Midspan / injector** — perangkat terpisah yang disisipkan di jalur kabel (untuk switch non-PoE).
 - **PoE splitter** — memisahkan daya dan data untuk perangkat non-PoE.
 
-### Power Budget — Perhitungan yang Wajib
+### Power Budget: Perhitungan yang Wajib
 
 Switch punya total daya terbatas, bukan per port.
 
@@ -329,7 +337,7 @@ Kebutuhan = (12 × 6,49) + (8 × 25,5) = 77,9 + 204 = 281,9 W
 Sisa      = 370 − 281,9 = 88,1 W  → headroom 24%  ✅ AMAN
 ```
 
-**Aturan praktis:** sisakan headroom 20–30% untuk pertumbuhan dan lonjakan daya saat boot.
+**Aturan praktis:** sisakan headroom 20-30% untuk pertumbuhan dan lonjakan daya saat boot.
 
 ### Verifikasi PoE
 ```
@@ -348,15 +356,20 @@ SW1# show power inline police          ← pelanggaran batas daya
 
 ### Masalah PoE yang sering terjadi
 
-⚠️ **1. Power budget habis** — perangkat mati acak. Cek `show power inline`.
+> [!WARNING]
+> **1. Power budget habis** — perangkat mati acak. Cek `show power inline`.
 
-⚠️ **2. Kabel CCA atau terlalu panjang** — rugi daya terlalu besar, PD tidak menyala walaupun budget cukup.
+> [!WARNING]
+> **2. Kabel CCA atau terlalu panjang** — rugi daya terlalu besar, PD tidak menyala walaupun budget cukup.
 
-⚠️ **3. Perangkat butuh 802.3bt tetapi switch hanya 802.3at** — misalnya AP Wi-Fi 6E/7 kelas atas atau kamera PTZ dengan pemanas.
+> [!WARNING]
+> **3. Perangkat butuh 802.3bt tetapi switch hanya 802.3at** — misalnya AP Wi-Fi 6E/7 kelas atas atau kamera PTZ dengan pemanas.
 
-⚠️ **4. AP masuk mode daya rendah** — Wi-Fi 6/7 AP yang hanya diberi 802.3af akan mematikan sebagian radio atau port. Gejalanya: throughput jauh di bawah spesifikasi. Cek log AP: "AP is running in low power mode".
+> [!WARNING]
+> **4. AP masuk mode daya rendah** — Wi-Fi 6/7 AP yang hanya diberi 802.3af akan mematikan sebagian radio atau port. Gejalanya: throughput jauh di bawah spesifikasi. Cek log AP: "AP is running in low power mode".
 
-⚠️ **5. Injector non-standar (passive PoE)** — perangkat murah yang langsung mengirim 24 V/48 V tanpa negosiasi. **Bisa merusak perangkat non-PoE.** Hindari di lingkungan campuran.
+> [!WARNING]
+> **5. Injector non-standar (passive PoE)** — perangkat murah yang langsung mengirim 24 V/48 V tanpa negosiasi. **Bisa merusak perangkat non-PoE.** Hindari di lingkungan campuran.
 
 ---
 
@@ -388,7 +401,7 @@ Di dunia jaringan modern, coax hanya Anda temui pada **koneksi internet kabel (D
 
 **DAC** (*Direct Attach Copper*) — kabel tembaga dengan transceiver terpasang permanen di kedua ujung.
 
-- Untuk jarak sangat pendek (1–7 m; active DAC sampai 10–15 m).
+- Untuk jarak sangat pendek (1-7 m; active DAC sampai 10-15 m).
 - Jauh **lebih murah** daripada sepasang transceiver optik + patch fiber.
 - Konsumsi daya lebih rendah.
 - Dipakai untuk: server ke ToR switch, switch ke switch dalam rak yang sama.
@@ -441,7 +454,8 @@ Channel total                          : 100 m
 | **Work area** | Sisi pengguna |
 | **Demarc** | Titik batas tanggung jawab dengan provider |
 
-💡 Aturan 90 m menentukan **jangkauan satu IDF ≈ radius 70–80 m** (setelah memperhitungkan jalur kabel yang tidak lurus). Ini yang menentukan berapa banyak ruang IDF dibutuhkan sebuah gedung — pertimbangan desain nyata, bukan teori.
+> [!TIP]
+> Aturan 90 m menentukan **jangkauan satu IDF ≈ radius 70–80 m** (setelah memperhitungkan jalur kabel yang tidak lurus). Ini yang menentukan berapa banyak ruang IDF dibutuhkan sebuah gedung — pertimbangan desain nyata, bukan teori.
 
 ---
 
@@ -485,7 +499,7 @@ SW1# show interfaces counters errors
 - Straight-through untuk perangkat berbeda jenis, crossover untuk sejenis — tetapi **auto-MDIX** membuat ini jarang relevan.
 - 1000BASE-T memakai **keempat pasang**; satu pasang rusak → turun ke 100 Mbps.
 - Buka pilinan maksimal **13 mm**; channel maksimum **100 m** (90 m permanent + 10 m patch).
-- PoE: af 15,4 W / at 30 W / bt 60–90 W di PSE. Selalu hitung **power budget dengan headroom 20–30%**.
+- PoE: af 15,4 W / at 30 W / bt 60-90 W di PSE. Selalu hitung **power budget dengan headroom 20-30%**.
 - PoE aman karena ada tahap deteksi & klasifikasi sebelum tegangan penuh dikirim.
 - Split pair adalah kesalahan yang lolos tester murah — pakai tester yang benar.
 
@@ -514,7 +528,7 @@ SW1# show interfaces counters errors
 
 5. Kemungkinan besar **split pair** — kawat sampai ke pin yang benar tetapi diambil dari pasangan yang salah, sehingga pasangan yang membawa sinyal tidak dipilin bersama. Continuity tester hanya memeriksa "pin 1 ke pin 1", jadi lolos; tetapi crosstalk menjadi parah dan gigabit gagal. Kemungkinan lain: pilinan dibuka terlalu panjang (>13 mm), crimp buruk, atau kabel melebihi panjang maksimum.
 
-6. Karena PoE melakukan **deteksi signature** sebelum mengirim daya. PSE mengirim tegangan rendah (2,8–10 V) dan mencari resistansi signature 25 kΩ yang hanya dimiliki PD valid. Laptop biasa tidak punya signature itu, sehingga PSE tidak pernah menaikkan tegangan ke 48 V. (Pengecualian: *passive PoE* non-standar yang langsung mengirim tegangan — inilah yang berbahaya dan harus dihindari.)
+6. Karena PoE melakukan **deteksi signature** sebelum mengirim daya. PSE mengirim tegangan rendah (2,8-10 V) dan mencari resistansi signature 25 kΩ yang hanya dimiliki PD valid. Laptop biasa tidak punya signature itu, sehingga PSE tidak pernah menaikkan tegangan ke 48 V. (Pengecualian: *passive PoE* non-standar yang langsung mengirim tegangan — inilah yang berbahaya dan harus dihindari.)
 
 7. **Melebihi batas 90 m untuk permanent link** — dengan patch cord di kedua ujung, channel akan melebihi 100 m, sehingga tidak memenuhi standar dan berisiko error/kecepatan turun. Solusi: (a) tambahkan IDF baru yang lebih dekat ke area itu; (b) pindahkan posisi IDF ke titik yang lebih sentral; (c) gunakan serat optik untuk jalur tersebut dengan media converter/switch kecil di ujung; (d) periksa apakah jalur kabel bisa dibuat lebih pendek.
 
@@ -532,4 +546,4 @@ SW1# show interfaces counters errors
 
 ---
 
-**Berikutnya:** `02-layer-fisik/03-fiber.md` — serat optik dari dasar sampai perhitungan power budget.
+**Berikutnya:** `02-layer-fisik/03-fiber.md`. Serat optik dari dasar sampai perhitungan power budget.

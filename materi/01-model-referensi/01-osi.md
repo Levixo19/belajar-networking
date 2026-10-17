@@ -1,4 +1,4 @@
-# 01.1 — Model OSI
+# 01.1 Model OSI
 
 > **Prasyarat:** `00-fondasi/01`–`05`
 > **Tujuan:** Anda bisa menyebut 7 layer dengan fungsinya, menempatkan protokol & perangkat di layer yang tepat, dan — yang terpenting — memakai OSI sebagai alat troubleshooting.
@@ -16,7 +16,7 @@ Model berlayer memberi empat manfaat konkret:
 1. **Modularitas** — ganti Wi-Fi jadi Ethernet tanpa mengubah browser sama sekali.
 2. **Interoperabilitas** — vendor A membuat switch, vendor B membuat NIC, keduanya bekerja karena mengikuti spesifikasi antarmuka layer yang sama.
 3. **Pembagian kerja** — insinyur RF tidak perlu tahu HTTP; developer web tidak perlu tahu modulasi.
-4. **Troubleshooting terstruktur** — ini manfaat harian Anda. Alih-alih "internetnya rusak", Anda bisa berkata "layer 1–3 sehat, masalahnya di layer 7".
+4. **Troubleshooting terstruktur** — ini manfaat harian Anda. Alih-alih "internetnya rusak", Anda bisa berkata "layer 1-3 sehat, masalahnya di layer 7".
 
 > **Yang paling penting dari modul ini bukan hafalan 7 nama. Tapi kebiasaan berpikir: "masalah ini ada di layer berapa?"**
 
@@ -56,7 +56,7 @@ Pilih satu, hafalkan hari ini. Anda akan memakainya seumur karier.
 
 ---
 
-## 3. Layer 1 — Physical
+## 3. Layer 1: Physical
 
 **Tugas:** memindahkan **bit** melalui media fisik.
 
@@ -92,11 +92,12 @@ $ ip link show eth0                ← state DOWN / NO-CARRIER
 $ ethtool eth0                     ← Link detected: yes/no
 ```
 
-💡 **Aturan lapangan:** ~80% masalah jaringan "aneh" berakar di layer 1. Selalu cek kabel dan lampu link sebelum menuduh routing.
+> [!TIP]
+> **Aturan lapangan:** ~80% masalah jaringan "aneh" berakar di layer 1. Selalu cek kabel dan lampu link sebelum menuduh routing.
 
 ---
 
-## 4. Layer 2 — Data Link
+## 4. Layer 2: Data Link
 
 **Tugas:** mengantar **frame** antar-perangkat **dalam satu segmen jaringan yang sama**, dan mengatur siapa boleh memakai media kapan.
 
@@ -142,7 +143,7 @@ $ bridge fdb show
 
 ---
 
-## 5. Layer 3 — Network
+## 5. Layer 3: Network
 
 **Tugas:** mengantar **paket** dari jaringan mana pun ke jaringan mana pun — lintas router, lintas negara.
 
@@ -193,7 +194,7 @@ R1# ping 8.8.8.8 source gi0/1
 
 ---
 
-## 6. Layer 4 — Transport
+## 6. Layer 4: Transport
 
 **Tugas:** komunikasi **antar-proses** (bukan antar-host), dan menyediakan keandalan bila diperlukan.
 
@@ -218,7 +219,7 @@ Layer 3 mengantar paket ke *komputer* yang benar. Layer 4 mengantarnya ke *aplik
 | Untuk | Web, email, file transfer, SSH | VoIP, video streaming, DNS, game |
 | Analogi | Surat tercatat | Kartu pos |
 
-**Contoh protokol lain:** SCTP, DCCP, dan **QUIC** — QUIC secara teknis berjalan di atas UDP tetapi menyediakan fungsi layer 4 lengkap (dan sebagian layer 5–6).
+**Contoh protokol lain:** SCTP, DCCP, dan **QUIC** — QUIC secara teknis berjalan di atas UDP tetapi menyediakan fungsi layer 4 lengkap (dan sebagian layer 5-6).
 
 **Gejala masalah layer 4:**
 ```
@@ -239,7 +240,7 @@ $ tcpdump -ni any 'tcp port 443'
 
 ---
 
-## 7. Layer 5 — Session
+## 7. Layer 5: Session
 
 **Tugas:** membuka, mengelola, dan menutup **sesi** — dialog berkelanjutan antar-aplikasi.
 
@@ -253,11 +254,12 @@ Layer ini paling "kabur" karena di TCP/IP fungsinya sering menyatu ke aplikasi a
 
 **Contoh:** NetBIOS session, RPC, PPTP, SOCKS, SIP (pensinyalan panggilan VoIP), NFS (bagian sesinya), TLS session resumption.
 
-💡 Contoh paling mudah dipahami: **SIP** membuka dan menutup panggilan telepon; **RTP** (layer 4/7) membawa suaranya. SIP = session layer bekerja.
+> [!TIP]
+> Contoh paling mudah dipahami: **SIP** membuka dan menutup panggilan telepon; **RTP** (layer 4/7) membawa suaranya. SIP = session layer bekerja.
 
 ---
 
-## 8. Layer 6 — Presentation
+## 8. Layer 6: Presentation
 
 **Tugas:** memastikan data yang dikirim bisa **dimengerti** penerima — soal format, bukan soal pengantaran.
 
@@ -269,15 +271,17 @@ Layer ini paling "kabur" karena di TCP/IP fungsinya sering menyatu ke aplikasi a
 
 **Contoh:** TLS/SSL, JPEG, GIF, PNG, MPEG, ASCII, Unicode/UTF-8, JSON, XML, Base64, gzip.
 
-⚠️ Penempatan TLS di layer 6 adalah konvensi pengajaran. Dalam praktik TLS berjalan di atas TCP dan di bawah HTTP — beberapa orang menyebutnya "layer 6,5" atau sekadar "di antara 4 dan 7". Yang penting Anda paham **fungsinya**, bukan nomornya.
+> [!WARNING]
+> Penempatan TLS di layer 6 adalah konvensi pengajaran. Dalam praktik TLS berjalan di atas TCP dan di bawah HTTP — beberapa orang menyebutnya "layer 6,5" atau sekadar "di antara 4 dan 7". Yang penting Anda paham **fungsinya**, bukan nomornya.
 
 ---
 
-## 9. Layer 7 — Application
+## 9. Layer 7: Application
 
 **Tugas:** menyediakan antarmuka jaringan **untuk aplikasi**.
 
-⚠️ **Kesalahpahaman paling umum:** Layer 7 **bukan** aplikasinya sendiri. Chrome bukan layer 7. **HTTP** adalah layer 7; Chrome adalah program yang memakainya.
+> [!WARNING]
+> **Kesalahpahaman paling umum:** Layer 7 **bukan** aplikasinya sendiri. Chrome bukan layer 7. **HTTP** adalah layer 7; Chrome adalah program yang memakainya.
 
 **Yang dilakukan:**
 - Menyediakan layanan jaringan ke proses aplikasi
@@ -305,13 +309,14 @@ Layer ini paling "kabur" karena di TCP/IP fungsinya sering menyatu ke aplikasi a
 | Kabel, konektor, repeater, hub | **1** | Tidak ada — sekadar meneruskan sinyal |
 | NIC, bridge, switch, access point | **2** | MAC address |
 | Router, layer-3 switch | **3** | IP address |
-| Firewall stateful | **3–4** | IP + port + state koneksi |
-| NGFW / IPS | **3–7** | Termasuk isi aplikasi |
+| Firewall stateful | **3-4** | IP + port + state koneksi |
+| NGFW / IPS | **3-7** | Termasuk isi aplikasi |
 | Load balancer L4 | **4** | IP + port |
 | Load balancer L7 / reverse proxy | **7** | URL, header, cookie |
 | Proxy, WAF, API gateway | **7** | Isi aplikasi |
 
-⚠️ Perangkat "layer N" memahami layer 1 sampai N. Router memahami L1, L2, dan L3 — ia harus membaca frame L2 dulu untuk sampai ke paket L3 di dalamnya.
+> [!WARNING]
+> Perangkat "layer N" memahami layer 1 sampai N. Router memahami L1, L2, dan L3 — ia harus membaca frame L2 dulu untuk sampai ke paket L3 di dalamnya.
 
 ---
 
@@ -398,7 +403,8 @@ Jujurlah tentang ini — banyak pemula bingung karena diajarkan OSI sebagai kebe
 
 4. **Enkapsulasi bertingkat merusak nomor layer.** VXLAN membawa frame Ethernet (L2) di dalam UDP (L4) di dalam IP (L3). Layer berapa itu? Jawabannya: pertanyaannya yang salah — ada dua tumpukan, satu di dalam yang lain.
 
-💡 **Sikap yang tepat:** OSI adalah **bahasa bersama dan alat berpikir**, bukan hukum fisika. Pakai ketika membantu; jangan berdebat soal nomor ketika tidak membantu.
+> [!TIP]
+> **Sikap yang tepat:** OSI adalah **bahasa bersama dan alat berpikir**, bukan hukum fisika. Pakai ketika membantu; jangan berdebat soal nomor ketika tidak membantu.
 
 ---
 
@@ -438,17 +444,23 @@ Dengan Wireshark, panel tengah menampilkan pohon layer secara eksplisit:
 
 ## 14. Kesalahan Umum
 
-⚠️ **1. Menghafal nama tanpa fungsi.** Yang ditanya di pekerjaan bukan "layer 4 apa?", tapi "kenapa koneksi ini timeout?".
+> [!WARNING]
+> **1. Menghafal nama tanpa fungsi.** Yang ditanya di pekerjaan bukan "layer 4 apa?", tapi "kenapa koneksi ini timeout?".
 
-⚠️ **2. Mengira aplikasi = layer 7.** Chrome bukan layer 7; HTTP layer 7.
+> [!WARNING]
+> **2. Mengira aplikasi = layer 7.** Chrome bukan layer 7; HTTP layer 7.
 
-⚠️ **3. Mengira switch tidak bisa layer 3.** Multilayer switch melakukan routing dengan ASIC — sering lebih cepat daripada router.
+> [!WARNING]
+> **3. Mengira switch tidak bisa layer 3.** Multilayer switch melakukan routing dengan ASIC — sering lebih cepat daripada router.
 
-⚠️ **4. Berdebat soal layer ARP/ICMP/MPLS.** Tidak produktif. Pahami fungsinya.
+> [!WARNING]
+> **4. Berdebat soal layer ARP/ICMP/MPLS.** Tidak produktif. Pahami fungsinya.
 
-⚠️ **5. Melompat ke layer atas terlalu cepat.** Sebelum menganalisis TLS, pastikan kabelnya tertancap.
+> [!WARNING]
+> **5. Melompat ke layer atas terlalu cepat.** Sebelum menganalisis TLS, pastikan kabelnya tertancap.
 
-⚠️ **6. Mengira OSI = TCP/IP.** Berbeda. Dibahas di modul berikutnya.
+> [!WARNING]
+> **6. Mengira OSI = TCP/IP.** Berbeda. Dibahas di modul berikutnya.
 
 ---
 
@@ -458,8 +470,8 @@ Dengan Wireshark, panel tengah menampilkan pohon layer secara eksplisit:
 - PDU: bit → frame → packet → segment/datagram → data.
 - L2 = MAC, lokal, berubah tiap hop. L3 = IP, global, tetap ujung ke ujung.
 - L4 = port, membedakan aplikasi; TCP andal, UDP cepat.
-- L5–L6 jarang dibicarakan terpisah di praktik; L7 = protokol aplikasi, bukan aplikasi.
-- Switch = L2, router = L3, firewall = L3–L7.
+- L5-L6 jarang dibicarakan terpisah di praktik; L7 = protokol aplikasi, bukan aplikasi.
+- Switch = L2, router = L3, firewall = L3-L7.
 - Manfaat terbesar OSI = **kerangka troubleshooting**: bottom-up, top-down, divide-and-conquer.
 - OSI adalah model, bukan kenyataan mutlak — pakai saat membantu.
 
@@ -467,7 +479,7 @@ Dengan Wireshark, panel tengah menampilkan pohon layer secara eksplisit:
 
 ## 16. Latihan
 
-1. Sebutkan PDU untuk setiap layer 1–4.
+1. Sebutkan PDU untuk setiap layer 1-4.
 2. Di layer berapa masing-masing bekerja: HTTPS, ARP, EtherChannel, BGP, RJ45, DNS, MAC address, TLS, OSPF, QUIC?
 3. Pengguna bisa `ping 8.8.8.8` tetapi tidak bisa membuka situs apa pun. Layer berapa yang paling mungkin bermasalah, dan apa perintah pertama Anda?
 4. Kenapa MAC address tujuan berubah di setiap hop, sedangkan IP address tujuan tidak?
@@ -479,9 +491,9 @@ Dengan Wireshark, panel tengah menampilkan pohon layer secara eksplisit:
 
 1. L1 = **bit**; L2 = **frame**; L3 = **packet**; L4 = **segment** (TCP) atau **datagram** (UDP).
 
-2. HTTPS = **7** (dengan TLS di 6); ARP = **2** (menjembatani ke 3); EtherChannel = **2** (bisa juga L3 EtherChannel); BGP = **7** untuk pesannya (berjalan di atas TCP 179) tetapi fungsinya routing **L3** — di ujian biasanya dijawab "protokol routing L3"; RJ45 = **1**; DNS = **7**; MAC address = **2**; TLS = **6** (konvensi); OSPF = **3** (langsung di atas IP, protokol 89); QUIC = **4** (di atas UDP, juga menjalankan fungsi 5–6).
+2. HTTPS = **7** (dengan TLS di 6); ARP = **2** (menjembatani ke 3); EtherChannel = **2** (bisa juga L3 EtherChannel); BGP = **7** untuk pesannya (berjalan di atas TCP 179) tetapi fungsinya routing **L3** — di ujian biasanya dijawab "protokol routing L3"; RJ45 = **1**; DNS = **7**; MAC address = **2**; TLS = **6** (konvensi); OSPF = **3** (langsung di atas IP, protokol 89); QUIC = **4** (di atas UDP, juga menjalankan fungsi 5-6).
 
-3. **Layer 7 — kemungkinan besar DNS.** Ping ke IP berhasil berarti L1–L3 sehat. Perintah pertama: `dig google.com` atau `nslookup google.com`. Kalau resolusi gagal → periksa server DNS di `/etc/resolv.conf` atau setelan DHCP. Kalau resolusi berhasil, lanjut `curl -v https://google.com` untuk memeriksa L4/TLS.
+3. **Layer 7 — kemungkinan besar DNS.** Ping ke IP berhasil berarti L1-L3 sehat. Perintah pertama: `dig google.com` atau `nslookup google.com`. Kalau resolusi gagal → periksa server DNS di `/etc/resolv.conf` atau setelan DHCP. Kalau resolusi berhasil, lanjut `curl -v https://google.com` untuk memeriksa L4/TLS.
 
 4. Karena MAC address hanya bermakna **dalam satu segmen L2**. Router membuang header L2 lama dan membuat header L2 baru untuk segmen berikutnya, dengan MAC sumber = interface router itu dan MAC tujuan = next hop. IP address adalah pengalamatan **ujung ke ujung**, jadi tetap sama sepanjang jalur (kecuali dilewatkan NAT, yang memang sengaja mengubahnya).
 
@@ -502,4 +514,4 @@ Dengan Wireshark, panel tengah menampilkan pohon layer secara eksplisit:
 
 ---
 
-**Berikutnya:** `01-model-referensi/02-tcp-ip.md` — model yang benar-benar dipakai internet.
+**Berikutnya:** `01-model-referensi/02-tcp-ip.md`. Model yang benar-benar dipakai internet.

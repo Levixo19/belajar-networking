@@ -1,11 +1,11 @@
-# 12.4 — AAA dan Manajemen Identitas
+# 12.4 AAA dan Manajemen Identitas
 
 > **Prasyarat:** `12-keamanan/01`, `06-aplikasi/05`
 > **Tujuan:** Anda paham AAA, bisa mengonfigurasi RADIUS/TACACS+, dan memahami peran identitas dalam keamanan modern.
 
 ---
 
-## 1. AAA — Tiga Pilar
+## 1. AAA (Tiga Pilar)
 
 | Pilar | Pertanyaan | Contoh |
 |---|---|---|
@@ -13,7 +13,8 @@
 | **Authorization** | **Apa yang boleh Anda lakukan?** | Privilege level, perintah yang diizinkan, VLAN |
 | **Accounting** | **Apa yang Anda lakukan?** | Log perintah, durasi sesi, byte terpakai |
 
-⚠️ **Ketiganya berbeda dan sering tertukar.** Autentikasi berhasil tidak berarti otorisasi diberikan — pengguna bisa terautentikasi tetapi tidak berhak melakukan apa pun.
+> [!WARNING]
+> **Ketiganya berbeda dan sering tertukar.** Autentikasi berhasil tidak berarti otorisasi diberikan — pengguna bisa terautentikasi tetapi tidak berhak melakukan apa pun.
 
 ---
 
@@ -29,23 +30,26 @@
 
 **MFA** (*Multi-Factor Authentication*) memerlukan **minimal dua faktor BERBEDA**.
 
-⚠️ **Password + PIN BUKAN MFA** — keduanya "something you know". Yang benar: password (know) + kode dari ponsel (have).
+> [!WARNING]
+> **Password + PIN BUKAN MFA** — keduanya "something you know". Yang benar: password (know) + kode dari ponsel (have).
 
 ### Kekuatan metode MFA
 
 | Metode | Keamanan | Kerentanan |
 |---|---|---|
-| **SMS OTP** | ⭐ Lemah | SIM swap, SS7 interception, phishing |
-| **Email OTP** | ⭐ Lemah | Email bisa diretas |
-| **TOTP** (Google Auth, Authy) | ⭐⭐⭐ Baik | Phishing real-time (penyerang meneruskan kode) |
-| **Push notification** | ⭐⭐⭐ Baik | **MFA fatigue** — pengguna menyetujui karena lelah |
-| **Push + number matching** | ⭐⭐⭐⭐ | Jauh lebih baik |
-| **FIDO2 / WebAuthn / Passkey** | ⭐⭐⭐⭐⭐ **Terbaik** | **Tahan phishing secara desain** |
-| **Sertifikat klien** | ⭐⭐⭐⭐⭐ | Butuh PKI dan manajemen |
+| **SMS OTP** | Lemah (1/5) | SIM swap, SS7 interception, phishing |
+| **Email OTP** | Lemah (1/5) | Email bisa diretas |
+| **TOTP** (Google Auth, Authy) | Baik (3/5) | Phishing real-time (penyerang meneruskan kode) |
+| **Push notification** | Baik (3/5) | **MFA fatigue** — pengguna menyetujui karena lelah |
+| **Push + number matching** | 4/5 | Jauh lebih baik |
+| **FIDO2 / WebAuthn / Passkey** | **Terbaik** (5/5) | **Tahan phishing secara desain** |
+| **Sertifikat klien** | 5/5 | Butuh PKI dan manajemen |
 
-💡 **FIDO2/passkey tahan phishing karena terikat pada domain.** Kunci untuk `bank.com` **tidak akan** dipakai di `bank-verify.com` — browser menolaknya secara otomatis. Ini melindungi bahkan pengguna yang tertipu sepenuhnya.
+> [!TIP]
+> **FIDO2/passkey tahan phishing karena terikat pada domain.** Kunci untuk `bank.com` **tidak akan** dipakai di `bank-verify.com` — browser menolaknya secara otomatis. Ini melindungi bahkan pengguna yang tertipu sepenuhnya.
 
-⚠️ **MFA fatigue attack:** penyerang yang sudah punya password membanjiri pengguna dengan prompt push berulang-ulang (bahkan tengah malam) sampai pengguna menyetujuinya karena kesal atau mengira ada kesalahan sistem. **Number matching** memaksa pengguna mengetikkan angka yang ditampilkan di layar login — sehingga persetujuan tidak bisa dilakukan tanpa sadar.
+> [!WARNING]
+> **MFA fatigue attack:** penyerang yang sudah punya password membanjiri pengguna dengan prompt push berulang-ulang (bahkan tengah malam) sampai pengguna menyetujuinya karena kesal atau mengira ada kesalahan sistem. **Number matching** memaksa pengguna mengetikkan angka yang ditampilkan di layar login — sehingga persetujuan tidak bisa dilakukan tanpa sadar.
 
 ---
 
@@ -68,7 +72,8 @@
 ❌ JANGAN batasi panjang maksimum di bawah 64 karakter
 ```
 
-⚠️ **Ini perubahan besar dari praktik lama.** NIST **tidak lagi merekomendasikan** rotasi password berkala dan aturan komposisi, karena penelitian menunjukkan keduanya **memperburuk** keamanan:
+> [!WARNING]
+> **Ini perubahan besar dari praktik lama.** NIST **tidak lagi merekomendasikan** rotasi password berkala dan aturan komposisi, karena penelitian menunjukkan keduanya **memperburuk** keamanan:
 
 ```
 Rotasi 90 hari  → pengguna membuat pola: Password1! → Password2! → Password3!
@@ -77,7 +82,8 @@ Aturan rumit    → pengguna membuat: P@ssw0rd! (mudah ditebak, sulit diingat)
                 → dan memakai password yang sama di banyak layanan
 ```
 
-💡 **Yang benar-benar efektif:** panjang minimum, pemeriksaan terhadap daftar bocor, **MFA**, dan **password manager**. Rotasi hanya dilakukan **saat ada indikasi kompromi**.
+> [!TIP]
+> **Yang benar-benar efektif:** panjang minimum, pemeriksaan terhadap daftar bocor, **MFA**, dan **password manager**. Rotasi hanya dilakukan **saat ada indikasi kompromi**.
 
 ### Alternatif password
 
@@ -105,17 +111,20 @@ Dua protokol AAA utama untuk perangkat jaringan.
 | Multi-vendor | ✅ **Universal** | Terutama Cisco |
 | Untuk | **Akses jaringan** (802.1X, VPN, Wi-Fi) | **Administrasi perangkat** |
 
-💡 **Praktik umum: pakai keduanya.**
+> [!TIP]
+> **Praktik umum: pakai keduanya.**
 ```
 TACACS+ → login administrator ke router/switch (dengan command authorization)
 RADIUS  → autentikasi pengguna akhir (802.1X, VPN, Wi-Fi)
 ```
 
-⚠️ **RADIUS hanya mengenkripsi field password** — username, atribut, dan hasil otorisasi dikirim **plaintext**. Siapa pun yang menyadap trafik RADIUS bisa melihat siapa login ke mana. **RadSec** (RADIUS over TLS, RFC 6614) memperbaikinya.
+> [!WARNING]
+> **RADIUS hanya mengenkripsi field password** — username, atribut, dan hasil otorisasi dikirim **plaintext**. Siapa pun yang menyadap trafik RADIUS bisa melihat siapa login ke mana. **RadSec** (RADIUS over TLS, RFC 6614) memperbaikinya.
 
-⚠️ **TACACS+ mengenkripsi seluruh payload**, tetapi memakai algoritma lama berbasis MD5 yang tidak lagi dianggap kuat. Tetap jauh lebih baik daripada RADIUS plaintext.
+> [!WARNING]
+> **TACACS+ mengenkripsi seluruh payload**, tetapi memakai algoritma lama berbasis MD5 yang tidak lagi dianggap kuat. Tetap jauh lebih baik daripada RADIUS plaintext.
 
-### Konfigurasi Cisco — TACACS+
+### Konfigurasi Cisco: TACACS+
 
 ```
 aaa new-model
@@ -155,9 +164,10 @@ line vty 0 15
  exec-timeout 10 0
 ```
 
-⚠️ **`local` di akhir baris `aaa authentication` adalah penyelamat.** Kalau semua server TACACS+ mati dan tidak ada fallback, **Anda tidak bisa login ke perangkat sama sekali** — outage manajemen total. Selalu sediakan akun lokal darurat dengan password kuat yang disimpan di brankas/password manager.
+> [!WARNING]
+> **`local` di akhir baris `aaa authentication` adalah penyelamat.** Kalau semua server TACACS+ mati dan tidak ada fallback, **Anda tidak bisa login ke perangkat sama sekali** — outage manajemen total. Selalu sediakan akun lokal darurat dengan password kuat yang disimpan di brankas/password manager.
 
-### Konfigurasi Cisco — RADIUS untuk 802.1X
+### Konfigurasi Cisco: RADIUS untuk 802.1X
 
 ```
 aaa new-model
@@ -199,7 +209,8 @@ dot1x system-auth-control
 /log print where topics~"radius"
 ```
 
-⚠️ **MikroTik tidak mendukung TACACS+ secara native.** Untuk command authorization, gunakan **user group** dengan policy yang dibatasi:
+> [!WARNING]
+> **MikroTik tidak mendukung TACACS+ secara native.** Untuk command authorization, gunakan **user group** dengan policy yang dibatasi:
 
 ```
 /user group add name=noc policy=read,test,ssh,winbox,reboot \
@@ -234,9 +245,10 @@ username noc-operator privilege 5 secret RahasiaKuat
 enable secret level 5 RahasiaLevel5
 ```
 
-⚠️ **Privilege level bersifat kumulatif dan kasar** — level 5 mencakup semua level 1. Sulit membuat peran yang presisi.
+> [!WARNING]
+> **Privilege level bersifat kumulatif dan kasar** — level 5 mencakup semua level 1. Sulit membuat peran yang presisi.
 
-### Role-Based CLI (Parser View) — lebih baik
+### Role-Based CLI (Parser View): lebih baik
 
 ```
 ! Aktifkan (butuh AAA)
@@ -253,7 +265,8 @@ conf t
 username noc-operator view NOC secret RahasiaKuat
 ```
 
-💡 **Untuk kontrol yang benar-benar presisi, gunakan TACACS+ command authorization** — setiap perintah diverifikasi ke server, sehingga kebijakan dikelola terpusat dan tidak perlu mengonfigurasi setiap perangkat.
+> [!TIP]
+> **Untuk kontrol yang benar-benar presisi, gunakan TACACS+ command authorization** — setiap perintah diverifikasi ke server, sehingga kebijakan dikelola terpusat dan tidak perlu mengonfigurasi setiap perangkat.
 
 ---
 
@@ -286,7 +299,7 @@ Session-Timeout = 28800
 Termination-Action = RADIUS-Request
 ```
 
-### CoA — Change of Authorization
+### CoA: Change of Authorization
 
 Memungkinkan server mengubah atau memutus **sesi yang sedang berjalan**.
 
@@ -332,7 +345,8 @@ enable algorithm-type scrypt secret RahasiaKuat
 username admin algorithm-type scrypt secret RahasiaKuat
 ```
 
-⚠️ **`service password-encryption` menghasilkan "type 7" yang BUKAN enkripsi** — hanya obfuscation yang dapat dipecahkan dalam hitungan detik oleh alat online mana pun. Selalu gunakan `secret` (type 5/8/9), bukan `password`.
+> [!WARNING]
+> **`service password-encryption` menghasilkan "type 7" yang BUKAN enkripsi** — hanya obfuscation yang dapat dipecahkan dalam hitungan detik oleh alat online mana pun. Selalu gunakan `secret` (type 5/8/9), bukan `password`.
 
 ```
 # MikroTik — password disimpan terenkripsi otomatis
@@ -351,7 +365,8 @@ Prosedur:
 5. Setiap penggunaan didokumentasikan dan direview
 ```
 
-💡 **Break-glass account adalah kebutuhan operasional, bukan kelemahan** — asalkan dikelola dengan benar. Tanpa itu, kegagalan AAA server berarti Anda tidak bisa memperbaiki jaringan Anda sendiri.
+> [!TIP]
+> **Break-glass account adalah kebutuhan operasional, bukan kelemahan** — asalkan dikelola dengan benar. Tanpa itu, kegagalan AAA server berarti Anda tidak bisa memperbaiki jaringan Anda sendiri.
 
 ---
 
@@ -373,7 +388,8 @@ Prosedur:
 | **Kerberos** | Windows/AD | ⚠️ Sensitif waktu (toleransi 5 menit) |
 | **LDAP** | Direktori pengguna | Sumber identitas |
 
-⚠️ **OAuth 2.0 adalah protokol OTORISASI, bukan autentikasi.** Memakainya untuk login (tanpa OIDC) adalah kesalahan desain yang umum dan berisiko.
+> [!WARNING]
+> **OAuth 2.0 adalah protokol OTORISASI, bukan autentikasi.** Memakainya untuk login (tanpa OIDC) adalah kesalahan desain yang umum dan berisiko.
 
 ### Relevansi untuk network engineer
 
@@ -384,7 +400,8 @@ Prosedur:
 - SSO menyederhanakan pencabutan akses — nonaktifkan sekali, berlaku di mana-mana
 ```
 
-💡 **NTP yang salah adalah penyebab kegagalan Kerberos yang sering tidak terduga.** Kalau autentikasi domain tiba-tiba gagal di sebuah lokasi, periksa jam sebelum hal lain.
+> [!TIP]
+> **NTP yang salah adalah penyebab kegagalan Kerberos yang sering tidak terduga.** Kalau autentikasi domain tiba-tiba gagal di sebuah lokasi, periksa jam sebelum hal lain.
 
 ---
 
@@ -402,7 +419,8 @@ Untuk akun dengan hak tinggi, kontrol tambahan diperlukan.
 ✅ Jaringan manajemen out-of-band
 ```
 
-⚠️ **Admin tidak boleh memakai akun istimewa untuk email dan browsing.** Satu klik phishing dengan akun domain admin = seluruh organisasi jatuh. Gunakan akun terpisah dan workstation khusus admin (PAW).
+> [!WARNING]
+> **Admin tidak boleh memakai akun istimewa untuk email dan browsing.** Satu klik phishing dengan akun domain admin = seluruh organisasi jatuh. Gunakan akun terpisah dan workstation khusus admin (PAW).
 
 ---
 
@@ -443,7 +461,8 @@ test aaa group TACACS-GROUP user password legacy
 | Accounting tidak tercatat | Konfigurasi accounting kurang; port 1813 diblokir |
 | Kerberos/AD gagal | **Selisih waktu > 5 menit** — periksa NTP |
 
-⚠️ **Selalu uji `test aaa` sebelum menerapkan konfigurasi AAA**, dan **selalu buka sesi kedua** sebelum menutup yang pertama.
+> [!WARNING]
+> **Selalu uji `test aaa` sebelum menerapkan konfigurasi AAA**, dan **selalu buka sesi kedua** sebelum menutup yang pertama.
 
 ```
 R1# test aaa group TACACS-GROUP budi Rahasia123 legacy
@@ -461,7 +480,7 @@ User was successfully authenticated.
 - **MFA fatigue** diatasi dengan number matching.
 - **NIST SP 800-63B: JANGAN paksa rotasi berkala dan aturan komposisi rumit.** Yang efektif: panjang ≥12, cek daftar bocor, MFA, password manager.
 - **RADIUS** (UDP 1812/1813, hanya password terenkripsi, auth+authz digabung) untuk **akses jaringan**; **TACACS+** (TCP 49, seluruh payload terenkripsi, AAA terpisah, command authorization) untuk **administrasi perangkat**.
-- ⚠️ **SELALU sediakan fallback lokal** (`... group TACACS-GROUP local`) dan **break-glass account** — tanpa itu, AAA server mati = tidak bisa login sama sekali.
+- **SELALU sediakan fallback lokal** (`... group TACACS-GROUP local`) dan **break-glass account** — tanpa itu, AAA server mati = tidak bisa login sama sekali.
 - **`service password-encryption` (type 7) bukan enkripsi** — pakai `secret` dengan type 8/9 (scrypt/PBKDF2).
 - **802.1X + RADIUS** memberi VLAN dinamis, dACL, dan audit trail per pengguna. **CoA** mengubah sesi yang berjalan.
 - **OAuth 2.0 adalah otorisasi, bukan autentikasi** — gunakan **OIDC** untuk login.
@@ -540,4 +559,4 @@ User was successfully authenticated.
 
 ---
 
-**Berikutnya:** `12-keamanan/05-hardening-zero-trust.md` — memperkuat perangkat dan arsitektur zero trust.
+**Berikutnya:** `12-keamanan/05-hardening-zero-trust.md`. Memperkuat perangkat dan arsitektur zero trust.

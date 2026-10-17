@@ -1,4 +1,4 @@
-# 18.3 — Peta Kurikulum ke CompTIA Network+ N10-009
+# 18.3 Peta Kurikulum ke CompTIA Network+ N10-009
 
 > **Prasyarat:** tidak ada
 > **Tujuan:** Memetakan topik CompTIA Network+ (N10-009) ke modul kurikulum ini, sebagai panduan persiapan alternatif/pelengkap CCNA.
@@ -22,7 +22,7 @@ Bahasa   : Inggris, Jerman, Jepang, Portugis, Spanyol
 
 | Domain | Bobot | Modul utama |
 |---|---|---|
-| **1.0 Networking Concepts** | **23%** | Tahap 0–6, 8 |
+| **1.0 Networking Concepts** | **23%** | Tahap 0-6, 8 |
 | **2.0 Network Implementation** | **20%** | Tahap 3, 7, 10 |
 | **3.0 Network Operations** | **19%** | Tahap 14, 17 |
 | **4.0 Network Security** | **14%** | Tahap 12, 9 |
@@ -30,7 +30,8 @@ Bahasa   : Inggris, Jerman, Jepang, Portugis, Spanyol
 
 Bobot di atas adalah bobot resmi CompTIA untuk N10-009 (23/20/19/14/24). Selalu cek ulang di halaman resmi [CompTIA Network+](https://www.comptia.org/en-us/certifications/network/) sebelum ujian, karena CompTIA bisa merevisinya.
 
-💡 **Domain terbesar Network+ adalah Troubleshooting (24%)**, disusul Networking Concepts (23%). Security justru yang paling kecil (14%). Jadi bobotnya tidak merata: ujian ini paling berat di kemampuan mendiagnosis masalah, dan Tahap 14 kurikulum ini adalah bekal utamanya. Network+ juga **vendor-netral** — menguji konsep dan terminologi umum, bukan perintah CLI Cisco. Bagus sebagai fondasi pertama sebelum spesialisasi vendor.
+> [!TIP]
+> **Domain terbesar Network+ adalah Troubleshooting (24%)**, disusul Networking Concepts (23%). Security justru yang paling kecil (14%). Jadi bobotnya tidak merata: ujian ini paling berat di kemampuan mendiagnosis masalah, dan Tahap 14 kurikulum ini adalah bekal utamanya. Network+ juga **vendor-netral** — menguji konsep dan terminologi umum, bukan perintah CLI Cisco. Bagus sebagai fondasi pertama sebelum spesialisasi vendor.
 
 ---
 
@@ -44,11 +45,12 @@ Bobot di atas adalah bobot resmi CompTIA untuk N10-009 (23/20/19/14/24). Selalu 
 | Cocok untuk | Enterprise/Cisco shop | Fondasi umum, help desk, awal karier |
 | Kesulitan | Lebih sulit (praktik) | Lebih mudah (konseptual) |
 
-💡 **Banyak orang mengambil Network+ dulu** (fondasi netral, lebih mudah) **lalu CCNA** (kedalaman vendor). Keduanya saling melengkapi — kurikulum ini menyiapkan **keduanya** karena mengajarkan konsep (Network+) dan konfigurasi multi-platform (CCNA + MikroTik + Linux).
+> [!TIP]
+> **Banyak orang mengambil Network+ dulu** (fondasi netral, lebih mudah) **lalu CCNA** (kedalaman vendor). Keduanya saling melengkapi — kurikulum ini menyiapkan **keduanya** karena mengajarkan konsep (Network+) dan konfigurasi multi-platform (CCNA + MikroTik + Linux).
 
 ---
 
-## 3. Domain 1.0 — Networking Concepts (23%)
+## 3. Domain 1.0: Networking Concepts (23%)
 
 | Topik N10-009 | Modul |
 |---|---|
@@ -65,7 +67,7 @@ Bobot di atas adalah bobot resmi CompTIA untuk N10-009 (23/20/19/14/24). Selalu 
 
 ---
 
-## 4. Domain 2.0 — Network Implementation (20%)
+## 4. Domain 2.0: Network Implementation (20%)
 
 | Topik N10-009 | Modul |
 |---|---|
@@ -78,7 +80,7 @@ Bobot di atas adalah bobot resmi CompTIA untuk N10-009 (23/20/19/14/24). Selalu 
 
 ---
 
-## 5. Domain 3.0 — Network Operations (19%)
+## 5. Domain 3.0: Network Operations (19%)
 
 | Topik N10-009 | Modul |
 |---|---|
@@ -91,7 +93,7 @@ Bobot di atas adalah bobot resmi CompTIA untuk N10-009 (23/20/19/14/24). Selalu 
 
 ---
 
-## 6. Domain 4.0 — Network Security (14%)
+## 6. Domain 4.0: Network Security (14%)
 
 | Topik N10-009 | Modul |
 |---|---|
@@ -103,7 +105,7 @@ Bobot di atas adalah bobot resmi CompTIA untuk N10-009 (23/20/19/14/24). Selalu 
 
 ---
 
-## 7. Domain 5.0 — Network Troubleshooting (24%)
+## 7. Domain 5.0: Network Troubleshooting (24%)
 
 | Topik N10-009 | Modul |
 |---|---|
@@ -113,7 +115,8 @@ Bobot di atas adalah bobot resmi CompTIA untuk N10-009 (23/20/19/14/24). Selalu 
 | Tools (ping, traceroute, nslookup/dig, tcpdump, cable tester, dll) | `14/02`, `13/01` |
 | Masalah wireless (interferensi, kanal, sinyal, roaming) | `10/01`, `10/04` |
 
-💡 **Metodologi troubleshooting CompTIA (7 langkah)** sering diuji langsung: (1) identifikasi masalah, (2) buat teori kemungkinan penyebab, (3) uji teori, (4) buat rencana tindakan, (5) implementasi solusi, (6) verifikasi & tindakan pencegahan, (7) dokumentasikan. Lihat `14-monitoring-troubleshooting/01`.
+> [!TIP]
+> **Metodologi troubleshooting CompTIA (7 langkah)** sering diuji langsung: (1) identifikasi masalah, (2) buat teori kemungkinan penyebab, (3) uji teori, (4) buat rencana tindakan, (5) implementasi solusi, (6) verifikasi & tindakan pencegahan, (7) dokumentasikan. Lihat `14-monitoring-troubleshooting/01`.
 
 ---
 
@@ -128,7 +131,8 @@ Bobot di atas adalah bobot resmi CompTIA untuk N10-009 (23/20/19/14/24). Selalu 
 5. Perhatikan istilah modern N10-009: SDN, SD-WAN, ZTA, SASE, IaC, VXLAN.
 ```
 
-⚠️ **Network+ menekankan terminologi dan konsep**, bukan konfigurasi mendalam. Kalau Anda datang dari CCNA, tantangannya justru menghafal **istilah CompTIA yang spesifik** dan menjawab secara vendor-netral (mis. konsep umum "link aggregation", bukan "EtherChannel" Cisco).
+> [!WARNING]
+> **Network+ menekankan terminologi dan konsep**, bukan konfigurasi mendalam. Kalau Anda datang dari CCNA, tantangannya justru menghafal **istilah CompTIA yang spesifik** dan menjawab secara vendor-netral (mis. konsep umum "link aggregation", bukan "EtherChannel" Cisco).
 
 ---
 
@@ -177,4 +181,4 @@ Bobot di atas adalah bobot resmi CompTIA untuk N10-009 (23/20/19/14/24). Selalu 
 
 ---
 
-**Berikutnya:** `18-karier-sertifikasi/04-portofolio-interview.md` — membangun portofolio dan persiapan wawancara.
+**Berikutnya:** `18-karier-sertifikasi/04-portofolio-interview.md`. Membangun portofolio dan persiapan wawancara.

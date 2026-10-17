@@ -1,4 +1,4 @@
-# 20.3 — Babak 2: Sidang Arsitektur (Jadi Juri)
+# 20.3 Babak 2: Sidang Arsitektur (Jadi Juri)
 
 > **Prasyarat:** `20.1`, `20.2`, ditambah `11` (WAN & VPN), `16` (data center, cloud, SDN), `17` (desain & arsitektur)
 > **Tujuan:** Menilai tiga proposal vendor secara objektif dengan matriks berbobot, menolak yang salah dengan alasan yang menunjuk kebutuhan, lalu menyusun desain tingkat tinggi sendiri beserta catatan keputusan arsitektur.
@@ -17,13 +17,15 @@ Alurnya tiga langkah, dan langkah 1 harus selesai sebelum melihat harga:
 2. **Nilai ketiga proposal** dengan kriteria yang sama, termasuk mencatat apa yang **tidak dijawab** proposal itu.
 3. **Rancang sendiri.** Ambil gagasan bagus dari ketiganya, buang sisanya, dan pertanggungjawabkan setiap keputusan dalam bentuk ADR.
 
-⏱ Mode Ujian: 150 menit. Mode Kilat: lewati babak ini, tapi wajib jawab latihan §9.
+> [!NOTE]
+> Mode Ujian: 150 menit. Mode Kilat: lewati babak ini, tapi wajib jawab latihan §9.
 
-⚠️ Jebakan utama babak ini: dua dari tiga proposal memakai istilah yang benar secara teknis namun tidak relevan dengan kebutuhan BNS. Kalau Anda menilai proposal dari **kecanggihan teknologinya**, Anda akan memilih yang salah.
+> [!WARNING]
+> Jebakan utama babak ini: dua dari tiga proposal memakai istilah yang benar secara teknis namun tidak relevan dengan kebutuhan BNS. Kalau Anda menilai proposal dari **kecanggihan teknologinya**, Anda akan memilih yang salah.
 
 ---
 
-## 2. Proposal A — "Cloud-First Nusantara"
+## 2. Proposal A: "Cloud-First Nusantara"
 
 > *"Hentikan repot mengelola perangkat. Pindahkan semuanya ke cloud."*
 
@@ -42,7 +44,7 @@ Kutipan menarik dari presentasinya: *"Tidak perlu memikirkan VLAN lagi — semua
 
 ---
 
-## 3. Proposal B — "Enterprise Fabric"
+## 3. Proposal B: "Enterprise Fabric"
 
 > *"Bangun sekali, bangun benar. Arsitektur yang sama dengan bank."*
 
@@ -63,7 +65,7 @@ Kutipan: *"VXLAN memberi Anda mobilitas beban kerja dan skala horizontal tanpa b
 
 ---
 
-## 4. Proposal C — "Paket Hemat Sekali Jalan"
+## 4. Proposal C: "Paket Hemat Sekali Jalan"
 
 > *"Rp 900 juta, semua beres, 3 minggu."*
 
@@ -84,7 +86,7 @@ Kutipan: *"Jaringan itu sederhana, Pak. Yang penting internetnya kencang."*
 
 ---
 
-## 5. Langkah 1 — Susun Matriks Kriteria (sebelum menilai)
+## 5. Langkah 1: Susun Matriks Kriteria (sebelum menilai)
 
 Buat tabel seperti ini di `03-keputusan-arsitektur.md`, isi bobot sendiri dengan total 100:
 
@@ -101,13 +103,14 @@ Buat tabel seperti ini di `03-keputusan-arsitektur.md`, isi bobot sendiri dengan
 | K9 | Bebas keterikatan vendor / bisa dimigrasi | ? | kelangsungan usaha |
 | K10 | Waktu sampai risiko terbesar hilang | ? | risiko berjalan setiap hari |
 
-Beri skor tiap proposal 0–5 per kriteria, kalikan bobot, jumlahkan.
+Beri skor tiap proposal 0-5 per kriteria, kalikan bobot, jumlahkan.
 
-💡 Aturan yang memisahkan juri berpengalaman dari pemula: **beberapa kriteria bersifat gugur (knock-out), bukan penambah nilai.** Kalau sebuah proposal gagal pada K1, proposal itu tidak boleh diselamatkan oleh skor tinggi di kriteria lain. Tentukan sendiri kriteria mana yang gugur, dan pertahankan alasannya.
+> [!TIP]
+> Aturan yang memisahkan juri berpengalaman dari pemula: **beberapa kriteria bersifat gugur (knock-out), bukan penambah nilai.** Kalau sebuah proposal gagal pada K1, proposal itu tidak boleh diselamatkan oleh skor tinggi di kriteria lain. Tentukan sendiri kriteria mana yang gugur, dan pertahankan alasannya.
 
 ---
 
-## 6. Langkah 2 — Tulis Tiga Surat Penilaian
+## 6. Langkah 2: Tulis Tiga Surat Penilaian
 
 Untuk masing-masing proposal, satu halaman berisi:
 
@@ -116,11 +119,12 @@ Untuk masing-masing proposal, satu halaman berisi:
 - **Kesalahan fatalnya**, dinyatakan sebagai *kebutuhan mana yang tidak terpenuhi* — bukan sebagai "teknologinya jelek".
 - **Satu pertanyaan** yang akan Anda ajukan ke vendor dan Anda tahu jawabannya akan mengungkap kelemahan terbesarnya.
 
-⚠️ Penilaian yang berbunyi "Proposal B terlalu canggih" akan ditolak. Yang benar: "Proposal B gagal pada K3 dan K4 — menuntut tiga orang bersertifikat yang tidak dimiliki BNS, dan tidak menyentuh 20 lokasi yang justru menghasilkan data kepatuhan."
+> [!WARNING]
+> Penilaian yang berbunyi "Proposal B terlalu canggih" akan ditolak. Yang benar: "Proposal B gagal pada K3 dan K4 — menuntut tiga orang bersertifikat yang tidak dimiliki BNS, dan tidak menyentuh 20 lokasi yang justru menghasilkan data kepatuhan."
 
 ---
 
-## 7. Langkah 3 — Rancang Sendiri
+## 7. Langkah 3: Rancang Sendiri
 
 Keluarkan di `03-keputusan-arsitektur.md` + `04-topologi/`:
 
@@ -167,7 +171,7 @@ Minimal cakup: topologi kampus HQ · fabric/akses pabrik · segmentasi OT · des
 
 ---
 
-## 9. Latihan — Pertanyaan Sidang
+## 9. Latihan: Pertanyaan Sidang
 
 1. Proposal A memindahkan pencatatan dan alarm suhu sepenuhnya ke cloud. Jelaskan mengapa ini gagal pada kriteria gugur, lalu rumuskan prinsip desain umum yang bisa Anda pakai lagi di kasus lain — bukan hanya untuk BNS.
 2. Proposal B menawarkan spine-leaf VXLAN/EVPN di HQ dan pabrik. Jelaskan untuk pola lalu lintas seperti apa arsitektur itu memang tepat, lalu tunjukkan dengan data kasus ini mengapa BNS bukan kasus tersebut. Sebutkan juga satu bagian dari Proposal B yang justru **harus** Anda ambil.
@@ -211,8 +215,8 @@ Minimal cakup: topologi kampus HQ · fabric/akses pabrik · segmentasi OT · des
 - `16-datacenter-cloud-sdn` — kapan spine-leaf, VXLAN, dan cloud memang tepat
 - `11-wan-vpn` — SD-WAN, pemilihan transport, terowongan
 - Michael Nygard, *Documenting Architecture Decisions* — asal format ADR
-- ISO/IEC 27001:2022 Annex A 8.20–8.23 — kontrol jaringan yang dicari auditor
+- ISO/IEC 27001:2022 Annex A 8.20-8.23 — kontrol jaringan yang dicari auditor
 
 ---
 
-**Berikutnya:** `20-proyek-akhir/04-babak-3-teka-teki-alamat.md` — satu blok alamat, dua puluh situs, satu lubang yang tidak boleh disentuh.
+**Berikutnya:** `20-proyek-akhir/04-babak-3-teka-teki-alamat.md`. Satu blok alamat, dua puluh situs, satu lubang yang tidak boleh disentuh.

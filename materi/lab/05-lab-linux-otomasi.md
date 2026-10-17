@@ -1,14 +1,15 @@
-# Lab 05 — Linux Networking & Otomasi
+# Lab 05: Linux Networking & Otomasi
 
-> **Prasyarat:** Tahap 13, 15, Lab 01–04
+> **Prasyarat:** Tahap 13, 15, Lab 01-04
 > **Platform:** Linux (native/VM/WSL2) + Python. Beberapa lab butuh sudo.
 > **Format:** TUGAS → VERIFIKASI → KRITERIA SUKSES → solusi.
 
-⚠️ Lab ini menyentuh konfigurasi jaringan sistem. Jalankan di **VM/lab**, bukan mesin produksi. Perintah `ip netns` bersifat sementara (hilang saat reboot) — aman untuk eksperimen.
+> [!WARNING]
+> Lab ini menyentuh konfigurasi jaringan sistem. Jalankan di **VM/lab**, bukan mesin produksi. Perintah `ip netns` bersifat sementara (hilang saat reboot) — aman untuk eksperimen.
 
 ---
 
-## Lab 5.1 — iproute2 Dasar
+## Lab 5.1: iproute2 Dasar
 
 **TUGAS:**
 1. Tampilkan interface, alamat, tabel routing dengan `ip` (bukan `ifconfig` usang).
@@ -37,7 +38,7 @@ ip neigh show                         # ARP/NDP cache
 
 ---
 
-## Lab 5.2 — Simulasi Topologi dengan Network Namespaces
+## Lab 5.2: Simulasi Topologi dengan Network Namespaces
 
 **TUGAS:** bangun "dua router + dua host" **hanya dengan Linux namespaces** (tanpa VM/emulator).
 ```
@@ -89,7 +90,7 @@ Ini membangun topologi routing **nyata** di satu mesin — inti bagaimana contai
 
 ---
 
-## Lab 5.3 — Bridge Linux (Switch Software)
+## Lab 5.3: Bridge Linux (Switch Software)
 
 **TUGAS:**
 1. Buat bridge Linux (`br0`).
@@ -116,7 +117,7 @@ Bridge Linux = **switch software** — persis yang dipakai Docker (`docker0`), K
 
 ---
 
-## Lab 5.4 — nftables Firewall
+## Lab 5.4: nftables Firewall
 
 **TUGAS:**
 1. Buat tabel/chain nftables dengan kebijakan **default drop** pada input.
@@ -142,7 +143,7 @@ Pola sama dengan firewall MikroTik (`19/03`) & konsep stateful (`12-keamanan/03`
 
 ---
 
-## Lab 5.5 — Otomasi: Backup Config Multi-Perangkat (Python)
+## Lab 5.5: Otomasi Backup Config Multi-Perangkat (Python)
 
 **TUGAS:**
 1. Siapkan 2+ perangkat lab (Cisco di GNS3, atau CHR MikroTik) dengan SSH.
@@ -180,7 +181,7 @@ for dev in perangkat:
 
 ---
 
-## Lab 5.6 (Lanjutan) — Ansible Playbook
+## Lab 5.6 (Lanjutan): Ansible Playbook
 
 **TUGAS:**
 1. Buat inventory Ansible untuk perangkat lab.
@@ -224,6 +225,7 @@ Jalankan: `ansible-playbook -i inventory.yaml banner.yaml --check --diff` (dry-r
 
 Anda mempraktikkan: iproute2, simulasi topologi dengan namespaces (fondasi container/K8s), bridge Linux, nftables (firewall stateful), dan otomasi (Python/Netmiko + Ansible). Ini menjembatani jaringan dengan Linux & NetDevOps (Tahap 13 & 15).
 
-💡 Lab 5.2 sangat berharga: memahami namespaces = memahami bagaimana Docker/Kubernetes networking (`16/05`) bekerja "di balik layar". Otomasi (5.5-5.6) adalah skill NetDevOps bernilai tinggi (`18/01`).
+> [!TIP]
+> Lab 5.2 sangat berharga: memahami namespaces = memahami bagaimana Docker/Kubernetes networking (`16/05`) bekerja "di balik layar". Otomasi (5.5-5.6) adalah skill NetDevOps bernilai tinggi (`18/01`).
 
-**Berikutnya:** `lab/06-lab-mikrotik.md` — lab MikroTik RouterOS end-to-end.
+**Berikutnya:** `lab/06-lab-mikrotik.md`. Lab MikroTik RouterOS end-to-end.

@@ -1,4 +1,4 @@
-# 07.1 — Static Routing
+# 07.1 Static Routing
 
 > **Prasyarat:** `04-network-layer/05`
 > **Tujuan:** Anda bisa mengonfigurasi semua varian static route, memahami recursive lookup, dan membangun failover otomatis dengan floating static + IP SLA.
@@ -25,7 +25,8 @@ Static routing sering dianggap "primitif", padahal dalam banyak situasi justru *
 - Butuh failover otomatis tanpa konfigurasi tambahan
 - Banyak jalur alternatif
 
-💡 **Aturan praktis:** kalau Anda menulis lebih dari ~10 static route per router, atau kalau topologi berubah lebih dari sekali sebulan, pertimbangkan protokol dinamis.
+> [!TIP]
+> **Aturan praktis:** kalau Anda menulis lebih dari ~10 static route per router, atau kalau topologi berubah lebih dari sekali sebulan, pertimbangkan protokol dinamis.
 
 ---
 
@@ -69,11 +70,12 @@ R1(config)# ip route 192.168.99.0 255.255.255.0 null0
 R1(config)# ip route 192.168.10.0 255.255.255.0 10.0.0.2 permanent
 ```
 
-⚠️ **`permanent` berbahaya.** Rute tetap ada walaupun jalurnya jelas mati, sehingga paket dibuang diam-diam alih-alih beralih ke rute cadangan. Hanya pakai bila Anda benar-benar memahami konsekuensinya.
+> [!WARNING]
+> **`permanent` berbahaya.** Rute tetap ada walaupun jalurnya jelas mati, sehingga paket dibuang diam-diam alih-alih beralih ke rute cadangan. Hanya pakai bila Anda benar-benar memahami konsekuensinya.
 
 ---
 
-## 3. Recursive Lookup — Konsep yang Harus Dipahami
+## 3. Recursive Lookup: Konsep yang Harus Dipahami
 
 Ketika static route hanya menyebut **next hop**, router harus mencari **dua kali**.
 
@@ -87,7 +89,8 @@ Paket ke 192.168.10.5:
   Hasil    : kirim lewat Gi0/1 ke MAC dari 10.0.0.2
 ```
 
-⚠️ **Kalau lookup kedua gagal, seluruh rute menjadi tidak dapat dipakai dan TIDAK MUNCUL di routing table.**
+> [!WARNING]
+> **Kalau lookup kedua gagal, seluruh rute menjadi tidak dapat dipakai dan TIDAK MUNCUL di routing table.**
 
 Ini penyebab paling umum "static route sudah dikonfigurasi tetapi tidak muncul di `show ip route`":
 ```
@@ -111,7 +114,8 @@ ip route 10.0.0.0 255.255.255.252 172.16.1.1
 Router IOS membatasi kedalaman rekursi (biasanya 3–5 tingkat)
 ```
 
-💡 **Cara memastikan rute benar-benar dipakai:**
+> [!TIP]
+> **Cara memastikan rute benar-benar dipakai:**
 ```
 R1# show ip route 192.168.10.5
 Routing entry for 192.168.10.0/24
@@ -122,7 +126,7 @@ Routing entry for 192.168.10.0/24
 
 ---
 
-## 4. Exit Interface pada Link Multi-Access — Jangan Lakukan
+## 4. Exit Interface pada Link Multi-Access: Jangan Lakukan
 
 ```
 R1(config)# ip route 192.168.10.0 255.255.255.0 gi0/1
@@ -188,11 +192,12 @@ R1(config-router)# default-information originate
 R1(config-router-af)# neighbor 10.0.0.2 default-originate
 ```
 
-⚠️ **`always` berbahaya** — router akan mengiklankan default route walaupun ia sendiri tidak punya jalan keluar, menciptakan black hole.
+> [!WARNING]
+> **`always` berbahaya** — router akan mengiklankan default route walaupun ia sendiri tidak punya jalan keluar, menciptakan black hole.
 
 ---
 
-## 6. Floating Static Route — Failover Otomatis
+## 6. Floating Static Route: Failover Otomatis
 
 Static route dengan **AD lebih tinggi** hanya dipasang jika rute utama hilang.
 
@@ -224,13 +229,14 @@ R1(config)# ip route 0.0.0.0 0.0.0.0 203.0.113.1
 R1(config)# ip route 0.0.0.0 0.0.0.0 198.51.100.1 10
 ```
 
-⚠️ **Masalah besar:** static route hanya hilang kalau **interface fisik down**. Kalau interface tetap up tetapi ISP di seberang bermasalah (kabel putus lebih jauh, router ISP mati, BGP ISP bermasalah), rute utama **tetap terpasang** dan trafik dibuang ke lubang hitam.
+> [!WARNING]
+> **Masalah besar:** static route hanya hilang kalau **interface fisik down**. Kalau interface tetap up tetapi ISP di seberang bermasalah (kabel putus lebih jauh, router ISP mati, BGP ISP bermasalah), rute utama **tetap terpasang** dan trafik dibuang ke lubang hitam.
 
 Solusinya: **IP SLA tracking**.
 
 ---
 
-## 7. IP SLA + Object Tracking — Failover yang Benar
+## 7. IP SLA + Object Tracking: Failover yang Benar
 
 Router secara aktif menguji konektivitas dan menghapus rute jika pengujian gagal.
 
@@ -287,7 +293,8 @@ R1# show ip sla configuration 1
 
 ### Pilihan target IP SLA
 
-⚠️ **Jangan ping alamat gateway ISP.** Kalau ISP punya masalah di hulu, gateway lokalnya tetap menjawab — pengujian lolos padahal internet mati.
+> [!WARNING]
+> **Jangan ping alamat gateway ISP.** Kalau ISP punya masalah di hulu, gateway lokalnya tetap menjawab — pengujian lolos padahal internet mati.
 
 ```
 ❌ icmp-echo 203.0.113.1              ← gateway ISP; terlalu dekat
@@ -295,7 +302,8 @@ R1# show ip sla configuration 1
 ✅ icmp-echo 1.1.1.1
 ```
 
-💡 **Lebih baik lagi: gunakan dua target berbeda** dan `track list` boolean, sehingga satu target yang kebetulan mati tidak memicu failover palsu:
+> [!TIP]
+> **Lebih baik lagi: gunakan dua target berbeda** dan `track list` boolean, sehingga satu target yang kebetulan mati tidak memicu failover palsu:
 ```
 R1(config)# ip sla 1
 R1(config-ip-sla)# icmp-echo 8.8.8.8 source-interface gi0/0
@@ -312,7 +320,8 @@ R1(config)# ip route 0.0.0.0 0.0.0.0 203.0.113.1 track 10
 ```
 Rute utama hanya dihapus kalau **kedua** target tidak terjangkau.
 
-⚠️ Pastikan rute ke alamat SLA melewati ISP yang sedang diuji. Kalau tidak, tambahkan host route:
+> [!WARNING]
+> Pastikan rute ke alamat SLA melewati ISP yang sedang diuji. Kalau tidak, tambahkan host route:
 ```
 R1(config)# ip route 8.8.8.8 255.255.255.255 203.0.113.1
 ```
@@ -346,9 +355,11 @@ R1# show ipv6 route
 R1# show ipv6 route static
 ```
 
-⚠️ **`ipv6 unicast-routing` sering terlupa.** Tanpa itu, router tidak akan meneruskan paket IPv6 sama sekali, walaupun alamat dan rute sudah dikonfigurasi.
+> [!WARNING]
+> **`ipv6 unicast-routing` sering terlupa.** Tanpa itu, router tidak akan meneruskan paket IPv6 sama sekali, walaupun alamat dan rute sudah dikonfigurasi.
 
-💡 **Memakai link-local sebagai next hop** memerlukan penyebutan exit interface, karena alamat link-local tidak unik secara global:
+> [!TIP]
+> **Memakai link-local sebagai next hop** memerlukan penyebutan exit interface, karena alamat link-local tidak unik secara global:
 ```
 ✅ ipv6 route 2001:db8:10::/64 gi0/1 fe80::2
 ❌ ipv6 route 2001:db8:10::/64 fe80::2         ← ambigu, ditolak
@@ -419,7 +430,8 @@ Gateway=10.0.0.2
    → show ip cef exact-route <src> <dst>
 ```
 
-⚠️ **"Lupa rute balik" adalah kesalahan static routing nomor satu.** Ping dari R1 ke jaringan di belakang R2 memerlukan R2 tahu cara kembali ke jaringan di belakang R1.
+> [!WARNING]
+> **"Lupa rute balik" adalah kesalahan static routing nomor satu.** Ping dari R1 ke jaringan di belakang R2 memerlukan R2 tahu cara kembali ke jaringan di belakang R1.
 
 ### Perintah diagnostik
 
@@ -472,7 +484,8 @@ R1# debug ip routing              ← lihat perubahan tabel secara langsung
 /ip route add dst-address=0.0.0.0/0 gateway=203.0.113.9 distance=1 check-gateway=ping
 /ip route add dst-address=0.0.0.0/0 gateway=198.51.100.9 distance=10
 ```
-⚠️ Hanya menguji gateway langsung — tidak mendeteksi kegagalan di hulu ISP.
+> [!WARNING]
+> Hanya menguji gateway langsung — tidak mendeteksi kegagalan di hulu ISP.
 
 **Tingkat 2 — Recursive route (menguji end-to-end):**
 ```
@@ -502,9 +515,11 @@ Ini setara **IP SLA + floating static** di Cisco.
   }
 ```
 
-💡 **Netwatch memungkinkan aksi apa pun** — mengaktifkan/menonaktifkan rute, mengganti NAT, mengirim email/Telegram, menjalankan skrip. Ini gabungan **IP SLA + EEM** Cisco dalam satu fitur yang jauh lebih mudah.
+> [!TIP]
+> **Netwatch memungkinkan aksi apa pun** — mengaktifkan/menonaktifkan rute, mengganti NAT, mengirim email/Telegram, menjalankan skrip. Ini gabungan **IP SLA + EEM** Cisco dalam satu fitur yang jauh lebih mudah.
 
-⚠️ **Jangan lupa NAT saat failover.** Kalau memakai `masquerade` dengan `out-interface`, ia otomatis mengikuti rute aktif. Kalau memakai `src-nat` dengan alamat tetap, Anda harus membuat aturan terpisah per ISP:
+> [!WARNING]
+> **Jangan lupa NAT saat failover.** Kalau memakai `masquerade` dengan `out-interface`, ia otomatis mengikuti rute aktif. Kalau memakai `src-nat` dengan alamat tetap, Anda harus membuat aturan terpisah per ISP:
 ```
 /ip firewall nat add chain=srcnat out-interface=ether1-ISP-A action=masquerade
 /ip firewall nat add chain=srcnat out-interface=ether2-ISP-B action=masquerade

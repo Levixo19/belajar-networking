@@ -220,6 +220,7 @@
 
 ---
 
-💡 **Istilah tersering tertukar:** collision domain vs broadcast domain; AD vs metric; RIB vs FIB; bandwidth vs throughput; standard vs extended ACL; masquerade vs src-nat; input vs forward chain; coverage vs kapasitas (wireless).
+> [!TIP]
+> **Istilah tersering tertukar:** collision domain vs broadcast domain; AD vs metric; RIB vs FIB; bandwidth vs throughput; standard vs extended ACL; masquerade vs src-nat; input vs forward chain; coverage vs kapasitas (wireless).
 
 **Lihat juga:** modul terkait tiap istilah, `referensi/daftar-rfc-penting.md`

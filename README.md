@@ -62,7 +62,7 @@ Setiap berkas diberi nomor juga. Baca `materi/00-fondasi/01-*.md` dulu, sampai h
 | **Latihan** | Soal + jawaban tersembunyi |
 | **Sumber** | RFC/dokumentasi resmi untuk pendalaman |
 
-### 3. Jangan cuma membaca — praktikkan
+### 3. Jangan cuma membaca: praktikkan
 Mulai dari **`materi/lab/00-setup-lab.md`** setelah selesai `01-model-referensi`.
 Semua lab bisa dijalankan gratis (Containerlab/GNS3/Packet Tracer/Linux namespace).
 
@@ -161,7 +161,7 @@ Hasil akhirnya satu repositori berisi 14 dokumen — sekaligus portofolio untuk 
 | Intensitas | Durasi 0 → profesional |
 |---|---|
 | 1 jam/hari (7 jam/minggu) | ~12 bulan |
-| 2 jam/hari (14 jam/minggu) | ~6–7 bulan |
+| 2 jam/hari (14 jam/minggu) | ~6-7 bulan |
 | Full-time (40 jam/minggu) | ~3 bulan (intensif) |
 
 Angka ini termasuk waktu lab. **Tanpa lab, waktu belajar Anda terbuang** — teori jaringan tidak menempel tanpa tangan yang mengetik command.

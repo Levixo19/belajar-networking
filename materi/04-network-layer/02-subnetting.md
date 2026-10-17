@@ -1,4 +1,4 @@
-# 04.2 — Subnetting
+# 04.2 Subnetting
 
 > **Prasyarat:** `00-fondasi/02` (biner — **wajib kuasai**), `04-network-layer/01`
 > **Tujuan:** Anda bisa mengerjakan soal subnetting apa pun dalam **kurang dari 30 detik tanpa kalkulator**.
@@ -149,7 +149,8 @@ HOST      = 172.16.32.1 – 172.16.47.254
 Jumlah    = 2^12 − 2 = 4094
 ```
 
-⚠️ **Perhatikan:** saat oktet ke-3 yang menentukan, oktet ke-4 ikut menjadi bagian host. Broadcast berakhir dengan `.255`, dan host terakhir adalah `.254`.
+> [!WARNING]
+> **Perhatikan:** saat oktet ke-3 yang menentukan, oktet ke-4 ikut menjadi bagian host. Broadcast berakhir dengan `.255`, dan host terakhir adalah `.254`.
 
 ### Contoh 4: `10.100.50.75/12` (oktet ke-2 yang menentukan)
 
@@ -200,7 +201,8 @@ Jumlah    = 2^20 − 2 = 1.048.574
 | /22 | 255.255.**252**.0 | 4 | 1.022 |
 | /23 | 255.255.**254**.0 | 2 | 510 |
 
-💡 **Pola yang mempercepat:** nilai mask hanya boleh salah satu dari **0, 128, 192, 224, 240, 248, 252, 254, 255**. Block size adalah `256 −` nilai itu: **256, 128, 64, 32, 16, 8, 4, 2, 1**.
+> [!TIP]
+> **Pola yang mempercepat:** nilai mask hanya boleh salah satu dari **0, 128, 192, 224, 240, 248, 252, 254, 255**. Block size adalah `256 −` nilai itu: **256, 128, 64, 32, 16, 8, 4, 2, 1**.
 
 ### Menghafal jumlah host
 
@@ -244,7 +246,8 @@ IP oktet 3 = 3 → blok 0–3   (network 10.1.0.0/22)
 SAMA SUBNET → bisa berkomunikasi langsung tanpa router
 ```
 
-⚠️ **Kesalahan klasik:** mengira `10.1.1.x` dan `10.1.3.x` pasti berbeda subnet karena oktet ke-3 berbeda. Dengan mask /22, keduanya satu subnet.
+> [!WARNING]
+> **Kesalahan klasik:** mengira `10.1.1.x` dan `10.1.3.x` pasti berbeda subnet karena oktet ke-3 berbeda. Dengan mask /22, keduanya satu subnet.
 
 ### Kesalahan mask yang menipu
 
@@ -269,7 +272,8 @@ PC-A berpikir: 192.168.1.20 ada di subnet saya → kirim langsung
 → Komunikasi ASIMETRIS, gejala sangat membingungkan
 ```
 
-💡 **Pelajaran:** ketika gejalanya "sebagian host bisa, sebagian tidak", **selalu periksa subnet mask di semua perangkat**, bukan hanya alamat IP-nya.
+> [!TIP]
+> **Pelajaran:** ketika gejalanya "sebagian host bisa, sebagian tidak", **selalu periksa subnet mask di semua perangkat**, bukan hanya alamat IP-nya.
 
 ---
 
@@ -312,17 +316,18 @@ Butuh 6 bit host → prefix = 32 − 6 = /26
 **Tabel bantu:**
 | Butuh host | Bit host | Prefix | Kapasitas |
 |---|---|---|---|
-| 1–2 | 2 | /30 | 2 |
-| 3–6 | 3 | /29 | 6 |
-| 7–14 | 4 | /28 | 14 |
-| 15–30 | 5 | /27 | 30 |
-| 31–62 | 6 | /26 | 62 |
-| 63–126 | 7 | /25 | 126 |
-| 127–254 | 8 | /24 | 254 |
-| 255–510 | 9 | /23 | 510 |
-| 511–1022 | 10 | /22 | 1022 |
+| 1-2 | 2 | /30 | 2 |
+| 3-6 | 3 | /29 | 6 |
+| 7-14 | 4 | /28 | 14 |
+| 15-30 | 5 | /27 | 30 |
+| 31-62 | 6 | /26 | 62 |
+| 63-126 | 7 | /25 | 126 |
+| 127-254 | 8 | /24 | 254 |
+| 255-510 | 9 | /23 | 510 |
+| 511-1022 | 10 | /22 | 1022 |
 
-💡 **Selalu sisakan ruang tumbuh.** Kalau butuh 60 host hari ini, /26 (62 host) sudah nyaris penuh. Pilih /25 (126 host) kecuali alamat benar-benar terbatas.
+> [!TIP]
+> **Selalu sisakan ruang tumbuh.** Kalau butuh 60 host hari ini, /26 (62 host) sudah nyaris penuh. Pilih /25 (126 host) kecuali alamat benar-benar terbatas.
 
 ---
 
@@ -377,14 +382,14 @@ Kerjakan tanpa kalkulator. Target: **rata-rata 30 detik per soal.**
    **Network 10.0.5.96 · Broadcast 10.0.5.103 · Host .97–.102**
 
 6. `/22`, block 4 pada oktet 3. Oktet 3 = 100 → kelipatan 4: 100 tepat kelipatan.
-   **Network 172.20.100.0 · Broadcast 172.20.103.255 · Host 172.20.100.1–172.20.103.254**
+   **Network 172.20.100.0 · Broadcast 172.20.103.255 · Host 172.20.100.1-172.20.103.254**
 
 7. `/30`, block 4. 35 → kelipatan 4: 32.
    **Network 192.168.200.32 · Broadcast 192.168.200.35 · Host .33–.34**
-   ⚠️ Perhatikan: `.35` justru adalah broadcast, bukan alamat host!
+   **Perhatian:** Perhatikan: `.35` justru adalah broadcast, bukan alamat host!
 
 8. `/19`, block 32 pada oktet 3. Oktet 3 = 60 → kelipatan 32: 0, 32, 64. Terbesar ≤60 = 32.
-   **Network 10.50.32.0 · Broadcast 10.50.63.255 · Host 10.50.32.1–10.50.63.254**
+   **Network 10.50.32.0 · Broadcast 10.50.63.255 · Host 10.50.32.1-10.50.63.254**
 
 </details>
 
@@ -401,9 +406,9 @@ Kerjakan tanpa kalkulator. Target: **rata-rata 30 detik per soal.**
 <details>
 <summary>Jawaban Bagian C</summary>
 
-13. Block 64: 50 → blok 0–63; 70 → blok 64–127. **BERBEDA subnet.**
-14. Block 4 pada oktet 3: oktet 5 → blok 4–7; oktet 7 → blok 4–7. **SAMA subnet** (10.1.4.0/22).
-15. Block 16 pada oktet 3: oktet 20 → blok 16–31; oktet 40 → blok 32–47. **BERBEDA subnet.**
+13. Block 64: 50 → blok 0-63; 70 → blok 64-127. **BERBEDA subnet.**
+14. Block 4 pada oktet 3: oktet 5 → blok 4-7; oktet 7 → blok 4-7. **SAMA subnet** (10.1.4.0/22).
+15. Block 16 pada oktet 3: oktet 20 → blok 16-31; oktet 40 → blok 32-47. **BERBEDA subnet.**
 
 </details>
 
@@ -413,7 +418,7 @@ Kerjakan tanpa kalkulator. Target: **rata-rata 30 detik per soal.**
 16. 2⁷ − 2 = 126 ≥ 100 → butuh 7 bit host → **/25**.
 17. 256 ÷ 32 = **8 subnet**.
 18. Block 32. Subnet ke-3 = (3−1) × 32 = 64 → **192.168.50.64/27** (host .65–.94, broadcast .95).
-19. Mask `/26`, block 64. Oktet 4 = 40 → blok 0–63 → network `10.20.30.0`. Alamat pertama yang usable = **10.20.30.1**.
+19. Mask `/26`, block 64. Oktet 4 = 40 → blok 0-63 → network `10.20.30.0`. Alamat pertama yang usable = **10.20.30.1**.
 20. **TIDAK VALID.** `/26` dengan block 64: 63 adalah **broadcast address** dari subnet `192.168.1.0/26`, sehingga tidak bisa diberikan ke host. Gejalanya: host tidak bisa berkomunikasi sama sekali, atau perilaku aneh (beberapa OS menolak konfigurasi ini secara langsung).
 
 </details>
@@ -459,19 +464,26 @@ for s in ipaddress.ip_network('192.168.1.0/24').subnets(new_prefix=26):
 
 ## 10. Kesalahan Umum
 
-⚠️ **1. Lupa mengurangi 2** untuk network dan broadcast address.
+> [!WARNING]
+> **1. Lupa mengurangi 2** untuk network dan broadcast address.
 
-⚠️ **2. Salah menghitung block size.** Block size = **256 − nilai oktet mask**, bukan nilai mask itu sendiri.
+> [!WARNING]
+> **2. Salah menghitung block size.** Block size = **256 − nilai oktet mask**, bukan nilai mask itu sendiri.
 
-⚠️ **3. Salah memilih oktet yang menentukan.** Untuk /20, yang menentukan adalah oktet ke-3, bukan ke-4.
+> [!WARNING]
+> **3. Salah memilih oktet yang menentukan.** Untuk /20, yang menentukan adalah oktet ke-3, bukan ke-4.
 
-⚠️ **4. Memberikan broadcast address ke host.** Periksa: apakah oktet terakhir adalah `network + block_size − 1`?
+> [!WARNING]
+> **4. Memberikan broadcast address ke host.** Periksa: apakah oktet terakhir adalah `network + block_size − 1`?
 
-⚠️ **5. Mask tidak konsisten antar-host.** Menyebabkan komunikasi asimetris yang sangat sulit didiagnosis.
+> [!WARNING]
+> **5. Mask tidak konsisten antar-host.** Menyebabkan komunikasi asimetris yang sangat sulit didiagnosis.
 
-⚠️ **6. Membuat subnet terlalu pas.** Butuh 60 host lalu memakai /26 (62 host) berarti hanya ada ruang untuk 2 perangkat tambahan.
+> [!WARNING]
+> **6. Membuat subnet terlalu pas.** Butuh 60 host lalu memakai /26 (62 host) berarti hanya ada ruang untuk 2 perangkat tambahan.
 
-⚠️ **7. Mengira dua IP berbeda oktet ke-3 pasti beda subnet.** Bergantung mask.
+> [!WARNING]
+> **7. Mengira dua IP berbeda oktet ke-3 pasti beda subnet.** Bergantung mask.
 
 ---
 
@@ -499,4 +511,4 @@ for s in ipaddress.ip_network('192.168.1.0/24').subnets(new_prefix=26):
 
 ---
 
-**Berikutnya:** `04-network-layer/03-vlsm-cidr.md` — subnetting dengan ukuran berbeda-beda dan meringkas rute.
+**Berikutnya:** `04-network-layer/03-vlsm-cidr.md`. Subnetting dengan ukuran berbeda-beda dan meringkas rute.

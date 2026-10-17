@@ -1,4 +1,4 @@
-# 22.1 — MPLS dan LDP
+# 22.1 MPLS dan LDP
 
 > **Prasyarat:** `11-wan-vpn/01-teknologi-wan` (§4 pengenalan MPLS), `07-routing-lanjutan/06-bgp`, `07-routing-lanjutan/10-isis` (IGP backbone), `13-linux-networking/01-iproute2`
 > **Tujuan:** Anda bisa menjelaskan cara MPLS meneruskan paket sampai ke tingkat bit header label, membaca LIB dan LFIB, memahami push/swap/pop, PHP, explicit-null, dan TTL, mengoperasikan LDP (discovery, sesi, mode distribusi label, sinkronisasi dengan IGP), menghitung dampak label terhadap MTU, serta mendiagnosis LSP yang putus di Cisco, Juniper, MikroTik, dan FRRouting.
@@ -37,7 +37,8 @@ Modul 11.1 sudah memperkenalkan istilahnya. Di sini kita pakai secara konsisten 
 
 Dalam terminologi RFC 3031, PE adalah **LER** (*Label Edge Router*) dan P adalah **LSR** (*Label Switching Router*). Dalam praktik, istilah PE/P lebih sering dipakai karena langsung menunjukkan posisi bisnisnya.
 
-💡 **Ide besarnya: router P tidak perlu tahu ke mana paket pelanggan akhirnya pergi.** Ia hanya perlu tahu "label 17 masuk dari kiri, keluarkan sebagai label 18 ke kanan". Semua kecerdasan tentang pelanggan ada di tepi (PE). Inilah yang membuat backbone operator bisa membesar tanpa router core ikut membengkak.
+> [!TIP]
+> **Ide besarnya: router P tidak perlu tahu ke mana paket pelanggan akhirnya pergi.** Ia hanya perlu tahu "label 17 masuk dari kiri, keluarkan sebagai label 18 ke kanan". Semua kecerdasan tentang pelanggan ada di tepi (PE). Inilah yang membuat backbone operator bisa membesar tanpa router core ikut membengkak.
 
 ### Peta Tahap 22
 
@@ -157,7 +158,8 @@ Cara cepat menghitungnya: nilai 32 bit = `label × 4096 + TC × 512 + S × 256 +
 
 Label dinamis biasanya dialokasikan mulai **16**. Itu sebabnya hampir semua contoh output menampilkan label 16, 17, 18, dan seterusnya. Vendor punya rentang default sendiri (misalnya Cisco IOS XE mulai 16, IOS XR mulai 24000, Junos mulai 299776), dan rentang itu bisa diubah.
 
-💡 **Label hanya bermakna lokal.** Label 17 di link pe1 ke p1 tidak ada hubungannya dengan label 17 di link p1 ke pe2. Setiap router memilih label masuknya sendiri dan memberitahu tetangga upstream. Inilah yang disebut **downstream label assignment**.
+> [!TIP]
+> **Label hanya bermakna lokal.** Label 17 di link pe1 ke p1 tidak ada hubungannya dengan label 17 di link p1 ke pe2. Setiap router memilih label masuknya sendiri dan memberitahu tetangga upstream. Inilah yang disebut **downstream label assignment**.
 
 ---
 
@@ -250,7 +252,8 @@ Padanan perintah antarplatform:
 | LFIB | `show mpls forwarding-table` | `show mpls forwarding` | `show route table mpls.0` | `/mpls forwarding-table print` | `show mpls table` |
 | FIB berlabel | `show ip cef 10.255.0.3 detail` | `show cef 10.255.0.3/32` | `show route table inet.3` | `/ip route print detail` | `show ip route` (kolom `label`) |
 
-💡 Di Junos, tabel **`inet.3`** khusus berisi "tujuan yang bisa dicapai lewat LSP". BGP memakainya untuk me-resolve next hop layanan VPN. Kalau loopback PE seberang tidak ada di `inet.3`, layanan VPN ke PE itu tidak akan jalan. Ini pola pikir yang berguna juga untuk vendor lain.
+> [!TIP]
+> Di Junos, tabel **`inet.3`** khusus berisi "tujuan yang bisa dicapai lewat LSP". BGP memakainya untuk me-resolve next hop layanan VPN. Kalau loopback PE seberang tidak ada di `inet.3`, layanan VPN ke PE itu tidak akan jalan. Ini pola pikir yang berguna juga untuk vendor lain.
 
 ---
 
@@ -402,9 +405,11 @@ set protocols mpls no-propagate-ttl
 sysctl -w net.mpls.ip_ttl_propagate=0
 ```
 
-💡 Varian `forwarded` di Cisco adalah kompromi yang bagus: pelanggan tidak melihat core, tetapi engineer NOC yang menjalankan traceroute dari router operator masih melihat setiap hop.
+> [!TIP]
+> Varian `forwarded` di Cisco adalah kompromi yang bagus: pelanggan tidak melihat core, tetapi engineer NOC yang menjalankan traceroute dari router operator masih melihat setiap hop.
 
-⚠️ **TTL propagation harus konsisten di semua PE.** Jika ingress menyalin TTL tetapi egress tidak, atau sebaliknya, traceroute menampilkan hasil yang membingungkan, dan pada kasus ekstrem TTL IP bisa "naik" setelah keluar dari domain MPLS.
+> [!WARNING]
+> **TTL propagation harus konsisten di semua PE.** Jika ingress menyalin TTL tetapi egress tidak, atau sebaliknya, traceroute menampilkan hasil yang membingungkan, dan pada kasus ekstrem TTL IP bisa "naik" setelah keluar dari domain MPLS.
 
 ---
 
@@ -436,7 +441,8 @@ AF   ID              Type     Source           Holdtime
 ipv4 10.255.0.2      Link     eth1                   15
 ```
 
-⚠️ **Transport address harus bisa dicapai.** Praktik standar adalah memakai loopback sebagai transport address. Akibatnya **loopback tetangga harus sudah ada di tabel routing via IGP** sebelum sesi TCP bisa terbentuk. Jika IGP belum jalan atau loopback tidak diiklankan, hello terlihat di `discovery` tetapi tetangga tidak pernah `OPERATIONAL`.
+> [!WARNING]
+> **Transport address harus bisa dicapai.** Praktik standar adalah memakai loopback sebagai transport address. Akibatnya **loopback tetangga harus sudah ada di tabel routing via IGP** sebelum sesi TCP bisa terbentuk. Jika IGP belum jalan atau loopback tidak diiklankan, hello terlihat di `discovery` tetapi tetangga tidak pernah `OPERATIONAL`.
 
 ### Fase 2: Sesi TCP
 
@@ -513,7 +519,8 @@ mpls ldp label
 /mpls ldp advertise-filter add prefix=0.0.0.0/0 advertise=no
 ```
 
-⚠️ **Loopback PE harus diiklankan sebagai /32.** Jika loopback diiklankan sebagai /24 (misalnya karena salah konfigurasi interface loopback di OSPF yang di beberapa platform diiklankan apa adanya), FEC menjadi /24 sementara BGP next hop adalah /32. Banyak implementasi lalu gagal mencocokkan label, dan layanan VPN putus walau `ping` antar-loopback berhasil.
+> [!WARNING]
+> **Loopback PE harus diiklankan sebagai /32.** Jika loopback diiklankan sebagai /24 (misalnya karena salah konfigurasi interface loopback di OSPF yang di beberapa platform diiklankan apa adanya), FEC menjadi /24 sementara BGP next hop adalah /32. Banyak implementasi lalu gagal mencocokkan label, dan layanan VPN putus walau `ping` antar-loopback berhasil.
 
 ---
 
@@ -575,7 +582,8 @@ router ospf
  mpls ldp-sync
 ```
 
-⚠️ Aktifkan LDP-IGP sync di **kedua** sisi link. Metrik dalam IS-IS dan OSPF diiklankan per arah, jadi jika hanya satu sisi yang mengaktifkannya, arah sebaliknya tetap memakai link yang belum siap.
+> [!WARNING]
+> Aktifkan LDP-IGP sync di **kedua** sisi link. Metrik dalam IS-IS dan OSPF diiklankan per arah, jadi jika hanya satu sisi yang mengaktifkannya, arah sebaliknya tetap memakai link yang belum siap.
 
 ### Session protection: jangan buang label saat link berkedip
 
@@ -603,7 +611,8 @@ set protocols ldp session-protection
 
 FRR ldpd dan MikroTik RouterOS v7 tidak mendokumentasikan fitur session protection. Di kedua platform itu, andalkan konvergensi IGP yang cepat dan LDP-IGP sync (FRR).
 
-💡 LDP-IGP sync dan session protection saling melengkapi. Sync mencegah trafik masuk ke link tanpa label. Session protection mempercepat kembalinya label setelah link pulih. Operator besar biasanya mengaktifkan keduanya, ditambah BFD untuk mendeteksi kegagalan link lebih cepat (22.5).
+> [!TIP]
+> LDP-IGP sync dan session protection saling melengkapi. Sync mencegah trafik masuk ke link tanpa label. Session protection mempercepat kembalinya label setelah link pulih. Operator besar biasanya mengaktifkan keduanya, ditambah BFD untuk mendeteksi kegagalan link lebih cepat (22.5).
 
 ---
 
@@ -657,7 +666,8 @@ set interfaces ge-0/0/0 unit 0 family mpls mtu 9100
 /mpls interface add interface=ether1 mpls-mtu=9000
 ```
 
-⚠️ **MTU adalah penyebab nomor satu keluhan "VPN baru jalan setengah".** Sebelum menyerahkan layanan ke pelanggan, selalu uji ping DF 1500 byte dari CE ke CE.
+> [!WARNING]
+> **MTU adalah penyebab nomor satu keluhan "VPN baru jalan setengah".** Sebelum menyerahkan layanan ke pelanggan, selalu uji ping DF 1500 byte dari CE ke CE.
 
 ---
 
@@ -790,7 +800,8 @@ set protocols ldp interface ge-0/0/0.0
 set protocols ldp session-protection
 ```
 
-⚠️ **Junos butuh tiga hal di interface yang sama:** `family mpls` di unit interface, interface terdaftar di `protocols mpls`, dan interface terdaftar di `protocols ldp`. Lupa salah satunya adalah kesalahan paling umum di Junos: sesi LDP bisa saja terbentuk, tetapi paket berlabel dibuang.
+> [!WARNING]
+> **Junos butuh tiga hal di interface yang sama:** `family mpls` di unit interface, interface terdaftar di `protocols mpls`, dan interface terdaftar di `protocols ldp`. Lupa salah satunya adalah kesalahan paling umum di Junos: sesi LDP bisa saja terbentuk, tetapi paket berlabel dibuang.
 
 ```
 user@PE1> show ldp neighbor
@@ -867,7 +878,8 @@ sysctl -w net.mpls.conf.eth1.input=1        # terima paket berlabel di interface
 sysctl -w net.ipv4.ip_forward=1
 ```
 
-⚠️ **`platform_labels` default-nya 0.** Ini jebakan paling umum di Linux: modul sudah dimuat, LDP sudah `OPERATIONAL`, `show mpls table` di FRR terisi, tetapi kernel menolak memasang label karena tabelnya berukuran nol. Periksa dengan `ip -f mpls route`: jika kosong padahal FRR menampilkan label, curigai sysctl ini.
+> [!WARNING]
+> **`platform_labels` default-nya 0.** Ini jebakan paling umum di Linux: modul sudah dimuat, LDP sudah `OPERATIONAL`, `show mpls table` di FRR terisi, tetapi kernel menolak memasang label karena tabelnya berukuran nol. Periksa dengan `ip -f mpls route`: jika kosong padahal FRR menampilkan label, curigai sysctl ini.
 
 Konfigurasi FRR (`/etc/frr/frr.conf`, aktifkan `isisd=yes` dan `ldpd=yes` di `/etc/frr/daemons`):
 
@@ -1130,7 +1142,8 @@ L 1 10.0.12.2 MRU 1500 [Labels: implicit-null Exp: 0] 1 ms
 
 Baris hop 1 menunjukkan p1 menerima label 17 dan meneruskan dengan implicit-null (PHP). Hop 2 adalah egress yang menjawab sukses.
 
-⚠️ Di IOS XR, LSP ping hanya dijawab jika `mpls oam` sudah dikonfigurasi. Router yang tidak menjawab LSP ping belum tentu rusak; bisa jadi OAM-nya belum diaktifkan.
+> [!WARNING]
+> Di IOS XR, LSP ping hanya dijawab jika `mpls oam` sudah dikonfigurasi. Router yang tidak menjawab LSP ping belum tentu rusak; bisa jadi OAM-nya belum diaktifkan.
 
 ### Traceroute biasa di jaringan MPLS
 
@@ -1252,4 +1265,4 @@ Traceroute IP tetap berguna jika Anda memahami keterbatasannya (§7):
 
 ---
 
-**Berikutnya:** `22-service-provider/02-mpls-l3vpn` — VRF, RD, RT, dan MP-BGP: bagaimana ribuan pelanggan dengan alamat yang sama berbagi satu backbone MPLS.
+**Berikutnya:** `22-service-provider/02-mpls-l3vpn`. VRF, RD, RT, dan MP-BGP: bagaimana ribuan pelanggan dengan alamat yang sama berbagi satu backbone MPLS.

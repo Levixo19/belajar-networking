@@ -1,4 +1,4 @@
-# 00.1 — Apa Itu Jaringan Komputer
+# 00.1 Apa Itu Jaringan Komputer
 
 > **Prasyarat:** Tidak ada. Ini titik nol.
 > **Tujuan:** Setelah modul ini Anda bisa menjelaskan apa itu jaringan, menyebut komponennya, dan tahu peran setiap perangkat jaringan tanpa menghafal.
@@ -58,7 +58,7 @@ Tiga kata kunci di definisi itu:
 
 1. **Berbagi perangkat mahal.** Tahun 1970-an, printer laser seharga mobil. Menghubungkan 20 terminal ke satu printer jauh lebih murah daripada 20 printer. Hari ini: berbagi storage, GPU, bandwidth internet.
 
-2. **Berbagi data.** Satu database dipakai bersama lebih baik daripada 20 salinan yang saling bertentangan. Ini melahirkan model klien–server.
+2. **Berbagi data.** Satu database dipakai bersama lebih baik daripada 20 salinan yang saling bertentangan. Ini melahirkan model klien-server.
 
 3. **Komunikasi.** Email (1971) lahir lebih dulu daripada web (1991). Sekarang: chat, video call, kolaborasi dokumen.
 
@@ -88,9 +88,11 @@ Istilah-istilah ini akan muncul di setiap modul. Pahami sekarang, bukan nanti.
 | **Latency** | Waktu tempuh data | 12 ms |
 | **Topologi** | Bentuk susunan jaringan | Star, mesh |
 
-⚠️ **Kesalahan umum #1:** Menyamakan *host* dan *node*. Semua host adalah node, tapi tidak semua node adalah host. Switch adalah node, bukan host (ia meneruskan data, bukan menghasilkan/mengonsumsinya — kecuali untuk manajemen dirinya sendiri).
+> [!WARNING]
+> **Kesalahan umum #1:** Menyamakan *host* dan *node*. Semua host adalah node, tapi tidak semua node adalah host. Switch adalah node, bukan host (ia meneruskan data, bukan menghasilkan/mengonsumsinya — kecuali untuk manajemen dirinya sendiri).
 
-⚠️ **Kesalahan umum #2:** Menyamakan *bandwidth* dan *throughput*. Bandwidth = lebar pipa. Throughput = air yang benar-benar mengalir. Detail di modul `00-fondasi/03`.
+> [!WARNING]
+> **Kesalahan umum #2:** Menyamakan *bandwidth* dan *throughput*. Bandwidth = lebar pipa. Throughput = air yang benar-benar mengalir. Detail di modul `00-fondasi/03`.
 
 ---
 
@@ -127,7 +129,8 @@ Setiap perangkat bisa jadi klien sekaligus server.
 **Kelebihan:** murah, tidak ada titik kegagalan tunggal, skalabilitas alami (makin banyak peer, makin banyak kapasitas).
 **Kekurangan:** sulit dikelola, keamanan tersebar, sulit di-backup, sering diblokir di jaringan korporat.
 
-💡 **Di lapangan:** kebanyakan jaringan modern **hibrida**. Contoh: video call Zoom memakai server untuk sinyal dan koordinasi, tapi bisa mengirim media langsung antar-peer jika memungkinkan.
+> [!TIP]
+> **Di lapangan:** kebanyakan jaringan modern **hibrida**. Contoh: video call Zoom memakai server untuk sinyal dan koordinasi, tapi bisa mengirim media langsung antar-peer jika memungkinkan.
 
 ---
 
@@ -137,7 +140,7 @@ Diurutkan dari terkecil ke terbesar. Perhatikan bahwa yang membedakan bukan cuma
 
 | Singkatan | Nama | Jangkauan | Contoh | Dikelola oleh |
 |---|---|---|---|---|
-| **PAN** | Personal Area Network | ~1–10 m | Bluetooth headset ke HP, USB tethering | Individu |
+| **PAN** | Personal Area Network | ~1-10 m | Bluetooth headset ke HP, USB tethering | Individu |
 | **LAN** | Local Area Network | 1 gedung / 1 lantai | Jaringan kantor, rumah, lab sekolah | Pemilik gedung/organisasi |
 | **WLAN** | Wireless LAN | sama dengan LAN | Wi-Fi kantor | Organisasi |
 | **CAN** | Campus Area Network | Beberapa gedung berdekatan | Kampus universitas, kompleks pabrik | Organisasi |
@@ -158,8 +161,8 @@ Perbedaan terpenting antara **LAN** dan **WAN** bukan jarak, tetapi:
 | | LAN | WAN |
 |---|---|---|
 | Kepemilikan media | Anda memiliki kabelnya | Anda **menyewa** dari provider |
-| Bandwidth | Murah dan besar (1–100 Gbps) | Mahal dan lebih kecil |
-| Latency | Sangat rendah (<1 ms) | Lebih tinggi (10–300 ms) |
+| Bandwidth | Murah dan besar (1-100 Gbps) | Mahal dan lebih kecil |
+| Latency | Sangat rendah (<1 ms) | Lebih tinggi (10-300 ms) |
 | Teknologi | Ethernet, Wi-Fi | MPLS, Metro-E, internet, seluler |
 | Kendali | Penuh | Terbatas oleh SLA provider |
 
@@ -199,15 +202,15 @@ Ini daftar yang harus Anda kenali sekarang secara **fungsi**. Cara kerjanya diba
 
 | Perangkat | Fungsi inti | Bekerja di layer | Modul detail |
 |---|---|---|---|
-| **NIC** | Menghubungkan host ke media, memberi identitas MAC | 1–2 | `03-data-link/01` |
+| **NIC** | Menghubungkan host ke media, memberi identitas MAC | 1-2 | `03-data-link/01` |
 | **Repeater** | Menguatkan/membangkitkan ulang sinyal agar bisa lebih jauh | 1 | `02-layer-fisik/03` |
 | **Hub** | Repeater banyak port — mengirim ulang ke semua port | 1 | `03-data-link/02` |
 | **Bridge** | Menghubungkan dua segmen, memfilter berdasarkan MAC | 2 | `03-data-link/02` |
 | **Switch** | Bridge banyak port berbasis hardware; meneruskan frame ke port yang tepat | 2 (dan 3 untuk multilayer) | `03-data-link/02` |
 | **Router** | Menghubungkan jaringan berbeda; memilih jalur terbaik berdasarkan IP | 3 | `04-network-layer/05` |
-| **Firewall** | Menegakkan kebijakan boleh/tidak boleh lewat | 3–7 | `09-nat-acl-firewall/03` |
-| **IPS/IDS** | Mendeteksi (IDS) atau memblokir (IPS) serangan | 3–7 | `09-nat-acl-firewall/03` |
-| **Access Point (AP)** | Menjembatani klien nirkabel ke jaringan kabel | 1–2 | `10-wireless/04` |
+| **Firewall** | Menegakkan kebijakan boleh/tidak boleh lewat | 3-7 | `09-nat-acl-firewall/03` |
+| **IPS/IDS** | Mendeteksi (IDS) atau memblokir (IPS) serangan | 3-7 | `09-nat-acl-firewall/03` |
+| **Access Point (AP)** | Menjembatani klien nirkabel ke jaringan kabel | 1-2 | `10-wireless/04` |
 | **WLC** (*Wireless LAN Controller*) | Mengelola banyak AP secara terpusat (config, RF, roaming) | — | `10-wireless/04` |
 | **Load balancer** | Membagi beban ke banyak server | 4 atau 7 | `06-aplikasi/03` |
 | **Proxy** | Perantara permintaan aplikasi (cache, filter, anonimisasi) | 7 | `06-aplikasi/03` |
@@ -239,13 +242,13 @@ Kalimat yang layak dihafal:
 
 ---
 
-## 9. PoE — Power over Ethernet
+## 9. PoE: Power over Ethernet
 
 Kabel Ethernet bisa membawa **listrik** sekaligus data. Ini bukan hal sepele: tanpa PoE, memasang 40 access point di plafon berarti menarik 40 kabel listrik juga.
 
 - **802.3af (PoE)** — sampai 15,4 W di sumber, ~12,95 W di perangkat.
 - **802.3at (PoE+)** — sampai 30 W di sumber, ~25,5 W di perangkat.
-- **802.3bt (PoE++ / 4PPoE)** — Type 3 sampai 60 W, Type 4 sampai 90–100 W di sumber.
+- **802.3bt (PoE++ / 4PPoE)** — Type 3 sampai 60 W, Type 4 sampai 90-100 W di sumber.
 
 Perangkat yang lazim memakai PoE: access point, telepon IP, kamera CCTV, small switch, sensor, bahkan lampu LED gedung.
 
@@ -254,7 +257,8 @@ Istilah:
 - **PD** (*Powered Device*) — yang menerima daya (AP, kamera).
 - **Power budget** — total daya yang bisa disediakan switch. Switch 24 port PoE+ dengan budget 370 W **tidak** bisa memberi 30 W ke semua 24 port (butuh 720 W).
 
-⚠️ **Jebakan lapangan:** Menghitung jumlah port PoE tanpa menghitung power budget. Perangkat akan menyala bergantian atau mati acak. Selalu jumlahkan kebutuhan daya nyata.
+> [!WARNING]
+> **Jebakan lapangan:** Menghitung jumlah port PoE tanpa menghitung power budget. Perangkat akan menyala bergantian atau mati acak. Selalu jumlahkan kebutuhan daya nyata.
 
 Detail teknis PoE (deteksi, klasifikasi, pasangan kabel yang dipakai) ada di `02-layer-fisik/02`.
 
@@ -265,7 +269,7 @@ Detail teknis PoE (deteksi, klasifikasi, pasangan kabel yang dipakai) ada di `02
 Anda akan bekerja pada salah satu (atau beberapa) dari ini. Perbedaannya menentukan gaya desain.
 
 **SOHO** (*Small Office / Home Office*)
-- 1–20 pengguna. Satu perangkat all-in-one (router+switch+AP+firewall).
+- 1-20 pengguna. Satu perangkat all-in-one (router+switch+AP+firewall).
 - Prioritas: murah, mudah, cukup andal.
 
 **Enterprise / Campus**
@@ -326,7 +330,7 @@ Simpan hasilnya. Di modul `04-network-layer/01` Anda akan membaca setiap baris o
 - Jaringan = perangkat + media + **protokol** + tujuan berbagi.
 - Analogi sistem pos berlaku hampir sempurna; gunakan terus.
 - Host menghasilkan/mengonsumsi data; node mencakup perangkat perantara juga.
-- Klien–server terpusat & mudah dikelola; P2P tersebar & tahan gangguan.
+- Klien-server terpusat & mudah dikelola; P2P tersebar & tahan gangguan.
 - Skala: PAN → LAN → CAN → MAN → WAN → internet. Beda LAN/WAN yang paling penting adalah **kepemilikan media**, bukan jarak.
 - Switch memisahkan collision domain; router memisahkan broadcast domain.
 - PoE membawa listrik lewat kabel data; hitung **power budget**, bukan jumlah port.
@@ -346,7 +350,7 @@ Simpan hasilnya. Di modul `04-network-layer/01` Anda akan membaca setiap baris o
 
 1. (a) Kepemilikan media — LAN milik sendiri, WAN disewa dari provider; (b) biaya per bandwidth — WAN jauh lebih mahal; (c) latency — LAN <1 ms, WAN puluhan sampai ratusan ms; (d) teknologi — Ethernet/Wi-Fi vs MPLS/Metro-E/seluler; (e) tingkat kendali — penuh vs dibatasi SLA.
 
-2. 30 × 12 W = 360 W kebutuhan perangkat. Budget 370 W. **Secara angka cukup, tetapi terlalu ketat.** Belum menghitung rugi daya di kabel (PSE harus mengirim lebih besar daripada yang diterima PD) dan tidak ada ruang untuk penambahan. Praktik yang benar: sisakan minimal 20–30% headroom, atau pilih switch dengan budget ≥ 500 W.
+2. 30 × 12 W = 360 W kebutuhan perangkat. Budget 370 W. **Secara angka cukup, tetapi terlalu ketat.** Belum menghitung rugi daya di kabel (PSE harus mengirim lebih besar daripada yang diterima PD) dan tidak ada ruang untuk penambahan. Praktik yang benar: sisakan minimal 20-30% headroom, atau pilih switch dengan budget ≥ 500 W.
 
 3. **Router** (atau switch layer 3 / multilayer switch). Switch biasa hanya membaca alamat MAC dan bekerja dalam satu broadcast domain; ia tidak bisa memindahkan paket antar-jaringan IP yang berbeda karena tidak membaca alamat IP dan tidak punya tabel routing.
 
@@ -367,4 +371,4 @@ Simpan hasilnya. Di modul `04-network-layer/01` Anda akan membaca setiap baris o
 
 ---
 
-**Berikutnya:** `00-fondasi/02-bit-byte-biner.md` — bahasa yang benar-benar dipakai komputer.
+**Berikutnya:** `00-fondasi/02-bit-byte-biner.md`. Bahasa yang benar-benar dipakai komputer.

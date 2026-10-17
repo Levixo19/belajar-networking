@@ -1,4 +1,4 @@
-# 16.4 — Jaringan Cloud
+# 16.4 Jaringan Cloud
 
 > **Prasyarat:** `04-network-layer/02` (subnetting), `09-nat-acl-firewall` (NAT/ACL/firewall), `16.1`
 > **Tujuan:** Anda paham model layanan cloud, jaringan virtual (VPC/VNet), konektivitas ke cloud, dan padanan konsep on-premises di cloud — sesuai CCNA 1.2.f.
@@ -30,7 +30,8 @@ On-Premises   IaaS         PaaS         SaaS
 
 **Model deployment:** **Public** (AWS/Azure/GCP), **Private** (DC sendiri), **Hybrid** (campuran on-prem + cloud), **Multi-cloud** (>1 penyedia).
 
-💡 **CCNA 1.2.f** menuntut Anda membedakan **on-premises vs cloud**. Kuncinya: di cloud Anda menyewa dan mengelola lebih sedikit lapisan (dari IaaS ke SaaS makin sedikit), dengan model **pay-as-you-go** dan **elastisitas** (skala naik/turun sesuai kebutuhan).
+> [!TIP]
+> **CCNA 1.2.f** menuntut Anda membedakan **on-premises vs cloud**. Kuncinya: di cloud Anda menyewa dan mengelola lebih sedikit lapisan (dari IaaS ke SaaS makin sedikit), dengan model **pay-as-you-go** dan **elastisitas** (skala naik/turun sesuai kebutuhan).
 
 ---
 
@@ -68,7 +69,8 @@ Setiap penyedia menyediakan jaringan virtual terisolasi:
 | Load balancer | ELB/ALB/NLB | Distribusi trafik |
 | DNS | Route 53 | Resolusi nama |
 
-⚠️ **Security Group (stateful) vs NACL (stateless)** sering membingungkan. **Security Group** melekat pada instance, **stateful** (balasan otomatis diizinkan), hanya punya rule *allow*. **NACL** melekat pada subnet, **stateless** (harus izinkan trafik masuk DAN balasannya secara eksplisit), punya rule allow dan deny. Ini persis paralel dengan **stateful firewall vs ACL** yang Anda pelajari di `09-nat-acl-firewall`.
+> [!WARNING]
+> **Security Group (stateful) vs NACL (stateless)** sering membingungkan. **Security Group** melekat pada instance, **stateful** (balasan otomatis diizinkan), hanya punya rule *allow*. **NACL** melekat pada subnet, **stateless** (harus izinkan trafik masuk DAN balasannya secara eksplisit), punya rule allow dan deny. Ini persis paralel dengan **stateful firewall vs ACL** yang Anda pelajari di `09-nat-acl-firewall`.
 
 ---
 
@@ -90,7 +92,8 @@ Bagaimana menghubungkan DC/kantor on-premises ke cloud:
    Overlay yang cerdas memilih jalur ke cloud (lihat 11-wan-vpn/01)
 ```
 
-💡 **Direct Connect/ExpressRoute** memberi koneksi privat dengan bandwidth dan latensi terjamin — untuk beban kerja kritis (database, hybrid). VPN over internet cukup untuk kebutuhan umum dan backup. Banyak desain memakai keduanya: Direct Connect utama + VPN sebagai cadangan.
+> [!TIP]
+> **Direct Connect/ExpressRoute** memberi koneksi privat dengan bandwidth dan latensi terjamin — untuk beban kerja kritis (database, hybrid). VPN over internet cukup untuk kebutuhan umum dan backup. Banyak desain memakai keduanya: Direct Connect utama + VPN sebagai cadangan.
 
 ---
 
@@ -116,9 +119,11 @@ Bagaimana menghubungkan DC/kantor on-premises ke cloud:
 | Latensi ke pengguna lokal | Rendah | Tergantung region |
 | Kepatuhan/kedaulatan data | Kontrol penuh | Perlu pilih region/verifikasi |
 
-⚠️ **Kedaulatan data (data sovereignty)** penting di Indonesia. **PP No. 71/2019** dan aturan turunannya mengatur penempatan data untuk sektor tertentu (mis. data sistem elektronik publik). Untuk beban kerja yang diatur, pilih **region cloud di Indonesia** (AWS Jakarta `ap-southeast-3`, GCP Jakarta, Azure Indonesia Central) atau pertimbangkan private/hybrid. Verifikasi kepatuhan sektor (mis. POJK untuk keuangan).
+> [!WARNING]
+> **Kedaulatan data (data sovereignty)** penting di Indonesia. **PP No. 71/2019** dan aturan turunannya mengatur penempatan data untuk sektor tertentu (mis. data sistem elektronik publik). Untuk beban kerja yang diatur, pilih **region cloud di Indonesia** (AWS Jakarta `ap-southeast-3`, GCP Jakarta, Azure Indonesia Central) atau pertimbangkan private/hybrid. Verifikasi kepatuhan sektor (mis. POJK untuk keuangan).
 
-💡 **Shared Responsibility Model:** vendor cloud mengamankan **"keamanan DARI cloud"** (infrastruktur fisik, hypervisor), Anda mengamankan **"keamanan DI cloud"** (konfigurasi, data, IAM, security group). Banyak insiden cloud berasal dari salah konfigurasi pelanggan (mis. S3 bucket terbuka), bukan kelemahan vendor.
+> [!TIP]
+> **Shared Responsibility Model:** vendor cloud mengamankan **"keamanan DARI cloud"** (infrastruktur fisik, hypervisor), Anda mengamankan **"keamanan DI cloud"** (konfigurasi, data, IAM, security group). Banyak insiden cloud berasal dari salah konfigurasi pelanggan (mis. S3 bucket terbuka), bukan kelemahan vendor.
 
 ---
 
@@ -169,4 +174,4 @@ Bagaimana menghubungkan DC/kantor on-premises ke cloud:
 
 ---
 
-**Berikutnya:** `16-datacenter-cloud-sdn/05-container-kubernetes.md` — jaringan container dan Kubernetes.
+**Berikutnya:** `16-datacenter-cloud-sdn/05-container-kubernetes.md`. Jaringan container dan Kubernetes.

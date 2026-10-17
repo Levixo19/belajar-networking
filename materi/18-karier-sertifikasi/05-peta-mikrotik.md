@@ -1,4 +1,4 @@
-# 18.5 — Jalur Sertifikasi MikroTik (MTCNA & Lanjutan)
+# 18.5 Jalur Sertifikasi MikroTik (MTCNA & Lanjutan)
 
 > **Prasyarat:** `19-mikrotik/01` (pengenalan RouterOS) membantu
 > **Tujuan:** Anda paham jalur sertifikasi MikroTik, isi MTCNA, dan bagaimana kurikulum ini mempersiapkannya — relevan khusus untuk pasar ISP/RT-RW-Net Indonesia.
@@ -20,7 +20,8 @@ Kekuatan MikroTik untuk pasar ini:
   ✅ Komunitas & materi lokal (Indonesia) melimpah
 ```
 
-💡 **Untuk karier di ISP/RT-RW-Net Indonesia, MTCNA + skill MikroTik praktis sering lebih dicari daripada CCNA saja.** Idealnya kombinasikan keduanya (`18.1`): CCNA untuk fondasi konsep yang diakui luas, MTCNA untuk keterampilan pada perangkat yang benar-benar dipakai di lapangan.
+> [!TIP]
+> **Untuk karier di ISP/RT-RW-Net Indonesia, MTCNA + skill MikroTik praktis sering lebih dicari daripada CCNA saja.** Idealnya kombinasikan keduanya (`18.1`): CCNA untuk fondasi konsep yang diakui luas, MTCNA untuk keterampilan pada perangkat yang benar-benar dipakai di lapangan.
 
 ---
 
@@ -44,7 +45,8 @@ MTCNA (Network Associate) ★ : WAJIB, pintu masuk ke semua sertifikasi level Ad
 - Sertifikasi engineer (MTCRE, MTCWE, dll.) adalah **spesialisasi** yang bisa diambil sesuai kebutuhan.
 - **MTCINE** (BGP/MPLS) adalah puncak jalur ISP/backbone (level Extended). Konfigurasi MPLS di RouterOS (LDP, VPLS, VRF/L3VPN, RSVP-TE) dibahas di `19-mikrotik/09-mpls-routeros`, dengan konsep multi-vendornya di Tahap 22 (`22-service-provider/01-mpls-ldp` dan seterusnya).
 
-⚠️ **Outline resmi lebih tua dari RouterOS v7.** Outline pelatihan yang ditautkan di halaman resmi MikroTik bertanggal 2011 sampai 2020 (misalnya MTCRE terakhir disunting 2015, MTCTCE dan MTCUME 2011, MTCSWE dan MTCEWE 2020), jadi semuanya ditulis sebelum RouterOS v7. Sintaks v7 untuk OSPF, BGP, routing table, dan wifi berbeda dari materi lama. Sebelum mendaftar, periksa outline dan jadwal terbaru di [mikrotik.com/training](https://mikrotik.com/training/about) dan tanyakan ke trainer versi RouterOS yang dipakai di kelas.
+> [!WARNING]
+> **Outline resmi lebih tua dari RouterOS v7.** Outline pelatihan yang ditautkan di halaman resmi MikroTik bertanggal 2011 sampai 2020 (misalnya MTCRE terakhir disunting 2015, MTCTCE dan MTCUME 2011, MTCSWE dan MTCEWE 2020), jadi semuanya ditulis sebelum RouterOS v7. Sintaks v7 untuk OSPF, BGP, routing table, dan wifi berbeda dari materi lama. Sebelum mendaftar, periksa outline dan jadwal terbaru di [mikrotik.com/training](https://mikrotik.com/training/about) dan tanyakan ke trainer versi RouterOS yang dipakai di kelas.
 
 **Seberapa jauh kurikulum ini menyiapkan jalur lanjutan?** Jujur saja, baru MTCNA yang tercakup penuh. Jalur di atasnya baru didukung sebagian:
 
@@ -81,7 +83,8 @@ Silabus MTCNA (garis besar) dan modul kurikulum ini yang menyiapkannya:
 | **Network Management** (tools, ARP, DNS, NTP, monitoring) | `06/*`, `14/02`, `19-mikrotik/07` |
 | **Tunnels** (PPPoE, PPTP, dasar) | `11/02`, `19-mikrotik/06` |
 
-💡 **Kurikulum ini mengajarkan setiap konsep MTCNA secara mendalam** (bukan hanya "cara klik di Winbox"), lalu **Tahap 19** memberi implementasi RouterOS spesifik. Anda akan memahami **kenapa**, bukan hanya **bagaimana** — keunggulan besar dibanding belajar MikroTik dari tutorial klik-klik saja.
+> [!TIP]
+> **Kurikulum ini mengajarkan setiap konsep MTCNA secara mendalam** (bukan hanya "cara klik di Winbox"), lalu **Tahap 19** memberi implementasi RouterOS spesifik. Anda akan memahami **kenapa**, bukan hanya **bagaimana** — keunggulan besar dibanding belajar MikroTik dari tutorial klik-klik saja.
 
 ---
 
@@ -117,7 +120,8 @@ Proyek portofolio yang relevan dengan pasar lokal (bangun di CHR/hardware murah)
    - Backup terjadwal + scripting
 ```
 
-⚠️ **Kepatuhan hukum**: penyelenggara jasa internet (termasuk RT-RW-Net komersial) di Indonesia idealnya memperhatikan regulasi — RT-RW-Net yang menjual ulang bandwidth secara komersial secara ketat perlu bermitra dengan ISP berizin/berlisensi (aturan Komdigi/Kominfo). Detail lisensi ada di ranah regulasi, tetapi penting disadari saat membangun bisnis, bukan sekadar teknis.
+> [!WARNING]
+> **Kepatuhan hukum**: penyelenggara jasa internet (termasuk RT-RW-Net komersial) di Indonesia idealnya memperhatikan regulasi — RT-RW-Net yang menjual ulang bandwidth secara komersial secara ketat perlu bermitra dengan ISP berizin/berlisensi (aturan Komdigi/Kominfo). Detail lisensi ada di ranah regulasi, tetapi penting disadari saat membangun bisnis, bukan sekadar teknis.
 
 ---
 
@@ -128,7 +132,8 @@ Ingat bahwa **MikroTik terintegrasi di seluruh kurikulum**, bukan hanya Tahap 19
 - **Tahap 19** adalah jalur khusus mendalam: RouterOS, bridge/VLAN, firewall/NAT, QoS/queue/hotspot, wireless, VPN/tunnel, monitoring/scripting.
 - **`referensi/cheatsheet-mikrotik.md`** dan **`referensi/padanan-cisco-mikrotik-linux.md`** untuk rujukan cepat.
 
-💡 Pendekatan **tiga platform** (Cisco IOS + MikroTik RouterOS + Linux) di kurikulum ini membuat Anda memahami **konsep universal** yang berlaku di semua vendor — sehingga MTCNA, CCNA, dan bahkan Linux networking saling memperkuat, bukan dipelajari terpisah.
+> [!TIP]
+> Pendekatan **tiga platform** (Cisco IOS + MikroTik RouterOS + Linux) di kurikulum ini membuat Anda memahami **konsep universal** yang berlaku di semua vendor — sehingga MTCNA, CCNA, dan bahkan Linux networking saling memperkuat, bukan dipelajari terpisah.
 
 ---
 
@@ -142,7 +147,7 @@ Ingat bahwa **MikroTik terintegrasi di seluruh kurikulum**, bukan hanya Tahap 19
 - Skenario lokal: **PPPoE server, hotspot voucher, bandwidth management (queue/PCQ/burst), firewall/NAT, failover 2 ISP, monitoring**.
 - MikroTik **terintegrasi di seluruh kurikulum** (bagian MikroTik + tabel padanan) plus **Tahap 19** khusus dan cheatsheet.
 - Untuk karier ISP Indonesia: **MTCNA + CCNA** = kombinasi kuat (keterampilan alat + fondasi konsep).
-- ⚠️ Perhatikan **regulasi** saat membangun RT-RW-Net komersial.
+- **Perhatian:** Perhatikan **regulasi** saat membangun RT-RW-Net komersial.
 
 ---
 
@@ -181,4 +186,4 @@ Ingat bahwa **MikroTik terintegrasi di seluruh kurikulum**, bukan hanya Tahap 19
 
 ---
 
-**Berikutnya:** `19-mikrotik/02-bridge-vlan-switching.md` — melanjutkan jalur khusus MikroTik.
+**Berikutnya:** `19-mikrotik/02-bridge-vlan-switching.md`. Melanjutkan jalur khusus MikroTik.

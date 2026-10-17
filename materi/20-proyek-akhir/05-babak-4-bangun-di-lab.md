@@ -1,4 +1,4 @@
-# 20.5 — Babak 4: Bangun di Lab & Uji Terima
+# 20.5 Babak 4: Bangun di Lab & Uji Terima
 
 > **Prasyarat:** `20.4`, ditambah `03` (VLAN, STP), `04` (routing dasar), `07` (OSPF, FHRP), `13` (Linux), `19` (MikroTik)
 > **Tujuan:** Mewujudkan desain dan rencana alamat menjadi konfigurasi yang benar-benar berjalan, lalu membuktikannya dengan matriks uji terima yang hasilnya tidak bisa didebat.
@@ -16,9 +16,11 @@ Aturan yang membedakan babak ini dari "latihan konfigurasi biasa":
 - **Uji waktu dihitung, bukan dirasakan.** "Failover-nya cepat" bukan hasil uji. "Kehilangan 7 paket pada interval 200 ms = ±1,4 detik" adalah hasil uji.
 - Konfigurasi yang tidak lulus uji **tidak disimpan ke `06-konfigurasi/`**. Repositori Anda hanya berisi yang terbukti.
 
-⏱ Mode Ujian: 4–6 jam, boleh dibagi dua sesi. Mode Kilat: lewati, tapi wajib kerjakan §7 dan latihan.
+> [!NOTE]
+> Mode Ujian: 4–6 jam, boleh dibagi dua sesi. Mode Kilat: lewati, tapi wajib kerjakan §7 dan latihan.
 
-💡 Pilih alat sesuai yang Anda punya: **Containerlab** (paling dekat perangkat nyata, butuh image), **GNS3/EVE-NG**, **Packet Tracer** (cukup untuk bagian Cisco), atau **namespace Linux + FRR + RouterOS CHR**. Yang penting topologinya mewakili, bukan alatnya megah.
+> [!TIP]
+> Pilih alat sesuai yang Anda punya: **Containerlab** (paling dekat perangkat nyata, butuh image), **GNS3/EVE-NG**, **Packet Tracer** (cukup untuk bagian Cisco), atau **namespace Linux + FRR + RouterOS CHR**. Yang penting topologinya mewakili, bukan alatnya megah.
 
 ---
 
@@ -98,7 +100,7 @@ logging trap informational
 snmp-server group <<SNMPv3, bukan community>>
 ```
 
-### 3.2 Inti HQ (Cisco) — FHRP + OSPF
+### 3.2 Inti HQ (Cisco): FHRP + OSPF
 
 ```cisco
 interface Vlan10
@@ -210,7 +212,8 @@ ping -i 0.2 -D 10.64.50.10 | tee /tmp/uji-t12.log
 grep -c 'icmp_seq' /tmp/uji-t12.log
 ```
 
-⚠️ Uji yang FAIL adalah hasil yang **berharga**, bukan kegagalan Anda. Catat apa adanya, cari sebabnya, perbaiki, uji ulang, dan simpan kedua catatannya. Riwayat "FAIL → perbaikan → PASS" justru yang membuat portofolio Anda dipercaya.
+> [!WARNING]
+> Uji yang FAIL adalah hasil yang **berharga**, bukan kegagalan Anda. Catat apa adanya, cari sebabnya, perbaiki, uji ulang, dan simpan kedua catatannya. Riwayat "FAIL → perbaikan → PASS" justru yang membuat portofolio Anda dipercaya.
 
 ---
 
@@ -234,7 +237,7 @@ grep -c 'icmp_seq' /tmp/uji-t12.log
 
 ---
 
-## 7. Latihan — Membaca Uji
+## 7. Latihan: Membaca Uji
 
 1. Uji T10 mensyaratkan rute TPI muncul sebagai satu ringkasan di tabel rute inti. Kalau uji ini FAIL dan yang muncul 20 baris, sebutkan tiga penyebab yang mungkin dan gejala apa yang akan muncul di kemudian hari bila dibiarkan.
 2. Pada T12 Anda mencatat 6 paket hilang pada interval 200 ms, tetapi pada T14 (failover WAN) Anda mencatat 140 paket hilang. Jelaskan mengapa besaran keduanya berbeda jauh secara wajar, dan tentukan angka mana yang **tidak** boleh Anda terima beserta alasan bisnisnya.
@@ -270,8 +273,8 @@ grep -c 'icmp_seq' /tmp/uji-t12.log
 |---|---|---|
 | Topologi lab mewakili semua pola | 20 | Inti berpasangan, akses, zona OT, dua WAN, dua TPI di balik NAT, server Linux |
 | Konfigurasi lengkap & aman | 35 | Semua `<<...>>` terisi, konsisten dengan Babak 3, tanpa telnet/community/password bersama |
-| Uji positif T01–T23 | 40 | Setiap uji punya bukti keluaran perintah |
-| Uji negatif T24–T29 | 30 | Semua benar-benar gagal seperti diharapkan — ini yang paling sering luput |
+| Uji positif T01-T23 | 40 | Setiap uji punya bukti keluaran perintah |
+| Uji negatif T24-T29 | 30 | Semua benar-benar gagal seperti diharapkan — ini yang paling sering luput |
 | Uji waktu terukur | 15 | Angka nyata untuk T12, T14, T18, dengan cara ukur yang dicantumkan |
 | Riwayat FAIL → perbaikan → PASS | 10 | Ada catatan kegagalan dan bagaimana diperbaiki |
 
@@ -288,4 +291,4 @@ grep -c 'icmp_seq' /tmp/uji-t12.log
 
 ---
 
-**Berikutnya:** `20-proyek-akhir/06-babak-5-udara-dan-gudang-beku.md` — hitung sinyal radio di ruangan bersuhu −25 °C penuh rak logam.
+**Berikutnya:** `20-proyek-akhir/06-babak-5-udara-dan-gudang-beku.md`. Hitung sinyal radio di ruangan bersuhu −25 °C penuh rak logam.

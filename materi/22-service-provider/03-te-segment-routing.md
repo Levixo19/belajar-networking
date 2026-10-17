@@ -1,4 +1,4 @@
-# 22.3 — Traffic Engineering dan Segment Routing
+# 22.3 Traffic Engineering dan Segment Routing
 
 > **Prasyarat:** `07-routing-lanjutan/10-isis` (IGP backbone, LSP, TLV), `22-service-provider/01-mpls-ldp` (label, push/swap/pop, PHP, LDP), `22-service-provider/02-mpls-l3vpn` (VRF, RD/RT, VPNv4, untuk bagian SRv6 L3VPN)
 > **Tujuan:** Anda bisa menjelaskan kenapa jalur terpendek IGP tidak selalu jalur terbaik, memahami cara kerja RSVP-TE dan FRR facility backup, menguasai Segment Routing (jenis SID, SRGB/SRLB, ekstensi IS-IS/OSPF), merencanakan migrasi LDP ke SR, menghitung dan memverifikasi proteksi TI-LFA, membangun SR-TE policy berbasis color, memahami Flex-Algo, PCE/PCEP, dan BGP-LS, membaca alamat SRv6 dan uSID (RFC 9800), mengonfigurasinya di IOS XR, Junos, FRRouting, dan SR Linux, serta memutuskan kapan SR-MPLS atau SRv6 cocok untuk operator Anda.
@@ -187,7 +187,8 @@ set protocols mpls label-switched-path KE-R3 link-protection
 ```
 Di Junos, `link-protection` (atau `node-link-protection`) pada LSP meminta facility backup, sedangkan `fast-reroute` meminta one-to-one detour. Verifikasi dengan `show mpls lsp extensive`, `show rsvp session detail`, dan `show rsvp interface`.
 
-⚠️ **FRRouting tidak mengimplementasikan RSVP-TE.** Tidak ada daemon RSVP di FRR, sehingga bagian ini tidak bisa dipraktikkan dengan FRR. Alternatif gratis: MikroTik CHR (RouterOS v7 punya RSVP-TE, tetapi menurut manualnya belum ada fast reroute, lihat `22-service-provider/01-mpls-ldp` §11) atau Cisco CML Free/XRd bila Anda punya akses lisensinya.
+> [!WARNING]
+> **FRRouting tidak mengimplementasikan RSVP-TE.** Tidak ada daemon RSVP di FRR, sehingga bagian ini tidak bisa dipraktikkan dengan FRR. Alternatif gratis: MikroTik CHR (RouterOS v7 punya RSVP-TE, tetapi menurut manualnya belum ada fast reroute, lihat `22-service-provider/01-mpls-ldp` §11) atau Cisco CML Free/XRd bila Anda punya akses lisensinya.
 
 ---
 
@@ -281,7 +282,8 @@ R1 mengirim paket untuk R3 (index 3) lewat R5:
 
 Secara teknis ini sah (RFC 8402 mengizinkan SRGB berbeda), tetapi operasinya menyiksa: label untuk node yang sama berubah di setiap hop, troubleshooting lebih sulit, dan anycast SID tidak bisa dipakai. **Praktik terbaik: SRGB seragam di seluruh domain.** Dengan SRGB seragam, label 16003 berarti "R3" di mana pun, dan operasi CONTINUE menjadi swap 16003 ke 16003.
 
-⚠️ **SRGB harus tidak bertabrakan dengan label dinamis.** LDP, BGP-LU, dan VPN memakai label dari rentang dinamis. Jika SRGB menimpa rentang itu, router menolak SRGB atau label bentrok. Default IOS XR, misalnya, memisahkan SRGB 16000-23999 dari label dinamis yang dimulai di 24000. Saat memperbesar SRGB, periksa batas platform dan rencanakan karena perubahan SRGB biasanya mengganggu forwarding.
+> [!WARNING]
+> **SRGB harus tidak bertabrakan dengan label dinamis.** LDP, BGP-LU, dan VPN memakai label dari rentang dinamis. Jika SRGB menimpa rentang itu, router menolak SRGB atau label bentrok. Default IOS XR, misalnya, memisahkan SRGB 16000-23999 dari label dinamis yang dimulai di 24000. Saat memperbesar SRGB, periksa batas platform dan rencanakan karena perubahan SRGB biasanya mengganggu forwarding.
 
 ### 4.3 SRLB
 
@@ -450,7 +452,8 @@ router ospf
  fast-reroute ti-lfa                     ← dokumentasi FRR: baru untuk interface P2P
 ```
 
-⚠️ FRR memakai dataplane MPLS **kernel Linux**. Tanpa `modprobe mpls_router mpls_iptunnel` di host dan `net.mpls.platform_labels` di setiap namespace, isisd tetap mengiklankan SID tetapi zebra gagal memasang label. Lab di §14 mengurus ini lewat skrip start.
+> [!WARNING]
+> FRR memakai dataplane MPLS **kernel Linux**. Tanpa `modprobe mpls_router mpls_iptunnel` di host dan `net.mpls.platform_labels` di setiap namespace, isisd tetap mengiklankan SID tetapi zebra gagal memasang label. Lab di §14 mengurus ini lewat skrip start.
 
 ### Nokia SR Linux
 
@@ -465,7 +468,8 @@ set / network-instance default protocols isis instance CORE segment-routing mpls
 set / network-instance default protocols isis instance CORE interface system0.0 segment-routing mpls ipv4-node-sid index 1
 ```
 
-⚠️ Menurut catatan proyek netlab, SR-MPLS di SR Linux hanya didukung pada platform tertentu (7250 IXR dan 7730 SXR), bukan pada tipe 7220 yang menjadi default container. Konfigurasi ini **belum diverifikasi** di lab modul ini. Periksa dokumentasi rilis SR Linux Anda sebelum memakainya.
+> [!WARNING]
+> Menurut catatan proyek netlab, SR-MPLS di SR Linux hanya didukung pada platform tertentu (7250 IXR dan 7730 SXR), bukan pada tipe 7220 yang menjadi default container. Konfigurasi ini **belum diverifikasi** di lab modul ini. Periksa dokumentasi rilis SR Linux Anda sebelum memakainya.
 
 ---
 
@@ -522,7 +526,8 @@ Mapping server **hanya mengiklankan** pemetaan. Ia tidak berada di jalur data. R
 
 Penjahitan ini otomatis terjadi di router yang menjalankan keduanya: LFIB-nya punya entri masuk dari satu dunia dan entri keluar ke dunia lain untuk FEC yang sama.
 
-💡 **Bonus migrasi:** TI-LFA bisa melindungi trafik yang masih berbasis LDP juga, asalkan router PLR dan jalur perbaikannya mendukung SR. Banyak operator mengaktifkan SR hanya untuk mendapatkan TI-LFA, jauh sebelum LDP dimatikan.
+> [!TIP]
+> **Bonus migrasi:** TI-LFA bisa melindungi trafik yang masih berbasis LDP juga, asalkan router PLR dan jalur perbaikannya mendukung SR. Banyak operator mengaktifkan SR hanya untuk mendapatkan TI-LFA, jauh sebelum LDP dimatikan.
 
 Pada saat penulisan, dokumentasi isisd FRR tidak memuat perintah mapping server, sehingga bagian ini tidak dipraktikkan di lab.
 
@@ -627,7 +632,8 @@ Jalur utama: langsung ke r2 (implicit-null, karena r1 adalah penultimate hop). J
 | Node protection | Seluruh node tetangga | Lebih aman bila router tetangga yang mati, tetapi cakupannya bisa lebih rendah |
 | SRLG protection | Semua link yang berbagi risiko (duct, kabel laut, perangkat transmisi yang sama) | Butuh SRLG dikonfigurasi dengan benar di IGP |
 
-💡 **SRLG sangat relevan di Indonesia.** Dua "link berbeda" antarpulau sering menumpang kabel laut atau sistem transmisi yang sama. Tanpa SRLG, TI-LFA bisa memilih backup yang ikut putus bersama link utama.
+> [!TIP]
+> **SRLG sangat relevan di Indonesia.** Dua "link berbeda" antarpulau sering menumpang kabel laut atau sistem transmisi yang sama. Tanpa SRLG, TI-LFA bisa memilih backup yang ikut putus bersama link utama.
 
 ### 8.5 Microloop
 
@@ -679,7 +685,8 @@ interface eth2
 ```
 `link-fallback` meminta FRR memakai proteksi link untuk tujuan yang tidak bisa dilindungi secara node. Verifikasi: `show isis route backup`, `show isis fast-reroute summary`, `show ip route <prefix>` (baris berawalan `b`), `show mpls table <label>`.
 
-⚠️ **Batas FRR di kernel Linux.** FRR menghitung backup TI-LFA dan menyimpannya di RIB zebra (terlihat sebagai `backup 0` dan baris `b`), tetapi kernel Linux tidak punya konsep backup next-hop di FIB. `ip route` di lab hanya menampilkan jalur utama. Saat link putus, pemulihan di lab terjadi karena isisd langsung bereaksi terhadap interface down dan menjalankan SPF, yang di container sangat cepat. Ini **bukan** perlindungan FIB tingkat hardware seperti di router fisik. Konsep, perhitungan, dan label stack-nya sama, tetapi angka waktu pemulihan di lab tidak boleh dipakai sebagai patokan perangkat produksi.
+> [!WARNING]
+> **Batas FRR di kernel Linux.** FRR menghitung backup TI-LFA dan menyimpannya di RIB zebra (terlihat sebagai `backup 0` dan baris `b`), tetapi kernel Linux tidak punya konsep backup next-hop di FIB. `ip route` di lab hanya menampilkan jalur utama. Saat link putus, pemulihan di lab terjadi karena isisd langsung bereaksi terhadap interface down dan menjalankan SPF, yang di container sangat cepat. Ini **bukan** perlindungan FIB tingkat hardware seperti di router fisik. Konsep, perhitungan, dan label stack-nya sama, tetapi angka waktu pemulihan di lab tidak boleh dipakai sebagai patokan perangkat produksi.
 
 ---
 
@@ -1400,7 +1407,8 @@ Hasil yang diharapkan (dari uji penulis):
 
 Hanya satu paket (sekitar 10 ms) yang hilang. Setelah konvergensi, r2 dicapai lewat r5-r4-r3 dengan **satu** label 16002. Itulah jalur pasca-konvergensi yang sebelumnya sudah diekspresikan TI-LFA sebagai `[16003, 16002]`. Ingat batasan di §8.6: di container, pemulihan secepat ini terjadi karena SPF berjalan langsung saat interface down, bukan karena backup sudah ada di FIB kernel. Skrip menyalakan kembali eth1 di akhir.
 
-💡 Traceroute antar-loopback di lab menampilkan `*` untuk hop di tengah. Kernel Linux membuang paket MPLS yang TTL-nya habis tanpa mengirim ICMP Time Exceeded, sehingga router transit tidak terlihat. Ini perilaku dataplane Linux, bukan tanda kerusakan.
+> [!TIP]
+> Traceroute antar-loopback di lab menampilkan `*` untuk hop di tengah. Kernel Linux membuang paket MPLS yang TTL-nya habis tanpa mengirim ICMP Time Exceeded, sehingga router transit tidak terlihat. Ini perilaku dataplane Linux, bukan tanda kerusakan.
 
 ### Langkah 5: SR Policy dan steering berbasis color
 
@@ -1433,7 +1441,8 @@ docker exec clab-sr-mpls-r1 ping -c 2 -I 10.0.0.1 192.0.2.3
 
 Dua label terlihat, dengan bit **S** (bottom of stack) pada label kedua. Coba juga tangkap di eth1 milik r4: Anda hanya akan melihat label 16003, karena r5 sudah melakukan PHP untuk 16004.
 
-⚠️ **Catatan FRR 10.4.1:** perintah `name` di bawah `policy` membuat pathd abort saat `frr.conf` dimuat (penulis mengamatinya di lab ini). Karena itu konfigurasi lab tidak memakai `name` untuk policy. Nama candidate path (`name EKSPLISIT`) aman. Selain itu, BSID harus berada di luar SRGB dan SRLB. Penulis mencoba BSID 15100 (di dalam SRLB), dan pathd menolaknya dengan "failed to allocate resource".
+> [!WARNING]
+> **Catatan FRR 10.4.1:** perintah `name` di bawah `policy` membuat pathd abort saat `frr.conf` dimuat (penulis mengamatinya di lab ini). Karena itu konfigurasi lab tidak memakai `name` untuk policy. Nama candidate path (`name EKSPLISIT`) aman. Selain itu, BSID harus berada di luar SRGB dan SRLB. Penulis mencoba BSID 15100 (di dalam SRLB), dan pathd menolaknya dengan "failed to allocate resource".
 
 ### Langkah 6: bersihkan
 
@@ -1773,4 +1782,4 @@ Pada Junos, pastikan nama perintah sesuai rilis Anda dengan `show ?` atau dokume
 
 ---
 
-**Berikutnya:** `22-service-provider/04-l2vpn-carrier-ethernet` — VPWS, VPLS, EVPN, dan Carrier Ethernet: menyambung layer 2 pelanggan di atas backbone MPLS dan SR.
+**Berikutnya:** `22-service-provider/04-l2vpn-carrier-ethernet`. VPWS, VPLS, EVPN, dan Carrier Ethernet: menyambung layer 2 pelanggan di atas backbone MPLS dan SR.

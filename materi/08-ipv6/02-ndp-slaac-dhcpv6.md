@@ -1,11 +1,11 @@
-# 08.2 — NDP, SLAAC, dan DHCPv6
+# 08.2 NDP, SLAAC, dan DHCPv6
 
 > **Prasyarat:** `08-ipv6/01`, `06-aplikasi/02`
 > **Tujuan:** Anda paham bagaimana host IPv6 menemukan tetangga dan gateway, mengonfigurasi alamatnya sendiri, dan kapan DHCPv6 diperlukan.
 
 ---
 
-## 1. NDP — Neighbor Discovery Protocol
+## 1. NDP (Neighbor Discovery Protocol)
 
 **NDP** [RFC 4861] menggantikan ARP, ICMP Router Discovery, dan ICMP Redirect dari IPv4 — sekaligus menambahkan fungsi baru. Semuanya berjalan di atas **ICMPv6**.
 
@@ -34,7 +34,7 @@
 
 ---
 
-## 2. Address Resolution — Pengganti ARP
+## 2. Address Resolution: Pengganti ARP
 
 ```
 Host A (2001:db8::1) ingin mengirim ke Host B (2001:db8::a1b2:c3d4)
@@ -63,7 +63,8 @@ Host A (2001:db8::1) ingin mengirim ke Host B (2001:db8::a1b2:c3d4)
 | Layer | Protokol terpisah (EtherType 0x0806) | Bagian dari ICMPv6 → bisa diamankan dengan IPsec |
 | Autentikasi | Tidak ada | **SEND** (RFC 3971) tersedia |
 
-💡 Pada segmen dengan 500 host, satu ARP request mengganggu 500 host. Satu NS hanya mengganggu host yang 24 bit terakhir alamatnya cocok — biasanya hanya 1.
+> [!TIP]
+> Pada segmen dengan 500 host, satu ARP request mengganggu 500 host. Satu NS hanya mengganggu host yang 24 bit terakhir alamatnya cocok — biasanya hanya 1.
 
 ### Neighbor Cache
 
@@ -90,7 +91,7 @@ FE80::211:22FF:FE33:4455 0 0011.2233.4455 REACH Gi0/0
 
 ---
 
-## 3. DAD — Duplicate Address Detection
+## 3. DAD (Duplicate Address Detection)
 
 Sebelum memakai alamat apa pun (termasuk link-local), host **wajib** memverifikasi bahwa alamat itu belum dipakai.
 
@@ -104,9 +105,11 @@ Sebelum memakai alamat apa pun (termasuk link-local), host **wajib** memverifika
    Tidak ada?      → alamat AMAN → berstatus PREFERRED ✅
 ```
 
-⚠️ **DAD dilakukan untuk SETIAP alamat**, termasuk yang dibentuk lewat SLAAC dan yang dikonfigurasi manual.
+> [!WARNING]
+> **DAD dilakukan untuk SETIAP alamat**, termasuk yang dibentuk lewat SLAAC dan yang dikonfigurasi manual.
 
-⚠️ **Kalau alamat link-local duplikat, IPv6 pada interface itu DINONAKTIFKAN SEPENUHNYA.** Ini bisa terjadi kalau dua perangkat dikonfigurasi manual dengan `fe80::1` di segmen yang sama.
+> [!WARNING]
+> **Kalau alamat link-local duplikat, IPv6 pada interface itu DINONAKTIFKAN SEPENUHNYA.** Ini bisa terjadi kalau dua perangkat dikonfigurasi manual dengan `fe80::1` di segmen yang sama.
 
 ```
 %IPV6-4-DUPLICATE: Duplicate address FE80::1 on GigabitEthernet0/0
@@ -121,7 +124,7 @@ $ ip -6 addr show eth0
 
 ---
 
-## 4. Router Advertisement — Jantung Konfigurasi IPv6
+## 4. Router Advertisement: Jantung Konfigurasi IPv6
 
 Router mengirim RA secara berkala (default setiap 200 detik pada Cisco) dan sebagai jawaban atas RS.
 
@@ -138,7 +141,7 @@ Router mengirim RA secara berkala (default setiap 200 detik pada Cisco) dan seba
 - DNSSL (search domain)
 ```
 
-### Flag M dan O — Menentukan Perilaku Host
+### Flag M dan O: Menentukan Perilaku Host
 
 Ini **konsep terpenting** dalam konfigurasi IPv6.
 
@@ -153,7 +156,7 @@ R1(config-if)# ipv6 nd managed-config-flag       ← set M=1
 R1(config-if)# ipv6 nd other-config-flag         ← set O=1
 ```
 
-### ⚠️ Aturan yang WAJIB diingat
+### Aturan yang WAJIB diingat
 
 > **Default gateway IPv6 SELALU berasal dari Router Advertisement — TIDAK PERNAH dari DHCPv6.**
 
@@ -182,11 +185,12 @@ R1(config-if)# ipv6 nd ra dns server 2001:4860:4860::8888 infinite
 R1(config-if)# ipv6 nd ra suppress all
 ```
 
-⚠️ **`ipv6 nd ra suppress` diperlukan pada interface yang menghadap ISP** atau segmen di mana router Anda tidak boleh menjadi gateway.
+> [!WARNING]
+> **`ipv6 nd ra suppress` diperlukan pada interface yang menghadap ISP** atau segmen di mana router Anda tidak boleh menjadi gateway.
 
 ---
 
-## 5. SLAAC — Autokonfigurasi
+## 5. SLAAC (Autokonfigurasi)
 
 Host membentuk alamatnya **sendiri** tanpa server apa pun.
 
@@ -211,7 +215,8 @@ default via fe80::1 dev eth0 proto ra metric 100
               ^^^^^^ link-local, bukan alamat global
 ```
 
-💡 Ini keunggulan desain: gateway tetap bekerja walaupun prefix global berubah (renumbering), karena link-local tidak pernah berubah.
+> [!TIP]
+> Ini keunggulan desain: gateway tetap bekerja walaupun prefix global berubah (renumbering), karena link-local tidak pernah berubah.
 
 ### Prefix Lifetime
 
@@ -225,7 +230,8 @@ preferred < valid:
   → ini yang membuat RENUMBERING mulus
 ```
 
-💡 **Renumbering IPv6 jauh lebih mudah daripada IPv4:** router mengumumkan prefix lama dengan lifetime pendek dan prefix baru dengan lifetime normal. Host memakai keduanya sementara, lalu prefix lama kedaluwarsa dengan sendirinya — tanpa downtime.
+> [!TIP]
+> **Renumbering IPv6 jauh lebih mudah daripada IPv4:** router mengumumkan prefix lama dengan lifetime pendek dan prefix baru dengan lifetime normal. Host memakai keduanya sementara, lalu prefix lama kedaluwarsa dengan sendirinya — tanpa downtime.
 
 ### Kelebihan dan Kekurangan SLAAC
 
@@ -247,7 +253,7 @@ preferred < valid:
 | Identitas klien | MAC address | **DUID** (DHCP Unique Identifier) |
 | Default gateway | Opsi 3 | ❌ **TIDAK ADA — selalu dari RA** |
 | Mode | Selalu stateful | **Stateful** atau **stateless** |
-| Prefix delegation | ❌ | ✅ **IA_PD** |
+| Prefix delegation | Tidak | ✅ **IA_PD** |
 
 ### Alur DHCPv6 (mirip DORA)
 
@@ -271,7 +277,8 @@ Pengenal unik klien yang **tidak berubah** walau NIC diganti atau interface berb
 | **DUID-LL** | Link-layer address saja |
 | **DUID-UUID** | UUID sistem |
 
-⚠️ **DUID bisa menyulitkan reservasi.** Berbeda dari DHCPv4 yang memakai MAC (mudah diketahui dari stiker perangkat), DUID sering harus dibaca dari sistem operasi terlebih dahulu. Beberapa OS juga mengubah DUID setelah instalasi ulang.
+> [!WARNING]
+> **DUID bisa menyulitkan reservasi.** Berbeda dari DHCPv4 yang memakai MAC (mudah diketahui dari stiker perangkat), DUID sering harus dibaca dari sistem operasi terlebih dahulu. Beberapa OS juga mengubah DUID setelah instalasi ulang.
 
 ### Konfigurasi Stateful DHCPv6 (Cisco)
 
@@ -380,7 +387,8 @@ UplinkInterface=wan0
 SubnetId=1
 ```
 
-💡 **PD adalah alasan kuat memakai IPv6 di rumah/kantor kecil** — setiap segmen mendapat prefix publik sendiri tanpa NAT, sehingga semua perangkat dapat dijangkau langsung (dengan firewall yang benar).
+> [!TIP]
+> **PD adalah alasan kuat memakai IPv6 di rumah/kantor kecil** — setiap segmen mendapat prefix publik sendiri tanpa NAT, sehingga semua perangkat dapat dijangkau langsung (dengan firewall yang benar).
 
 ---
 
@@ -396,7 +404,8 @@ Penyerang mengirim RA → host memakainya sebagai gateway
 → MITM sempurna untuk seluruh trafik IPv6
 ```
 
-⚠️ **Sering terjadi TANPA niat jahat:** Windows dengan Internet Connection Sharing, VM dengan bridge yang salah, atau perangkat dengan `net.ipv6.conf.all.forwarding=1` yang tidak sengaja aktif. Ini penyebab gangguan IPv6 yang sangat sering di jaringan kampus.
+> [!WARNING]
+> **Sering terjadi TANPA niat jahat:** Windows dengan Internet Connection Sharing, VM dengan bridge yang salah, atau perangkat dengan `net.ipv6.conf.all.forwarding=1` yang tidak sengaja aktif. Ini penyebab gangguan IPv6 yang sangat sering di jaringan kampus.
 
 **NDP spoofing** — setara ARP spoofing.
 
@@ -434,9 +443,11 @@ R1(config-if)# ipv6 nd cache expire 300
 R1(config)# ipv6 nd cache interface-limit 1024
 ```
 
-💡 **RA Guard adalah kontrol keamanan IPv6 paling penting di access layer** — setara dengan DHCP snooping di IPv4. Terapkan di semua port pengguna.
+> [!TIP]
+> **RA Guard adalah kontrol keamanan IPv6 paling penting di access layer** — setara dengan DHCP snooping di IPv4. Terapkan di semua port pengguna.
 
-⚠️ **RA Guard bisa dilewati** dengan RA yang difragmentasi atau memakai extension header (RFC 7113). Perangkat modern menangani ini, tetapi verifikasi platform Anda.
+> [!WARNING]
+> **RA Guard bisa dilewati** dengan RA yang difragmentasi atau memakai extension header (RFC 7113). Perangkat modern menangani ini, tetapi verifikasi platform Anda.
 
 ---
 
@@ -583,7 +594,8 @@ Ini konfigurasi yang paling sering dipakai untuk pelanggan ISP IPv6.
 /ipv6 address print
 ```
 
-💡 **`from-pool=` dengan `address=::1/64`** adalah cara RouterOS mengambil prefix dari kolam delegasi dan menempelkan bagian host `::1`. Sangat elegan — ketika ISP mengganti prefix, alamat LAN otomatis mengikuti tanpa konfigurasi ulang.
+> [!TIP]
+> **`from-pool=` dengan `address=::1/64`** adalah cara RouterOS mengambil prefix dari kolam delegasi dan menempelkan bagian host `::1`. Sangat elegan — ketika ISP mengganti prefix, alamat LAN otomatis mengikuti tanpa konfigurasi ulang.
 
 ### Keamanan IPv6 (RA Guard setara)
 
@@ -598,7 +610,8 @@ Ini konfigurasi yang paling sering dipakai untuk pelanggan ISP IPv6.
     icmp-options=134 action=drop
 ```
 
-⚠️ **RouterOS tidak punya fitur RA Guard bawaan seperti Cisco.** Anda harus membuatnya sendiri dengan bridge filter. Ini kelemahan nyata untuk jaringan access layer yang besar.
+> [!WARNING]
+> **RouterOS tidak punya fitur RA Guard bawaan seperti Cisco.** Anda harus membuatnya sendiri dengan bridge filter. Ini kelemahan nyata untuk jaringan access layer yang besar.
 
 ### Padanan istilah
 
@@ -616,11 +629,11 @@ Ini konfigurasi yang paling sering dipakai untuk pelanggan ISP IPv6.
 
 ## 10. Ringkasan
 
-- **NDP** (ICMPv6 tipe 133–137) menggantikan ARP, router discovery, dan redirect IPv4.
+- **NDP** (ICMPv6 tipe 133-137) menggantikan ARP, router discovery, dan redirect IPv4.
 - Address resolution memakai **solicited-node multicast** (`ff02::1:ff` + 24 bit terakhir) — jauh lebih efisien daripada broadcast ARP.
 - **DAD** wajib untuk setiap alamat; **link-local duplikat mematikan IPv6 di interface itu**.
 - **RA adalah jantung konfigurasi IPv6.** Flag **M** (alamat dari DHCPv6) dan **O** (opsi lain dari DHCPv6) menentukan perilaku host.
-- ⚠️ **Default gateway SELALU dari RA — DHCPv6 tidak punya opsi router sama sekali.**
+- **Default gateway SELALU dari RA — DHCPv6 tidak punya opsi router sama sekali.**
 - Gateway yang dipasang adalah **alamat link-local router**, bukan alamat global — sehingga tahan terhadap renumbering.
 - **SLAAC**: prefix dari RA + interface ID dibentuk sendiri. Tanpa server, tetapi tanpa catatan alokasi.
 - **DHCPv6**: port **546/547**, multicast `ff02::1:2`, identitas **DUID**, mendukung **prefix delegation (IA_PD)**.
@@ -681,4 +694,4 @@ Ini konfigurasi yang paling sering dipakai untuk pelanggan ISP IPv6.
 
 ---
 
-**Berikutnya:** `08-ipv6/03-routing-transisi-ipv6.md` — routing IPv6 dan strategi migrasi.
+**Berikutnya:** `08-ipv6/03-routing-transisi-ipv6.md`. Routing IPv6 dan strategi migrasi.

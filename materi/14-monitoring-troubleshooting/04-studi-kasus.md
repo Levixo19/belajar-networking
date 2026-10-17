@@ -1,9 +1,10 @@
-# 14.4 — Studi Kasus Troubleshooting Nyata
+# 14.4 Studi Kasus Troubleshooting Nyata
 
 > **Prasyarat:** seluruh Tahap 14, dan konsep dari tahap-tahap sebelumnya
 > **Tujuan:** Anda bisa menerapkan metodologi pada 15 skenario nyata — masing-masing menautkan gejala ke akar penyebab dengan penalaran lengkap.
 
-> 📌 **Cara memakai modul ini:** baca gejalanya, **berhenti dan pikirkan diagnosis Anda sendiri**, baru buka penyelesaiannya. Ini melatih pola pikir, bukan hafalan.
+> > [!NOTE]
+> > **Cara memakai modul ini:** baca gejalanya, **berhenti dan pikirkan diagnosis Anda sendiri**, baru buka penyelesaiannya. Ini melatih pola pikir, bukan hafalan.
 
 ---
 
@@ -115,7 +116,8 @@ $ resolvectl status
 - Sisi **full duplex**: banyak **CRC/FCS errors**, **runts**.
 - Sisi **half duplex**: banyak **collisions**, terutama **late collisions**.
 
-⚠️ **Late collision adalah tanda paling khas** duplex mismatch (atau kabel terlalu panjang).
+> [!WARNING]
+> **Late collision adalah tanda paling khas** duplex mismatch (atau kabel terlalu panjang).
 
 **Solusi:** set **kedua sisi** ke auto-negotiation, atau hard-code **identik** di kedua sisi. Untuk gigabit, auto wajib.
 ```
@@ -260,8 +262,9 @@ $ sudo sysctl -w net.ipv4.tcp_tw_reuse=1
 - Aktifkan **keep-alive/connection pooling** ke backend (jangan buat koneksi baru terus).
 - Tambah IP sumber atau port tujuan backend.
 
-⚠️ Jangan pakai `tcp_tw_recycle` (dihapus dari kernel). Lihat `05-transport/01`, `05-transport/02`.
-</details>
+> [!WARNING]
+> Jangan pakai `tcp_tw_recycle` (dihapus dari kernel). Lihat `05-transport/01`, `05-transport/02`.
+> </details>
 
 ---
 
@@ -310,8 +313,9 @@ notAfter=... (tanggal lampau)
 SW1(config)# vlan 30
 SW1(config-if)# switchport trunk allowed vlan add 30
 ```
-⚠️ Ingat: `switchport trunk allowed vlan 30` **menimpa** daftar — pakai `add`. Lihat `03-data-link/03`.
-</details>
+> [!WARNING]
+> Ingat: `switchport trunk allowed vlan 30` **menimpa** daftar — pakai `add`. Lihat `03-data-link/03`.
+> </details>
 
 ---
 
@@ -459,4 +463,4 @@ Untuk setiap gejala, tentukan diagnosis dan langkah pertama Anda:
 
 ---
 
-**Berikutnya:** `15-otomasi/01-mengapa-otomasi.md` — memasuki dunia otomasi jaringan.
+**Berikutnya:** `15-otomasi/01-mengapa-otomasi.md`. Memasuki dunia otomasi jaringan.

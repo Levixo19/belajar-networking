@@ -1,11 +1,11 @@
-# 03.6 — CDP, LLDP, dan Protokol Layer 2 Lainnya
+# 03.6 CDP, LLDP, dan Protokol Layer 2 Lainnya
 
 > **Prasyarat:** `03-data-link/01`–`05`
 > **Tujuan:** Anda bisa memetakan topologi jaringan dengan CDP/LLDP, memahami risiko keamanannya, dan mengenal protokol L2 warisan yang masih Anda temui.
 
 ---
 
-## 1. CDP — Cisco Discovery Protocol
+## 1. CDP (Cisco Discovery Protocol)
 
 Protocol proprietary Cisco yang membuat perangkat saling mengumumkan identitas ke tetangga langsungnya.
 
@@ -58,7 +58,8 @@ R1           Gig 0/24        171      R S I       ISR4331    Gig 0/0/0
 PHONE-1042   Gig 0/8         162      H P M       IP Phone   Port 1
 ```
 
-💡 **Menjalankan `show cdp neighbors` di setiap switch = peta topologi lengkap.** Ini cara tercepat mendokumentasikan jaringan yang tidak terdokumentasi. Otomasinya dibahas di `15-otomasi/03`.
+> [!TIP]
+> **Menjalankan `show cdp neighbors` di setiap switch = peta topologi lengkap.** Ini cara tercepat mendokumentasikan jaringan yang tidak terdokumentasi. Otomasinya dibahas di `15-otomasi/03`.
 
 ### Konfigurasi
 
@@ -80,7 +81,8 @@ SW1# clear cdp table
 
 ### Risiko keamanan
 
-⚠️ CDP membocorkan informasi berharga bagi penyerang: model perangkat, versi IOS (→ mencari exploit yang diketahui), IP manajemen, native VLAN, topologi.
+> [!WARNING]
+> CDP membocorkan informasi berharga bagi penyerang: model perangkat, versi IOS (→ mencari exploit yang diketahui), IP manajemen, native VLAN, topologi.
 
 **Praktik yang benar:**
 ```
@@ -93,11 +95,12 @@ SW1(config)# interface gi0/24
 SW1(config-if)# cdp enable
 ```
 
-⚠️ **Tetapi hati-hati:** telepon IP Cisco memakai CDP untuk mengetahui voice VLAN dan menegosiasikan daya PoE. Mematikan CDP di port telepon akan membuat telepon tidak berfungsi. Untuk port telepon, gunakan LLDP-MED sebagai pengganti, atau biarkan CDP aktif hanya di port tersebut.
+> [!WARNING]
+> **Tetapi hati-hati:** telepon IP Cisco memakai CDP untuk mengetahui voice VLAN dan menegosiasikan daya PoE. Mematikan CDP di port telepon akan membuat telepon tidak berfungsi. Untuk port telepon, gunakan LLDP-MED sebagai pengganti, atau biarkan CDP aktif hanya di port tersebut.
 
 ---
 
-## 2. LLDP — Link Layer Discovery Protocol (IEEE 802.1AB)
+## 2. LLDP (Link Layer Discovery Protocol (IEEE 802.1AB))
 
 Setara CDP tetapi **standar terbuka** — bekerja antar-vendor.
 
@@ -121,7 +124,8 @@ SW1# show lldp neighbors detail
 SW1# show lldp interface
 ```
 
-⚠️ Perhatikan `lldp transmit` dan `lldp receive` terpisah — Anda bisa mengaktifkan hanya salah satu. Ini berguna untuk keamanan: terima informasi tetangga tanpa mengungkap milik Anda.
+> [!WARNING]
+> Perhatikan `lldp transmit` dan `lldp receive` terpisah — Anda bisa mengaktifkan hanya salah satu. Ini berguna untuk keamanan: terima informasi tetangga tanpa mengungkap milik Anda.
 
 ### LLDP-MED
 
@@ -148,7 +152,8 @@ SW1(config-if)# switchport voice vlan 110
 | MAC multicast | `01:00:0C:CC:CC:CC` | `01:80:C2:00:00:0E` |
 | Ekstensi endpoint | CDP untuk telepon Cisco | **LLDP-MED** (multi-vendor) |
 
-💡 **Praktik terbaik:** aktifkan **keduanya** di jaringan campuran. CDP untuk perangkat Cisco lama dan telepon Cisco, LLDP untuk yang lain. Matikan keduanya di port yang menghadap pengguna dan pihak eksternal.
+> [!TIP]
+> **Praktik terbaik:** aktifkan **keduanya** di jaringan campuran. CDP untuk perangkat Cisco lama dan telepon Cisco, LLDP untuk yang lain. Matikan keduanya di port yang menghadap pengguna dan pihak eksternal.
 
 ### LLDP di Linux
 
@@ -171,11 +176,12 @@ Interface: eth0, via: LLDP
 $ lldpcli show neighbors detail
 ```
 
-💡 **Sangat berguna untuk server:** administrator server bisa langsung tahu switch dan port mana yang terhubung tanpa menelusuri kabel atau meminta bantuan tim jaringan.
+> [!TIP]
+> **Sangat berguna untuk server:** administrator server bisa langsung tahu switch dan port mana yang terhubung tanpa menelusuri kabel atau meminta bantuan tim jaringan.
 
 ---
 
-## 3. PPP — Point-to-Point Protocol
+## 3. PPP (Point-to-Point Protocol)
 
 Protokol layer 2 untuk link point-to-point (serial WAN, DSL, dial-up). Masih relevan karena dipakai di PPPoE untuk koneksi broadband.
 
@@ -240,7 +246,8 @@ PPP di atas Ethernet — dipakai oleh ISP DSL/fiber untuk autentikasi pelanggan 
 [PC] ── Ethernet ── [Router] ── PPPoE ── [ISP BRAS]
 ```
 
-⚠️ **PPPoE menambah 8 byte overhead** → MTU efektif turun dari 1500 ke **1492**. Ini menyebabkan masalah MTU klasik: sebagian situs terbuka, sebagian menggantung. Solusinya **MSS clamping**:
+> [!WARNING]
+> **PPPoE menambah 8 byte overhead** → MTU efektif turun dari 1500 ke **1492**. Ini menyebabkan masalah MTU klasik: sebagian situs terbuka, sebagian menggantung. Solusinya **MSS clamping**:
 ```
 R1(config-if)# ip tcp adjust-mss 1452
 ```
@@ -250,7 +257,8 @@ R1(config-if)# ip tcp adjust-mss 1452
 
 Protokol serial sederhana. **Cisco HDLC** adalah varian proprietary yang menambahkan field protokol (agar bisa membawa banyak protokol L3). Default encapsulation pada interface serial Cisco.
 
-⚠️ Cisco HDLC tidak interoperable dengan HDLC vendor lain. Untuk link antar-vendor, gunakan **PPP**.
+> [!WARNING]
+> Cisco HDLC tidak interoperable dengan HDLC vendor lain. Untuk link antar-vendor, gunakan **PPP**.
 
 ---
 
@@ -283,7 +291,7 @@ Anda tidak akan mengonfigurasinya di jaringan baru, tetapi mungkin menemuinya di
 
 ## 5. Protokol L2 Lain yang Perlu Dikenal
 
-### 802.1X — Port-Based Network Access Control
+### 802.1X (Port-Based Network Access Control)
 
 Autentikasi di layer 2 sebelum port diizinkan melewatkan trafik.
 
@@ -298,7 +306,7 @@ Autentikasi di layer 2 sebelum port diizinkan melewatkan trafik.
 
 Dibahas lengkap di `12-keamanan/04`.
 
-### 802.1AE — MACsec
+### 802.1AE (MACsec)
 
 Enkripsi di layer 2, hop-by-hop antar-perangkat.
 
@@ -307,12 +315,12 @@ Enkripsi di layer 2, hop-by-hop antar-perangkat.
 - Berbeda dari IPsec (L3, end-to-end) — MACsec hanya melindungi satu link
 
 ### LLDP-MED, CDP untuk telepon
-Sudah dibahas di §1–2.
+Sudah dibahas di §1-2.
 
 ### Slow Protocols (802.3ad Annex)
 MAC `01:80:C2:00:00:02`, EtherType `0x8809`. Membawa LACP dan Marker Protocol.
 
-### VXLAN — Pengantar
+### VXLAN (Pengantar)
 
 Enkapsulasi frame Ethernet (L2) ke dalam UDP (L4) sehingga bisa dibawa melintasi jaringan IP mana pun.
 
@@ -405,7 +413,8 @@ Address    MAC-Address       Identity      Version    Board     Interface
 /ip neighbor discovery-settings set discover-interface-list=LAN
 ```
 
-⚠️ **MNDP/CDP/LLDP membocorkan informasi berharga** — hostname, versi RouterOS (untuk mencari exploit), model perangkat, alamat IP. **Selalu batasi ke interface internal saja.**
+> [!WARNING]
+> **MNDP/CDP/LLDP membocorkan informasi berharga** — hostname, versi RouterOS (untuk mencari exploit), model perangkat, alamat IP. **Selalu batasi ke interface internal saja.**
 
 ### PPPoE
 
@@ -438,15 +447,17 @@ MikroTik sangat sering dipakai sebagai PPPoE server (ISP/RT-RW Net) maupun clien
 /interface pppoe-server print
 ```
 
-⚠️ **PPPoE mengurangi MTU menjadi 1492.** Aktifkan MSS clamping agar transfer besar tidak menggantung:
+> [!WARNING]
+> **PPPoE mengurangi MTU menjadi 1492.** Aktifkan MSS clamping agar transfer besar tidak menggantung:
 ```
 /ip firewall mangle add chain=forward protocol=tcp tcp-flags=syn \
     action=change-mss new-mss=clamp-to-pmtu passthrough=yes
 ```
 
-💡 **`rate-limit`** di profile PPP memberi pembatasan bandwidth per pelanggan secara otomatis — inilah alasan MikroTik dominan untuk RT/RW-Net dan ISP kecil di Indonesia. Format: `rx/tx` atau lengkap `rx/tx rx-burst/tx-burst rx-burst-threshold/tx-burst-threshold rx-burst-time/tx-burst-time priority rx-min/tx-min`.
+> [!TIP]
+> **`rate-limit`** di profile PPP memberi pembatasan bandwidth per pelanggan secara otomatis — inilah alasan MikroTik dominan untuk RT/RW-Net dan ISP kecil di Indonesia. Format: `rx/tx` atau lengkap `rx/tx rx-burst/tx-burst rx-burst-threshold/tx-burst-threshold rx-burst-time/tx-burst-time priority rx-min/tx-min`.
 
-### EoIP — Ethernet over IP
+### EoIP: Ethernet over IP
 
 Tunnel layer 2 khas MikroTik yang membawa frame Ethernet penuh di atas IP.
 
@@ -462,7 +473,8 @@ Tunnel layer 2 khas MikroTik yang membawa frame Ethernet penuh di atas IP.
 
 Hasilnya: dua LAN yang terpisah secara geografis menjadi **satu broadcast domain**.
 
-⚠️ **EoIP memperluas domain broadcast dan STP lintas WAN** — satu masalah di satu sisi bisa melumpuhkan sisi lain. Gunakan dengan sangat hati-hati, dan **selalu di dalam tunnel terenkripsi** (IPsec atau WireGuard) karena EoIP sendiri tidak terenkripsi.
+> [!WARNING]
+> **EoIP memperluas domain broadcast dan STP lintas WAN** — satu masalah di satu sisi bisa melumpuhkan sisi lain. Gunakan dengan sangat hati-hati, dan **selalu di dalam tunnel terenkripsi** (IPsec atau WireGuard) karena EoIP sendiri tidak terenkripsi.
 
 ```
 # EoIP dengan IPsec
@@ -535,4 +547,4 @@ Hasilnya: dua LAN yang terpisah secara geografis menjadi **satu broadcast domain
 
 ---
 
-**Berikutnya:** `04-network-layer/01-ipv4.md` — masuk ke Layer 3, jantung internet.
+**Berikutnya:** `04-network-layer/01-ipv4.md`. Masuk ke Layer 3, jantung internet.

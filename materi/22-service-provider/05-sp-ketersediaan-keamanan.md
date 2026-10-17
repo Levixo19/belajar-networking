@@ -1,4 +1,4 @@
-# 22.5 — Ketersediaan dan Keamanan Jaringan Service Provider
+# 22.5 Ketersediaan dan Keamanan Jaringan Service Provider
 
 > **Prasyarat:** `22-service-provider/01-mpls-ldp`, `22-service-provider/03-te-segment-routing` (FRR, TI-LFA), `22-service-provider/04-l2vpn-carrier-ethernet`, `07-routing-lanjutan/06-bgp`, `07-routing-lanjutan/10-isis`, `12-keamanan/03-serangan-l3-l7`, `12-keamanan/05-hardening-zero-trust` (dasar CoPP)
 > **Tujuan:** Anda bisa menyusun anggaran konvergensi untuk jaringan operator, memilih dan mengonfigurasi GR/NSF/NSR, BFD, BGP PIC, dan Add-Path dengan alasan yang jelas, melindungi control plane (CoPP, LPTS, filter lo0, iACL, uRPF, GTSM, TCP-AO), menanggapi DDoS di tepi operator, serta menjalankan pemeliharaan dengan cost-out yang tidak memutus pelanggan.
@@ -62,7 +62,8 @@ Sebuah operator menetapkan target berikut untuk core-nya. Angka di bawah adalah 
 | Sesi eBGP ke upstream mati karena router upstream hang | BFD eBGP + BGP PIC edge di PE | Sekitar 1 detik |
 | Restart proses BGP di PE (bug, upgrade) | NSR (tidak ada yang tahu) atau GR (tetangga mempertahankan rute) | Nol kehilangan trafik |
 
-💡 **Anggaran konvergensi adalah dokumen desain, bukan angan-angan.** Tulis target per jenis kejadian, mekanisme yang diandalkan, dan cara mengujinya. Lalu uji di lab dan saat pemeliharaan terjadwal. Angka yang tidak pernah diuji hanyalah harapan.
+> [!TIP]
+> **Anggaran konvergensi adalah dokumen desain, bukan angan-angan.** Tulis target per jenis kejadian, mekanisme yang diandalkan, dan cara mengujinya. Lalu uji di lab dan saat pemeliharaan terjadwal. Angka yang tidak pernah diuji hanyalah harapan.
 
 ---
 
@@ -234,7 +235,8 @@ Local timers:
 
 BFD yang diproses di line card atau ASIC (hardware offload) bisa stabil di 3,3 ms sampai 50 ms. BFD yang diproses di CPU (router software, VM, sebagian besar router kecil termasuk router berbasis Linux) bisa **flap palsu** saat CPU sibuk, misalnya ketika menerima tabel BGP penuh atau saat serangan ke control plane. BFD yang flap lebih buruk daripada BFD yang lambat, karena setiap flap meruntuhkan sesi IGP/BGP.
 
-💡 **Panduan praktis:** mulai dari 300 ms × 3 untuk platform berbasis CPU dan 50 ms × 3 untuk platform dengan BFD di hardware; ukur stabilitas selama beberapa minggu sebelum mengetatkan. Aktifkan **BFD dampening** bila platform mendukung, agar link yang flap tidak terus meruntuhkan protokol.
+> [!TIP]
+> **Panduan praktis:** mulai dari 300 ms × 3 untuk platform berbasis CPU dan 50 ms × 3 untuk platform dengan BFD di hardware; ukur stabilitas selama beberapa minggu sebelum mengetatkan. Aktifkan **BFD dampening** bila platform mendukung, agar link yang flap tidak terus meruntuhkan protokol.
 
 ### Konfigurasi
 
@@ -499,7 +501,8 @@ Ambil skenario konkret: PE3 melayani pelanggan, internet keluar lewat PE1 (upstr
 
 Angka lab berasal dari kontainer di satu laptop dan hanya menunjukkan **urutan besaran**. Router fisik dengan BFD di hardware dan FIB hierarkis bisa jauh lebih cepat; router software di bawah beban bisa lebih lambat.
 
-⚠️ **Jangan lupa arah sebaliknya.** Trafik **masuk** dari internet ke pelanggan juga perlu berpindah. Upstream AS65001 yang hang tidak akan menarik rute Anda; yang menyelamatkan adalah sesi eBGP Anda turun (karena BFD), sehingga rute pelanggan berhenti diiklankan lewat AS65001 dan internet beralih ke AS65002. Kecepatannya bergantung pada konvergensi BGP di internet, yang di luar kendali Anda.
+> [!WARNING]
+> **Jangan lupa arah sebaliknya.** Trafik **masuk** dari internet ke pelanggan juga perlu berpindah. Upstream AS65001 yang hang tidak akan menarik rute Anda; yang menyelamatkan adalah sesi eBGP Anda turun (karena BFD), sehingga rute pelanggan berhenti diiklankan lewat AS65001 dan internet beralih ke AS65002. Kecepatannya bergantung pada konvergensi BGP di internet, yang di luar kendali Anda.
 
 ---
 
@@ -557,7 +560,8 @@ lpts pifib hardware police
  flow bgp known rate 2500                                          ← menyesuaikan rate satu flow
 ```
 
-💡 **Kelebihan LPTS:** proteksi dasar sudah aktif tanpa konfigurasi tambahan, dan peer BGP baru otomatis masuk kelas "known". **Kelemahannya:** operator sering lupa bahwa rate default mungkin terlalu rendah untuk router dengan ribuan sesi BGP (misalnya RR besar atau router di IXP), sehingga flow sah ikut terbuang saat konvergensi masal. Pantau kolom drop di output police.
+> [!TIP]
+> **Kelebihan LPTS:** proteksi dasar sudah aktif tanpa konfigurasi tambahan, dan peer BGP baru otomatis masuk kelas "known". **Kelemahannya:** operator sering lupa bahwa rate default mungkin terlalu rendah untuk router dengan ribuan sesi BGP (misalnya RR besar atau router di IXP), sehingga flow sah ikut terbuang saat konvergensi masal. Pantau kolom drop di output police.
 
 ### Juniper Junos: filter lo0
 
@@ -590,7 +594,8 @@ set interfaces lo0 unit 0 family inet filter input PROTECT-RE
 
 `apply-path` membuat prefix-list yang selalu sinkron dengan konfigurasi BGP: peer baru otomatis diizinkan. IS-IS tidak berjalan di atas IP, sehingga tidak tersaring oleh filter `family inet` ini. Untuk kelengkapan, tambahkan term untuk OSPF, LDP (TCP/UDP 646), RSVP, ICMP dengan policer, NTP, SNMP, dan protokol lain yang Anda pakai **sebelum** menerapkan term terakhir.
 
-⚠️ **Terapkan filter lo0 dengan `commit confirmed`.** Satu term yang terlupa (misalnya BFD atau LDP) langsung memutus protokol itu di seluruh router. `commit confirmed 5` membuat Junos membatalkan perubahan otomatis dalam 5 menit bila Anda tidak mengonfirmasi, misalnya karena Anda sendiri terkunci.
+> [!WARNING]
+> **Terapkan filter lo0 dengan `commit confirmed`.** Satu term yang terlupa (misalnya BFD atau LDP) langsung memutus protokol itu di seluruh router. `commit confirmed 5` membuat Junos membatalkan perubahan otomatis dalam 5 menit bila Anda tidak mengonfirmasi, misalnya karena Anda sendiri terkunci.
 
 ### MikroTik RouterOS dan Linux/FRR
 
@@ -646,7 +651,8 @@ Serangan refleksi dan amplifikasi bergantung pada **alamat sumber palsu**. Opera
 | **Loose** | Rute ke alamat sumber cukup **ada** di tabel (interface mana pun, selain ke null) | Tepi peering dan transit (asimetris); terutama untuk RTBH berbasis sumber |
 | **Feasible path** | Interface masuk termasuk salah satu jalur yang **mungkin** (termasuk jalur cadangan BGP) | Pelanggan multihomed; versi diperbaiki di RFC 8704 |
 
-⚠️ **Strict uRPF di jalur asimetris membuang trafik sah.** Pelanggan multihomed yang mengirim lewat link A tetapi rutenya terpasang lewat link B akan terputus sebagian. Jangan pasang strict di link peering atau transit.
+> [!WARNING]
+> **Strict uRPF di jalur asimetris membuang trafik sah.** Pelanggan multihomed yang mengirim lewat link A tetapi rutenya terpasang lewat link B akan terputus sebagian. Jangan pasang strict di link peering atau transit.
 
 ```
 ! Cisco IOS XR
@@ -709,7 +715,8 @@ router bgp 65000
 
 Junos tidak punya satu tombol GTSM. Ia terdiri dari dua bagian: TTL keluar diset 255 dengan `set protocols bgp group UPSTREAM ttl 255`, dan pemeriksaan TTL masuk dilakukan filter lo0 (§8) dengan term yang mencocokkan `protocol tcp`, `port bgp`, dan `ttl-except 255`, lalu `discard`.
 
-⚠️ **Temuan lab penulis (FRR 10.7.1):** saat `ttl-security hops 1` aktif pada sesi eBGP, FRR mendaftarkan sesi BFD untuk tetangga itu sebagai **multihop** (`BFD: Type: multi hop`, port 4784), bukan single-hop. Tanpa `ttl-security`, sesi yang sama menjadi `single hop`. Deteksi tetap bekerja (lab mencatat BFD down dalam sekitar 0,84 detik), tetapi mode echo tidak bisa dipakai dan perangkat lawan dari vendor lain mungkin mengharapkan BFD single-hop. Uji kombinasi GTSM dan BFD antar-vendor sebelum produksi.
+> [!WARNING]
+> **Temuan lab penulis (FRR 10.7.1):** saat `ttl-security hops 1` aktif pada sesi eBGP, FRR mendaftarkan sesi BFD untuk tetangga itu sebagai **multihop** (`BFD: Type: multi hop`, port 4784), bukan single-hop. Tanpa `ttl-security`, sesi yang sama menjadi `single hop`. Deteksi tetap bekerja (lab mencatat BFD down dalam sekitar 0,84 detik), tetapi mode echo tidak bisa dipakai dan perangkat lawan dari vendor lain mungkin mengharapkan BFD single-hop. Uji kombinasi GTSM dan BFD antar-vendor sebelum produksi.
 
 ---
 
@@ -759,7 +766,8 @@ router bgp 65000
 /routing bgp connection set [find name=ISP-A] tcp-md5-key=RahasiaLab22
 ```
 
-💡 **Perlindungan sesi bukan hanya kriptografi.** Paket lengkap untuk setiap sesi eBGP operator: GTSM, autentikasi (TCP-AO bila kedua sisi mendukung, MD5 bila tidak), `maximum-prefix`, filter prefiks masuk dan keluar, RPKI ROV, serta BGP Roles (RFC 9234) untuk mencegah route leak. Semua ini dibahas di `07-routing-lanjutan/06-bgp` dan `07-routing-lanjutan/11-interkoneksi-internet`.
+> [!TIP]
+> **Perlindungan sesi bukan hanya kriptografi.** Paket lengkap untuk setiap sesi eBGP operator: GTSM, autentikasi (TCP-AO bila kedua sisi mendukung, MD5 bila tidak), `maximum-prefix`, filter prefiks masuk dan keluar, RPKI ROV, serta BGP Roles (RFC 9234) untuk mencegah route leak. Semua ini dibahas di `07-routing-lanjutan/06-bgp` dan `07-routing-lanjutan/11-interkoneksi-internet`.
 
 ---
 
@@ -791,7 +799,8 @@ route-policy PELANGGAN-X-IN
 end-policy
 ```
 
-⚠️ Validasi **kepemilikan prefiks** sebelum menerima blackhole adalah bagian terpenting. Tanpa itu, satu pelanggan bisa mem-blackhole alamat pelanggan lain, atau alamat siapa pun di internet.
+> [!WARNING]
+> Validasi **kepemilikan prefiks** sebelum menerima blackhole adalah bagian terpenting. Tanpa itu, satu pelanggan bisa mem-blackhole alamat pelanggan lain, atau alamat siapa pun di internet.
 
 ### RTBH berbasis sumber
 
@@ -1121,7 +1130,8 @@ pe3# show ip route 203.0.113.0/24
 
 Prefiks milik p1 sendiri (loopback dan link-nya) tetap terjangkau, sehingga sesi iBGP pe3 ke RR p1 **tetap hidup** dan jalur BGP tetap diterima. Tetapi loopback pe1 dan pe2 hilang karena satu-satunya jalan ke sana adalah transit melalui p1. Jalur BGP kehilangan tanda `*` (next-hop tidak valid) dan tidak ada lagi rute ke internet. Pelajaran: **overload di router yang tidak punya alternatif sama dengan memutus jaringan**, dan gejalanya menipu karena sesi BGP ke RR masih Established. Cost-out hanya aman bila ada jalur pengganti.
 
-⚠️ **Catatan lab:** `sp-ha.clab.yml` menghapus default route jaringan manajemen di setiap node. Tanpa itu, next-hop BGP pe1 dan pe2 "terselesaikan" lewat default route ke eth0 (jaringan manajemen Docker), dan eksperimen ini tampak baik-baik saja. Penulis mengalaminya sendiri saat pertama kali menjalankan lab.
+> [!WARNING]
+> **Catatan lab:** `sp-ha.clab.yml` menghapus default route jaringan manajemen di setiap node. Tanpa itu, next-hop BGP pe1 dan pe2 "terselesaikan" lewat default route ke eth0 (jaringan manajemen Docker), dan eksperimen ini tampak baik-baik saja. Penulis mengalaminya sendiri saat pertama kali menjalankan lab.
 
 ```bash
 sudo containerlab destroy -t sp-ha.clab.yml
@@ -1260,4 +1270,4 @@ sudo containerlab destroy -t sp-ha.clab.yml
 
 ---
 
-**Berikutnya:** `23-jalur-vendor/01-junos` — pendalaman opsional: Junos, Cisco SD-Access dan Catalyst SD-WAN, serta API platform Cisco. Kalau ingin langsung ke peta profesi, lewati ke modul 21.1 Peta Ekosistem.
+**Berikutnya:** `23-jalur-vendor/01-junos`. Pendalaman opsional: Junos, Cisco SD-Access dan Catalyst SD-WAN, serta API platform Cisco. Kalau ingin langsung ke peta profesi, lewati ke modul 21.1 Peta Ekosistem.

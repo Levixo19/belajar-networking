@@ -1,4 +1,4 @@
-# 07.2 — Konsep Routing Dinamis
+# 07.2 Konsep Routing Dinamis
 
 > **Prasyarat:** `07-routing-lanjutan/01`
 > **Tujuan:** Anda paham perbedaan mendasar antara distance vector, link state, dan path vector, serta mekanisme pencegahan loop yang dipakai masing-masing.
@@ -44,7 +44,8 @@ Biaya:
 | Skala | Ribuan rute | Jutaan rute |
 | Konvergensi | Cepat (detik) | Lambat (menit) — sengaja, demi stabilitas |
 
-💡 **Perbedaan filosofisnya penting:** IGP bertanya *"jalur mana yang tercepat?"* — BGP bertanya *"jalur mana yang ingin saya pakai berdasarkan perjanjian bisnis?"* BGP bisa dengan sengaja memilih jalur yang lebih panjang karena lebih murah.
+> [!TIP]
+> **Perbedaan filosofisnya penting:** IGP bertanya *"jalur mana yang tercepat?"* — BGP bertanya *"jalur mana yang ingin saya pakai berdasarkan perjanjian bisnis?"* BGP bisa dengan sengaja memilih jalur yang lebih panjang karena lebih murah.
 
 ### Berdasarkan algoritma
 
@@ -62,7 +63,7 @@ Biaya:
 
 ---
 
-## 3. Distance Vector — "Routing by Rumor"
+## 3. Distance Vector: "Routing by Rumor"
 
 Setiap router memberi tahu tetangganya: *"Saya bisa mencapai jaringan X dengan jarak N."* Penerima menambahkan biaya link ke tetangga itu, lalu menyebarkannya lagi.
 
@@ -73,7 +74,8 @@ R2 → R3 : "Saya bisa mencapai 10.0.0.0/8, jarak 1"
 R3 mencatat: 10.0.0.0/8 lewat R2, jarak 2
 ```
 
-⚠️ **R3 tidak tahu apa pun tentang topologi.** Ia hanya percaya apa yang dikatakan R2 — karena itu disebut *routing by rumor*.
+> [!WARNING]
+> **R3 tidak tahu apa pun tentang topologi.** Ia hanya percaya apa yang dikatakan R2 — karena itu disebut *routing by rumor*.
 
 ### Masalah: Count to Infinity
 
@@ -146,11 +148,12 @@ Jangan tunggu timer periodik — kirim update SEGERA saat ada perubahan
 → mempercepat konvergensi
 ```
 
-⚠️ **Semua mekanisme ini adalah tambalan** untuk kelemahan mendasar distance vector: router tidak punya gambaran topologi. Link state memecahkan masalah ini dari akarnya.
+> [!WARNING]
+> **Semua mekanisme ini adalah tambalan** untuk kelemahan mendasar distance vector: router tidak punya gambaran topologi. Link state memecahkan masalah ini dari akarnya.
 
 ---
 
-## 4. Link State — Setiap Router Punya Peta
+## 4. Link State: Setiap Router Punya Peta
 
 ```
 1. Setiap router mendeteksi tetangganya (Hello)
@@ -194,7 +197,7 @@ Link State      : Anda punya peta lengkap kota.
 | **Bandwidth** | Flooding LSA memakan bandwidth (walau hanya saat ada perubahan) |
 | **Kompleksitas** | Konfigurasi dan troubleshooting lebih rumit |
 
-### Algoritma Dijkstra — intuisi
+### Algoritma Dijkstra: intuisi
 
 ```
 1. Mulai dari diri sendiri, cost 0. Tandai sebagai "sementara".
@@ -210,7 +213,7 @@ Link State      : Anda punya peta lengkap kota.
 
 ---
 
-## 5. Path Vector — BGP
+## 5. Path Vector: BGP
 
 BGP bukan mencari jalur tercepat, melainkan menegakkan **kebijakan**.
 
@@ -235,7 +238,8 @@ Kalau rute ini kembali ke AS 200:
   → Loop dicegah secara elegan, tanpa timer atau holddown
 ```
 
-⚠️ **iBGP (dalam AS yang sama) tidak menambah AS_PATH**, sehingga mekanisme ini tidak berlaku. Karena itu iBGP butuh aturan berbeda: **router tidak boleh meneruskan rute iBGP ke peer iBGP lain** — yang memaksa **full mesh** atau **route reflector** (`07-routing-lanjutan/06`).
+> [!WARNING]
+> **iBGP (dalam AS yang sama) tidak menambah AS_PATH**, sehingga mekanisme ini tidak berlaku. Karena itu iBGP butuh aturan berbeda: **router tidak boleh meneruskan rute iBGP ke peer iBGP lain** — yang memaksa **full mesh** atau **route reflector** (`07-routing-lanjutan/06`).
 
 ---
 
@@ -243,7 +247,7 @@ Kalau rute ini kembali ke AS 200:
 
 | Protokol | Metrik | Formula/Rentang |
 |---|---|---|
-| **RIP** | Hop count | 1–15 (16 = tak terjangkau) |
+| **RIP** | Hop count | 1-15 (16 = tak terjangkau) |
 | **OSPF** | Cost | `reference_bandwidth / bandwidth`; default ref = 100 Mbps |
 | **EIGRP** | Composite | `256 × ((K1×BW) + (K3×Delay))` dengan K1=K3=1 default |
 | **IS-IS** | Cost | Default 10 per link; wide metric sampai 16.777.215 |
@@ -262,7 +266,8 @@ Cost = 100.000.000 / bandwidth
   100 Gbps → cost 1     ← SAMA!
 ```
 
-⚠️ OSPF tidak bisa membedakan 100 Mbps dan 100 Gbps dengan setelan default. **Selalu naikkan reference bandwidth**, dan **samakan di semua router**:
+> [!WARNING]
+> OSPF tidak bisa membedakan 100 Mbps dan 100 Gbps dengan setelan default. **Selalu naikkan reference bandwidth**, dan **samakan di semua router**:
 ```
 R1(config-router)# auto-cost reference-bandwidth 100000    ← 100 Gbps
 ```
@@ -282,20 +287,22 @@ Waktu konvergensi = deteksi + propagasi + perhitungan + pemasangan FIB
 | Mekanisme | Waktu deteksi |
 |---|---|
 | Link down (fisik) | Milidetik — **tercepat** |
-| **BFD** (Bidirectional Forwarding Detection) | 50–150 ms |
+| **BFD** (Bidirectional Forwarding Detection) | 50-150 ms |
 | Fast hello (OSPF sub-second) | ~1 detik |
 | Hello/dead timer default OSPF | 40 detik |
 | Hello/hold timer default EIGRP | 15 detik |
 | BGP hold timer default | 180 detik |
 
-💡 **BFD adalah mekanisme deteksi universal** — protokol ringan yang mengirim paket sangat cepat dan memberi tahu protokol routing (OSPF, BGP, EIGRP, static) begitu link mati. Jauh lebih efisien daripada mempercepat hello timer setiap protokol.
+> [!TIP]
+> **BFD adalah mekanisme deteksi universal** — protokol ringan yang mengirim paket sangat cepat dan memberi tahu protokol routing (OSPF, BGP, EIGRP, static) begitu link mati. Jauh lebih efisien daripada mempercepat hello timer setiap protokol.
 
 ```
 R1(config-if)# bfd interval 50 min_rx 50 multiplier 3
 R1(config-router)# bfd all-interfaces
 ```
 
-⚠️ **Menurunkan hello/dead timer terlalu agresif berbahaya** — beban CPU meningkat, dan link yang sedikit tidak stabil akan menyebabkan **flapping** yang justru lebih merusak daripada konvergensi lambat.
+> [!WARNING]
+> **Menurunkan hello/dead timer terlalu agresif berbahaya** — beban CPU meningkat, dan link yang sedikit tidak stabil akan menyebabkan **flapping** yang justru lebih merusak daripada konvergensi lambat.
 
 ### Mekanisme peredam
 
@@ -543,9 +550,11 @@ R1(config-router)# no passive-interface gi0/1         ← kecuali yang ini
 2. **Efisiensi** — tidak membuang bandwidth mengirim hello ke jaringan tanpa router
 3. **Kebersihan** — mengurangi noise
 
-💡 **Praktik terbaik: `passive-interface default`, lalu aktifkan eksplisit hanya di interface yang menghadap router lain.** Ini pendekatan "deny by default" yang jauh lebih aman.
+> [!TIP]
+> **Praktik terbaik: `passive-interface default`, lalu aktifkan eksplisit hanya di interface yang menghadap router lain.** Ini pendekatan "deny by default" yang jauh lebih aman.
 
-⚠️ Pada **EIGRP dan OSPF**, passive interface berarti **tidak ada adjacency sama sekali** di interface itu. Pada **RIP**, router masih **menerima** update (hanya tidak mengirim) — perbedaan yang penting.
+> [!WARNING]
+> Pada **EIGRP dan OSPF**, passive interface berarti **tidak ada adjacency sama sekali** di interface itu. Pada **RIP**, router masih **menerima** update (hanya tidak mengirim) — perbedaan yang penting.
 
 ---
 
@@ -576,7 +585,8 @@ R1(config-if)# ip authentication key-chain eigrp 100 EIGRP-KEYS
 R1(config-router)# neighbor 10.0.0.2 password RahasiaKuat
 ```
 
-💡 **Autentikasi + passive-interface adalah dua kontrol keamanan routing paling dasar.** Terapkan keduanya di semua jaringan produksi.
+> [!TIP]
+> **Autentikasi + passive-interface adalah dua kontrol keamanan routing paling dasar.** Terapkan keduanya di semua jaringan produksi.
 
 ---
 
@@ -593,7 +603,8 @@ R1(config-router)# neighbor 10.0.0.2 password RahasiaKuat
 | Multi-homing ke banyak ISP | **BGP** |
 | Warisan/lab sederhana | RIP (hindari di produksi) |
 
-💡 **Tren modern:** BGP semakin dipakai **di dalam** data center (bukan hanya antar-AS), karena skalabilitas, kontrol kebijakan yang eksplisit, dan implementasinya yang sangat matang. Desain "BGP everywhere" dengan eBGP unnumbered kini umum di spine-leaf (`16-datacenter-cloud-sdn/01`).
+> [!TIP]
+> **Tren modern:** BGP semakin dipakai **di dalam** data center (bukan hanya antar-AS), karena skalabilitas, kontrol kebijakan yang eksplisit, dan implementasinya yang sangat matang. Desain "BGP everywhere" dengan eBGP unnumbered kini umum di spine-leaf (`16-datacenter-cloud-sdn/01`).
 
 ---
 
@@ -604,7 +615,7 @@ R1(config-router)# neighbor 10.0.0.2 password RahasiaKuat
 - **Link state**: setiap router punya **LSDB identik** dan menjalankan **Dijkstra** sendiri; konvergensi cepat dan bebas loop; biayanya CPU/memori. **Area** membatasi cakupan.
 - **Path vector (BGP)**: memakai **AS_PATH** untuk mencegah loop dan **path attributes** untuk kebijakan.
 - **Reference bandwidth OSPF default (100 Mbps) tidak bisa membedakan link ≥100 Mbps** — selalu naikkan dan samakan di semua router.
-- Konvergensi = deteksi + propagasi + perhitungan + FIB. **BFD** memberi deteksi 50–150 ms tanpa membebani timer protokol.
+- Konvergensi = deteksi + propagasi + perhitungan + FIB. **BFD** memberi deteksi 50-150 ms tanpa membebani timer protokol.
 - Timer yang terlalu agresif menyebabkan **flapping** yang lebih merusak daripada konvergensi lambat.
 - **`passive-interface default` + aktifkan eksplisit** adalah praktik keamanan yang benar.
 - **Selalu aktifkan autentikasi** protokol routing di jaringan produksi.
@@ -690,4 +701,4 @@ Subbagian 8.1 (algoritma forward search dengan daftar Confirmed/Tentative) dan 8
 
 ---
 
-**Berikutnya:** `07-routing-lanjutan/03-rip.md` — protokol distance vector klasik.
+**Berikutnya:** `07-routing-lanjutan/03-rip.md`. Protokol distance vector klasik.

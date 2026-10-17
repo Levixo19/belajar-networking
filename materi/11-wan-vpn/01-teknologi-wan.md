@@ -1,4 +1,4 @@
-# 11.1 — Teknologi WAN
+# 11.1 Teknologi WAN
 
 > **Prasyarat:** `00-fondasi/01`, `07-routing-lanjutan/06`
 > **Tujuan:** Anda paham pilihan teknologi WAN, bisa membaca SLA provider, dan memahami MPLS serta SD-WAN.
@@ -11,12 +11,13 @@
 |---|---|---|
 | Kepemilikan media | Anda | **Disewa dari provider** |
 | Bandwidth | Murah, besar | **Mahal**, lebih kecil |
-| Latency | < 1 ms | 5–300 ms |
+| Latency | < 1 ms | 5-300 ms |
 | Kendali | Penuh | Dibatasi **SLA** |
 | Perubahan | Menit | **Minggu sampai bulan** |
 | Biaya | Sekali beli | **Bulanan, terus-menerus** |
 
-💡 **Konsekuensi desain:** karena bandwidth WAN mahal, **QoS menjadi wajib** — Anda harus memutuskan trafik mana yang lebih penting. Di LAN dengan 10 Gbps, QoS sering tidak diperlukan.
+> [!TIP]
+> **Konsekuensi desain:** karena bandwidth WAN mahal, **QoS menjadi wajib** — Anda harus memutuskan trafik mana yang lebih penting. Di LAN dengan 10 Gbps, QoS sering tidak diperlukan.
 
 ### Istilah kontrak
 
@@ -31,9 +32,11 @@
 | **SLA** | Jaminan uptime, latency, jitter, loss + kompensasi |
 | **MTTR** | Mean Time To Repair — janji waktu perbaikan |
 
-⚠️ **Baca SLA dengan teliti.** "Uptime 99,9%" berarti **8,76 jam downtime per tahun yang diizinkan** — dan kompensasinya biasanya hanya potongan tagihan bulanan, bukan ganti rugi kerugian bisnis.
+> [!WARNING]
+> **Baca SLA dengan teliti.** "Uptime 99,9%" berarti **8,76 jam downtime per tahun yang diizinkan** — dan kompensasinya biasanya hanya potongan tagihan bulanan, bukan ganti rugi kerugian bisnis.
 
-⚠️ **Perhatikan CIR vs bandwidth port.** Provider sering menjual "100 Mbps" tetapi CIR-nya hanya 20 Mbps — sisanya *best effort* yang bisa hilang saat jaringan provider padat.
+> [!WARNING]
+> **Perhatikan CIR vs bandwidth port.** Provider sering menjual "100 Mbps" tetapi CIR-nya hanya 20 Mbps — sisanya *best effort* yang bisa hilang saat jaringan provider padat.
 
 ---
 
@@ -42,15 +45,15 @@
 | Teknologi | Kecepatan tipikal | Media | Catatan |
 |---|---|---|---|
 | **Leased line / E1-T1** | 2 Mbps (E1) | Copper/fiber | Sangat mahal, simetris, SLA ketat. Warisan |
-| **Metro Ethernet** | 10 Mbps – 10 Gbps | Fiber | **Standar enterprise saat ini** |
-| **Dedicated Internet Access (DIA)** | 10 Mbps – 10 Gbps | Fiber | Simetris, SLA, IP publik |
-| **GPON / FTTH** | 100 Mbps – 1 Gbps | Fiber | Murah, **shared** (dibagi 32–128 pelanggan) |
-| **DSL (ADSL/VDSL)** | 1–100 Mbps | Copper | Asimetris, jarak-sensitif. Menurun |
-| **DOCSIS (kabel)** | 100 Mbps – 1 Gbps | Coax | Asimetris, shared |
-| **4G/5G FWA** | 10–500 Mbps | Seluler | Cepat dipasang, cocok untuk backup |
-| **Satelit GEO** | 10–100 Mbps | Radio | **RTT 600 ms** — buruk untuk interaktif |
-| **Satelit LEO** (Starlink) | 50–300 Mbps | Radio | RTT 25–60 ms — jauh lebih baik |
-| **Wireless PtP** | 100 Mbps – 1 Gbps | Radio | Untuk lokasi tanpa fiber |
+| **Metro Ethernet** | 10 Mbps - 10 Gbps | Fiber | **Standar enterprise saat ini** |
+| **Dedicated Internet Access (DIA)** | 10 Mbps - 10 Gbps | Fiber | Simetris, SLA, IP publik |
+| **GPON / FTTH** | 100 Mbps - 1 Gbps | Fiber | Murah, **shared** (dibagi 32-128 pelanggan) |
+| **DSL (ADSL/VDSL)** | 1-100 Mbps | Copper | Asimetris, jarak-sensitif. Menurun |
+| **DOCSIS (kabel)** | 100 Mbps - 1 Gbps | Coax | Asimetris, shared |
+| **4G/5G FWA** | 10-500 Mbps | Seluler | Cepat dipasang, cocok untuk backup |
+| **Satelit GEO** | 10-100 Mbps | Radio | **RTT 600 ms** — buruk untuk interaktif |
+| **Satelit LEO** (Starlink) | 50-300 Mbps | Radio | RTT 25-60 ms — jauh lebih baik |
+| **Wireless PtP** | 100 Mbps - 1 Gbps | Radio | Untuk lokasi tanpa fiber |
 
 ### Istilah penting
 
@@ -68,7 +71,8 @@ Shared     : dibagi dengan pelanggan lain; murah; kinerja bervariasi
 1:50  → umum untuk layanan rumahan
 ```
 
-💡 **Di Indonesia**, layanan bisnis umumnya menawarkan **DIA** (dedicated, simetris, SLA) atau **Metro Ethernet**; layanan rumahan/UKM memakai **GPON dengan contention ratio** yang tidak selalu diungkapkan.
+> [!TIP]
+> **Di Indonesia**, layanan bisnis umumnya menawarkan **DIA** (dedicated, simetris, SLA) atau **Metro Ethernet**; layanan rumahan/UKM memakai **GPON dengan contention ratio** yang tidak selalu diungkapkan.
 
 ---
 
@@ -98,7 +102,8 @@ E-Tree  : [Pusat]
         [A]  [B]  [C]     ← cabang tidak bisa saling bicara langsung
 ```
 
-💡 **E-LAN sangat memudahkan** karena semua lokasi berada di satu broadcast domain — routing menjadi sederhana. **Tetapi** ini juga berarti **STP dan broadcast membentang lintas WAN** — satu masalah di satu lokasi bisa memengaruhi semuanya. Pertimbangkan dengan hati-hati.
+> [!TIP]
+> **E-LAN sangat memudahkan** karena semua lokasi berada di satu broadcast domain — routing menjadi sederhana. **Tetapi** ini juga berarti **STP dan broadcast membentang lintas WAN** — satu masalah di satu lokasi bisa memengaruhi semuanya. Pertimbangkan dengan hati-hati.
 
 ---
 
@@ -134,7 +139,7 @@ Header MPLS (**"layer 2,5"** — di antara L2 dan L3):
   S   = Bottom of Stack (label bisa bertumpuk)
 ```
 
-### MPLS L3VPN — layanan yang paling banyak dijual
+### MPLS L3VPN: layanan yang paling banyak dijual
 
 ```
 Setiap pelanggan punya VRF sendiri di router PE
@@ -163,9 +168,10 @@ MP-BGP                    : membawa rute VPN antar-PE
 ❌ Tidak fleksibel untuk cloud (perlu koneksi khusus)
 ```
 
-⚠️ **MPLS tidak mengenkripsi.** Trafik terisolasi secara logis, tetapi provider dapat melihatnya. Untuk data sensitif, **tambahkan IPsec di atas MPLS**.
+> [!WARNING]
+> **MPLS tidak mengenkripsi.** Trafik terisolasi secara logis, tetapi provider dapat melihatnya. Untuk data sensitif, **tambahkan IPsec di atas MPLS**.
 
-### Segment Routing — penerus MPLS
+### Segment Routing: penerus MPLS
 
 **SR-MPLS** dan **SRv6** menghilangkan LDP/RSVP dengan menyematkan seluruh jalur di header paket (*source routing*).
 
@@ -212,7 +218,8 @@ SD-WAN memakai **overlay** di atas transport apa pun (internet, MPLS, LTE) denga
 | **Integrated security** | Firewall, IPS, URL filtering di edge |
 | **Enkripsi otomatis** | IPsec antar-semua edge |
 
-💡 **Local Internet Breakout adalah manfaat terbesar.** Dengan MPLS tradisional, trafik ke Microsoft 365 dari cabang harus memutar ke data center pusat lalu keluar ke internet (**tromboning**) — menambah latency besar. SD-WAN mengizinkannya keluar langsung dari cabang.
+> [!TIP]
+> **Local Internet Breakout adalah manfaat terbesar.** Dengan MPLS tradisional, trafik ke Microsoft 365 dari cabang harus memutar ke data center pusat lalu keluar ke internet (**tromboning**) — menambah latency besar. SD-WAN mengizinkannya keluar langsung dari cabang.
 
 ### Vendor utama
 
@@ -225,7 +232,8 @@ HPE      : Silver Peak / Aruba EdgeConnect
 Versa    : Versa SASE
 ```
 
-⚠️ **Pertimbangan SD-WAN:**
+> [!WARNING]
+> **Pertimbangan SD-WAN:**
 ```
 - Vendor lock-in (edge, controller, dan lisensi dari satu vendor)
 - Controller menjadi titik kritis — pastikan HA dan akses darurat
@@ -264,7 +272,8 @@ FECN/BECN : notifikasi congestion
 Inverse ARP : memetakan DLCI ke IP otomatis
 ```
 
-⚠️ **Masalah klasik: split horizon pada hub-and-spoke multipoint** — routing update dari satu spoke tidak diteruskan ke spoke lain. Solusinya: subinterface point-to-point.
+> [!WARNING]
+> **Masalah klasik: split horizon pada hub-and-spoke multipoint** — routing update dari satu spoke tidak diteruskan ke spoke lain. Solusinya: subinterface point-to-point.
 
 ### ATM
 Sel tetap 53 byte (48 data + 5 header). "Cell tax" ~9% membuatnya tidak efisien untuk data. Kalah dari Ethernet.
@@ -303,7 +312,8 @@ TINGKAT 3 — dua provider + MEDIA berbeda (fiber + LTE/5G)
 TINGKAT 4 — + lokasi DR
 ```
 
-⚠️ **Selalu tanyakan ke provider: apakah kedua link melewati jalur fisik yang sama?** Banyak organisasi membayar dua link "redundan" yang ternyata melewati duct yang sama — satu ekskavator memutus keduanya. Minta **diverse path guarantee** secara tertulis.
+> [!WARNING]
+> **Selalu tanyakan ke provider: apakah kedua link melewati jalur fisik yang sama?** Banyak organisasi membayar dua link "redundan" yang ternyata melewati duct yang sama — satu ekskavator memutus keduanya. Minta **diverse path guarantee** secara tertulis.
 
 ### Failover WAN
 
@@ -331,7 +341,8 @@ ip route 0.0.0.0 0.0.0.0 203.0.113.1 track 1
 ip route 0.0.0.0 0.0.0.0 198.51.100.1 10
 ```
 
-⚠️ **Failover memutus sesi TCP yang sedang berjalan** kalau alamat sumber berubah (NAT ke IP publik yang berbeda). Untuk failover yang benar-benar mulus, butuh **BGP dengan alamat IP milik sendiri**, atau **SD-WAN overlay** yang mempertahankan alamat tunnel.
+> [!WARNING]
+> **Failover memutus sesi TCP yang sedang berjalan** kalau alamat sumber berubah (NAT ke IP publik yang berbeda). Untuk failover yang benar-benar mulus, butuh **BGP dengan alamat IP milik sendiri**, atau **SD-WAN overlay** yang mempertahankan alamat tunnel.
 
 ---
 
@@ -349,9 +360,11 @@ Karena bandwidth WAN mahal, ada banyak teknik untuk memaksimalkannya.
 | **QoS** | Prioritaskan trafik penting (`11-wan-vpn/03`) |
 | **Local breakout** | Trafik internet keluar langsung dari cabang |
 
-💡 **Deduplikasi bisa memberi penghematan 60–90%** untuk backup dan replikasi file, karena banyak data berulang.
+> [!TIP]
+> **Deduplikasi bisa memberi penghematan 60–90%** untuk backup dan replikasi file, karena banyak data berulang.
 
-⚠️ **Sebagian besar teknik ini tidak bekerja pada trafik terenkripsi** (HTTPS, yang kini >95% trafik web). Karena itu WAN optimizer klasik kehilangan relevansi, dan fokus bergeser ke **local breakout + SD-WAN + CDN**.
+> [!WARNING]
+> **Sebagian besar teknik ini tidak bekerja pada trafik terenkripsi** (HTTPS, yang kini >95% trafik web). Karena itu WAN optimizer klasik kehilangan relevansi, dan fokus bergeser ke **local breakout + SD-WAN + CDN**.
 
 ---
 
@@ -380,7 +393,8 @@ Karena bandwidth WAN mahal, ada banyak teknik untuk memaksimalkannya.
 /tool ping-speed address=8.8.8.8
 ```
 
-⚠️ **`/tool bandwidth-server` sebaiknya dimatikan di produksi** — sering disalahgunakan untuk menghabiskan bandwidth Anda:
+> [!WARNING]
+> **`/tool bandwidth-server` sebaiknya dimatikan di produksi** — sering disalahgunakan untuk menghabiskan bandwidth Anda:
 ```
 /tool bandwidth-server set enabled=no
 ```
@@ -416,7 +430,7 @@ Karena bandwidth WAN mahal, ada banyak teknik untuk memaksimalkannya.
 <summary>Jawaban</summary>
 
 1. Karena **bandwidth WAN mahal dan terbatas**, sehingga hampir selalu ada saat di mana permintaan melebihi kapasitas. Ketika itu terjadi, tanpa QoS semua trafik diperlakukan sama — backup besar bisa membuat panggilan VoIP putus dan aplikasi bisnis tidak responsif. Anda harus memutuskan secara eksplisit apa yang lebih penting.
-   Di LAN dengan link 1–10 Gbps, kapasitasnya biasanya jauh melebihi kebutuhan, sehingga antrean jarang terbentuk dan QoS tidak memberi perbedaan nyata. QoS di LAN baru diperlukan pada titik agregasi yang oversubscribed atau untuk trafik khusus (storage, RoCE).
+   Di LAN dengan link 1-10 Gbps, kapasitasnya biasanya jauh melebihi kebutuhan, sehingga antrean jarang terbentuk dan QoS tidak memberi perbedaan nyata. QoS di LAN baru diperlukan pada titik agregasi yang oversubscribed atau untuk trafik khusus (storage, RoCE).
 
 2. **CIR (Committed Information Rate) 20 Mbps adalah bandwidth yang benar-benar DIJAMIN** oleh provider dan dilindungi SLA. Sisanya (80 Mbps) adalah **best effort** — Anda boleh memakainya **kalau jaringan provider sedang tidak padat**, tetapi tidak ada jaminan dan tidak ada kompensasi jika tidak tersedia.
    Praktisnya: pada jam sibuk Anda mungkin hanya mendapat mendekati 20 Mbps. Untuk aplikasi kritis, **rancang berdasarkan CIR, bukan angka pemasaran**. Kalau bisnis Anda membutuhkan 50 Mbps yang andal, belilah CIR 50 Mbps.
@@ -452,4 +466,4 @@ Karena bandwidth WAN mahal, ada banyak teknik untuk memaksimalkannya.
 
 ---
 
-**Berikutnya:** `11-wan-vpn/02-tunneling-vpn.md` — mengamankan komunikasi lintas jaringan publik.
+**Berikutnya:** `11-wan-vpn/02-tunneling-vpn.md`. Mengamankan komunikasi lintas jaringan publik.

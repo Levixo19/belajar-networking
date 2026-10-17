@@ -1,6 +1,6 @@
 # Daftar Port & Protokol Penting
 
-> Port yang wajib dihafal untuk CCNA/Network+ dan operasi sehari-hari. Rentang: well-known 0–1023, registered 1024–49151, dynamic/ephemeral 49152–65535.
+> Port yang wajib dihafal untuk CCNA/Network+ dan operasi sehari-hari. Rentang: well-known 0-1023, registered 1024-49151, dynamic/ephemeral 49152-65535.
 
 ---
 
@@ -99,9 +99,11 @@ HTTP/3    → UDP 443 (QUIC) ★ berbasis UDP!
 | OSPF | 89 | routing (langsung di atas IP!) |
 | VRRP | 112 | redundansi gateway |
 
-⚠️ **ESP (50), AH (51), GRE (47), OSPF (89) bukan TCP/UDP** — mereka protokol IP tersendiri. Firewall harus mengizinkan **nomor protokol IP**, bukan port, untuk IPsec/GRE/OSPF. Ini gotcha umum: "kenapa IPsec/GRE diblokir?" → firewall hanya mengizinkan TCP/UDP.
+> [!WARNING]
+> **ESP (50), AH (51), GRE (47), OSPF (89) bukan TCP/UDP** — mereka protokol IP tersendiri. Firewall harus mengizinkan **nomor protokol IP**, bukan port, untuk IPsec/GRE/OSPF. Ini gotcha umum: "kenapa IPsec/GRE diblokir?" → firewall hanya mengizinkan TCP/UDP.
 
-💡 **ICMP tidak punya port** — ia protokol L3 sendiri. Karena itu "buka port untuk ping" salah; yang benar mengizinkan protokol ICMP (tipe echo-request/reply).
+> [!TIP]
+> **ICMP tidak punya port** — ia protokol L3 sendiri. Karena itu "buka port untuk ping" salah; yang benar mengizinkan protokol ICMP (tipe echo-request/reply).
 
 ---
 
@@ -123,7 +125,8 @@ Aman vs tidak (pola +TLS):
   IMAP 143 → 993         |  POP3 110 → 995   |  LDAP 389 → 636
 ```
 
-⚠️ **UDP untuk yang cepat/toleran-loss:** DNS(53), DHCP(67/68), NTP(123), SNMP(161), Syslog(514), TFTP(69), **HTTP/3/QUIC(443)**. **TCP untuk yang andal:** HTTP(S), SSH, email, BGP.
+> [!WARNING]
+> **UDP untuk yang cepat/toleran-loss:** DNS(53), DHCP(67/68), NTP(123), SNMP(161), Syslog(514), TFTP(69), **HTTP/3/QUIC(443)**. **TCP untuk yang andal:** HTTP(S), SSH, email, BGP.
 
 ---
 

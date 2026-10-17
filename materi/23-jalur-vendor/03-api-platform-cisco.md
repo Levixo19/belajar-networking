@@ -1,4 +1,4 @@
-# 23.3 — API Platform Cisco
+# 23.3 API Platform Cisco
 
 > **Prasyarat:** `15-otomasi/02-data-dan-api`, `15-otomasi/03-python-jaringan`, `23-jalur-vendor/02-sd-access-sd-wan`, `19-mikrotik/07-monitoring-scripting`
 > **Tujuan:** Anda bisa memanggil API Catalyst Center (Intent API) dan Meraki Dashboard API dari Python dengan `requests` secara benar (autentikasi token, timeout, verifikasi TLS, pagination, penanganan 401 dan 429), menjelaskan peran NSO dan RESTCONF-nya, menyebut cara login ke Catalyst SD-WAN Manager, dan membandingkan semuanya dengan MikroTik REST API v7.
@@ -7,7 +7,8 @@
 
 ## 1. Pengantar: Label Pendalaman
 
-⚠️ **Label pendalaman.** Modul ini membahas API produk Cisco tertentu. Isinya **tidak diuji** di CCNA, Network+, maupun MTCNA. CCNA hanya menguji konsep REST, JSON, dan perbedaan pendekatan controller-based; produk dan endpoint di bawah ini adalah bahan untuk jalur CCNP Enterprise/Automation (ENAUTO) dan pekerjaan sehari-hari.
+> [!WARNING]
+> **Label pendalaman.** Modul ini membahas API produk Cisco tertentu. Isinya **tidak diuji** di CCNA, Network+, maupun MTCNA. CCNA hanya menguji konsep REST, JSON, dan perbedaan pendekatan controller-based; produk dan endpoint di bawah ini adalah bahan untuk jalur CCNP Enterprise/Automation (ENAUTO) dan pekerjaan sehari-hari.
 
 Modul 15.2 dan 15.3 sudah mengajarkan REST, JSON, dan Python. Di sini Anda menerapkannya pada tiga platform nyata, plus satu perbandingan dengan perangkat yang Anda kenal dari Tahap 19:
 
@@ -262,21 +263,29 @@ Jadi pola umumnya sama: HTTPS, JSON, kredensial rahasia, timeout, verifikasi TLS
 
 ## 8. Kesalahan Umum
 
-❌ `requests.post(..., verify=False)` dibiarkan di skrip produksi. Ini membuka celah man-in-the-middle. Gunakan `verify="ca.pem"`.
+> [!CAUTION]
+> `requests.post(..., verify=False)` dibiarkan di skrip produksi. Ini membuka celah man-in-the-middle. Gunakan `verify="ca.pem"`.
 
-❌ Tidak memakai `timeout`. Skrip menggantung bila server tidak merespons.
+> [!CAUTION]
+> Tidak memakai `timeout`. Skrip menggantung bila server tidak merespons.
 
-❌ Menanam token atau API key di kode, lalu mengunggahnya ke Git. Simpan di variabel lingkungan atau vault, dan rotasi key yang bocor.
+> [!CAUTION]
+> Menanam token atau API key di kode, lalu mengunggahnya ke Git. Simpan di variabel lingkungan atau vault, dan rotasi key yang bocor.
 
-❌ Mengabaikan pagination: hanya mengambil halaman pertama, sehingga inventori tampak lebih sedikit dari kenyataan.
+> [!CAUTION]
+> Mengabaikan pagination: hanya mengambil halaman pertama, sehingga inventori tampak lebih sedikit dari kenyataan.
 
-❌ Mengulang permintaan secepatnya saat 429 dari Meraki. Baca `Retry-After`.
+> [!CAUTION]
+> Mengulang permintaan secepatnya saat 429 dari Meraki. Baca `Retry-After`.
 
-❌ Menyusun URL halaman berikutnya sendiri, padahal API sudah menyediakan header `Link`.
+> [!CAUTION]
+> Menyusun URL halaman berikutnya sendiri, padahal API sudah menyediakan header `Link`.
 
-❌ Menyimpan token Catalyst Center tanpa menangani 401. Setelah 60 menit skrip panjang gagal di tengah jalan.
+> [!CAUTION]
+> Menyimpan token Catalyst Center tanpa menangani 401. Setelah 60 menit skrip panjang gagal di tengah jalan.
 
-✅ Bungkus panggilan dalam fungsi kecil (login, get dengan retry, iterator halaman), dan catat status HTTP dalam log tanpa menuliskan rahasia.
+> [!TIP]
+> Bungkus panggilan dalam fungsi kecil (login, get dengan retry, iterator halaman), dan catat status HTTP dalam log tanpa menuliskan rahasia.
 
 ---
 
@@ -344,4 +353,4 @@ Jadi pola umumnya sama: HTTPS, JSON, kredensial rahasia, timeout, verifikasi TLS
 
 ---
 
-**Berikutnya:** `21-ekosistem-profesi/01-peta-ekosistem` — dari spesialisasi vendor ke peta besar profesi: bagaimana semua keterampilan ini bertemu dalam karier.
+**Berikutnya:** `21-ekosistem-profesi/01-peta-ekosistem`. Dari spesialisasi vendor ke peta besar profesi: bagaimana semua keterampilan ini bertemu dalam karier.

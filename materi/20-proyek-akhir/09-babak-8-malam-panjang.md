@@ -1,4 +1,4 @@
-# 20.9 — Babak 8: Malam Panjang
+# 20.9 Babak 8: Malam Panjang
 
 > **Prasyarat:** `20.8`, ditambah `14` (metodologi troubleshooting) dan seluruh kurikulum
 > **Tujuan:** Mendiagnosis lima gangguan nyata di bawah tekanan waktu, memilih pemeriksaan yang tepat alih-alih memeriksa segalanya, mengambil keputusan bisnis saat data kepatuhan hilang, lalu menulis postmortem yang tidak menyalahkan orang.
@@ -21,15 +21,17 @@ Yang dinilai bukan kecepatan mentah, tetapi: akar masalah benar · jumlah menit 
 
 Catat semuanya di `13-postmortem.md` sambil berjalan. Menulis setelah semuanya selesai akan kehilangan detail yang justru paling berharga.
 
-⏱ Mode Ujian: jalankan lima tiket berurutan tanpa istirahat, dan patuhi anggaran waktu. Mode Kilat: tiket 1, 4, dan 5 saja.
+> [!NOTE]
+> Mode Ujian: jalankan lima tiket berurutan tanpa istirahat, dan patuhi anggaran waktu. Mode Kilat: tiket 1, 4, dan 5 saja.
 
-💡 Latar: ini malam Jumat ke Sabtu. Anda sendirian. Bu Ratna sedang tidak bisa dihubungi sampai pukul 06:00. Ada tiga kontainer dijadwalkan berangkat pukul 07:00.
+> [!TIP]
+> Latar: ini malam Jumat ke Sabtu. Anda sendirian. Bu Ratna sedang tidak bisa dihubungi sampai pukul 06:00. Ada tiga kontainer dijadwalkan berangkat pukul 07:00.
 
 <figure class="fig-img"><a href="/img/capstone-garis-waktu.png" target="_blank" rel="noreferrer"><img src="/img/capstone-garis-waktu.png" alt="Garis waktu lima tiket pada malam panjang beserta akar masalahnya" loading="lazy"></a><figcaption>Peta jawaban malam ini — buka hanya setelah kelima tiket selesai Anda kerjakan.</figcaption></figure>
 
 ---
 
-## 2. Tiket 1 — 22:14 · Data suhu TPI-07 berhenti masuk
+## 2. Tiket 1: 22:14 · Data suhu TPI-07 berhenti masuk
 
 > **Alarm:** `SensorSuhuDiam` · lokasi TPI-07 · data terakhir 21:50 · sudah 24 menit
 > **Dampak:** celah rekaman suhu melewati batas auditor 15 menit
@@ -114,7 +116,7 @@ Catatan teknis operator: pemeliharaan rutin pada gerbang NAT pukul 21:40–21:55
 <details>
 <summary>Akar Masalah — Tiket 1</summary>
 
-**Akar masalah:** TPI-07 berada di belakang CGNAT. Terowongan WireGuard hanya hidup selama **pemetaan NAT di sisi operator** masih ada. Konfigurasi TPI-07 kehilangan `persistent-keepalive` (satu-satunya lokasi yang dikonfigurasi dengan tangan setelah penggantian perangkat), sehingga ketika operator melakukan pemeliharaan gerbang NAT pukul 21:40–21:55, pemetaan lama hilang dan **tidak ada apa pun dari sisi TPI yang membangunnya kembali** — hub tidak bisa memulai karena TPI tidak punya alamat yang bisa dituju.
+**Akar masalah:** TPI-07 berada di belakang CGNAT. Terowongan WireGuard hanya hidup selama **pemetaan NAT di sisi operator** masih ada. Konfigurasi TPI-07 kehilangan `persistent-keepalive` (satu-satunya lokasi yang dikonfigurasi dengan tangan setelah penggantian perangkat), sehingga ketika operator melakukan pemeliharaan gerbang NAT pukul 21:40-21:55, pemetaan lama hilang dan **tidak ada apa pun dari sisi TPI yang membangunnya kembali** — hub tidak bisa memulai karena TPI tidak punya alamat yang bisa dituju.
 
 **Kenapa tablet tetap bisa WhatsApp:** lalu lintas itu keluar langsung ke internet, bukan melewati terowongan. Inilah yang membuat "sinyal penuh" menjadi pengalih perhatian paling meyakinkan — dan kenapa tiket T-902 dulu ditutup dengan sebab yang salah.
 
@@ -128,7 +130,7 @@ Catatan teknis operator: pemeliharaan rutin pada gerbang NAT pukul 21:40–21:55
 
 ---
 
-## 3. Tiket 2 — 22:40 · Kantor pabrik lambat, HMI kadang tidak merespons
+## 3. Tiket 2: 22:40 · Kantor pabrik lambat, HMI kadang tidak merespons
 
 > **Laporan:** operator produksi menelepon — layar HMI "loading" berulang, dan komputer kantor pabrik lambat membuka berkas
 > **Anggaran waktu: 25 menit**
@@ -225,9 +227,9 @@ SBY-ACC-01# show spanning-tree interface Gi1/0/14 detail | include BPDU|guard
 
 ---
 
-## 4. Tiket 3 — 23:05 · VoIP antar-lokasi patah-patah, ERP normal
+## 4. Tiket 3: 23:05 · VoIP antar-lokasi patah-patah, ERP normal
 
-> **Laporan:** panggilan HQ–pabrik terdengar terpotong dan bergema. Pengguna ERP tidak mengeluh. Dasbor menunjukkan semua tautan **up**.
+> **Laporan:** panggilan HQ-pabrik terdengar terpotong dan bergema. Pengguna ERP tidak mengeluh. Dasbor menunjukkan semua tautan **up**.
 > **Anggaran waktu: 25 menit**
 
 <details>
@@ -325,7 +327,7 @@ Jalur cadangan `wan-b` tidak memiliki kebijakan antrean apa pun.
 
 ---
 
-## 5. Tiket 4 — 01:20 · Delapan belas sensor cold storage 1 & 2 berhenti mengirim
+## 5. Tiket 4: 01:20 · Delapan belas sensor cold storage 1 & 2 berhenti mengirim
 
 > **Alarm:** tidak ada. Anda menemukannya sendiri saat memeriksa dasbor setelah Tiket 3.
 > **Data terakhir:** 00:07. Sekarang 01:20. **Celah 73 menit.**
@@ -450,7 +452,7 @@ Ini akibat langsung dari tiga hal yang sudah teridentifikasi di babak sebelumnya
 
 ---
 
-## 6. Tiket 5 — 03:50 · Empat belas kamera mengirim koneksi keluar berulang
+## 6. Tiket 5: 03:50 · Empat belas kamera mengirim koneksi keluar berulang
 
 > **Alarm:** IDS — pola koneksi keluar berkala dari VLAN CCTV pabrik ke lima alamat di luar negeri
 > **Anggaran waktu: 25 menit**
@@ -579,7 +581,7 @@ Tulis `13-postmortem.md`. Tanpa nama orang yang disalahkan — nama peran boleh.
 
 ---
 
-## 9. Latihan — Refleksi Malam Itu
+## 9. Latihan: Refleksi Malam Itu
 
 1. Untuk Tiket 1, urutan pemeriksaan tercepat memakai 10 menit dari 20. Jelaskan prinsip pemilihan yang membuat pemeriksaan B lebih berharga daripada A, lalu rumuskan aturan umum untuk memilih pemeriksaan pertama pada gangguan apa pun.
 2. Tiket 3 mengajarkan "up bukan berarti layak pakai". Sebutkan tiga contoh lain dalam kurikulum ini di mana indikator status hijau menyembunyikan kerusakan nyata, dan untuk masing-masing sebutkan metrik apa yang seharusnya dipantau.
@@ -637,4 +639,4 @@ Tulis `13-postmortem.md`. Tanpa nama orang yang disalahkan — nama peran boleh.
 
 ---
 
-**Berikutnya:** `20-proyek-akhir/10-babak-9-ruang-rapat.md` — anggaran Anda dipotong 35% dan Anda punya sepuluh menit di depan direksi.
+**Berikutnya:** `20-proyek-akhir/10-babak-9-ruang-rapat.md`. Anggaran Anda dipotong 35% dan Anda punya sepuluh menit di depan direksi.

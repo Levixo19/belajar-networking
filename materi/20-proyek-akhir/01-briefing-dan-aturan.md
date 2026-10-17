@@ -1,4 +1,4 @@
-# 20.1 — Briefing: Proyek Akhir Rantai Dingin
+# 20.1 Briefing: Proyek Akhir Rantai Dingin
 
 > **Prasyarat:** Seluruh modul `00`–`19` dan lab `00`–`06`
 > **Tujuan:** Memahami aturan main proyek akhir, menggali kebutuhan nyata dari dokumen bisnis yang berantakan, dan menyiapkan berkas kerja sebelum masuk Babak 1.
@@ -18,10 +18,11 @@ Perbedaannya penting:
 | Soal menyebut topiknya ("hitung subnet...") | Anda sendiri yang memutuskan ini soal subnetting, QoS, atau kebijakan |
 | Satu jawaban benar | Banyak jawaban sah, tapi setiap keputusan harus bisa dipertahankan |
 | Data lengkap dan bersih | Data bertentangan, ada yang bohong, ada yang hilang |
-| Selesai dalam 2 menit | Selesai dalam 3–6 minggu kerja santai |
+| Selesai dalam 2 menit | Selesai dalam 3-6 minggu kerja santai |
 | Lupa seminggu kemudian | Jadi portofolio yang bisa ditunjukkan saat wawancara |
 
-💡 Ukuran keberhasilan sebenarnya: setelah selesai, Anda bisa menjelaskan **kenapa** setiap angka di desain Anda seperti itu — tanpa membuka catatan.
+> [!TIP]
+> Ukuran keberhasilan sebenarnya: setelah selesai, Anda bisa menjelaskan **kenapa** setiap angka di desain Anda seperti itu — tanpa membuka catatan.
 
 ---
 
@@ -82,10 +83,11 @@ Ini semua bahan yang Anda punya. Sengaja tidak rapi — persis seperti di pekerj
 | T-881 | "Wi-Fi di cold storage hilang setiap kali forklift masuk lorong 3" | Dibiarkan, "sudah dari dulu" |
 | T-902 | "Tablet TPI-04 minta login ulang berkali-kali, kadang gagal kirim data 2 jam" | Ditutup: "sinyal LTE lemah" |
 | T-915 | "Rekaman CCTV pabrik hanya bertahan 4 hari, padahal kontrak bilang 30 hari" | Diteruskan ke vendor CCTV |
-| T-930 | "Setiap Senin 09:00–10:00 ERP lambat sekali" | Ditutup: "jam sibuk, normal" |
+| T-930 | "Setiap Senin 09:00-10:00 ERP lambat sekali" | Ditutup: "jam sibuk, normal" |
 | T-944 | "Printer label timbangan ganti IP sendiri, label tercetak dengan kode batch salah" | Dibiarkan, "dicabut-pasang saja" |
 
-💡 Empat dari lima tiket ini punya akar masalah yang akan Anda temukan sendiri di Babak 1 dan Babak 8. Jangan diagnosa sekarang — catat saja.
+> [!TIP]
+> Empat dari lima tiket ini punya akar masalah yang akan Anda temukan sendiri di Babak 1 dan Babak 8. Jangan diagnosa sekarang — catat saja.
 
 ### 3.4 Inventaris Warisan
 
@@ -112,7 +114,7 @@ Bagian dari nilai Anda adalah menuliskan **daftar pertanyaan terbuka** dan asums
 
 | Mode | Cara | Untuk siapa |
 |---|---|---|
-| **Santai** | Boleh buka semua modul, tanpa batas waktu. Target 3–6 minggu. | Baru selesai kurikulum, ingin memantapkan |
+| **Santai** | Boleh buka semua modul, tanpa batas waktu. Target 3-6 minggu. | Baru selesai kurikulum, ingin memantapkan |
 | **Ujian** | Hanya boleh buka `referensi/` (cheatsheet, tabel subnetting, daftar port). Tiap babak punya batas waktu. | Persiapan CCNA/MTCNA atau wawancara kerja |
 | **Kilat** | Tanpa catatan sama sekali, hanya Babak 1, 3, 8, dan sidang akhir. Satu hari penuh. | Menguji kesiapan wawancara teknis |
 
@@ -125,7 +127,8 @@ Bagian dari nilai Anda adalah menuliskan **daftar pertanyaan terbuka** dan asums
 5. **Yang bisa dijalankan, jalankan.** Konfigurasi harus diuji di lab (Containerlab / GNS3 / EVE-NG / Packet Tracer / mesin virtual Linux), bukan hanya ditulis.
 6. **Simpan di Git.** Satu commit per babak, minimal. Riwayat kerja adalah bagian dari portofolio.
 
-⚠️ Satu larangan keras: **jangan minta model bahasa membuatkan desainnya lalu Anda tempel.** Babak ini mengukur isi kepala Anda. Memakai AI untuk memeriksa hasil kerja sendiri, mencari dokumentasi, atau berdebat — silakan.
+> [!WARNING]
+> Satu larangan keras: **jangan minta model bahasa membuatkan desainnya lalu Anda tempel.** Babak ini mengukur isi kepala Anda. Memakai AI untuk memeriksa hasil kerja sendiri, mencari dokumentasi, atau berdebat — silakan.
 
 ---
 
@@ -137,7 +140,7 @@ Babak ini sengaja tidak seragam. Pekerjaan network engineer memang tidak seragam
 
 | Babak | Bentuk kerja | Yang diuji | Modul | Poin |
 |---|---|---|---|---|
-| **1** Audit Warisan | Forensik: bedah konfigurasi & keluaran perintah yang salah | Ketelitian, prioritisasi, L2/L3, keamanan dasar | 02–04, 09, 12, 13, 19 | 120 |
+| **1** Audit Warisan | Forensik: bedah konfigurasi & keluaran perintah yang salah | Ketelitian, prioritisasi, L2/L3, keamanan dasar | 02-04, 09, 12, 13, 19 | 120 |
 | **2** Sidang Arsitektur | Jadi juri: nilai 3 proposal vendor, lalu buat desain sendiri | Desain, trade-off, argumentasi | 17, 11, 16 | 130 |
 | **3** Teka-teki Alamat | Puzzle presisi dengan verifikasi mandiri | Subnetting, VLSM, ringkasan rute, IPv6 | 04, 08 | 130 |
 | **4** Bangun di Lab | Kerja tangan + matriks uji terima PASS/FAIL | Konfigurasi nyata, VLAN, routing, FHRP, verifikasi | 03, 04, 07, 13, 19 | 150 |
@@ -150,7 +153,8 @@ Babak ini sengaja tidak seragam. Pekerjaan network engineer memang tidak seragam
 
 Total **1230 poin**. Ambang lulus dibahas di `20.11`.
 
-💡 Urutan babak boleh diubah, **kecuali** Babak 1 (harus pertama, karena temuannya dipakai babak lain) dan Sidang (harus terakhir).
+> [!TIP]
+> Urutan babak boleh diubah, **kecuali** Babak 1 (harus pertama, karena temuannya dipakai babak lain) dan Sidang (harus terakhir).
 
 ---
 
@@ -192,18 +196,20 @@ Masalah belajar mandiri: tidak ada yang mengoreksi. Proyek ini memakai empat mek
 | **Uji terima** | Perintah nyata di lab yang hasilnya PASS atau FAIL. Tidak bisa didebat. | Babak 4, 7 |
 | **Ajari orang lain** | Jelaskan ke orang yang tidak paham jaringan dalam 5 menit. Kalau dia bingung, Anda belum paham. | Babak 9, Sidang |
 
-⚠️ Mekanisme paling keras adalah yang terakhir. Banyak orang bisa mengonfigurasi OSPF tapi tidak bisa menjelaskan kenapa OSPF, bukan RIP, untuk kasus ini. Yang kedua itulah yang ditanya saat wawancara.
+> [!WARNING]
+> Mekanisme paling keras adalah yang terakhir. Banyak orang bisa mengonfigurasi OSPF tapi tidak bisa menjelaskan kenapa OSPF, bukan RIP, untuk kasus ini. Yang kedua itulah yang ditanya saat wawancara.
 
 ---
 
 ## 8. Kesalahan Umum Peserta
 
-❌ **Mulai dari teknologi.** "Saya mau pakai VXLAN" sebelum tahu berapa host per situs. Mulai dari kebutuhan, selalu.
-❌ **Mendesain untuk jaringan impian.** Ini perusahaan dengan satu engineer dan tanpa tim keamanan. Desain yang butuh 5 orang untuk dirawat adalah desain yang gagal.
-❌ **Melewati Babak 1.** Semua yang "sudah dari dulu" adalah bom waktu, dan Babak 8 akan meledakkannya.
-❌ **Menulis konfigurasi tanpa menguji.** Konfigurasi yang belum pernah dijalankan adalah karangan.
-❌ **Mengabaikan sisi bisnis.** Desain paling benar yang ditolak CFO bernilai nol.
-❌ **Mengerjakan semuanya dalam satu duduk.** Kelelahan menghasilkan keputusan buruk yang tidak Anda sadari. Satu babak, satu sesi.
+> [!CAUTION]
+> **Mulai dari teknologi.** "Saya mau pakai VXLAN" sebelum tahu berapa host per situs. Mulai dari kebutuhan, selalu.
+> ❌ **Mendesain untuk jaringan impian.** Ini perusahaan dengan satu engineer dan tanpa tim keamanan. Desain yang butuh 5 orang untuk dirawat adalah desain yang gagal.
+> ❌ **Melewati Babak 1.** Semua yang "sudah dari dulu" adalah bom waktu, dan Babak 8 akan meledakkannya.
+> ❌ **Menulis konfigurasi tanpa menguji.** Konfigurasi yang belum pernah dijalankan adalah karangan.
+> ❌ **Mengabaikan sisi bisnis.** Desain paling benar yang ditolak CFO bernilai nol.
+> ❌ **Mengerjakan semuanya dalam satu duduk.** Kelelahan menghasilkan keputusan buruk yang tidak Anda sadari. Satu babak, satu sesi.
 
 ---
 
@@ -217,7 +223,7 @@ Masalah belajar mandiri: tidak ada yang mengoreksi. Proyek ini memakai empat mek
 
 ---
 
-## 10. Latihan — Membaca Kebutuhan
+## 10. Latihan: Membaca Kebutuhan
 
 Jawab di `01-kebutuhan.md` sebelum membuka kunci. Semua jawabannya ada di berkas masuk di atas.
 
@@ -257,4 +263,4 @@ Jawab di `01-kebutuhan.md` sebelum membuka kunci. Semua jawabannya ada di berkas
 
 ---
 
-**Berikutnya:** `20-proyek-akhir/02-babak-1-audit-warisan.md` — bedah konfigurasi warisan BNS dan temukan bom waktunya.
+**Berikutnya:** `20-proyek-akhir/02-babak-1-audit-warisan.md`. Bedah konfigurasi warisan BNS dan temukan bom waktunya.

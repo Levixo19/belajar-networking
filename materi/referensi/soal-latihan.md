@@ -4,7 +4,7 @@
 
 ---
 
-## Bagian A — Fondasi & Model (Tahap 0–1)
+## Bagian A: Fondasi & Model (Tahap 0–1)
 
 **A1.** Konversikan `192` dan `172` ke biner 8-bit. Berapa `11000000` dalam desimal?
 
@@ -24,7 +24,7 @@
 
 ---
 
-## Bagian B — Layer Fisik & Data Link (Tahap 2–3)
+## Bagian B: Layer Fisik & Data Link (Tahap 2–3)
 
 **B1.** PC terhubung ke switch tetapi lambat & banyak error. `show interface` menunjukkan banyak "late collisions". Apa penyebab paling mungkin?
 
@@ -44,7 +44,7 @@
 
 ---
 
-## Bagian C — IP & Subnetting (Tahap 4)
+## Bagian C: IP & Subnetting (Tahap 4)
 
 **C1.** Diberi `10.20.30.75/28`. Tentukan: network, broadcast, rentang host usable, dan jumlah host per subnet.
 
@@ -68,7 +68,7 @@
 
 ---
 
-## Bagian D — Transport & Aplikasi (Tahap 5–6)
+## Bagian D: Transport & Aplikasi (Tahap 5–6)
 
 **D1.** Kapan memilih UDP daripada TCP? Beri dua contoh aplikasi UDP.
 
@@ -88,7 +88,7 @@
 
 ---
 
-## Bagian E — Routing (Tahap 7)
+## Bagian E: Routing (Tahap 7)
 
 **E1.** Router punya rute ke `10.1.1.0/24` dari OSPF (AD 110) dan dari static (AD 1). Mana yang dipakai & kenapa?
 
@@ -112,7 +112,7 @@
 
 ---
 
-## Bagian F — Keamanan & IP Services (Tahap 9, 12)
+## Bagian F: Keamanan & IP Services (Tahap 9, 12)
 
 **F1.** Apa perbedaan ACL standard dan extended, dan di mana masing-masing sebaiknya ditempatkan?
 
@@ -136,7 +136,7 @@
 
 ---
 
-## Bagian G — Wireless, WAN, QoS (Tahap 10–11)
+## Bagian G: Wireless, WAN, QoS (Tahap 10–11)
 
 **G1.** Kenapa di 2.4 GHz hanya kanal 1, 6, 11 yang direkomendasikan?
 
@@ -152,7 +152,7 @@
 
 ---
 
-## Bagian H — Otomasi, DC, Cloud (Tahap 15–16)
+## Bagian H: Otomasi, DC, Cloud (Tahap 15–16)
 
 **H1.** Apa arti "idempoten" dalam otomasi, dan kenapa penting?
 
@@ -172,7 +172,7 @@
 
 ---
 
-## Bagian I — Troubleshooting (skenario terapan)
+## Bagian I: Troubleshooting (skenario terapan)
 
 **I1.** User melapor "tidak bisa akses internet". Uraikan pendekatan troubleshooting sistematis Anda.
 
@@ -188,7 +188,7 @@
 
 ---
 
-## Bagian J — Campuran (tantangan)
+## Bagian J: Campuran (tantangan)
 
 **J1.** Rancang skema IP hierarkis untuk 3 situs, masing-masing butuh ~200 host di LAN utama. Jelaskan agar bisa di-summarize.
 

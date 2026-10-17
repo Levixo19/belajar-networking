@@ -1,4 +1,4 @@
-# 23.2 — Cisco SD-Access dan Catalyst SD-WAN
+# 23.2 Cisco SD-Access dan Catalyst SD-WAN
 
 > **Prasyarat:** `23-jalur-vendor/01-junos`, `16-datacenter-cloud-sdn/02-overlay-vxlan-evpn`, `16-datacenter-cloud-sdn/06-sdn`, `07-routing-lanjutan/10-isis`, `11-wan-vpn/01-teknologi-wan`
 > **Tujuan:** Anda bisa menjelaskan arsitektur Cisco SD-Access (underlay IS-IS, overlay LISP dan VXLAN, SGT/TrustSec, peran control plane, border, dan edge node, serta Catalyst Center) dan Cisco Catalyst SD-WAN (Manager, Controller, Validator, WAN Edge, OMP, TLOC, kebijakan aplikasi), menyebut nama produk yang berlaku sekarang beserta nama lamanya, dan membedakan kapan keduanya dipakai.
@@ -7,7 +7,8 @@
 
 ## 1. Pengantar: Label Pendalaman
 
-⚠️ **Label pendalaman.** Modul ini spesialisasi vendor Cisco di atas CCNA. Topik ini **tidak diuji** di CCNA (yang hanya menyinggung konsep controller-based dan SD-WAN secara umum), Network+, maupun MTCNA. Ia relevan bila Anda menuju CCNP Enterprise (ENCOR, ENSDWI, ENAUTO), atau bekerja di perusahaan yang membeli solusi kampus dan WAN Cisco.
+> [!WARNING]
+> **Label pendalaman.** Modul ini spesialisasi vendor Cisco di atas CCNA. Topik ini **tidak diuji** di CCNA (yang hanya menyinggung konsep controller-based dan SD-WAN secara umum), Network+, maupun MTCNA. Ia relevan bila Anda menuju CCNP Enterprise (ENCOR, ENSDWI, ENAUTO), atau bekerja di perusahaan yang membeli solusi kampus dan WAN Cisco.
 
 Dua produk dibahas karena menjawab dua masalah berbeda dengan ide yang mirip: **pisahkan kebijakan dari topologi fisik, dan kelola dari satu pusat**.
 
@@ -33,7 +34,8 @@ Cisco mengubah nama merek beberapa kali, dan materi lama memakai nama yang berbe
 | **Catalyst SD-WAN Analytics** | vAnalytics | Idem |
 | **Identity Services Engine (ISE)** | (tidak berubah) | Mesin kebijakan identitas dan SGT |
 
-💡 Dokumentasi Cisco sendiri mencatat bahwa nama lama masih muncul di bagian API dan CLI. Jadi di konfigurasi nyata Anda masih akan melihat `vmanage`, `vsmart`, `vbond`, dan `vmanage-admin`. Hafalkan keduanya.
+> [!TIP]
+> Dokumentasi Cisco sendiri mencatat bahwa nama lama masih muncul di bagian API dan CLI. Jadi di konfigurasi nyata Anda masih akan melihat `vmanage`, `vsmart`, `vbond`, dan `vmanage-admin`. Hafalkan keduanya.
 
 ---
 
@@ -84,7 +86,8 @@ Skenario: Laptop A (di edge E1) menghubungi Server B (di edge E2) dalam VN yang 
 
 Hal ini berbeda dari VLAN tradisional: tidak ada STP di fabric, tidak ada VLAN yang direntangkan lintas switch di underlay, dan endpoint yang berpindah cukup **mendaftar ulang** ke CP. Versi baru memakai **LISP Pub/Sub**: control plane node "menerbitkan" pembaruan kepada pelanggan (edge dan border), sehingga tidak bergantung pada BGP untuk pertukaran informasi dan konvergensinya lebih cepat.
 
-💡 Instruktur sering memakai satu kalimat ringkasan: *LISP menjawab "di mana", VXLAN menjawab "bagaimana membawanya", SGT menjawab "boleh atau tidak".*
+> [!TIP]
+> Instruktur sering memakai satu kalimat ringkasan: *LISP menjawab "di mana", VXLAN menjawab "bagaimana membawanya", SGT menjawab "boleh atau tidak".*
 
 ---
 
@@ -101,7 +104,8 @@ Catalyst Center adalah pusat kendali SD-Access. Alurnya mengikuti empat tahap:
 
 Catalyst Center memiliki **API** (Intent API) untuk semua fungsi ini, dibahas di modul 23.3. **ISE** menyediakan autentikasi 802.1X/MAB dan penetapan SGT dinamis. Jaringan lama bisa dihubungkan lewat border node, lalu bermigrasi bertahap (model *brownfield*).
 
-⚠️ SD-Access bukan hanya "konfigurasi otomatis". Ia membawa **ketergantungan lisensi**, kebutuhan perangkat keras tertentu (Catalyst 9000), dan ISE yang sehat. Kegagalan ISE atau Catalyst Center memengaruhi onboarding endpoint baru, walau trafik endpoint yang sudah terhubung tetap berjalan.
+> [!WARNING]
+> SD-Access bukan hanya "konfigurasi otomatis". Ia membawa **ketergantungan lisensi**, kebutuhan perangkat keras tertentu (Catalyst 9000), dan ISE yang sehat. Kegagalan ISE atau Catalyst Center memengaruhi onboarding endpoint baru, walau trafik endpoint yang sudah terhubung tetap berjalan.
 
 ---
 
@@ -174,17 +178,23 @@ Pertimbangan penting: kedua solusi menukar kerumitan per perangkat dengan **kete
 
 ## 9. Kesalahan Umum
 
-❌ Menyamakan SD-WAN Cisco dengan "VPN biasa". Perbedaannya ada pada **controller**, OMP, dan kebijakan aplikasi.
+> [!CAUTION]
+> Menyamakan SD-WAN Cisco dengan "VPN biasa". Perbedaannya ada pada **controller**, OMP, dan kebijakan aplikasi.
 
-❌ Memakai nama lama dan baru bergantian tanpa kesepakatan, sehingga tim bingung antara vManage dan Manager.
+> [!CAUTION]
+> Memakai nama lama dan baru bergantian tanpa kesepakatan, sehingga tim bingung antara vManage dan Manager.
 
-❌ MTU underlay SD-Access tidak dinaikkan. Overhead VXLAN sekitar 50 byte membuat paket penuh terpecah atau terbuang. Cisco menyarankan 9100.
+> [!CAUTION]
+> MTU underlay SD-Access tidak dinaikkan. Overhead VXLAN sekitar 50 byte membuat paket penuh terpecah atau terbuang. Cisco menyarankan 9100.
 
-❌ Menganggap SGT menggantikan VN. VN memisahkan tabel routing, SGT memisahkan golongan di dalam satu VN.
+> [!CAUTION]
+> Menganggap SGT menggantikan VN. VN memisahkan tabel routing, SGT memisahkan golongan di dalam satu VN.
 
-❌ Mengabaikan sertifikat dan jam (NTP) di SD-WAN. Perangkat gagal bergabung bila waktu atau sertifikat salah.
+> [!CAUTION]
+> Mengabaikan sertifikat dan jam (NTP) di SD-WAN. Perangkat gagal bergabung bila waktu atau sertifikat salah.
 
-✅ Dokumentasikan nama color, nomor VPN, dan pemetaan VN ke VRF sebelum membangun.
+> [!TIP]
+> Dokumentasikan nama color, nomor VPN, dan pemetaan VN ke VRF sebelum membangun.
 
 ---
 
@@ -240,4 +250,4 @@ Pertimbangan penting: kedua solusi menukar kerumitan per perangkat dengan **kete
 
 ---
 
-**Berikutnya:** `23-jalur-vendor/03-api-platform-cisco` — platform ini bisa diprogram: Catalyst Center, Meraki, dan NSO lewat REST API dengan Python.
+**Berikutnya:** `23-jalur-vendor/03-api-platform-cisco`. Platform ini bisa diprogram: Catalyst Center, Meraki, dan NSO lewat REST API dengan Python.

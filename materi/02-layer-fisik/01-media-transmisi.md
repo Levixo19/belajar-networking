@@ -1,4 +1,4 @@
-# 02.1 — Media Transmisi dan Gangguan Sinyal
+# 02.1 Media Transmisi dan Gangguan Sinyal
 
 > **Prasyarat:** `00-fondasi/03`, `01-model-referensi/01`
 > **Tujuan:** Anda paham tiga jenis media, tahu gangguan apa yang menyerang masing-masing, dan bisa memilih media yang tepat berdasarkan jarak, kecepatan, dan lingkungan.
@@ -10,13 +10,13 @@
 | | Tembaga (copper) | Serat optik (fiber) | Nirkabel (wireless) |
 |---|---|---|---|
 | Membawa | Sinyal listrik | Cahaya | Gelombang radio |
-| Jarak tipikal | 100 m | 300 m – 100+ km | 30–100 m indoor |
-| Kecepatan | 1–40 Gbps | 1 Gbps – 800 Gbps+ | 100 Mbps – beberapa Gbps |
+| Jarak tipikal | 100 m | 300 m - 100+ km | 30-100 m indoor |
+| Kecepatan | 1-40 Gbps | 1 Gbps - 800 Gbps+ | 100 Mbps - beberapa Gbps |
 | Kekebalan EMI | Buruk | **Sempurna** | Buruk |
 | Keamanan fisik | Bisa disadap | Sulit disadap | **Paling mudah disadap** |
 | Biaya per meter | Murah | Sedang (kabel murah, optik mahal) | Tanpa kabel |
 | Instalasi | Mudah | Butuh keahlian (splicing) | Paling mudah |
-| Bisa bawa listrik (PoE) | ✅ Ya | ❌ Tidak | ❌ Tidak |
+| Bisa bawa listrik (PoE) | Ya | Tidak | Tidak |
 | Media bersama? | Tidak (switched) | Tidak | **Ya** (half duplex) |
 
 ### Aturan pemilihan cepat
@@ -32,7 +32,8 @@ Perangkat bergerak, sulit ditarik kabel     → Nirkabel
 Butuh throughput konsisten & rendah latency → Kabel, bukan nirkabel
 ```
 
-⚠️ **Aturan yang sering dilanggar:** menghubungkan dua gedung terpisah dengan kabel tembaga. Perbedaan potensial tanah (*ground potential difference*) dan sambaran petir bisa merusak perangkat di kedua ujung — bahkan membahayakan orang. Antar-gedung **selalu** pakai serat optik (atau media converter dengan isolasi yang benar).
+> [!WARNING]
+> **Aturan yang sering dilanggar:** menghubungkan dua gedung terpisah dengan kabel tembaga. Perbedaan potensial tanah (*ground potential difference*) dan sambaran petir bisa merusak perangkat di kedua ujung — bahkan membahayakan orang. Antar-gedung **selalu** pakai serat optik (atau media converter dengan isolasi yang benar).
 
 ---
 
@@ -52,7 +53,7 @@ Kuat sinyal
 ```
 
 - **Tembaga:** melemah karena resistansi kabel; makin tinggi frekuensi, makin cepat melemah. Inilah alasan batas 100 m untuk UTP.
-- **Serat:** melemah jauh lebih lambat (~0,2–0,35 dB/km untuk single-mode) — karena itu bisa puluhan kilometer.
+- **Serat:** melemah jauh lebih lambat (~0,2-0,35 dB/km untuk single-mode) — karena itu bisa puluhan kilometer.
 - **Nirkabel:** melemah dengan kuadrat jarak (*free space path loss*), plus terhalang benda.
 
 Solusi: repeater, switch (yang membangkitkan ulang sinyal), amplifier optik, atau memperpendek jarak.
@@ -81,7 +82,8 @@ Sinyal dari satu pasang kabel "bocor" ke pasangan tetangga di dalam kabel yang s
 
 **Mitigasi crosstalk pada UTP:** setiap pasang dipilin (*twisted*) dengan **rapatan berbeda**. Pilinan membuat medan elektromagnetik saling meniadakan; rapatan berbeda mencegah dua pasang beresonansi bersama.
 
-⚠️ **Konsekuensi praktis:** jangan membuka pilinan lebih dari **13 mm** saat memasang RJ45. Instalasi yang "rapi terlihat" dengan pilinan dibuka panjang justru gagal uji sertifikasi Cat6.
+> [!WARNING]
+> **Konsekuensi praktis:** jangan membuka pilinan lebih dari **13 mm** saat memasang RJ45. Instalasi yang "rapi terlihat" dengan pilinan dibuka panjang justru gagal uji sertifikasi Cat6.
 
 ### 2.4 Distorsi & Delay Skew
 
@@ -106,7 +108,7 @@ Sudah dibahas di `00-fondasi/03`. Di layer fisik, penyebabnya adalah kecepatan r
 
 ---
 
-## 3. SNR — Rasio Sinyal terhadap Derau
+## 3. SNR (Rasio Sinyal terhadap Derau)
 
 ```
 SNR (dB) = 10 × log₁₀ (daya sinyal / daya derau)
@@ -127,13 +129,13 @@ Panduan kasar SNR untuk Wi-Fi:
 | SNR | Kualitas |
 |---|---|
 | > 40 dB | Sangat baik, kecepatan maksimum |
-| 25–40 dB | Baik, cocok untuk data & suara |
-| 15–25 dB | Cukup, kecepatan menurun |
+| 25-40 dB | Baik, cocok untuk data & suara |
+| 15-25 dB | Cukup, kecepatan menurun |
 | < 15 dB | Buruk, sering terputus |
 
 ---
 
-## 4. Desibel (dB) — Wajib Dipahami
+## 4. Desibel (dB): Wajib Dipahami
 
 Semua pengukuran sinyal memakai skala logaritmik.
 
@@ -143,7 +145,7 @@ dBm  = daya absolut, relatif terhadap 1 mW
 dBi  = penguatan antena relatif terhadap antena isotropis
 ```
 
-### Aturan 3 dan 10 — hafalkan ini
+### Aturan 3 dan 10: hafalkan ini
 
 | Perubahan | Artinya |
 |---|---|
@@ -230,18 +232,19 @@ Contoh yang wajib dikenal:
 | 10BASE-T | 10 Mbps | UTP Cat3+ | 100 m |
 | 100BASE-TX | 100 Mbps | UTP Cat5+ | 100 m |
 | **1000BASE-T** | 1 Gbps | UTP Cat5e+ | 100 m |
-| 1000BASE-SX | 1 Gbps | MMF 850 nm | 220–550 m |
-| 1000BASE-LX | 1 Gbps | SMF 1310 nm | 5–10 km |
+| 1000BASE-SX | 1 Gbps | MMF 850 nm | 220-550 m |
+| 1000BASE-LX | 1 Gbps | SMF 1310 nm | 5-10 km |
 | **10GBASE-T** | 10 Gbps | UTP Cat6A | 100 m (Cat6: 55 m) |
-| 10GBASE-SR | 10 Gbps | MMF | 26–400 m (OM3/OM4) |
+| 10GBASE-SR | 10 Gbps | MMF | 26-400 m (OM3/OM4) |
 | 10GBASE-LR | 10 Gbps | SMF | 10 km |
-| 25GBASE-SR | 25 Gbps | MMF | 70–100 m |
-| 40GBASE-SR4 | 40 Gbps | MMF (MPO 8 serat) | 100–150 m |
-| 100GBASE-SR4 | 100 Gbps | MMF (MPO) | 70–100 m |
+| 25GBASE-SR | 25 Gbps | MMF | 70-100 m |
+| 40GBASE-SR4 | 40 Gbps | MMF (MPO 8 serat) | 100-150 m |
+| 100GBASE-SR4 | 100 Gbps | MMF (MPO) | 70-100 m |
 | 100GBASE-LR4 | 100 Gbps | SMF | 10 km |
 | 400GBASE-DR4 | 400 Gbps | SMF (MPO) | 500 m |
 
-💡 Angka `4` di akhir (SR4, LR4) berarti sinyal dibagi ke **4 jalur paralel** — 4 pasang serat atau 4 panjang gelombang.
+> [!TIP]
+> Angka `4` di akhir (SR4, LR4) berarti sinyal dibagi ke **4 jalur paralel** — 4 pasang serat atau 4 panjang gelombang.
 
 ---
 
@@ -272,7 +275,8 @@ $ ip -s link show eth0
 $ ethtool -S eth0 | grep -iE 'err|crc|drop|discard'
 ```
 
-⚠️ **CRC error yang terus bertambah = masalah layer 1.** Kabel, konektor, SFP, atau interferensi. Bukan masalah routing.
+> [!WARNING]
+> **CRC error yang terus bertambah = masalah layer 1.** Kabel, konektor, SFP, atau interferensi. Bukan masalah routing.
 
 ### Di Cisco
 ```
@@ -296,17 +300,23 @@ Ini menunjukkan panjang kabel dan lokasi perkiraan kerusakan tiap pasang.
 
 ## 9. Kesalahan Umum
 
-⚠️ **1. Menarik kabel data sejajar kabel listrik.** Sumber EMI utama. Jaga jarak minimal 30 cm untuk jalur paralel panjang; kalau harus menyeberang, buat sudut 90°.
+> [!WARNING]
+> **1. Menarik kabel data sejajar kabel listrik.** Sumber EMI utama. Jaga jarak minimal 30 cm untuk jalur paralel panjang; kalau harus menyeberang, buat sudut 90°.
 
-⚠️ **2. Menghubungkan gedung berbeda dengan tembaga.** Risiko petir & perbedaan potensial tanah. Gunakan serat.
+> [!WARNING]
+> **2. Menghubungkan gedung berbeda dengan tembaga.** Risiko petir & perbedaan potensial tanah. Gunakan serat.
 
-⚠️ **3. Melebihi 100 m pada UTP.** Batas ini mencakup patch cord di kedua ujung (90 m permanent link + 2×5 m patch). Melebihinya menyebabkan error yang muncul acak dan sulit dilacak.
+> [!WARNING]
+> **3. Melebihi 100 m pada UTP.** Batas ini mencakup patch cord di kedua ujung (90 m permanent link + 2×5 m patch). Melebihinya menyebabkan error yang muncul acak dan sulit dilacak.
 
-⚠️ **4. Mengabaikan radius tekuk.** Serat yang tertekuk tajam kehilangan cahaya (macrobend loss). UTP yang tertekuk mengubah impedansi.
+> [!WARNING]
+> **4. Mengabaikan radius tekuk.** Serat yang tertekuk tajam kehilangan cahaya (macrobend loss). UTP yang tertekuk mengubah impedansi.
 
-⚠️ **5. Mengira "sinyal kuat = cepat" pada Wi-Fi.** Yang menentukan adalah SNR.
+> [!WARNING]
+> **5. Mengira "sinyal kuat = cepat" pada Wi-Fi.** Yang menentukan adalah SNR.
 
-⚠️ **6. Memakai kabel murah tanpa sertifikasi.** Banyak kabel "Cat6" di pasar sebenarnya CCA (*Copper Clad Aluminum*) — bukan tembaga murni. Resistansi lebih tinggi, gagal pada PoE dan pada jarak jauh, dan mudah patah.
+> [!WARNING]
+> **6. Memakai kabel murah tanpa sertifikasi.** Banyak kabel "Cat6" di pasar sebenarnya CCA (*Copper Clad Aluminum*) — bukan tembaga murni. Resistansi lebih tinggi, gagal pada PoE dan pada jarak jauh, dan mudah patah.
 
 ---
 
@@ -360,4 +370,4 @@ Ini menunjukkan panjang kabel dan lokasi perkiraan kerusakan tiap pasang.
 
 ---
 
-**Berikutnya:** `02-layer-fisik/02-kabel-copper.md` — semua tentang UTP, kategori, pinout, dan PoE.
+**Berikutnya:** `02-layer-fisik/02-kabel-copper.md`. Semua tentang UTP, kategori, pinout, dan PoE.

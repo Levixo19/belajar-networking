@@ -1,9 +1,10 @@
-# 15.1 — Mengapa Otomasi dan Konsep SDN
+# 15.1 Mengapa Otomasi dan Konsep SDN
 
 > **Prasyarat:** pemahaman dasar jaringan (Tahap 0-14)
 > **Tujuan:** Anda paham nilai otomasi jaringan, konsep SDN dan controller-based networking, serta peran AI/ML — sesuai CCNA domain 6.
 
-> 📌 **Domain 6 (Automation & Programmability) adalah bagian yang paling banyak berubah di CCNA v1.1**, menambahkan AI/ML dan Terraform. Ini mencerminkan pergeseran industri: network engineer masa depan harus bisa memprogram, bukan hanya mengetik perintah CLI.
+> > [!NOTE]
+> > **Domain 6 (Automation & Programmability) adalah bagian yang paling banyak berubah di CCNA v1.1**, menambahkan AI/ML dan Terraform. Ini mencerminkan pergeseran industri: network engineer masa depan harus bisa memprogram, bukan hanya mengetik perintah CLI.
 
 ---
 
@@ -41,9 +42,11 @@ Skenario: mengubah server DNS di 200 perangkat
 ✅ Kolaborasi — review sebelum deploy (seperti kode)
 ```
 
-⚠️ **Otomasi memperbesar kesalahan juga.** Skrip yang salah bisa merusak 200 perangkat sekaligus, jauh lebih cepat daripada manual. Karena itu **testing, dry-run, dan rollback plan menjadi wajib**, bukan opsional.
+> [!WARNING]
+> **Otomasi memperbesar kesalahan juga.** Skrip yang salah bisa merusak 200 perangkat sekaligus, jauh lebih cepat daripada manual. Karena itu **testing, dry-run, dan rollback plan menjadi wajib**, bukan opsional.
 
-💡 **Studi menunjukkan penyebab utama outage jaringan adalah human error dalam perubahan konfigurasi.** Otomasi dengan review dan testing mengurangi ini secara dramatis — tetapi hanya kalau diterapkan dengan disiplin.
+> [!TIP]
+> **Studi menunjukkan penyebab utama outage jaringan adalah human error dalam perubahan konfigurasi.** Otomasi dengan review dan testing mengurangi ini secara dramatis — tetapi hanya kalau diterapkan dengan disiplin.
 
 ---
 
@@ -92,11 +95,12 @@ Setiap perangkat DIKONFIGURASI SENDIRI-SENDIRI:
 | Skalabilitas | Terbatas usaha manual | Tinggi |
 | Titik kegagalan | Terdistribusi | **Controller = SPOF** (butuh HA) |
 
-⚠️ **Controller menjadi single point of failure yang kritis.** Kalau controller mati, jaringan sering tetap meneruskan trafik (data plane mandiri), tetapi tidak ada perubahan yang bisa dibuat, dan fitur yang bergantung controller berhenti. **Controller HA adalah keharusan.**
+> [!WARNING]
+> **Controller menjadi single point of failure yang kritis.** Kalau controller mati, jaringan sering tetap meneruskan trafik (data plane mandiri), tetapi tidak ada perubahan yang bisa dibuat, dan fitur yang bergantung controller berhenti. **Controller HA adalah keharusan.**
 
 ---
 
-## 3. SDN — Pemisahan Control Plane dan Data Plane (CCNA 6.3)
+## 3. SDN (Pemisahan Control Plane dan Data Plane (CCNA 6.3))
 
 ### Tiga plane
 
@@ -118,7 +122,7 @@ MANAGEMENT PLANE:
 
 **SDN memisahkan control plane dari data plane** dan memindahkan control plane ke **controller terpusat**.
 
-### API — Northbound dan Southbound
+### API (Northbound dan Southbound)
 
 ```
         ┌─────────── APLIKASI / ORKESTRASI ───────────┐
@@ -141,7 +145,8 @@ MANAGEMENT PLANE:
 | **Northbound** | Controller → aplikasi | Aplikasi memberi tahu controller **apa** yang diinginkan | REST API |
 | **Southbound** | Controller → perangkat | Controller memberi tahu perangkat **bagaimana** | OpenFlow, NETCONF, gNMI, OpFlex |
 
-💡 **Cara mengingat:** North = "ke atas" ke aplikasi/manusia (abstrak, "apa"); South = "ke bawah" ke perangkat (konkret, "bagaimana").
+> [!TIP]
+> **Cara mengingat:** North = "ke atas" ke aplikasi/manusia (abstrak, "apa"); South = "ke bawah" ke perangkat (konkret, "bagaimana").
 
 ### Overlay, Underlay, Fabric (CCNA 6.3)
 
@@ -197,7 +202,8 @@ Cloud-managed           : Meraki, cloud MikroTik, controller vendor di cloud
 Hybrid                  : kombinasi
 ```
 
-⚠️ **Cloud-managed nyaman tetapi bergantung konektivitas internet dan vendor.** Kalau internet ke cloud controller putus, sebagian fungsi manajemen hilang (walau data plane biasanya tetap jalan). Pertimbangkan implikasi ini untuk lokasi kritis.
+> [!WARNING]
+> **Cloud-managed nyaman tetapi bergantung konektivitas internet dan vendor.** Kalau internet ke cloud controller putus, sebagian fungsi manajemen hilang (walau data plane biasanya tetap jalan). Pertimbangkan implikasi ini untuk lokasi kritis.
 
 ---
 
@@ -221,7 +227,7 @@ GENERATIF (generative AI):
   - Asisten troubleshooting
 ```
 
-### AIOps — AI untuk operasi
+### AIOps: AI untuk operasi
 
 ```
 - Korelasi alert (mengurangi ribuan alert menjadi beberapa insiden)
@@ -239,7 +245,8 @@ Arista AVA / CloudVision AI
 HPE Aruba AIOps
 ```
 
-⚠️ **AI dalam jaringan punya batasan nyata:**
+> [!WARNING]
+> **AI dalam jaringan punya batasan nyata:**
 ```
 - Butuh DATA berkualitas (garbage in, garbage out)
 - Bisa memberi false positive/negative
@@ -249,9 +256,11 @@ HPE Aruba AIOps
 - Privasi dan keamanan data yang dikirim ke AI
 ```
 
-💡 **AI adalah alat bantu, bukan pengganti.** Ia unggul dalam **menemukan pola dari data besar** (korelasi alert, anomali, tren) yang sulit dilakukan manusia. Tetapi keputusan kritis dan pemahaman akar masalah tetap membutuhkan engineer. **Verifikasi output AI** — terutama konfigurasi yang dihasilkan AI generatif, yang bisa terlihat benar tetapi mengandung kesalahan halus.
+> [!TIP]
+> **AI adalah alat bantu, bukan pengganti.** Ia unggul dalam **menemukan pola dari data besar** (korelasi alert, anomali, tren) yang sulit dilakukan manusia. Tetapi keputusan kritis dan pemahaman akar masalah tetap membutuhkan engineer. **Verifikasi output AI** — terutama konfigurasi yang dihasilkan AI generatif, yang bisa terlihat benar tetapi mengandung kesalahan halus.
 
-⚠️ **Konfigurasi yang dihasilkan AI harus selalu di-review dan diuji** sebelum diterapkan — sama seperti kode dari sumber mana pun. AI bisa menghasilkan sintaks yang plausibel tetapi salah, atau merujuk fitur/perintah yang tidak ada.
+> [!WARNING]
+> **Konfigurasi yang dihasilkan AI harus selalu di-review dan diuji** sebelum diterapkan — sama seperti kode dari sumber mana pun. AI bisa menghasilkan sintaks yang plausibel tetapi salah, atau merujuk fitur/perintah yang tidak ada.
 
 ---
 
@@ -285,9 +294,11 @@ Konfigurasi jaringan → file teks (YAML, Jinja2, HCL)
 5. TESTING — validasi sebelum deploy (lint, dry-run, lab)
 ```
 
-⚠️ **Idempotensi adalah konsep kunci.** Alat yang tidak idempoten (skrip yang membabi buta "buat VLAN 10") akan gagal atau menduplikasi kalau dijalankan dua kali. Alat modern (Ansible, Terraform) idempoten — mereka membandingkan keadaan sekarang dengan yang diinginkan dan hanya mengubah yang perlu.
+> [!WARNING]
+> **Idempotensi adalah konsep kunci.** Alat yang tidak idempoten (skrip yang membabi buta "buat VLAN 10") akan gagal atau menduplikasi kalau dijalankan dua kali. Alat modern (Ansible, Terraform) idempoten — mereka membandingkan keadaan sekarang dengan yang diinginkan dan hanya mengubah yang perlu.
 
-💡 **NetBox sebagai Source of Truth** — banyak organisasi memakai NetBox (atau Nautobot) sebagai basis data otoritatif "apa yang seharusnya ada", lalu otomasi membaca dari sana dan menerapkannya ke perangkat. Ini memisahkan **niat** (di NetBox) dari **implementasi** (di perangkat). Dibahas di `15-otomasi/04`.
+> [!TIP]
+> **NetBox sebagai Source of Truth** — banyak organisasi memakai NetBox (atau Nautobot) sebagai basis data otoritatif "apa yang seharusnya ada", lalu otomasi membaca dari sana dan menerapkannya ke perangkat. Ini memisahkan **niat** (di NetBox) dari **implementasi** (di perangkat). Dibahas di `15-otomasi/04`.
 
 ---
 
@@ -314,11 +325,12 @@ DEKLARATIF (apa):
 | Idempoten? | Harus dibuat sendiri | Bawaan |
 | Kompleksitas | Tinggi untuk kasus rumit | Lebih sederhana |
 
-💡 **Deklaratif lebih baik untuk sebagian besar otomasi jaringan** karena idempoten dan fokus pada niat. Tetapi imperatif (Netmiko, Scrapli) tetap berguna untuk tugas ad-hoc, pengumpulan data, dan perangkat yang tidak punya model deklaratif.
+> [!TIP]
+> **Deklaratif lebih baik untuk sebagian besar otomasi jaringan** karena idempoten dan fokus pada niat. Tetapi imperatif (Netmiko, Scrapli) tetap berguna untuk tugas ad-hoc, pengumpulan data, dan perangkat yang tidak punya model deklaratif.
 
 ---
 
-## 8. Perjalanan Otomasi — Bertahap
+## 8. Perjalanan Otomasi: Bertahap
 
 ```
 LEVEL 0 — Manual
@@ -345,9 +357,11 @@ LEVEL 5 — Intent-based / self-driving
   → jaringan yang mengoreksi diri
 ```
 
-💡 **Mulai dari yang kecil.** Anda tidak perlu langsung ke Level 5. Bahkan Level 1 (skrip untuk mengumpulkan data dan membuat perubahan sederhana) sudah memberi nilai besar. Bangun keterampilan dan kepercayaan bertahap.
+> [!TIP]
+> **Mulai dari yang kecil.** Anda tidak perlu langsung ke Level 5. Bahkan Level 1 (skrip untuk mengumpulkan data dan membuat perubahan sederhana) sudah memberi nilai besar. Bangun keterampilan dan kepercayaan bertahap.
 
-⚠️ **Jangan mengotomasi proses yang buruk** — Anda hanya akan membuat kesalahan lebih cepat. Perbaiki dan standarkan proses dulu, baru otomasi.
+> [!WARNING]
+> **Jangan mengotomasi proses yang buruk** — Anda hanya akan membuat kesalahan lebih cepat. Perbaiki dan standarkan proses dulu, baru otomasi.
 
 ---
 
@@ -366,9 +380,11 @@ LEVEL 5 — Intent-based / self-driving
 10. CI/CD — pipeline otomasi (15-otomasi/04)
 ```
 
-💡 **Untuk network engineer yang baru mulai:** urutan yang disarankan adalah **Git → Python dasar → REST API → Netmiko → Jinja2 → Ansible**. Terraform dan gNMI menyusul.
+> [!TIP]
+> **Untuk network engineer yang baru mulai:** urutan yang disarankan adalah **Git → Python dasar → REST API → Netmiko → Jinja2 → Ansible**. Terraform dan gNMI menyusul.
 
-⚠️ **Otomasi tidak menghilangkan kebutuhan memahami jaringan** — justru memperkuatnya. Anda tidak bisa mengotomasi apa yang tidak Anda pahami, dan skrip yang salah karena tidak paham OSPF akan merusak jaringan lebih cepat. Kuasai fondasi dulu (yang sudah Anda lakukan di Tahap 0-14).
+> [!WARNING]
+> **Otomasi tidak menghilangkan kebutuhan memahami jaringan** — justru memperkuatnya. Anda tidak bisa mengotomasi apa yang tidak Anda pahami, dan skrip yang salah karena tidak paham OSPF akan merusak jaringan lebih cepat. Kuasai fondasi dulu (yang sudah Anda lakukan di Tahap 0-14).
 
 ---
 
@@ -443,4 +459,4 @@ LEVEL 5 — Intent-based / self-driving
 
 ---
 
-**Berikutnya:** `15-otomasi/02-data-dan-api.md` — format data dan antarmuka programatik perangkat.
+**Berikutnya:** `15-otomasi/02-data-dan-api.md`. Format data dan antarmuka programatik perangkat.

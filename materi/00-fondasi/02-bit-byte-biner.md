@@ -1,9 +1,10 @@
-# 00.2 — Bit, Byte, Biner, dan Heksadesimal
+# 00.2 Bit, Byte, Biner, dan Heksadesimal
 
 > **Prasyarat:** `00-fondasi/01`
 > **Tujuan:** Anda bisa mengonversi biner↔desimal↔hex dalam hitungan detik tanpa kalkulator, dan memahami operasi AND yang menjadi dasar seluruh subnetting.
 
-⚠️ **Modul ini adalah fondasi paling kritis di seluruh kurikulum.** Orang yang gagal di subnetting (`04-network-layer/02`) 90% gagal karena melewati modul ini. Jangan lanjut sebelum bisa mengerjakan latihan di bawah tanpa alat bantu.
+> [!WARNING]
+> **Modul ini adalah fondasi paling kritis di seluruh kurikulum.** Orang yang gagal di subnetting (`04-network-layer/02`) 90% gagal karena melewati modul ini. Jangan lanjut sebelum bisa mengerjakan latihan di bawah tanpa alat bantu.
 
 ---
 
@@ -36,9 +37,10 @@ Anda **wajib** nyaman dengan biner karena:
 | **octet** | 8 bit | Istilah resmi di dunia jaringan |
 | **word** | 16/32/64 bit | Tergantung arsitektur |
 
-💡 Di dokumen jaringan dan RFC, kata yang dipakai adalah **octet**, bukan byte. Alasan historis: dulu ada komputer dengan byte 6, 7, atau 9 bit, jadi IETF memilih istilah yang tidak ambigu. Alamat IPv4 disebut terdiri dari "4 oktet".
+> [!TIP]
+> Di dokumen jaringan dan RFC, kata yang dipakai adalah **octet**, bukan byte. Alasan historis: dulu ada komputer dengan byte 6, 7, atau 9 bit, jadi IETF memilih istilah yang tidak ambigu. Alamat IPv4 disebut terdiri dari "4 oktet".
 
-### bit vs byte — huruf kecil vs besar
+### bit vs byte: huruf kecil vs besar
 
 Ini sumber kebingungan nomor satu bagi pengguna awam:
 
@@ -53,7 +55,7 @@ Ini sumber kebingungan nomor satu bagi pengguna awam:
 100 Mbps ÷ 8 = 12,5 MB/s (teoretis maksimum)
 ```
 
-Ini menjawab keluhan klasik: *"Internet saya 100 Mbps tapi download cuma 12 MB/s!"* — Itu **benar dan normal**. 100 Mbps memang setara ~12,5 MB/s, dan setelah overhead protokol, ~11–12 MB/s adalah hasil yang bagus.
+Ini menjawab keluhan klasik: *"Internet saya 100 Mbps tapi download cuma 12 MB/s!"* — Itu **benar dan normal**. 100 Mbps memang setara ~12,5 MB/s, dan setelah overhead protokol, ~11-12 MB/s adalah hasil yang bagus.
 
 ### Prefiks SI vs biner
 
@@ -73,7 +75,7 @@ Aturan praktis di lapangan:
 
 ## 3. Sistem Bilangan
 
-### 3.1 Desimal (basis 10) — yang kita pakai sehari-hari
+### 3.1 Desimal (basis 10): yang kita pakai sehari-hari
 
 Setiap posisi bernilai pangkat 10:
 
@@ -133,11 +135,12 @@ Di jaringan, hex dipakai untuk:
 - **EtherType**: `0x0800` = IPv4, `0x0806` = ARP, `0x86DD` = IPv6
 - **Isi paket** di Wireshark/tcpdump (hex dump)
 
-💡 Prefiks `0x` menandakan angka hex (`0x1F` = 31 desimal). Prefiks `0b` menandakan biner (`0b11111` = 31).
+> [!TIP]
+> Prefiks `0x` menandakan angka hex (`0x1F` = 31 desimal). Prefiks `0b` menandakan biner (`0b11111` = 31).
 
 ---
 
-## 4. Konversi — Metode yang Dipakai Praktisi
+## 4. Konversi: Metode yang Dipakai Praktisi
 
 ### 4.1 Biner → Desimal (metode jumlah posisi)
 
@@ -234,7 +237,8 @@ Trik hafalan: setiap angka adalah *angka sebelumnya + nilai bit berikutnya*:
 128 → +64 = 192 → +32 = 224 → +16 = 240 → +8 = 248 → +4 = 252 → +2 = 254 → +1 = 255
 ```
 
-⚠️ Kalau Anda melihat subnet mask `255.255.255.100`, itu **tidak valid** — 100 = `01100100`, bit 1-nya tidak berurutan dari kiri.
+> [!WARNING]
+> Kalau Anda melihat subnet mask `255.255.255.100`, itu **tidak valid** — 100 = `01100100`, bit 1-nya tidak berurutan dari kiri.
 
 ### 4.4 Biner ↔ Hex (paling mudah dari semua)
 
@@ -295,7 +299,7 @@ $ python3 -c "print(bin(200), hex(200), int('11001000',2), int('FF',16))"
 
 ---
 
-## 5. Pangkat Dua — Tabel Wajib
+## 5. Pangkat Dua: Tabel Wajib
 
 Dipakai untuk menghitung jumlah subnet dan jumlah host.
 
@@ -312,15 +316,15 @@ Dipakai untuk menghitung jumlah subnet dan jumlah host.
 | 8 | 256 | | 24 | 16.777.216 |
 
 Angka-angka ini akan Anda kenali di mana-mana:
-- **256** — jumlah nilai satu oktet (0–255)
+- **256** — jumlah nilai satu oktet (0-255)
 - **1.024** — jumlah VLAN yang praktis dipakai; 4.096 = batas teoretis VLAN 12-bit
-- **65.536** — jumlah port TCP/UDP (0–65535)
+- **65.536** — jumlah port TCP/UDP (0-65535)
 - **16.777.216** — jumlah alamat di /8 (misalnya seluruh 10.0.0.0/8)
 - **4.294.967.296** = 2³² — total alamat IPv4 di dunia
 
 ---
 
-## 6. Operasi Bitwise — Inti Subnetting
+## 6. Operasi Bitwise: Inti Subnetting
 
 ### 6.1 AND
 
@@ -419,7 +423,7 @@ $ python3 -c "import ipaddress; print(ipaddress.ip_network('192.168.10.130/26', 
 
 Sekadar untuk melengkapi gambaran (tidak perlu dihafal):
 
-- **Teks** — setiap karakter dipetakan ke angka. ASCII (7 bit, 128 karakter): `A`=65, `a`=97, `0`=48. UTF-8 (1–4 byte) menampung semua bahasa.
+- **Teks** — setiap karakter dipetakan ke angka. ASCII (7 bit, 128 karakter): `A`=65, `a`=97, `0`=48. UTF-8 (1-4 byte) menampung semua bahasa.
 - **Bilangan** — integer (2's complement untuk negatif), floating point (IEEE 754).
 - **Gambar** — piksel × kanal warna (RGB 3 byte/piksel), lalu dikompres (JPEG/PNG).
 - **Suara** — sampling (44.100 sampel/detik × 16 bit × 2 kanal = 1,4 Mbps untuk audio CD).
@@ -437,15 +441,20 @@ $ echo -n "Hi" | xxd
 
 ## 8. Kesalahan Umum
 
-⚠️ **1. Tertukar bit dan byte.** "Link 1 Gbps" bukan 1 GB/s, tapi ~125 MB/s.
+> [!WARNING]
+> **1. Tertukar bit dan byte.** "Link 1 Gbps" bukan 1 GB/s, tapi ~125 MB/s.
 
-⚠️ **2. Mengira subnet mask bisa nilai apa saja.** Hanya 9 nilai per oktet yang valid (lihat §4.3).
+> [!WARNING]
+> **2. Mengira subnet mask bisa nilai apa saja.** Hanya 9 nilai per oktet yang valid (lihat §4.3).
 
-⚠️ **3. Lupa bahwa oktet maksimal 255.** `192.168.300.1` bukan alamat IP yang valid.
+> [!WARNING]
+> **3. Lupa bahwa oktet maksimal 255.** `192.168.300.1` bukan alamat IP yang valid.
 
-⚠️ **4. Menghitung 2ⁿ untuk host tanpa mengurangi 2.** Jumlah host usable = 2ⁿ − 2 (network address & broadcast address tidak bisa dipakai host). Detail di `04-network-layer/02`.
+> [!WARNING]
+> **4. Menghitung 2ⁿ untuk host tanpa mengurangi 2.** Jumlah host usable = 2ⁿ − 2 (network address & broadcast address tidak bisa dipakai host). Detail di `04-network-layer/02`.
 
-⚠️ **5. Membaca hex sebagai desimal.** `0x10` = 16, bukan 10. Ini sering terjadi saat membaca EtherType atau IPv6.
+> [!WARNING]
+> **5. Membaca hex sebagai desimal.** `0x10` = 16, bukan 10. Ini sering terjadi saat membaca EtherType atau IPv6.
 
 ---
 
@@ -492,7 +501,7 @@ Kerjakan **tanpa kalkulator**. Target: 10 soal dalam 5 menit.
 7. `0x2C` = (2×16)+12 = **44** = **00101100**
 8. /27 = 27 bit 1: `11111111.11111111.11111111.11100000` → **255.255.255.224**
 9. 255−255, 255−255, 255−240, 255−0 → **0.0.15.255**
-10. Oktet 4: 77 = `01001101`, mask 240 = `11110000`, AND = `01000000` = 64. Oktet 1–3 tidak berubah karena mask 255. → **192.168.5.64**
+10. Oktet 4: 77 = `01001101`, mask 240 = `11110000`, AND = `01000000` = 64. Oktet 1-3 tidak berubah karena mask 255. → **192.168.5.64**
 11. 40 ÷ 8 = **5 MB/s**
 12. `AC` = A(1010) C(1100) → **10101100**
 
@@ -509,4 +518,4 @@ Kerjakan **tanpa kalkulator**. Target: 10 soal dalam 5 menit.
 
 ---
 
-**Berikutnya:** `00-fondasi/03-sinyal-bandwidth-latency.md` — apa yang sebenarnya terjadi pada bit saat melintasi kabel.
+**Berikutnya:** `00-fondasi/03-sinyal-bandwidth-latency.md`. Apa yang sebenarnya terjadi pada bit saat melintasi kabel.

@@ -1,7 +1,7 @@
-# 12.3 — Serangan Layer 3 sampai Layer 7
+# 12.3 Serangan Layer 3 sampai Layer 7
 
 > **Prasyarat:** `12-keamanan/02`, `05-transport/02`, `06-aplikasi/01`
-> **Tujuan:** Anda bisa mengenali serangan pada layer 3–7, memahami mekanismenya, dan menerapkan mitigasi yang tepat.
+> **Tujuan:** Anda bisa mengenali serangan pada layer 3-7, memahami mekanismenya, dan menerapkan mitigasi yang tepat.
 
 ---
 
@@ -17,7 +17,8 @@ Tujuan penyerang:
 4. Membanjiri tabel state (SYN flood)
 ```
 
-⚠️ **Spoofing pada TCP sulit dieksploitasi** untuk mencuri data karena penyerang tidak menerima balasan (tidak bisa menyelesaikan handshake). Tetapi **sangat efektif untuk DoS dan amplification** yang tidak memerlukan balasan.
+> [!WARNING]
+> **Spoofing pada TCP sulit dieksploitasi** untuk mencuri data karena penyerang tidak menerima balasan (tidak bisa menyelesaikan handshake). Tetapi **sangat efektif untuk DoS dan amplification** yang tidak memerlukan balasan.
 
 ### Mitigasi: BCP 38 / uRPF
 
@@ -37,7 +38,8 @@ R1(config-if)# ip verify unicast source reachable-via any   ← loose
     src-address=!192.168.0.0/16 action=drop comment="Anti-spoofing keluar"
 ```
 
-💡 **BCP 38 adalah tanggung jawab setiap operator**: filter paket keluar yang alamat sumbernya bukan milik jaringan Anda. Kalau semua operator menerapkannya, sebagian besar amplification attack akan hilang. Ini pilar utama **MANRS**.
+> [!TIP]
+> **BCP 38 adalah tanggung jawab setiap operator**: filter paket keluar yang alamat sumbernya bukan milik jaringan Anda. Kalau semua operator menerapkannya, sebagian besar amplification attack akan hilang. Ini pilar utama **MANRS**.
 
 ---
 
@@ -57,7 +59,8 @@ R1(config-if)# no ip redirects
 R1(config)# ip icmp rate-limit unreachable 1000
 ```
 
-⚠️ **Jangan blokir ICMP sepenuhnya** — merusak PMTUD, dan **mematikan IPv6** (`04-network-layer/04`).
+> [!WARNING]
+> **Jangan blokir ICMP sepenuhnya** — merusak PMTUD, dan **mematikan IPv6** (`04-network-layer/04`).
 
 ```
 # Rate limit, bukan blokir
@@ -136,7 +139,7 @@ DNS adalah target favorit karena sangat penting dan sering kurang dilindungi.
 | **Subdomain takeover** | Record CNAME menunjuk layanan yang sudah dihapus | Audit DNS berkala |
 | **Typosquatting** | Domain mirip untuk phishing | Monitoring, daftarkan variasi umum |
 
-### DNS Amplification — contoh nyata
+### DNS Amplification: contoh nyata
 
 ```
 Penyerang mengirim query 60 byte dengan alamat sumber = korban
@@ -172,7 +175,8 @@ CLDAP         : 56–70×
 /ip firewall filter add chain=input in-interface-list=WAN protocol=tcp dst-port=53 action=drop
 ```
 
-⚠️ **Ini kesalahan konfigurasi MikroTik yang sangat umum di Indonesia** — `allow-remote-requests=yes` tanpa memfilter WAN membuat router menjadi open resolver yang dipakai untuk menyerang orang lain, dan menghabiskan bandwidth Anda.
+> [!WARNING]
+> **Ini kesalahan konfigurasi MikroTik yang sangat umum di Indonesia** — `allow-remote-requests=yes` tanpa memfilter WAN membuat router menjadi open resolver yang dipakai untuk menyerang orang lain, dan menghabiskan bandwidth Anda.
 
 ### DNS Tunneling
 
@@ -204,13 +208,14 @@ Dipakai untuk **eksfiltrasi data** dan **C2 channel** yang sering lolos firewall
 
 | Kategori | Target | Contoh | Ukuran tipikal |
 |---|---|---|---|
-| **Volumetric** | **Bandwidth** | UDP flood, amplification | Gbps–Tbps |
+| **Volumetric** | **Bandwidth** | UDP flood, amplification | Gbps-Tbps |
 | **Protocol** | **State/tabel** | SYN flood, fragmented packet | Mpps |
 | **Application (L7)** | **Sumber daya aplikasi** | HTTP flood, slowloris | Rps rendah tetapi mematikan |
 
-⚠️ **Serangan L7 paling sulit** karena trafiknya terlihat sah. 1.000 request/detik ke endpoint pencarian yang mahal bisa melumpuhkan server tanpa memakan bandwidth berarti.
+> [!WARNING]
+> **Serangan L7 paling sulit** karena trafiknya terlihat sah. 1.000 request/detik ke endpoint pencarian yang mahal bisa melumpuhkan server tanpa memakan bandwidth berarti.
 
-### Slowloris — serangan dengan bandwidth minimal
+### Slowloris: serangan dengan bandwidth minimal
 
 ```
 1. Buka banyak koneksi HTTP
@@ -240,9 +245,10 @@ DI SISI PROVIDER/CLOUD:
   ✅ Layanan DDoS protection (Cloudflare, Akamai, dll)
 ```
 
-⚠️ **Serangan volumetrik besar TIDAK BISA dimitigasi di tepi jaringan Anda** — kalau 100 Gbps menghantam link 1 Gbps, link sudah penuh sebelum paket mencapai firewall Anda. **Harus dimitigasi di hulu** oleh ISP atau layanan scrubbing.
+> [!WARNING]
+> **Serangan volumetrik besar TIDAK BISA dimitigasi di tepi jaringan Anda** — kalau 100 Gbps menghantam link 1 Gbps, link sudah penuh sebelum paket mencapai firewall Anda. **Harus dimitigasi di hulu** oleh ISP atau layanan scrubbing.
 
-### RTBH — Remotely Triggered Black Hole
+### RTBH (Remotely Triggered Black Hole)
 
 ```
 1. Anda mengiklankan rute /32 alamat yang diserang lewat BGP ke ISP
@@ -251,7 +257,8 @@ DI SISI PROVIDER/CLOUD:
 3. Link Anda selamat, tetapi alamat itu menjadi tidak dapat dijangkau
 ```
 
-⚠️ **RTBH menyelesaikan serangan dengan menyelesaikan tujuan penyerang** — layanan itu memang menjadi tidak tersedia. Ia melindungi **sisa** infrastruktur Anda. Untuk melindungi layanan itu sendiri, butuh scrubbing.
+> [!WARNING]
+> **RTBH menyelesaikan serangan dengan menyelesaikan tujuan penyerang** — layanan itu memang menjadi tidak tersedia. Ia melindungi **sisa** infrastruktur Anda. Untuk melindungi layanan itu sendiri, butuh scrubbing.
 
 ```
 # MikroTik — rate limit dan blackhole
@@ -292,7 +299,8 @@ DI SISI PROVIDER/CLOUD:
 Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
 ```
 
-💡 **HSTS preload list** yang tertanam di browser melindungi bahkan pada kunjungan **pertama** — sebelum header HSTS pernah diterima.
+> [!TIP]
+> **HSTS preload list** yang tertanam di browser melindungi bahkan pada kunjungan **pertama** — sebelum header HSTS pernah diterima.
 
 ---
 
@@ -311,14 +319,16 @@ Meski ini domain developer, network engineer perlu memahaminya untuk mengonfigur
 | **XXE** | Entitas eksternal XML | WAF, matikan parsing entitas |
 | **Deserialization** | Objek berbahaya | Patch, WAF |
 
-⚠️ **SSRF sangat relevan untuk network engineer** — penyerang memaksa server web mengakses `169.254.169.254` (metadata cloud) untuk mencuri kredensial IAM. **Mitigasi jaringan:** blokir akses ke alamat metadata dari aplikasi yang tidak memerlukannya, dan terapkan firewall **egress** yang ketat.
+> [!WARNING]
+> **SSRF sangat relevan untuk network engineer** — penyerang memaksa server web mengakses `169.254.169.254` (metadata cloud) untuk mencuri kredensial IAM. **Mitigasi jaringan:** blokir akses ke alamat metadata dari aplikasi yang tidak memerlukannya, dan terapkan firewall **egress** yang ketat.
 
 ```
 # Blokir metadata cloud dari container/VM aplikasi
 $ sudo nft add rule inet filter output ip daddr 169.254.169.254 drop
 ```
 
-💡 **Firewall egress (keluar) sering diabaikan** padahal sangat efektif — membatasi ke mana server boleh terhubung menghentikan C2, eksfiltrasi, dan SSRF sekaligus.
+> [!TIP]
+> **Firewall egress (keluar) sering diabaikan** padahal sangat efektif — membatasi ke mana server boleh terhubung menghentikan C2, eksfiltrasi, dan SSRF sekaligus.
 
 ---
 
@@ -344,7 +354,8 @@ $ nmap -O 192.168.1.10                 # OS fingerprinting
 $ nmap -sU --top-ports 100 192.168.1.10 # UDP scan
 ```
 
-⚠️ **Pemindaian tanpa izin tertulis adalah tindakan ilegal** di banyak yurisdiksi, termasuk Indonesia (UU ITE). Selalu miliki **rules of engagement** tertulis sebelum melakukan pengujian.
+> [!WARNING]
+> **Pemindaian tanpa izin tertulis adalah tindakan ilegal** di banyak yurisdiksi, termasuk Indonesia (UU ITE). Selalu miliki **rules of engagement** tertulis sebelum melakukan pengujian.
 
 ### Mitigasi
 
@@ -365,7 +376,8 @@ $ nmap -sU --top-ports 100 192.168.1.10 # UDP scan
 /ip firewall filter add chain=input src-address-list=port-scanner action=drop
 ```
 
-💡 **Lakukan pemindaian terhadap diri sendiri secara berkala** (dari internet) untuk mengetahui apa yang terlihat penyerang. Sering ada layanan yang terekspos tanpa disadari.
+> [!TIP]
+> **Lakukan pemindaian terhadap diri sendiri secara berkala** (dari internet) untuk mengetahui apa yang terlihat penyerang. Sering ada layanan yang terekspos tanpa disadari.
 
 ---
 
@@ -433,7 +445,8 @@ Kanal C2 yang umum:
 ✅ Monitoring NetFlow untuk pola beaconing
 ```
 
-💡 **Firewall egress adalah kontrol yang paling kurang dimanfaatkan.** Sebagian besar organisasi memfilter trafik masuk dengan ketat tetapi mengizinkan semua yang keluar — padahal itulah jalur C2 dan eksfiltrasi.
+> [!TIP]
+> **Firewall egress adalah kontrol yang paling kurang dimanfaatkan.** Sebagian besar organisasi memfilter trafik masuk dengan ketat tetapi mengizinkan semua yang keluar — padahal itulah jalur C2 dan eksfiltrasi.
 
 ---
 
@@ -443,7 +456,7 @@ Kanal C2 yang umum:
 - **ICMP**: rate limit, jangan blokir total (merusak PMTUD dan IPv6). Matikan `ip redirects` dan `directed-broadcast`.
 - **SYN flood** → **SYN cookies** + backlog besar + rate limit.
 - **DNS**: cache poisoning (→ DNSSEC), **amplification** (→ jangan jadi open resolver, RRL, BCP 38), **tunneling** (→ monitoring anomali).
-- ⚠️ **Kesalahan MikroTik umum: `allow-remote-requests=yes` tanpa memfilter WAN** → menjadi open resolver.
+- **Kesalahan MikroTik umum: `allow-remote-requests=yes` tanpa memfilter WAN** → menjadi open resolver.
 - **DDoS**: volumetric (bandwidth), protocol (state), **application L7 (paling sulit — trafik terlihat sah)**.
 - **Serangan volumetrik besar tidak bisa dimitigasi di tepi jaringan Anda** — butuh scrubbing di hulu. **RTBH** melindungi sisa infrastruktur dengan mengorbankan satu alamat.
 - **SSL stripping** → **HSTS** dengan preload.
@@ -484,7 +497,7 @@ Kanal C2 yang umum:
    ```
    Periksa juga apakah router menjadi **open NTP server** (`/system ntp server set enabled=no` atau filter UDP 123 dari WAN) dan apakah `/tool bandwidth-server` masih aktif. Verifikasi dengan memindai IP publik Anda dari luar.
 
-4. **Slowloris** membuka banyak koneksi HTTP ke server, lalu **mengirim header sangat lambat** — misalnya satu baris header setiap 10–15 detik — dan **tidak pernah menyelesaikan request**. Server, yang menunggu request lengkap sebelum memprosesnya, **menahan setiap koneksi tetap terbuka**. Ketika connection pool atau worker thread habis, server tidak bisa melayani pengguna sah.
+4. **Slowloris** membuka banyak koneksi HTTP ke server, lalu **mengirim header sangat lambat** — misalnya satu baris header setiap 10-15 detik — dan **tidak pernah menyelesaikan request**. Server, yang menunggu request lengkap sebelum memprosesnya, **menahan setiap koneksi tetap terbuka**. Ketika connection pool atau worker thread habis, server tidak bisa melayani pengguna sah.
    **Efektif dengan bandwidth kecil** karena setiap koneksi hanya memerlukan beberapa byte per belasan detik. Dengan beberapa ribu koneksi dan hanya beberapa kbps total, penyerang dapat menghabiskan seluruh kapasitas server — tidak ada lonjakan trafik yang terlihat mencurigakan.
    **Mitigasi:** timeout header yang ketat (`client_header_timeout` di nginx), batasi koneksi per IP, dan **reverse proxy yang menyangga request lengkap** sebelum meneruskan ke backend (nginx melakukannya secara default, sehingga backend terlindungi).
 
@@ -539,4 +552,4 @@ Kanal C2 yang umum:
 
 ---
 
-**Berikutnya:** `12-keamanan/04-aaa-identitas.md` — autentikasi, otorisasi, dan akuntansi.
+**Berikutnya:** `12-keamanan/04-aaa-identitas.md`. Autentikasi, otorisasi, dan akuntansi.

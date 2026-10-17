@@ -1,6 +1,6 @@
-# 17.1 — Prinsip Desain Jaringan
+# 17.1 Prinsip Desain Jaringan
 
-> **Prasyarat:** seluruh Tahap 1–16 (modul ini menyatukan semuanya)
+> **Prasyarat:** seluruh Tahap 1-16 (modul ini menyatukan semuanya)
 > **Tujuan:** Anda paham prinsip desain jaringan yang baik — hierarki, redundansi, modularitas, skalabilitas — dan model arsitektur yang diuji CCNA 1.2.
 
 ---
@@ -17,7 +17,8 @@ Jaringan yang tumbuh tanpa desain ("organik") menjadi rapuh: sulit di-troublesho
 5. MANAGEABILITY— mudah dipahami, dipantau, dan diubah
 ```
 
-💡 **Trade-off selalu ada.** Redundansi penuh mahal; keamanan maksimal menambah kompleksitas; performa tertinggi butuh biaya. Desain yang baik menyeimbangkan kelimanya **sesuai kebutuhan bisnis dan anggaran** — bukan memaksimalkan satu aspek.
+> [!TIP]
+> **Trade-off selalu ada.** Redundansi penuh mahal; keamanan maksimal menambah kompleksitas; performa tertinggi butuh biaya. Desain yang baik menyeimbangkan kelimanya **sesuai kebutuhan bisnis dan anggaran** — bukan memaksimalkan satu aspek.
 
 ---
 
@@ -44,7 +45,8 @@ Model klasik Cisco membagi jaringan kampus menjadi tiga lapisan dengan peran jel
 | **Distribution** | Agregasi & kebijakan | Inter-VLAN routing, ACL, QoS, batas L2/L3, FHRP |
 | **Access** | Koneksi endpoint | Port user, PoE, port security, VLAN akses, PortFast |
 
-⚠️ **Core harus "bodoh dan cepat".** Jangan taruh ACL/policy berat di core — itu tugas distribution. Core hanya meneruskan secepat mungkin. Menaruh kebijakan di core menambah latensi dan titik kegagalan.
+> [!WARNING]
+> **Core harus "bodoh dan cepat".** Jangan taruh ACL/policy berat di core — itu tugas distribution. Core hanya meneruskan secepat mungkin. Menaruh kebijakan di core menambah latensi dan titik kegagalan.
 
 ---
 
@@ -59,7 +61,8 @@ Untuk jaringan lebih kecil, core dan distribution **digabung** ("collapsed core"
         [Access]          [Access]
 ```
 
-💡 **Pilih berdasar ukuran:** **dua-tier (collapsed core)** untuk kampus kecil-menengah (hemat, cukup); **tiga-tier** untuk kampus besar dengan banyak distribution block (skalabilitas, isolasi fault). Jangan over-engineer jaringan kecil dengan tiga tier penuh.
+> [!TIP]
+> **Pilih berdasar ukuran:** **dua-tier (collapsed core)** untuk kampus kecil-menengah (hemat, cukup); **tiga-tier** untuk kampus besar dengan banyak distribution block (skalabilitas, isolasi fault). Jangan over-engineer jaringan kecil dengan tiga tier penuh.
 
 ---
 
@@ -67,7 +70,8 @@ Untuk jaringan lebih kecil, core dan distribution **digabung** ("collapsed core"
 
 Untuk **data center** (trafik east-west), gunakan **spine-leaf**, bukan hierarki tiga-tier — sudah dibahas mendalam di `16-datacenter-cloud-sdn/01`. Ringkas: setiap leaf ke setiap spine, 2 hop konsisten, ECMP.
 
-⚠️ **Jangan tertukar:** tiga-tier untuk **kampus** (north-south), spine-leaf untuk **data center** (east-west). CCNA menguji keduanya sebagai arsitektur topologi berbeda (1.2.b vs 1.2.c).
+> [!WARNING]
+> **Jangan tertukar:** tiga-tier untuk **kampus** (north-south), spine-leaf untuk **data center** (east-west). CCNA menguji keduanya sebagai arsitektur topologi berbeda (1.2.b vs 1.2.c).
 
 ---
 
@@ -97,7 +101,8 @@ Cloud / Hybrid                   — on-prem + cloud (lihat 16.4)
 - Power ganda (dual PSU, UPS)
 - Path ganda (WAN dari 2 provider)
 ```
-⚠️ **Single Point of Failure (SPOF)** adalah komponen yang, bila gagal, menjatuhkan layanan. Desain andal mengidentifikasi dan menghilangkan SPOF — tetapi redundansi harus seimbang dengan biaya (tidak semua hal butuh redundansi penuh).
+> [!WARNING]
+> **Single Point of Failure (SPOF)** adalah komponen yang, bila gagal, menjatuhkan layanan. Desain andal mengidentifikasi dan menghilangkan SPOF — tetapi redundansi harus seimbang dengan biaya (tidak semua hal butuh redundansi penuh).
 
 ### Modularitas
 Bagi jaringan menjadi blok/modul (distribution block, service block, DC block). Kegagalan atau perubahan di satu modul tidak merembet. Memudahkan skalabilitas (tambah modul) dan troubleshooting (isolasi).
@@ -113,7 +118,8 @@ DISTRIBUTION — batas L2↔L3: SVI/inter-VLAN routing, FHRP di sini
    │  ← L3 routed link
 CORE — L3 murni (routing, ECMP)
 ```
-💡 **Praktik modern: routed access** — dorong batas L3 sampai ke access (routing sampai access switch), menghilangkan STP antar-lapisan dan mempercepat konvergensi. Fabric SDN (SD-Access) melakukan ini.
+> [!TIP]
+> **Praktik modern: routed access** — dorong batas L3 sampai ke access (routing sampai access switch), menghilangkan STP antar-lapisan dan mempercepat konvergensi. Fabric SDN (SD-Access) melakukan ini.
 
 ---
 
@@ -173,4 +179,4 @@ Detail per-domain di `17.2`.
 
 ---
 
-**Berikutnya:** `17-desain-arsitektur/02-desain-per-domain.md` — desain per domain: kampus, WAN, DC, wireless.
+**Berikutnya:** `17-desain-arsitektur/02-desain-per-domain.md`. Desain per domain: kampus, WAN, DC, wireless.

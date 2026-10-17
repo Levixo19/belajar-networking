@@ -1,4 +1,4 @@
-# 12.5 — Hardening Perangkat dan Zero Trust
+# 12.5 Hardening Perangkat dan Zero Trust
 
 > **Prasyarat:** `12-keamanan/01`–`04`
 > **Tujuan:** Anda bisa mengeraskan perangkat jaringan secara menyeluruh dan memahami arsitektur Zero Trust serta SASE.
@@ -113,9 +113,11 @@ banner motd ^
 ^
 ```
 
-⚠️ **Banner login penting secara hukum** di banyak yurisdiksi — tanpa pemberitahuan bahwa sistem dipantau, tindakan hukum terhadap penyusup bisa lebih sulit. Jangan mencantumkan "Welcome" (bisa ditafsirkan sebagai undangan) atau informasi perangkat.
+> [!WARNING]
+> **Banner login penting secara hukum** di banyak yurisdiksi — tanpa pemberitahuan bahwa sistem dipantau, tindakan hukum terhadap penyusup bisa lebih sulit. Jangan mencantumkan "Welcome" (bisa ditafsirkan sebagai undangan) atau informasi perangkat.
 
-⚠️ **`no ip unreachables` merusak PMTUD.** Rekomendasi hardening lama menyarankannya untuk mencegah reconnaissance, tetapi biayanya besar. Lebih baik gunakan rate limit:
+> [!WARNING]
+> **`no ip unreachables` merusak PMTUD.** Rekomendasi hardening lama menyarankannya untuk mencegah reconnaissance, tetapi biayanya besar. Lebih baik gunakan rate limit:
 ```
 ip icmp rate-limit unreachable 1000
 ```
@@ -180,7 +182,8 @@ add chain=input action=drop
     on-event="/system backup save name=backup; /export file=config"
 ```
 
-⚠️ **RouterOS punya riwayat kerentanan serius** (mis. CVE-2018-14847 yang memungkinkan pengambilalihan penuh lewat WinBox). **Selalu jalankan versi terbaru** dan **jangan pernah mengekspos WinBox (8291), API (8728), atau layanan manajemen lain ke internet.**
+> [!WARNING]
+> **RouterOS punya riwayat kerentanan serius** (mis. CVE-2018-14847 yang memungkinkan pengambilalihan penuh lewat WinBox). **Selalu jalankan versi terbaru** dan **jangan pernah mengekspos WinBox (8291), API (8728), atau layanan manajemen lain ke internet.**
 
 ---
 
@@ -198,7 +201,7 @@ Trafik yang diproses CPU (punted):
   - Fitur yang tidak didukung hardware
 ```
 
-### CoPP — Control Plane Policing
+### CoPP: Control Plane Policing
 
 ```
 ! Klasifikasi
@@ -236,7 +239,8 @@ control-plane
  service-policy input CONTROL-PLANE-POLICY
 ```
 
-⚠️ **Hati-hati dengan CoPP.** Salah konfigurasi bisa **memutus routing protocol atau akses manajemen Anda sendiri**. Terapkan bertahap: mulai dengan `conform-action transmit exceed-action transmit` (hanya menghitung), analisis counter, baru aktifkan drop.
+> [!WARNING]
+> **Hati-hati dengan CoPP.** Salah konfigurasi bisa **memutus routing protocol atau akses manajemen Anda sendiri**. Terapkan bertahap: mulai dengan `conform-action transmit exceed-action transmit` (hanya menghitung), analisis counter, baru aktifkan drop.
 
 ```
 R1# show policy-map control-plane
@@ -287,7 +291,8 @@ R1# show archive config differences
 R1# configure replace tftp://192.168.99.50/configs/R1-golden
 ```
 
-💡 **`configure replace` memungkinkan rollback ke konfigurasi sebelumnya** tanpa reload — sangat berharga saat perubahan bermasalah.
+> [!TIP]
+> **`configure replace` memungkinkan rollback ke konfigurasi sebelumnya** tanpa reload — sangat berharga saat perubahan bermasalah.
 
 ```
 # Cisco — commit dengan timer (rollback otomatis kalau tidak dikonfirmasi)
@@ -297,7 +302,8 @@ R1(config)# exit
 R1# configure confirm          ← kalau berhasil; kalau tidak, otomatis rollback
 ```
 
-⚠️ **Ini setara Safe Mode MikroTik** — gunakan setiap kali mengubah konfigurasi kritis dari jarak jauh.
+> [!WARNING]
+> **Ini setara Safe Mode MikroTik** — gunakan setiap kali mengubah konfigurasi kritis dari jarak jauh.
 
 ```
 # MikroTik — Safe Mode
@@ -330,7 +336,7 @@ ZERO TRUST:
   ✅ Least privilege per-sesi
 ```
 
-### NIST SP 800-207 — Model Resmi
+### NIST SP 800-207: Model Resmi
 
 ```
        ┌──────────────────────────────────────┐
@@ -379,7 +385,8 @@ ZERO TRUST:
 7. Organisasi mengumpulkan data untuk MEMPERBAIKI postur keamanan
 ```
 
-⚠️ **Zero Trust bukan produk yang bisa dibeli.** Ia adalah **arsitektur dan pendekatan** yang diterapkan bertahap. Vendor yang menjual "solusi Zero Trust" hanya menyediakan **sebagian** komponennya.
+> [!WARNING]
+> **Zero Trust bukan produk yang bisa dibeli.** Ia adalah **arsitektur dan pendekatan** yang diterapkan bertahap. Vendor yang menjual "solusi Zero Trust" hanya menyediakan **sebagian** komponennya.
 
 ### Penerapan bertahap yang realistis
 
@@ -415,7 +422,8 @@ FASE 5 — VISIBILITAS & OTOMASI
   □ Kebijakan adaptif berbasis risiko
 ```
 
-💡 **Mulai dari MFA dan segmentasi.** Keduanya memberi pengurangan risiko terbesar per rupiah yang dikeluarkan, dan tidak memerlukan penggantian arsitektur.
+> [!TIP]
+> **Mulai dari MFA dan segmentasi.** Keduanya memberi pengurangan risiko terbesar per rupiah yang dikeluarkan, dan tidak memerlukan penggantian arsitektur.
 
 ---
 
@@ -446,7 +454,8 @@ Dengan mikrosegmentasi: setiap komunikasi harus diizinkan eksplisit
 - Service mesh dengan mTLS
 ```
 
-⚠️ **Tantangan terbesar mikrosegmentasi adalah menemukan dependensi yang sebenarnya.** Aplikasi sering berkomunikasi dengan cara yang tidak terdokumentasi. **Mulai dengan mode monitor** selama beberapa minggu untuk memetakan alur nyata, baru terapkan enforcement.
+> [!WARNING]
+> **Tantangan terbesar mikrosegmentasi adalah menemukan dependensi yang sebenarnya.** Aplikasi sering berkomunikasi dengan cara yang tidak terdokumentasi. **Mulai dengan mode monitor** selama beberapa minggu untuk memetakan alur nyata, baru terapkan enforcement.
 
 ---
 
@@ -489,9 +498,11 @@ SASE: keamanan dilakukan di POP cloud yang DEKAT dengan pengguna
 | Aplikasi terekspos? | Ya (setelah VPN) | **Tidak** — tersembunyi sampai diotorisasi |
 | Lateral movement | **Mungkin** | Dicegah |
 
-💡 **Keunggulan terbesar ZTNA: aplikasi tidak terekspos sama sekali** sampai pengguna terverifikasi. Tidak ada port terbuka untuk dipindai penyerang — model "dark cloud".
+> [!TIP]
+> **Keunggulan terbesar ZTNA: aplikasi tidak terekspos sama sekali** sampai pengguna terverifikasi. Tidak ada port terbuka untuk dipindai penyerang — model "dark cloud".
 
-⚠️ **Pertimbangan SASE/ZTNA:**
+> [!WARNING]
+> **Pertimbangan SASE/ZTNA:**
 ```
 - Ketergantungan pada penyedia cloud (uptime, kinerja, lokasi POP)
 - Semua trafik terinspeksi oleh pihak ketiga → implikasi privasi dan kepatuhan
@@ -502,7 +513,7 @@ SASE: keamanan dilakukan di POP cloud yang DEKAT dengan pengguna
 
 ---
 
-## 7. Segmentasi — Pendekatan Praktis
+## 7. Segmentasi: Pendekatan Praktis
 
 Untuk sebagian besar organisasi, **segmentasi yang baik memberi manfaat keamanan terbesar** dibanding investasi lain.
 
@@ -534,9 +545,11 @@ TAMU            ❌     ❌      ❌   ❌     ❌     ❌   ❌
 ✅ = diizinkan   ⚠️ = hanya port/host tertentu   ❌ = ditolak
 ```
 
-⚠️ **Perhatikan baris DMZ dan IoT: keduanya TIDAK boleh menjangkau jaringan internal.** Ini dua sumber kompromi yang paling sering.
+> [!WARNING]
+> **Perhatikan baris DMZ dan IoT: keduanya TIDAK boleh menjangkau jaringan internal.** Ini dua sumber kompromi yang paling sering.
 
-💡 **IoT/OT adalah zona yang paling sering diabaikan.** Kamera CCTV, printer, dan perangkat pintar sering: memakai firmware lama yang tidak pernah di-patch, punya kredensial default, dan tidak dapat menjalankan agen keamanan. **Isolasi ketat adalah satu-satunya kontrol yang efektif.**
+> [!TIP]
+> **IoT/OT adalah zona yang paling sering diabaikan.** Kamera CCTV, printer, dan perangkat pintar sering: memakai firmware lama yang tidak pernah di-patch, punya kredensial default, dan tidak dapat menjalankan agen keamanan. **Isolasi ketat adalah satu-satunya kontrol yang efektif.**
 
 ---
 
@@ -573,9 +586,9 @@ TAMU            ❌     ❌      ❌   ❌     ❌     ❌   ❌
 - **Hanya SSH** (`transport input ssh` / `/ip service disable telnet`); batasi dengan **ACL/address**.
 - **`service password-encryption` (type 7) bukan enkripsi** — pakai `secret` type 8/9.
 - **Banner login penting secara hukum** — jangan tulis "Welcome".
-- ⚠️ **`no ip unreachables` merusak PMTUD** — pakai rate limit sebagai gantinya.
+- **`no ip unreachables` merusak PMTUD** — pakai rate limit sebagai gantinya.
 - **CoPP** melindungi CPU dari banjir trafik control plane. Terapkan bertahap (hitung dulu, baru drop).
-- ⚠️ **RouterOS punya riwayat CVE serius** — selalu update, jangan pernah ekspos WinBox/API ke internet.
+- **RouterOS punya riwayat CVE serius** — selalu update, jangan pernah ekspos WinBox/API ke internet.
 - Manajemen konfigurasi: backup otomatis, **Git**, golden config, **deteksi drift**, change control. Gunakan `configure replace`/`revert timer` (Cisco) atau **Safe Mode** (MikroTik).
 - **Zero Trust (NIST SP 800-207)**: jangan pernah percaya, selalu verifikasi; **PDP/PEP**; akses per-sesi berbasis identitas + postur + konteks. **Bukan produk — arsitektur.**
 - Penerapan bertahap: **identitas (MFA) → perangkat → jaringan → aplikasi → visibilitas**. Mulai dari MFA dan segmentasi.
@@ -662,4 +675,4 @@ TAMU            ❌     ❌      ❌   ❌     ❌     ❌   ❌
 
 ---
 
-**Berikutnya:** `12-keamanan/06-tools-keamanan.md` — alat untuk menguji dan memantau keamanan.
+**Berikutnya:** `12-keamanan/06-tools-keamanan.md`. Alat untuk menguji dan memantau keamanan.

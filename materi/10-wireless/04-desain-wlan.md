@@ -1,4 +1,4 @@
-# 10.4 — Arsitektur dan Desain WLAN
+# 10.4 Arsitektur dan Desain WLAN
 
 > **Prasyarat:** `10-wireless/01`–`03`
 > **Tujuan:** Anda paham arsitektur AP dan controller, bisa merancang cakupan dan kapasitas WLAN, serta mendiagnosis masalah wireless secara sistematis.
@@ -9,13 +9,13 @@
 
 | Arsitektur | Cara kerja | Cocok untuk |
 |---|---|---|
-| **Autonomous AP** | Setiap AP dikonfigurasi sendiri, punya semua fungsi | 1–5 AP, SOHO |
+| **Autonomous AP** | Setiap AP dikonfigurasi sendiri, punya semua fungsi | 1-5 AP, SOHO |
 | **Controller-based (split-MAC)** | WLC memusatkan kontrol; AP jadi "lightweight" | Enterprise, kampus |
 | **Cloud-managed** | Kontrol di cloud vendor | Multi-lokasi, tanpa staf lokal |
-| **Embedded / Mobility Express** | Salah satu AP menjadi controller | 5–50 AP |
+| **Embedded / Mobility Express** | Salah satu AP menjadi controller | 5-50 AP |
 | **CAPsMAN** (MikroTik) | Controller MikroTik untuk AP MikroTik | Jaringan MikroTik |
 
-### Split-MAC — konsep controller-based
+### Split-MAC: konsep controller-based
 
 Fungsi 802.11 dibagi antara AP dan WLC:
 
@@ -55,9 +55,11 @@ UDP 5247 → data channel
 | **Flex+Bridge** | Kombinasi mesh dan FlexConnect |
 | **SE-Connect** | Spectrum analysis |
 
-⚠️ **Local mode mengirim SEMUA trafik klien ke WLC** lewat tunnel CAPWAP — bahkan kalau dua klien di AP yang sama saling berkomunikasi. Untuk cabang dengan link WAN lambat, ini sangat boros.
+> [!WARNING]
+> **Local mode mengirim SEMUA trafik klien ke WLC** lewat tunnel CAPWAP — bahkan kalau dua klien di AP yang sama saling berkomunikasi. Untuk cabang dengan link WAN lambat, ini sangat boros.
 
-💡 **FlexConnect memecahkan masalah itu** — trafik di-switch lokal di AP, hanya kontrol yang lewat WAN. Wajib untuk desain cabang.
+> [!TIP]
+> **FlexConnect memecahkan masalah itu** — trafik di-switch lokal di AP, hanya kontrol yang lewat WAN. Wajib untuk desain cabang.
 
 **FlexConnect punya beberapa mode:**
 ```
@@ -84,14 +86,16 @@ Standalone mode  : WLC tidak terjangkau
 - **Trunk** atau **LAG (Link Aggregation)** ke switch
 - Membawa VLAN manajemen dan semua VLAN klien
 
-⚠️ **Perhatikan daya PoE untuk AP modern:**
+> [!WARNING]
+> **Perhatikan daya PoE untuk AP modern:**
 ```
 Wi-Fi 5 AP     : 802.3af (15,4 W) biasanya cukup
 Wi-Fi 6 AP     : 802.3at (30 W) diperlukan
 Wi-Fi 6E/7 AP  : 802.3at atau 802.3bt (60 W) — periksa spesifikasi!
 ```
 
-⚠️ **AP yang kekurangan daya akan berjalan dalam mode terbatas** — mematikan salah satu radio, mengurangi spatial stream, atau menonaktifkan port USB/Ethernet sekunder. Gejalanya: throughput jauh di bawah spesifikasi tanpa alasan jelas.
+> [!WARNING]
+> **AP yang kekurangan daya akan berjalan dalam mode terbatas** — mematikan salah satu radio, mengurangi spatial stream, atau menonaktifkan port USB/Ethernet sekunder. Gejalanya: throughput jauh di bawah spesifikasi tanpa alasan jelas.
 
 ```
 # Cisco — periksa daya AP
@@ -115,7 +119,8 @@ Ini yang membedakan WLAN yang bekerja dan yang selalu bermasalah.
 | **AP-on-a-stick** | Menempatkan AP sementara untuk mengukur | AP + baterai + tripod |
 | **Spectrum analysis** | Menemukan interferensi non-Wi-Fi | Wi-Spy, Ekahau Sidekick, MikroTik spectral-scan |
 
-💡 **Predictive survey tanpa validasi lapangan sering meleset jauh** — model tidak mengetahui material dinding yang sebenarnya, rak logam, atau interferensi. **Selalu validasi dengan passive survey setelah instalasi.**
+> [!TIP]
+> **Predictive survey tanpa validasi lapangan sering meleset jauh** — model tidak mengetahui material dinding yang sebenarnya, rak logam, atau interferensi. **Selalu validasi dengan passive survey setelah instalasi.**
 
 ### Target desain
 
@@ -127,19 +132,25 @@ Ini yang membedakan WLAN yang bekerja dan yang selalu bermasalah.
 | Location tracking | −75 dBm dari ≥3 AP | — | 30%+ |
 | High density | −65 dBm | 25 dB | 20% |
 
-⚠️ **Cell overlap yang terlalu besar (>25%) menyebabkan co-channel interference.** Yang terlalu kecil (<10%) menyebabkan roaming gagal dan "coverage hole". Target 15–20%.
+> [!WARNING]
+> **Cell overlap yang terlalu besar (>25%) menyebabkan co-channel interference.** Yang terlalu kecil (<10%) menyebabkan roaming gagal dan "coverage hole". Target 15–20%.
 
 ### Kesalahan survei yang umum
 
-⚠️ **1. Survei di gedung kosong.** Tubuh manusia menyerap 3–5 dB. Auditorium penuh berperilaku sangat berbeda.
+> [!WARNING]
+> **1. Survei di gedung kosong.** Tubuh manusia menyerap 3–5 dB. Auditorium penuh berperilaku sangat berbeda.
 
-⚠️ **2. Memakai adapter yang berbeda dari klien nyata.** Adapter survei sering lebih sensitif daripada ponsel. Survei dengan perangkat yang mewakili klien terburuk.
+> [!WARNING]
+> **2. Memakai adapter yang berbeda dari klien nyata.** Adapter survei sering lebih sensitif daripada ponsel. Survei dengan perangkat yang mewakili klien terburuk.
 
-⚠️ **3. Hanya mengukur RSSI, bukan SNR.** RSSI baik dengan noise tinggi tetap buruk.
+> [!WARNING]
+> **3. Hanya mengukur RSSI, bukan SNR.** RSSI baik dengan noise tinggi tetap buruk.
 
-⚠️ **4. Mengabaikan sumbu vertikal.** Sinyal menembus lantai; AP lantai 2 mengganggu lantai 1 dan 3.
+> [!WARNING]
+> **4. Mengabaikan sumbu vertikal.** Sinyal menembus lantai; AP lantai 2 mengganggu lantai 1 dan 3.
 
-⚠️ **5. Tidak melakukan spectrum analysis.** Interferensi non-Wi-Fi tidak terlihat di survei Wi-Fi biasa.
+> [!WARNING]
+> **5. Tidak melakukan spectrum analysis.** Interferensi non-Wi-Fi tidak terlihat di survei Wi-Fi biasa.
 
 ---
 
@@ -188,7 +199,8 @@ Langkah 6: Cek terhadap batas klien per AP
 → AMBIL YANG LEBIH BESAR: 10 AP
 ```
 
-⚠️ **Batas klien per AP hampir selalu menjadi faktor penentu**, bukan bandwidth. Wi-Fi adalah media bersama — 100 klien di satu AP akan sangat lambat meski bandwidth agregat mencukupi, karena setiap klien harus antre memakai media.
+> [!WARNING]
+> **Batas klien per AP hampir selalu menjadi faktor penentu**, bukan bandwidth. Wi-Fi adalah media bersama — 100 klien di satu AP akan sangat lambat meski bandwidth agregat mencukupi, karena setiap klien harus antre memakai media.
 
 ### Kepadatan tinggi (auditorium, stadion, ruang kelas)
 
@@ -204,13 +216,14 @@ Prinsip:
 8. Pertimbangkan AP di bawah kursi atau di dinding samping, bukan plafon tinggi
 ```
 
-💡 **Menurunkan daya pancar terasa berlawanan dengan intuisi, tetapi benar.** Sel yang lebih kecil berarti lebih sedikit klien per sel, lebih sedikit co-channel interference, dan roaming lebih tegas.
+> [!TIP]
+> **Menurunkan daya pancar terasa berlawanan dengan intuisi, tetapi benar.** Sel yang lebih kecil berarti lebih sedikit klien per sel, lebih sedikit co-channel interference, dan roaming lebih tegas.
 
 ---
 
 ## 5. Perencanaan Kanal
 
-### 2,4 GHz — pola 3 kanal
+### 2,4 GHz: pola 3 kanal
 
 ```
 Lantai:
@@ -221,11 +234,12 @@ Lantai:
 
 Karena hanya ada 3 kanal, **kepadatan AP di 2,4 GHz sangat terbatas**. Di lingkungan padat, sering lebih baik **mematikan radio 2,4 GHz pada sebagian AP**.
 
-### 5 GHz — banyak kanal
+### 5 GHz: banyak kanal
 
 Dengan 20 MHz, tersedia ~25 kanal (termasuk DFS) → perencanaan jauh lebih mudah.
 
-⚠️ **Jangan pakai kanal yang sama di lantai atas/bawah** — sinyal menembus lantai.
+> [!WARNING]
+> **Jangan pakai kanal yang sama di lantai atas/bawah** — sinyal menembus lantai.
 
 ### Auto RF (RRM)
 
@@ -236,7 +250,8 @@ Aruba  : ARM (Adaptive Radio Management)
 MikroTik: frequency=auto (jauh lebih sederhana)
 ```
 
-💡 **Auto RF baik untuk memulai, tetapi selalu tinjau hasilnya.** Kadang ia membuat keputusan yang buruk (mis. memilih kanal DFS di dekat radar). Untuk lingkungan kritis, kunci kanal secara manual setelah survei.
+> [!TIP]
+> **Auto RF baik untuk memulai, tetapi selalu tinjau hasilnya.** Kadang ia membuat keputusan yang buruk (mis. memilih kanal DFS di dekat radar). Untuk lingkungan kritis, kunci kanal secara manual setelah survei.
 
 ---
 
@@ -273,7 +288,8 @@ Menghubungkan dua gedung tanpa kabel.
 /interface wireless monitor wlan1
 ```
 
-💡 **NV2 (Nstreme Version 2)** adalah protokol TDMA proprietary MikroTik yang **menggantikan CSMA/CA** untuk link PtP/PtMP. Keunggulannya: tidak ada masalah hidden node, latency lebih rendah dan konsisten, dan throughput jauh lebih baik pada jarak jauh. ⚠️ **Hanya bekerja antar-perangkat MikroTik.**
+> [!TIP]
+> **NV2 (Nstreme Version 2)** adalah protokol TDMA proprietary MikroTik yang **menggantikan CSMA/CA** untuk link PtP/PtMP. Keunggulannya: tidak ada masalah hidden node, latency lebih rendah dan konsisten, dan throughput jauh lebih baik pada jarak jauh. ⚠️ **Hanya bekerja antar-perangkat MikroTik.**
 
 ### Point-to-Multipoint (PtMP)
 
@@ -285,7 +301,8 @@ Satu AP sektor melayani banyak stasiun — model **WISP/RT-RW Net**.
       [CPE-1]   [CPE-2]   [CPE-3]  ...
 ```
 
-⚠️ **Hidden node adalah masalah utama di PtMP** — CPE di sisi berlawanan tidak saling mendengar. NV2/TDMA memecahkannya; CSMA/CA tidak.
+> [!WARNING]
+> **Hidden node adalah masalah utama di PtMP** — CPE di sisi berlawanan tidak saling mendengar. NV2/TDMA memecahkannya; CSMA/CA tidak.
 
 ### Mesh
 
@@ -299,13 +316,15 @@ AP saling terhubung tanpa kabel; salah satu (RAP — Root AP) terhubung ke kabel
     [MAP] [MAP]
 ```
 
-⚠️ **Setiap hop mesh memotong throughput sekitar setengah** (radio yang sama dipakai untuk uplink dan downlink). Mesh 3 hop → ~12,5% throughput asli.
+> [!WARNING]
+> **Setiap hop mesh memotong throughput sekitar setengah** (radio yang sama dipakai untuk uplink dan downlink). Mesh 3 hop → ~12,5% throughput asli.
 
-💡 **Batasi mesh maksimal 2–3 hop.** Untuk mesh yang serius, gunakan AP dengan radio backhaul terpisah (tri-band) sehingga uplink tidak berbagi radio dengan klien.
+> [!TIP]
+> **Batasi mesh maksimal 2–3 hop.** Untuk mesh yang serius, gunakan AP dengan radio backhaul terpisah (tri-band) sehingga uplink tidak berbagi radio dengan klien.
 
 ---
 
-## 7. CAPsMAN — Controller MikroTik
+## 7. CAPsMAN: Controller MikroTik
 
 ```
 # Di CONTROLLER
@@ -330,7 +349,8 @@ AP saling terhubung tanpa kabel; salah satu (RAP — Root AP) terhubung ke kabel
 /caps-man interface print
 ```
 
-💡 **`local-forwarding=yes`** membuat trafik klien di-switch lokal di AP (setara FlexConnect) alih-alih di-tunnel ke controller — wajib untuk cabang dengan link WAN lambat.
+> [!TIP]
+> **`local-forwarding=yes`** membuat trafik klien di-switch lokal di AP (setara FlexConnect) alih-alih di-tunnel ke controller — wajib untuk cabang dengan link WAN lambat.
 
 **RouterOS v7 memakai `/interface wifi` dan CAPsMAN yang berbeda:**
 ```
@@ -405,7 +425,8 @@ $ journalctl -u wpa_supplicant -f
 /log print where topics~"wireless"
 ```
 
-💡 **`tx-ccq` (Client Connection Quality)** di MikroTik adalah metrik gabungan terbaik untuk penilaian cepat. Di bawah 70% = ada masalah. Selisih besar antara `frames` dan `hw-frames` menunjukkan banyak retransmisi.
+> [!TIP]
+> **`tx-ccq` (Client Connection Quality)** di MikroTik adalah metrik gabungan terbaik untuk penilaian cepat. Di bawah 70% = ada masalah. Selisih besar antara `frames` dan `hw-frames` menunjukkan banyak retransmisi.
 
 ```
 # Cisco WLC
@@ -432,7 +453,8 @@ WLC> debug client <mac>              ← sangat berguna, tampilkan seluruh prose
 | Hanya sebagian klien bermasalah | Klien lama (802.11b/g) memaksa protection mode; driver bermasalah |
 | Retry rate tinggi | Interferensi; hidden node; sinyal lemah; kanal padat |
 
-⚠️ **Selalu periksa uplink AP dan daya PoE terlebih dahulu** saat throughput mengecewakan. AP Wi-Fi 6 dengan uplink 100 Mbps atau PoE 802.3af akan berkinerja jauh di bawah spesifikasi tanpa gejala jelas lainnya.
+> [!WARNING]
+> **Selalu periksa uplink AP dan daya PoE terlebih dahulu** saat throughput mengecewakan. AP Wi-Fi 6 dengan uplink 100 Mbps atau PoE 802.3af akan berkinerja jauh di bawah spesifikasi tanpa gejala jelas lainnya.
 
 ---
 
@@ -442,12 +464,12 @@ WLC> debug client <mac>              ← sangat berguna, tampilkan seluruh prose
 - **CAPWAP**: UDP 5246 (control, DTLS) dan 5247 (data).
 - Mode AP: **local** (tunnel ke WLC), **FlexConnect** (switch lokal — wajib untuk cabang), monitor, sniffer, bridge/mesh.
 - **Periksa daya PoE**: Wi-Fi 6 butuh 802.3at; Wi-Fi 6E/7 bisa butuh 802.3bt. AP kurang daya berjalan dalam mode terbatas.
-- **Site survey**: predictive → validasi passive. Target **−67 dBm, SNR 25 dB, overlap 15–20%** untuk suara.
-- Survei di gedung kosong menyesatkan — **tubuh manusia menyerap 3–5 dB**.
-- **Capacity-driven design**: sel kecil, daya rendah, banyak AP. **Batas klien per AP (25–30) biasanya menjadi faktor penentu**, bukan bandwidth.
+- **Site survey**: predictive → validasi passive. Target **−67 dBm, SNR 25 dB, overlap 15-20%** untuk suara.
+- Survei di gedung kosong menyesatkan — **tubuh manusia menyerap 3-5 dB**.
+- **Capacity-driven design**: sel kecil, daya rendah, banyak AP. **Batas klien per AP (25-30) biasanya menjadi faktor penentu**, bukan bandwidth.
 - Kepadatan tinggi: daya rendah, 20 MHz, matikan rate rendah, batasi SSID, airtime fairness.
 - **2,4 GHz hanya 3 kanal** — pertimbangkan mematikan sebagian radio 2,4 GHz.
-- **Setiap hop mesh memotong throughput setengah** — batasi 2–3 hop, atau pakai radio backhaul terpisah.
+- **Setiap hop mesh memotong throughput setengah** — batasi 2-3 hop, atau pakai radio backhaul terpisah.
 - **NV2 (MikroTik)** menggantikan CSMA/CA dengan TDMA untuk PtP/PtMP — memecahkan hidden node.
 - Troubleshooting: pisahkan **satu klien vs semua klien**; periksa **RSSI, SNR, MCS, retry, jumlah klien, uplink, dan PoE**.
 
@@ -479,7 +501,7 @@ WLC> debug client <mac>              ← sangat berguna, tampilkan seluruh prose
      900 / 400 = 2,25 → 3 AP
 
    Berbasis jumlah klien:
-     Maksimal 25–30 klien aktif per radio
+     Maksimal 25-30 klien aktif per radio
      300 / 30 = 10 AP
 
    → AMBIL YANG LEBIH BESAR: 10 AP (dibulatkan ke atas untuk cakupan

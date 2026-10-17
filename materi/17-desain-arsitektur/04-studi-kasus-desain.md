@@ -1,4 +1,4 @@
-# 17.4 — Studi Kasus Desain End-to-End
+# 17.4 Studi Kasus Desain End-to-End
 
 > **Prasyarat:** `17.1–17.3` dan seluruh kurikulum
 > **Tujuan:** Menerapkan semua yang dipelajari ke desain jaringan nyata dari kebutuhan sampai implementasi — latihan berpikir seperti arsitek jaringan.
@@ -18,7 +18,8 @@ Operate  → jalankan, pantau, pelihara
 Optimize → tuning, perbaikan berkelanjutan → kembali ke Plan
 ```
 
-💡 Kunci desain baik: **mulai dari kebutuhan (requirements), bukan dari teknologi.** Teknologi dipilih untuk memenuhi kebutuhan, bukan sebaliknya. Kumpulkan: jumlah user/situs, aplikasi kritis & kebutuhannya (bandwidth/latensi), kebutuhan keamanan/kepatuhan, anggaran, pertumbuhan, SLA.
+> [!TIP]
+> Kunci desain baik: **mulai dari kebutuhan (requirements), bukan dari teknologi.** Teknologi dipilih untuk memenuhi kebutuhan, bukan sebaliknya. Kumpulkan: jumlah user/situs, aplikasi kritis & kebutuhannya (bandwidth/latensi), kebutuhan keamanan/kepatuhan, anggaran, pertumbuhan, SLA.
 
 ---
 
@@ -143,7 +144,8 @@ Saat mendesain, tanyakan berurutan:
 10. Apakah desain memenuhi SLA & anggaran? (validasi trade-off)
 ```
 
-⚠️ **Kesalahan pemula**: mulai dari "saya mau pakai teknologi X" alih-alih "kebutuhan menuntut apa". Selalu **requirements → desain → teknologi**. Dan selalu **validasi trade-off**: desain "sempurna" yang melebihi anggaran atau terlalu kompleks untuk dikelola tim adalah desain yang gagal.
+> [!WARNING]
+> **Kesalahan pemula**: mulai dari "saya mau pakai teknologi X" alih-alih "kebutuhan menuntut apa". Selalu **requirements → desain → teknologi**. Dan selalu **validasi trade-off**: desain "sempurna" yang melebihi anggaran atau terlalu kompleks untuk dikelola tim adalah desain yang gagal.
 
 ---
 
@@ -205,7 +207,7 @@ Saat mendesain, tanyakan berurutan:
    - **Storage tunggal** → storage redundan (RAID + kontroler ganda) atau replikasi.
    - **Satu koneksi internet untuk M365/web** → tercakup oleh redundansi WAN dua transport.
    - **Link server ke satu switch** → **dual-homing** ke dua switch dengan MLAG/vPC.
-   ⚠️ Prioritaskan menghilangkan SPOF yang **dampaknya paling kritis** (ERP dan VoIP yang butuh uptime tinggi) lebih dulu, dan seimbangkan dengan anggaran — tidak setiap komponen wajib digandakan, tetapi jalur dan perangkat untuk aplikasi kritis harus punya cadangan.
+   **Perhatian:** Prioritaskan menghilangkan SPOF yang **dampaknya paling kritis** (ERP dan VoIP yang butuh uptime tinggi) lebih dulu, dan seimbangkan dengan anggaran — tidak setiap komponen wajib digandakan, tetapi jalur dan perangkat untuk aplikasi kritis harus punya cadangan.
 
 </details>
 
@@ -216,8 +218,8 @@ Saat mendesain, tanyakan berurutan:
 - Cisco PPDIOO / Cisco lifecycle services
 - Cisco Validated Designs (CVD)
 - *Top-Down Network Design* (Priscilla Oppenheimer, Cisco Press)
-- Seluruh kurikulum ini (modul 1–16) sebagai referensi teknis
+- Seluruh kurikulum ini (modul 1-16) sebagai referensi teknis
 
 ---
 
-**Berikutnya:** `17-desain-arsitektur/05-operasi-kontinuitas` — operasi, kontinuitas bisnis, dan manajemen perubahan.
+**Berikutnya:** `17-desain-arsitektur/05-operasi-kontinuitas`. Operasi, kontinuitas bisnis, dan manajemen perubahan.

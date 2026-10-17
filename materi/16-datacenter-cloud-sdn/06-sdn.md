@@ -1,4 +1,4 @@
-# 16.6 — SDN & Controller-Based Networking
+# 16.6 SDN & Controller-Based Networking
 
 > **Prasyarat:** `15-otomasi/01–02`, `16.1`, `07-routing-lanjutan/02` (control plane)
 > **Tujuan:** Anda paham pemisahan control/data plane, jaringan berbasis controller, northbound/southbound API, dan AI/ML dalam operasi jaringan — sesuai CCNA 6.2, 6.3, dan 6.4.
@@ -24,7 +24,8 @@ Setiap perangkat punya otak sendiri      Satu controller = otak; perangkat = oto
 | Visibilitas | Terpecah | Menyeluruh |
 | Konsistensi | Rawan salah/drift | Terjamin |
 
-💡 **CCNA 6.2** meminta membandingkan keduanya. Intinya: jaringan tradisional mengelola perangkat **satu per satu** dengan control plane di masing-masing; jaringan berbasis controller **memusatkan kecerdasan** sehingga Anda mengelola seluruh jaringan sebagai **satu sistem** lewat controller.
+> [!TIP]
+> **CCNA 6.2** meminta membandingkan keduanya. Intinya: jaringan tradisional mengelola perangkat **satu per satu** dengan control plane di masing-masing; jaringan berbasis controller **memusatkan kecerdasan** sehingga Anda mengelola seluruh jaringan sebagai **satu sistem** lewat controller.
 
 ---
 
@@ -44,7 +45,8 @@ DATA PLANE (otot): benar-benar MENERUSKAN paket
 
 Kaitkan dengan `07-routing-lanjutan/02`: RIB dibangun control plane, FIB dipakai data plane. SDN memindahkan "pembangunan RIB" ke controller.
 
-⚠️ **Pemisahan ini adalah definisi inti SDN** dan pasti muncul di ujian CCNA. Perangkat SDN "murni" tidak berpikir sendiri — ia meneruskan sesuai instruksi controller. (Dalam praktik, banyak solusi bersifat *hibrida* — perangkat tetap punya sebagian control plane demi ketahanan bila controller putus.)
+> [!WARNING]
+> **Pemisahan ini adalah definisi inti SDN** dan pasti muncul di ujian CCNA. Perangkat SDN "murni" tidak berpikir sendiri — ia meneruskan sesuai instruksi controller. (Dalam praktik, banyak solusi bersifat *hibrida* — perangkat tetap punya sebagian control plane demi ketahanan bila controller putus.)
 
 ---
 
@@ -80,9 +82,11 @@ Controller berkomunikasi ke dua arah:
 | **Northbound (NBI)** | Ke atas | Controller ↔ aplikasi/otomasi | **REST API** (JSON) |
 | **Southbound (SBI)** | Ke bawah | Controller ↔ perangkat | **NETCONF, OpenFlow, gNMI, CLI** |
 
-💡 **Cara mengingat:** **Northbound menghadap aplikasi/manusia** (biasanya REST API yang ramah developer — Anda menulis skrip yang bicara ke controller lewat sini). **Southbound menghadap perangkat** (protokol yang controller pakai untuk memerintah switch/router — NETCONF, OpenFlow). "North = ke atas ke software, South = ke bawah ke hardware."
+> [!TIP]
+> **Cara mengingat:** **Northbound menghadap aplikasi/manusia** (biasanya REST API yang ramah developer — Anda menulis skrip yang bicara ke controller lewat sini). **Southbound menghadap perangkat** (protokol yang controller pakai untuk memerintah switch/router — NETCONF, OpenFlow). "North = ke atas ke software, South = ke bawah ke hardware."
 
-⚠️ **OpenFlow** adalah protokol southbound SDN klasik (memprogram tabel forwarding switch langsung), tetapi dalam praktik enterprise modern **NETCONF/gNMI** lebih umum sebagai southbound. CCNA fokus pada konsep NBI/SBI, bukan protokol spesifik.
+> [!WARNING]
+> **OpenFlow** adalah protokol southbound SDN klasik (memprogram tabel forwarding switch langsung), tetapi dalam praktik enterprise modern **NETCONF/gNMI** lebih umum sebagai southbound. CCNA fokus pada konsep NBI/SBI, bukan protokol spesifik.
 
 ---
 
@@ -97,7 +101,8 @@ Controller berkomunikasi ke dua arah:
 | **VMware NSX** | Overlay/virtualisasi jaringan |
 | **OpenDaylight, ONOS** | Controller open-source |
 
-💡 **Cloud-managed** (Meraki) adalah bentuk controller-based di mana controllernya **di cloud vendor** — Anda kelola lewat dashboard web, perangkat "menelepon pulang" ke cloud. CCNA 2.8 menyebut "cloud managed" sebagai salah satu metode akses/manajemen perangkat.
+> [!TIP]
+> **Cloud-managed** (Meraki) adalah bentuk controller-based di mana controllernya **di cloud vendor** — Anda kelola lewat dashboard web, perangkat "menelepon pulang" ke cloud. CCNA 2.8 menyebut "cloud managed" sebagai salah satu metode akses/manajemen perangkat.
 
 ---
 
@@ -120,9 +125,11 @@ GENERATIVE AI            →  menghasilkan konten/bantuan
 
 **AIOps** = penerapan AI/ML untuk operasi IT/jaringan: mengumpulkan telemetri masif (lihat `14-monitoring-troubleshooting/03`), mendeteksi pola, dan sering **bertindak otomatis** atau memberi rekomendasi.
 
-⚠️ **AI/ML di jaringan mengandalkan telemetri berkualitas** (streaming telemetry/gNMI, flow data). "Sampah masuk, sampah keluar" — model hanya sebaik data yang dikumpulkan. Ini menghubungkan kembali ke observability (`14.3`) dan otomasi (`15`).
+> [!WARNING]
+> **AI/ML di jaringan mengandalkan telemetri berkualitas** (streaming telemetry/gNMI, flow data). "Sampah masuk, sampah keluar" — model hanya sebaik data yang dikumpulkan. Ini menghubungkan kembali ke observability (`14.3`) dan otomasi (`15`).
 
-💡 Untuk CCNA, cukup **memahami peran** AI prediktif (deteksi anomali, prediksi) vs generatif (asisten, ringkasan) dalam operasi jaringan — bukan detail algoritma. Ini topik konseptual (6.4).
+> [!TIP]
+> Untuk CCNA, cukup **memahami peran** AI prediktif (deteksi anomali, prediksi) vs generatif (asisten, ringkasan) dalam operasi jaringan — bukan detail algoritma. Ini topik konseptual (6.4).
 
 ---
 
@@ -192,4 +199,4 @@ SDN/controller-based menjawab:
 
 ---
 
-**Berikutnya:** `17-desain-arsitektur/01-prinsip-desain.md` — menyatukan semuanya menjadi desain jaringan yang utuh.
+**Berikutnya:** `17-desain-arsitektur/01-prinsip-desain.md`. Menyatukan semuanya menjadi desain jaringan yang utuh.
