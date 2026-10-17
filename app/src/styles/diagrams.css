@@ -194,3 +194,4 @@ svg.dg { display: block; min-width: 560px; font-family: var(--font-sans); overfl
 @media (prefers-reduced-motion: reduce) {
   .dg-fig { opacity: 1; transform: none; }
 }
+:root[data-gerak="kurangi"] .dg-fig { opacity: 1; transform: none; }

@@ -206,10 +206,10 @@ function Bobot({ rows, title, sub, foot, h }: {
 
 export function DgL5BobotCcna() {
   return (
-    <Bobot title="Bobot enam domain CCNA 200-301" sub="IP Connectivity (25%) adalah domain terbesar" h={330}
-      foot="Durasi 120 menit, passing ~825/1000, berlaku 3 tahun, versi v1.1"
+    <Bobot title="Bobot enam domain CCNA 200-301 v1.1" sub="IP Connectivity (25%) adalah domain terbesar" h={330}
+      foot="Durasi 120 menit, nilai lulus tidak dipublikasikan, berlaku 3 tahun. Diuji sampai 2 Februari 2027"
       rows={[
-        { n: '1.0 Network Fundamentals', pct: 20, tahap: 'Tahap 0–5, 8, 10' },
+        { n: '1.0 Network Fundamentals', pct: 20, tahap: 'Tahap 0-5, 8, 10' },
         { n: '2.0 Network Access', pct: 20, tahap: 'Tahap 3, 10' },
         { n: '3.0 IP Connectivity', pct: 25, tahap: 'Tahap 4, 7', hi: true },
         { n: '4.0 IP Services', pct: 10, tahap: 'Tahap 6, 9, 11, 14' },
@@ -224,7 +224,7 @@ export function DgL5BobotNetworkplus() {
     <Bobot title="Bobot lima domain Network+ N10-009" sub="Troubleshooting (24%) adalah domain terbesar, Security yang terkecil" h={300}
       foot="Durasi 90 menit, maks 90 soal, passing 720/900, vendor-netral"
       rows={[
-        { n: '1.0 Networking Concepts', pct: 23, tahap: 'Tahap 0–6, 8' },
+        { n: '1.0 Networking Concepts', pct: 23, tahap: 'Tahap 0-6, 8' },
         { n: '2.0 Network Implementation', pct: 20, tahap: 'Tahap 3, 7, 10' },
         { n: '3.0 Network Operations', pct: 19, tahap: 'Tahap 14, 17' },
         { n: '4.0 Network Security', pct: 14, tahap: 'Tahap 12, 9' },

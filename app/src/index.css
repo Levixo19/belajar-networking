@@ -333,6 +333,14 @@ p { text-wrap: pretty; }
   }
   .read-progress { animation: none; display: none; }
 }
+/* Padanan untuk pilihan "Kurangi" di menu profil (lib/gerak.ts), di luar setelan sistem. */
+:root[data-gerak="kurangi"] *, :root[data-gerak="kurangi"] *::before, :root[data-gerak="kurangi"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+:root[data-gerak="kurangi"] .read-progress { animation: none; display: none; }
 
 /* =========================================================================
    NAVIGASI
@@ -674,6 +682,7 @@ a.tile:hover, button.tile:hover { border-color: var(--border-strong); box-shadow
     .pil-progres { display: block; animation: readGrow linear both; animation-timeline: scroll(root); }
   }
   @media (prefers-reduced-motion: reduce) { .pil-progres { animation: none; display: none; } }
+  :root[data-gerak="kurangi"] .pil-progres { animation: none; display: none; }
   /* Kanvas di bawah pil */
   main#konten { padding-top: 5.25rem; }
   main#konten.tanpa-jarak-atas { padding-top: 0; }

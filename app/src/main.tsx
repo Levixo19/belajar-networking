@@ -18,6 +18,7 @@ import '@fontsource-variable/eb-garamond'
 import '@fontsource-variable/eb-garamond/wght-italic.css'
 import './index.css'
 import { StoreProvider } from './lib/store'
+import { bacaGerak, terapkanGerak } from './lib/gerak'
 import App from './App'
 import Dashboard from './pages/Dashboard'
 import ModulePage from './pages/ModulePage'
@@ -37,6 +38,10 @@ const Memuat = () => (
     <div className="mt-10 aspect-[10/7] w-full animate-pulse rounded-2xl bg-[var(--surface-2)]" />
   </div>
 )
+
+// Pilihan gerak dari menu profil diterapkan sebelum render pertama, supaya animasi pembuka
+// Dasbor tidak sempat berjalan untuk pembaca yang memilih "Kurangi".
+terapkanGerak(bacaGerak())
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

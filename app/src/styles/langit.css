@@ -169,6 +169,15 @@
   .kursor-sudut.kiri-bawah { border-left-width: 1.5px; border-bottom-width: 1.5px; }
   .kursor-sudut.kanan-bawah { border-right-width: 1.5px; border-bottom-width: 1.5px; }
   @media (prefers-reduced-motion: reduce) { .kursor { display: none; } }
+  :root[data-gerak="kurangi"] .kursor { display: none; }
+
+  /* Titik yang terbang dari peta dasbor ke plat kepala modul (lib/terbangBintang.ts).
+     Ukurannya harus sama dengan TITIK di sana; transform dan opacity milik GSAP. */
+  .bintang-terbang {
+    position: fixed; z-index: 60; width: 12px; height: 12px; margin: -6px 0 0 -6px;
+    border-radius: 50%; pointer-events: none; background: var(--pf-lampu);
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--pf-lampu) 35%, transparent), 0 0 14px 3px color-mix(in oklab, var(--pf-lampu) 55%, transparent);
+  }
 
   /* ----------------------------------------------- Bingkai plat ala atlas */
   /* Garis rangkap dengan tik derajat di keempat sisi: dipakai hemat (hero, plat rasi). */

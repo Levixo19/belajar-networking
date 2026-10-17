@@ -88,4 +88,5 @@
   @media (prefers-reduced-motion: reduce) {
     .arc-bingkai, .arc-butir { transition: none; }
   }
+  :root[data-gerak="kurangi"] .arc-bingkai, :root[data-gerak="kurangi"] .arc-butir { transition: none; }
 }

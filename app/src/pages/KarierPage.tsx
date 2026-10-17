@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { gerakDikurangi } from '../lib/gerak'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useStore } from '../lib/store'
 import { getModule } from '../lib/content'
@@ -14,7 +15,7 @@ import { IconArrowRight, IconCheck, IconRetry, IconBook } from '../components/ic
 
 const pendek = (nama: string) => nama.replace(/\s*\(.*?\)\s*/g, ' ').trim()
 const keAtas = () => document.getElementById('judul-karier')?.scrollIntoView({
-  behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start',
+  behavior: gerakDikurangi() ? 'auto' : 'smooth', block: 'start',
 })
 
 /* ------------------------------------------------------------------ Halaman */

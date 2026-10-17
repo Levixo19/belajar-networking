@@ -7,6 +7,7 @@ import Planisfer, { langitKurikulum, TandaBintang, useLangitNyata } from '../com
 import { jamTahap } from '../lib/langit'
 import PustakaKartu from '../components/PustakaKartu'
 import BumiMalam, { type TitikMisi } from '../components/BumiMalam'
+import { bentukBintang, terbangkanBintang } from '../lib/terbangBintang'
 
 const KarierTeaser = lazy(() => import('../components/KarierTeaser'))
 
@@ -88,7 +89,8 @@ export default function Dashboard() {
               {tahapLanjut ? `Tahap ${tahapLanjut.title}, ` : ''}sekitar {lanjut.readMin} menit
             </p>
             {/* Satu-satunya tombol berlatar aksen di layar ini; klik bintang adalah jalan kedua. */}
-            <Link to={tautan(lanjut)} className="btn btn-primary kartus-tombol">
+            {/* Bintang modul berikutnya ikut terbang ke kepala modul, sama seperti klik bintang. */}
+            <Link to={tautan(lanjut)} className="btn btn-primary kartus-tombol" onClick={() => terbangkanBintang(bentukBintang(lanjut.id), lanjut.id)}>
               {baru ? 'Mulai membaca' : 'Lanjutkan membaca'}
             </Link>
           </div>

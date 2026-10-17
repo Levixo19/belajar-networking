@@ -6,7 +6,18 @@ import { useGSAP } from '@gsap/react'
 // ScrollTrigger dan SplitText ikut dicabut bersama teks gulir dan tumpukan kartu Dasbor.
 gsap.registerPlugin(MotionPathPlugin, useGSAP)
 
-/** Kueri yang menjaga semua animasi: tidak dibuat bila pengguna minta gerak dikurangi. */
-export const MOTION_OK = '(prefers-reduced-motion: no-preference)'
+const KUERI_HALUS = '(prefers-reduced-motion: no-preference)'
+
+/**
+ * Kueri yang menjaga semua animasi: tidak dibuat bila pengguna minta gerak dikurangi.
+ * Sengaja `let`: impor ES adalah live binding, jadi pilihan "Kurangi" di menu profil
+ * (lib/gerak.ts) mengubahnya menjadi `not all`, kueri yang tidak pernah cocok, untuk
+ * setiap gsap.matchMedia yang dibuat sesudahnya.
+ */
+export let MOTION_OK = KUERI_HALUS
+
+export function aturMotionOk(kurangi: boolean) {
+  MOTION_OK = kurangi ? 'not all' : KUERI_HALUS
+}
 
 export { gsap, useGSAP }

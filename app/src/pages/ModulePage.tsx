@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { gerakDikurangi } from '../lib/gerak'
 import { useLocation, Link } from 'react-router-dom'
 import { getModule, neighbors, stageOfModule } from '../lib/content'
 import { useStore } from '../lib/store'
@@ -133,7 +134,7 @@ export default function ModulePage() {
                 {tawarLanjut && (
                   <button onClick={() => {
                       const y = store.scroll[mod.id] || 0
-                      window.scrollTo({ top: y, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
+                      window.scrollTo({ top: y, behavior: gerakDikurangi() ? 'auto' : 'smooth' })
                       setTawarLanjut(false)
                     }}
                     className="fade-in inline-flex h-8 items-center gap-2 rounded-lg bg-[var(--fg)] px-3 text-[13px] font-medium text-[var(--fg-contrast)] transition-transform active:scale-[0.98]">

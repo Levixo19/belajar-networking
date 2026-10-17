@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { MOTION_OK } from '../lib/motion'
+import { gerakDikurangi, useGerak } from '../lib/gerak'
 
 /**
  * Kursor bidik. Kursor sistem TIDAK disembunyikan (teks tetap bisa diseleksi dengan
@@ -12,7 +12,7 @@ import { MOTION_OK } from '../lib/motion'
  * di atas cincin fokus, bukan penggantinya.
  *
  * Hanya aktif untuk mouse (pointer: fine, hover: hover) dan bila pengguna tidak minta
- * gerak dikurangi. Tiap frame hanya menulis transform (titik pusat dan empat sudut),
+ * gerak dikurangi, lewat sistem atau lewat menu profil (efek dipasang ulang saat pilihan berubah). Tiap frame hanya menulis transform (titik pusat dan empat sudut),
  * tidak pernah width/height, jadi tidak ada kerja tata letak per frame. Sasaran diukur
  * saat berganti, saat digulir, dan saat ukuran jendela berubah, bukan di setiap gerak.
  * Pelembutan dihitung dari waktu, bukan per frame: di layar 120 Hz kecepatannya sama.
@@ -24,12 +24,13 @@ const LAJU = 0.24     // porsi jarak yang ditempuh per 1/60 detik
 
 export default function Kursor() {
   const root = useRef<HTMLDivElement>(null)
+  const gerak = useGerak()
 
   useEffect(() => {
     const el = root.current
     if (!el) return
-    const mq = window.matchMedia(`(pointer: fine) and (hover: hover) and ${MOTION_OK}`)
-    if (!mq.matches) return
+    const mq = window.matchMedia('(pointer: fine) and (hover: hover)')
+    if (!mq.matches || gerakDikurangi()) return
     document.documentElement.classList.add('ada-kursor')
     const sudut = Array.from(el.querySelectorAll<HTMLElement>('.kursor-sudut'))
     // x, y = pusat; w, h = ukuran kotak bidik. t* = sasaran.
@@ -110,7 +111,7 @@ export default function Kursor() {
       window.removeEventListener('pointerdown', tekan)
       window.removeEventListener('pointerup', lepas)
     }
-  }, [])
+  }, [gerak])
 
   return (
     <div ref={root} className="kursor" aria-hidden="true">

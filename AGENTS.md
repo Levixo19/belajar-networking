@@ -141,6 +141,15 @@ rute berganti, atau ScrollTrigger tidak pernah menyala, elemennya tetap terlihat
 **Setiap animasi menghormati `prefers-reduced-motion`**, lewat `gsap.matchMedia`
 di `lib/motion.ts`. Jangan memanggil GSAP dari tempat lain tanpa penjaga itu.
 
+**Pembaca juga bisa memilih "Kurangi" di menu profil** (`lib/gerak.ts`, localStorage
+`bn-gerak`), dan pilihan itu harus dihormati tiga mesin sekaligus: CSS lewat
+`:root[data-gerak="kurangi"]` (setiap blok `@media (prefers-reduced-motion: reduce)`
+wajib punya padanan ini), GSAP lewat `MOTION_OK` yang sengaja `let` (live binding, menjadi
+`not all`), dan kode yang menggulir atau menganimasikan sendiri lewat `gerakDikurangi()`.
+Jangan menulis `matchMedia('(prefers-reduced-motion: reduce)')` langsung lagi: itu
+mengabaikan pilihan pembaca. Tidak ada pilihan "selalu bergerak"; permintaan sistem
+tidak pernah ditimpa.
+
 **Satu properti, satu mesin.** Kalau GSAP menggerakkan `transform`/`opacity` sebuah
 elemen, lepas `transition` CSS untuk properti yang sama; keduanya saling mengejar
 dan menghasilkan gerak tersendat yang sulit didiagnosis.
@@ -322,6 +331,13 @@ yang aktif pemicu Kurikulum. Penanda yang meluncur digerakkan transition CSS
 (transform + width) saja. Layar < 1024 px tidak dirancang, tapi tidak boleh meluber:
 pil bisa digulir mendatar dan label cari/XP disembunyikan di bawah 1100 px.
 
+**Panel yang menjulur dari pil TIDAK boleh tinggal di dalam `.pil`.** `overflow-x: auto`
+membuat sumbu y ikut terpotong, dan saat `useDialogFokus` memindah fokus ke panel, browser
+menggulir isi pil sehingga semua butir navigasi tergeser keluar (menu profil rusak begini
+sampai 2026-10-18). Mega-menu Kurikulum dirender di luar `<nav>`; menu profil lewat
+portal ke `<body>` dengan posisi `fixed` yang diukur di handler klik, bukan di efek:
+`useDialogFokus` membaca ref panel di commit yang sama dengan `open`.
+
 **Satu layar, satu latar aksen.** `.btn-primary` (ultramarin, teks `--on-primary`)
 hanya untuk tindakan utama layar itu; yang lain `.btn-ink` atau `.btn`. Widget
 sisipan di modul (kuis, checkpoint, alat), tombol dialog, dan lencana jumlah memakai
@@ -437,8 +453,11 @@ AKHIR daftar latihan.
 **Peta sertifikasi (18.2, 18.3, 18.5) diperiksa terhadap halaman resmi 2026-10-15**
 dan setiap angka membawa URL buktinya. Yang TIDAK dipublikasikan penerbit (jumlah soal
 dan nilai lulus CCNA) ditulis sebagai "tidak dipublikasikan", bukan angka komunitas
-yang disamarkan jadi fakta. **CCNA v2.0 mulai diuji 2027-02-03**; 18.2 masih memetakan
-v1.1 topik demi topik, dan pemetaan ulang ke v2.0 harus selesai sebelum tanggal itu.
+yang disamarkan jadi fakta. **CCNA v2.0 mulai diuji 2027-02-03** (v1.1 terakhir
+2027-02-02, nomor ujian tetap 200-301). Sejak 2026-10-17, 18.2 memuat KEDUA peta: v1.1
+(bagian 2-7) dan v2.0 (bagian 8-13, dengan kolom Tercakup/Sebagian/Celah dan daftar
+perubahan). Celah kurikulum untuk v2.0: AI agentik (5.1) dan penyusunan prompt (5.2).
+Judul bagian 1 jangan diubah: jangkar diagram `l5-bobot-ccna`.
 MTCINE menuntut MTCRE, bukan MTCNA; ujian MikroTik di kelas, bukan daring.
 
 **Teks materi baru ditulis sendiri, sumber hanya dirujuk.** Fase 6 tidak mengadaptasi
@@ -504,6 +523,13 @@ berbasis waktu (sama cepat di 60 dan 120 Hz), sasaran diukur saat berganti, digu
 jendela berubah ukuran, dan fokus papan ketik dikunci bidikan yang sama. Kursor sistem
 tidak pernah disembunyikan kecuali di atas peta, tempat lensa menggantikannya. Tanpa
 `mix-blend-mode`: di atas ultramarin hasilnya kekuningan.
+
+**Bintang terbang dari dasbor ke kepala modul** (`lib/terbangBintang.ts`): klik bintang
+atau tombol "Mulai membaca" membuat titik HTML `fixed` terbang dari kotak bintang di peta
+ke bintang `[data-sini]` di `.plat-modul`, keduanya diukur, bukan diperkirakan. Bukan View
+Transition API: elemen anak SVG belum bisa diandalkan untuk itu. Navigasi tidak pernah
+menunggu animasinya; tanpa sasaran dalam 30 frame, titiknya dibuang. Pemeriksaan browser
+2026-10-18: titik mendarat tepat di pusat bintang plat (selisih 0 px).
 
 **Metafora untuk gambar, kata biasa untuk kontrol.** "Rasi" dan "bintang" boleh di peta,
 plat, dan keterangannya; remah navigasi, judul bagian, dan tombol memakai nama tahap dan

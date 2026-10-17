@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { gerakDikurangi } from '../lib/gerak'
 import { Link, useParams } from 'react-router-dom'
 import { useStore } from '../lib/store'
 import { getModule } from '../lib/content'
@@ -152,7 +153,7 @@ function PemainMisi({ m, berikut }: { m: Misi; berikut: Misi | null }) {
     const lama = s.games[slug(m.id)] || 0
     s.recordGame(slug(m.id), skor)
     setBeres({ skor, xp: Math.max(0, Math.min(60, skor - lama)) })
-    requestAnimationFrame(() => document.getElementById('pembahasan')?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }))
+    requestAnimationFrame(() => document.getElementById('pembahasan')?.scrollIntoView({ behavior: gerakDikurangi() ? 'auto' : 'smooth', block: 'start' }))
   }
 
   const daftarLangkah = m.langkah.filter(l => !fokus || l.perangkat === fokus)

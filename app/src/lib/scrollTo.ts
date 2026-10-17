@@ -1,4 +1,5 @@
 import type { MouseEvent } from 'react'
+import { gerakDikurangi } from './gerak'
 
 /**
  * HashRouter memakai fragmen URL sebagai route, jadi <a href="#id"> akan berpindah halaman.
@@ -9,7 +10,7 @@ export function scrollToId(id: string) {
     const el = document.getElementById(id)
     if (!el) return
     e.preventDefault()
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const reduce = gerakDikurangi()
     el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
   }
 }

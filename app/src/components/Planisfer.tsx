@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom'
 import { stages, stageOfModule, linearModules } from '../lib/content'
 import { bangunLangit, kotakRasi, bintangTerdekat, kutubKeXY, jariSpiral, type Bintang, type Langit } from '../lib/langit'
 import { gsap, useGSAP, MOTION_OK } from '../lib/motion'
+import { bentukBintang, terbangkanBintang } from '../lib/terbangBintang'
 import { cakrawala, langitMalamIni, lokasiPengamat, waktuSiderisLokal, type BarisBintang, type BintangNyata, type Lokasi, type Titik } from '../lib/langitNyata'
 
 // Satu langit untuk seluruh aplikasi: dihitung sekali dari kurikulum.
@@ -278,7 +279,7 @@ export default function Planisfer({ progress, tuju, mode = 'penuh', sorot = null
         } : undefined}
         onClick={interaktif ? e => {
           if ((e.target as Element).closest('a')) return
-          if (dekat) nav(`/m/${encodeURI(dekat.id)}`)
+          if (dekat) { terbangkanBintang(bentukBintang(dekat.id), dekat.id); nav(`/m/${encodeURI(dekat.id)}`) }
         } : undefined}
         data-kursor={interaktif ? 'lensa' : undefined}>
         {interaktif && <defs><clipPath id="pf-potong-lensa"><circle ref={potong} r={LENSA - 3} /></clipPath></defs>}
@@ -367,14 +368,16 @@ export default function Planisfer({ progress, tuju, mode = 'penuh', sorot = null
                     {sorotan.has(b.id) && <circle cx={cx} cy={cy} r={rr + 4.5 * u} className="pf-terang" />}
                   </>
                 )
-                if (!interaktif) return <g key={b.id} data-pijar={pijar.has(b.id) ? b.id : undefined}>{isi}</g>
+                // data-sini: sasaran pendaratan bintang yang terbang dari dasbor (lib/terbangBintang.ts).
+                if (!interaktif) return <g key={b.id} data-pijar={pijar.has(b.id) ? b.id : undefined} data-sini={b.id === sini ? b.id : undefined}>{isi}</g>
                 const st2 = st === 'tuntas' ? 'sudah tuntas' : st === 'dibaca' ? 'sedang dibaca' : 'belum dibaca'
                 return (
                   <a key={b.id} href={`#/m/${encodeURI(b.id)}`} data-bintang={b.id} className="pf-bintang"
                     tabIndex={(aktif ?? tuju ?? urutan[0]) === b.id ? 0 : -1}
                     aria-label={`Modul ${b.num || ''} ${b.title}, ${r.title}, ${st2}${b.id === tuju ? ', modul berikutnya' : ''}`}
                     data-pijar={pijar.has(b.id) ? b.id : undefined}
-                    onFocus={() => setAktif(b.id)}>
+                    onFocus={() => setAktif(b.id)}
+                    onClick={e => terbangkanBintang(e.currentTarget.querySelector('.pf-bentuk'), b.id)}>
                     <circle cx={cx} cy={cy} r={Math.max(9 * u, rr + 5 * u)} className="pf-sasaran" />
                     {isi}
                   </a>
