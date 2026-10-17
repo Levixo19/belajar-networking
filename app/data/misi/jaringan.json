@@ -1018,7 +1018,7 @@
         "label": "Nyalakan debug adjacency OSPF di R-BATU sebentar",
         "perangkat": "BATU",
         "perintah": "debug ip ospf adj",
-        "keluaran": "OSPF adjacency events debugging is on\nOct 16 21:24:05.331 WIB: OSPF: Rcv DBD from 10.255.0.1 on FastEthernet0/0 seq 0x1F4C opt 0x52 flag 0x2 Len 532  mtu 1500 state EXSTART\nOct 16 21:24:05.331 WIB: OSPF: Nbr 10.255.0.1 has larger interface MTU\nOct 16 21:24:09.807 WIB: OSPF: Retransmitting DBD to 10.255.0.1 on FastEthernet0/0 [12]\nOct 16 21:24:09.807 WIB: OSPF: Send DBD to 10.255.0.1 on FastEthernet0/0 seq 0x0B71 opt 0x52 flag 0x7 Len 32\nOct 16 21:24:10.334 WIB: OSPF: Rcv DBD from 10.255.0.1 on FastEthernet0/0 seq 0x1F4C opt 0x52 flag 0x2 Len 532  mtu 1500 state EXSTART\nOct 16 21:24:10.334 WIB: OSPF: Nbr 10.255.0.1 has larger interface MTU",
+        "keluaran": "OSPF adjacency events debugging is on\nOct 16 21:24:05.331 WIB: OSPF: Rcv DBD from 10.255.0.1 on FastEthernet0/0 seq 0x0B71 opt 0x52 flag 0x2 Len 532  mtu 1500 state EXSTART\nOct 16 21:24:05.331 WIB: OSPF: Nbr 10.255.0.1 has larger interface MTU\nOct 16 21:24:09.807 WIB: OSPF: Send DBD to 10.255.0.1 on FastEthernet0/0 seq 0x0B71 opt 0x52 flag 0x7 Len 32\nOct 16 21:24:09.807 WIB: OSPF: Retransmitting DBD to 10.255.0.1 on FastEthernet0/0 [12]\nOct 16 21:24:10.334 WIB: OSPF: Rcv DBD from 10.255.0.1 on FastEthernet0/0 seq 0x0B71 opt 0x52 flag 0x2 Len 532  mtu 1500 state EXSTART\nOct 16 21:24:10.334 WIB: OSPF: Nbr 10.255.0.1 has larger interface MTU",
         "makna": "R-BATU menerima DBD dari R-MLG yang menyebut `mtu 1500`, lalu menolaknya dengan alasan `has larger interface MTU`. R-BATU terus mengirim ulang DBD awalnya, dan siklus ini tidak pernah selesai. Debug membebani CPU, jadi matikan lagi dengan `undebug all` setelah membaca beberapa baris.",
         "berguna": true
       },
@@ -1253,7 +1253,7 @@
         "label": "Lihat konfigurasi interface Gi0/16 DIST-GDC",
         "perangkat": "GDC",
         "perintah": "show running-config interface GigabitEthernet0/16",
-        "keluaran": "Building configuration...\n\nCurrent configuration : 136 bytes\n!\ninterface GigabitEthernet0/16\n description UPLINK-CORE-KAMPUS\n no switchport\n ip address 10.1.30.2 255.255.255.252\n ip ospf hello-interval 5\nend\n",
+        "keluaran": "Building configuration...\n\nCurrent configuration : 147 bytes\n!\ninterface GigabitEthernet0/16\n description UPLINK-CORE-KAMPUS\n no switchport\n ip address 10.1.30.2 255.255.255.252\n ip ospf hello-interval 5\nend\n",
         "makna": "Baris `ip ospf hello-interval 5` berasal dari template kontraktor. Di Cisco, mengubah hello tanpa menyebut dead otomatis membuat dead menjadi empat kali hello, yaitu 20 detik. Itu sebabnya kedua timer ikut berbeda.",
         "berguna": true
       },
