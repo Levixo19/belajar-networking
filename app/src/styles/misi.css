@@ -22,18 +22,52 @@
   .chip.chip-aktif { background: var(--fg); color: var(--fg-contrast); border-color: var(--fg); }
   .chip.chip-aktif .text-faint { color: color-mix(in srgb, var(--fg-contrast) 65%, transparent); }
 
-  /* ----------------------------------------------------------- Daftar misi */
-  .misi-kisi { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.85rem; list-style: none; margin: 0; padding: 0; }
-  .misi-kartu {
-    display: flex; gap: 1.3rem; align-items: flex-start; height: 100%; padding: 1.3rem 1.4rem;
-    border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border);
-    transition: border-color var(--padam) var(--ease-std), box-shadow var(--padam) var(--ease-std);
+  /* --------------------------------------------- Buku log gangguan (daftar misi) */
+  /* Baris bergaris seperti buku log NOC: kota, laporan, tingkat, status. Status memakai
+     bentuk yang sama dengan bintang (lingkar = menunggu, lampu = dipecahkan). */
+  .buku-log { border-top: 1px solid var(--border-strong); }
+  .buku-log ol { list-style: none; margin: 0; padding: 0; }
+  .buku-log-kepala, .buku-log-baris { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr) 7rem 11rem; gap: 1.5rem; align-items: baseline; }
+  .buku-log-kepala { padding: 0.7rem 0.75rem; border-bottom: 1px solid var(--border); font-size: 0.78rem; font-weight: 500; color: var(--text-faint); }
+  .buku-log-baris {
+    padding: 1.05rem 0.75rem; border-bottom: 1px solid var(--border); color: var(--text-muted);
+    transition: background-color var(--padam) var(--ease-std);
   }
-  .misi-kartu:hover { border-color: var(--border-strong); box-shadow: var(--shadow-lg); transition-duration: 0s; }
-  .misi-kartu-atas { display: flex; align-items: center; gap: 0.75rem; font-size: 0.76rem; font-weight: 500; color: var(--text-faint); }
-  .misi-skor { display: inline-flex; align-items: center; gap: 0.25rem; color: var(--primary); font-weight: 600; }
-  .misi-kartu-judul { display: block; margin-top: 0.35rem; font-size: 1.05rem; font-weight: 600; line-height: 1.3; letter-spacing: -0.015em; color: var(--text); }
-  .misi-kartu-gejala { display: block; margin-top: 0.4rem; font-size: 0.88rem; line-height: 1.55; color: var(--text-muted); }
+  .buku-log-baris:hover { background: color-mix(in srgb, var(--text) 3.5%, transparent); transition-duration: 0s; }
+  .buku-log-kota { font-size: 0.95rem; font-weight: 600; color: var(--text); }
+  .buku-log-judul { display: block; font-size: 1rem; font-weight: 600; line-height: 1.35; letter-spacing: -0.01em; color: var(--text); }
+  .buku-log-gejala { display: block; margin-top: 0.3rem; font-size: 0.88rem; line-height: 1.55; color: var(--text-muted); }
+  .buku-log-tingkat { font-size: 0.86rem; }
+  .buku-log-status { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.86rem; font-variant-numeric: tabular-nums; }
+  .buku-log-status.menyala { color: var(--text); font-weight: 500; }
+  @media (max-width: 900px) {
+    .buku-log-kepala { display: none; }
+    .buku-log-baris { grid-template-columns: minmax(0, 1fr); gap: 0.35rem; }
+  }
+
+  /* -------------------------------------------- Bumi di bawah: Indonesia malam */
+  .bumi { margin: 0; padding: 0.75rem 0.75rem 0.9rem; border-radius: var(--radius-xl); background: var(--pf-langit); }
+  .bumi-peta { position: relative; overflow: hidden; border-radius: var(--radius-sm); background: #05070d; }
+  .bumi-foto { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .bumi-titik { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .bumi-lingkar { fill: rgba(5, 7, 13, 0.6); stroke: #e8ecff; stroke-width: 1.6; }
+  .bumi-inti { fill: #f6b54a; }
+  .bumi-sinar { fill: none; stroke: #f6b54a; stroke-width: 1.6; stroke-linecap: round; }
+  .bumi-label {
+    font-family: var(--font-ui); font-size: 13px; font-weight: 600; fill: #eef1fb;
+    paint-order: stroke; stroke: rgba(5, 7, 13, 0.85); stroke-width: 4px; stroke-linejoin: round;
+  }
+  .bumi-kota.menyala .bumi-label { fill: #ffd38a; }
+  .bumi-penunjuk { stroke: rgba(238, 241, 251, 0.55); stroke-width: 1; }
+  .bumi-penunjuk, .bumi-lingkar, .bumi-sinar, .bumi-sisip-wilayah, .bumi-sisip-bingkai { vector-effect: non-scaling-stroke; }
+  /* Peta sisipan Jawa dan Bali: kotak wilayah di peta utama dan bingkai sisipannya. */
+  .bumi-sisip-wilayah { fill: none; stroke: rgba(238, 241, 251, 0.45); stroke-width: 1; stroke-dasharray: 3 3; }
+  .bumi-sisip-bingkai { fill: none; stroke: rgba(238, 241, 251, 0.7); stroke-width: 1.2; }
+  .bumi-sisip-judul { font-family: var(--font-ui); font-size: 11px; font-weight: 500; fill: rgba(238, 241, 251, 0.8); }
+  .bumi-keterangan { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.4rem 1.5rem; margin-top: 0.8rem; padding: 0 0.3rem; font-size: 0.86rem; line-height: 1.55; color: var(--text-muted); }
+  .bumi-legenda { display: inline-flex; align-items: center; gap: 0.3rem; vertical-align: -1px; }
+  .bumi-kredit { font-size: 0.74rem; color: var(--text-faint); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); }
+  .bumi-kredit:hover { color: var(--text); }
 
   /* ------------------------------------------------------------ Pemain misi */
   .misi-tiket { padding: 1.2rem 1.3rem 1.25rem; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); }
@@ -99,8 +133,11 @@
   .misi-umpan.benar { background: var(--ok-soft); color: var(--text); }
 
   .misi-pembahasan { margin-top: 3rem; padding: 2rem 2rem 1.8rem; border-radius: var(--radius-xl); background: var(--surface); border: 1px solid var(--border); }
-  .misi-hasil { display: flex; align-items: center; gap: 1.1rem; }
-  .misi-hasil-skor { font-family: var(--font-mono); font-size: 2.6rem; font-weight: 600; line-height: 1; letter-spacing: -0.04em; color: var(--primary); }
+  .misi-hasil { display: flex; flex-wrap: wrap; align-items: center; gap: 1.1rem 1.4rem; }
+  .misi-hasil-skor { font-size: 2.8rem; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -0.04em; color: var(--primary); }
+  .misi-meta { margin: 0.6rem 0 0; font-size: 0.9rem; color: var(--text-faint); }
+  .misi-modul { display: inline-flex; gap: 0.5rem; color: var(--text); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, var(--primary) 45%, transparent); }
+  .misi-modul:hover { text-decoration-color: var(--primary); }
   .misi-teks { margin-top: 0.8rem; font-family: var(--font-read); font-size: 0.98rem; line-height: 1.72; color: var(--text); }
   .misi-teks :is(p, ul, ol) { margin: 0.6rem 0; }
   .misi-teks :is(ul, ol) { padding-left: 1.25rem; }
@@ -110,5 +147,4 @@
   .misi-teks-p { margin: 0.4rem 0 0; font-family: var(--font-read); font-size: 0.97rem; line-height: 1.68; color: var(--text-muted); }
   .misi-perbaikan { margin: 0.8rem 0 0; padding: 0.9rem 1.05rem; border-radius: var(--radius-md); background: var(--hl-bg); color: var(--hl-text); font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.6; white-space: pre-wrap; overflow-x: auto; }
 
-  @media (max-width: 900px) { .misi-kisi { grid-template-columns: minmax(0, 1fr); } }
 }

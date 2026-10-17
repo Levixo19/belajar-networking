@@ -3,6 +3,8 @@ import * as D from './dasar'
 import * as L23 from './l2l3'
 import * as L47 from './l4l7'
 import * as A from './lanjut'
+import * as PT11 from './b11-packet-tracer'
+import * as LB from './b10-luar-bumi'
 import * as V8 from './b8-vendor'
 import * as P7 from './b7-rpl'
 import * as O6 from './b6-operasi'
@@ -162,6 +164,18 @@ export const DIAGRAMS: Record<string, FC> = {
   'v8-sdwan-arsitektur': V8.DgV8SdwanArsitektur,
   'v8-catc-token-alur': V8.DgV8CatcTokenAlur,
   'v8-api-peta': V8.DgV8ApiPeta,
+
+  // b10-luar-bumi.tsx (Fase 7)
+  'lb-orbit-rtt': LB.DgLbOrbitRtt,
+  'lb-jalur-starlink': LB.DgLbJalurStarlink,
+  'lb-vsat-bintang': LB.DgLbVsatBintang,
+  'lb-pep-split': LB.DgLbPepSplit,
+  'lb-dsn-cakupan': LB.DgLbDsnCakupan,
+  'lb-bundle-dtn': LB.DgLbBundleDtn,
+
+  // b11-packet-tracer.tsx (Fase 7)
+  'pt-topologi-pertama': PT11.DgPtTopologiPertama,
+  'pt-anatomi-pdu': PT11.DgPtAnatomiPdu,
 }
 
 export function getDiagram(id: string): FC | null { return DIAGRAMS[id] || null }

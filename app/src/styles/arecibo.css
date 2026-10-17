@@ -1,0 +1,91 @@
+/* =========================================================================
+   DEKODE PESAN ARECIBO (src/tools/Arecibo.tsx)
+   Warna hanya lewat token yang sudah ada, supaya terbaca di dua tema:
+   panel = --pf-langit (kertas atlas / langit malam), petak 0 = --surface,
+   bit 1 = --pf-bintang, garis anotasi = --pf-label, sorotan = --pf-nyala.
+   Alat ini juga tampil di dalam .prose (modul), jadi huruf dan ukuran dasarnya
+   ditetapkan di .arc, dan jarak teks memakai utility (m-0, mt-*) yang menang atas
+   .prose p karena utility ada di layer sesudah components.
+   ========================================================================= */
+@layer components {
+  .arc { font-family: var(--font-ui); font-size: 0.875rem; line-height: 1.55; letter-spacing: 0; color: var(--text); }
+
+  /* Deret yang tiba, dipotong per lebar: tiap potongan bergantian latar, dipisah garis */
+  .arc-aliran {
+    display: flex; flex-wrap: wrap; align-items: stretch;
+    font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.6; letter-spacing: 0.02em;
+    color: var(--text); word-break: break-all;
+  }
+  .arc-potong { padding: 0.1rem 0.3rem; }
+  .arc-potong:nth-child(even) { background: var(--surface-2); }
+  .arc-potong + .arc-potong { border-left: 1px solid var(--border-strong); }
+  .arc-lanjut { padding: 0.1rem 0.5rem; font-family: var(--font-ui); letter-spacing: 0; color: var(--text-faint); }
+
+  /* Kontrol: lebar baris di kiri, faktor 1.679 di kanan */
+  .arc-kendali { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 1.25rem 1.75rem; align-items: start; }
+  @media (max-width: 640px) { .arc-kendali { grid-template-columns: minmax(0, 1fr); } }
+  .arc-geser { flex: 1 1 auto; min-width: 7rem; height: 2.25rem; accent-color: var(--fg); cursor: pointer; }
+  .arc-angka {
+    width: 5.25rem; height: 2.25rem; padding: 0 0.55rem;
+    border: 1px solid var(--border-control); border-radius: var(--radius-md);
+    background: var(--surface-2); color: var(--text);
+    font-family: var(--font-mono); font-size: 0.9rem; font-variant-numeric: tabular-nums;
+  }
+  .arc-angka:focus-visible { border-color: var(--primary); }
+  .arc-hitung { font-family: var(--font-mono); font-size: 0.86rem; font-variant-numeric: tabular-nums; color: var(--text); }
+  .arc-faktor { padding: 0.85rem 1rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface-2); }
+  .arc-rumus { font-family: var(--font-mono); font-size: 1.05rem; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text); }
+  .arc-pembagi { height: 1.9rem; padding: 0 0.7rem; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  /* Tekan = tinta, bukan aksen: satu layar, satu latar aksen. */
+  .arc-pembagi[aria-pressed="true"], .arc-sakelar[aria-pressed="true"] { background: var(--fg); color: var(--fg-contrast); border-color: var(--fg); }
+  .arc-pembagi[aria-pressed="true"]:hover:not(:disabled), .arc-sakelar[aria-pressed="true"]:hover:not(:disabled) { background: var(--fg-hover); }
+  .arc-sakelar { height: 1.9rem; padding: 0 0.8rem; }
+
+  /* Panel gambar: tinggi tetap, supaya halaman tidak melompat selagi penggeser digeser */
+  .arc-panel { overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius); background: var(--pf-langit); }
+  .arc-panel-atas {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem;
+    min-height: 2.9rem; padding: 0.45rem 0.6rem 0.45rem 0.9rem;
+    border-bottom: 1px solid var(--border); background: var(--surface);
+  }
+  .arc-svg { display: block; width: 100%; height: 38rem; padding: 0.5rem; user-select: none; }
+  .arc-latar { fill: var(--surface); }
+  .arc-bit { fill: var(--pf-bintang); shape-rendering: crispEdges; }
+  .arc-sisa { fill: var(--pf-langit); stroke: var(--pf-garis-kuat); stroke-width: 1; stroke-dasharray: 3 3; vector-effect: non-scaling-stroke; }
+  .arc-bingkai {
+    fill: none; stroke: var(--pf-garis-kuat); stroke-width: 1; vector-effect: non-scaling-stroke;
+    transition: stroke var(--padam) var(--ease-std);
+  }
+  .arc-bingkai-pas { stroke: var(--pf-nyala); stroke-width: 1.5; }
+  .arc-catatan { padding: 0 0.9rem 0.7rem; font-size: 0.78rem; color: var(--text-faint); }
+
+  /* Anotasi bergaya sampul Voyager: garis rambut, titik kecil, label dua baris.
+     Ukuran huruf dalam satuan SVG (1 petak = 10): judul sekitar 12,5 px, nilai 11 px pada
+     tinggi panel 38rem. Diukur di browser: tidak ada label yang bertumpuk atau keluar viewBox. */
+  .arc-tanda { pointer-events: bounding-box; }
+  .arc-garis { fill: none; stroke: var(--pf-label); stroke-width: 1; vector-effect: non-scaling-stroke; }
+  .arc-titik { fill: var(--pf-label); }
+  .arc-label { font-family: var(--font-ui); font-size: 16px; font-weight: 600; letter-spacing: -0.01em; fill: var(--text); }
+  .arc-label-nilai { font-family: var(--font-ui); font-size: 14px; font-variant-numeric: tabular-nums; fill: var(--pf-label); }
+  .arc-kotak { fill: none; stroke: var(--pf-nyala); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+  .arc-tanda-sorot .arc-garis { stroke: var(--pf-nyala); }
+  .arc-tanda-sorot .arc-titik, .arc-tanda-sorot .arc-label { fill: var(--pf-nyala); }
+
+  /* Daftar penjelasan di bawah gambar */
+  .arc-daftar { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.35rem 1.5rem; }
+  @media (max-width: 640px) { .arc-daftar { grid-template-columns: minmax(0, 1fr); } }
+  /* Jarak dalam lewat utility (px-2.5 py-1.5): .prose li ikut menetapkan padding. */
+  .arc-butir {
+    border-radius: var(--radius-sm); font-size: 0.83rem; line-height: 1.5; color: var(--text-muted);
+    transition: background-color var(--padam) var(--ease-std);
+  }
+  .arc-butir b { color: var(--text); font-weight: 600; }
+  .arc-butir-sorot { background: var(--surface-2); transition-duration: 0s; }
+
+  .arc-pelajaran { padding-top: 1.1rem; border-top: 1px solid var(--border); font-size: 0.9rem; line-height: 1.65; color: var(--text-muted); }
+  .arc-pelajaran b { color: var(--text); font-weight: 600; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .arc-bingkai, .arc-butir { transition: none; }
+  }
+}

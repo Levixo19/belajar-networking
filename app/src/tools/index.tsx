@@ -7,7 +7,8 @@ import PacketJourney from './PacketJourney'
 import VlanLab from './VlanLab'
 import PacketInspector from './PacketInspector'
 import CliSim from './CliSim'
-import { IconBinary, IconGrid, IconLayers, IconRoute, IconZap, IconSearch, IconFlask, IconTerminal } from '../components/icons'
+import Arecibo from './Arecibo'
+import { IconBinary, IconGrid, IconLayers, IconRoute, IconZap, IconSearch, IconFlask, IconTerminal, IconBroadcast } from '../components/icons'
 
 const CliIpDasar: FC = () => <CliSim scenario="ip-dasar" />
 const CliVlan: FC = () => <CliSim scenario="vlan" />
@@ -17,6 +18,7 @@ export interface ToolDef { slug: string; name: string; desc: string; Icon: FC<an
 export const TOOLS: ToolDef[] = [
   { slug: 'subnet', name: 'Kalkulator Subnet', desc: 'Hitung network, broadcast, host, mask + visualisasi biner network/host.', Icon: IconGrid, Comp: SubnetCalculator, related: '04-network-layer/02-subnetting' },
   { slug: 'biner', name: 'Konverter Biner', desc: 'Biner ↔ desimal ↔ hex interaktif dengan bobot bit yang bisa diklik.', Icon: IconBinary, Comp: BaseConverter, related: '00-fondasi/02-bit-byte-biner' },
+  { slug: 'arecibo', name: 'Dekode pesan Arecibo', desc: 'Atur lebar baris sampai 1.679 bit dari teleskop Arecibo (1974) membentuk gambar. Framing dengan tangan.', Icon: IconBroadcast, Comp: Arecibo, related: '00-fondasi/02-bit-byte-biner' },
   { slug: 'osi', name: 'Penjelajah OSI', desc: 'Jelajahi 7 layer: fungsi, PDU, protokol, perangkat, contoh nyata.', Icon: IconLayers, Comp: OSIExplorer, related: '01-model-referensi/01-osi' },
   { slug: 'paket', name: 'Perjalanan Paket', desc: 'Animasi enkapsulasi & routing paket dari PC ke server lintas internet.', Icon: IconRoute, Comp: PacketJourney, related: '01-model-referensi/03-enkapsulasi' },
   { slug: 'tcp', name: 'Koneksi TCP', desc: 'Animasi 3-way handshake, transfer, dan teardown TCP langkah demi langkah.', Icon: IconZap, Comp: TcpHandshake, related: '05-transport/02-tcp' },

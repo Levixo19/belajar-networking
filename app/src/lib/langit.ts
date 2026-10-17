@@ -45,7 +45,6 @@ export interface Rasi {
 export interface Langit {
   rasi: Rasi[]
   bintang: Bintang[]            // semua bintang modul, urut kurikulum
-  latar: { x: number; y: number; r: number; o: number }[]   // bintang latar (hiasan, bukan data)
   spiral: string                // path SVG lintasan belajar (satuan peta)
   kutub: { x: number; y: number; id: string | null }
 }
@@ -91,7 +90,7 @@ function jariBintang(words: number) {
   return 0.0042 + 0.0068 * t
 }
 
-export function bangunLangit(tahap: TahapLangit[], opsi: { latar?: number } = {}): Langit {
+export function bangunLangit(tahap: TahapLangit[]): Langit {
   const rasi: Rasi[] = []
   const semua: Bintang[] = []
 
@@ -141,24 +140,8 @@ export function bangunLangit(tahap: TahapLangit[], opsi: { latar?: number } = {}
     semua.push(...bintang)
   }
 
-  // Bintang latar: hiasan, sengaja samar. Dua pertiga menyebar rata, sepertiga mengikuti
-  // pita lengkung tipis seperti Bima Sakti di peta bintang cetak.
-  const rl = acak(benih('latar'))
-  const latar: Langit['latar'] = []
-  const jumlah = opsi.latar ?? 420
-  for (let i = 0; i < jumlah; i++) {
-    let x: number, y: number
-    if (i % 3 === 2) {
-      const s = rl() * 2 - 1
-      const t = Math.sin(s * 2.2) * 0.32 + (rl() + rl() + rl() - 1.5) * 0.11
-      x = s * 0.98; y = t - 0.18 * s
-    } else {
-      const a = rl() * 360, r = Math.sqrt(rl()) * 0.99
-      ;({ x, y } = kutubKeXY(a, r))
-    }
-    if (x * x + y * y > 0.98) continue
-    latar.push({ x, y, r: 0.0011 + rl() * 0.0026, o: 0.25 + rl() * 0.5 })
-  }
+  // Bintang latar BUKAN dihitung di sini lagi: langit di belakang rasi kurikulum adalah
+  // langit sungguhan (HYG, lib/langitNyata.ts), bukan titik acak.
 
   // Lintasan belajar: spiral satu putaran, ditulis sebagai rangkaian titik halus.
   const titik: string[] = []
@@ -169,7 +152,7 @@ export function bangunLangit(tahap: TahapLangit[], opsi: { latar?: number } = {}
 
   const panduan = tahap.find(t => t.id === 'panduan')
   return {
-    rasi, bintang: semua, latar, spiral: titik.join(' '),
+    rasi, bintang: semua, spiral: titik.join(' '),
     kutub: { x: 0, y: 0, id: panduan?.modules[0]?.id ?? null },
   }
 }

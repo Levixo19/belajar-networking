@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { muatPustaka, type DataPustaka } from '../lib/pustaka'
 import { JENIS } from '../lib/pustakaTopik'
-import { IconArrowRight } from './icons'
 
 /** Satu kartu Pustaka di dasbor: berapa yang ada, dari mana, dan pintu ke halamannya. */
 export default function PustakaKartu() {

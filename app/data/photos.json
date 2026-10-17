@@ -124,5 +124,54 @@
     "credit": "PiDatacenters · CC BY-SA 4.0",
     "page": "https://commons.wikimedia.org/wiki/File:Racks_Amravati_Data_Center.jpg",
     "title": "Racks Amravati Data Center"
+  },
+  "palapa-b1": {
+    "src": "/img/palapa-b1.jpg",
+    "credit": "NASA · Public domain",
+    "page": "https://commons.wikimedia.org/wiki/File:STS-7_Palapa-B1_deploy.jpg",
+    "title": "STS-7 Palapa-B1 deploy"
+  },
+  "dsn-canberra": {
+    "src": "/img/dsn-canberra.jpg",
+    "credit": "NASA/Canberra Deep Space Communication Complex · Public domain",
+    "page": "https://commons.wikimedia.org/wiki/File:DSS43_is_a_70-meter-wide_(230-feet-wide)_radio_antenna_at_the_Deep_Space_Network%27s_Canberra_facility_in_Australia.jpg",
+    "title": "DSS43 is a 70-meter-wide (230-feet-wide) radio antenna at the Deep Space Network's Canberra facility in Australia"
+  },
+  "apollo13-ruang-kendali": {
+    "src": "/img/apollo13-ruang-kendali.jpg",
+    "credit": "NASA · Public domain",
+    "page": "https://commons.wikimedia.org/wiki/File:Mission_Operations_Control_Room_during_Apollo_13.jpg",
+    "title": "Mission Operations Control Room during Apollo 13"
+  },
+  "voyager-sampul": {
+    "src": "/img/voyager-sampul.jpg",
+    "credit": "NASA/JPL · Public domain",
+    "page": "https://commons.wikimedia.org/wiki/File:The_Sounds_of_Earth_Record_Cover_-_GPN-2000-001978.jpg",
+    "title": "The Sounds of Earth Record Cover - GPN-2000-001978"
+  },
+  "arpanet-1977": {
+    "src": "/img/arpanet-1977.png",
+    "credit": "ARPANET · Public domain",
+    "page": "https://commons.wikimedia.org/wiki/File:Arpanet_logical_map,_march_1977.png",
+    "title": "Arpanet logical map, march 1977"
+  },
+  "lampu-jawa": {
+    "src": "/img/lampu-jawa.jpg",
+    "credit": "NASA · Public domain",
+    "page": "https://commons.wikimedia.org/wiki/File:Lights_of_Java.jpg",
+    "title": "Lights of Java"
+  },
+  "indonesia-malam": {
+    "src": "/img/indonesia-malam.jpg",
+    "credit": "NASA Earth Observatory images by Joshua Stevens, using Suomi NPP VIIRS data from Miguel Román, NASA GSFC. We acknowledge the use of imagery provided by services from NASA's Global Imagery Browse Services (GIBS), part of NASA's Earth Science Data and Information System (ESDIS).",
+    "page": "https://worldview.earthdata.nasa.gov/?v=94,-12,142,7&l=VIIRS_Black_Marble&t=2016-01-01-T00%3A00%3A00Z",
+    "title": "Black Marble 2016 (lapisan GIBS VIIRS_Black_Marble)",
+    "lisensi": "Public domain",
+    "batas": {
+      "barat": 94,
+      "timur": 142,
+      "utara": 7,
+      "selatan": -12
+    }
   }
 }

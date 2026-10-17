@@ -65,7 +65,7 @@ function PetaKarier() {
   return (
     <div className="overflow-x-hidden">
       <section className="mx-auto max-w-[1440px] px-4 pt-12 sm:px-6 md:pt-16 lg:px-8" aria-labelledby="judul-karier">
-        <div className="fade-up max-w-3xl">
+        <div className="max-w-3xl">
           <h1 id="judul-karier" className="hero-title max-w-[16ch] scroll-mt-24">Peta {PROFESI.length} profesi di sekitar jaringan</h1>
           <p className="mt-6 max-w-[56ch] text-[17px] leading-relaxed text-muted">
             Tiap baris satu rumpun, tiap kolom satu jenjang. Arahkan kursor ke sebuah profesi untuk melihat ke mana ia naik
@@ -135,7 +135,7 @@ function PanelSapa({ onSelect }: { onSelect: (id: string) => void }) {
         {pintu.map(p => (
           <li key={p.id}>
             <button onClick={() => onSelect(p.id)} className="group flex w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left text-[14px] hover:bg-[var(--surface-2)]">
-              {p.nama} <IconArrowRight size={14} className="shrink-0 text-faint group-hover:text-[var(--text)]" />
+              {p.nama}
             </button>
           </li>
         ))}
@@ -308,7 +308,7 @@ function QuizSection({ onSelect, pemula }: { onSelect: (id: string) => void; pem
     <section id="cocok" className="scroll-mt-20 border-t border-app" aria-labelledby="judul-cocok">
       <div className="mx-auto grid max-w-[1280px] gap-12 px-4 py-20 sm:px-6 md:py-32 lg:grid-cols-12 lg:px-8">
         <div className="lg:col-span-5">
-          <h2 id="judul-cocok" className="reveal text-[clamp(1.9rem,3.2vw,2.75rem)] font-semibold leading-[1.08]">Mana yang cocok dengan Anda?</h2>
+          <h2 id="judul-cocok" className="text-[clamp(1.9rem,3.2vw,2.75rem)] font-semibold leading-[1.08]">Mana yang cocok dengan Anda?</h2>
           <p className="mt-4 max-w-[40ch] text-[15px] leading-relaxed text-muted">
             Enam pertanyaan tentang cara Anda suka bekerja. Tidak ada jawaban salah; hasilnya titik awal untuk dijelajahi.
           </p>
@@ -356,7 +356,6 @@ function QuizSection({ onSelect, pemula }: { onSelect: (id: string) => void; pem
                             {h.hits.slice(0, 4).map(k => <span key={k} className="chip">{KEAHLIAN_LABEL[k] || k}</span>)}
                           </span>
                         </span>
-                        <span className="btn-bubble mt-1 text-faint group-hover:text-[var(--text)]"><IconArrowRight size={16} /></span>
                       </button>
                     </li>
                   ))}
@@ -387,7 +386,7 @@ function TransisiSection({ progress, target, onSelect }: { progress: Record<stri
   return (
     <section className="border-t border-app" aria-labelledby="judul-transisi">
       <div className="mx-auto max-w-[1280px] px-4 py-20 sm:px-6 md:py-32 lg:px-8">
-        <h2 id="judul-transisi" className="reveal max-w-[20ch] text-[clamp(1.9rem,3.2vw,2.75rem)] font-semibold leading-[1.08]">Rencanakan perpindahan.</h2>
+        <h2 id="judul-transisi" className="max-w-[20ch] text-[clamp(1.9rem,3.2vw,2.75rem)] font-semibold leading-[1.08]">Rencanakan perpindahan.</h2>
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:max-w-3xl">
           <label className="block">
             <span className="mb-1.5 block text-[13px] font-medium">Posisi Anda sekarang</span>
@@ -443,7 +442,6 @@ function TransisiSection({ progress, target, onSelect }: { progress: Record<stri
                         <span className="block truncate text-[15px] font-medium">{mod.title}</span>
                         <span className="mt-0.5 block text-[12.5px] text-faint">{ok ? 'Sudah tuntas' : `${mod.readMin} menit baca`}</span>
                       </span>
-                      <span className="btn-bubble text-faint group-hover:text-[var(--text)]"><IconArrowRight size={16} /></span>
                     </Link>
                   </li>
                 )
@@ -478,9 +476,9 @@ function RumpunIndex({ onSelect }: { onSelect: (id: string) => void }) {
   return (
     <section className="border-t border-app" aria-labelledby="judul-rumpun">
       <div className="mx-auto max-w-[1280px] px-4 py-20 sm:px-6 md:py-32 lg:px-8">
-        <h2 id="judul-rumpun" className="reveal max-w-[20ch] text-[clamp(1.9rem,3.2vw,2.75rem)] font-semibold leading-[1.08]">Dua profesi inti, enam rumpun.</h2>
+        <h2 id="judul-rumpun" className="max-w-[20ch] text-[clamp(1.9rem,3.2vw,2.75rem)] font-semibold leading-[1.08]">Dua profesi inti, enam rumpun.</h2>
         {/* 2 kolom: inti melebar 2 + 6 rumpun = 8 sel = 2x4, tanpa sel kosong */}
-        <div className="bento reveal mt-10 md:!grid-cols-2">
+        <div className="bento mt-10 md:!grid-cols-2">
           {RUMPUN.map(r => {
             const list = PROFESI.filter(p => p.rumpun === r.id)
             if (!list.length) return null
@@ -502,7 +500,7 @@ function RumpunIndex({ onSelect }: { onSelect: (id: string) => void }) {
                 </div>
                 {bacaan && (
                   <Link to={`/m/${encodeURI(bacaan)}`} className="group mt-auto inline-flex items-center gap-1.5 text-[13.5px] font-medium">
-                    Baca modulnya <span className="btn-bubble"><IconArrowRight size={14} /></span>
+                    Baca modulnya
                   </Link>
                 )}
               </div>

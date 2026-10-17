@@ -69,6 +69,11 @@
       "id": "byte-bit"
     },
     {
+      "end": "1-kenapa-harus-biner",
+      "type": "tool",
+      "slug": "arecibo"
+    },
+    {
       "end": "5-pangkat-dua-tabel-wajib",
       "type": "game",
       "slug": "biner-blitz"
@@ -584,6 +589,14 @@
           "why": "Empat level tegangan = 4 kombinasi = 2 bit per simbol. Konsekuensinya jarak antar-level menyempit sehingga lebih rentan derau."
         }
       ]
+    },
+    {
+      "type": "photo",
+      "after": "1-masalah-dasar-bagaimana-penerima-tahu-batas-antar-bit",
+      "src": "/img/voyager-sampul.jpg",
+      "caption": "Sampul piringan emas Voyager (1977) adalah petunjuk cara memutar piringan itu bagi penemunya, yang menghadapi masalah bagian ini tanpa bisa bertanya ke pengirim: berapa panjang satu satuan waktu? Menurut NASA JPL, transisi atom hidrogen di kanan bawah menjadi clock acuan, dan bilangan biner di sekeliling gambar piringan (garis tegak = 1, garis datar = 0) memakai satuan itu untuk menyatakan lama satu putaran, 3,6 detik.",
+      "credit": "NASA/JPL · Public domain",
+      "href": "https://commons.wikimedia.org/wiki/File:The_Sounds_of_Earth_Record_Cover_-_GPN-2000-001978.jpg"
     }
   ],
   "03-data-link/01-ethernet-frame-mac": [
@@ -2065,6 +2078,14 @@
           "why": "Dokumentasi mengubah satu kejadian jadi pengetahuan tim, dan jadi bahan mencegah kejadian berulang."
         }
       ]
+    },
+    {
+      "type": "photo",
+      "after": "4-menentukan-scope-pertanyaan-kunci",
+      "src": "/img/apollo13-ruang-kendali.jpg",
+      "caption": "Ruang kendali misi NASA, 13 April 1970: flight director Eugene F. Kranz (membelakangi kamera) menonton siaran televisi keempat dari Apollo 13. Tak lama kemudian, ledakan yang menggagalkan pendaratan di Bulan dan mengancam nyawa ketiga awak terjadi di tengah prosedur rutin mengaduk salah satu tangki oksigen cair, jadi saat bertanya \"apa yang baru berubah?\", tindakan rutin pun ikut dihitung.",
+      "credit": "NASA · Public domain",
+      "href": "https://commons.wikimedia.org/wiki/File:Mission_Operations_Control_Room_during_Apollo_13.jpg"
     }
   ],
   "14-monitoring-troubleshooting/02-tools": [
@@ -2414,6 +2435,14 @@
       "id": "r1-leher-sempit",
       "after": "ide-besar-yang-bertahan",
       "ganti": true
+    },
+    {
+      "type": "photo",
+      "after": "1-garis-waktu-singkat",
+      "src": "/img/arpanet-1977.png",
+      "caption": "Peta logis ARPANET, Maret 1977: delapan tahun sesudah empat node pada baris 1969 di bawah, simpulnya (lingkaran IMP, kotak TIP) sudah puluhan, ditempeli komputer host seperti PDP-10 dan PDP-11. Garis zigzag adalah saluran satelit ke Hawaii dan NORSAR, dan banyak simpul punya lebih dari satu sambungan, jadi ada jalur lain bila satu saluran putus.",
+      "credit": "ARPANET · Public domain",
+      "href": "https://commons.wikimedia.org/wiki/File:Arpanet_logical_map,_march_1977.png"
     }
   ],
   "03-data-link/05-etherchannel": [
@@ -2502,6 +2531,14 @@
       "id": "r1-peering-model",
       "after": "32-bilateral-atau-multilateral",
       "ganti": true
+    },
+    {
+      "type": "photo",
+      "end": "72-ixp-di-indonesia",
+      "src": "/img/lampu-jawa.jpg",
+      "caption": "Rangkaian pulau utama Indonesia pada malam hari, dipotret astronaut dari Stasiun Antariksa Internasional pada 9 Juni 2018; menurut NASA, Jawa adalah pusat ekonomi Indonesia dan pulau terpadat di dunia, dengan lebih dari 141 juta penduduk. Jakarta, Depok, dan Surabaya, kota tempat IXP terbesar di bagian ini, semuanya ada di Jawa: pertukaran trafik tumbuh di tempat penggunanya berkumpul.",
+      "credit": "NASA · Public domain",
+      "href": "https://commons.wikimedia.org/wiki/File:Lights_of_Java.jpg"
     }
   ],
   "08-ipv6/02-ndp-slaac-dhcpv6": [
@@ -3110,6 +3147,66 @@
       "id": "v8-api-peta",
       "after": "7-perbandingan-dengan-mikrotik-rest-api-v7",
       "ganti": false
+    }
+  ],
+  "11-wan-vpn/04-satelit-antarplanet": [
+    {
+      "type": "diagram",
+      "id": "lb-orbit-rtt",
+      "after": "2-orbit-geo-meo-dan-leo"
+    },
+    {
+      "type": "diagram",
+      "id": "lb-jalur-starlink",
+      "after": "3-komponen-jaringan-satelit"
+    },
+    {
+      "type": "diagram",
+      "id": "lb-vsat-bintang",
+      "after": "gateway-dan-hub"
+    },
+    {
+      "type": "diagram",
+      "id": "lb-pep-split",
+      "after": "pep-proxy-yang-memecah-koneksi-tcp"
+    },
+    {
+      "type": "diagram",
+      "id": "lb-dsn-cakupan",
+      "after": "nasa-deep-space-network"
+    },
+    {
+      "type": "diagram",
+      "id": "lb-bundle-dtn",
+      "after": "arsitektur-dtn-dan-bundle-protocol-versi-7"
+    },
+    {
+      "type": "photo",
+      "end": "palapa-sistem-satelit-domestik-sejak-1976",
+      "src": "/img/palapa-b1.jpg",
+      "caption": "Satelit komunikasi Indonesia Palapa B1 sesaat sebelum melewati sirip tegak pesawat ulang-alik Challenger (misi STS-7, 19 Juni 1983), difoto dari jendela belakang dek penerbangan. Dari sini satelit itu masih harus menempuh perjalanan ke orbit tujuannya, seperti SATRIA-1 di bawah.",
+      "credit": "NASA · Public domain",
+      "href": "https://commons.wikimedia.org/wiki/File:STS-7_Palapa-B1_deploy.jpg"
+    },
+    {
+      "type": "photo",
+      "end": "nasa-deep-space-network",
+      "src": "/img/dsn-canberra.jpg",
+      "caption": "DSS43, antena radio berdiameter 70 m di kompleks Canberra pada tabel di atas. Menurut NASA, inilah satu-satunya antena yang dapat mengirim perintah ke wahana Voyager 2: tiga kompleks menjaga kontak tetap tersambung, tetapi jalur perintah ke wahana itu hanya satu.",
+      "credit": "NASA/Canberra Deep Space Communication Complex · Public domain",
+      "href": "https://commons.wikimedia.org/wiki/File:DSS43_is_a_70-meter-wide_(230-feet-wide)_radio_antenna_at_the_Deep_Space_Network%27s_Canberra_facility_in_Australia.jpg"
+    }
+  ],
+  "lab/00b-panduan-packet-tracer": [
+    {
+      "type": "diagram",
+      "id": "pt-topologi-pertama",
+      "after": "41-rencana-alamat-dan-kabel"
+    },
+    {
+      "type": "diagram",
+      "id": "pt-anatomi-pdu",
+      "after": "52-membaca-jendela-pdu-information"
     }
   ]
 }

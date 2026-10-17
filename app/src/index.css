@@ -105,25 +105,25 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #070a18;
-  --bg-2: #0a0e20;
-  --surface: #0d1226;
-  --surface-2: #131a36;
-  --surface-3: #1c2449;
-  --glass: rgba(10, 14, 32, 0.82);
+  --bg: #0c1532;                   /* biru tinta (L* ~7,6), bukan hitam bertinta */
+  --bg-2: #0e1838;
+  --surface: #111b3f;
+  --surface-2: #16224b;
+  --surface-3: #1e2b5a;
+  --glass: rgba(12, 21, 50, 0.86);
   --glass-border: rgba(220, 226, 255, 0.09);
-  --border: #1c2346;
-  --border-strong: #2d3766;
-  --border-control: #6c76a3;
+  --border: #1f2b58;
+  --border-strong: #2f3d75;
+  --border-control: #6f7bae;
   --border-highlight: rgba(255, 255, 255, 0.06);
 
   --text: #e9ecf8;
   --text-muted: #a9b0d0;
-  --text-faint: #8d95bb;
+  --text-faint: #8f97bd;
 
   --fg: #e9ecf8;
   --fg-hover: #cdd2e8;
-  --fg-contrast: #070a18;
+  --fg-contrast: #0c1532;
 
   --primary: #8f9cff;
   --primary-hover: #adb6ff;
@@ -149,7 +149,7 @@
   --shadow: 0 1px 1px rgba(0, 0, 0, 0.4), 0 6px 14px -6px rgba(0, 0, 0, 0.55);
   --shadow-lg: 0 1px 1px rgba(0, 0, 0, 0.4), 0 8px 18px -8px rgba(0, 0, 0, 0.6), 0 24px 40px -16px rgba(0, 0, 0, 0.65);
 
-  --hl-bg: #0b0f22;
+  --hl-bg: #08102a;
 }
 
 
@@ -266,14 +266,6 @@ p { text-wrap: pretty; }
 .hover-padam:hover { transition-duration: 0s; }
 .btn-icon { width: 2.25rem; padding: 0; }
 
-.btn-bubble {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.25s var(--ease-out);
-}
-.btn:hover .btn-bubble, .group:hover .btn-bubble { transform: translateX(3px); }
-
 /* Tautan teks tersier */
 .link-arrow {
   display: inline-flex; align-items: center; gap: 0.35rem;
@@ -320,12 +312,6 @@ p { text-wrap: pretty; }
 /* Penanda selesai (kuis sisipan, CliSim): muncul sedikit membesar. */
 .pop { animation: pop 0.38s var(--ease-out) both; }
 @keyframes pop { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
-.stagger > * { animation: fadeUp 0.6s var(--ease-out) both; animation-delay: calc(var(--i, 0) * 60ms); }
-.stagger > *:nth-child(1) { --i: 0; } .stagger > *:nth-child(2) { --i: 1; }
-.stagger > *:nth-child(3) { --i: 2; } .stagger > *:nth-child(4) { --i: 3; }
-.stagger > *:nth-child(5) { --i: 4; } .stagger > *:nth-child(6) { --i: 5; }
-.stagger > *:nth-child(7) { --i: 6; } .stagger > *:nth-child(8) { --i: 7; }
-.stagger > *:nth-child(n+9) { --i: 8; }
 
 /* Progres baca: animasi berbasis scroll murni CSS, tanpa listener */
 .read-progress {
@@ -432,9 +418,6 @@ a.tile:hover, button.tile:hover { border-color: var(--border-strong); box-shadow
 .road-item.is-done .road-ico { background: var(--primary-soft); color: var(--primary); border-color: var(--primary-border); }
 .road-bar { height: 2px; border-radius: 2px; background: var(--primary); transform-origin: 0 50%; }
 
-/* Paragraf yang terungkap saat di-scroll (diatur GSAP) */
-.scrub-text { font-size: clamp(1.5rem, 3vw, 2.4rem); line-height: 1.25; font-weight: 500; letter-spacing: -0.03em; }
-.scrub-text .w { display: inline; }
 
 
 
@@ -470,7 +453,12 @@ a.tile:hover, button.tile:hover { border-color: var(--border-strong); box-shadow
   transition: text-decoration-color 0.15s;
 }
 .prose a:hover { text-decoration-color: var(--primary); }
+/* Preflight Tailwind memasang list-style: none pada semua ul/ol; tanpa baris ini daftar di
+   modul tampil tanpa bullet dan aturan ::marker di bawah tidak pernah terlihat. */
 .prose ul, .prose ol { margin: 1.15rem 0; padding-left: 1.35rem; }
+.prose ul { list-style: disc; }
+.prose ul ul { list-style: circle; }
+.prose ol { list-style: decimal; }
 .prose li { margin: 0.4rem 0; padding-left: 0.2rem; }
 .prose ul li::marker { color: var(--text-faint); }
 .prose ol li::marker { color: var(--text-faint); font-weight: 500; font-variant-numeric: tabular-nums; }
@@ -573,17 +561,6 @@ a.tile:hover, button.tile:hover { border-color: var(--border-strong); box-shadow
 
 
 
-/* Muncul saat masuk viewport: murni CSS, tanpa listener */
-@media (prefers-reduced-motion: no-preference) {
-  @supports (animation-timeline: view()) {
-    .reveal {
-      animation: revealUp linear both;
-      animation-timeline: view();
-      animation-range: entry 0% cover 22%;
-    }
-  }
-}
-@keyframes revealUp { from { opacity: 0; transform: translateY(28px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
 
 
 
@@ -645,9 +622,10 @@ a.tile:hover, button.tile:hover { border-color: var(--border-strong); box-shadow
 }
 
 /* =========================================================================
-   Pil atas (components/PilAtas.tsx). Satu-satunya permukaan kaca di aplikasi.
-   Penanda aktif meluncur lewat transform + width (CSS transition saja, tidak ada
-   GSAP yang menyentuhnya: satu properti, satu mesin).
+   Pil atas (components/PilAtas.tsx): panel instrumen padat bergaris tepi tunggal,
+   bukan kaca berblur dan bukan bingkai bercincin ganda. Penanda aktif meluncur lewat
+   transform + width (CSS transition saja, tidak ada GSAP yang menyentuhnya: satu
+   properti, satu mesin).
    ========================================================================= */
 @layer components {
   .pil-wadah { position: fixed; top: 0.85rem; left: 0; right: 0; z-index: 40; display: flex; justify-content: center; padding: 0 1rem; pointer-events: none; }
@@ -655,8 +633,7 @@ a.tile:hover, button.tile:hover { border-color: var(--border-strong); box-shadow
     position: relative; pointer-events: auto; display: flex; align-items: center; gap: 0.15rem;
     height: 3.1rem; padding: 0 0.4rem 0 0.55rem; border: 1px solid var(--border-strong); border-radius: 12px;
     background: var(--surface);
-    /* Bingkai instrumen bergaris rangkap (gravir), bukan kaca berblur. */
-    box-shadow: 0 0 0 4px var(--bg), 0 0 0 5px var(--pf-garis-kuat), var(--shadow);
+    box-shadow: var(--shadow);
     max-width: 100%; overflow-x: auto; scrollbar-width: none;
   }
   .pil::-webkit-scrollbar { display: none; }
@@ -711,25 +688,4 @@ a.tile:hover, button.tile:hover { border-color: var(--border-strong); box-shadow
   .bab { padding: clamp(5.5rem, 10vw, 9.5rem) 0 clamp(6rem, 11vw, 10.5rem); }
   .judul-bab { font-size: clamp(2rem, 3.4vw, 3.1rem); font-weight: 600; line-height: 1.05; font-stretch: var(--lebar-layar); letter-spacing: -0.03em; }
   .bab-penutup { border-top: 1px solid var(--border); padding: clamp(6rem, 11vw, 10rem) 0 2.5rem; }
-
-
-  /* Tumpukan kartu: sticky (CSS) yang menumpuk; GSAP hanya mengecilkan yang tertimpa. */
-  .tumpuk-kartu {
-    position: sticky; list-style: none; min-height: 18rem; margin-bottom: 1.25rem; padding: 2.25rem 2.5rem;
-    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-lg); transform-origin: 50% 0;
-  }
-  /* Kartu yang tertimpa memudar ke warna latar (--redup digerakkan GSAP; diamnya 0). */
-  .tumpuk-kartu::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: var(--bg); opacity: var(--redup, 0); pointer-events: none; }
-  .tumpuk-nomor { position: absolute; top: 1.75rem; right: 2rem; font-size: 0.85rem; font-weight: 600; color: var(--text-faint); font-variant-numeric: tabular-nums; }
-
-
-  /* Carousel kartu review */
-  .carousel-jalur { display: flex; gap: 1rem; list-style: none; margin: 0; padding: 0; transition: transform 0.5s var(--ease-out); }
-  .carousel-kartu {
-    flex: none; width: min(36rem, 86vw); min-height: 15rem; padding: 2rem;
-    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl);
-    transition: opacity 0.3s var(--ease-std);
-  }
-  .carousel-kartu[aria-hidden="true"] { opacity: 0.45; }
 }

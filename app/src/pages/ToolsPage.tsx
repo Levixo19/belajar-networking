@@ -2,7 +2,7 @@ import { useParams, Link, Navigate } from 'react-router-dom'
 import { TOOLS } from '../tools'
 import { photo } from '../lib/photos'
 import DetailShell from '../components/DetailShell'
-import { IconArrowRight, IconTerminal } from '../components/icons'
+import { IconTerminal } from '../components/icons'
 import KepalaHalaman from '../components/KepalaHalaman'
 import Planisfer from '../components/Planisfer'
 import { getModule, stageOfModule } from '../lib/content'
@@ -26,6 +26,10 @@ export default function ToolsPage() {
   const terminal = TOOLS.filter(t => t.slug.startsWith('cli-'))
   const sim = TOOLS.filter(t => !t.slug.startsWith('cli-'))
   const [utama, ...lain] = sim
+  // Ubin selebar dua kolom. Hitungannya: subnet 2 + tiga ini 2+2+2 + empat ubin biasa = 12
+  // sel = tiga baris penuh di 4 kolom, enam baris penuh di 2 kolom. Menambah alat berarti
+  // menghitung ulang di sini, kalau tidak bento punya sel kosong.
+  const LEBAR = new Set(['arecibo', 'packet-inspector', 'vlan-lab'])
   const foto = photo('patch-panel')
 
   return (
@@ -40,8 +44,8 @@ export default function ToolsPage() {
         </p>
       </KepalaHalaman>
 
-      {/* Bento: md 2 kolom (2+6=8 sel), lg 4 kolom (2+6=8 sel). Tidak ada sel kosong. */}
-      <div className="bento stagger mt-14 md:!grid-cols-2 lg:!grid-cols-4">
+      {/* Bento 12 sel (lihat LEBAR), grid-flow-dense mengisi celah. Tidak ada sel kosong. */}
+      <div className="bento mt-14 grid-flow-dense md:!grid-cols-2 lg:!grid-cols-4">
         {utama && (
           <Link to={`/tools/${utama.slug}`} className="tile group flex min-h-[18rem] flex-col justify-end !border-transparent !p-7 text-white md:col-span-2">
             <img src={foto.url} alt="" className="absolute inset-0 h-full w-full object-cover grayscale transition-transform duration-700 ease-out group-hover:scale-105" />
@@ -54,7 +58,7 @@ export default function ToolsPage() {
           </Link>
         )}
         {lain.map(t => (
-          <Link key={t.slug} to={`/tools/${t.slug}`} className="tile group flex min-h-[13rem] flex-col justify-between gap-6 !pt-0">
+          <Link key={t.slug} to={`/tools/${t.slug}`} className={`tile group flex min-h-[13rem] flex-col justify-between gap-6 !pt-0 ${LEBAR.has(t.slug) ? 'md:col-span-2' : ''}`}>
             {t.related && stageOfModule.get(t.related) && (
               <span className="-mx-6 block border-b border-app bg-[var(--pf-langit)] px-3 pb-1 pt-2">
                 <Planisfer mode="plat" sorot={stageOfModule.get(t.related)!.id} sini={t.related} progress={store.progress} judul={`Dipakai di modul ${getModule(t.related)?.num}`} />
@@ -62,7 +66,6 @@ export default function ToolsPage() {
             )}
             <div className="flex items-start justify-between">
               <span className="road-ico"><t.Icon size={17} /></span>
-              <span className="btn-bubble text-faint group-hover:text-[var(--text)]"><IconArrowRight size={16} /></span>
             </div>
             <div>
               <div className="text-[16px] font-medium tracking-[-0.015em]">{t.name}</div>
@@ -76,14 +79,14 @@ export default function ToolsPage() {
         <section className="mt-24 grid gap-10 lg:grid-cols-12" aria-labelledby="judul-terminal">
           <div className="lg:col-span-4">
             <IconTerminal size={22} className="text-faint" />
-            <h2 id="judul-terminal" className="reveal mt-4 text-[clamp(1.6rem,2.6vw,2.1rem)] font-semibold leading-[1.1]">
+            <h2 id="judul-terminal" className="mt-4 text-[clamp(1.6rem,2.6vw,2.1rem)] font-semibold leading-[1.1]">
               Terminal tiga platform.
             </h2>
             <p className="mt-3 max-w-[40ch] text-[15px] leading-relaxed text-muted">
               Ketik perintah Cisco IOS, MikroTik RouterOS, dan Linux untuk tugas yang sama, lalu bandingkan.
             </p>
           </div>
-          <ul className="road reveal border-app lg:col-span-8 lg:border-t">
+          <ul className="road border-app lg:col-span-8 lg:border-t">
             {terminal.map(t => (
               <li key={t.slug}>
                 <Link to={`/tools/${t.slug}`} className="road-item group">
@@ -92,7 +95,6 @@ export default function ToolsPage() {
                     <span className="block text-[16px] font-medium tracking-[-0.015em]">{capitalize(t.name.replace(/^Terminal\s*[:\-]\s*/, ''))}</span>
                     <span className="mt-0.5 block text-[13.5px] text-muted">{t.desc}</span>
                   </span>
-                  <span className="btn-bubble text-faint group-hover:text-[var(--text)]"><IconArrowRight size={16} /></span>
                 </Link>
               </li>
             ))}

@@ -83,11 +83,11 @@ export default function ModulePage() {
       <div className="mx-auto flex max-w-[1200px] gap-16 px-4 pb-24 pt-10 sm:px-6 md:pt-16 lg:px-8">
         <article className="min-w-0 flex-1">
           <div className="mx-auto max-w-[44rem]">
-            <header className="fade-up mb-12">
+            <header className="mb-12">
               {/* Plat rasi tahap ini: bintang modul ini ditandai "Anda di sini", sama dengan peta di dasbor. */}
               {stage && stage.id !== 'panduan' && stage.id !== 'referensi' && (
                 <figure className="plat-modul bingkai-atlas mb-9">
-                  <Planisfer mode="plat" sorot={stage.id} sini={mod.id} progress={store.progress} judul={`Rasi ${stage.title}`} />
+                  <Planisfer mode="plat" sorot={stage.id} sini={mod.id} progress={store.progress} judul={`Peta tahap ${stage.title}`} />
                 </figure>
               )}
               {stage && (
@@ -96,7 +96,7 @@ export default function ModulePage() {
                   <span aria-hidden="true">/</span>
                   <Link to={`/m/${encodeURI(stage.modules[0].id)}`} className="inline-flex items-center gap-1.5 hover:text-[var(--text)]">
                     <StageIcon id={stage.id} size={14} />
-                    <span className="nama-rasi">Rasi {stage.title}</span>
+                    <span>{stage.title}</span>
                   </Link>
                   {mod.num && (<><span aria-hidden="true">/</span><span className="tabular-nums">Modul {mod.num}</span></>)}
                 </nav>
@@ -137,7 +137,7 @@ export default function ModulePage() {
                       setTawarLanjut(false)
                     }}
                     className="fade-in inline-flex h-8 items-center gap-2 rounded-lg bg-[var(--fg)] px-3 text-[13px] font-medium text-[var(--fg-contrast)] transition-transform active:scale-[0.98]">
-                    <IconArrowRight size={14} /> Lanjutkan dari terakhir dibaca
+                    Lanjutkan dari terakhir dibaca
                   </button>
                 )}
               </div>
@@ -205,7 +205,7 @@ export default function ModulePage() {
               {next && (
                 <Link to={`/m/${encodeURI(next.id)}`} className="tile group !p-5 text-right">
                   <span className="flex items-center justify-end gap-1.5 text-[12.5px] text-faint">
-                    Berikutnya <span className="btn-bubble"><IconArrowRight size={14} /></span>
+                    Berikutnya <IconArrowRight size={14} />
                   </span>
                   <span className="mt-2 block text-[15px] font-medium leading-snug">{next.title}</span>
                 </Link>

@@ -56,6 +56,7 @@ export const IconGraph = wrap(GraphIcon)
 export const IconCertificate = wrap(CertificateIcon)
 export const IconBriefcase = wrap(BriefcaseIcon)
 export const IconShuffle = wrap(ShuffleIcon)
+export const IconBroadcast = wrap(BroadcastIcon)
 
 // Ikon per tahap kurikulum. Data konten masih membawa emoji; UI memakai peta ini.
 const STAGE: Record<string, PhosphorIcon> = {

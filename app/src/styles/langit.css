@@ -4,6 +4,10 @@
    tema gelap = langit malam (garis pucat, bintang putih hangat).
    Bahasa ornamennya diambil dari peta bintang sungguhan: cincin derajat bertik,
    kisi deklinasi, label rasi bergravir (EB Garamond miring, kapital kecil).
+   EB Garamond HANYA di dalam peta dan plat; di luar itu huruf antarmuka.
+   --pf-lampu = warna lampu natrium (oranye di foto Black Marble): satu-satunya warna
+   untuk "tuntas", sama untuk bintang di langit dan kota di peta Bumi. Status dibedakan
+   BENTUK (lihat BentukBintang), kontrasnya dijaga tests/kontras.test.mjs.
    ========================================================================= */
 
 :root {
@@ -13,24 +17,25 @@
   --pf-garis-kuat: rgba(11, 16, 48, 0.3);
   --pf-latar: #2b335e;
   --pf-bintang: #0b1030;
-  --pf-bintang-redup: rgba(11, 16, 48, 0.42);
+  --pf-bintang-redup: rgba(11, 16, 48, 0.6);
   --pf-nyala: #2a37d4;
-  --pf-jalur: rgba(42, 55, 212, 0.38);
+  --pf-lampu: #a14f07;
+  --pf-jalur: rgba(42, 55, 212, 0.7);
   --pf-label: #3a4170;
   --pf-lensa: rgba(255, 255, 255, 0.55);
-  --kursor-warna: #ffffff;
 }
 :root[data-theme="dark"] {
-  --pf-langit: #0a0f25;
+  --pf-langit: #0f1a3c;
   --pf-garis: rgba(190, 200, 255, 0.09);
   --pf-garis-kuat: rgba(190, 200, 255, 0.26);
   --pf-latar: #c9d1f5;
   --pf-bintang: #e4e8ff;
-  --pf-bintang-redup: rgba(228, 232, 255, 0.5);
-  --pf-nyala: #ffe2a8;
-  --pf-jalur: rgba(143, 156, 255, 0.45);
+  --pf-bintang-redup: rgba(228, 232, 255, 0.6);
+  --pf-nyala: #8f9cff;
+  --pf-lampu: #f6b54a;
+  --pf-jalur: rgba(143, 156, 255, 0.65);
   --pf-label: #aeb6e0;
-  --pf-lensa: rgba(9, 13, 32, 0.45);
+  --pf-lensa: rgba(12, 21, 50, 0.5);
 }
 
 @layer components {
@@ -45,11 +50,15 @@
   .pf-jam { stroke: var(--pf-garis); stroke-width: 0.8; }
   .pf-jam-kuat { stroke: var(--pf-garis-kuat); stroke-width: 0.9; }
   .pf-sektor { fill: color-mix(in srgb, var(--pf-nyala) 14%, transparent); stroke: var(--pf-nyala); stroke-width: 2; stroke-opacity: 0.5; }
-  .pf-latar circle { fill: var(--pf-latar); }
+  /* Langit sungguhan: bintang terbenam sangat samar, yang di atas cakrawala lebih terang;
+     tetap jauh di bawah bintang kurikulum yang berbentuk. */
+  .pf-latar circle { fill: var(--pf-latar); opacity: 0.16; }
+  .pf-latar circle.tampak { opacity: 0.62; }
+  .pf-cakrawala { fill: none; stroke: var(--pf-garis-kuat); stroke-width: 1; stroke-dasharray: 6 4 1.5 4; }
   .pf-tepi { fill: none; stroke: var(--pf-garis-kuat); stroke-width: 1.1; }
   .pf-cincin-tik { stroke: var(--pf-garis-kuat); stroke-width: 0.8; }
   .pf-cincin-tik.kuat { stroke: var(--pf-bintang); stroke-width: 1.2; }
-  .pf-jam-no { font-family: var(--font-mono); font-size: calc(11px * var(--u, 1)); font-weight: 600; fill: var(--pf-bintang); letter-spacing: 0.02em; }
+  .pf-jam-no { font-family: var(--font-atlas); font-size: calc(12.5px * var(--u, 1)); font-weight: 600; font-variant-numeric: lining-nums tabular-nums; fill: var(--pf-bintang); }
   .pf-jam-kode { font-family: var(--font-atlas); font-style: italic; font-size: calc(11px * var(--u, 1)); fill: var(--pf-label); letter-spacing: 0.04em; }
   .pf-jalur { fill: none; stroke: var(--pf-jalur); stroke-width: 1.3; stroke-dasharray: 1.5 6; stroke-linecap: round; }
   .pf-jejak { fill: none; stroke: var(--pf-nyala); stroke-width: 2.2; stroke-linecap: round; opacity: 0.8; }
@@ -57,23 +66,26 @@
   .pf-rasi { transition: opacity 0.3s var(--ease-std); }
   .pf-rasi.redup { opacity: 0.28; }
   .pf-asterisme { fill: none; stroke: var(--pf-garis-kuat); stroke-width: 1; stroke-linejoin: round; }
-  .pf-asterisme-nyala { stroke: var(--pf-nyala); stroke-width: 1.6; stroke-linecap: round; }
+  .pf-asterisme-nyala { stroke: var(--pf-lampu); stroke-width: 1.6; stroke-linecap: round; }
   .pf-rasi.sorot .pf-asterisme { stroke: var(--pf-nyala); stroke-width: 1.6; }
 
-  .pf-bintang-dot { fill: var(--pf-bintang); }
-  .pf-bintang-dot.baru { fill: var(--pf-bintang-redup); }
-  .pf-bintang-dot.dibaca { fill: var(--pf-bintang); stroke: var(--pf-nyala); stroke-width: 1.4; }
-  .pf-bintang-dot.tuntas { fill: var(--pf-nyala); }
-  .pf-halo { animation: pfKerlip 4.5s ease-in-out infinite; animation-delay: var(--d, 0s); }
-  @keyframes pfKerlip { 0%, 100% { opacity: 0.85; } 50% { opacity: 0.35; } }
-  .pf-tuju { fill: none; stroke: var(--pf-nyala); stroke-width: 1.6; transform-box: fill-box; transform-origin: center; animation: pfDenyut 2.4s var(--ease-out) infinite; }
-  @keyframes pfDenyut { 0% { transform: scale(0.7); opacity: 1; } 80%, 100% { transform: scale(1.9); opacity: 0; } }
+  /* Bentuk status: lingkar kosong (belum), setengah terisi (dibaca), penuh berjari empat
+     dalam warna lampu (tuntas). Tidak ada gerak tanpa henti di peta: bintang menyala SEKALI
+     (.pf-pijar, digerakkan GSAP), lalu diam. Modul berikutnya diberi cincin diam. */
+  .pf-bentuk.baru circle { fill: var(--pf-langit); stroke: var(--pf-bintang-redup); stroke-width: 1.15; }
+  .pf-bentuk.dibaca circle { fill: var(--pf-langit); stroke: var(--pf-bintang); stroke-width: 1.2; }
+  .pf-bentuk.dibaca path { fill: var(--pf-bintang); }
+  .pf-bentuk.tuntas circle { fill: var(--pf-lampu); }
+  .pf-bentuk.tuntas path { fill: none; stroke: var(--pf-lampu); stroke-width: 1.25; stroke-linecap: round; }
+  .tanda-bintang .pf-bentuk.baru circle, .tanda-bintang .pf-bentuk.dibaca circle { fill: none; }
+  .pf-pijar { fill: none; stroke: var(--pf-lampu); stroke-width: 1.4; opacity: 0; }
+  .pf-tuju { fill: none; stroke: var(--pf-nyala); stroke-width: 1.5; }
   .pf-sini { fill: none; stroke: var(--pf-nyala); stroke-width: 1.5; stroke-dasharray: 3 3; }
   .pf-terang { fill: none; stroke: var(--pf-nyala); stroke-width: 1.6; }
   .pf-bintang { outline: none; cursor: pointer; }
   .pf-sasaran { fill: transparent; }
   .pf-bintang:focus-visible .pf-sasaran { fill: color-mix(in srgb, var(--pf-nyala) 12%, transparent); stroke: var(--pf-nyala); stroke-width: 1.5; }
-  .pf-bintang:hover .pf-bintang-dot.baru { fill: var(--pf-bintang); }
+  .pf-bintang:hover .pf-bentuk.baru circle { stroke: var(--pf-bintang); }
 
   .pf-label-rasi {
     font-family: var(--font-atlas); font-style: italic; font-size: calc(12.5px * var(--u, 1)); font-weight: 500;
@@ -83,7 +95,8 @@
   .pf-rasi.sorot .pf-label-rasi { fill: var(--pf-bintang); }
   .pf-kutub-silang { stroke: var(--pf-bintang); stroke-width: 1; }
   .pf-kutub-dot { fill: var(--pf-nyala); }
-  .pf-label-modul { font-family: var(--font-mono); font-size: calc(9.5px * var(--u, 1)); font-weight: 500; fill: var(--pf-bintang); }
+  /* Nomor modul = nomor katalog bintang (seperti nomor Flamsteed): huruf atlas, angka tegak. */
+  .pf-label-modul { font-family: var(--font-atlas); font-size: calc(11px * var(--u, 1)); font-weight: 500; font-variant-numeric: lining-nums tabular-nums; fill: var(--pf-bintang); }
   .pf-label-modul.sini { font-family: var(--font-ui); font-size: calc(13px * var(--u, 1)); font-weight: 600; }
   .pf-jam-halus { stroke: var(--pf-garis); stroke-width: 0.6; }
   .pf-dek-halus { fill: none; stroke: var(--pf-garis); stroke-width: 0.6; }
@@ -92,6 +105,14 @@
   .pf-lensa-tepi { fill: none; stroke: var(--pf-bintang); stroke-width: 1.4; }
   .pf-lensa-tik { stroke: var(--pf-bintang); stroke-width: 1.2; }
   .pf-lensa-skala { stroke: var(--pf-bintang); stroke-width: 0.8; opacity: 0.7; }
+  /* Anotasi ala sampul Voyager: garis penunjuk tipis + label kecil. Tampak saat lensa parkir. */
+  .pf-lensa-tag { opacity: 0; transition: opacity 0.25s var(--ease-std); }
+  .pf-lensa-tag[data-tampak="1"] { opacity: 1; }
+  .pf-lensa-tag-garis { stroke: var(--pf-bintang); stroke-width: 1; }
+  .pf-lensa-tag-teks {
+    font-family: var(--font-atlas); font-style: italic; font-size: calc(14px * var(--u, 1)); font-weight: 500; fill: var(--pf-bintang);
+    paint-order: stroke; stroke: var(--pf-langit); stroke-width: calc(4px * var(--u, 1)); stroke-linejoin: round;
+  }
   .pf-detail { pointer-events: none; }
   .pf-lensa, .pf-cincin, .pf-kutub { pointer-events: none; }
   /* Di atas peta, lensa teleskop adalah kursornya: kursor sistem disembunyikan, tapi HANYA
@@ -105,51 +126,48 @@
     background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-lg);
   }
   .pf-kartu-atas { display: flex; align-items: center; gap: 0.5rem; font-size: 0.74rem; font-weight: 500; color: var(--text-faint); }
-  .pf-kartu-rasi { margin-left: auto; font-family: var(--font-atlas); font-style: italic; font-size: 0.86rem; color: var(--text-muted); }
-  .pf-kartu-titik { width: 0.5rem; height: 0.5rem; border-radius: 9999px; background: var(--border-control); }
-  .pf-kartu-titik.tuntas { background: var(--primary); }
-  .pf-kartu-titik.dibaca { background: transparent; box-shadow: inset 0 0 0 2px var(--primary); }
+  .pf-kartu-rasi { margin-left: auto; font-size: 0.78rem; color: var(--text-muted); }
   .pf-kartu-judul { margin-top: 0.45rem; font-size: 1.02rem; font-weight: 600; line-height: 1.3; letter-spacing: -0.015em; color: var(--text); }
-  .pf-kartu-no { font-family: var(--font-mono); font-size: 0.86rem; font-weight: 600; color: var(--primary); margin-right: 0.25rem; }
+  .pf-kartu-no { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--primary); margin-right: 0.25rem; }
   .pf-kartu-meta { margin-top: 0.35rem; font-size: 0.8rem; color: var(--text-faint); }
 
   /* Di peta penuh kartu mengikuti lensa (transform ditulis JS tiap frame). */
   body > .pf-kartu { position: fixed; z-index: 45; left: 0; top: 0; bottom: auto; pointer-events: none; will-change: transform; }
 
-  .tanda-bintang { flex: none; }
-  .tanda-bintang .tb-inti { fill: var(--pf-bintang-redup); }
-  .tanda-bintang.dibaca .tb-inti, .tanda-bintang.tuntas .tb-inti { fill: var(--pf-nyala); }
-  .tanda-bintang .tb-halo { fill: color-mix(in srgb, var(--pf-nyala) 22%, transparent); }
-  .tanda-bintang .tb-cincin { fill: none; stroke: var(--pf-nyala); stroke-width: 1.2; }
+  .tanda-bintang { flex: none; overflow: visible; }
 
   .pf-mini .pf-cincin-tik:not(.kuat) { display: none; }
   .pf-plat .pf-piring { fill: none; }
   .pf-plat .pf-svg, .pf-mini .pf-svg { overflow: hidden; }
 
   /* --------------------------------------------------------- Kursor bidik */
+  /* .kursor = titik pusat berukuran nol yang digeser JS; cincin dipusatkan dengan offset
+     tetap, empat sudut digeser JS lewat transform. Tidak ada mix-blend-mode (di atas tombol
+     ultramarin hasilnya cincin kekuningan): warnanya tinta tema. */
   .kursor {
-    position: fixed; left: 0; top: 0; z-index: 95; width: 22px; height: 22px;
-    pointer-events: none; opacity: 0; mix-blend-mode: difference; color: var(--kursor-warna);
+    position: fixed; left: 0; top: 0; z-index: 95; width: 0; height: 0;
+    pointer-events: none; opacity: 0; color: var(--text);
     transition: opacity 0.25s var(--ease-std);
   }
   .kursor[data-tampak="1"] { opacity: 1; }
   .kursor[data-mode="lensa"] { opacity: 0; }
   .kursor-cincin {
-    position: absolute; inset: 0; border-radius: 9999px; border: 1.5px solid currentColor;
+    position: absolute; left: -11px; top: -11px; width: 22px; height: 22px; border-radius: 9999px;
+    border: 1.5px solid currentColor; opacity: 0.75;
     transition: opacity 0.2s var(--ease-std), transform 0.18s var(--ease-out);
   }
-  .kursor[data-mode="baca"] .kursor-cincin { opacity: 0.3; transform: scale(0.55); }
+  .kursor[data-mode="baca"] .kursor-cincin { opacity: 0.25; transform: scale(0.55); }
   .kursor[data-kunci="1"] .kursor-cincin { opacity: 0; }
   .kursor[data-tekan="1"] .kursor-cincin { transform: scale(0.8); }
   .kursor-sudut {
-    position: absolute; width: 9px; height: 9px; opacity: 0; border: 0 solid currentColor;
+    position: absolute; left: 0; top: 0; width: 9px; height: 9px; opacity: 0; border: 0 solid currentColor;
     transition: opacity 0.2s var(--ease-std);
   }
   .kursor[data-kunci="1"] .kursor-sudut { opacity: 1; }
-  .kursor-sudut.kiri-atas { left: 0; top: 0; border-left-width: 1.5px; border-top-width: 1.5px; }
-  .kursor-sudut.kanan-atas { right: 0; top: 0; border-right-width: 1.5px; border-top-width: 1.5px; }
-  .kursor-sudut.kiri-bawah { left: 0; bottom: 0; border-left-width: 1.5px; border-bottom-width: 1.5px; }
-  .kursor-sudut.kanan-bawah { right: 0; bottom: 0; border-right-width: 1.5px; border-bottom-width: 1.5px; }
+  .kursor-sudut.kiri-atas { border-left-width: 1.5px; border-top-width: 1.5px; }
+  .kursor-sudut.kanan-atas { border-right-width: 1.5px; border-top-width: 1.5px; }
+  .kursor-sudut.kiri-bawah { border-left-width: 1.5px; border-bottom-width: 1.5px; }
+  .kursor-sudut.kanan-bawah { border-right-width: 1.5px; border-bottom-width: 1.5px; }
   @media (prefers-reduced-motion: reduce) { .kursor { display: none; } }
 
   /* ----------------------------------------------- Bingkai plat ala atlas */
@@ -174,28 +192,60 @@
    Dasbor langit (pages/Dashboard.tsx)
    ========================================================================= */
 @layer components {
-  .langit-hero { position: relative; min-height: 100dvh; overflow: hidden; isolation: isolate; background: var(--bg); }
-  /* Tirai kiri: teks berdiri di atas warna latar, bukan langsung di atas garis peta. */
-  .langit-hero::before {
-    content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
-    background: linear-gradient(90deg, var(--bg) 0 24%, color-mix(in srgb, var(--bg) 86%, transparent) 38%, transparent 58%);
+  /* Hero = satu plat atlas, seperti plat Cellarius: peta melingkar di tengah, kartus (kotak
+     judul bergaris rangkap) di sudut plat. Tidak ada tirai gradien di atas peta; kartus
+     berdiri di atas warna kertas sendiri. --peta = diameter kotak peta. */
+  .plat-langit { padding: 5.1rem clamp(0.75rem, 1.3vw, 1.25rem) clamp(0.75rem, 1.3vw, 1.25rem); }
+  .plat-langit-bingkai {
+    --peta: min(calc(100dvh - 7.4rem), 64vw, 1100px);
+    position: relative; display: grid; place-items: center; min-height: calc(100dvh - 6.2rem);
+    border-radius: var(--radius-sm); background: var(--bg);
   }
-  :root[data-theme="dark"] .langit-hero { background: radial-gradient(64rem 52rem at 66% 54%, #0d1534, transparent 72%), var(--bg); }
-  .langit-hero-peta { position: absolute; z-index: 0; width: clamp(760px, 96vh, 1180px); aspect-ratio: 1; left: 66%; top: 54.5%; transform: translate(-50%, -50%); }
-  .langit-hero-isi {
-    position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: center;
-    min-height: 100dvh; max-width: 40rem; padding: 7.5rem 0 4.5rem clamp(1.5rem, 6vw, 6.5rem);
-    pointer-events: none;
+  .plat-langit-peta { width: var(--peta); aspect-ratio: 1; }
+  .kartus {
+    position: absolute; z-index: 2; width: clamp(15.5rem, calc((100% - var(--peta)) / 2 - 2.4rem), 23rem);
+    padding: 1.1rem 1.25rem 1.2rem; border-radius: var(--radius-sm);
+    background: var(--bg); border: 1px solid var(--pf-garis-kuat);
+    box-shadow: inset 0 0 0 3px var(--bg), inset 0 0 0 4px var(--pf-garis);
   }
-  .langit-hero-isi > * { pointer-events: auto; }
-  .log-waktu { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-faint); letter-spacing: 0.01em; }
-  .langit-judul { margin-top: 1.1rem; max-width: 15ch; font-size: clamp(2.4rem, 4.1vw, 4.1rem); line-height: 1.04; font-weight: 600; font-stretch: var(--lebar-layar); letter-spacing: -0.035em; }
-  .langit-lead { margin-top: 1.4rem; max-width: 44ch; font-size: 1.1rem; line-height: 1.6; color: var(--text-muted); }
-  .instrumen { display: flex; flex-wrap: wrap; gap: 0.5rem 2.5rem; margin: 3rem 0 0; padding-top: 1.1rem; border-top: 1px solid var(--border); max-width: 30rem; }
-  .instrumen dt { font-size: 0.74rem; font-weight: 500; color: var(--text-faint); }
-  .instrumen dd { margin: 0.2rem 0 0; font-family: var(--font-mono); font-size: 1.3rem; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text); }
-  .legenda-peta { display: flex; flex-wrap: wrap; gap: 0.45rem 1.1rem; margin-top: 1.4rem; max-width: 34rem; font-size: 0.78rem; line-height: 1.5; color: var(--text-faint); }
-  .legenda-peta > span { display: inline-flex; align-items: center; gap: 0.4rem; }
+  .kartus-judul { left: 1.65rem; top: 1.65rem; }
+  .kartus-instrumen { right: 1.65rem; top: 1.65rem; }
+  .kartus-legenda { right: 1.65rem; bottom: 1.65rem; }
+  .kartus-nama {
+    margin: 0; font-family: var(--font-atlas); font-style: italic; font-weight: 500; font-size: 1.1rem;
+    font-variant-caps: all-small-caps; letter-spacing: 0.14em; color: var(--pf-label);
+  }
+  .kartus-epoch { margin: 0.2rem 0 0; font-family: var(--font-atlas); font-style: italic; font-size: 0.95rem; color: var(--text-muted); }
+  .kartus-kredit { color: var(--text-muted); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); }
+  .kartus-kredit:hover { color: var(--text); }
+  .kartus-h1 {
+    margin: 0.85rem 0 0; font-size: clamp(1.5rem, 1.95vw, 2.15rem); line-height: 1.14; font-weight: 600;
+    font-stretch: var(--lebar-judul); letter-spacing: -0.025em; text-wrap: balance;
+  }
+  .kartus-label { display: block; font-weight: 450; color: var(--text-muted); }
+  .kartus-no { font-variant-numeric: tabular-nums; color: var(--primary); }
+  .kartus-teks { margin: 0.8rem 0 0; font-family: var(--font-read); font-size: 0.96rem; line-height: 1.6; color: var(--text-muted); text-wrap: pretty; }
+  .kartus-meta { margin: 0.55rem 0 0; font-size: 0.8rem; color: var(--text-faint); }
+  .kartus-tombol { margin-top: 1.15rem; }
+  .kartus-sapa { margin: 0; font-size: 0.98rem; font-weight: 500; color: var(--text); }
+  .kartus-kecil { margin: 0.75rem 0 0; font-size: 0.8rem; line-height: 1.55; color: var(--text-faint); text-wrap: pretty; }
+
+  .instrumen { display: grid; gap: 0.7rem; margin: 0.9rem 0 0; padding-top: 0.9rem; border-top: 1px solid var(--border); }
+  .instrumen > div { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+  .instrumen dt { font-size: 0.8rem; color: var(--text-faint); }
+  .instrumen dd { margin: 0; font-size: 1.15rem; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text); }
+  .instrumen dd span { font-size: 0.8rem; font-weight: 400; color: var(--text-faint); }
+  .instrumen dd a { color: var(--primary); text-decoration: underline; text-underline-offset: 3px; }
+  .legenda-peta { display: grid; gap: 0.4rem; list-style: none; margin: 0.8rem 0 0; padding: 0; font-size: 0.86rem; color: var(--text-muted); }
+  .legenda-peta li { display: flex; align-items: center; gap: 0.6rem; }
+
+  /* Layar sempit (bukan sasaran rancangan, tapi tidak boleh meluber): kartus turun di
+     bawah peta, tidak lagi melayang di sudut. */
+  @media (max-width: 1099px) {
+    .plat-langit-bingkai { --peta: min(100%, 44rem); display: flex; flex-direction: column; gap: 1rem; padding: 1rem; }
+    .kartus { position: relative; inset: auto; width: 100%; max-width: 44rem; }
+    .kartus-judul { order: -1; }
+  }
 
   .plat-rasi { margin: 0; padding: 1.4rem 1.4rem 1.1rem; border-radius: var(--radius-xl); background: var(--pf-langit); }
   .plat-keterangan { margin-top: 0.9rem; padding: 0 0.3rem; font-family: var(--font-atlas); font-style: italic; font-size: 1.02rem; line-height: 1.45; color: var(--text-muted); }
@@ -208,20 +258,16 @@
   }
   .daftar-rasi-butir:hover { color: var(--text); background: color-mix(in srgb, var(--text) 3%, transparent); transition-duration: 0s; }
   .daftar-rasi-butir.sini { color: var(--text); font-weight: 600; }
-  .daftar-rasi-no { flex: none; width: 3.1rem; font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-faint); }
+  .daftar-rasi-no { flex: none; width: 2.6rem; font-size: 0.86rem; font-variant-numeric: tabular-nums; color: var(--text-faint); }
+  .judul-bab-no { display: block; margin-bottom: 0.35rem; font-size: 0.95rem; font-weight: 500; letter-spacing: 0; font-stretch: 100%; color: var(--text-faint); }
   .daftar-rasi-menit { flex: none; font-size: 0.78rem; color: var(--text-faint); font-variant-numeric: tabular-nums; }
 
   .wilayah { display: grid; gap: 0.6rem; margin: 0; }
   .wilayah > div { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); align-items: center; gap: 0.75rem; font-size: 0.8rem; color: var(--text-faint); }
-  .wilayah dd { display: flex; align-items: center; gap: 0.7rem; margin: 0; font-family: var(--font-mono); font-size: 0.76rem; }
+  .wilayah dd { display: flex; align-items: center; gap: 0.7rem; margin: 0; font-size: 0.8rem; font-variant-numeric: tabular-nums; }
   .wilayah-batang { position: relative; flex: 1; height: 3px; overflow: hidden; border-radius: 2px; background: var(--surface-3); }
   .wilayah-batang::after { content: ""; position: absolute; inset: 0; transform-origin: 0 50%; transform: scaleX(var(--isi, 0)); background: var(--primary); }
 
-  @media (max-width: 1023px) {
-    .langit-hero-peta { left: 50%; top: auto; bottom: -42%; transform: translateX(-50%); width: 140vw; }
-    .langit-hero::before { background: linear-gradient(180deg, var(--bg) 0 45%, transparent 75%); }
-    .langit-hero-isi { justify-content: flex-start; padding-right: 1.5rem; }
-  }
 }
 
 /* =========================================================================
@@ -231,7 +277,8 @@
 @layer components {
   .kepala-halaman { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: center; gap: 3.5rem; }
   .kepala-halaman.tanpa-visual { grid-template-columns: minmax(0, 1fr); }
-  .kepala-judul { margin-top: 1rem; max-width: 16ch; font-size: clamp(2.2rem, 4.2vw, 3.4rem); font-weight: 600; line-height: 1.05; font-stretch: var(--lebar-layar); letter-spacing: -0.035em; }
+  .kepala-catatan { margin: 0.85rem 0 0; font-size: 0.92rem; font-variant-numeric: tabular-nums; color: var(--text-faint); }
+  .kepala-judul { margin: 0; max-width: 16ch; font-size: clamp(2.2rem, 4.2vw, 3.4rem); font-weight: 600; line-height: 1.05; font-stretch: var(--lebar-layar); letter-spacing: -0.035em; }
   .kepala-lead { margin-top: 1.25rem; max-width: 56ch; font-size: 1.05rem; line-height: 1.65; color: var(--text-muted); }
   .kepala-visual { min-width: 0; display: flex; justify-content: center; }
   .kepala-visual .pf-mini { width: min(100%, 360px); }

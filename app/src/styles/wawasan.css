@@ -1,19 +1,17 @@
 /* =========================================================================
    Halaman modul: plat rasi, judul bernomor, lapis wawasan (Intinya, Kasus nyata,
    Tantangan), daftar isi bergaya lintasan, dan penomoran gambar ala buku teks.
-   Label bagian memakai huruf atlas (EB Garamond miring, kapital kecil) dengan garis
-   rambut yang memanjang, sama dengan label rasi di peta.
+   Huruf atlas (EB Garamond) hanya di plat peta; label bagian, nomor, dan waktu memakai
+   huruf antarmuka dengan angka tabular. Monospace hanya untuk kode.
    ========================================================================= */
 @layer components {
   .plat-modul { margin: 0 0 2.25rem; padding: 0.9rem 1rem 0.6rem; border-radius: var(--radius-xl); background: var(--pf-langit); }
-  .nama-rasi { font-family: var(--font-atlas); font-style: italic; font-size: 1.04rem; }
   .judul-modul { display: flex; flex-direction: column; gap: 0.55rem; font-size: clamp(2rem, 4.2vw, 3.15rem); font-weight: 600; line-height: 1.05; font-stretch: var(--lebar-layar); letter-spacing: -0.03em; }
-  .judul-modul-no { font-family: var(--font-mono); font-size: 0.95rem; font-weight: 600; letter-spacing: 0.01em; color: var(--primary); }
+  .judul-modul-no { font-size: 1.05rem; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: 0; font-stretch: 100%; color: var(--primary); }
 
   .label-atlas {
     display: flex; align-items: center; gap: 0.9rem; margin: 0;
-    font-family: var(--font-atlas); font-style: italic; font-weight: 500; font-size: 1.2rem;
-    font-variant-caps: all-small-caps; letter-spacing: 0.14em; color: var(--text-muted);
+    font-size: 1rem; font-weight: 600; letter-spacing: -0.005em; color: var(--text);
   }
   .label-atlas::after { content: ""; flex: 1; height: 1px; background: var(--border); }
 
@@ -32,8 +30,8 @@
   /* -------------------------------------------------------- Kasus nyata */
   .kasus { margin: 4.5rem 0 0; padding: 2.2rem 2.25rem 1.7rem; border-radius: var(--radius-xl); background: var(--pf-langit); border: 1px solid var(--border); }
   .kasus-atas { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.4rem 1rem; }
-  .kasus-jenis { font-family: var(--font-atlas); font-style: italic; font-weight: 500; font-size: 1.15rem; font-variant-caps: all-small-caps; letter-spacing: 0.14em; color: var(--text-muted); }
-  .kasus-tempat { font-family: var(--font-mono); font-size: 0.76rem; color: var(--text-faint); }
+  .kasus-jenis { font-size: 1rem; font-weight: 600; color: var(--text); }
+  .kasus-tempat { font-size: 0.82rem; font-variant-numeric: tabular-nums; color: var(--text-faint); }
   .kasus-judul { margin: 0.9rem 0 0; font-size: clamp(1.45rem, 2.4vw, 1.9rem); font-weight: 600; line-height: 1.2; letter-spacing: -0.03em; }
   .kasus-ringkas { margin: 0.9rem 0 0; max-width: 62ch; font-family: var(--font-read); font-size: 1.02rem; line-height: 1.7; color: var(--text-muted); }
   .kronologi { list-style: none; margin: 1.9rem 0 0; padding: 0 0 0 1.4rem; border-left: 1px solid var(--pf-garis-kuat); }
@@ -43,7 +41,7 @@
     content: ""; position: absolute; left: calc(-1.4rem - 4px); top: 0.32rem; width: 7px; height: 7px;
     border-radius: 9999px; background: var(--pf-langit); border: 1.5px solid var(--primary);
   }
-  .kronologi-waktu { display: block; font-family: var(--font-mono); font-size: 0.76rem; font-weight: 600; color: var(--primary); }
+  .kronologi-waktu { display: block; font-size: 0.82rem; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--primary); }
   .kronologi p { margin: 0.25rem 0 0; font-family: var(--font-read); font-size: 0.95rem; line-height: 1.6; color: var(--text); }
   .kasus-dua { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.75rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
   .kasus-dua p { margin: 0; font-family: var(--font-read); font-size: 0.95rem; line-height: 1.65; color: var(--text-muted); }
@@ -56,7 +54,7 @@
   .kasus-sumber ul { display: grid; gap: 0.25rem; list-style: none; margin: 0; padding: 0; }
   .kasus-sumber a { color: var(--text); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, var(--primary) 50%, transparent); }
   .kasus-sumber a:hover { text-decoration-color: var(--primary); }
-  .kasus-diperiksa { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-faint); }
+  .kasus-diperiksa { font-size: 0.78rem; font-variant-numeric: tabular-nums; color: var(--text-faint); }
 
   /* ---------------------------------------------------------- Tantangan */
   .tantangan { margin: 4rem 0 0; }
@@ -64,7 +62,7 @@
   .tantangan-saran { margin: 0.6rem 0 0; font-size: 0.85rem; color: var(--text-faint); }
   .tantangan-petunjuk { display: grid; gap: 0.6rem; list-style: none; margin: 1.25rem 0 0; padding: 0; }
   .tantangan-petunjuk li { padding: 0.85rem 1rem; border-radius: var(--radius-md); background: var(--surface-2); font-family: var(--font-read); font-size: 0.95rem; line-height: 1.6; color: var(--text); }
-  .tantangan-no { margin-right: 0.35rem; font-family: var(--font-mono); font-size: 0.74rem; font-weight: 600; color: var(--primary); }
+  .tantangan-no { margin-right: 0.35rem; font-size: 0.82rem; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--primary); }
   .tantangan-jawaban { margin-top: 1.25rem; padding: 1.25rem 1.4rem; border-radius: var(--radius-md); border: 1px solid var(--border); background: var(--surface); font-family: var(--font-read); font-size: 0.97rem; line-height: 1.7; color: var(--text); }
   .tantangan-jawaban > :first-child { margin-top: 0; }
   .tantangan-jawaban > :last-child { margin-bottom: 0; }
@@ -94,7 +92,7 @@
   /* --------------------------------------- Gambar bernomor di dalam materi */
   .prose { counter-reset: gambar; }
   .prose .dg-fig { position: relative; counter-increment: gambar; }
-  .prose .dg-cap-t::before { content: "Gambar " counter(gambar) ". "; font-family: var(--font-atlas); font-style: italic; font-weight: 500; letter-spacing: 0; color: var(--text-faint); }
+  .prose .dg-cap-t::before { content: "Gambar " counter(gambar) ". "; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: 0; color: var(--text-faint); }
 
   /* ----------------------------------------- Daftar isi bergaya lintasan */
   .lintasan { position: relative; padding-left: 0.9rem; }

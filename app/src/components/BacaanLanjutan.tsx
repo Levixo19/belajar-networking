@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { muatPustaka, bacaanUntukTahap, type ButirPustaka } from '../lib/pustaka'
 import { JENIS } from '../lib/pustakaTopik'
-import { IconArrowRight, IconBook } from './icons'
+import { IconBook } from './icons'
 
 /** 4-6 tautan Pustaka untuk tahap sebuah modul. Data dimuat malas; selama memuat tidak ada yang digambar. */
 export default function BacaanLanjutan({ tahap, judulTahap }: { tahap: string; judulTahap: string }) {
@@ -23,7 +23,7 @@ export default function BacaanLanjutan({ tahap, judulTahap }: { tahap: string; j
           <IconBook size={18} className="text-faint" /> Bacaan lanjutan
         </h2>
         <Link to={`/pustaka?tahap=${encodeURIComponent(tahap)}`} className="link-arrow text-[13.5px]">
-          Semua bacaan {judulTahap} <IconArrowRight size={13} />
+          Semua bacaan {judulTahap}
         </Link>
       </div>
       <ul className="mt-4 grid gap-px overflow-hidden rounded-[var(--radius)] border border-app bg-[var(--border)] sm:grid-cols-2">
@@ -32,7 +32,7 @@ export default function BacaanLanjutan({ tahap, judulTahap }: { tahap: string; j
             <a href={e.url} target="_blank" rel="noopener noreferrer" className="group block h-full p-4 transition-colors hover:bg-[var(--surface-2)]">
               <span className="block text-[14.5px] font-medium leading-snug group-hover:underline group-hover:underline-offset-2">{e.judul}</span>
               <span className="mt-1.5 block text-[12.5px] text-faint">
-                {JENIS[e.jenis] || e.jenis} · {e.bahasa === 'id' ? 'Indonesia' : 'Inggris'} · {new URL(e.url).hostname.replace(/^www\./, '')}
+                {JENIS[e.jenis] || e.jenis}, berbahasa {e.bahasa === 'id' ? 'Indonesia' : 'Inggris'}, di {new URL(e.url).hostname.replace(/^www\./, '')}
               </span>
               <span className="sr-only">(membuka situs lain)</span>
             </a>

@@ -2,7 +2,6 @@ import { useParams, Link, Navigate } from 'react-router-dom'
 import { GAMES } from '../games'
 import { useStore } from '../lib/store'
 import DetailShell from '../components/DetailShell'
-import { IconArrowRight } from '../components/icons'
 import KepalaHalaman from '../components/KepalaHalaman'
 import Lencana from '../components/Lencana'
 
@@ -35,13 +34,12 @@ export default function ArenaPage() {
         </p>
       </KepalaHalaman>
 
-      <ol className="road stagger mt-16 border-t border-app">
+      <ol className="road mt-16 border-t border-app">
         {GAMES.map(g => {
           const best = store.games[g.slug] || 0
           return (
             <li key={g.slug}>
-              <Link to={`/arena/${g.slug}`} className="road-item group !grid-cols-[4.5rem_minmax(0,1fr)_auto] !gap-6 !py-6">
-                <Lencana benih={'arena:' + g.slug} nama={g.name} ukuran={64} nyala={!!best} />
+              <Link to={`/arena/${g.slug}`} className="road-item group !grid-cols-[minmax(0,1fr)_auto] !gap-6 !py-6">
                 <span className="min-w-0">
                   <span className="block text-[18px] font-medium tracking-[-0.02em]">{g.name}</span>
                   <span className="mt-1 block text-[14px] text-muted">{g.desc}</span>
@@ -53,7 +51,6 @@ export default function ArenaPage() {
                     </span>
                     <span className="block text-[12px] text-faint">rekor</span>
                   </span>
-                  <span className="btn-bubble text-faint group-hover:text-[var(--text)]"><IconArrowRight size={16} /></span>
                 </span>
               </Link>
             </li>

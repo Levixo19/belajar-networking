@@ -5,6 +5,8 @@ import { getModule } from '../lib/content'
 import { linkModuleRefs } from '../lib/modRefs'
 import { Device } from '../diagrams/primitives'
 import Lencana from '../components/Lencana'
+import BumiMalam from '../components/BumiMalam'
+import { TandaBintang } from '../components/Planisfer'
 import { IconArrowLeft, IconArrowRight, IconCheck, IconTerminal } from '../components/icons'
 
 // Misi troubleshooting: laporan gangguan yang dipecahkan dengan menjalankan perintah
@@ -19,6 +21,8 @@ export interface Misi {
   briefingHtml: string; topologi: { simpul: Simpul[]; sisi: { dari: string; ke: string; label?: string }[] }
   langkah: Langkah[]; dugaan: Dugaan[]; pembahasanHtml: string
   perbaikan: { penjelasan: string; perintah: string }; sumber: { judul: string; url: string }[]
+  /** Kota tempat gejala dilaporkan (titik di peta Indonesia malam). */
+  lokasi?: { kota: string; lat: number; lon: number }
 }
 
 const TINGKAT = { pemula: 1, menengah: 2, lanjut: 3 } as const
@@ -54,23 +58,24 @@ function TakDikenal() {
 }
 
 /* ------------------------------------------------------------------ Daftar */
+/** Buku log gangguan: kota, laporan, tingkat, status. Lencana TIDAK tampil di sini; lencana
+ *  adalah hadiah yang muncul sesudah misi dipecahkan, di halaman misinya sendiri. */
 function DaftarMisi({ data }: { data: Misi[] }) {
   const s = useStore()
   const [saring, setSaring] = useState<'semua' | Misi['tingkat']>('semua')
   const tampil = data.filter(m => saring === 'semua' || m.tingkat === saring)
-  const selesai = data.filter(m => (s.games[slug(m.id)] || 0) > 0).length
+  const dipecahkan = useMemo(() => new Set(data.filter(m => (s.games[slug(m.id)] || 0) > 0).map(m => m.id)), [data, s.games])
   return (
     <div className="mx-auto max-w-[1280px] px-6 pb-28 pt-14 lg:px-8">
       <header className="grid gap-10 lg:grid-cols-12 lg:items-end">
-        <div className="lg:col-span-7">
-          <p className="log-waktu">{data.length} laporan gangguan, {selesai} sudah Anda pecahkan</p>
-          <h1 className="langit-judul !max-w-[18ch]">Misi troubleshooting</h1>
-        </div>
+        <h1 className="kepala-judul lg:col-span-7 !max-w-[18ch]">Misi troubleshooting</h1>
         <p className="max-w-[46ch] text-[15.5px] leading-relaxed text-muted lg:col-span-5">
-          Setiap misi dimulai dari laporan pengguna. Jalankan perintah di perangkat yang tepat, baca keluarannya,
-          lalu tentukan akar masalahnya. Perintah yang tidak membantu mengurangi skor, jadi pikirkan dulu sebelum mengetik.
+          Setiap misi dimulai dari laporan pengguna di sebuah kota. Jalankan perintah di perangkat yang tepat, baca
+          keluarannya, lalu tentukan akar masalahnya. Perintah yang tidak membantu mengurangi skor, jadi pikirkan dulu sebelum mengetik.
         </p>
       </header>
+
+      <BumiMalam misi={data} dipecahkan={dipecahkan} className="mt-12" />
 
       <div className="mt-12 flex flex-wrap items-center gap-2" role="group" aria-label="Saring menurut tingkat">
         {(['semua', 'pemula', 'menengah', 'lanjut'] as const).map(t => (
@@ -79,29 +84,35 @@ function DaftarMisi({ data }: { data: Misi[] }) {
             {t === 'semua' ? 'Semua' : LABEL_TINGKAT[t]} <span className="tabular-nums text-faint">{t === 'semua' ? data.length : data.filter(m => m.tingkat === t).length}</span>
           </button>
         ))}
+        <span className="ml-auto text-[13px] tabular-nums text-faint">{dipecahkan.size} dari {data.length} sudah dipecahkan</span>
       </div>
 
-      <ol className="misi-kisi mt-8">
-        {tampil.map(m => {
-          const skor = s.games[slug(m.id)] || 0
-          const no = data.indexOf(m) + 1
-          return (
-            <li key={m.id}>
-              <Link to={`/misi/${m.id}`} className="misi-kartu group">
-                <Lencana benih={m.id} nama={namaLencana(m.id)} tingkat={TINGKAT[m.tingkat]} kode={`MISI ${String(no).padStart(2, '0')}`} ukuran={84} nyala={skor > 0} />
-                <span className="min-w-0">
-                  <span className="misi-kartu-atas">
-                    <span>{LABEL_TINGKAT[m.tingkat]}</span>
-                    {skor > 0 && <span className="misi-skor"><IconCheck size={12} /> Skor {skor}</span>}
+      <div className="buku-log mt-6">
+        <div className="buku-log-kepala" aria-hidden="true">
+          <span>Kota</span><span>Laporan</span><span>Tingkat</span><span>Status</span>
+        </div>
+        <ol>
+          {tampil.map(m => {
+            const skor = s.games[slug(m.id)] || 0
+            return (
+              <li key={m.id}>
+                <Link to={`/misi/${m.id}`} className="buku-log-baris">
+                  <span className="buku-log-kota">{m.lokasi?.kota ?? 'Tanpa kota'}</span>
+                  <span className="min-w-0">
+                    <span className="buku-log-judul">{m.judul}</span>
+                    <span className="buku-log-gejala">{m.gejala}</span>
                   </span>
-                  <span className="misi-kartu-judul">{m.judul}</span>
-                  <span className="misi-kartu-gejala">{m.gejala}</span>
-                </span>
-              </Link>
-            </li>
-          )
-        })}
-      </ol>
+                  <span className="buku-log-tingkat">{LABEL_TINGKAT[m.tingkat]}</span>
+                  <span className={`buku-log-status ${skor ? 'menyala' : ''}`}>
+                    <TandaBintang status={skor ? 'tuntas' : 'baru'} size={13} />
+                    {skor ? <>Dipecahkan, skor {skor}</> : 'Menunggu'}
+                  </span>
+                </Link>
+              </li>
+            )
+          })}
+        </ol>
+      </div>
     </div>
   )
 }
@@ -130,6 +141,7 @@ function PemainMisi({ m, berikut }: { m: Misi; berikut: Misi | null }) {
   useEffect(() => { const el = konsol.current; if (el) el.scrollTop = el.scrollHeight }, [jalan.length])
   useEffect(() => { if (beres && bahas.current) linkModuleRefs(bahas.current) }, [beres])
 
+  const pernah = s.games[slug(m.id)] || 0
   const pengecoh = jalan.filter(id => !m.langkah.find(l => l.id === id)?.berguna).length
   const jalankan = (id: string) => { if (!jalan.includes(id) && !beres) setJalan(j => [...j, id]) }
   const kunci = () => {
@@ -152,13 +164,8 @@ function PemainMisi({ m, berikut }: { m: Misi; berikut: Misi | null }) {
       <div className="mt-6 grid gap-10 lg:grid-cols-12">
         {/* Kiri: laporan dan topologi */}
         <aside className="lg:col-span-5">
-          <div className="flex items-start gap-5">
-            <Lencana benih={m.id} nama={namaLencana(m.id)} tingkat={TINGKAT[m.tingkat]} ukuran={92} nyala={!!beres} />
-            <div className="min-w-0">
-              <p className="log-waktu">{LABEL_TINGKAT[m.tingkat]}</p>
-              <h1 className="mt-1 text-[clamp(1.6rem,2.4vw,2.1rem)] font-semibold leading-[1.12] tracking-[-0.03em]">{m.judul}</h1>
-            </div>
-          </div>
+          <h1 className="text-[clamp(1.6rem,2.4vw,2.1rem)] font-semibold leading-[1.12] tracking-[-0.03em]">{m.judul}</h1>
+          <p className="misi-meta">{m.lokasi ? `${m.lokasi.kota}, ` : ''}tingkat {LABEL_TINGKAT[m.tingkat].toLowerCase()}{pernah ? `. Sudah pernah Anda pecahkan, skor terbaik ${pernah}` : ''}</p>
           <section className="misi-tiket mt-8" aria-labelledby="judul-tiket">
             <h2 id="judul-tiket" className="label-atlas">Laporan</h2>
             <div className="misi-tiket-isi" dangerouslySetInnerHTML={{ __html: m.briefingHtml }} />
@@ -250,6 +257,8 @@ function PemainMisi({ m, berikut }: { m: Misi; berikut: Misi | null }) {
           {beres && (
             <section id="pembahasan" ref={bahas} className="misi-pembahasan pop scroll-mt-24" aria-labelledby="judul-pembahasan">
               <div className="misi-hasil">
+                {/* Lencana adalah hadiah: muncul sesudah misi dipecahkan, cukup besar untuk dibaca. */}
+                <Lencana benih={m.id} nama={namaLencana(m.id)} tingkat={TINGKAT[m.tingkat]} ukuran={132} nyala />
                 <span className="misi-hasil-skor">{beres.skor}</span>
                 <span>
                   <span className="block font-semibold">Misi selesai.</span>
@@ -267,7 +276,7 @@ function PemainMisi({ m, berikut }: { m: Misi; berikut: Misi | null }) {
               <h3 className="kasus-sub mt-8">Pelajari di modul</h3>
               <ul className="mt-2 grid gap-1.5">
                 {m.modul.map(id => { const mod = getModule(id); return mod && (
-                  <li key={id}><Link to={`/m/${encodeURI(id)}`} className="link-arrow">{mod.num} {mod.title} <IconArrowRight size={14} /></Link></li>
+                  <li key={id}><Link to={`/m/${encodeURI(id)}`} className="misi-modul"><span className="tabular-nums text-faint">{mod.num}</span> {mod.title}</Link></li>
                 ) })}
               </ul>
               {m.sumber.length > 0 && (

@@ -8,7 +8,7 @@ import ProfileMenu from './ProfileMenu'
 import ThemeToggle from './ThemeToggle'
 import Logo from './Logo'
 import Planisfer from './Planisfer'
-import { IconChevron, IconCheck, IconSearch, IconArrowRight, StageIcon } from './icons'
+import { IconChevron, IconCheck, IconSearch, StageIcon } from './icons'
 
 const TUJUAN = [
   { to: '/', label: 'Dasbor', end: true },
@@ -123,7 +123,7 @@ export default function PilAtas({ onSearch }: { onSearch: () => void }) {
                 {learnModules.filter(m => store.progress[m.id] === 'done').length} dari {learnModules.length} modul tuntas
               </span>
               <Link to={`/m/${encodeURI(lanjut.id)}`} className="link-arrow">
-                Lanjut ke {lanjut.num ? `modul ${lanjut.num}` : lanjut.title} <IconArrowRight size={14} />
+                Lanjut ke {lanjut.num ? `modul ${lanjut.num}` : lanjut.title}
               </Link>
             </div>
           </div>

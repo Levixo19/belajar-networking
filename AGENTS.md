@@ -1,6 +1,6 @@
 # Catatan untuk agen
 
-Kurikulum jaringan komputer berbahasa Indonesia (`materi/`, 149 modul dalam 27
+Kurikulum jaringan komputer berbahasa Indonesia (`materi/`, 151 modul dalam 27
 tahap) plus aplikasi belajar di `app/`: React 19 + Vite 8 + Tailwind v4 +
 TypeScript, server Express + MongoDB, HashRouter. Pemiliknya pelajar yang memakai
 aplikasi ini **hanya di laptop**.
@@ -37,10 +37,16 @@ Rincian ada di `docs/menjalankan-aplikasi.md`.
 | `app/scripts/build-content.mjs` | `materi/` → `src/generated/curriculum.json`; `data/profesi/*.json` → `src/generated/profesi.json` (divalidasi ketat) |
 | `app/data/enrich.json` | Penempatan diagram/foto/kuis/alat/game per modul, tanpa mengotori `.md` |
 | `app/data/profesi/*.json` | 32 profil profesi per rumpun, ditulis tangan, divalidasi build |
+| `app/data/kasus/*.json` | Lapis wawasan per modul: Intinya, Kasus nyata bersumber, Tantangan. Divalidasi build |
+| `app/data/misi/*.json` | 24 misi troubleshooting: topologi, perintah, keluaran, dugaan, kota. Divalidasi build |
+| `app/data/langit/bintang-hyg.json` | Bintang HYG v4.4 untuk langit planisfer. CC BY-SA 4.0, berkas sendiri |
+| `app/scripts/cek-suntingan-materi.mjs` | Penjaga suntingan GAYA materi terhadap `HEAD` (lihat Konten dan data) |
 | `app/data/photos.json` | Katalog foto lokal di `app/public/img/` beserta kredit |
 | `app/server/app.mjs` | REST API + tiga lapis penjagaan. Dipisah dari `listen` supaya bisa dites |
 | `app/server/index.mjs` | `listen` di 127.0.0.1 saja |
-| `app/src/lib/` | Logika murni (`srs`, `profesi`, `content`, `search`) + `store` (state + sinkron API) |
+| `app/src/lib/` | Logika murni (`srs`, `profesi`, `content`, `search`, `langit`, `langitNyata`) + `store` (state + sinkron API) |
+| `components/Planisfer.tsx` | Peta langit kurikulum (penuh, plat, mini), langit nyata, lensa, penyalaan bintang |
+| `components/BumiMalam.tsx` | Indonesia malam: kota-kota misi, peta sisipan Jawa dan Bali |
 | `app/src/pages/`, `components/` | Layar dan komponen |
 | `app/src/diagrams/` | Diagram SVG React; registri di `diagrams/index.tsx`, ID dipakai `enrich.json` |
 | `app/src/lib/motion.ts` | SATU-SATUNYA pintu GSAP (`gsap.matchMedia` + `MOTION_OK`) |
@@ -307,7 +313,8 @@ ukuran huruf, `KIRI`, `KOLOM`, atau label diubah.
 
 Arah, riset, dan angka kontrasnya di `reports/rencana-desain-2026-10-15.md`.
 
-**Cangkang = satu pil kaca melayang** (`components/PilAtas.tsx`). Bilah atas, menu
+**Cangkang = satu pil melayang** (`components/PilAtas.tsx`), panel padat bergaris tepi
+TUNGGAL: kaca berblur dan cincin ganda sudah dicabut (2026-10-17). Bilah atas, menu
 burger, dan tab bar bawah sudah dicabut (aplikasi dipakai hanya di laptop); jangan
 dikembalikan. Semua tujuan, cari, XP, tema, dan profil tinggal di pil. Butir aktif
 ditandai `is-on` DAN `aria-current`, keduanya dipasang dan dilepas; di halaman modul
@@ -325,12 +332,17 @@ tangan: di tema gelap aksennya terang dan teksnya harus gelap.
 durasi `--padam` di keadaan biasa, `transition-duration: 0s` di `:hover`
 (`.btn`, `.pil-item`, `.hover-padam`, `.tile`). Tekan: scale .98 dalam 100 ms.
 
-**Huruf: Space Grotesk untuk judul dan antarmuka, Atkinson untuk prosa.** Preferensi
+**Huruf: Archivo Variable (sumbu lebar) untuk judul dan antarmuka, Atkinson untuk
+prosa, EB Garamond HANYA di dalam peta dan plat, JetBrains Mono HANYA untuk kode dan
+keluaran perintah.** Space Grotesk dicabut 2026-10-17: Anthropic sendiri menyebutnya
+pilihan konvergen model (riset di `reports/riset-desain-2026-10-17.md`). Nomor modul,
+waktu, dan angka instrumen memakai angka tabular Archivo, bukan monospace. Preferensi
 baca (`data-ba-font`) hanya mengubah `--font-read`; dulu ia ikut mengganti font
 antarmuka, sehingga memilih Lexend untuk membaca mengubah tombol dan navigasi juga.
 
 **Token warna lolos AA di kedua tema, dan itu dites** (`tests/kontras.test.mjs`
-membaca `index.css` langsung, mengomposisikan rgba di atas latarnya). Saat menulis
+membaca `index.css` DAN `styles/langit.css` langsung, mengomposisikan rgba di atas
+latarnya; token peta `--pf-*` dulu tidak ikut dites dan bintang "belum" lolos di 2,71:1). Saat menulis
 tes ini dua token terang ternyata meleset tipis (`--accent` 4,42, `--border-control`
 2,96 di surface-2). Mengubah token berarti tes ini harus tetap hijau.
 
@@ -339,25 +351,30 @@ tes ini dua token terang ternyata meleset tipis (`--accent` 4,42, `--border-cont
 pertamanya menemukan 21 aturan yatim dan 7 kelas tanpa gaya, termasuk dua bug
 sungguhan: diagram domain broadcast memakai `r-b` yang tidak pernah didefinisikan
 (dua VLAN tampil sama warnanya, padahal itu inti diagramnya), dan animasi `.pop` yang
-dipakai kuis tidak pernah ada. Kelas yang cuma jadi kait selektor JS (`.pd-packet`,
-`.scrub-text`) sah tanpa aturan; kelas dari highlight.js dikecualikan.
+dipakai kuis tidak pernah ada. Kelas yang cuma jadi kait selektor JS (`.pd-packet`)
+sah tanpa aturan; kelas dari highlight.js dikecualikan.
 
 **Dialog = `useDialogFokus`** (`lib/fokus.ts`): fokus masuk, Tab berputar di dalam,
 Escape menutup, fokus kembali ke pemicunya. Dipakai palet, menu profil, mega-menu
 Kurikulum, dan `Lightbox` (learn.tsx, satu komponen untuk foto dan diagram). Lapisan
 baru yang menutupi halaman wajib memakainya.
 
-**Dasbor punya dua keadaan.** Profil baru (XP 0 dan nol modul tuntas) mendapat hero
-dengan satu saran + semua tahap sebagai ubin yang bisa dibandingkan, bukan katalog
-nol persen. Profil berjalan mendapat bento 12 kolom `grid-flow-dense` (7x2 + 5x1 +
-5x1, nol sel kosong). Angka di ubin dihitung dari kurikulum, desimal memakai koma
-(`toLocaleString('id')`).
+**Dasbor = satu plat atlas** (lihat Fase 7): planisfer di tengah, kartus di sudut plat.
+Profil baru (XP 0 dan nol modul tuntas) mendapat kartus judul ("Mulai dari sini") dan
+legenda; profil berjalan juga mendapat kartus instrumen. Angka dihitung dari
+kurikulum, desimal memakai koma (`toLocaleString('id')`).
 
-**Gerak gulir Dasbor** (`useGSAP` + `gsap.matchMedia(MOTION_OK)`): kalimat menyala per
-kata lewat SplitText, tumpukan kartu cara belajar. Tumpukannya `position: sticky`
-(CSS), GSAP hanya mengecilkan kartu yang tertimpa dan menaikkan `--redup` (lapisan
-`::after` berwarna `--bg`). Jangan menganimasikan `filter` dari `none`: hasilnya kartu
-abu kotor, sudah pernah terjadi.
+**Tidak ada gerak gulir dan tidak ada pemunculan per bagian.** Teks menyala per kata
+(SplitText), tumpukan kartu, carousel, `.reveal` (animation-timeline: view), `.stagger`,
+dan `fade-up` tingkat halaman dicabut 2026-10-17: semuanya resep skill `gpt-taste`, dan
+`.reveal` membuat bagian yang belum digulir tetap transparan (melanggar "keadaan akhir =
+keadaan alami"). Satu momen gerak pembuka per halaman cukup; selebihnya gerak hanya
+menjawab tindakan (menu, dialog, langkah kuis). Jangan menganimasikan `filter` dari
+`none`: hasilnya kartu abu kotor, sudah pernah terjadi.
+
+**Panah hanya untuk arah sungguhan**: sebelumnya/berikutnya, kembali, penanda pilihan
+di palet perintah, arah langkah jalur karier, dan penanda tautan luar. Panah di ujung
+tombol dan tautan biasa (dulu `.btn-bubble`, 35 rujukan) adalah krom templat.
 
 **Fallback SPA hanya untuk path tanpa ekstensi** (`server/app.mjs`). Aset yang tidak
 ada (tab lama sesudah build ulang) dijawab 404, bukan `index.html` yang membuat
@@ -365,14 +382,10 @@ browser melapor galat MIME yang menyesatkan.
 
 ### Gambar dan bentuk (Fase 5, 2026-10-15)
 
-**Sampul generatif** (`lib/sampul.tsx`): SVG yang dibangkitkan dari benih teks
-(FNV-1a + mulberry32), lima ragam bertema jaringan (topologi, kisi, gelombang, paket,
-mesh), rona per band/tahap (`ronaTahap`) atau per rumpun (`RONA_RUMPUN`), tanda per
-tahap ("L2", "/24", "BGP"). Benih sama = gambar sama, jadi JANGAN memakai benih yang
-berubah tiap render (tanggal, indeks acak). Warna lewat `var()` dan
-`--sampul-s/--sampul-l` (tema terang digelapkan, bukan dipucatkan). Sampul selalu
-`aria-hidden`, dan teks di atasnya berdiri di atas tirai pekat (akordeon: tirai ke
-`--surface`; hero: tirai gelap). Satu sampul per TAHAP di kepala halaman modul.
+**Sampul generatif (`lib/sampul.tsx`) sudah dicabut** (2026-10-17). Kepala modul memakai
+plat rasi Planisfer, yaitu potongan peta yang sama dengan dasbor. Prinsip benihnya
+tetap berlaku untuk Planisfer dan Lencana: benih sama = gambar sama, jadi JANGAN memakai
+benih yang berubah tiap render (tanggal, indeks acak).
 
 **Diagram SVG menggantikan ASCII lewat `enrich.json`, bukan lewat `.md`.**
 `{ type: "diagram", id, after, ganti: true }` membuat build MENGGANTI figur ASCII
@@ -392,13 +405,20 @@ berdiagram baru, 1 tumpang-tindih nyata (ARP spoofing, sudah diperbaiki).
 **Foto asli tinggal di `app/public/img/` dengan kredit di `data/photos.json`**, diambil
 dari Wikimedia Commons lewat API (`extmetadata`: lisensi dan pembuat dibaca dari
 metadata, bukan diketik), diunduh pada lebar 1.920 px, dan hanya CC BY, CC BY-SA, CC0,
-atau domain publik. Foto yang tampil di halaman wajib menampilkan kreditnya.
+atau domain publik. Foto yang tampil di halaman wajib menampilkan kreditnya. Satu
+pengecualian sumber: `indonesia-malam.jpg` (NASA GIBS `VIIRS_Black_Marble` 2016, domain
+publik, 2.400 x 950 px, kredit EO dan kalimat pengakuan GIBS persis) membawa `batas`
+equirectangular di `photos.json`; titik kota hanya benar bila wadahnya berasio sama.
+Keterangan Lightbox berada DI BAWAH gambar (dulu melayang dan menutupi sampai 8% foto).
 
 ### Kurikulum: tahap dan modul baru (Fase 6, 2026-10-15)
 
 **Tahap baru wajib didaftarkan di EMPAT tempat**: `STAGE_META` (`build-content.mjs`,
-judul + band), `TANDA` (`lib/sampul.tsx`), `STAGE` (`components/icons.tsx`), dan
-`TOPIK_TAHAP` (`lib/pustakaTopik.ts`). Yang terakhir dijaga tes (setiap tahap belajar
+judul + band), `KODE_TAHAP` (`components/Planisfer.tsx`, kode di cincin jam), `STAGE`
+(`components/icons.tsx`), dan `TOPIK_TAHAP` (`lib/pustakaTopik.ts`); judul panjang juga
+butuh nama pendek di `NAMA_PETA` (`lib/langit.ts`). Planisfer dirancang untuk TEPAT 24
+tahap bernomor (00-23), satu per jam asensio rekta; tahap bernomor ke-25 tidak punya
+jam, dan `tests/langit.test.mjs` akan merah. Yang terakhir dijaga tes (setiap tahap belajar
 4-6 bacaan lanjutan) dan validasi build (`TOPIK_TAHAP` yang menunjuk tahap tanpa modul
 menggagalkan build). Dua yang tengah tidak dijaga apa pun: tanpa keduanya tahap jatuh
 ke ikon dan tanda bawaan tanpa ada yang protes. Tahap 23 "Jalur Vendor Lanjutan" ada
@@ -431,3 +451,84 @@ dalam `Box` bersub (huruf tidak bersentuhan, dicek di tangkapan layar), dan lemb
 kontak menemukan 3 masalah yang tidak tertangkap pemeriksa: label panah menempel
 batas panel, panah yang berakhir di ruang kosong, label di atas garis. Pemeriksa
 otomatis tidak menggantikan melihat gambarnya.
+
+### Langit, Bumi, wawasan, dan misi (Fase 7, 2026-10-17)
+
+Arah dan kritiknya di `reports/riset-desain-2026-10-17.md` (bagian 6): "Langit di atas,
+Bumi di bawah". Kurikulum adalah langit (planisfer), jaringan Indonesia adalah Bumi
+(lampu malam, kota misi). Progres yang sama menyalakan keduanya dengan warna yang sama.
+
+**Planisfer dihitung dari kurikulum** (`lib/langit.ts`): 24 tahap bernomor = 24 jam
+asensio rekta (15 derajat per tahap, 00 di puncak, searah jarum jam), modul = bintang
+yang besarnya mengikuti jumlah kata, lintasan belajar = spiral satu putaran, garis rasi
+= pohon rentang minimum (tidak pernah bersilang). Deterministik: dasbor, kepala modul,
+dan menu Kurikulum menggambar langit yang sama. Dijaga `tests/langit.test.mjs`.
+
+**Status bintang dikodekan dengan BENTUK, bukan warna saja**: lingkar kosong = belum,
+setengah terisi = dibaca, penuh berjari empat dalam `--pf-lampu` = tuntas. Di tema gelap
+lampu dan bintang hanya berbeda 1,49:1, jadi pembedanya bentuk. Legenda, daftar, kartu,
+dan kota di peta Bumi memakai bentuk yang sama (`TandaBintang`).
+
+**Tidak ada gerak tanpa henti di peta** (WCAG 2.2.2). Kelip bintang dan cincin berdenyut
+sudah dicabut. Bintang yang tuntas sejak langit terakhir dilihat menyala SEKALI saat
+dasbor dibuka (catatan per profil di localStorage `bn-langit:<profileId>`; tanpa catatan
+tidak ada yang dinyalakan), lalu diam. Penyalaan ada di timeline yang SAMA dengan intro
+dan memakai `fromTo` berkeadaan akhir tertulis: dua `.from()` pada elemen yang sama, dibuat
+pada tick yang sama, membuat yang kedua merekam skala 0 sebagai tujuan dan bintangnya
+lenyap. Modul berikutnya ditandai cincin diam dan label lensa "Anda di sini".
+
+**Langit di belakang rasi adalah langit sungguhan, bukan titik acak** (`lib/langitNyata.ts`
++ `data/langit/bintang-hyg.json`, HYG v4.4, CC BY-SA 4.0, berkas sendiri, dimuat malas,
+atribusi di `NOTICE.md` dan di kartus legenda). Posisi J2000; yang terang adalah bintang
+yang sedang di atas cakrawala untuk jam laptop di kota zona waktunya (WIB Jakarta, WITA
+Makassar, WIT Jayapura), dan garis titik-strip adalah cakrawalanya. Kartus menulis epoch
+("Langit di atas Makassar, ...") karena langitnya memang dihitung untuk saat itu. Peta ini
+langit sebagaimana terlihat dari Bumi, BUKAN cermin (dijaga tes "tidak tercermin" di
+`tests/langit-nyata.test.mjs`); jangan menulis "cermin" di antarmuka.
+
+**Dasbor adalah satu plat atlas**: peta di tengah, kartus bergaris rangkap di sudut
+seperti plat Cellarius (judul dan langkah berikutnya, instrumen, cara membaca). Tidak ada
+tirai gradien di atas peta dan tidak ada judul slogan; H1 adalah keadaan pembelajar
+("Berikutnya: 02.3 Serat Optik"). Satu tombol aksen; klik bintang adalah jalan kedua. Di
+bawah 1100 px kartus turun di bawah peta.
+
+**Bumi di bawah** (`components/BumiMalam.tsx`, di kepala Misi dan di dasbor): setiap misi
+membawa `lokasi` (kota tempat gejala dirasakan, koordinat Wikidata P625, CC0), divalidasi
+build terhadap kotak Indonesia supaya lintang dan bujur yang tertukar ketahuan. Kota yang
+berjarak < 6 unit digabung (Sleman dan Yogyakarta). Jawa dan Bali tampil di PETA SISIPAN
+1,8 kali: lima kota Jawa tidak muat dilabeli di peta utama tanpa garis yang saling
+menyilang. Pemeriksaan browser 2026-10-17: 0 label bertumpuk dari 16.
+
+**Kursor bidik hanya menulis `transform`** (titik pusat dan empat sudut), pelembutannya
+berbasis waktu (sama cepat di 60 dan 120 Hz), sasaran diukur saat berganti, digulir, atau
+jendela berubah ukuran, dan fokus papan ketik dikunci bidikan yang sama. Kursor sistem
+tidak pernah disembunyikan kecuali di atas peta, tempat lensa menggantikannya. Tanpa
+`mix-blend-mode`: di atas ultramarin hasilnya kekuningan.
+
+**Metafora untuk gambar, kata biasa untuk kontrol.** "Rasi" dan "bintang" boleh di peta,
+plat, dan keterangannya; remah navigasi, judul bagian, dan tombol memakai nama tahap dan
+modul ("Layer Fisik", "Tahap 02"), bukan "Rasi Layer Fisik". Sapaan selalu "Anda".
+
+**Lapis wawasan (`data/kasus/*.json`) dan misi (`data/misi/*.json`) divalidasi build, dan
+data rusak MENGGAGALKAN build** (`tests/wawasan.test.mjs`): kasus nyata tanpa sumber https
+bukan kasus nyata; domain penyingkat tautan dan cermin bajakan ditolak; `kapan` dan
+`diperiksa` tidak boleh di masa depan (tanggal lokal); satu modul hanya boleh diisi satu
+berkas; misi wajib tepat satu dugaan benar, minimal tiga langkah berguna dan dua pengecoh,
+setiap langkah di perangkat yang ada di topologi. Prosa tanpa em-dash, en-dash, dan
+emoji; `keluaran` dan `perintah` misi boleh memuat apa saja yang dicetak perangkat
+sungguhan. Lencana misi muncul SESUDAH dipecahkan, besar, di halaman misinya; daftar misi
+adalah buku log (kota, laporan, tingkat, status), bukan kisi kartu berlencana.
+
+**Format materi**: H1 `# 05.2 TCP` (tanpa tanda pisah), `**Berikutnya:** \`id\`. Teaser.`,
+callout lewat alert GitHub (`> [!WARNING]` Perhatian, `[!TIP]` Tips, `[!CAUTION]` Hindari,
+`[!NOTE]` Catatan, `[!IMPORTANT]` Penting). Prosa tanpa em-dash, en-dash, dan emoji;
+blok kode dibiarkan apa adanya. Daftar di prosa memakai `list-style` eksplisit karena
+preflight Tailwind mematikannya (dulu semua daftar modul tampil tanpa bullet).
+
+**Penjaga suntingan GAYA** (`scripts/cek-suntingan-materi.mjs <berkas>`, terhadap `HEAD`
+atau `BN_REF`): blok kode, kode sebaris, tautan, judul, multiset angka, jumlah baris tabel,
+alert, details, dan baris Prasyarat/Tujuan/Berikutnya harus sama; jumlah kata 0,85-1,08
+kali aslinya; prosa tanpa em-dash, en-dash, emoji. Pagar kode yang menempel pada penanda
+daftar (`4. ```json`) dikenali; versi pertama melewatkannya dan menukar prosa dengan kode
+di tujuh berkas. Koreksi ISI (angka, rujukan, kode) memang membuat penjaga GAGAL; itu
+bukan alasan menolak koreksi, cuma tanda bahwa suntingannya bukan sekadar gaya.

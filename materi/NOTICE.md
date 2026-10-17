@@ -31,6 +31,14 @@ Pustaka hanya menyimpan judul, alamat, dan keterangan singkat; isi sumbernya tid
 - roadmap.sh, freeCodeCamp, getting-a-gig, dan build-your-own-x hanya ditautkan (proprietary, berhak cipta, atau tanpa lisensi).
 - Data kurasi (`pustaka-kurasi/*.json`) ditulis sendiri dari hasil memeriksa tiap halaman; lisensi tiap tautan dicatat persis seperti di sumbernya beserta tanggal diperiksa.
 
+## Langit dan Bumi aplikasi (app/data/langit, app/data/misi, app/public/img)
+- HYG Database v4.4, David Nash (The Astronomy Nexus, astronexus.com), https://codeberg.org/astronexus/hyg (commit 53e3df3, 2026-07-12; repo lama https://github.com/astronexus/HYG-Database berhenti di v4.1), CC BY-SA 4.0 → `app/data/langit/bintang-hyg.json`: 1.637 bintang bermagnitudo 5,0 atau lebih terang, tanpa Matahari, hanya kolom ra, dec, dan mag yang dibulatkan (4, 3, dan 2 desimal), diurutkan dari yang paling terang. Berkas itu, sebagai turunannya, juga berlisensi CC BY-SA 4.0 dan sengaja dipisah dari berkas lain; kode yang membacanya (`app/src/lib/langitNyata.ts`) ditulis sendiri. Atribusinya juga tampil di kartus legenda dasbor.
+- Waktu sideris memakai model IAU 1982 dalam bentuk Meeus (*Astronomical Algorithms*, persamaan 12.4); nilai pembanding di tes berasal dari IAU SOFA rilis 2023-10-11 (nilai uji `iauGmst82` dan hasil menjalankan `iauGmst82` serta `iauAtco13`). Tidak ada kode SOFA yang disalin.
+- Koordinat kota pengamat (Jakarta, Makassar, Jayapura) dan kota misi: Wikidata, properti P625, CC0.
+- Citra lampu malam Indonesia (`indonesia-malam.jpg`): NASA GIBS, lapisan VIIRS_Black_Marble 2016, domain publik; kredit NASA Earth Observatory dan kalimat pengakuan GIBS ditampilkan di bawah peta.
+- Foto arsip di modul (Palapa B1, DSS43 Canberra, ruang kendali Apollo 13, sampul Voyager, peta logis ARPANET 1977, Lights of Java): Wikimedia Commons, semuanya domain publik menurut metadata berkasnya; kreditnya tampil di keterangan foto.
+- Pesan Arecibo (alat "Dekode pesan Arecibo"): deret 1.679 bit siaran 16 November 1974, dicocokkan dengan tiga salinan independen; gambarnya digambar sendiri dari deret bit itu. SVG di Wikimedia Commons (CC BY-SA 3.0) tidak disalin.
+
 ## Rujukan tanpa adaptasi
 Dokumentasi vendor (Cisco, Juniper, MikroTik, Nokia), dokumentasi FRRouting, buku mikro Systems Approach (CC BY-NC-ND), materi kursus Stanford CS144, Berkeley CS168, dan Princeton COS461, serta repo tanpa lisensi terbuka hanya dirujuk dan ditulis ulang dengan kata-kata sendiri; tidak ada teks atau kode yang disalin.
 

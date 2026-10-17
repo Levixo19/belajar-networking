@@ -25,6 +25,13 @@ function keUrl(s: Saringan): URLSearchParams {
   return p
 }
 
+/** "2026-10-15" -> "15 Oktober 2026". Diurai sebagai tanggal lokal (new Date(y, m, d)), bukan
+ *  new Date("2026-10-15") yang berarti tengah malam UTC dan bisa bergeser sehari. */
+function tanggalId(t: string) {
+  const [y, m, d] = t.split('-').map(Number)
+  return new Date(y, m - 1, d).toLocaleDateString('id', { day: 'numeric', month: 'long', year: 'numeric' })
+}
+
 export default function PustakaPage() {
   const [data, setData] = useState<DataPustaka | null>(null)
   const [gagal, setGagal] = useState(false)
@@ -184,8 +191,8 @@ function Baris({ e, namaSumber }: { e: ButirPustaka; namaSumber: Map<string, str
         <span className="chip">{BAHASA[e.bahasa]}</span>
         {e.topik.slice(0, 2).map(t => <span key={t} className="chip">{TOPIK[t] || t}</span>)}
         <span className="text-faint">
-          {namaSumber.get(e.sumber) || e.sumber}{e.juga_di.length ? ` + ${e.juga_di.length} sumber lain` : ''} · {e.lisensi}
-          {e.tanggal_diperiksa ? ` · diperiksa ${e.tanggal_diperiksa}` : ''}
+          Dari {namaSumber.get(e.sumber) || e.sumber}{e.juga_di.length ? ` dan ${e.juga_di.length} sumber lain` : ''}. Lisensi {e.lisensi}
+          {e.tanggal_diperiksa ? `, diperiksa ${tanggalId(e.tanggal_diperiksa)}` : ''}.
         </span>
       </div>
       {e.modul.length > 0 && (

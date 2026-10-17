@@ -4,7 +4,7 @@ import { useStore } from '../lib/store'
 import { linearModules } from '../lib/content'
 import { isDue, GRADES } from '../lib/srs'
 import type { CSSProperties, ReactNode } from 'react'
-import { IconCards, IconCheck, IconArrowRight } from '../components/icons'
+import { IconCards, IconCheck } from '../components/icons'
 import Planisfer from '../components/Planisfer'
 
 interface QCard {
@@ -104,7 +104,7 @@ export default function ReviewPage() {
     const total = pools.due.length + Math.min(pools.fresh.length, NEW_LIMIT)
     const modulPertama = linearModules.find(m => m.cards.length > 0) ?? linearModules[0]
     return (
-      <div className="fade-up mx-auto max-w-2xl px-4 py-16 sm:px-6 md:py-24">
+      <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 md:py-24">
         <figure className="review-peta mb-10" aria-label="Peta modul yang punya kartu jatuh tempo">
           <Planisfer mode="mini" progress={s.progress} terang={[...new Set(pools.due.map(c => c.id.split('#')[0]))]} judul="Modul yang kartunya jatuh tempo" />
           <figcaption>{pools.due.length ? `Lingkaran menandai ${new Set(pools.due.map(c => c.id.split('#')[0])).size} modul yang kartunya jatuh tempo hari ini.` : 'Belum ada kartu yang jatuh tempo.'}</figcaption>
@@ -179,7 +179,7 @@ export default function ReviewPage() {
   // -------- Done Phase --------
   if (phase === 'done') {
     return (
-      <div className="fade-up mx-auto max-w-xl px-4 py-16 text-center sm:px-6 md:py-24">
+      <div className="mx-auto max-w-xl px-4 py-16 text-center sm:px-6 md:py-24">
         <span className="mx-auto grid h-12 w-12 place-items-center rounded-[var(--radius)] border border-[var(--primary-border)] bg-[var(--primary-soft)] text-primary">
           <IconCheck size={22} />
         </span>

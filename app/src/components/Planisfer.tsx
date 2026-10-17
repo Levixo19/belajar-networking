@@ -4,12 +4,40 @@ import { createPortal } from 'react-dom'
 import { stages, stageOfModule, linearModules } from '../lib/content'
 import { bangunLangit, kotakRasi, bintangTerdekat, kutubKeXY, jariSpiral, type Bintang, type Langit } from '../lib/langit'
 import { gsap, useGSAP, MOTION_OK } from '../lib/motion'
+import { cakrawala, langitMalamIni, lokasiPengamat, waktuSiderisLokal, type BarisBintang, type BintangNyata, type Lokasi, type Titik } from '../lib/langitNyata'
 
 // Satu langit untuk seluruh aplikasi: dihitung sekali dari kurikulum.
 let _langit: Langit | null = null
 export function langitKurikulum(): Langit {
   if (!_langit) _langit = bangunLangit(stages.map(s => ({ id: s.id, title: s.title, modules: s.modules.map(m => ({ id: m.id, num: m.num, title: m.title, words: m.words })) })))
   return _langit
+}
+
+/** Langit sungguhan di belakang rasi kurikulum: bintang HYG (CC BY-SA 4.0, berkas sendiri,
+ *  dimuat malas) di posisi J2000-nya, mana yang sedang di atas cakrawala untuk jam laptop
+ *  di kota pengamat (zona WIB/WITA/WIT), dan garis cakrawalanya. Satu hasil dipakai bersama
+ *  semua peta di layar dan dihitung ulang paling cepat tiap 10 menit. */
+export interface LangitNyata { bintang: BintangNyata[]; cakrawala: Titik[][]; lokasi: Lokasi; waktu: Date }
+let _hyg: Promise<readonly BarisBintang[]> | null = null
+const muatHyg = () => (_hyg ??= import('../../data/langit/bintang-hyg.json').then(m => (m.default as unknown as { bintang: BarisBintang[] }).bintang))
+let _nyata: { kunci: number; hasil: LangitNyata } | null = null
+function hitungLangit(daftar: readonly BarisBintang[], kini = new Date()): LangitNyata {
+  const kunci = Math.floor(kini.getTime() / 600000)
+  if (_nyata?.kunci === kunci) return _nyata.hasil
+  const lokasi = lokasiPengamat(kini.getTimezoneOffset())
+  const hasil = { bintang: langitMalamIni(kini, lokasi, daftar), cakrawala: cakrawala(waktuSiderisLokal(kini, lokasi.bujur), lokasi.lintang), lokasi, waktu: kini }
+  _nyata = { kunci, hasil }
+  return hasil
+}
+export function useLangitNyata(): LangitNyata | null {
+  const [l, setL] = useState<LangitNyata | null>(() => _nyata?.hasil ?? null)
+  useEffect(() => {
+    let hidup = true, daftar: readonly BarisBintang[] | null = null
+    muatHyg().then(d => { daftar = d; if (hidup) setL(hitungLangit(d)) }).catch(() => { /* peta tetap utuh tanpa latar */ })
+    const t = setInterval(() => { if (daftar && hidup) setL(hitungLangit(daftar)) }, 600000)
+    return () => { hidup = false; clearInterval(t) }
+  }, [])
+  return l
 }
 
 /** Kode pendek per tahap di cincin jam (sama dengan tanda sampul lama: L2, /24, BGP). */
@@ -38,13 +66,17 @@ export interface PlanisferProps {
   sini?: string
   /** Bintang yang disorot (mis. modul dengan kartu jatuh tempo, modul yang punya alat). */
   terang?: string[]
+  /** Bintang yang tuntas sejak langit terakhir dilihat: menyala SEKALI (cincin mengembang),
+   *  lalu diam. Tanpa gerak, langsung tampil dalam keadaan tuntas. */
+  menyalaBaru?: string[]
   className?: string
   judul?: string
 }
 
-export default function Planisfer({ progress, tuju, mode = 'penuh', sorot = null, sini, terang, className = '', judul }: PlanisferProps) {
+export default function Planisfer({ progress, tuju, mode = 'penuh', sorot = null, sini, terang, menyalaBaru, className = '', judul }: PlanisferProps) {
   const sorotan = useMemo(() => new Set(terang ?? []), [terang])
   const L = langitKurikulum()
+  const nyata = useLangitNyata()
   const nav = useNavigate()
   const svg = useRef<SVGSVGElement>(null)
   const lensa = useRef<SVGGElement>(null)
@@ -53,6 +85,10 @@ export default function Planisfer({ progress, tuju, mode = 'penuh', sorot = null
   const kartu = useRef<HTMLDivElement>(null)
   const [dekat, setDekat] = useState<Bintang | null>(null)
   const [aktif, setAktif] = useState<string | null>(null)   // bintang yang fokus keyboard
+  // diam = lensa parkir di modul berikutnya (tidak sedang dijelajah tetikus atau papan ketik):
+  // lensa membawa label "Anda di sini" dan kartu bintang disembunyikan.
+  const [diam, setDiam] = useState(true)
+  const pulang = useRef<() => void>(() => {})
   // u = unit viewBox per piksel layar. Huruf, bintang, dan cincin ditulis dalam PIKSEL
   // layar dikali u, jadi peta penuh, plat yang diperbesar, dan peta mini sama-sama tajam.
   // Diukur sesudah elemen menempel; tebakan awal dipakai untuk render pertama saja.
@@ -157,8 +193,14 @@ export default function Planisfer({ progress, tuju, mode = 'penuh', sorot = null
       if (!halus) { p.x = p.tx; p.y = p.ty; tulis() }
       const b = bintangTerdekat(L.bintang, p.tx / S, p.ty / S, (LENSA - 4) / S)
       if (b !== terakhir) { terakhir = b; setDekat(b) }
+      setDiam(false)
     }
-    const keluar = () => { p.tx = parkir.x * S; p.ty = parkir.y * S; terakhir = bintangTuju; setDekat(bintangTuju) }
+    const keluar = () => {
+      p.tx = parkir.x * S; p.ty = parkir.y * S; terakhir = bintangTuju; setDekat(bintangTuju)
+      if (!halus) { p.x = p.tx; p.y = p.ty; tulis() }
+      setDiam(true)
+    }
+    pulang.current = keluar
     el.addEventListener('pointermove', gerak)
     el.addEventListener('pointerleave', keluar)
     setDekat(bintangTuju)
@@ -175,6 +217,7 @@ export default function Planisfer({ progress, tuju, mode = 'penuh', sorot = null
     if (!b) return
     posLensa.current.tx = b.x * S; posLensa.current.ty = b.y * S
     setDekat(b)
+    setDiam(false)
   }, [aktif, interaktif, L])
 
   const urutan = useMemo(() => L.bintang.map(b => b.id), [L])
@@ -193,6 +236,10 @@ export default function Planisfer({ progress, tuju, mode = 'penuh', sorot = null
   }
 
   // ---------- gerak masuk (keadaan akhir = keadaan alami; tanpa gerak, peta langsung utuh)
+  // Penyalaan berada di timeline yang SAMA dengan intro, sesudahnya, dan memakai fromTo
+  // dengan keadaan akhir tertulis: dua tween .from() pada elemen yang sama, dibuat pada
+  // tick yang sama, membuat tween kedua merekam skala 0 dari tween pertama sebagai tujuan.
+  const kunciMenyala = (menyalaBaru ?? []).join(' ')
   useGSAP(() => {
     if (mode !== 'penuh') return
     const mm = gsap.matchMedia()
@@ -200,12 +247,22 @@ export default function Planisfer({ progress, tuju, mode = 'penuh', sorot = null
       const tl = gsap.timeline({ defaults: { ease: 'power2.out' } })
       tl.from('.pf-kisi > *', { opacity: 0, duration: 0.9, stagger: 0.05 })
         .from('.pf-cincin-tik', { opacity: 0, duration: 0.6, stagger: { each: 0.004, from: 'start' } }, 0.1)
-        .from('.pf-bintang-dot', { scale: 0, transformOrigin: '50% 50%', transformBox: 'fill-box', duration: 0.5, stagger: { each: 0.006, from: 'random' } }, 0.35)
+        .from('.pf-bentuk', { scale: 0, transformOrigin: '50% 50%', transformBox: 'fill-box', duration: 0.5, stagger: { each: 0.006, from: 'random' } }, 0.35)
         .from('.pf-jalur, .pf-jejak', { opacity: 0, duration: 1.2 }, 0.6)
         .from('.pf-label-rasi', { opacity: 0, y: 6, duration: 0.6, stagger: 0.03 }, 0.9)
+      const baru = gsap.utils.toArray<SVGGElement>('[data-pijar]')
+      if (baru.length) {
+        tl.addLabel('pijar', '+=0.2')
+        baru.forEach((g, i) => {
+          const t = `pijar+=${i * 0.45}`
+          tl.fromTo(g.querySelector('.pf-pijar'), { opacity: 0.95, scale: 0.15 }, { opacity: 0, scale: 1, duration: 1.7, ease: 'power2.out', transformOrigin: '50% 50%', transformBox: 'fill-box' }, t)
+            .fromTo(g.querySelector('.pf-bentuk'), { scale: 0.25 }, { scale: 1, duration: 0.9, ease: 'back.out(2.2)', transformOrigin: '50% 50%', transformBox: 'fill-box' }, t)
+        })
+      }
     })
     return () => mm.revert()
-  }, { scope: svg, dependencies: [mode] })
+  }, { scope: svg, dependencies: [mode, kunciMenyala] })
+  const pijar = useMemo(() => new Set(menyalaBaru ?? []), [kunciMenyala])
 
   const label = judul ?? 'Peta langit kurikulum'
   const ringkas = `${linearModules.filter(m => progress[m.id] === 'done').length} modul tuntas`
@@ -215,18 +272,16 @@ export default function Planisfer({ progress, tuju, mode = 'penuh', sorot = null
       <svg ref={svg} viewBox={vb} className="pf-svg" role={interaktif ? 'group' : 'img'} style={{ ['--u' as string]: u }}
         aria-label={interaktif ? `${label}. ${ringkas}. Gunakan tombol panah untuk berpindah bintang, Enter untuk membuka modul.` : `${label}. ${ringkas}.`}
         onKeyDown={interaktif ? tombolPanah : undefined}
+        onBlur={interaktif ? e => {
+          if (e.currentTarget.contains(e.relatedTarget as Node | null)) return
+          setAktif(null); pulang.current()
+        } : undefined}
         onClick={interaktif ? e => {
           if ((e.target as Element).closest('a')) return
           if (dekat) nav(`/m/${encodeURI(dekat.id)}`)
         } : undefined}
         data-kursor={interaktif ? 'lensa' : undefined}>
-        <defs>
-          <radialGradient id="pf-cahaya">
-            <stop offset="0" stopColor="var(--pf-nyala)" stopOpacity=".55" />
-            <stop offset="1" stopColor="var(--pf-nyala)" stopOpacity="0" />
-          </radialGradient>
-          {interaktif && <clipPath id="pf-potong-lensa"><circle ref={potong} r={LENSA - 3} /></clipPath>}
-        </defs>
+        {interaktif && <defs><clipPath id="pf-potong-lensa"><circle ref={potong} r={LENSA - 3} /></clipPath></defs>}
 
         {/* Piringan dan kisi deklinasi/jam */}
         <circle r={S} className="pf-piring" />
@@ -246,10 +301,20 @@ export default function Planisfer({ progress, tuju, mode = 'penuh', sorot = null
           return <path d={`M0 0 L${p0.x * S} ${p0.y * S} A${S} ${S} 0 0 1 ${p1.x * S} ${p1.y * S} Z`} className="pf-sektor" />
         })()}
 
-        {/* Bintang latar (hiasan) */}
-        <g className="pf-latar" aria-hidden="true">
-          {L.latar.map((b, i) => <circle key={i} cx={b.x * S} cy={b.y * S} r={Math.max(0.6, b.r * S)} opacity={b.o} />)}
-        </g>
+        {/* Langit sungguhan: bintang HYG sampai magnitudo 5. Yang di atas cakrawala malam ini
+            terang, yang terbenam samar. Bukan data kurikulum: titik bulat polos tanpa bentuk
+            status, jari-jari dan kecerahan mengikuti magnitudo. */}
+        {nyata && (
+          <g className="pf-latar" aria-hidden="true">
+            {nyata.bintang.map((b, i) => (
+              <circle key={i} cx={b.x * S} cy={b.y * S} r={Math.max(0.45, Math.min(2.1, 2.05 - 0.33 * b.mag)) * u}
+                className={b.tampak ? 'tampak' : undefined} />
+            ))}
+            {nyata.cakrawala.map((ruas, i) => (
+              <path key={i} className="pf-cakrawala" d={ruas.map((p, j) => `${j ? 'L' : 'M'}${(p.x * S).toFixed(1)} ${(p.y * S).toFixed(1)}`).join(' ')} />
+            ))}
+          </g>
+        )}
 
         {/* Cincin derajat: tik 1/5/15 derajat, nomor jam, kode tahap */}
         {mode !== 'plat' && (
@@ -295,19 +360,20 @@ export default function Planisfer({ progress, tuju, mode = 'penuh', sorot = null
                 const cx = b.x * S, cy = b.y * S, rr = (b.r * S / 1.2) * u * (mode === 'plat' ? 1.35 : 1)
                 const isi = (
                   <>
-                    {st === 'tuntas' && <circle cx={cx} cy={cy} r={rr * 4.2} fill="url(#pf-cahaya)" className="pf-halo" style={{ ['--d' as string]: `${(b.x * 7 + b.y * 3) % 4}s` }} />}
-                    <circle cx={cx} cy={cy} r={rr} className={`pf-bintang-dot ${st}`} />
-                    {b.id === tuju && mode !== 'mini' && <circle cx={cx} cy={cy} r={rr + 6 * u} className="pf-tuju" />}
+                    {pijar.has(b.id) && <circle cx={cx} cy={cy} r={rr * 9} className="pf-pijar" />}
+                    <BentukBintang cx={cx} cy={cy} r={Math.max(rr, 2.1 * u)} st={st} />
+                    {b.id === tuju && mode !== 'mini' && <circle cx={cx} cy={cy} r={rr + 6.5 * u} className="pf-tuju" />}
                     {b.id === sini && <circle cx={cx} cy={cy} r={rr + 7 * u} className="pf-sini" />}
                     {sorotan.has(b.id) && <circle cx={cx} cy={cy} r={rr + 4.5 * u} className="pf-terang" />}
                   </>
                 )
-                if (!interaktif) return <g key={b.id}>{isi}</g>
+                if (!interaktif) return <g key={b.id} data-pijar={pijar.has(b.id) ? b.id : undefined}>{isi}</g>
                 const st2 = st === 'tuntas' ? 'sudah tuntas' : st === 'dibaca' ? 'sedang dibaca' : 'belum dibaca'
                 return (
                   <a key={b.id} href={`#/m/${encodeURI(b.id)}`} data-bintang={b.id} className="pf-bintang"
                     tabIndex={(aktif ?? tuju ?? urutan[0]) === b.id ? 0 : -1}
-                    aria-label={`Modul ${b.num || ''} ${b.title}, ${r.title}, ${st2}`}
+                    aria-label={`Modul ${b.num || ''} ${b.title}, ${r.title}, ${st2}${b.id === tuju ? ', modul berikutnya' : ''}`}
+                    data-pijar={pijar.has(b.id) ? b.id : undefined}
                     onFocus={() => setAktif(b.id)}>
                     <circle cx={cx} cy={cy} r={Math.max(9 * u, rr + 5 * u)} className="pf-sasaran" />
                     {isi}
@@ -359,13 +425,19 @@ export default function Planisfer({ progress, tuju, mode = 'penuh', sorot = null
                 const a = j * 10, p0 = kutubKeXY(a, LENSA / S), p1 = kutubKeXY(a, (LENSA + (j % 3 === 0 ? 7 : 4)) / S)
                 return <line key={j} x1={p0.x * S} y1={p0.y * S} x2={p1.x * S} y2={p1.y * S} className="pf-lensa-skala" />
               })}
+              {bintangTuju && (
+                <g className="pf-lensa-tag" data-tampak={diam ? '1' : '0'}>
+                  <line x1={0} y1={LENSA + 9} x2={0} y2={LENSA + 24} className="pf-lensa-tag-garis" />
+                  <text y={LENSA + 24 + 16 * u} textAnchor="middle" className="pf-lensa-tag-teks">Anda di sini</text>
+                </g>
+              )}
             </g>
           </>
         )}
       </svg>
 
       {/* Kartu bintang: apa yang sedang ditunjuk lensa */}
-      {interaktif && createPortal(<KartuBintang ref={kartu} b={dekat} status={dekat ? status(dekat.id) : 'baru'} tuju={!!dekat && dekat.id === tuju} />, document.body)}
+      {interaktif && createPortal(<KartuBintang ref={kartu} b={diam ? null : dekat} status={dekat ? status(dekat.id) : 'baru'} tuju={!!dekat && dekat.id === tuju} />, document.body)}
     </div>
   )
 }
@@ -390,11 +462,11 @@ function KartuBintang({ b, status, tuju, ref }: { b: Bintang | null; status: Sta
   if (!b) return <div ref={ref} className="pf-kartu" hidden />
   const m = linearModules.find(x => x.id === b.id)
   const st = stageOfModule.get(b.id)
-  const ket = status === 'tuntas' ? 'Sudah tuntas' : status === 'dibaca' ? 'Sedang dibaca' : tuju ? 'Bintang berikutnya' : 'Belum dibaca'
+  const ket = status === 'tuntas' ? 'Sudah tuntas' : status === 'dibaca' ? 'Sedang dibaca' : tuju ? 'Modul berikutnya' : 'Belum dibaca'
   return (
     <div ref={ref} className="pf-kartu" aria-live="polite">
       <div className="pf-kartu-atas">
-        <span className={`pf-kartu-titik ${status}`} aria-hidden="true" />
+        <TandaBintang status={status} />
         <span>{ket}</span>
         {st && <span className="pf-kartu-rasi">{st.title}</span>}
       </div>
@@ -404,13 +476,35 @@ function KartuBintang({ b, status, tuju, ref }: { b: Bintang | null; status: Sta
   )
 }
 
-/** Tanda status modul yang sama dengan bintang di peta: tuntas (penuh), dibaca (bercincin), belum (redup). */
+/** Status dikodekan dengan BENTUK, seperti atlas mengodekan magnitudo dan bintang variabel
+ *  dengan simbol: lingkar kosong = belum, setengah terisi = dibaca, penuh berjari empat =
+ *  tuntas (warna lampu). Warna saja tidak cukup: di tema gelap lampu dan bintang hanya
+ *  berbeda 1,49:1. */
+function BentukBintang({ cx, cy, r, st }: { cx: number; cy: number; r: number; st: Status }) {
+  const f = (n: number) => n.toFixed(2)
+  if (st === 'tuntas') {
+    const a = r * 1.6, b = r * 2.7
+    return (
+      <g className="pf-bentuk tuntas">
+        <circle cx={cx} cy={cy} r={r} />
+        <path d={`M${f(cx)} ${f(cy - b)}V${f(cy - a)}M${f(cx)} ${f(cy + a)}V${f(cy + b)}M${f(cx - b)} ${f(cy)}H${f(cx - a)}M${f(cx + a)} ${f(cy)}H${f(cx + b)}`} />
+      </g>
+    )
+  }
+  if (st === 'dibaca') return (
+    <g className="pf-bentuk dibaca">
+      <circle cx={cx} cy={cy} r={r} />
+      <path d={`M${f(cx)} ${f(cy - r)}A${f(r)} ${f(r)} 0 0 0 ${f(cx)} ${f(cy + r)}Z`} />
+    </g>
+  )
+  return <g className="pf-bentuk baru"><circle cx={cx} cy={cy} r={r} /></g>
+}
+
+/** Tanda status untuk legenda, daftar, dan kartu: bentuk yang sama dengan bintang di peta. */
 export function TandaBintang({ status, size = 12 }: { status: 'tuntas' | 'dibaca' | 'baru'; size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 12 12" aria-hidden="true" className={`tanda-bintang ${status}`}>
-      {status === 'tuntas' && <circle cx="6" cy="6" r="5.4" className="tb-halo" />}
-      <circle cx="6" cy="6" r={status === 'baru' ? 2.2 : 3} className="tb-inti" />
-      {status === 'dibaca' && <circle cx="6" cy="6" r="5" className="tb-cincin" />}
+    <svg width={size} height={size} viewBox="0 0 12 12" aria-hidden="true" className="tanda-bintang">
+      <BentukBintang cx={6} cy={6} r={status === 'tuntas' ? 2.1 : 3.6} st={status} />
     </svg>
   )
 }

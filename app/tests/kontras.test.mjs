@@ -7,15 +7,19 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-const CSS = fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), '../src/index.css'), 'utf8')
-function blok(sel) {
-  const i = CSS.indexOf(sel + ' {')
+const DIR = path.dirname(fileURLToPath(import.meta.url))
+const CSS = fs.readFileSync(path.join(DIR, '../src/index.css'), 'utf8')
+// Token peta bintang (--pf-*) tinggal di langit.css. Dulu tidak ikut dites, dan bintang
+// "belum" (2,71:1) serta garis jalur (1,94:1) lolos di bawah 3:1 tanpa ketahuan.
+const LANGIT = fs.readFileSync(path.join(DIR, '../src/styles/langit.css'), 'utf8')
+function blok(sel, css = CSS) {
+  const i = css.indexOf(sel + ' {')
   assert.ok(i >= 0, sel)
-  const isi = CSS.slice(i, CSS.indexOf('\n}', i))
+  const isi = css.slice(i, css.indexOf('\n}', i))
   return Object.fromEntries([...isi.matchAll(/--([\w-]+):\s*([^;]+);/g)].map(m => [m[1], m[2].trim()]))
 }
-const terang = blok(':root')
-const gelap = { ...terang, ...blok(':root[data-theme="dark"]') }
+const terang = { ...blok(':root'), ...blok(':root', LANGIT) }
+const gelap = { ...terang, ...blok(':root[data-theme="dark"]'), ...blok(':root[data-theme="dark"]', LANGIT) }
 
 function rgba(v) {
   let m = v.match(/^#([0-9a-f]{6})$/i)
@@ -48,5 +52,12 @@ for (const [nama, t] of [['terang', terang], ['gelap', gelap]]) {
   })
   test(`${nama}: batas kontrol >= 3:1`, () => {
     for (const b of latar) assert.ok(rasio(t['border-control'], t[b]) >= 3, `--border-control di --${b}: ${rasio(t['border-control'], t[b]).toFixed(2)}`)
+  })
+  test(`${nama}: peta bintang: nama rasi >= 4,5:1, bintang dan garis bermakna >= 3:1 di langit`, () => {
+    const langit = t['pf-langit']
+    assert.ok(rasio(t['pf-label'], langit) >= 4.5, `--pf-label: ${rasio(t['pf-label'], langit).toFixed(2)}`)
+    // WCAG 1.4.11: grafik yang membawa makna (status bintang, lintasan belajar) >= 3:1.
+    for (const k of ['pf-bintang', 'pf-bintang-redup', 'pf-nyala', 'pf-lampu', 'pf-jalur'])
+      assert.ok(rasio(t[k], langit) >= 3, `--${k} di --pf-langit: ${rasio(t[k], langit).toFixed(2)}`)
   })
 }

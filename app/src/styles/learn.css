@@ -36,8 +36,9 @@
   display: grid; place-items: center;
   background: rgba(255,255,255,.08); color: #ededed; border: 1px solid rgba(255,255,255,.16); }
 .lb-x:hover { background: rgba(255,255,255,.16); }
-.lb-cap { position: absolute; bottom: 1.4rem; left: 50%; transform: translateX(-50%); color: #d4d4d4;
-  font-size: .82rem; background: rgba(10,10,10,.6); padding: .4rem .9rem; border-radius: var(--radius-sm); max-width: 80vw; }
+.lb-fig { display: flex; flex-direction: column; align-items: center; gap: .8rem; margin: 0; max-width: 96vw; cursor: default; }
+.lb-fig img { max-height: calc(88vh - 5rem); }
+.lb-cap { max-width: min(80vw, 64rem); color: #d4d4d4; font-size: .86rem; line-height: 1.55; text-align: center; }
 
 /* --- Foto ----------------------------------------------------------------- */
 .ph-fig { margin: 1.6rem 0; }

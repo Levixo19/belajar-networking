@@ -167,8 +167,12 @@ export function PhotoFig({ src, caption, credit, href }: { src: string; caption?
       </figure>
       {zoom && (
         <Lightbox label={caption ? `Foto: ${caption}` : 'Foto diperbesar'} onTutup={() => setZoom(false)}>
-          <img src={src} alt={caption || ''} onClick={e => e.stopPropagation()} />
-          {caption && <div className="lb-cap">{caption}{credit ? `. ${credit}` : ''}</div>}
+          {/* Keterangan DI BAWAH gambar, bukan melayang di atasnya: keterangan 3-4 baris dulu
+              menutupi sampai 8% bagian bawah foto. Titik akhir dibuang sebelum dirangkai. */}
+          <figure className="lb-fig" onClick={e => e.stopPropagation()}>
+            <img src={src} alt={caption || ''} />
+            {(caption || credit) && <figcaption className="lb-cap">{[caption?.replace(/[.\s]+$/, ''), credit].filter(Boolean).join('. ')}</figcaption>}
+          </figure>
         </Lightbox>
       )}
     </>
