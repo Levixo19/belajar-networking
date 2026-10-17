@@ -7,12 +7,14 @@ import { useDialogFokus } from '../lib/fokus'
 import ProfileMenu from './ProfileMenu'
 import ThemeToggle from './ThemeToggle'
 import Logo from './Logo'
+import Planisfer from './Planisfer'
 import { IconChevron, IconCheck, IconSearch, IconArrowRight, StageIcon } from './icons'
 
 const TUJUAN = [
   { to: '/', label: 'Dasbor', end: true },
   { to: '/review', label: 'Review' },
   { to: '/tools', label: 'Alat' },
+  { to: '/misi', label: 'Misi' },
   { to: '/arena', label: 'Arena' },
   { to: '/karier', label: 'Karier' },
   { to: '/pustaka', label: 'Pustaka' },
@@ -36,6 +38,7 @@ export default function PilAtas({ onSearch }: { onSearch: () => void }) {
   const pil = useRef<HTMLElement>(null)
   const panel = useRef<HTMLDivElement>(null)
   const [penanda, setPenanda] = useState<{ x: number; w: number } | null>(null)
+  const [sorotTahap, setSorotTahap] = useState<string | null>(null)
 
   const dueCount = useMemo(() => Object.values(store.srs).filter(s => isDue(s)).length, [store.srs])
   const lanjut = useMemo(() => nextModule(store.progress), [store.progress])
@@ -99,15 +102,21 @@ export default function PilAtas({ onSearch }: { onSearch: () => void }) {
         <>
           <div className="fixed inset-0 z-40" onClick={() => setKurOpen(false)} aria-hidden="true" />
           <div ref={panel} role="dialog" aria-label="Kurikulum" tabIndex={-1} className="menu-panel fade-up pil-mega">
-            <div className="grid max-h-[66vh] grid-cols-3 gap-x-8 gap-y-7 overflow-y-auto p-6">
-              {groups.map(g => (
-                <div key={g.band}>
-                  <div className="mb-2 px-2 text-[12px] font-medium text-faint">{g.label}</div>
-                  <div className="space-y-px">
-                    {g.stages.map(s => <StageLink key={s.id} stage={s} currentId={currentId} progress={store.progress} />)}
+            <div className="flex">
+              <div className="grid max-h-[66vh] flex-1 grid-cols-3 gap-x-8 gap-y-7 overflow-y-auto p-6" onMouseLeave={() => setSorotTahap(null)}>
+                {groups.map(g => (
+                  <div key={g.band}>
+                    <div className="mb-2 px-2 text-[12px] font-medium text-faint">{g.label}</div>
+                    <div className="space-y-px">
+                      {g.stages.map(s => <StageLink key={s.id} stage={s} currentId={currentId} progress={store.progress} onSorot={setSorotTahap} />)}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+              <div className="pil-mega-peta" aria-hidden="true">
+                <Planisfer mode="mini" progress={store.progress} sorot={sorotTahap ?? (currentId ? currentId.split('/')[0] : lanjut.stage)} judul="Peta langit kurikulum" />
+                <p className="pil-mega-peta-ket">{groups.flatMap(g => g.stages).find(x => x.id === (sorotTahap ?? (currentId ? currentId.split('/')[0] : lanjut.stage)))?.title ?? 'Peta langit kurikulum'}</p>
+              </div>
             </div>
             <div className="flex items-center justify-between gap-4 border-t border-app bg-[var(--surface-2)] px-6 py-3.5">
               <span className="text-[13px] text-muted">
@@ -124,7 +133,7 @@ export default function PilAtas({ onSearch }: { onSearch: () => void }) {
   )
 }
 
-function StageLink({ stage, currentId, progress }: { stage: Stage; currentId: string | null; progress: Record<string, string> }) {
+function StageLink({ stage, currentId, progress, onSorot }: { stage: Stage; currentId: string | null; progress: Record<string, string>; onSorot: (id: string) => void }) {
   const done = stage.modules.filter(m => progress[m.id] === 'done').length
   const total = stage.modules.length
   const aktif = stage.modules.some(m => m.id === currentId)
@@ -132,6 +141,7 @@ function StageLink({ stage, currentId, progress }: { stage: Stage; currentId: st
   const tuntas = done === total && total > 0
   return (
     <Link to={`/m/${encodeURI(tujuan.id)}`} aria-current={aktif ? 'true' : undefined}
+      onMouseEnter={() => onSorot(stage.id)} onFocus={() => onSorot(stage.id)}
       className={`group flex h-9 items-center gap-2.5 rounded-full px-2.5 ${aktif ? 'bg-[var(--surface-2)] text-[var(--text)]' : 'hover-padam text-muted hover:bg-[var(--surface-2)] hover:text-[var(--text)]'}`}>
       <StageIcon id={stage.id} size={16} className={tuntas ? 'text-primary' : 'text-faint group-hover:text-[var(--text)]'} />
       <span className="flex-1 truncate text-[13.5px]">{stage.title}</span>

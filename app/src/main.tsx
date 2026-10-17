@@ -13,6 +13,9 @@ import '@fontsource-variable/geist'
 import '@fontsource-variable/jetbrains-mono'
 // Judul dan antarmuka (Fase 4). Prosa tetap Atkinson.
 import '@fontsource-variable/space-grotesk'
+// Label atlas (nama rasi, keterangan peta): EB Garamond, dipakai hemat.
+import '@fontsource-variable/eb-garamond'
+import '@fontsource-variable/eb-garamond/wght-italic.css'
 import './index.css'
 import { StoreProvider } from './lib/store'
 import App from './App'
@@ -26,6 +29,8 @@ import ArenaPage from './pages/ArenaPage'
 const KarierPage = lazy(() => import('./pages/KarierPage'))
 // Pustaka memuat ±1.100 tautan; dipisah dengan alasan yang sama
 const PustakaPage = lazy(() => import('./pages/PustakaPage'))
+// Misi memuat misi.json (keluaran perintah yang panjang); dipisah dengan alasan yang sama
+const MisiPage = lazy(() => import('./pages/MisiPage'))
 const Memuat = () => (
   <div className="mx-auto max-w-[1280px] px-4 pt-16 sm:px-6 lg:px-8" aria-busy="true" aria-label="Memuat">
     <div className="h-14 w-2/3 max-w-xl animate-pulse rounded-xl bg-[var(--surface-3)]" />
@@ -49,6 +54,8 @@ createRoot(document.getElementById('root')!).render(
             <Route path="karier" element={<Suspense fallback={<Memuat />}><KarierPage /></Suspense>} />
             <Route path="karier/:id" element={<Suspense fallback={<Memuat />}><KarierPage /></Suspense>} />
             <Route path="pustaka" element={<Suspense fallback={<Memuat />}><PustakaPage /></Suspense>} />
+            <Route path="misi" element={<Suspense fallback={<Memuat />}><MisiPage /></Suspense>} />
+            <Route path="misi/:id" element={<Suspense fallback={<Memuat />}><MisiPage /></Suspense>} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>

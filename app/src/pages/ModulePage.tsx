@@ -8,7 +8,8 @@ import ReadingSettings from '../components/ReadingSettings'
 import BacaanLanjutan from '../components/BacaanLanjutan'
 import { scrollToId } from '../lib/scrollTo'
 import { linkModuleRefs } from '../lib/modRefs'
-import { SampulTahap } from '../lib/sampul'
+import Planisfer from '../components/Planisfer'
+import { Intinya, KasusNyata, Tantangan } from '../components/Wawasan'
 import { toolForModule } from '../tools'
 import { IconCheck, IconArrowRight, IconArrowLeft, IconClock, IconBook, IconCards, IconFlask, StageIcon } from '../components/icons'
 
@@ -36,7 +37,7 @@ export default function ModulePage() {
   // Scroll-spy daftar isi
   useEffect(() => {
     if (!mod) return
-    const heads = Array.from(document.querySelectorAll('.prose h2, .prose h3')) as HTMLElement[]
+    const heads = Array.from(document.querySelectorAll('#intinya, .prose h2, .prose h3, #kasus-nyata, #tantangan')) as HTMLElement[]
     if (!heads.length) return
     const obs = new IntersectionObserver(
       entries => {
@@ -66,6 +67,14 @@ export default function ModulePage() {
   }
 
   const done = store.progress[mod.id] === 'done'
+  const w = mod.wawasan
+  // Daftar isi: bagian materi, diapit lapis wawasan bila ada.
+  const daftarIsi = [
+    ...(w?.intinya ? [{ id: 'intinya', text: 'Intinya', level: 2 }] : []),
+    ...mod.toc,
+    ...(w?.kasus ? [{ id: 'kasus-nyata', text: 'Kasus nyata', level: 2 }] : []),
+    ...(w?.tantangan ? [{ id: 'tantangan', text: 'Tantangan', level: 2 }] : []),
+  ]
 
   return (
     <>
@@ -75,20 +84,25 @@ export default function ModulePage() {
         <article className="min-w-0 flex-1">
           <div className="mx-auto max-w-[44rem]">
             <header className="fade-up mb-12">
-              {/* Satu sampul per TAHAP: modul di tahap yang sama berbagi ruang, pindah tahap terasa pindah ruang. */}
-              {stage && <div className="kepala-sampul mb-9 !aspect-[16/4]"><SampulTahap tahap={stage.id} band={stage.band} lebar={880} tinggi={220} /></div>}
+              {/* Plat rasi tahap ini: bintang modul ini ditandai "Anda di sini", sama dengan peta di dasbor. */}
+              {stage && stage.id !== 'panduan' && stage.id !== 'referensi' && (
+                <figure className="plat-modul bingkai-atlas mb-9">
+                  <Planisfer mode="plat" sorot={stage.id} sini={mod.id} progress={store.progress} judul={`Rasi ${stage.title}`} />
+                </figure>
+              )}
               {stage && (
                 <nav aria-label="Lokasi" className="mb-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-faint">
                   <Link to="/" className="hover:text-[var(--text)]">Dasbor</Link>
                   <span aria-hidden="true">/</span>
                   <Link to={`/m/${encodeURI(stage.modules[0].id)}`} className="inline-flex items-center gap-1.5 hover:text-[var(--text)]">
                     <StageIcon id={stage.id} size={14} />
-                    {stage.title}
+                    <span className="nama-rasi">Rasi {stage.title}</span>
                   </Link>
                   {mod.num && (<><span aria-hidden="true">/</span><span className="tabular-nums">Modul {mod.num}</span></>)}
                 </nav>
               )}
-              <h1 className="text-[clamp(2rem,4.2vw,3.1rem)] font-semibold leading-[1.06] tracking-[-0.04em]">
+              <h1 className="judul-modul">
+                {mod.num && <span className="judul-modul-no">{mod.num}</span>}
                 {mod.title}
               </h1>
               <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-[13.5px] text-faint">
@@ -132,9 +146,11 @@ export default function ModulePage() {
             {(mod.prasyarat || mod.tujuan) && (
               <div className="mb-14 grid gap-px overflow-hidden rounded-[var(--radius)] border border-app bg-[var(--border)] sm:grid-cols-2">
                 {mod.prasyarat && <MetaBlock label="Sebelum mulai" html={mod.prasyarat} />}
-                {mod.tujuan && <MetaBlock label="Setelah modul ini kamu bisa" html={mod.tujuan} />}
+                {mod.tujuan && <MetaBlock label="Setelah modul ini Anda bisa" html={mod.tujuan} />}
               </div>
             )}
+
+            {w?.intinya && <Intinya w={w.intinya} />}
 
             <RichProse html={mod.bodyHtml} moduleId={mod.id} />
 
@@ -148,6 +164,9 @@ export default function ModulePage() {
               </section>
             )}
 
+            {w?.kasus && <KasusNyata k={w.kasus} />}
+            {w?.tantangan && <Tantangan t={w.tantangan} moduleId={mod.id} />}
+
             {stage && <BacaanLanjutan tahap={stage.id} judulTahap={stage.title} />}
 
             <section className="mt-20 border-t border-app pt-10" aria-label="Selesaikan modul">
@@ -157,7 +176,7 @@ export default function ModulePage() {
               <p className="mt-2 max-w-[52ch] text-[15px] text-muted">
                 {done
                   ? 'Progres tersimpan di profilmu. Kartu latihannya akan muncul lagi di review sesuai jadwal.'
-                  : 'Tandai selesai untuk memperbarui peta perjalanan. Kamu mendapat 40 XP dan kartu latihannya masuk antrean review.'}
+                  : 'Tandai selesai untuk menyalakan bintang modul ini di peta. Anda mendapat 40 XP, dan kartu latihannya masuk antrean review.'}
               </p>
               {terkirim === mod.id && done && <div className="mt-6"><PacketDelivered /></div>}
               <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
@@ -195,12 +214,12 @@ export default function ModulePage() {
           </div>
         </article>
 
-        {mod.toc.length > 1 && (
+        {daftarIsi.length > 1 && (
           <aside className="hidden w-56 shrink-0 xl:block" aria-label="Daftar isi">
             <div className="sticky top-28">
               <div className="mb-3 text-[13px] font-medium">Di halaman ini</div>
-              <nav className="max-h-[calc(100dvh-12rem)] overflow-y-auto border-l border-app">
-                {mod.toc.map(t => (
+              <nav className="lintasan max-h-[calc(100dvh-12rem)] overflow-y-auto">
+                {daftarIsi.map(t => (
                   <a key={t.id} href={`#${t.id}`} onClick={scrollToId(t.id)}
                     className={`toc-link ${t.level === 3 ? '!pl-6' : ''} ${activeToc === t.id ? 'is-on' : ''}`}>
                     {t.text}

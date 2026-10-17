@@ -3,10 +3,21 @@ import raw from '../generated/curriculum.json'
 export interface TocItem { id: string; text: string; level: number }
 export interface Card { id: string; n: number; q: string; aHtml: string }
 export interface NextRef { id: string; teaser: string }
+/** Lapis untuk pembaca awam (data/kasus/*.json, divalidasi build). Teks sudah HTML sebaris. */
+export interface Wawasan {
+  intinya?: { satuKalimat: string; analogi: string; kenapaPenting: string; istilah: { kata: string; arti: string }[] }
+  kasus?: {
+    jenis: 'insiden' | 'praktik'; judul: string; kapan: string; diMana: string; ringkas: string
+    kronologi: { waktu: string; peristiwa: string }[]; akarMasalah: string; kaitan: string
+    pelajaran: string[]; sumber: { judul: string; url: string; penerbit: string }[]; diperiksa: string
+  }
+  tantangan?: { soal: string; petunjuk: string[]; jawabanHtml: string }
+}
 export interface Module {
   id: string; rel: string; stage: string; order: number; num: string; title: string
   prasyarat: string; tujuan: string; next: NextRef | null
   bodyHtml: string; toc: TocItem[]; cards: Card[]; words: number; readMin: number
+  wawasan?: Wawasan
 }
 export interface Stage {
   id: string; title: string; icon: string; band: string; num: number; modules: Module[]

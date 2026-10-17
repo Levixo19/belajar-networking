@@ -7,7 +7,7 @@ import {
   QUIZ, scoreQuiz, celahJalur, KEAHLIAN_LABEL, JENJANG_LABEL, type Profesi, type Rumpun,
 } from '../lib/profesi'
 import TanggaKarier from '../components/TanggaKarier'
-import { Sampul, RONA_RUMPUN } from '../lib/sampul'
+import Lencana from '../components/Lencana'
 import { useScramble } from '../lib/useScramble'
 import { scrollToId } from '../lib/scrollTo'
 import { IconArrowRight, IconCheck, IconRetry, IconBook } from '../components/icons'
@@ -67,7 +67,7 @@ function PetaKarier() {
       <section className="mx-auto max-w-[1440px] px-4 pt-12 sm:px-6 md:pt-16 lg:px-8" aria-labelledby="judul-karier">
         <div className="fade-up max-w-3xl">
           <span className="eyebrow mb-5">Ekosistem profesi jaringan</span>
-          <h1 id="judul-karier" className="hero-title max-w-[16ch] scroll-mt-24">{PROFESI.length} profesi, satu fondasi.</h1>
+          <h1 id="judul-karier" className="hero-title max-w-[16ch] scroll-mt-24">Peta {PROFESI.length} profesi di sekitar jaringan</h1>
           <p className="mt-6 max-w-[56ch] text-[17px] leading-relaxed text-muted">
             Tiap baris satu rumpun, tiap kolom satu jenjang. Arahkan kursor ke sebuah profesi untuk melihat ke mana ia naik
             dan dengan siapa keahliannya beririsan. Kesiapan dihitung dari modul yang sudah Anda tuntaskan.
@@ -125,7 +125,7 @@ function PanelSapa({ onSelect }: { onSelect: (id: string) => void }) {
   const pintu = PROFESI.filter(p => p.jenjang === 'pemula').slice(0, 5)
   return (
     <aside className="card overflow-hidden lg:sticky lg:top-24" aria-label="Mulai menjelajah">
-      <div className="h-28 border-b border-app"><Sampul benih="profesi:sapa" ragam="mesh" rona={RONA_RUMPUN.inti} lebar={420} tinggi={140} /></div>
+      <div className="panel-lencana"><Lencana benih="profesi:sapa" nama="Peta karier" ukuran={84} /></div>
       <div className="p-6">
       <h2 className="text-[1.25rem] font-semibold leading-snug tracking-[-0.02em]">Pilih satu profesi di tangga.</h2>
       <p className="mt-2 text-[14px] leading-relaxed text-muted">
@@ -155,7 +155,7 @@ function DetailPanel({ p, progress, onSelect }: { p: Profesi; progress: Record<s
     .filter(x => x.list.length)
   return (
     <aside className="card overflow-hidden lg:sticky lg:top-24 lg:max-h-[calc(100dvh-7rem)] lg:overflow-y-auto" aria-live="polite" aria-label={`Profil ${p.nama}`}>
-      <div className="h-28 border-b border-app"><Sampul benih={'profesi:' + p.id} rona={RONA_RUMPUN[p.rumpun]} lebar={420} tinggi={140} /></div>
+      <div className="panel-lencana"><Lencana benih={'profesi:' + p.id} nama={p.nama} tingkat={p.jenjang === 'pemula' ? 1 : p.jenjang === 'menengah' ? 2 : 3} ukuran={84} nyala={readiness(p, progress).pct >= 1} /></div>
       <div className="border-b border-app p-6">
         <div className="text-[12.5px] text-faint">{rumpunMeta(p.rumpun).label}</div>
         <h2 ref={nameRef} className="mt-1.5 min-h-[2.4em] text-[1.45rem] font-semibold leading-[1.15] tracking-[-0.03em]">{p.nama}</h2>

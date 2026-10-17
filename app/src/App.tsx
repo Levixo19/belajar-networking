@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import PilAtas from './components/PilAtas'
 import CommandPalette from './components/CommandPalette'
 import Logo from './components/Logo'
+import Kursor from './components/Kursor'
 import { useStore } from './lib/store'
 import { installSpotlight } from './lib/spotlight'
 
@@ -37,6 +38,7 @@ export default function App() {
         <Outlet />
       </main>
       <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
+      <Kursor />
       {store.offline && (
         <div role="status" className="menu-panel fade-up fixed bottom-5 left-1/2 z-40 flex -translate-x-1/2 items-center gap-2.5 px-4 py-2 text-[13px]">
           <span className="h-1.5 w-1.5 rounded-full bg-[var(--warn)]" aria-hidden="true" />

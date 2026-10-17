@@ -72,7 +72,7 @@ export function BinaryBlitz() {
   }
   return (
     <GameFrame g={g} title="Biner Blitz" desc="Desimal ⇄ biner sampai otomatis"
-      howto="Kadang kamu diminta menyusun bit, kadang membaca bit. 60 detik, kejar rekor.">
+      howto="Kadang Anda diminta menyusun bit, kadang membaca bit. 60 detik, kejar rekor.">
       {mode === 'd2b' ? (
         <>
           <div className="gm-q"><span className="gm-ask">Susun</span><span className="gm-mono gm-ip">{n}</span><span className="gm-ask">dalam 8 bit</span></div>

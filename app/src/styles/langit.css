@@ -1,0 +1,266 @@
+/* =========================================================================
+   LANGIT: planisfer kurikulum, kursor bidik, dan ornamen atlas.
+   Tema terang = atlas cetak (tinta biru Prusia di atas kertas dingin);
+   tema gelap = langit malam (garis pucat, bintang putih hangat).
+   Bahasa ornamennya diambil dari peta bintang sungguhan: cincin derajat bertik,
+   kisi deklinasi, label rasi bergravir (EB Garamond miring, kapital kecil).
+   ========================================================================= */
+
+:root {
+  --font-atlas: "EB Garamond Variable", "EB Garamond", Garamond, "Times New Roman", serif;
+  --pf-langit: #edf0f7;
+  --pf-garis: rgba(11, 16, 48, 0.11);
+  --pf-garis-kuat: rgba(11, 16, 48, 0.3);
+  --pf-latar: #2b335e;
+  --pf-bintang: #0b1030;
+  --pf-bintang-redup: rgba(11, 16, 48, 0.42);
+  --pf-nyala: #2a37d4;
+  --pf-jalur: rgba(42, 55, 212, 0.38);
+  --pf-label: #3a4170;
+  --pf-lensa: rgba(255, 255, 255, 0.55);
+  --kursor-warna: #ffffff;
+}
+:root[data-theme="dark"] {
+  --pf-langit: #0a0f25;
+  --pf-garis: rgba(190, 200, 255, 0.09);
+  --pf-garis-kuat: rgba(190, 200, 255, 0.26);
+  --pf-latar: #c9d1f5;
+  --pf-bintang: #e4e8ff;
+  --pf-bintang-redup: rgba(228, 232, 255, 0.5);
+  --pf-nyala: #ffe2a8;
+  --pf-jalur: rgba(143, 156, 255, 0.45);
+  --pf-label: #aeb6e0;
+  --pf-lensa: rgba(9, 13, 32, 0.45);
+}
+
+@layer components {
+  /* -------------------------------------------------------------- Planisfer */
+  .pf { position: relative; }
+  .pf-svg { display: block; width: 100%; height: auto; overflow: visible; user-select: none; }
+  .pf-penuh .pf-svg { cursor: crosshair; }
+  .pf-piring { fill: var(--pf-langit); }
+  /* Garis ditulis dalam piksel layar (vector-effect), huruf dalam piksel x --u (lihat Planisfer.tsx). */
+  .pf-svg :is(line, circle, path, polyline) { vector-effect: non-scaling-stroke; }
+  .pf-dek { fill: none; stroke: var(--pf-garis); stroke-width: 1; stroke-dasharray: 2 5; }
+  .pf-jam { stroke: var(--pf-garis); stroke-width: 0.8; }
+  .pf-jam-kuat { stroke: var(--pf-garis-kuat); stroke-width: 0.9; }
+  .pf-sektor { fill: color-mix(in srgb, var(--pf-nyala) 14%, transparent); stroke: var(--pf-nyala); stroke-width: 2; stroke-opacity: 0.5; }
+  .pf-latar circle { fill: var(--pf-latar); }
+  .pf-tepi { fill: none; stroke: var(--pf-garis-kuat); stroke-width: 1.1; }
+  .pf-cincin-tik { stroke: var(--pf-garis-kuat); stroke-width: 0.8; }
+  .pf-cincin-tik.kuat { stroke: var(--pf-bintang); stroke-width: 1.2; }
+  .pf-jam-no { font-family: var(--font-mono); font-size: calc(11px * var(--u, 1)); font-weight: 600; fill: var(--pf-bintang); letter-spacing: 0.02em; }
+  .pf-jam-kode { font-family: var(--font-atlas); font-style: italic; font-size: calc(11px * var(--u, 1)); fill: var(--pf-label); letter-spacing: 0.04em; }
+  .pf-jalur { fill: none; stroke: var(--pf-jalur); stroke-width: 1.3; stroke-dasharray: 1.5 6; stroke-linecap: round; }
+  .pf-jejak { fill: none; stroke: var(--pf-nyala); stroke-width: 2.2; stroke-linecap: round; opacity: 0.8; }
+
+  .pf-rasi { transition: opacity 0.3s var(--ease-std); }
+  .pf-rasi.redup { opacity: 0.28; }
+  .pf-asterisme { fill: none; stroke: var(--pf-garis-kuat); stroke-width: 1; stroke-linejoin: round; }
+  .pf-asterisme-nyala { stroke: var(--pf-nyala); stroke-width: 1.6; stroke-linecap: round; }
+  .pf-rasi.sorot .pf-asterisme { stroke: var(--pf-nyala); stroke-width: 1.6; }
+
+  .pf-bintang-dot { fill: var(--pf-bintang); }
+  .pf-bintang-dot.baru { fill: var(--pf-bintang-redup); }
+  .pf-bintang-dot.dibaca { fill: var(--pf-bintang); stroke: var(--pf-nyala); stroke-width: 1.4; }
+  .pf-bintang-dot.tuntas { fill: var(--pf-nyala); }
+  .pf-halo { animation: pfKerlip 4.5s ease-in-out infinite; animation-delay: var(--d, 0s); }
+  @keyframes pfKerlip { 0%, 100% { opacity: 0.85; } 50% { opacity: 0.35; } }
+  .pf-tuju { fill: none; stroke: var(--pf-nyala); stroke-width: 1.6; transform-box: fill-box; transform-origin: center; animation: pfDenyut 2.4s var(--ease-out) infinite; }
+  @keyframes pfDenyut { 0% { transform: scale(0.7); opacity: 1; } 80%, 100% { transform: scale(1.9); opacity: 0; } }
+  .pf-sini { fill: none; stroke: var(--pf-nyala); stroke-width: 1.5; stroke-dasharray: 3 3; }
+  .pf-terang { fill: none; stroke: var(--pf-nyala); stroke-width: 1.6; }
+  .pf-bintang { outline: none; cursor: pointer; }
+  .pf-sasaran { fill: transparent; }
+  .pf-bintang:focus-visible .pf-sasaran { fill: color-mix(in srgb, var(--pf-nyala) 12%, transparent); stroke: var(--pf-nyala); stroke-width: 1.5; }
+  .pf-bintang:hover .pf-bintang-dot.baru { fill: var(--pf-bintang); }
+
+  .pf-label-rasi {
+    font-family: var(--font-atlas); font-style: italic; font-size: calc(12.5px * var(--u, 1)); font-weight: 500;
+    font-variant-caps: all-small-caps; letter-spacing: 0.16em; fill: var(--pf-label);
+  }
+  .pf-label-rasi.kecil { font-size: calc(11px * var(--u, 1)); }
+  .pf-rasi.sorot .pf-label-rasi { fill: var(--pf-bintang); }
+  .pf-kutub-silang { stroke: var(--pf-bintang); stroke-width: 1; }
+  .pf-kutub-dot { fill: var(--pf-nyala); }
+  .pf-label-modul { font-family: var(--font-mono); font-size: calc(9.5px * var(--u, 1)); font-weight: 500; fill: var(--pf-bintang); }
+  .pf-label-modul.sini { font-family: var(--font-ui); font-size: calc(13px * var(--u, 1)); font-weight: 600; }
+  .pf-jam-halus { stroke: var(--pf-garis); stroke-width: 0.6; }
+  .pf-dek-halus { fill: none; stroke: var(--pf-garis); stroke-width: 0.6; }
+
+  .pf-lensa-kaca { fill: var(--pf-lensa); }
+  .pf-lensa-tepi { fill: none; stroke: var(--pf-bintang); stroke-width: 1.4; }
+  .pf-lensa-tik { stroke: var(--pf-bintang); stroke-width: 1.2; }
+  .pf-lensa-skala { stroke: var(--pf-bintang); stroke-width: 0.8; opacity: 0.7; }
+  .pf-detail { pointer-events: none; }
+  .pf-lensa, .pf-cincin, .pf-kutub { pointer-events: none; }
+  /* Di atas peta, lensa teleskop adalah kursornya: kursor sistem disembunyikan, tapi HANYA
+     saat kursor bidik aktif (mouse, gerak tidak dikurangi). Tanpa itu kursor biasa tetap. */
+  .ada-kursor .pf-penuh .pf-svg { cursor: none; }
+
+  /* Kartu bintang: mengikuti pojok kiri bawah peta, bukan menempel ke lensa (stabil dibaca). */
+  .pf-kartu {
+    position: absolute; left: 0; bottom: 0; min-width: 16rem; max-width: 22rem;
+    padding: 0.95rem 1.1rem 1rem; border-radius: var(--radius-md);
+    background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-lg);
+  }
+  .pf-kartu-atas { display: flex; align-items: center; gap: 0.5rem; font-size: 0.74rem; font-weight: 500; color: var(--text-faint); }
+  .pf-kartu-rasi { margin-left: auto; font-family: var(--font-atlas); font-style: italic; font-size: 0.86rem; color: var(--text-muted); }
+  .pf-kartu-titik { width: 0.5rem; height: 0.5rem; border-radius: 9999px; background: var(--border-control); }
+  .pf-kartu-titik.tuntas { background: var(--primary); }
+  .pf-kartu-titik.dibaca { background: transparent; box-shadow: inset 0 0 0 2px var(--primary); }
+  .pf-kartu-judul { margin-top: 0.45rem; font-size: 1.02rem; font-weight: 600; line-height: 1.3; letter-spacing: -0.015em; color: var(--text); }
+  .pf-kartu-no { font-family: var(--font-mono); font-size: 0.86rem; font-weight: 600; color: var(--primary); margin-right: 0.25rem; }
+  .pf-kartu-meta { margin-top: 0.35rem; font-size: 0.8rem; color: var(--text-faint); }
+
+  /* Di peta penuh kartu mengikuti lensa (transform ditulis JS tiap frame). */
+  .pf-penuh .pf-kartu { top: 0; bottom: auto; pointer-events: none; will-change: transform; }
+
+  .tanda-bintang { flex: none; }
+  .tanda-bintang .tb-inti { fill: var(--pf-bintang-redup); }
+  .tanda-bintang.dibaca .tb-inti, .tanda-bintang.tuntas .tb-inti { fill: var(--pf-nyala); }
+  .tanda-bintang .tb-halo { fill: color-mix(in srgb, var(--pf-nyala) 22%, transparent); }
+  .tanda-bintang .tb-cincin { fill: none; stroke: var(--pf-nyala); stroke-width: 1.2; }
+
+  .pf-mini .pf-cincin-tik:not(.kuat) { display: none; }
+  .pf-plat .pf-piring { fill: none; }
+  .pf-plat .pf-svg, .pf-mini .pf-svg { overflow: hidden; }
+
+  /* --------------------------------------------------------- Kursor bidik */
+  .kursor {
+    position: fixed; left: 0; top: 0; z-index: 95; width: 22px; height: 22px;
+    pointer-events: none; opacity: 0; mix-blend-mode: difference; color: var(--kursor-warna);
+    transition: opacity 0.25s var(--ease-std);
+  }
+  .kursor[data-tampak="1"] { opacity: 1; }
+  .kursor[data-mode="lensa"] { opacity: 0; }
+  .kursor-cincin {
+    position: absolute; inset: 0; border-radius: 9999px; border: 1.5px solid currentColor;
+    transition: opacity 0.2s var(--ease-std), transform 0.18s var(--ease-out);
+  }
+  .kursor[data-mode="baca"] .kursor-cincin { opacity: 0.3; transform: scale(0.55); }
+  .kursor[data-kunci="1"] .kursor-cincin { opacity: 0; }
+  .kursor[data-tekan="1"] .kursor-cincin { transform: scale(0.8); }
+  .kursor-sudut {
+    position: absolute; width: 9px; height: 9px; opacity: 0; border: 0 solid currentColor;
+    transition: opacity 0.2s var(--ease-std);
+  }
+  .kursor[data-kunci="1"] .kursor-sudut { opacity: 1; }
+  .kursor-sudut.kiri-atas { left: 0; top: 0; border-left-width: 1.5px; border-top-width: 1.5px; }
+  .kursor-sudut.kanan-atas { right: 0; top: 0; border-right-width: 1.5px; border-top-width: 1.5px; }
+  .kursor-sudut.kiri-bawah { left: 0; bottom: 0; border-left-width: 1.5px; border-bottom-width: 1.5px; }
+  .kursor-sudut.kanan-bawah { right: 0; bottom: 0; border-right-width: 1.5px; border-bottom-width: 1.5px; }
+  @media (prefers-reduced-motion: reduce) { .kursor { display: none; } }
+
+  /* ----------------------------------------------- Bingkai plat ala atlas */
+  /* Garis rangkap dengan tik derajat di keempat sisi: dipakai hemat (hero, plat rasi). */
+  .bingkai-atlas { position: relative; }
+  .bingkai-atlas::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none; border: 1px solid var(--pf-garis-kuat);
+    box-shadow: inset 0 0 0 5px var(--bg), inset 0 0 0 6px var(--pf-garis);
+    border-radius: inherit;
+  }
+  .bingkai-atlas::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+    background:
+      repeating-linear-gradient(90deg, var(--pf-garis-kuat) 0 1px, transparent 1px 24px) top / 100% 5px no-repeat,
+      repeating-linear-gradient(90deg, var(--pf-garis-kuat) 0 1px, transparent 1px 24px) bottom / 100% 5px no-repeat,
+      repeating-linear-gradient(0deg, var(--pf-garis-kuat) 0 1px, transparent 1px 24px) left / 5px 100% no-repeat,
+      repeating-linear-gradient(0deg, var(--pf-garis-kuat) 0 1px, transparent 1px 24px) right / 5px 100% no-repeat;
+  }
+}
+
+/* =========================================================================
+   Dasbor langit (pages/Dashboard.tsx)
+   ========================================================================= */
+@layer components {
+  .langit-hero { position: relative; min-height: 100dvh; overflow: hidden; isolation: isolate; background: var(--bg); }
+  /* Tirai kiri: teks berdiri di atas warna latar, bukan langsung di atas garis peta. */
+  .langit-hero::before {
+    content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background: linear-gradient(90deg, var(--bg) 0 24%, color-mix(in srgb, var(--bg) 86%, transparent) 38%, transparent 58%);
+  }
+  :root[data-theme="dark"] .langit-hero { background: radial-gradient(64rem 52rem at 66% 54%, #0d1534, transparent 72%), var(--bg); }
+  .langit-hero-peta { position: absolute; z-index: 0; width: clamp(760px, 96vh, 1180px); aspect-ratio: 1; left: 66%; top: 54.5%; transform: translate(-50%, -50%); }
+  .langit-hero-isi {
+    position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: center;
+    min-height: 100dvh; max-width: 40rem; padding: 7.5rem 0 4.5rem clamp(1.5rem, 6vw, 6.5rem);
+    pointer-events: none;
+  }
+  .langit-hero-isi > * { pointer-events: auto; }
+  .log-waktu { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-faint); letter-spacing: 0.01em; }
+  .langit-judul { margin-top: 1.1rem; max-width: 15ch; font-size: clamp(2.5rem, 4.3vw, 4.3rem); line-height: 1.03; font-weight: 600; letter-spacing: -0.045em; }
+  .langit-lead { margin-top: 1.4rem; max-width: 44ch; font-size: 1.1rem; line-height: 1.6; color: var(--text-muted); }
+  .instrumen { display: flex; flex-wrap: wrap; gap: 0.5rem 2.5rem; margin: 3rem 0 0; padding-top: 1.1rem; border-top: 1px solid var(--border); max-width: 30rem; }
+  .instrumen dt { font-size: 0.74rem; font-weight: 500; color: var(--text-faint); }
+  .instrumen dd { margin: 0.2rem 0 0; font-family: var(--font-mono); font-size: 1.3rem; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text); }
+  .legenda-peta { display: flex; flex-wrap: wrap; gap: 0.45rem 1.1rem; margin-top: 1.4rem; max-width: 34rem; font-size: 0.78rem; line-height: 1.5; color: var(--text-faint); }
+  .legenda-peta > span { display: inline-flex; align-items: center; gap: 0.4rem; }
+
+  .plat-rasi { margin: 0; padding: 1.4rem 1.4rem 1.1rem; border-radius: var(--radius-xl); background: var(--pf-langit); }
+  .plat-keterangan { margin-top: 0.9rem; padding: 0 0.3rem; font-family: var(--font-atlas); font-style: italic; font-size: 1.02rem; line-height: 1.45; color: var(--text-muted); }
+
+  .daftar-rasi { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--border); }
+  .daftar-rasi-butir {
+    display: flex; align-items: center; gap: 0.85rem; padding: 0.78rem 0.3rem; border-bottom: 1px solid var(--border);
+    font-size: 0.95rem; color: var(--text-muted);
+    transition: color var(--padam) var(--ease-std), background-color var(--padam) var(--ease-std);
+  }
+  .daftar-rasi-butir:hover { color: var(--text); background: color-mix(in srgb, var(--text) 3%, transparent); transition-duration: 0s; }
+  .daftar-rasi-butir.sini { color: var(--text); font-weight: 600; }
+  .daftar-rasi-no { flex: none; width: 3.1rem; font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-faint); }
+  .daftar-rasi-menit { flex: none; font-size: 0.78rem; color: var(--text-faint); font-variant-numeric: tabular-nums; }
+
+  .wilayah { display: grid; gap: 0.6rem; margin: 0; }
+  .wilayah > div { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); align-items: center; gap: 0.75rem; font-size: 0.8rem; color: var(--text-faint); }
+  .wilayah dd { display: flex; align-items: center; gap: 0.7rem; margin: 0; font-family: var(--font-mono); font-size: 0.76rem; }
+  .wilayah-batang { position: relative; flex: 1; height: 3px; overflow: hidden; border-radius: 2px; background: var(--surface-3); }
+  .wilayah-batang::after { content: ""; position: absolute; inset: 0; transform-origin: 0 50%; transform: scaleX(var(--isi, 0)); background: var(--primary); }
+
+  @media (max-width: 1023px) {
+    .langit-hero-peta { left: 50%; top: auto; bottom: -42%; transform: translateX(-50%); width: 140vw; }
+    .langit-hero::before { background: linear-gradient(180deg, var(--bg) 0 45%, transparent 75%); }
+    .langit-hero-isi { justify-content: flex-start; padding-right: 1.5rem; }
+  }
+}
+
+/* =========================================================================
+   Kepala halaman bervisual (components/KepalaHalaman.tsx), kartu katalog,
+   deret lencana, peta Review.
+   ========================================================================= */
+@layer components {
+  .kepala-halaman { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: center; gap: 3.5rem; }
+  .kepala-halaman.tanpa-visual { grid-template-columns: minmax(0, 1fr); }
+  .kepala-judul { margin-top: 1rem; max-width: 16ch; font-size: clamp(2.3rem, 4.4vw, 3.6rem); font-weight: 600; line-height: 1.04; letter-spacing: -0.045em; }
+  .kepala-lead { margin-top: 1.25rem; max-width: 56ch; font-size: 1.05rem; line-height: 1.65; color: var(--text-muted); }
+  .kepala-visual { min-width: 0; display: flex; justify-content: center; }
+  .kepala-visual .pf-mini { width: min(100%, 360px); }
+  @media (max-width: 1023px) { .kepala-halaman { grid-template-columns: minmax(0, 1fr); gap: 2rem; } .kepala-visual { justify-content: flex-start; } }
+
+  .lencana-deret { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.25rem; }
+  .lencana-deret .lencana:nth-child(2) { transform: translateY(18px); }
+
+  .panel-lencana { display: flex; justify-content: center; padding: 1.4rem 1rem 1.1rem; border-bottom: 1px solid var(--border); background: var(--pf-langit); }
+
+  .review-peta { margin: 0 0 2.5rem; }
+  .review-peta .pf-mini { width: min(100%, 300px); }
+  .review-peta figcaption { margin-top: 0.75rem; font-family: var(--font-atlas); font-style: italic; font-size: 1rem; color: var(--text-muted); }
+
+  /* Kartu katalog: tiga kartu bertumpuk, sedikit miring seperti di laci katalog. */
+  .katalog { position: relative; width: min(100%, 25rem); height: 15.5rem; }
+  .katalog-kartu {
+    position: absolute; left: calc(var(--i) * 1.2rem); top: calc(var(--i) * 1.6rem); width: calc(100% - 2.4rem); height: 11.5rem;
+    padding: 0.9rem 1.1rem 0; border-radius: 6px; overflow: hidden;
+    background:
+      repeating-linear-gradient(180deg, transparent 0 1.55rem, color-mix(in srgb, var(--primary) 16%, transparent) 1.55rem calc(1.55rem + 1px)),
+      var(--surface);
+    border: 1px solid var(--border-strong); box-shadow: var(--shadow);
+    transform: rotate(calc((var(--i) - 1) * 1.4deg));
+    font-family: var(--font-mono); font-size: 0.74rem; line-height: 1.55rem; color: var(--text-muted);
+  }
+  .katalog-kartu::before { content: ""; position: absolute; left: 3.1rem; top: 0; bottom: 0; width: 1px; background: color-mix(in srgb, var(--no) 30%, transparent); }
+  .katalog-baris { position: relative; padding-left: 2.6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .katalog-no { padding-left: 0; font-weight: 600; color: var(--text-faint); }
+  .katalog-judul { color: var(--text); font-weight: 600; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .katalog-lubang { position: absolute; left: 50%; bottom: 0.7rem; width: 0.9rem; height: 0.9rem; margin-left: -0.45rem; border-radius: 9999px; background: var(--bg); box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25); }
+}

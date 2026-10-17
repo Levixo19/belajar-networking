@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @import "./styles/diagrams.css";
 @import "./styles/learn.css";
+@import "./styles/langit.css";
+@import "./styles/wawasan.css";
+@import "./styles/misi.css";
 
 /* =========================================================================
    BELAJAR NETWORKING · sistem desain (Fase 4, 2026-10-15)
@@ -17,25 +20,25 @@
 
 :root {
   color-scheme: light;
-  --bg: #f6f7f9;
-  --bg-2: #eff1f5;
+  --bg: #f3f4f8;
+  --bg-2: #eceef4;
   --surface: #ffffff;
-  --surface-2: #eef0f4;
-  --surface-3: #e3e6ec;
-  --glass: rgba(250, 251, 253, 0.86);
-  --glass-border: rgba(13, 15, 20, 0.08);
-  --border: #dfe2e8;
-  --border-strong: #c3c8d1;
-  --border-control: #7a808c;       /* batas input/kotak centang: >= 3:1 di surface, surface-2, bg */
+  --surface-2: #eceef5;
+  --surface-3: #e1e4ee;
+  --glass: rgba(248, 249, 252, 0.86);
+  --glass-border: rgba(11, 16, 48, 0.08);
+  --border: #dcdfea;
+  --border-strong: #c1c6d6;
+  --border-control: #737a92;       /* batas input/kotak centang: >= 3:1 di surface, surface-2, bg */
   --border-highlight: rgba(255, 255, 255, 0.85);
 
-  --text: #0d0f14;
-  --text-muted: #454b57;
-  --text-faint: #5d6370;
+  --text: #0b1030;
+  --text-muted: #424a68;
+  --text-faint: #596180;
 
   /* Tinta: tombol sekunder yang kuat, kartu pekat */
-  --fg: #0d0f14;
-  --fg-hover: #2a2e38;
+  --fg: #0b1030;
+  --fg-hover: #262c52;
   --fg-contrast: #ffffff;
 
   /* Aksen tunggal UI: ultramarin. Satu layar, satu tindakan utama berlatar ini. */
@@ -100,25 +103,25 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0a0b0f;
-  --bg-2: #0e1015;
-  --surface: #111319;
-  --surface-2: #181b23;
-  --surface-3: #22252f;
-  --glass: rgba(14, 16, 22, 0.84);
-  --glass-border: rgba(236, 238, 244, 0.09);
-  --border: #23262f;
-  --border-strong: #353945;
-  --border-control: #6d7280;
+  --bg: #070a18;
+  --bg-2: #0a0e20;
+  --surface: #0d1226;
+  --surface-2: #131a36;
+  --surface-3: #1c2449;
+  --glass: rgba(10, 14, 32, 0.82);
+  --glass-border: rgba(220, 226, 255, 0.09);
+  --border: #1c2346;
+  --border-strong: #2d3766;
+  --border-control: #6c76a3;
   --border-highlight: rgba(255, 255, 255, 0.06);
 
-  --text: #eceef4;
-  --text-muted: #a3a8b5;
-  --text-faint: #8a8f9c;
+  --text: #e9ecf8;
+  --text-muted: #a9b0d0;
+  --text-faint: #8d95bb;
 
-  --fg: #eceef4;
-  --fg-hover: #cfd2db;
-  --fg-contrast: #0a0b0f;
+  --fg: #e9ecf8;
+  --fg-hover: #cdd2e8;
+  --fg-contrast: #070a18;
 
   --primary: #8f9cff;
   --primary-hover: #adb6ff;
@@ -144,7 +147,7 @@
   --shadow: 0 1px 1px rgba(0, 0, 0, 0.4), 0 6px 14px -6px rgba(0, 0, 0, 0.55);
   --shadow-lg: 0 1px 1px rgba(0, 0, 0, 0.4), 0 8px 18px -8px rgba(0, 0, 0, 0.6), 0 24px 40px -16px rgba(0, 0, 0, 0.65);
 
-  --hl-bg: #0d0f15;
+  --hl-bg: #0b0f22;
 }
 
 
@@ -334,7 +337,6 @@ p { text-wrap: pretty; }
 /* ------------------------------------------------------------- Animasi */
 @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes marquee { to { transform: translateX(-50%); } }
 @keyframes slide { from { transform: translateX(-110%); } to { transform: translateX(330%); } }
 
 .fade-up { animation: fadeUp 0.6s var(--ease-out) both; }
@@ -404,18 +406,6 @@ kbd {
   font-weight: 600;
   letter-spacing: -0.045em;
 }
-.inline-img {
-  display: inline-block;
-  width: 1.9em; height: 0.82em;
-  border-radius: 9999px;
-  vertical-align: -0.04em;
-  margin: 0 0.12em;
-  background-size: cover; background-position: center;
-  filter: grayscale(1) contrast(1.1);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--text) 12%, transparent);
-  transition: filter 0.6s var(--ease-out);
-}
-.inline-img:hover { filter: grayscale(0) contrast(1); }
 
 
 .bento {
@@ -469,34 +459,7 @@ a.tile:hover, button.tile:hover { border-color: var(--border-strong); box-shadow
 .scrub-text { font-size: clamp(1.5rem, 3vw, 2.4rem); line-height: 1.25; font-weight: 500; letter-spacing: -0.03em; }
 .scrub-text .w { display: inline; }
 
-/* Marquee tipografi (satu-satunya di halaman) */
-.marquee { overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
-.marquee-track { display: flex; width: max-content; gap: 3rem; animation: marquee 48s linear infinite; }
-.marquee:hover .marquee-track { animation-play-state: paused; }
-@media (prefers-reduced-motion: reduce) {
-  .marquee-track { animation: none; flex-wrap: wrap; width: auto; gap: 1rem 2rem; }
-  .marquee-track > [aria-hidden="true"] { display: none; } /* salinan untuk loop tak diperlukan saat diam */
-  .marquee { mask-image: none; }
-}
 
-/* Akordeon horizontal (alat) */
-.hacc { display: flex; gap: 0.6rem; height: 26rem; }
-.hacc-item {
-  position: relative; flex: 1 1 0; min-width: 0; overflow: hidden;
-  border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface);
-  transition: flex-grow 0.7s var(--ease-out), border-color 0.2s var(--ease-std);
-}
-.hacc-item:hover, .hacc-item:focus-within { flex-grow: 3.2; border-color: var(--border-strong); }
-.hacc-body { opacity: 0; transform: translateY(8px); transition: opacity 0.4s var(--ease-out) 0.15s, transform 0.5s var(--ease-out) 0.15s; }
-.hacc-item:hover .hacc-body, .hacc-item:focus-within .hacc-body { opacity: 1; transform: none; }
-.hacc-label { writing-mode: vertical-rl; transform: rotate(180deg); transition: opacity 0.3s var(--ease-std); }
-.hacc-item:hover .hacc-label, .hacc-item:focus-within .hacc-label { opacity: 0; }
-@media (max-width: 1023px) {
-  .hacc { flex-direction: column; height: auto; }
-  .hacc-item { flex: none; }
-  .hacc-body { opacity: 1; transform: none; }
-  .hacc-label { display: none; }
-}
 
 /* =========================================================================
    PEMBACA MODUL & PROSE
@@ -755,6 +718,9 @@ a.tile:hover, button.tile:hover { border-color: var(--border-strong); box-shadow
   .pil-mega {
     position: fixed; z-index: 50; top: 4.6rem; left: 50%; width: min(92vw, 1000px); transform: translateX(-50%); overflow: hidden;
   }
+  .pil-mega { width: min(94vw, 1180px); }
+  .pil-mega-peta { flex: none; width: 15rem; padding: 1.5rem 1.4rem 1rem; border-left: 1px solid var(--border); background: var(--pf-langit); }
+  .pil-mega-peta-ket { margin-top: 0.75rem; text-align: center; font-family: var(--font-atlas); font-style: italic; font-size: 1.02rem; color: var(--text-muted); }
   .pil-mega.fade-up { animation-name: megaMasuk; }
   @keyframes megaMasuk { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
   /* Progres baca di kaki pil: scroll-timeline murni CSS, tanpa listener. */
@@ -778,20 +744,6 @@ a.tile:hover, button.tile:hover { border-color: var(--border-strong); box-shadow
   .judul-bab { font-size: clamp(2.1rem, 3.6vw, 3.25rem); font-weight: 600; line-height: 1.04; letter-spacing: -0.04em; }
   .bab-penutup { border-top: 1px solid var(--border); padding: clamp(6rem, 11vw, 10rem) 0 2.5rem; }
 
-  /* Hero sinematik: foto lokal penuh + tirai pekat; teks putih berdiri di atas tirai,
-     bukan langsung di atas foto, di KEDUA tema. */
-  .hero-sinema { position: relative; overflow: hidden; background: #0a0b0f; isolation: isolate; }
-  .hero-sinema-foto { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.1) brightness(0.8); transform: scale(1.04); z-index: -2; }
-  .hero-sinema-tirai {
-    position: absolute; inset: 0; z-index: -1;
-    background:
-      radial-gradient(60% 55% at 50% 48%, rgba(10, 11, 15, 0.55), rgba(10, 11, 15, 0.86) 70%, #0a0b0f 100%),
-      linear-gradient(180deg, rgba(10, 11, 15, 0.7), rgba(10, 11, 15, 0.35) 40%, #0a0b0f);
-  }
-  /* Di atas foto gelap, aksen tema terang (ultramarin gelap) tetap dipakai sebagai
-     latar tombol dengan teks putih: 8,09:1, tidak bergantung pada fotonya. */
-  .hero-tautan { color: rgba(255, 255, 255, 0.86); font-size: 0.95rem; font-weight: 500; text-decoration: underline; text-underline-offset: 5px; text-decoration-color: rgba(255, 255, 255, 0.35); transition: text-decoration-color var(--padam); }
-  .hero-tautan:hover { text-decoration-color: #fff; transition-duration: 0s; }
 
   /* Tumpukan kartu: sticky (CSS) yang menumpuk; GSAP hanya mengecilkan yang tertimpa. */
   .tumpuk-kartu {
@@ -803,9 +755,6 @@ a.tile:hover, button.tile:hover { border-color: var(--border-strong); box-shadow
   .tumpuk-kartu::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: var(--bg); opacity: var(--redup, 0); pointer-events: none; }
   .tumpuk-nomor { position: absolute; top: 1.75rem; right: 2rem; font-size: 0.85rem; font-weight: 600; color: var(--text-faint); font-variant-numeric: tabular-nums; }
 
-  /* Akordeon: latar sampul tahap + tirai gradien ke --surface; teks memakai token teks
-     dan berdiri di bagian tirai yang pekat. */
-  .hacc-tirai { position: absolute; inset: 0; background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 10%, transparent), color-mix(in srgb, var(--surface) 72%, transparent) 42%, var(--surface) 82%); }
 
   /* Carousel kartu review */
   .carousel-jalur { display: flex; gap: 1rem; list-style: none; margin: 0; padding: 0; transition: transform 0.5s var(--ease-out); }
@@ -815,18 +764,4 @@ a.tile:hover, button.tile:hover { border-color: var(--border-strong); box-shadow
     transition: opacity 0.3s var(--ease-std);
   }
   .carousel-kartu[aria-hidden="true"] { opacity: 0.45; }
-}
-
-/* =========================================================================
-   Sampul generatif (lib/sampul.tsx). Rona dibaca dari --sampul-s/--sampul-l:
-   tema terang DIGELAPKAN, bukan dipucatkan, supaya tidak pudar jadi krem.
-   ========================================================================= */
-@layer components {
-  .sampul { display: block; width: 100%; height: 100%; --sampul-s: 46%; --sampul-l: 62%; }
-  :root:not([data-theme="dark"]) .sampul { --sampul-s: 50%; --sampul-l: 44%; }
-  .sampul-tanda { font-family: var(--font-mono); font-weight: 600; letter-spacing: -0.04em; fill: var(--text); opacity: 0.1; }
-  /* Kepala halaman bersampul: teks kiri, sampul kanan, sudut membulat. */
-  .kepala-bersampul { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 3rem; align-items: center; }
-  .kepala-sampul { position: relative; aspect-ratio: 7 / 5; overflow: hidden; border-radius: var(--radius-xl); border: 1px solid var(--border); }
-  @media (max-width: 1023px) { .kepala-bersampul { grid-template-columns: minmax(0, 1fr); } .kepala-sampul { aspect-ratio: 16 / 6; } }
 }

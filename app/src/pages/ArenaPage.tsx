@@ -2,9 +2,9 @@ import { useParams, Link, Navigate } from 'react-router-dom'
 import { GAMES } from '../games'
 import { useStore } from '../lib/store'
 import DetailShell from '../components/DetailShell'
-import { IconArrowRight, IconTrophy } from '../components/icons'
-import KepalaBersampul from '../components/KepalaBersampul'
-import { Sampul } from '../lib/sampul'
+import { IconArrowRight } from '../components/icons'
+import KepalaHalaman from '../components/KepalaHalaman'
+import Lencana from '../components/Lencana'
 
 export default function ArenaPage() {
   const { game } = useParams()
@@ -26,36 +26,22 @@ export default function ArenaPage() {
 
   return (
     <div className="mx-auto max-w-[1100px] px-4 pb-24 pt-12 sm:px-6 md:pt-20 lg:px-8">
-      <KepalaBersampul sampul={{ benih: 'arena-latihan', rona: 28, ragam: 'paket', tanda: '0x' }}>
-        <div>
-          <h1 className="max-w-[16ch] text-[clamp(2.2rem,4.5vw,3.5rem)] font-semibold leading-[1.04] tracking-[-0.045em]">
-            Hitungan cepat, sampai jadi insting.
-          </h1>
-          <p className="mt-5 max-w-[54ch] text-[17px] leading-relaxed text-muted">
-            Subnet, biner, port, dan urutan OSI. Hal yang harus terjawab dalam detik saat troubleshooting.
-          </p>
-        </div>
-        <div className="mt-8 flex items-center gap-4">
-          <IconTrophy size={22} className="text-faint" />
-          <div>
-            <div className="stat-num !text-[2.4rem]">{total.toLocaleString('id')}</div>
-            <div className="mt-1 text-[13px] text-faint">
-              {dimainkan ? `Total rekor dari ${dimainkan} latihan` : 'Belum ada rekor. Mulai dari mana saja.'}
-            </div>
-          </div>
-        </div>
-      </KepalaBersampul>
+      <KepalaHalaman
+        catatan={dimainkan ? `Total rekor ${total.toLocaleString('id')} dari ${dimainkan} latihan` : 'Belum ada rekor. Mulai dari mana saja.'}
+        judul="Arena latihan cepat"
+        visual={<div className="lencana-deret">{GAMES.map(g => <Lencana key={g.slug} benih={'arena:' + g.slug} nama={g.name} ukuran={124} nyala={!!store.games[g.slug]} />)}</div>}>
+        <p className="kepala-lead">
+          Latihan berwaktu untuk subnet, bilangan biner, urutan layer OSI, nomor port, dan prefix CIDR. Saat troubleshooting, hitungan seperti ini harus terjawab dalam hitungan detik.
+        </p>
+      </KepalaHalaman>
 
       <ol className="road stagger mt-16 border-t border-app">
         {GAMES.map(g => {
           const best = store.games[g.slug] || 0
           return (
             <li key={g.slug}>
-              <Link to={`/arena/${g.slug}`} className="road-item group !grid-cols-[6rem_minmax(0,1fr)_auto] !gap-6 !py-6">
-                <span className="relative block h-16 w-24 overflow-hidden rounded-[var(--radius-md)] border border-app">
-                  <Sampul benih={'arena:' + g.slug} rona={28} lebar={192} tinggi={128} />
-                  <span className="absolute inset-0 grid place-items-center"><span className="grid h-8 w-8 place-items-center rounded-full bg-[var(--surface)] text-[var(--text)] shadow-[var(--shadow-sm)]"><g.Icon size={16} /></span></span>
-                </span>
+              <Link to={`/arena/${g.slug}`} className="road-item group !grid-cols-[4.5rem_minmax(0,1fr)_auto] !gap-6 !py-6">
+                <Lencana benih={'arena:' + g.slug} nama={g.name} ukuran={64} nyala={!!best} />
                 <span className="min-w-0">
                   <span className="block text-[18px] font-medium tracking-[-0.02em]">{g.name}</span>
                   <span className="mt-1 block text-[14px] text-muted">{g.desc}</span>

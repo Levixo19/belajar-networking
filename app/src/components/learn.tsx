@@ -104,7 +104,7 @@ export function CardCheckpoint({ moduleId, from, count = 2 }: { moduleId: string
     <div className="lz lz-done pop">
       <div className="lz-badge" aria-hidden="true"><IconBrain size={22} /></div>
       <div className="lz-done-t">Checkpoint selesai</div>
-      <p className="lz-done-s">Kartu-kartu ini masuk antrean review terjadwal. Sistem akan memunculkannya lagi tepat sebelum kamu lupa.</p>
+      <p className="lz-done-s">Kartu-kartu ini masuk antrean review terjadwal. Sistem memunculkannya lagi tepat sebelum Anda lupa.</p>
     </div>
   )
 

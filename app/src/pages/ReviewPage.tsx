@@ -5,7 +5,7 @@ import { linearModules } from '../lib/content'
 import { isDue, GRADES } from '../lib/srs'
 import type { CSSProperties, ReactNode } from 'react'
 import { IconCards, IconCheck, IconArrowRight } from '../components/icons'
-import { Sampul } from '../lib/sampul'
+import Planisfer from '../components/Planisfer'
 
 interface QCard {
   id: string
@@ -105,10 +105,13 @@ export default function ReviewPage() {
     const modulPertama = linearModules.find(m => m.cards.length > 0) ?? linearModules[0]
     return (
       <div className="fade-up mx-auto max-w-2xl px-4 py-16 sm:px-6 md:py-24">
-        <div className="kepala-sampul mb-10 !aspect-[16/5]"><Sampul benih="review-kartu" rona={232} ragam="gelombang" tanda="SRS" lebar={720} tinggi={225} /></div>
+        <figure className="review-peta mb-10" aria-label="Peta modul yang punya kartu jatuh tempo">
+          <Planisfer mode="mini" progress={s.progress} terang={[...new Set(pools.due.map(c => c.id.split('#')[0]))]} judul="Modul yang kartunya jatuh tempo" />
+          <figcaption>{pools.due.length ? `Lingkaran menandai ${new Set(pools.due.map(c => c.id.split('#')[0])).size} modul yang kartunya jatuh tempo hari ini.` : 'Belum ada kartu yang jatuh tempo.'}</figcaption>
+        </figure>
         <h1 className="text-[clamp(2.25rem,4.5vw,3.25rem)] font-semibold leading-[1.05] tracking-[-0.045em]">Review</h1>
         <p className="mt-4 max-w-[52ch] text-[16px] leading-relaxed text-muted">
-          Coba jawab di kepala sebelum membuka kartu. Penilaianmu menentukan kapan kartu itu muncul lagi.
+          Coba jawab di kepala sebelum membuka kartu. Penilaian Anda menentukan kapan kartu itu muncul lagi.
         </p>
 
         <div role="radiogroup" aria-label="Cakupan kartu"
@@ -130,10 +133,9 @@ export default function ReviewPage() {
 
         {scope === 'studied' && studiedCount === 0 ? (
           <div className="mt-8 rounded-[var(--radius)] border border-app bg-surface p-8 sm:p-10">
-            <span className="block h-14 w-24 overflow-hidden rounded-[var(--radius-md)]"><Sampul benih="review-kosong" ragam="kisi" lebar={192} tinggi={112} /></span>
-            <h2 className="mt-6 text-[20px] font-semibold tracking-[-0.025em]">Belum ada kartu dari modul yang kamu buka</h2>
+            <h2 className="mt-6 text-[20px] font-semibold tracking-[-0.025em]">Belum ada kartu dari modul yang Anda buka</h2>
             <p className="mt-2 max-w-[48ch] text-[14.5px] leading-relaxed text-muted">
-              Kartu latihan muncul setelah kamu membuka modul. Mulai dari modul pertama, atau latih semua materi sekaligus.
+              Kartu latihan muncul setelah Anda membuka modul. Mulai dari modul pertama, atau latih semua materi sekaligus.
             </p>
             <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3">
               <Link to={`/m/${encodeURI(modulPertama.id)}`} className="btn btn-ink">
