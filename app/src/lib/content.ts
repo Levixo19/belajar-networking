@@ -20,7 +20,7 @@ export interface Module {
   wawasan?: Wawasan
 }
 export interface Stage {
-  id: string; title: string; icon: string; band: string; num: number; modules: Module[]
+  id: string; title: string; band: string; num: number; modules: Module[]
 }
 export interface SearchDoc { id: string; title: string; num: string; stage: string; stageTitle: string; text: string }
 

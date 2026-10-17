@@ -1,0 +1,515 @@
+{
+  "00-fondasi/01-apa-itu-jaringan": {
+    "intinya": {
+      "satu_kalimat": "Jaringan komputer adalah dua perangkat atau lebih yang tersambung lewat media dan memakai aturan bicara (protokol) yang sama, sehingga bisa bertukar data dan berbagi sumber daya.",
+      "analogi": "Bayangkan jaringan sebagai layanan kurir paket. Alamat di label adalah IP address, gudang sortir antarkota adalah router, dan kurir yang berkeliling di kompleks Anda adalah switch. Paket hanya sampai kalau pengirim, gudang, dan kurir sepakat cara menulis label, dan kesepakatan itulah protokol. Bedanya, paket data tiba dalam hitungan milidetik, dan satu pesan bisa dipecah menjadi banyak paket yang dirakit ulang di tujuan.",
+      "kenapa_penting": "Pesan WhatsApp yang Anda kirim melewati ponsel, Wi-Fi atau menara seluler, router milik operator, lalu server. Kalau tahu peran tiap perangkat, Anda bisa menebak bagian mana yang bermasalah saat orang bilang 'internetnya mati'.",
+      "istilah": [
+        {
+          "kata": "Host",
+          "arti": "Perangkat yang menjadi asal atau tujuan akhir data, misalnya laptop, ponsel, server, atau printer jaringan."
+        },
+        {
+          "kata": "Node",
+          "arti": "Titik mana pun di jaringan, termasuk perangkat perantara seperti switch dan router. Setiap host adalah node, tetapi tidak setiap node adalah host."
+        },
+        {
+          "kata": "Protokol",
+          "arti": "Aturan bersama tentang format pesan, urutan bicara, dan cara menangani kesalahan. Contohnya IP, TCP, dan HTTP."
+        },
+        {
+          "kata": "WAN (Wide Area Network)",
+          "arti": "Jaringan antarkota atau antarnegara. Medianya biasanya milik penyedia, dan Anda menyewa kapasitasnya."
+        },
+        {
+          "kata": "Tulang punggung (backbone)",
+          "arti": "Jalur berkapasitas besar yang menghubungkan kota atau wilayah. Pengguna tersambung ke sana lewat jaringan akses."
+        },
+        {
+          "kata": "Last mile",
+          "arti": "Sambungan terakhir dari jaringan penyedia ke pelanggan, misalnya BTS seluler, Wi-Fi, atau kabel ke rumah."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "Palapa Ring: tulang punggung serat optik nasional untuk daerah 3T",
+      "kapan": "2019-10-14",
+      "di_mana": "Indonesia, dalam tiga paket: Barat, Tengah, dan Timur",
+      "ringkas": "Palapa Ring adalah jaringan tulang punggung yang dibangun pemerintah lewat skema kerja sama dengan badan usaha. Panjangnya sekitar 12.229 km, gabungan kabel serat optik darat, kabel bawah laut, dan 55 lompatan radio microwave. Jaringan ini melayani 57 kabupaten/kota, termasuk daerah 3T yang sulit dijangkau. Saat Presiden meresmikannya pada 14 Oktober 2019, pemerintah menyatakan 514 kabupaten/kota di Indonesia sudah terhubung.",
+      "kronologi": [
+        {
+          "waktu": "2016",
+          "peristiwa": "Kementerian Kominfo menandatangani perjanjian kerja sama Paket Timur dengan PT Palapa Timur Telematika, badan usaha yang membangun dan mengoperasikan jaringannya."
+        },
+        {
+          "waktu": "2018",
+          "peristiwa": "Paket Barat selesai dibangun."
+        },
+        {
+          "waktu": "Awal 2019",
+          "peristiwa": "Paket Tengah selesai dibangun."
+        },
+        {
+          "waktu": "Agustus 2019",
+          "peristiwa": "Paket Timur rampung setelah molor dari target kuartal kedua karena medan Papua yang sulit."
+        },
+        {
+          "waktu": "14 Oktober 2019",
+          "peristiwa": "Presiden Joko Widodo meresmikan Palapa Ring di Istana Negara. Jaringan ini digambarkan seperti jalan tol untuk internet kecepatan tinggi."
+        },
+        {
+          "waktu": "14 Oktober 2019",
+          "peristiwa": "Direktur Utama BAKTI, Anang Latif, menyebut 2-3 operator serius masuk memakai jaringan ini. Operator berminat memakai radio, seluler, atau Wi-Fi sebagai last mile, alih-alih satelit."
+        }
+      ],
+      "akar_masalah": "Di daerah 3T, permintaan layanan belum pasti, padahal kabel laut dan darat sepanjang ribuan kilometer butuh investasi besar. Skema KPBU dengan availability payment memindahkan risiko itu ke pemerintah. Badan usaha membangun dan merawat jaringan, lalu dibayar bulanan selama 15 tahun selama layanannya tersedia. Kemenkominfo menanggung risiko permintaan, dan dananya berasal dari dana Universal Service Obligation (USO).",
+      "kaitan": "Palapa Ring adalah contoh WAN pada tabel bagian 6 (Skala Jaringan): menghubungkan antarkota dan antarpulau, dikelola penyedia, lalu dipakai pihak lain. Bagian 'Kunci pemahaman' menyebut beda terpenting LAN dan WAN adalah kepemilikan media; di sini operator memakai media milik negara alih-alih menarik kabel sendiri. Pembayaran berdasarkan ketersediaan layanan mirip SLA yang disebut pada kategori Service Provider di bagian 10.",
+      "pelajaran": [
+        "Tulang punggung saja belum membuat warga online. Masih dibutuhkan jaringan akses di ujungnya (BTS, Wi-Fi, atau kabel ke rumah), persis soal last mile yang disebut BAKTI.",
+        "Saat memakai WAN sewaan, cari tahu siapa pemilik medianya dan apa jaminan ketersediaannya. Anda tidak bisa memperbaiki kabel yang bukan milik Anda."
+      ],
+      "sumber": [
+        {
+          "judul": "514 Regencies/Cities Connected with High Speed Internet Access: Communications Minister",
+          "penerbit": "Sekretariat Kabinet RI",
+          "url": "https://setkab.go.id/en/?p=171871"
+        },
+        {
+          "judul": "Siaran Pers: Presiden Republik Indonesia Joko Widodo Meresmikan Proyek Strategis Nasional Infrastruktur Prioritas Palapa Ring Paket Timur",
+          "penerbit": "PT Mora Telematika Indonesia",
+          "url": "https://www.moratelindo.co.id/download/press-release/2019-10-14_Siaran%20Pers-Presiden%20Republik%20Indonesia%20Joko%20Widodo%20Meresmikan%20Proyek%20Strategis%20Nasional%20Infrastruktur%20Prioritas%20Palapa%20Ring%20Paket%20Timur.pdf"
+        },
+        {
+          "judul": "Apa Itu Palapa Ring? Ini Penjelasan dan Cakupan Wilayahnya",
+          "penerbit": "detikNews",
+          "url": "https://news.detik.com/berita/d-7677519/apa-itu-palapa-ring-ini-penjelasan-dan-cakupan-wilayahnya"
+        },
+        {
+          "judul": "Kapan Palapa Ring Selesai? Ini Waktu Peresmiannya",
+          "penerbit": "detikInet",
+          "url": "https://inet.detik.com/telecommunication/d-7666323/kapan-palapa-ring-selesai-ini-waktu-peresmiannya"
+        },
+        {
+          "judul": "Palapa Ring diresmikan, BAKTI: Tiga operator selular siap masuk",
+          "penerbit": "Kontan",
+          "url": "https://industri.kontan.co.id/news/palapa-ring-diresmikan-bakti-tiga-operator-selular-siap-masuk"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda membantu kantor desa di sebuah pulau di NTT yang baru mendapat internet dari ISP lokal. Perangkatnya: router dari ISP, satu switch 8 port, satu PC 'server' berisi aplikasi administrasi kependudukan, dan lima PC staf. Suatu pagi semua staf bisa membuka situs berita, tetapi aplikasi administrasi di PC mereka menampilkan 'server tidak dapat dihubungi'. Kepala desa mengira internetnya rusak dan menelepon ISP. Apa yang Anda periksa, dan apa yang Anda jelaskan kepadanya?",
+      "petunjuk": [
+        "Pisahkan dua jalur: PC staf ke internet lewat router, dan PC staf ke PC server lewat switch. Jalur mana yang terbukti masih jalan?",
+        "Aplikasi itu memakai model klien-server. Apa yang terjadi pada semua klien kalau servernya mati?",
+        "Lihat langsung PC server: menyala atau tidak, lampu port switch-nya hidup atau tidak, dan bisakah ia di-ping dari PC staf."
+      ],
+      "jawaban": "1. **Amati.** Situs berita terbuka, berarti jalur PC staf, switch, router, sampai ISP (WAN) sehat. Masalahnya bukan di ISP.\n2. **Susun dugaan.** Aplikasi administrasi memakai model klien-server, dan servernya ada di LAN desa sendiri. Kemungkinannya: PC server mati atau sedang restart, kabelnya lepas dari switch, atau alamat IP-nya berubah.\n3. **Uji.** Datangi PC server. Cek layarnya (misalnya sedang memasang pembaruan Windows), cek lampu port di switch, lalu jalankan `ping <IP server>` dari salah satu PC staf.\n4. **Simpulkan.** Misalkan PC server sedang restart karena pembaruan. Semua klien terputus bersamaan karena server adalah titik kegagalan tunggal (single point of failure) dalam model klien-server.\n5. **Jelaskan ke kepala desa.** Internet adalah WAN milik ISP, sedangkan aplikasi ini berjalan di LAN milik desa. Menelepon ISP tidak akan menolong.\n6. **Usulan.** Jadwalkan pembaruan di luar jam kerja, pasang UPS untuk PC server, beri server alamat IP tetap, dan buat cadangan data rutin."
+    }
+  },
+  "00-fondasi/02-bit-byte-biner": {
+    "intinya": {
+      "satu_kalimat": "Semua data di jaringan adalah deretan bit (0 dan 1); delapan bit membentuk satu byte, kecepatan link dihitung dalam bit per detik, sedangkan ukuran file dalam byte.",
+      "analogi": "Bayangkan satu bit sebagai satu lampu yang hanya bisa nyala atau mati. Delapan lampu berjajar membentuk satu byte, dan pola nyala-matinya bisa mewakili 256 nilai, dari 0 sampai 255. Seperti odometer motor yang kembali ke nol setelah angka tertinggi, penghitung dengan jumlah bit tetap juga mentok lalu mulai lagi dari nol. Bedanya, odometer memakai angka desimal, sedangkan komputer memakai pangkat dua.",
+      "kenapa_penting": "Paket internet 100 Mbps memberi unduhan sekitar 12 MB/s, bukan 100 MB/s. Subnet mask, alamat MAC, IPv6, dan grafik pemakaian bandwidth semuanya dibaca dalam biner atau heksadesimal, jadi salah membaca satuan berarti salah menyimpulkan.",
+      "istilah": [
+        {
+          "kata": "Bit",
+          "arti": "Satuan data terkecil, bernilai 0 atau 1. Ditulis dengan huruf b kecil, misalnya pada Mbps."
+        },
+        {
+          "kata": "Byte (oktet)",
+          "arti": "Kumpulan 8 bit, ditulis dengan huruf B besar. Dokumen jaringan memakai kata oktet supaya tidak ambigu."
+        },
+        {
+          "kata": "Prefiks SI dan biner",
+          "arti": "Kilo, mega, giga berbasis 10 (1 Gbps = 1.000.000.000 bit per detik). Kibi, mebi, gibi berbasis 2 (1 GiB = 1.073.741.824 byte)."
+        },
+        {
+          "kata": "Heksadesimal",
+          "arti": "Sistem bilangan basis 16 (0-9 dan A-F). Satu digit hex mewakili tepat 4 bit, jadi alamat MAC 6 byte ditulis 12 digit hex."
+        },
+        {
+          "kata": "SNMP",
+          "arti": "Protokol yang dipakai aplikasi pemantau untuk membaca angka dari router dan switch, misalnya jumlah byte yang sudah lewat di sebuah port."
+        },
+        {
+          "kata": "Counter wrap (meluap)",
+          "arti": "Penghitung yang mencapai nilai maksimumnya lalu kembali ke nol, seperti odometer."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "Penghitung byte 32-bit meluap tiap 34 detik di link 1 Gbps, IETF menambah penghitung 64-bit",
+      "kapan": "1994-01",
+      "di_mana": "IETF, standar MIB antarmuka SNMP (dipakai di seluruh dunia)",
+      "ringkas": "Aplikasi pemantau jaringan menggambar grafik bandwidth dari penghitung ifInOctets, yaitu jumlah byte yang sudah diterima sebuah port. Penghitung itu awalnya hanya 32 bit, sehingga setelah mencapai 4.294.967.295 nilainya kembali ke nol. Di Ethernet 10 Mbps luapan baru terjadi setelah 57 menit, tetapi di link 1 Gbps hanya 34 detik. Pemantau yang membaca tiap beberapa menit bisa melewatkan luapan dan salah menghitung trafik. IETF lalu menambah penghitung 64-bit dan mewajibkannya untuk antarmuka cepat.",
+      "kronologi": [
+        {
+          "waktu": "Mei 1990",
+          "peristiwa": "RFC 1155 menetapkan tipe Counter pada SNMP: bilangan yang terus naik sampai `2^32-1` (4.294.967.295), lalu kembali ke nol."
+        },
+        {
+          "waktu": "Maret 1991",
+          "peristiwa": "RFC 1213 (MIB-II) mendefinisikan ifInOctets, jumlah oktet yang diterima sebuah antarmuka, dengan tipe Counter 32-bit itu."
+        },
+        {
+          "waktu": "Januari 1994",
+          "peristiwa": "RFC 1573 mencatat ifInOctets bisa meluap dalam 57 menit di Ethernet, 12 menit di T3, 5,7 menit di FDDI, dan 34 detik di link 1 gigabit."
+        },
+        {
+          "waktu": "Januari 1994",
+          "peristiwa": "Usul menghitung per blok 1.024 byte ditolak, karena di port yang sepi angkanya jarang berubah dan trafik tampak tersendat. RFC 1573 memilih penghitung 64-bit 'high capacity' seperti ifHCInOctets."
+        },
+        {
+          "waktu": "Juni 2000",
+          "peristiwa": "RFC 2863, yang sampai kini belum digantikan, mewajibkan penghitung byte 64-bit di atas 20 Mbps dan penghitung paket 64-bit mulai 650 Mbps. Penghitung 32-bit tetap ada dan berisi 32 bit terbawah."
+        },
+        {
+          "waktu": "Juni 2000",
+          "peristiwa": "RFC 2863 menghitung bahwa link 1 Tbps butuh hampir 5 tahun untuk meluapkan penghitung 64-bit."
+        }
+      ],
+      "akar_masalah": "Penghitung n bit hanya bisa menyimpan 2^n nilai. Dengan 32 bit, penghitung byte mentok di sekitar 4,29 miliar byte, atau 34,36 miliar bit. Link 1 Gbps yang terisi penuh menghabiskannya dalam `2^32 x 8 / 10^9` = 34,36 detik. Makin cepat link, makin cepat penghitung meluap, sementara jumlah bitnya tetap.",
+      "kaitan": "Bagian 5 (Pangkat Dua) memberi angka 2^32 = 4.294.967.296. Bagian 2 (Satuan Data) menjelaskan bahwa penghitung menghitung oktet, sedangkan kecepatan link ditulis dalam bit, sehingga perlu dikali 8. Subbagian prefiks SI di bagian 2 menjelaskan kenapa 1 Gbps berarti 10^9 bit per detik, bukan 2^30.",
+      "pelajaran": [
+        "Untuk port 1 Gbps ke atas, pantau dengan penghitung 64-bit (misalnya ifHCInOctets lewat SNMPv2c atau v3), bukan ifInOctets yang 32-bit.",
+        "Kalau grafik bandwidth tiba-tiba anjlok ke nol atau melonjak ke angka mustahil, periksa dulu jenis penghitungnya sebelum menyalahkan jaringan.",
+        "Sebelum menyimpulkan apa pun dari sebuah angka, cek satuannya: bit atau byte, basis 10 atau basis 2."
+      ],
+      "sumber": [
+        {
+          "judul": "RFC 1155: Structure and Identification of Management Information for TCP/IP-based Internets",
+          "penerbit": "RFC Editor (IETF)",
+          "url": "https://www.rfc-editor.org/rfc/rfc1155"
+        },
+        {
+          "judul": "RFC 1213: Management Information Base for Network Management of TCP/IP-based internets: MIB-II",
+          "penerbit": "RFC Editor (IETF)",
+          "url": "https://www.rfc-editor.org/rfc/rfc1213"
+        },
+        {
+          "judul": "RFC 1573: Evolution of the Interfaces Group of MIB-II",
+          "penerbit": "RFC Editor (IETF)",
+          "url": "https://www.rfc-editor.org/rfc/rfc1573"
+        },
+        {
+          "judul": "RFC 2863: The Interfaces Group MIB",
+          "penerbit": "RFC Editor (IETF)",
+          "url": "https://www.rfc-editor.org/rfc/rfc2863"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda magang di bagian layanan pelanggan sebuah ISP di Sleman. Seorang pelanggan paket 50 Mbps marah: aplikasi unduhan game menampilkan 5,8 MB/s, jadi ia merasa 'cuma dapat 5,8 dari 50'. Ia juga mengeluh hard disk 1 TB yang baru dibelinya hanya terbaca 931 GB di Windows. Grafik router menunjukkan port pelanggan itu terpakai 48 Mbps selama unduhan. Apakah ada yang salah? Jelaskan dengan angka, lalu perkirakan berapa lama file 30 GB selesai diunduh.",
+      "petunjuk": [
+        "Perhatikan huruf b kecil dan B besar. Satu byte berisi berapa bit?",
+        "Produsen hard disk memakai prefiks SI (basis 10), sedangkan Windows menghitung dengan basis 2 tetapi menuliskannya GB.",
+        "Untuk lama unduhan, ubah 30 GB menjadi MB dulu, lalu bagi dengan kecepatan dalam MB/s."
+      ],
+      "jawaban": "1. **Kecepatan.** 50 Mbps dibagi 8 = 6,25 MB/s, itu batas teoretisnya. Setelah dipotong overhead header protokol (sekitar 5%), sisanya kira-kira 5,9 MB/s. Angka 5,8 MB/s berarti layanan bekerja hampir penuh.\n2. **Cek silang dengan grafik.** 48 Mbps dibagi 8 = 6 MB/s di kabel, termasuk header. Cocok dengan 5,8 MB/s data yang diterima aplikasi.\n3. **Hard disk.** 1 TB = 10^12 byte. Windows membaginya dengan 2^30 = 1.073.741.824, lalu menulis hasilnya sebagai GB: 10^12 / 1.073.741.824 kira-kira 931. Tidak ada yang hilang; satuannya saja yang berbeda.\n4. **Lama unduhan.** 30 GB = 30.000 MB (basis 10). 30.000 / 5,8 kira-kira 5.172 detik, sekitar 86 menit atau 1 jam 26 menit. Kalau aplikasinya memakai MB basis 2, hasilnya hanya bergeser beberapa persen.\n5. **Penjelasan ke pelanggan.** Kecepatan paket ditulis dalam bit, sedangkan aplikasi menampilkan byte. Bagi 8 sebelum membandingkan. Tidak ada gangguan, jadi tiket bisa ditutup dengan penjelasan ini."
+    }
+  },
+  "00-fondasi/03-sinyal-bandwidth-latency": {
+    "intinya": {
+      "satu_kalimat": "Bandwidth adalah lebar jalan, latency adalah lama perjalanan; menambah bandwidth tidak membuat data tiba lebih cepat, karena waktu tempuh dibatasi jarak dan kecepatan sinyal di media.",
+      "analogi": "Bayangkan jalan tol Jakarta-Surabaya. Menambah lajur membuat lebih banyak mobil bisa lewat sekaligus (bandwidth), tetapi tidak membuat satu mobil tiba lebih cepat. Waktu tempuh ditentukan jarak dan kecepatan mobil, ditambah antre di gerbang tol yang mirip queuing delay. Analogi ini berhenti berlaku di satu hal: di jaringan, kecepatan 'mobil' sudah mentok di kecepatan cahaya dalam media, jadi tidak ada mobil lebih kencang yang bisa dibeli.",
+      "kenapa_penting": "Saat game terasa lag atau video call patah-patah, penyebabnya sering latency, jitter, atau antrean, bukan kecepatan paket internet. Paham bedanya mencegah Anda membayar bandwidth tambahan yang tidak menyelesaikan masalah.",
+      "istilah": [
+        {
+          "kata": "Bandwidth",
+          "arti": "Kapasitas maksimum sebuah jalur, misalnya 1 Gbps."
+        },
+        {
+          "kata": "Throughput",
+          "arti": "Laju data yang benar-benar tercapai. Selalu di bawah bandwidth karena ada overhead, antrean, dan paket hilang."
+        },
+        {
+          "kata": "Latency",
+          "arti": "Waktu yang dibutuhkan data untuk sampai dari pengirim ke penerima, terdiri atas delay propagasi, transmisi, pemrosesan, dan antrean."
+        },
+        {
+          "kata": "RTT (round-trip time)",
+          "arti": "Waktu pulang-pergi: paket berangkat, tiba, lalu balasannya kembali. Angka inilah yang ditampilkan `ping`."
+        },
+        {
+          "kata": "Delay propagasi",
+          "arti": "Bagian latency yang ditentukan jarak dibagi kecepatan sinyal. Di serat optik sekitar 200.000 km per detik."
+        },
+        {
+          "kata": "Microwave",
+          "arti": "Sambungan radio titik-ke-titik antarmenara. Sinyalnya merambat lewat udara, hampir secepat cahaya di ruang hampa."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "Spread Networks menggali kabel serat hampir lurus Chicago-New York demi memangkas 3 milidetik",
+      "kapan": "2010-06",
+      "di_mana": "Chicago dan New York, Amerika Serikat",
+      "ringkas": "Pedagang saham frekuensi tinggi berlomba mengirim informasi harga antara bursa di Chicago dan New York, karena yang tercepat bisa mengambil untung dari selisih harga sesaat. Jalur serat lama berkelok mengikuti rel kereta dan memutari gunung. Spread Networks menggali jalur baru yang hampir lurus lewat Pegunungan Allegheny, dengan biaya yang dilaporkan sekitar 300 juta dolar AS. RTT turun dari 16 ms menjadi 13 ms. Beberapa tahun kemudian, jaringan radio microwave memangkasnya lagi sampai 8,5 ms.",
+      "kronologi": [
+        {
+          "waktu": "Sebelum 2010",
+          "peristiwa": "Kabel serat antara kedua kota berkelok mengikuti rel kereta dan memutari pegunungan. RTT-nya sekitar 16 ms."
+        },
+        {
+          "waktu": "Juni 2010",
+          "peristiwa": "Spread Networks mengumumkan kabel serat barunya selesai. Rutenya sekitar 825 mil lewat Pegunungan Allegheny, dibuat sependek mungkin."
+        },
+        {
+          "waktu": "2010",
+          "peristiwa": "RTT turun menjadi 13 ms. Pengamat industri menyebut selisih 3 ms itu 'keabadian' bagi pedagang frekuensi tinggi."
+        },
+        {
+          "waktu": "Sesudah 2010",
+          "peristiwa": "Jaringan radio microwave antarmenara menurunkan RTT ke 10 ms, lalu 9 ms."
+        },
+        {
+          "waktu": "2013",
+          "peristiwa": "RTT lewat microwave tercatat 8,5 ms, dan kabel Spread Networks disebut sudah usang untuk perlombaan ini. Kelemahan microwave: kurang andal saat cuaca buruk."
+        }
+      ],
+      "akar_masalah": "Delay propagasi sama dengan jarak dibagi kecepatan sinyal. Cahaya di serat merambat sekitar 200.000 km/s karena indeks bias kaca. Jalur 825 mil (sekitar 1.328 km) butuh kira-kira 6,6 ms sekali jalan atau 13,3 ms pulang-pergi, cocok dengan 13 ms yang dicapai. Gelombang microwave merambat di udara hampir 300.000 km/s, sehingga untuk jarak yang sama waktunya lebih singkat. Bandwidth sebesar apa pun tidak mengubah angka ini.",
+      "kaitan": "Bagian 3.1 (Delay propagasi) memberi rumus dan kecepatan sinyal yang dipakai di sini: 300.000 km/s di ruang hampa dan sekitar 200.000 km/s di serat. Peringatan di bagian itu berbunyi 'Ini tidak bisa dipercepat dengan uang'. Spread Networks memang membayar mahal, tetapi untuk memendekkan jarak, bukan menambah bandwidth. Bagian 8 (Menghitung Waktu Transfer) menjelaskan kenapa transaksi kecil yang sering, seperti order saham, ditentukan latency.",
+      "pelajaran": [
+        "Kalau aplikasi lambat karena jarak, menambah bandwidth tidak menolong. Dekatkan server ke pengguna (misalnya dengan CDN) atau perpendek jalurnya.",
+        "Hitung RTT minimum dengan rumus 2 x jarak / 200.000 km/s sebelum menjanjikan angka latency kepada pelanggan atau atasan.",
+        "Media tercepat belum tentu paling andal: microwave lebih cepat dari serat, tetapi kurang andal saat cuaca buruk."
+      ],
+      "sumber": [
+        {
+          "judul": "The High-Frequency Trading Arms Race: Frequent Batch Auctions as a Market Design Response (makalah kerja, September 2013)",
+          "penerbit": "Eric Budish, Peter Cramton, John Shim (NBER)",
+          "url": "https://conference.nber.org/conf_papers/f69665.pdf"
+        },
+        {
+          "judul": "An Alternative to High-Frequency Trading",
+          "penerbit": "Chicago Booth Review",
+          "url": "https://www.chicagobooth.edu/review/alternative-high-frequency-trading"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Kantor cabang sebuah koperasi di pedalaman Papua tersambung ke server pusat di Jakarta lewat VSAT. Satelitnya geostasioner, sekitar 36.000 km di atas khatulistiwa. Aplikasi kasir terasa lambat: satu transaksi butuh sekitar 8 detik. Data dari teknisi: `ping` ke server stabil di 650 ms dan utilisasi link 4 Mbps hanya 30%. Setiap transaksi mengirim 12 permintaan kecil ke database secara berurutan, dengan total data sekitar 200 KB. Manajer ingin menaikkan link ke 8 Mbps. Apakah itu menolong? Jelaskan dengan hitungan, lalu usulkan solusi yang lebih tepat.",
+      "petunjuk": [
+        "Hitung dua bagian waktu secara terpisah: waktu bolak-balik (12 kali RTT) dan waktu memindahkan 200 KB di link 4 Mbps.",
+        "Bagian mana yang berubah kalau bandwidth digandakan?",
+        "Hitung RTT minimum lewat satelit geostasioner: dalam satu putaran pulang-pergi, sinyal naik dan turun dua kali. Bisakah angka itu diturunkan?"
+      ],
+      "jawaban": "1. **Waktu bolak-balik.** 12 permintaan x 0,65 detik = 7,8 detik.\n2. **Waktu transfer data.** 200 KB = 1.600 kilobit. Di 4 Mbps: 1.600 / 4.000 = 0,4 detik. Di 8 Mbps: 0,2 detik.\n3. **Total.** Sekarang sekitar 7,8 + 0,4 = 8,2 detik. Setelah upgrade sekitar 7,8 + 0,2 = 8,0 detik. Upgrade hanya menghemat 0,2 detik, kurang dari 3%.\n4. **Batas fisik.** Satu RTT lewat satelit geostasioner berarti empat kali menempuh 36.000 km (naik dan turun, pergi dan pulang) = 144.000 km. 144.000 / 300.000 km/s = 0,48 detik. Itu batas bawah dari jarak saja; sisanya pemrosesan dan antrean. Bandwidth berapa pun tidak bisa menurunkannya.\n5. **Kesimpulan.** Aplikasi ini dibatasi latency, bukan bandwidth. Bagian 8 modul menyebut: untuk banyak transaksi kecil, latency yang menentukan.\n6. **Solusi.** (a) Ubah aplikasi agar 12 permintaan digabung menjadi satu atau dua. (b) Jalankan aplikasi di server pusat dan akses dari cabang lewat antarmuka web atau remote desktop, sehingga bolak-balik ke database terjadi di LAN pusat. (c) Pasang server atau cache lokal di cabang yang disinkronkan berkala. (d) Kalau tersedia, pindah ke media dengan jarak tempuh lebih pendek: serat, radio terestrial, atau satelit orbit rendah."
+    }
+  },
+  "00-fondasi/04-sejarah-dan-standar": {
+    "intinya": {
+      "satu_kalimat": "Internet tidak punya pemilik tunggal: protokolnya ditulis terbuka dalam RFC oleh IETF, standar kabel dan Wi-Fi oleh IEEE, dan alamat IP dibagikan IANA lewat RIR.",
+      "analogi": "Bayangkan aturan lalu lintas antarnegara yang disepakati para insinyur pembangun jalan, tanpa satu pemerintah pun yang memerintah. IETF menulis rambu untuk protokol internet, IEEE untuk kabel dan Wi-Fi, dan IANA bersama RIR mengatur 'nomor pelat' berupa alamat IP. Bedanya dengan undang-undang, RFC tidak ditegakkan polisi: sebuah protokol dipakai karena terbukti bekerja dan semua orang ingin perangkatnya bisa bicara dengan perangkat lain.",
+      "kenapa_penting": "Saat sebuah protokol berperilaku aneh, jawaban resminya ada di RFC atau standar IEEE. Engineer yang bisa membaca RFC dan mengecek statusnya (misalnya 'Obsoleted by') bisa membuktikan pihak mana yang menyimpang dari standar ketika dua perangkat tidak cocok.",
+      "istilah": [
+        {
+          "kata": "RFC (Request for Comments)",
+          "arti": "Seri dokumen teknis internet. Sebagian berstatus standar, sebagian hanya informasi. Isi RFC tidak diubah setelah terbit; perbaikan terbit sebagai RFC baru."
+        },
+        {
+          "kata": "IETF",
+          "arti": "Komunitas terbuka yang menyusun standar protokol internet seperti IP, TCP, dan HTTP. Siapa pun boleh ikut lewat milis."
+        },
+        {
+          "kata": "ARPANET",
+          "arti": "Jaringan paket yang didanai badan riset Departemen Pertahanan AS (ARPA) dan mulai beroperasi pada 1969. Cikal bakal internet."
+        },
+        {
+          "kata": "IMP (Interface Message Processor)",
+          "arti": "Komputer khusus yang meneruskan paket di ARPANET, mirip router zaman sekarang. Setiap lokasi punya satu IMP yang tersambung ke komputer host."
+        },
+        {
+          "kata": "Packet switching",
+          "arti": "Cara mengirim data dengan memecahnya menjadi paket yang dikirim sendiri-sendiri, alih-alih memesan satu sirkuit tetap seperti telepon."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "1969: catatan diskusi mahasiswa menjadi RFC 1, dan pesan pertama ARPANET hanya sampai 'LO'",
+      "kapan": "1969",
+      "di_mana": "UCLA dan SRI, California, Amerika Serikat",
+      "ringkas": "Pada 1969, sekelompok mahasiswa pascasarjana dan staf dari empat lokasi calon simpul ARPANET merancang cara komputer saling bicara. Tidak ada otoritas yang memberi mereka aturan, jadi mereka menulis catatan diskusi bernomor urut. Atas usul Bill Duvall, Steve Crocker menamainya 'Request for Comments' supaya tidak terkesan mengklaim wewenang. RFC 1 terbit 7 April 1969. Pada 29 Oktober, UCLA mencoba login ke komputer SRI: huruf L dan O terkirim, lalu sistemnya macet. Login penuh berhasil sekitar satu jam kemudian.",
+      "kronologi": [
+        {
+          "waktu": "Agustus 1968",
+          "peristiwa": "Rapat pertama perwakilan calon lokasi ARPANET dipimpin Elmer Shapiro dari SRI. Pertanyaannya masih dasar, misalnya apa yang akan saling dikatakan oleh host."
+        },
+        {
+          "waktu": "Januari 1969",
+          "peristiwa": "BBN mulai membuat IMP, dengan target IMP pertama tiba di UCLA pada awal September."
+        },
+        {
+          "waktu": "7 April 1969",
+          "peristiwa": "Steve Crocker dari UCLA menerbitkan RFC 1 berjudul 'Host Software'."
+        },
+        {
+          "waktu": "April 1969",
+          "peristiwa": "RFC 3 menetapkan bahwa catatan boleh berisi gagasan apa pun, lebih baik cepat daripada rapi, dan panjang minimalnya satu kalimat."
+        },
+        {
+          "waktu": "September 1969",
+          "peristiwa": "BBN memasang IMP pertama di UCLA, dan komputer host pertama tersambung."
+        },
+        {
+          "waktu": "29 Oktober 1969, 22.30",
+          "peristiwa": "Charley Kline di UCLA mencoba login ke komputer SRI, dengan programmer Bill Duvall di sisi SRI. Huruf L dan O sampai, lalu sistem macet. Login penuh berhasil sekitar satu jam kemudian."
+        },
+        {
+          "waktu": "Akhir 1969",
+          "peristiwa": "UC Santa Barbara dan University of Utah bergabung. Empat host kini tersambung dalam ARPANET awal."
+        }
+      ],
+      "akar_masalah": "Keempat lokasi memakai komputer berbeda (SDS Sigma 7, SDS 940, IBM 360/75, dan DEC PDP-10) dengan sistem operasi, set karakter, bahkan ukuran byte yang berlainan. BBN membangun IMP, tetapi tidak mengambil alih perancangan protokol antar-host, dan tidak ada otoritas lain yang muncul. Para mahasiswa harus merancang sendiri dan butuh cara mencatat serta membagikan kesepakatan. Catatan informal bernomor urut itulah yang menjadi seri RFC.",
+      "kaitan": "Bagian 1 (Garis Waktu Singkat) mencatat 1969 sebagai tahun ARPANET hidup dengan empat node. Bagian 3 (RFC) menyebut nama 'Request for Comments' menyesatkan karena sebagian RFC kini standar penuh; kasus ini menunjukkan asal-usul nama itu. Semboyan IETF di bagian 2.1, 'rough consensus and running code', sudah tampak sejak awal: aturan ditulis oleh orang yang membangun dan mencobanya sendiri.",
+      "pelajaran": [
+        "Saat merujuk RFC, cek statusnya di rfc-editor.org atau datatracker. RFC lama bisa sudah digantikan, seperti RFC 793 oleh RFC 9293.",
+        "Tuliskan kesepakatan teknis tim Anda dalam dokumen bernomor yang bisa dirujuk. Keputusan yang hanya diingat cepat hilang ketika anggota tim berganti."
+      ],
+      "sumber": [
+        {
+          "judul": "RFC 8700: Fifty Years of RFCs",
+          "penerbit": "RFC Editor / Internet Architecture Board",
+          "url": "https://www.rfc-editor.org/rfc/rfc8700"
+        },
+        {
+          "judul": "RFC 1: Host Software",
+          "penerbit": "RFC Editor (Network Working Group)",
+          "url": "https://www.rfc-editor.org/rfc/rfc1"
+        },
+        {
+          "judul": "The Day the Infant Internet Uttered its First Words",
+          "penerbit": "Leonard Kleinrock, UCLA",
+          "url": "https://www.lk.cs.ucla.edu/internet_first_words.html"
+        },
+        {
+          "judul": "A Brief History of the Internet",
+          "penerbit": "Internet Society",
+          "url": "https://www.internetsociety.org/internet/history-internet/brief-history-internet/"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda bekerja di ISP kecil di Medan dengan 3.000 pelanggan. Semua trafik keluar lewat satu penyedia transit dengan biaya, misalkan, Rp7.000 per Mbps per bulan, dan pemakaian puncaknya 2 Gbps. Data aliran trafik (NetFlow) menunjukkan 45% trafik puncak menuju jaringan yang juga anggota sebuah IXP di Jakarta, termasuk server cache video besar. Bergabung ke IXP itu, termasuk port dan sewa link ke lokasinya, memakan Rp5 juta per bulan. Pelanggan juga sering mengeluh video buffering di jam sibuk. Atasan bertanya: perlukah ikut IXP, apa yang harus disiapkan, dan apa yang tidak akan berubah?",
+      "petunjuk": [
+        "Hitung biaya transit sekarang, lalu hitung bagian trafik yang bisa pindah ke peering.",
+        "Peering hanya membawa trafik ke pelanggan sesama anggota IXP. Apakah transit masih dibutuhkan untuk sisanya?",
+        "Untuk bertukar rute dengan BGP di IXP, ISP biasanya butuh nomor AS dan blok IP sendiri. Di Indonesia, dari mana mendapatkannya?"
+      ],
+      "jawaban": "1. **Biaya sekarang.** 2.000 Mbps x Rp7.000 = Rp14 juta per bulan.\n2. **Trafik yang bisa pindah.** 45% x 2.000 Mbps = 900 Mbps lewat peering. Transit tinggal 1.100 Mbps x Rp7.000 = Rp7,7 juta. Ditambah biaya IXP Rp5 juta, totalnya Rp12,7 juta, hemat sekitar Rp1,3 juta per bulan.\n3. **Manfaat selain uang.** Trafik ke server cache video tidak lagi berebut kapasitas transit, jadi jalur transit lebih lega di jam sibuk. Latency ke konten itu juga biasanya lebih rendah (bagian 4, IXP). Ini langsung menyasar keluhan buffering.\n4. **Yang tidak berubah.** Peering hanya menjangkau pelanggan sesama anggota. Trafik ke tujuan lain tetap lewat transit, jadi kontrak transit tetap perlu; hanya kapasitasnya yang bisa dikurangi.\n5. **Persiapan.** ISP perlu ASN dan blok IP sendiri dari APNIC lewat IDNIC/APJII (bagian 2.6), router yang mampu BGP, dan kesepakatan peering dengan anggota IXP.\n6. **Rekomendasi.** Ikut IXP, lalu pantau grafik transit dan peering selama sebulan untuk memastikan 45% itu benar-benar berpindah sebelum menurunkan kontrak transit."
+    }
+  },
+  "00-fondasi/05-topologi": {
+    "intinya": {
+      "satu_kalimat": "Topologi adalah bentuk susunan jaringan, baik cara kabelnya terpasang (fisik) maupun cara datanya mengalir (logis), dan bentuk itu menentukan apa yang berhenti ketika satu bagian rusak.",
+      "analogi": "Bayangkan jalan antardesa. Kalau setiap desa hanya punya satu jalan ke pasar (star), jembatan yang ambruk memutus desa itu dari semuanya. Menambah jalan cadangan (ring atau mesh) membuat desa tetap tersambung, asal jalan cadangan itu tidak lewat jembatan yang sama. Di jaringan, 'jembatan yang sama' bisa berupa satu galian kabel, satu catu daya, atau satu selat laut.",
+      "kenapa_penting": "Kantor Anda mungkin punya dua ISP, tetapi kalau kedua kabelnya masuk lewat tiang dan galian yang sama, satu ekskavator bisa memutus keduanya. Dengan memahami topologi, Anda bisa menemukan titik lemah seperti ini sebelum gangguan terjadi dan menghitung berapa lama layanan bisa mati dalam setahun.",
+      "istilah": [
+        {
+          "kata": "Topologi fisik dan logis",
+          "arti": "Fisik berarti cara kabel benar-benar terpasang. Logis berarti cara data mengalir. Keduanya sering berbeda."
+        },
+        {
+          "kata": "Mesh",
+          "arti": "Susunan dengan banyak jalur antar-node, sehingga ada jalan memutar saat satu link putus. Full mesh menyambung setiap node ke setiap node lain."
+        },
+        {
+          "kata": "SPOF (single point of failure)",
+          "arti": "Komponen yang kalau rusak menghentikan layanan, misalnya satu router, satu catu daya, atau satu jalur kabel."
+        },
+        {
+          "kata": "Failure domain",
+          "arti": "Wilayah yang ikut terdampak oleh satu kegagalan. Makin kecil, makin sedikit pengguna yang terganggu."
+        },
+        {
+          "kata": "Redundansi",
+          "arti": "Komponen atau jalur cadangan yang mengambil alih saat yang utama gagal. Hanya berguna kalau cadangan itu tidak berbagi titik lemah dengan yang utama."
+        },
+        {
+          "kata": "Kabel laut",
+          "arti": "Kabel serat optik yang dibentangkan di dasar laut untuk menghubungkan negara dan benua."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Tiga kabel laut di Laut Merah putus dalam lima menit, diduga terseret jangkar kapal Rubymar",
+      "kapan": "2024-02-24",
+      "di_mana": "Laut Merah bagian selatan, perairan Yaman",
+      "ringkas": "Pada 24 Februari 2024, kabel laut Seacom/TGN-EA, AAE-1, dan EIG putus di Laut Merah bagian selatan. Teori terkuat: jangkar kapal kargo Rubymar yang ditinggalkan awaknya terseret di dasar laut. Ketiganya sistem kabel yang berbeda, tetapi melintasi koridor laut yang sama. Gangguannya terasa dari Afrika Timur sampai Asia Tenggara, dan operator harus mengalihkan trafik lewat kabel serta rute lain.",
+      "kronologi": [
+        {
+          "waktu": "18 Februari 2024",
+          "peristiwa": "Kapal kargo Rubymar terkena serangan rudal. Awaknya menurunkan jangkar lalu meninggalkan kapal, yang kemudian hanyut sambil menyeret jangkarnya."
+        },
+        {
+          "waktu": "24 Februari 2024, 09.46 UTC",
+          "peristiwa": "Kabel Seacom/TGN-EA putus. Banyak penyedia layanan di Afrika Timur kehilangan sebagian jalur transitnya."
+        },
+        {
+          "waktu": "24 Februari 2024, sekitar 09.51 UTC",
+          "peristiwa": "Kabel AAE-1 putus sekitar lima menit kemudian. Jaringan yang terdampak beralih ke transit dari penyedia lain, misalnya Telecom Italia, Singtel, dan Lumen."
+        },
+        {
+          "waktu": "24 Februari 2024",
+          "peristiwa": "Kabel EIG ikut putus, tetapi dampaknya kecil karena kabel itu sudah mati sejak putus sebelumnya pada awal Desember 2023."
+        },
+        {
+          "waktu": "2 Maret 2024",
+          "peristiwa": "Rubymar tenggelam."
+        },
+        {
+          "waktu": "4 Maret 2024",
+          "peristiwa": "HGC Global Communications menyebut pemutusan ini memengaruhi 25% trafik yang melewati Laut Merah dan mulai mengalihkan trafik."
+        },
+        {
+          "waktu": "3 Juni 2024",
+          "peristiwa": "Seacom memperkirakan perbaikan kabelnya di Laut Merah baru selesai pada awal kuartal III 2024."
+        }
+      ],
+      "akar_masalah": "Banyak kabel antara Eropa, Afrika Timur, dan Asia harus melewati Laut Merah. Menurut TeleGeography, saat itu ada 14 kabel di sana, dan diperkirakan lebih dari 90% komunikasi Eropa-Asia melintasinya. Jangkar yang terseret termasuk penyebab utama kabel laut putus menurut International Cable Protection Committee. Seacom dan AAE-1 putus hanya berselang lima menit, cocok dengan satu jangkar yang menyeret melintasi kabel-kabel yang berdekatan. Tiga sistem kabel yang berbeda ternyata berbagi satu koridor fisik.",
+      "kaitan": "Bagian 4 (Redundansi dan Failure Domain) mendaftar SPOF yang sering terlupa, salah satunya satu jalur kabel fisik: dua serat dalam satu galian bisa putus oleh satu backhoe. Laut Merah adalah versi raksasanya. Bagian 7 (Kesalahan Umum) poin 2 mengingatkan hal yang sama: dua serat di satu duct bukan redundansi terhadap galian. Pengalihan trafik lewat kabel dan rute lain adalah manfaat partial mesh di bagian 2.6.",
+      "pelajaran": [
+        "Saat membeli koneksi cadangan, minta peta rute fisiknya. Pastikan jalur utama dan cadangan tidak lewat tiang, galian, gedung, atau kabel laut yang sama.",
+        "Nilai redundansi dari jalur fisiknya, bukan dari nama penyedia atau nama kabel.",
+        "Siapkan dan uji rencana pengalihan ke rute lain, karena perbaikan kabel laut bisa makan waktu berbulan-bulan."
+      ],
+      "sumber": [
+        {
+          "judul": "What Caused the Red Sea Submarine Cable Cuts?",
+          "penerbit": "Kentik Blog (Doug Madory)",
+          "url": "https://www.kentik.com/blog/what-caused-the-red-sea-submarine-cable-cuts/"
+        },
+        {
+          "judul": "Houthi rebels deny severing three Red Sea underwater cables",
+          "penerbit": "PBS News (Associated Press)",
+          "url": "https://www.pbs.org/newshour/world/houthi-rebels-deny-severing-three-red-sea-underwater-cables"
+        },
+        {
+          "judul": "Seacom restores connectivity on East Africa cable",
+          "penerbit": "ITWeb",
+          "url": "https://www.itweb.co.za/article/seacom-restores-connectivity-on-east-africa-cable/VgZeyvJlky8MdjX9"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Kantor cabang sebuah BPR di Banyumas memakai dua ISP serat optik, A dan B, supaya layanan tidak putus. Suatu siang keduanya mati bersamaan selama 4 jam. Saat Anda cek, kedua kabel ISP masuk lewat tiang yang sama di depan kantor, dan hari itu ada proyek pelebaran jalan. Di dalam kantor hanya ada satu router dengan dua port WAN dan satu UPS. Setiap ISP menjanjikan ketersediaan 99,5%, sedangkan routernya 99,9%. Jelaskan kenapa redundansi gagal, hitung ketersediaan yang bisa diharapkan, lalu usulkan perbaikan.",
+      "petunjuk": [
+        "Rumus paralel di bagian 4 hanya berlaku kalau kegagalan kedua jalur tidak saling terkait. Benarkah begitu di sini?",
+        "Hitung dua skenario: kedua ISP benar-benar terpisah, dan kedua ISP berbagi satu jalur fisik.",
+        "Setelah jalur WAN, telusuri komponen yang masih tunggal di dalam kantor."
+      ],
+      "jawaban": "1. **Amati.** Dua jalur yang 'terpisah' mati pada saat yang sama, di hari ada proyek jalan. Itu tanda penyebab bersama: tiang atau galian di depan kantor.\n2. **Konsep.** Redundansi paralel hanya bekerja kalau kegagalannya independen. Tiang yang sama adalah SPOF (bagian 4), sehingga dua ISP berperilaku seperti satu jalur.\n3. **Skenario ideal.** Kalau ISP benar-benar terpisah: 1 - (0,005 x 0,005) = 0,999975, atau 99,9975%. Diserikan dengan router 99,9%: 0,999975 x 0,999 kira-kira 0,99898, sekitar 99,9%. Router tunggal kini menjadi mata rantai terlemah.\n4. **Skenario nyata.** Kalau jalur fisiknya sama, ketersediaan WAN tidak bisa lebih baik dari ketersediaan jalur bersama itu. Gangguan 4 jam ini saja sudah memakai hampir separuh jatah gangguan setahun untuk target 99,9% (8,76 jam).\n5. **SPOF lain.** Router tunggal, UPS tunggal, dan kemungkinan switch tunggal.\n6. **Perbaikan.** Minta ISP B masuk dari sisi lain gedung, atau pakai media lain sebagai cadangan (radio atau modem seluler 4G). Tambah router kedua atau siapkan unit cadangan, pastikan UPS cukup, lalu uji failover secara berkala."
+    }
+  }
+}

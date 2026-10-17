@@ -1,0 +1,188 @@
+{
+  "18-karier-sertifikasi/01-peta-sertifikasi": {
+    "intinya": {
+      "satu_kalimat": "Sertifikasi jaringan adalah bukti terstruktur bahwa Anda menguasai materi tertentu, dan pilihan yang tepat bergantung pada tujuan kerja Anda: fondasi netral, ekosistem Cisco, atau pasar ISP lokal yang memakai MikroTik.",
+      "analogi": "Sertifikasi mirip SIM: ia membuktikan Anda lulus ujian mengemudi, tetapi tidak menjamin Anda sudah terbiasa menyetir di jalan Puncak saat hujan. Jenjangnya juga bertingkat, seperti SIM A lalu SIM B untuk kendaraan yang lebih berat. Bedanya, sertifikasi IT punya masa berlaku dan sering berganti nama atau kode ujian, jadi Anda harus memeriksa halaman resmi penerbitnya sebelum mendaftar.",
+      "kenapa_penting": "Banyak lowongan IT support, NOC, dan network engineer mensyaratkan atau menyukai sertifikasi tertentu. Peta ini membantu Anda tidak membuang uang dan waktu untuk sertifikat yang tidak cocok dengan pekerjaan yang Anda incar.",
+      "istilah": [
+        {
+          "kata": "Vendor-netral",
+          "arti": "Sertifikasi yang menguji konsep umum tanpa terikat merek perangkat tertentu, misalnya CompTIA Network+."
+        },
+        {
+          "kata": "CCNA",
+          "arti": "Cisco Certified Network Associate, sertifikasi jenjang associate dari Cisco dengan kode ujian 200-301. Banyak dipakai sebagai fondasi karier jaringan."
+        },
+        {
+          "kata": "MTCNA",
+          "arti": "MikroTik Certified Network Associate, sertifikasi dasar MikroTik dan syarat masuk semua sertifikasi MikroTik level Advanced."
+        },
+        {
+          "kata": "Jenjang (track)",
+          "arti": "Urutan sertifikasi dari dasar ke ahli, misalnya CCNA, CCNP, lalu CCIE di Cisco, atau JNCIA sampai JNCIE di Juniper."
+        },
+        {
+          "kata": "NetDevOps",
+          "arti": "Peran yang menggabungkan keahlian jaringan dengan otomasi dan pemrograman, misalnya Python, Ansible, dan CI/CD untuk konfigurasi jaringan."
+        }
+      ]
+    },
+    "tantangan": {
+      "soal": "Rina lulusan SMK TKJ di Yogyakarta. Sudah enam bulan ia bekerja sebagai teknisi di sebuah RT/RW Net yang semua routernya MikroTik. Targetnya: dalam setahun pindah ke NOC sebuah ISP regional, lalu kelak ke tim jaringan sebuah bank. Anggarannya terbatas. Teman-temannya menyarankan ia mengambil CCNA, Security+, dan sertifikasi cloud AWS sekaligus tahun ini. Rencana apa yang Anda sarankan, dalam urutan apa, dan mengapa?",
+      "petunjuk": [
+        "Mulailah dari pekerjaan yang ia incar paling dekat, bukan dari sertifikat yang paling terkenal.",
+        "Bagian 7 modul ini punya baris khusus untuk orang yang ingin bekerja di ISP atau RT/RW Net di Indonesia.",
+        "Ingat peringatan di bagian 7 soal mengejar terlalu banyak sertifikasi sekaligus, dan peran portofolio sebagai pelengkap."
+      ],
+      "jawaban": "1. Tentukan target terdekat dulu: NOC ISP regional dalam setahun. Bagian 1 dan bagian 4 menyebut MikroTik populer di ISP kecil-menengah dan RT/RW Net di Indonesia, dan Rina sudah memakainya setiap hari.\n2. Urutan yang masuk akal:\n   - MTCNA lebih dulu. Materinya sesuai pekerjaannya sekarang, MTCNA menjadi syarat semua sertifikasi MikroTik level Advanced, dan ujiannya diikuti setelah training di Training Center resmi (lihat 18.5).\n   - Bangun portofolio lab di MikroTik CHR yang gratis: PPPoE, queue, failover dua ISP, lalu OSPF dan BGP. Dokumentasikan di GitHub (18.4).\n   - CCNA berikutnya, sebagai fondasi konsep yang diakui luas dan bekal untuk melamar ke tim jaringan bank.\n   - Sesudah itu MTCRE bila ia bertahan di ISP, atau Security+ bila ia condong ke keamanan.\n3. Tolak saran tiga sertifikasi sekaligus. Bagian 7 memperingatkan bahwa satu sertifikasi yang dipahami dan dipraktikkan lebih meyakinkan daripada banyak sertifikat dangkal. Sertifikasi cloud juga belum relevan untuk target satu tahunnya.\n4. Sebelum mendaftar, periksa kode ujian, biaya, dan jadwal di halaman resmi penerbit, karena nama dan kode sertifikasi sering berubah."
+    }
+  },
+  "18-karier-sertifikasi/02-peta-ccna": {
+    "intinya": {
+      "satu_kalimat": "Modul ini memetakan setiap topik ujian CCNA 200-301 v1.1 ke modul kurikulum ini, sehingga Anda bisa memakainya sebagai daftar periksa persiapan ujian.",
+      "analogi": "Blueprint CCNA mirip kisi-kisi ujian sekolah: ia menyebut bab mana yang keluar dan berapa porsinya, tetapi tidak memberi soalnya. Tabel di modul ini menunjukkan bab buku mana yang membahas setiap butir kisi-kisi. Bedanya, kisi-kisi CCNA bisa berganti versi: v1.1 hanya berlaku sampai 2 Februari 2027, dan sesudahnya ujian memakai blueprint v2.0 yang isinya berbeda.",
+      "kenapa_penting": "Bobot domain menentukan ke mana waktu belajar Anda paling banyak dicurahkan: IP Connectivity 25%, Network Fundamentals dan Network Access masing-masing 20%. Dengan peta ini Anda tahu modul mana yang wajib dikuasai dan topik mana yang belum Anda sentuh.",
+      "istilah": [
+        {
+          "kata": "Blueprint (exam topics)",
+          "arti": "Daftar resmi topik ujian beserta bobot tiap domain yang diterbitkan Cisco. Inilah acuan resmi apa saja yang diuji."
+        },
+        {
+          "kata": "Domain",
+          "arti": "Kelompok besar topik di blueprint, misalnya 3.0 IP Connectivity. Setiap domain punya persentase bobot di ujian."
+        },
+        {
+          "kata": "Simulasi (sim/simlet)",
+          "arti": "Soal ujian yang meminta Anda mengonfigurasi perangkat virtual atau membaca keluaran perintah `show`. Jawabannya tidak dipilih dari daftar pilihan."
+        },
+        {
+          "kata": "Floating static route",
+          "arti": "Rute statis cadangan yang diberi administrative distance lebih tinggi, sehingga baru dipakai bila rute utama hilang."
+        },
+        {
+          "kata": "Packet Tracer",
+          "arti": "Simulator jaringan gratis dari Cisco Networking Academy yang cukup untuk sebagian besar latihan CCNA."
+        }
+      ]
+    },
+    "tantangan": {
+      "soal": "Dimas, pelajar PKL di Surabaya, ingin ujian CCNA dan punya waktu belajar sekitar 100 jam. Ia menyusun jadwal dari tabel bobot di modul ini: IP Connectivity 25%, Fundamentals dan Access masing-masing 20%, Security 15%, IP Services dan Automation masing-masing 10%. Karena biaya ujian baru terkumpul dari uang saku PKL beberapa bulan lagi, ia berencana ujian pada Maret 2027. Apa yang keliru dari rencananya, dan bagaimana Anda memperbaikinya?",
+      "petunjuk": [
+        "Baca lagi peringatan di bagian 1 tentang tanggal berlakunya v1.1 dan v2.0.",
+        "Bobot domain v2.0 berbeda. Domain mana yang porsinya berubah?",
+        "Ada dua pilihan: tetap pada v1.1 dengan memajukan jadwal, atau belajar dari blueprint v2.0. Apa konsekuensi masing-masing?"
+      ],
+      "jawaban": "1. Masalah utamanya tanggal. Menurut bagian 1, v1.1 hanya bisa diambil sampai 2 Februari 2027, dan sejak 3 Februari 2027 yang tersedia adalah v2.0. Ujian pada Maret 2027 berarti Dimas diuji dengan blueprint v2.0, padahal jadwalnya disusun dari bobot v1.1.\n2. Bobot v2.0 berbeda: Network Infrastructure and Connectivity 25%, Switching and Network Access 25%, IP Routing 20%, Network Services and Security 20%, serta AI, and Network Operations and Management 10%. Topiknya juga bergeser. Ada soal troubleshooting, OSPFv3, HSRP dan VRRP, serta topik AI, sementara REST API dan JSON tidak lagi tercantum.\n3. Pilihan pertama: majukan ujian sebelum 2 Februari 2027 dan pakai peta v1.1 di modul ini. Bagi 100 jam menurut bobot: sekitar 25 jam untuk IP Connectivity, masing-masing 20 jam untuk Fundamentals dan Access, 15 jam untuk Security, dan masing-masing 10 jam untuk IP Services dan Automation.\n4. Pilihan kedua: tetap Maret 2027, tetapi susun ulang jadwal dari blueprint v2.0 di situs Cisco. Modul ini menyebut pemetaan rinci v2.0 belum disusun, jadi Dimas perlu memetakan sendiri topik baru ke modul kurikulum.\n5. Apa pun pilihannya, sisihkan waktu untuk lab di Packet Tracer, karena CCNA menguji konfigurasi dan verifikasi, bukan hanya teori."
+    }
+  },
+  "18-karier-sertifikasi/03-peta-networkplus": {
+    "intinya": {
+      "satu_kalimat": "Modul ini memetakan ujian CompTIA Network+ N10-009, sertifikasi vendor-netral yang menguji konsep dan kemampuan troubleshooting, ke modul-modul kurikulum ini.",
+      "analogi": "Network+ mirip ujian teori SIM yang berlaku untuk mobil merek apa pun: Anda harus paham rambu, aturan, dan cara menangani mogok, tanpa harus hafal letak tombol di satu merek mobil. CCNA lebih mirip pelatihan resmi satu pabrikan yang mengajari Anda membongkar mesin mereknya sendiri. Bedanya dengan ujian SIM, porsi terbesar Network+ justru menangani masalah (troubleshooting 24%), bukan menghafal aturan.",
+      "kenapa_penting": "Network+ sering menjadi sertifikasi pertama untuk posisi help desk dan teknisi, karena tidak menuntut penguasaan CLI satu merek. Bagi Anda yang belajar dari kurikulum ini, peta ini menunjukkan bahwa Tahap 14 (troubleshooting) adalah bekal utama, sebab domain troubleshooting berbobot paling besar.",
+      "istilah": [
+        {
+          "kata": "N10-009",
+          "arti": "Kode versi ujian Network+ yang diluncurkan 20 Juni 2024, menggantikan N10-008 yang pensiun Desember 2024."
+        },
+        {
+          "kata": "PBQ",
+          "arti": "Performance-based question. Soal berbasis skenario yang meminta Anda menerapkan konsep, misalnya menyusun langkah atau mencocokkan konfigurasi dengan kebutuhan."
+        },
+        {
+          "kata": "Metodologi 7 langkah",
+          "arti": "Urutan troubleshooting versi CompTIA: identifikasi masalah, buat teori, uji teori, susun rencana, terapkan, verifikasi, lalu dokumentasikan."
+        },
+        {
+          "kata": "Vendor-netral",
+          "arti": "Menguji konsep umum dengan istilah industri, misalnya link aggregation, bukan nama fitur satu merek seperti EtherChannel."
+        },
+        {
+          "kata": "Skor lulus 720",
+          "arti": "Network+ dinilai pada skala 100-900, dan Anda lulus bila mencapai 720."
+        }
+      ]
+    },
+    "tantangan": {
+      "soal": "Anda teknisi IT di sebuah klinik di Bekasi. Pagi ini satu komputer di meja pendaftaran tidak bisa membuka aplikasi pendaftaran berbasis web maupun situs lain, sedangkan komputer lain di ruangan yang sama normal. Komputer itu satu-satunya yang dinyalakan ulang pagi ini. `ipconfig` menunjukkan alamat 192.168.0.23 dengan gateway 192.168.0.1, padahal jaringan klinik memakai 192.168.1.0/24. Kemarin sore seorang staf memasang router Wi-Fi kecil di bawah meja untuk ponselnya. Terapkan metodologi troubleshooting 7 langkah CompTIA untuk kasus ini.",
+      "petunjuk": [
+        "Langkah pertama mengumpulkan informasi: siapa terdampak, sejak kapan, dan apa yang berubah. Data mana di soal yang menjawab pertanyaan 'apa yang berubah'?",
+        "Dari mana komputer mendapat alamat 192.168.0.23? Perintah apa yang menampilkan server DHCP yang memberinya?",
+        "Jangan lupa langkah 6 dan 7: verifikasi penuh, pencegahan, dan dokumentasi."
+      ],
+      "jawaban": "1. Identifikasi masalah. Hanya satu komputer terdampak, sejak dinyalakan ulang pagi ini, dan alamatnya berasal dari subnet asing. Perubahan terakhir di ruangan itu: router Wi-Fi kecil yang dipasang kemarin sore.\n2. Buat teori. Router kecil itu menjalankan server DHCP sendiri (DHCP liar) dan menjawab lebih cepat daripada server DHCP klinik, sehingga komputer mendapat alamat, gateway, dan DNS yang salah.\n3. Uji teori. Jalankan `ipconfig /all` dan lihat baris DHCP Server. Bila isinya 192.168.0.1, bukan server DHCP klinik, teorinya terbukti. Bila tidak, susun teori baru.\n4. Buat rencana. Cabut router kecil dari jaringan atau matikan DHCP-nya, beri tahu staf yang memasangnya, dan perkirakan dampaknya: perangkat lain yang sempat mendapat alamat dari router itu juga perlu diperbarui.\n5. Terapkan. Cabut atau ubah router kecil, lalu jalankan `ipconfig /release` dan `ipconfig /renew` di komputer pendaftaran.\n6. Verifikasi dan cegah. Pastikan komputer kembali mendapat alamat 192.168.1.x, bisa membuka aplikasi pendaftaran, dan komputer lain tetap normal. Untuk pencegahan, aktifkan DHCP snooping di switch bila mendukung, dan buat aturan bahwa perangkat jaringan baru harus seizin IT.\n7. Dokumentasikan gejala, penyebab, tindakan, dan pencegahannya di catatan tiket, supaya kejadian serupa bisa dikenali lebih cepat."
+    }
+  },
+  "18-karier-sertifikasi/04-portofolio-interview": {
+    "intinya": {
+      "satu_kalimat": "Sertifikasi menunjukkan Anda lulus ujian, sedangkan portofolio lab yang terdokumentasi dan cara berpikir yang runtut saat wawancara menunjukkan Anda benar-benar bisa bekerja.",
+      "analogi": "Portofolio mirip album foto hasil kerja seorang tukang bangunan: calon pemberi kerja bisa melihat rumah yang sudah ia bangun, bukan hanya mendengar ceritanya. Wawancara teknis mirip meminta tukang itu memeriksa dinding retak di depan Anda: yang dinilai cara ia memeriksa dari pondasi ke atas, bukan tebakan langsungnya. Bedanya, portofolio jaringan bisa Anda bangun gratis di laptop memakai simulator, tanpa menunggu proyek sungguhan.",
+      "kenapa_penting": "Pelamar entry-level sering punya sertifikat yang mirip-mirip. Repositori GitHub berisi diagram, konfigurasi, dan catatan masalah yang Anda pecahkan membedakan Anda, dan pewawancara jaringan hampir selalu menanyakan troubleshooting serta apa yang terjadi saat Anda mengetik URL di browser.",
+      "istilah": [
+        {
+          "kata": "Portofolio",
+          "arti": "Kumpulan bukti kerja nyata, misalnya topologi, konfigurasi, skrip, dan catatan masalah dari lab Anda, yang bisa dilihat calon pemberi kerja."
+        },
+        {
+          "kata": "Home lab",
+          "arti": "Lab jaringan pribadi untuk berlatih. Bisa sepenuhnya virtual memakai Packet Tracer, GNS3, Containerlab, atau MikroTik CHR."
+        },
+        {
+          "kata": "README",
+          "arti": "Berkas penjelasan di depan repositori: tujuan proyek, diagram, cara menjalankan, masalah yang ditemui, dan pelajarannya."
+        },
+        {
+          "kata": "Bottom-up",
+          "arti": "Cara troubleshooting dari lapisan bawah ke atas: fisik, link, IP dan gateway, DNS, lalu aplikasi."
+        }
+      ]
+    },
+    "tantangan": {
+      "soal": "Bayu akan diwawancarai untuk posisi NOC di sebuah ISP minggu depan. Repositori GitHub-nya berisi tiga berkas: `config-router1-final.txt`, `config-router2-final-fix.txt`, dan `catatan.txt` bertuliskan 'lab OSPF, sudah jalan'. Ia punya waktu dua malam. Apa yang sebaiknya ia ubah agar repositori itu benar-benar menjadi portofolio, dan bagaimana ia menyiapkan diri bila pewawancara bertanya tentang proyek itu?",
+      "petunjuk": [
+        "Bagian 3 modul ini menyebut lima hal yang harus ada dalam dokumentasi setiap proyek. Apa saja?",
+        "Pewawancara jarang menanyakan 'apakah lab Anda jalan'. Yang lebih sering ditanyakan: 'apa yang Anda lakukan ketika tidak jalan'.",
+        "Dalam dua malam, satu proyek yang terdokumentasi rapi lebih berguna daripada tiga yang setengah jadi."
+      ],
+      "jawaban": "1. Repositori itu belum menjelaskan apa pun. Pemberi kerja tidak bisa melihat tujuan, topologi, atau cara berpikir Bayu, jadi proyeknya nyaris tak terlihat.\n2. Malam pertama, rapikan satu proyek OSPF saja:\n   - Tulis README berisi tujuan lab, diagram topologi beserta alamat IP, dan alat yang dipakai, misalnya Packet Tracer atau Containerlab.\n   - Ganti nama berkas menjadi jelas, misalnya `r1.cfg` dan `r2.cfg`, dan buang versi ganda seperti `final-fix`.\n   - Tambahkan bagian 'masalah yang saya temui', misalnya tetangga OSPF tidak naik karena nomor area atau timer hello berbeda, beserta cara menemukannya (`show ip ospf neighbor`, `show ip ospf interface`) dan cara memperbaikinya.\n   - Tutup dengan apa yang ia pelajari dan rencana proyek berikutnya.\n3. Malam kedua, latih cara menjelaskannya. Siapkan cerita dua menit: tujuan, topologi, satu masalah, cara mengisolasinya, dan hasilnya. Latih juga jawaban klasik tentang apa yang terjadi saat mengetik URL, dan troubleshooting bottom-up.\n4. Saat wawancara, kaitkan jawaban dengan lab itu, misalnya 'di lab saya, tetangga OSPF tidak naik karena timer hello berbeda'. Bila ditanya hal yang belum pernah ia kerjakan, ia menjawab jujur, lalu menjelaskan konsep serupa yang sudah ia pahami."
+    }
+  },
+  "18-karier-sertifikasi/05-peta-mikrotik": {
+    "intinya": {
+      "satu_kalimat": "Jalur sertifikasi MikroTik dimulai dari MTCNA sebagai syarat wajib, lalu bercabang ke spesialisasi seperti routing, wireless, dan switching, dengan MTCINE sebagai puncak jalur ISP.",
+      "analogi": "Jalur MikroTik mirip lembaga kursus bertingkat: semua peserta wajib lulus kelas dasar (MTCNA) sebelum memilih kelas lanjutan seperti routing (MTCRE) atau wireless (MTCWE). Kelas tertinggi untuk ISP, MTCINE, hanya terbuka bagi yang sudah lulus MTCRE. Bedanya, ujian MikroTik hanya bisa diikuti setelah training di Training Center resmi, tidak bisa ujian mandiri.",
+      "kenapa_penting": "ISP kecil-menengah, RT/RW Net, warnet, dan hotel di Indonesia banyak memakai MikroTik karena murah dan fiturnya lengkap. Untuk melamar di tempat seperti itu, MTCNA ditambah portofolio lab MikroTik sering lebih dicari daripada CCNA saja.",
+      "istilah": [
+        {
+          "kata": "MTCNA",
+          "arti": "MikroTik Certified Network Associate. Sertifikasi dasar yang wajib dimiliki sebelum mengambil sertifikasi MikroTik level Advanced."
+        },
+        {
+          "kata": "MTCRE",
+          "arti": "MikroTik Certified Routing Engineer: routing statis lanjutan, OSPF, dan tunnel. Menjadi syarat untuk MTCINE."
+        },
+        {
+          "kata": "MTCINE",
+          "arti": "MikroTik Certified Inter-networking Engineer: BGP dan MPLS. Level Extended, puncak jalur ISP dan backbone."
+        },
+        {
+          "kata": "Training Center",
+          "arti": "Lembaga pelatihan resmi dengan MikroTik Certified Trainer. Ujian sertifikasi hanya bisa diikuti setelah training di sana."
+        },
+        {
+          "kata": "RouterOS v7",
+          "arti": "Versi sistem operasi MikroTik saat ini. Sintaks OSPF, BGP, dan wifi-nya berbeda dari v6 yang dipakai banyak materi lama."
+        }
+      ]
+    },
+    "tantangan": {
+      "soal": "Arif lulus MTCNA pada Maret 2021 dan sejak itu bekerja di ISP lokal di Lampung. Sekarang, Oktober 2026, kantornya mulai memakai BGP dan MPLS, dan atasannya meminta Arif mengambil MTCINE secepatnya. Arif ingin langsung mendaftar kelas MTCINE, dan ia bertanya apakah MTCNA-nya yang sudah lewat tiga tahun harus diulang. Apa jawaban Anda, dan bagaimana rencananya?",
+      "petunjuk": [
+        "Bagian 2 menyebut prasyarat MTCINE. Apakah prasyaratnya MTCNA?",
+        "Ada aturan khusus tentang MTCNA yang sudah kedaluwarsa saat mengikuti kursus engineer pertama.",
+        "Periksa juga peringatan bahwa outline resmi lebih tua dari RouterOS v7."
+      ],
+      "jawaban": "1. Arif belum bisa langsung ke MTCINE. Menurut bagian 2, MTCINE menuntut MTCRE, bukan MTCNA.\n2. MTCNA-nya tidak perlu diulang untuk langkah berikutnya. Sertifikat berlaku tiga tahun, jadi MTCNA Arif sudah kedaluwarsa sejak 2024, tetapi MikroTik membolehkan MTCNA yang kedaluwarsa saat mengikuti kursus engineer pertama, asalkan ia pernah memilikinya.\n3. Rencananya:\n   - Ambil MTCRE lebih dulu di Training Center resmi. Ujian diikuti setelah training, berisi 25 soal dalam 60 menit, dan lulus dengan nilai 60%.\n   - Bersiap dengan modul routing v7 (19.8), lalu untuk MTCINE dengan modul MPLS di RouterOS (19.9) dan Tahap 22.\n   - Sesudah lulus MTCRE, daftar kelas MTCINE.\n4. Sebelum mendaftar, tanyakan kepada trainer versi RouterOS yang dipakai di kelas, karena outline resmi ditulis sebelum v7 dan sintaks OSPF serta BGP di v7 sudah berbeda.\n5. Sampaikan ke atasan bahwa jalurnya dua tahap, MTCRE lalu MTCINE, jadi jadwal dan anggaran perlu disusun untuk dua kelas."
+    }
+  }
+}

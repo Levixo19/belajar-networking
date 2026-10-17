@@ -419,7 +419,8 @@
    ],
    "catatan": "",
    "modul": [
-    "01-model-referensi/02-tcp-ip"
+    "01-model-referensi/02-tcp-ip",
+    "11-wan-vpn/04-satelit-antarplanet"
    ]
   },
   {
@@ -450,7 +451,8 @@
    ],
    "catatan": "",
    "modul": [
-    "01-model-referensi/02-tcp-ip"
+    "01-model-referensi/02-tcp-ip",
+    "11-wan-vpn/04-satelit-antarplanet"
    ]
   },
   {
@@ -901,7 +903,8 @@
    ],
    "catatan": "",
    "modul": [
-    "05-transport/02-tcp"
+    "05-transport/02-tcp",
+    "11-wan-vpn/04-satelit-antarplanet"
    ]
   },
   {
@@ -976,6 +979,49 @@
    "modul": [
     "06-aplikasi/02-dhcp",
     "13-linux-networking/04-layanan-jaringan-linux"
+   ]
+  },
+  {
+   "id": "materi-ec1807eb",
+   "judul": "MDN Web Docs",
+   "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "aplikasi"
+   ],
+   "catatan": "",
+   "modul": [
+    "06-aplikasi/03-http"
+   ]
+  },
+  {
+   "id": "materi-0d96b071",
+   "judul": "RFC 8216, HTTP Live Streaming (Agustus 2017, Informational)",
+   "url": "https://www.rfc-editor.org/rfc/rfc8216",
+   "jenis": "standar",
+   "bahasa": "en",
+   "topik": [
+    "aplikasi",
+    "standar"
+   ],
+   "catatan": "",
+   "modul": [
+    "06-aplikasi/03-http"
+   ]
+  },
+  {
+   "id": "materi-11ff38fe",
+   "judul": "ISO/IEC 23009-1, Dynamic adaptive streaming over HTTP (DASH), Part 1: Media presentation description and segment formats",
+   "url": "https://www.iso.org/standard/89027.html",
+   "jenis": "standar",
+   "bahasa": "en",
+   "topik": [
+    "aplikasi"
+   ],
+   "catatan": "",
+   "modul": [
+    "06-aplikasi/03-http"
    ]
   },
   {
@@ -2154,6 +2200,21 @@
    ]
   },
   {
+   "id": "materi-570522ed",
+   "judul": "MikroTik",
+   "url": "https://help.mikrotik.com/docs/display/ROS/Filter",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "firewall-nat",
+    "mikrotik"
+   ],
+   "catatan": "",
+   "modul": [
+    "09-nat-acl-firewall/02-acl"
+   ]
+  },
+  {
    "id": "materi-c8f41fab",
    "judul": "MikroTik",
    "url": "https://help.mikrotik.com/docs/display/ROS/Firewall",
@@ -2179,7 +2240,8 @@
    ],
    "catatan": "",
    "modul": [
-    "09-nat-acl-firewall/03-firewall"
+    "09-nat-acl-firewall/03-firewall",
+    "13-linux-networking/03-nftables-firewall"
    ]
   },
   {
@@ -2226,6 +2288,21 @@
    ]
   },
   {
+   "id": "materi-f25ab8a2",
+   "judul": "MikroTik CAPsMAN",
+   "url": "https://help.mikrotik.com/docs/display/ROS/CAPsMAN",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "wireless",
+    "mikrotik"
+   ],
+   "catatan": "",
+   "modul": [
+    "10-wireless/04-desain-wlan"
+   ]
+  },
+  {
    "id": "materi-dec23bb1",
    "judul": "WireGuard",
    "url": "https://www.wireguard.com/papers/wireguard.pdf",
@@ -2267,6 +2344,677 @@
    "catatan": "",
    "modul": [
     "11-wan-vpn/03-qos"
+   ]
+  },
+  {
+   "id": "materi-4466a7a9",
+   "judul": "NIST, CODATA: speed of light in vacuum",
+   "url": "https://physics.nist.gov/cgi-bin/cuu/Value?c",
+   "jenis": "standar",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-2b5c232a",
+   "judul": "ESA, Types of orbits",
+   "url": "https://www.esa.int/Enabling_Support/Space_Transportation/Types_of_orbits",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-9cc314af",
+   "judul": "NASA Earth Observatory, Catalog of Earth Satellite Orbits",
+   "url": "https://science.nasa.gov/earth/earth-observatory/catalog-of-earth-satellite-orbits",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-f068d2fe",
+   "judul": "NASA NSSDCA, Earth Fact Sheet",
+   "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-1c9d7f57",
+   "judul": "NASA NSSDCA, Moon Fact Sheet",
+   "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-0adab713",
+   "judul": "NASA NSSDCA, Mars Fact Sheet",
+   "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-8ade9721",
+   "judul": "SES, Medium Earth Orbit (MEO)",
+   "url": "https://www.ses.com/network-and-technology/meo",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-988da698",
+   "judul": "ITU-T G.114 (05/2003), One-way transmission time",
+   "url": "https://www.itu.int/rec/T-REC-G.114-200305-I/en",
+   "jenis": "standar",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-6f7b6173",
+   "judul": "ITU-R P.618, Propagation data and prediction methods required for the design of Earth-space telecommunication systems",
+   "url": "https://www.itu.int/rec/R-REC-P.618",
+   "jenis": "standar",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-ade445c1",
+   "judul": "ESA, Satellite frequency bands",
+   "url": "https://www.esa.int/Applications/Connectivity_and_Secure_Communications/Satellite_frequency_bands",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-9ed555c8",
+   "judul": "TeleGeography Submarine Cable Map, Matrix Cable System",
+   "url": "https://www.submarinecablemap.com/submarine-cable/matrix-cable-system",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-6db9c036",
+   "judul": "RFC 2488, Enhancing TCP Over Satellite Channels using Standard Mechanisms (BCP 28)",
+   "url": "https://www.rfc-editor.org/rfc/rfc2488",
+   "jenis": "standar",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn",
+    "transport",
+    "standar"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-6ea1a879",
+   "judul": "RFC 7323, TCP Extensions for High Performance",
+   "url": "https://www.rfc-editor.org/rfc/rfc7323",
+   "jenis": "standar",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn",
+    "transport",
+    "standar"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-7a13f84b",
+   "judul": "RFC 9312, Manageability of the QUIC Transport Protocol",
+   "url": "https://www.rfc-editor.org/rfc/rfc9312",
+   "jenis": "standar",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn",
+    "transport",
+    "standar"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-7abe07ff",
+   "judul": "RFC 4838, Delay-Tolerant Networking Architecture",
+   "url": "https://www.rfc-editor.org/rfc/rfc4838",
+   "jenis": "standar",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn",
+    "standar"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-5570b77e",
+   "judul": "RFC 9171, Bundle Protocol Version 7",
+   "url": "https://www.rfc-editor.org/rfc/rfc9171",
+   "jenis": "standar",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn",
+    "standar"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-afe212f5",
+   "judul": "RFC 5325, Licklider Transmission Protocol - Motivation",
+   "url": "https://www.rfc-editor.org/rfc/rfc5325",
+   "jenis": "standar",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn",
+    "standar"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-ace20e3c",
+   "judul": "RFC 5326, Licklider Transmission Protocol - Specification",
+   "url": "https://www.rfc-editor.org/rfc/rfc5326",
+   "jenis": "standar",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn",
+    "standar"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-bd4ef2f2",
+   "judul": "IETF Datatracker, Bundle-in-Bundle Encapsulation (draft-ietf-dtn-bibe)",
+   "url": "https://datatracker.ietf.org/doc/draft-ietf-dtn-bibe/",
+   "jenis": "standar",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-47c086de",
+   "judul": "CCSDS, daftar publikasi",
+   "url": "https://ccsds.org/publications/allpubs/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-bacc4eaf",
+   "judul": "CCSDS 734.2-B-1, CCSDS Bundle Protocol Specification",
+   "url": "https://ccsds.org/Pubs/734x2b1.pdf",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-b3ea151a",
+   "judul": "CCSDS 734.1-B-1, Licklider Transmission Protocol (LTP) for CCSDS",
+   "url": "https://ccsds.org/Pubs/734x1b1.pdf",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-72a82405",
+   "judul": "Starlink, Satellite Technology",
+   "url": "https://www.starlink.com/technology",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-dbec0f00",
+   "judul": "Starlink, Network Update",
+   "url": "https://www.starlink.com/updates/network-update",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-60bbfd96",
+   "judul": "SpaceX, Improving Starlink's Latency",
+   "url": "https://api.starlink.com/public-files/StarlinkLatency.pdf",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-95047f7e",
+   "judul": "FCC 21-48, SpaceX Gen1 modification order",
+   "url": "https://docs.fcc.gov/public/attachments/FCC-21-48A1.pdf",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-c65825d7",
+   "judul": "FCC 22-91, SpaceX Gen2 order and authorization",
+   "url": "https://docs.fcc.gov/public/attachments/FCC-22-91A1.pdf",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-7f2e3297",
+   "judul": "FCC, FCC Approves Next-Gen Satellite Constellation (9 Januari 2026)",
+   "url": "https://docs.fcc.gov/public/attachments/DOC-417881A1.pdf",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-1633841e",
+   "judul": "SpaceX, narasi permohonan eksperimen terminal pengguna ke FCC",
+   "url": "https://apps.fcc.gov/els/GetAtt.html?id=262648&x=",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-7a3d09dd",
+   "judul": "Mohan dkk., A Multifaceted Look at Starlink Performance (WWW 2024)",
+   "url": "https://arxiv.org/abs/2310.09242",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-e6f9f15c",
+   "judul": "Thales Alenia Space, Indonesia's SATRIA communications satellite successfully launched",
+   "url": "https://www.thalesaleniaspace.com/en/press-releases/indonesias-satria-communications-satellite-successfully-launched",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-1d3336e9",
+   "judul": "Kominfo, majalah KominfoNext Edisi 55 (Juli 2023), liputan SATRIA-1 dan sejarah satelit Indonesia",
+   "url": "https://jdih.komdigi.go.id/storage/file-artikel-hukum/1709096783-KOMINFONEXT_EDISI_55_JULI_2023_1_.pdf",
+   "jenis": "artikel",
+   "bahasa": "id",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-0109a5ba",
+   "judul": "Kominfo, majalah KominfoNext Edisi 61 (Januari 2024), peresmian SATRIA-1 dan gateway Manado",
+   "url": "https://jdih.komdigi.go.id/storage/file-artikel-hukum/1729219601-KOMINFONEXT_EDISI_61_JANUARI_2024.pdf",
+   "jenis": "artikel",
+   "bahasa": "id",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-eb9d0627",
+   "judul": "BPSDM Komdigi, Seremoni pengoperasian SATRIA-1 dan BTS 4G (28 Desember 2023)",
+   "url": "https://bpsdm.komdigi.go.id/berita-presiden-bersama-menkominfo-kunjungi-sulawesi-utara-dalam-rangka-seremoni-p-19-1667",
+   "jenis": "artikel",
+   "bahasa": "id",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-924b7534",
+   "judul": "NASA, Where is the DSN Located?",
+   "url": "https://www.nasa.gov/directorates/somd/space-communications-navigation-program/dsn-complexes/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-d451b1e8",
+   "judul": "NASA, What is the Deep Space Network?",
+   "url": "https://www.nasa.gov/directorates/somd/space-communications-navigation-program/what-is-the-deep-space-network/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-3b9bd6de",
+   "judul": "NASA JPL, Deep Space Network",
+   "url": "https://www.jpl.nasa.gov/missions/dsn/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-92a997e1",
+   "judul": "NASA, Mars 2020 Perseverance rover components",
+   "url": "https://science.nasa.gov/mission/mars-2020-perseverance/rover-components/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-e9b38e5f",
+   "judul": "NASA, Delay/Disruption Tolerant Networking Overview",
+   "url": "https://www.nasa.gov/technology/space-comms/dtn-overview-benefits-successstories-learningresources/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-2d546ce0",
+   "judul": "NASA, October 2008: Disruption Tolerant Networking Tested on Spacecraft",
+   "url": "https://www.nasa.gov/image-article/october-2008-disruption-tolerant-networking-dtn-tested-spacecraft/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-b06b10be",
+   "judul": "NASA Glenn, High-Rate Delay Tolerant Networking",
+   "url": "https://www.nasa.gov/glenn/glenn-expertise-space-exploration/scan/high-rate-delay-tolerant-networking/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-c0e5f659",
+   "judul": "NASA, Laser Communications Relay Demonstration (LCRD) Overview",
+   "url": "https://www.nasa.gov/directorates/stmd/tech-demo-missions-program/laser-communications-relay-demonstration-lcrd-overview/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-5941e1da",
+   "judul": "NASA, NASA's Laser Relay System Sends Pet Imagery to, from Space Station",
+   "url": "https://www.nasa.gov/missions/station/nasas-laser-relay-system-sends-pet-imagery-to-from-space-station/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-29c6c78b",
+   "judul": "Ristovski dkk., NASA Delay Tolerant Networks: Operational, Evolving, and Ready for Expansion (SpaceOps 2023)",
+   "url": "https://ntrs.nasa.gov/citations/20230001324",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-5688d2eb",
+   "judul": "Cisco, Understand the Ping and Traceroute Commands",
+   "url": "https://www.cisco.com/c/en/us/support/docs/ios-nx-os-software/ios-software-releases-121-mainline/12778-ping-traceroute.html",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-1abb18f7",
+   "judul": "MikroTik, Ping",
+   "url": "https://help.mikrotik.com/docs/display/ROS/Ping",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn",
+    "mikrotik"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
+   ]
+  },
+  {
+   "id": "materi-8dbfab55",
+   "judul": "MikroTik, Traceroute",
+   "url": "https://help.mikrotik.com/docs/display/ROS/Traceroute",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "wan-vpn",
+    "mikrotik"
+   ],
+   "catatan": "",
+   "modul": [
+    "11-wan-vpn/04-satelit-antarplanet"
    ]
   },
   {
@@ -2495,6 +3243,77 @@
    ]
   },
   {
+   "id": "materi-47bd3792",
+   "judul": "netfilter project",
+   "url": "https://www.netfilter.org/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "",
+   "modul": [
+    "13-linux-networking/03-nftables-firewall"
+   ]
+  },
+  {
+   "id": "materi-2379cf72",
+   "judul": "firewalld",
+   "url": "https://firewalld.org/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "linux",
+    "firewall-nat"
+   ],
+   "catatan": "",
+   "modul": [
+    "13-linux-networking/03-nftables-firewall"
+   ]
+  },
+  {
+   "id": "materi-5d1477d1",
+   "judul": "eBPF Docs, Program type BPFPROGTYPEXDP",
+   "url": "https://docs.ebpf.io/linux/program-type/BPF_PROG_TYPE_XDP/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "",
+   "modul": [
+    "13-linux-networking/03-nftables-firewall"
+   ]
+  },
+  {
+   "id": "materi-e9ad0647",
+   "judul": "Linux kernel documentation, AFXDP",
+   "url": "https://docs.kernel.org/networking/af_xdp.html",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "",
+   "modul": [
+    "13-linux-networking/03-nftables-firewall"
+   ]
+  },
+  {
+   "id": "materi-cdb2b647",
+   "judul": "man ip-link(8), opsi xdp, xdpdrv, xdpgeneric, xdpoffload",
+   "url": "https://man7.org/linux/man-pages/man8/ip-link.8.html",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "linux"
+   ],
+   "catatan": "",
+   "modul": [
+    "13-linux-networking/03-nftables-firewall"
+   ]
+  },
+  {
    "id": "materi-ce04614a",
    "judul": "nginx",
    "url": "https://nginx.org/en/docs/",
@@ -2606,7 +3425,8 @@
    ],
    "catatan": "",
    "modul": [
-    "14-monitoring-troubleshooting/03-observability"
+    "14-monitoring-troubleshooting/03-observability",
+    "15-otomasi/02-data-dan-api"
    ]
   },
   {
@@ -2651,6 +3471,50 @@
    "catatan": "",
    "modul": [
     "15-otomasi/01-mengapa-otomasi"
+   ]
+  },
+  {
+   "id": "materi-30f78735",
+   "judul": "RFC 8259 (JSON) · YAML spec",
+   "url": "https://yaml.org/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "otomasi",
+    "standar"
+   ],
+   "catatan": "",
+   "modul": [
+    "15-otomasi/02-data-dan-api"
+   ]
+  },
+  {
+   "id": "materi-7a782931",
+   "judul": "gNMI",
+   "url": "https://github.com/openconfig/gnmi",
+   "jenis": "alat",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "",
+   "modul": [
+    "15-otomasi/02-data-dan-api"
+   ]
+  },
+  {
+   "id": "materi-2f184437",
+   "judul": "gnmic",
+   "url": "https://gnmic.openconfig.net/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "otomasi"
+   ],
+   "catatan": "",
+   "modul": [
+    "15-otomasi/02-data-dan-api",
+    "lab/08-lab-netdevops"
    ]
   },
   {
@@ -3411,7 +4275,7 @@
   },
   {
    "id": "materi-4f87b885",
-   "judul": "Cisco CCNA 200-301 v1.1 Exam Topics (blueprint resmi) — sumber pemetaan di atas",
+   "judul": "Cisco CCNA 200-301 v1.1 Exam Topics (blueprint resmi), sumber pemetaan di atas",
    "url": "https://learningcontent.cisco.com/documents/marketing/exam-topics/200-301-CCNA-v1.1.pdf",
    "jenis": "artikel",
    "bahasa": "en",
@@ -3524,6 +4388,64 @@
     "18-karier-sertifikasi/05-peta-mikrotik",
     "21-ekosistem-profesi/01-peta-ekosistem",
     "21-ekosistem-profesi/02-rumpun-infrastruktur"
+   ]
+  },
+  {
+   "id": "materi-58fe9550",
+   "judul": "MikroTik Documentation",
+   "url": "https://help.mikrotik.com/docs/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "mikrotik"
+   ],
+   "catatan": "",
+   "modul": [
+    "19-mikrotik/01-pengenalan-routeros"
+   ]
+  },
+  {
+   "id": "materi-ec79523f",
+   "judul": "MikroTik Wiki (v6)",
+   "url": "https://wiki.mikrotik.com/",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "mikrotik"
+   ],
+   "catatan": "",
+   "modul": [
+    "19-mikrotik/01-pengenalan-routeros"
+   ]
+  },
+  {
+   "id": "materi-d12b69b4",
+   "judul": "MikroTik Forum",
+   "url": "https://forum.mikrotik.com/",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "mikrotik"
+   ],
+   "catatan": "",
+   "modul": [
+    "19-mikrotik/01-pengenalan-routeros"
+   ]
+  },
+  {
+   "id": "materi-c9e52a3e",
+   "judul": "MikroTik Download (termasuk CHR untuk lab)",
+   "url": "https://mikrotik.com/download",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "mikrotik"
+   ],
+   "catatan": "",
+   "modul": [
+    "19-mikrotik/01-pengenalan-routeros",
+    "22-service-provider/04-l2vpn-carrier-ethernet",
+    "referensi/sumber-belajar"
    ]
   },
   {
@@ -9148,22 +10070,6 @@
    ]
   },
   {
-   "id": "materi-c9e52a3e",
-   "judul": "MikroTik, CHR dan unduhan",
-   "url": "https://mikrotik.com/download",
-   "jenis": "artikel",
-   "bahasa": "en",
-   "topik": [
-    "provider",
-    "mikrotik"
-   ],
-   "catatan": "",
-   "modul": [
-    "22-service-provider/04-l2vpn-carrier-ethernet",
-    "referensi/sumber-belajar"
-   ]
-  },
-  {
    "id": "materi-3c2a4a84",
    "judul": "Nokia SR Linux, tutorial MPLS dengan LDP (catatan lisensi platform MPLS)",
    "url": "https://learn.srlinux.dev/tutorials/mpls/mpls-ldp/intro/",
@@ -10000,6 +10906,354 @@
    ]
   },
   {
+   "id": "materi-3d8ce9b1",
+   "judul": "Cisco Networking Academy, halaman Cisco Packet Tracer (fungsi, siapa yang berhak, cara mendapatkan, pemakaian di laptop pribadi)",
+   "url": "https://www.netacad.com/cisco-packet-tracer",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "lab",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "lab/00b-panduan-packet-tracer",
+    "referensi/sumber-belajar"
+   ]
+  },
+  {
+   "id": "materi-2d2c2c2c",
+   "judul": "Cisco Networking Academy, kursus Getting Started with Cisco Packet Tracer (gratis, sekitar 2 jam, isi modul)",
+   "url": "https://www.netacad.com/courses/getting-started-cisco-packet-tracer?courseLang=en-US",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "lab",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "lab/00b-panduan-packet-tracer"
+   ]
+  },
+  {
+   "id": "materi-f2e27187",
+   "judul": "Cisco Networking Academy, Resource Hub (versi 9.0.1, langkah instalasi, persyaratan sistem)",
+   "url": "https://www.netacad.com/resources/lab-downloads?courseLang=en-US",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "lab",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "lab/00b-panduan-packet-tracer"
+   ]
+  },
+  {
+   "id": "materi-e79f616c",
+   "judul": "Cisco, Cisco Packet Tracer Download and Installation Instructions (Windows, Ubuntu, macOS, login pertama)",
+   "url": "https://www.netacad.com/skillsforall/files/Cisco_Packet_Tracer_Download_and_Installation_Instructions.pdf",
+   "jenis": "kursus",
+   "bahasa": "en",
+   "topik": [
+    "lab",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "lab/00b-panduan-packet-tracer"
+   ]
+  },
+  {
+   "id": "materi-f043f818",
+   "judul": "Cisco, Offer Description: Cisco Packet Tracer Software (EDCS-19611795 versi 2.0, 10 September 2025)",
+   "url": "https://www.cisco.com/c/dam/en_us/about/doing_business/legal/seula/cisco-packet-tracer-software.pdf",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "lab",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "lab/00b-panduan-packet-tracer"
+   ]
+  },
+  {
+   "id": "materi-dac8fda4",
+   "judul": "Cisco Packet Tracer Help, Introduction, What's New, Log In, dan Copyrights",
+   "url": "https://tutorials.ptnetacad.net/help/default/intro.htm",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "lab",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "lab/00b-panduan-packet-tracer"
+   ]
+  },
+  {
+   "id": "materi-2d7c4b02",
+   "judul": "Cisco Packet Tracer Help, Interface Overview, Logical Workspace, dan Physical Workspace",
+   "url": "https://tutorials.ptnetacad.net/help/default/interfaceOverview.htm",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "lab",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "lab/00b-panduan-packet-tracer"
+   ]
+  },
+  {
+   "id": "materi-a1cf4ff9",
+   "judul": "Cisco Packet Tracer Help, Operating Modes, Realtime Mode, dan Simulation Mode",
+   "url": "https://tutorials.ptnetacad.net/help/default/operatingModes.htm",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "lab",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "lab/00b-panduan-packet-tracer"
+   ]
+  },
+  {
+   "id": "materi-0b06d9b5",
+   "judul": "Cisco Packet Tracer Help, PDU Information dan Special Notes Simulation Mode",
+   "url": "https://tutorials.ptnetacad.net/help/default/mode_simulation_PDUinfo.htm",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "lab",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "lab/00b-panduan-packet-tracer"
+   ]
+  },
+  {
+   "id": "materi-e65684a6",
+   "judul": "Cisco Packet Tracer Help, Connections / Links (jenis kabel dan arti lampu link)",
+   "url": "https://tutorials.ptnetacad.net/help/default/connectionsLinks.htm",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "lab",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "lab/00b-panduan-packet-tracer"
+   ]
+  },
+  {
+   "id": "materi-327fbf33",
+   "judul": "Cisco Packet Tracer Help, Devices & Modules, Configuring Routers, Configuring Switches, Configuring PCs, Configuring Servers",
+   "url": "https://tutorials.ptnetacad.net/help/default/devicesAndModules.htm",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "lab",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "lab/00b-panduan-packet-tracer"
+   ]
+  },
+  {
+   "id": "materi-161adb47",
+   "judul": "Cisco Packet Tracer Help, My First PT Lab (contoh kabel PC ke server, alur ARP dan ICMP di Simulation Mode)",
+   "url": "https://tutorials.ptnetacad.net/help/default/myFirstPTLab.htm",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "lab",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "lab/00b-panduan-packet-tracer"
+   ]
+  },
+  {
+   "id": "materi-83cc0fb2",
+   "judul": "Cisco Packet Tracer Help, Activity Wizard dan Running Activity Files",
+   "url": "https://tutorials.ptnetacad.net/help/default/activityWizard.htm",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "lab",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "lab/00b-panduan-packet-tracer"
+   ]
+  },
+  {
+   "id": "materi-2166c886",
+   "judul": "Cisco Packet Tracer Help, Keyboard Shortcuts",
+   "url": "https://tutorials.ptnetacad.net/help/default/keyboardShortcuts.htm",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "lab",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "lab/00b-panduan-packet-tracer"
+   ]
+  },
+  {
+   "id": "materi-91dd3aa5",
+   "judul": "Cisco Packet Tracer Help, System Requirements",
+   "url": "https://tutorials.ptnetacad.net/help/default/systemRequirements.htm",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "lab",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "lab/00b-panduan-packet-tracer"
+   ]
+  },
+  {
+   "id": "materi-8c93cbe0",
+   "judul": "Cisco Packet Tracer Help, FAQ/Troubleshooting (versi IOS, batasan, login, kompatibilitas berkas, NVRAM, STP, ARP)",
+   "url": "https://tutorials.ptnetacad.net/help/default/faqTroubleShoot.htm",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "lab",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "lab/00b-panduan-packet-tracer"
+   ]
+  },
+  {
+   "id": "materi-c27980a7",
+   "judul": "Cisco Packet Tracer Help, Router IOS 15 (pohon perintah yang dimodelkan, termasuk clock rate) dan Miscellaneous Modeling (model ARP)",
+   "url": "https://tutorials.ptnetacad.net/help/default/CLI_routerIOS15.htm",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "lab",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "lab/00b-panduan-packet-tracer"
+   ]
+  },
+  {
+   "id": "materi-9a363b01",
+   "judul": "Cisco, Configuration Fundamentals Configuration Guide 12.2SR, Using Setup Mode to Configure a Cisco Networking Device",
+   "url": "https://www.cisco.com/c/en/us/td/docs/ios/fundamentals/configuration/guide/12_2sr/cf_12_2sr_book/cf_setup.html",
+   "jenis": "dokumentasi",
+   "bahasa": "en",
+   "topik": [
+    "lab",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "lab/00b-panduan-packet-tracer"
+   ]
+  },
+  {
+   "id": "materi-25cf3cb2",
+   "judul": "Cisco Blogs, New Performance-Based Lab Exam Items Build Opportunities (7 Juli 2022)",
+   "url": "https://blogs.cisco.com/learning/new-performance-based-lab-exam-items-build-opportunities",
+   "jenis": "artikel",
+   "bahasa": "en",
+   "topik": [
+    "lab",
+    "cisco"
+   ],
+   "catatan": "",
+   "modul": [
+    "lab/00b-panduan-packet-tracer"
+   ]
+  },
+  {
+   "id": "materi-8ea5b0c1",
+   "judul": "RFC 792, Internet Control Message Protocol (tipe 8 echo, tipe 0 echo reply)",
+   "url": "https://www.rfc-editor.org/rfc/rfc792.html",
+   "jenis": "standar",
+   "bahasa": "en",
+   "topik": [
+    "lab",
+    "standar"
+   ],
+   "catatan": "",
+   "modul": [
+    "lab/00b-panduan-packet-tracer"
+   ]
+  },
+  {
+   "id": "materi-c5e0c33f",
+   "judul": "RFC 826, An Ethernet Address Resolution Protocol (request disiarkan, reply langsung ke penanya)",
+   "url": "https://www.rfc-editor.org/rfc/rfc826.html",
+   "jenis": "standar",
+   "bahasa": "en",
+   "topik": [
+    "lab",
+    "standar"
+   ],
+   "catatan": "",
+   "modul": [
+    "lab/00b-panduan-packet-tracer"
+   ]
+  },
+  {
+   "id": "materi-c4889691",
+   "judul": "RFC 2606, Reserved Top Level DNS Names (cadangan nama .test)",
+   "url": "https://www.rfc-editor.org/rfc/rfc2606.html",
+   "jenis": "standar",
+   "bahasa": "en",
+   "topik": [
+    "lab",
+    "aplikasi",
+    "standar"
+   ],
+   "catatan": "",
+   "modul": [
+    "lab/00b-panduan-packet-tracer"
+   ]
+  },
+  {
+   "id": "materi-80071312",
+   "judul": "RFC 6762, Multicast DNS (nama .local)",
+   "url": "https://www.rfc-editor.org/rfc/rfc6762.html",
+   "jenis": "standar",
+   "bahasa": "en",
+   "topik": [
+    "lab",
+    "aplikasi",
+    "standar"
+   ],
+   "catatan": "",
+   "modul": [
+    "lab/00b-panduan-packet-tracer"
+   ]
+  },
+  {
    "id": "materi-b9c29192",
    "judul": "Stanford CS144 Introduction to Computer Networking (inspirasi desain: membangun TCP dan router IP bertahap)",
    "url": "https://cs144.github.io/",
@@ -10514,20 +11768,6 @@
    ]
   },
   {
-   "id": "materi-2f184437",
-   "judul": "gnmic",
-   "url": "https://gnmic.openconfig.net/",
-   "jenis": "artikel",
-   "bahasa": "en",
-   "topik": [
-    "lab"
-   ],
-   "catatan": "",
-   "modul": [
-    "lab/08-lab-netdevops"
-   ]
-  },
-  {
    "id": "materi-6e4cfdf6",
    "judul": "gnmic, output Prometheus",
    "url": "https://gnmic.openconfig.net/user_guide/outputs/prometheus_output/",
@@ -10746,21 +11986,6 @@
    "judul": "exam topics di Cisco Learning Network",
    "url": "https://learningnetwork.cisco.com/s/ccna-exam-topics",
    "jenis": "artikel",
-   "bahasa": "en",
-   "topik": [
-    "standar",
-    "cisco"
-   ],
-   "catatan": "",
-   "modul": [
-    "referensi/sumber-belajar"
-   ]
-  },
-  {
-   "id": "materi-3d8ce9b1",
-   "judul": "Cisco Packet Tracer",
-   "url": "https://www.netacad.com/cisco-packet-tracer",
-   "jenis": "kursus",
    "bahasa": "en",
    "topik": [
     "standar",

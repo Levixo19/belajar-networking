@@ -24,11 +24,14 @@ const berkas = argv.length
   ? argv.map(f => path.relative(REPO, path.resolve(process.cwd(), f)))
   : git('diff', '--name-only', REF, '--', 'materi', 'README.md', 'SILABUS.md').split('\n').filter(f => f.endsWith('.md'))
 
+const PAGAR = /^\s*(?:(?:\d+[.)]|[-*+])\s+)?(```|~~~)/
 function pisah(md) {
   const kode = [], prosa = []
   let dalam = false, buf = []
   for (const line of md.split('\n')) {
-    if (/^\s*(```|~~~)/.test(line)) {
+    // Pagar boleh menempel pada penanda daftar ("4. ```json"): markdown-it membukanya
+    // sebagai blok kode di dalam butir daftar. Versi pertama melewatkannya.
+    if (PAGAR.test(line)) {
       if (dalam) { buf.push(line); kode.push(buf.join('\n')); buf = [] } else buf = [line]
       dalam = !dalam
       continue

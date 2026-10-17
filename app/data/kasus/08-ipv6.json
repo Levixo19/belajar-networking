@@ -1,0 +1,263 @@
+{
+  "08-ipv6/01-dasar-ipv6": {
+    "intinya": {
+      "satu_kalimat": "IPv6 memakai alamat 128 bit yang ditulis heksadesimal, misalnya 2001:db8::1, sehingga alamatnya cukup untuk setiap perangkat tanpa perlu berbagi lewat NAT.",
+      "analogi": "IPv4 seperti nomor telepon rumah yang sudah habis dibagi, sehingga satu nomor dipakai bersama satu gang lewat operator (NAT). IPv6 seperti nomor baru yang panjangnya empat kali lipat dalam bit, cukup untuk setiap orang, setiap ponsel, bahkan setiap lampu. Karena panjang, penulisannya disingkat: nol di depan dibuang, dan satu deretan nol diganti `::`. Analogi ini kurang tepat di satu hal: perangkat IPv6 tidak bisa langsung menelepon perangkat IPv4, karena keduanya protokol berbeda yang harus dijembatani.",
+      "kenapa_penting": "Stok alamat IPv4 untuk kawasan Asia-Pasifik, termasuk Indonesia, sudah habis sejak 2011. Ponsel Anda mungkin sudah memakai IPv6 tanpa Anda sadari, dan pemerintah mendorong operator serta instansi mengaktifkannya. Teknisi yang tidak paham IPv6 akan bingung membaca alamatnya dan bisa lupa memasang firewall IPv6.",
+      "istilah": [
+        {
+          "kata": "Heksadesimal",
+          "arti": "Penulisan angka berbasis 16 (0-9 dan a-f). Satu kelompok alamat IPv6 berisi empat digit heksadesimal, atau 16 bit."
+        },
+        {
+          "kata": "GUA",
+          "arti": "Global Unicast Address: alamat publik IPv6 dari blok 2000::/3 yang bisa dirutekan di internet."
+        },
+        {
+          "kata": "Link-local",
+          "arti": "Alamat fe80::/10 yang wajib ada di setiap antarmuka IPv6 dan hanya berlaku di satu link."
+        },
+        {
+          "kata": "CGNAT",
+          "arti": "Carrier-Grade NAT: NAT di sisi operator yang membuat banyak pelanggan berbagi satu alamat IPv4 publik."
+        },
+        {
+          "kata": "ICMPv6",
+          "arti": "Protokol kontrol IPv6. Ia membawa fungsi inti seperti pencarian tetangga dan pesan Packet Too Big, sehingga tidak boleh diblokir total."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "Indonesia mendorong IPv6 lewat dua surat edaran Menkominfo 2024; adopsi IPv6 naik dari 15 ke 26 persen",
+      "kapan": "2024-06-05",
+      "di_mana": "Indonesia (Kominfo, kini Komdigi; operator telekomunikasi; instansi pemerintah)",
+      "ringkas": "Pada 5 Juni 2024 Menteri Komunikasi dan Informatika menetapkan dua surat edaran. Surat Edaran Nomor 5 Tahun 2024 mengimbau kementerian, lembaga, dan pemerintah daerah mengaktifkan dan memakai IPv6. Surat Edaran Nomor 6 Tahun 2024 mengimbau penyelenggara telekomunikasi melakukan hal yang sama, termasuk menyalakan IPv6 sebagai setelan bawaan perangkat pelanggan. Menurut Internet Society Pulse, adopsi IPv6 di Indonesia naik dari 15 persen pada 1 Juni 2025 menjadi 26 persen pada Juni 2026.",
+      "kronologi": [
+        {
+          "waktu": "5 Juni 2024",
+          "peristiwa": "Menkominfo menetapkan SE Nomor 5 Tahun 2024 untuk kementerian, lembaga, dan pemerintah daerah, serta SE Nomor 6 Tahun 2024 untuk penyelenggara telekomunikasi. Keduanya berisi imbauan mengaktifkan dan menggunakan IPv6."
+        },
+        {
+          "waktu": "27 September 2024",
+          "peristiwa": "Kominfo memublikasikan imbauan itu. Operator diminta menyalakan setelan IPv6 di perangkat pelanggan, dan Menkominfo Budi Arie Setiadi menyebut adopsi IPv6 sebagai langkah strategis."
+        },
+        {
+          "waktu": "1 Juni 2025",
+          "peristiwa": "Internet Society Pulse mencatat adopsi IPv6 di Indonesia sebesar 15 persen."
+        },
+        {
+          "waktu": "2025",
+          "peristiwa": "Direktur Network Telkomsel, Indra Mardiatna, menyatakan IPv6 membantu mengurangi ketergantungan Telkomsel pada layanan CGNAT yang selama ini memperpanjang umur stok IPv4-nya."
+        },
+        {
+          "waktu": "5 Juni 2026",
+          "peristiwa": "Pulse mencatat adopsi naik ke 26 persen. Menurut Syarif Lumintarjo dari IDNIC-APJII, hampir 60 persen pemerintah daerah sudah mematuhi arahan kementerian."
+        }
+      ],
+      "akar_masalah": "Stok IPv4 di Asia-Pasifik sudah habis, sehingga operator memakai CGNAT agar banyak pelanggan berbagi satu alamat publik. CGNAT menambah biaya perangkat di sisi operator, menyulitkan aplikasi yang butuh koneksi masuk, dan menyembunyikan identitas pengguna dari log. IPv6 menghapus kebutuhan itu, tetapi adopsinya lambat bila perangkat pelanggan, jaringan operator, dan situs pemerintah saling menunggu. Kedua surat edaran itu menyasar ketiga pihak tersebut.",
+      "kaitan": "Kebijakan ini adalah bagian Kenapa IPv6 dalam praktik. Timeline di modul mencatat APNIC, yang melayani Indonesia, kehabisan IPv4 pada 2011. Bagian Solusi sementara yang menahan IPv4 menyebut CGNAT sebagai tambalan dengan biaya nyata, dan pernyataan Telkomsel menunjukkan biaya itu. Kesalahan Umum nomor 6 juga relevan: begitu perangkat pelanggan menyalakan IPv6 secara bawaan, jaringan kantor yang 'belum pakai IPv6' sebenarnya sudah membawa trafik IPv6.",
+      "pelajaran": [
+        "Periksa apakah jaringan Anda sudah memakai IPv6: `ip -6 addr show scope global` di Linux atau `ipconfig` di Windows, lalu buka situs uji IPv6 dari browser.",
+        "Siapkan firewall IPv6 yang setara dengan IPv4 sebelum perangkat menyalakan IPv6 secara bawaan. Tanpa NAT, setiap host IPv6 bisa dijangkau langsung dari internet.",
+        "Untuk instansi daerah, mulai dari situs web publik: pasang alamat IPv6 dan record AAAA, lalu uji dari jaringan seluler yang sudah IPv6."
+      ],
+      "sumber": [
+        {
+          "judul": "Surat Edaran Menteri Komunikasi dan Informatika Nomor 5 Tahun 2024 tentang Himbauan Mengaktifkan dan Menggunakan Alamat Protokolinternet Versi 6 (IPv6) pada Kementerian/Lembaga dan Pemerintah Daerah",
+          "penerbit": "JDIH Kementerian Komunikasi dan Digital",
+          "url": "https://jdih.komdigi.go.id/produk_hukum/view/id/923/t/surat+edaran+menteri+komunikasi+dan+informatika+nomor+5+tahun+2024"
+        },
+        {
+          "judul": "Surat Edaran Menteri Komunikasi dan Informatika Nomor 6 Tahun 2024 tentang Himbauan Mengaktifkan dan Menggunakan Alamat Protokolinternet Versi 6 (IPv6) pada Penyelenggara Telekomunikasi",
+          "penerbit": "JDIH Kementerian Komunikasi dan Digital",
+          "url": "https://jdih.komdigi.go.id/produk_hukum/view/id/924/t/surat+edaran+menteri+komunikasi+dan+informatika+nomor+6+tahun+2024"
+        },
+        {
+          "judul": "Kominfo Imbau untuk Aktifkan Protokol IPv6 di Perangkat Telekomunikasi, Apa Itu?",
+          "penerbit": "Kontan",
+          "url": "https://industri.kontan.co.id/news/kominfo-imbau-untuk-aktifkan-protokol-ipv6-di-perangkat-telekomunikasi-apa-itu"
+        },
+        {
+          "judul": "Government Directive Boosting Indonesia's IPv6 Adoption",
+          "penerbit": "Internet Society Pulse",
+          "url": "https://pulse.internetsociety.org/en/blog/government-directive-boosting-indonesias-ipv6-adoption/"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Setelah ISP di Pontianak mengaktifkan IPv6, sebuah kantor notaris mendapat prefix 2001:db8:1200::/56 dan semua PC punya alamat di 2001:db8:1200:10::/64. Browsing biasa lancar, tetapi unggah berkas PDF besar ke portal layanan lewat IPv6 selalu macet di awal. Teknisi kantor memasang aturan di chain forward firewall router: izinkan ICMPv6 echo saja, buang ICMPv6 lain. Dari PC Linux, `ping -6 -M do -s 1432 <server>` berhasil, sedangkan `ping -6 -M do -s 1440 <server>` hilang tanpa pesan galat. Apa penyebabnya dan apa perbaikannya?",
+      "petunjuk": [
+        "Hitung ukuran paket IPv6 penuh dari kedua uji ping. Header IPv6 40 byte, header ICMPv6 8 byte.",
+        "Apa yang dilakukan router IPv6 bila paket terlalu besar untuk link berikutnya? Router tidak pernah memfragmentasi.",
+        "Pesan yang memberi tahu PC agar memperkecil paketnya juga ICMPv6. Apa yang terjadi padanya di firewall kantor?"
+      ],
+      "jawaban": "1. Hitung MTU jalur. 1432 + 48 = 1480 byte lolos, 1440 + 48 = 1488 byte hilang. Jadi di suatu titik jalur ke portal ada link dengan MTU 1480, misalnya tunnel 6in4 di jaringan ISP yang memakan 20 byte.\n2. Susun dugaan. Router IPv6 tidak memfragmentasi. Paket 1500 byte dari PC dibuang di link 1480, dan router itu mengirim ICMPv6 tipe 2 Packet Too Big ke PC. Firewall kantor membuang semua ICMPv6 selain echo, jadi pesan itu tidak pernah sampai. PC terus mengirim paket besar: PMTUD gagal dan terjadi MTU black hole. Browsing yang paketnya kecil tidak terganggu, unggahan berkas besar macet.\n3. Uji dugaan itu. Lihat penghitung drop pada aturan firewall saat unggahan dicoba, atau tangkap paket di sisi WAN router: ICMPv6 tipe 2 tiba dari ISP lalu dibuang. `tracepath -6 <server>` dari PC juga gagal menemukan MTU 1480.\n4. Perbaiki penyebabnya. Izinkan ICMPv6 yang disarankan RFC 4890 di chain forward, minimal tipe 1, 2, 3, 4, dan 128/129. Jangan memblokir ICMPv6 sebagai cara mengamankan jaringan. Sebagai lapisan tambahan untuk TCP, pasang MSS clamping di router.\n5. Verifikasi hasilnya. Ulangi unggahan dan `tracepath -6`; jalur kini melaporkan pmtu 1480, dan berkas terkirim tanpa macet."
+    }
+  },
+  "08-ipv6/02-ndp-slaac-dhcpv6": {
+    "intinya": {
+      "satu_kalimat": "Host IPv6 mengatur dirinya sendiri: NDP menemukan tetangga dan router, Router Advertisement memberi prefix dan gateway, dan DHCPv6 menambah opsi bila perlu.",
+      "analogi": "Bayangkan Anda baru pindah ke perumahan. Anda menyusun nomor rumah sendiri dari nama blok (prefix) ditambah nomor pilihan Anda, lalu bertanya keras 'ada yang sudah pakai nomor ini?' sebelum memakainya (DAD). Satpam kompleks (router) berkeliling membawa pengumuman: nama blok, letak gerbang keluar, dan nomor pusat informasi (RDNSS). Masalahnya, warga percaya pada siapa pun yang mengaku satpam, karena pengumuman itu tidak dicap. Itulah alasan RA Guard dipasang di switch.",
+      "kenapa_penting": "Ponsel dan laptop Anda memakai SLAAC dan Router Advertisement setiap kali tersambung ke jaringan IPv6. Saat IPv6 'dapat alamat tapi tidak bisa ke mana-mana', penyebabnya sering ada di RA: diblokir, tidak dikirim, atau dipalsukan perangkat lain.",
+      "istilah": [
+        {
+          "kata": "NDP",
+          "arti": "Neighbor Discovery Protocol: kumpulan pesan ICMPv6 tipe 133-137 pengganti ARP, penemuan router, dan redirect."
+        },
+        {
+          "kata": "Router Advertisement (RA)",
+          "arti": "Pesan ICMPv6 tipe 134 dari router. Isinya prefix, masa berlaku router sebagai gateway, flag M dan O, serta opsi seperti DNS."
+        },
+        {
+          "kata": "SLAAC",
+          "arti": "Stateless Address Autoconfiguration: host membentuk alamatnya sendiri dari prefix di RA ditambah interface ID."
+        },
+        {
+          "kata": "RDNSS",
+          "arti": "Opsi RA bertipe 25 (RFC 8106) yang memberi tahu host alamat server DNS tanpa perlu DHCPv6."
+        },
+        {
+          "kata": "RA Guard",
+          "arti": "Fitur switch yang membuang RA dari port pengguna, sehingga hanya port menuju router sah yang boleh mengirim RA."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Celah Windows 'Bad Neighbor' (CVE-2020-16898): Router Advertisement berbahaya bisa menjalankan kode di komputer korban",
+      "kapan": "2020-10-13",
+      "di_mana": "Microsoft Windows 10 dan Windows Server 2019, global",
+      "ringkas": "Pada 13 Oktober 2020 Microsoft menambal celah di tumpukan TCP/IP Windows. Komputer yang menerima ICMPv6 Router Advertisement buatan khusus bisa menjalankan kode milik penyerang. CERT-EU menjelaskan bahwa celah yang dijuluki Bad Neighbor ini ada di pemrosesan opsi RDNSS, opsi RA untuk alamat server DNS. Microsoft awalnya memberi skor CVSS 9,8, lalu menurunkannya ke 8,8 karena celah ini tidak bisa dirutekan lewat internet. Penyerang harus berada di jaringan lokal yang sama.",
+      "kronologi": [
+        {
+          "waktu": "13 Oktober 2020",
+          "peristiwa": "Microsoft merilis pembaruan untuk CVE-2020-16898, celah eksekusi kode jarak jauh di tumpukan TCP/IP Windows yang dipicu ICMPv6 Router Advertisement."
+        },
+        {
+          "waktu": "14 Oktober 2020",
+          "peristiwa": "CERT-EU menerbitkan Security Advisory 2020-048. Celah ada pada opsi RDNSS (tipe 25) dengan nilai Length genap, dan menimpa Windows 10 serta Windows Server 2019."
+        },
+        {
+          "waktu": "Sesudah rilis",
+          "peristiwa": "Microsoft menurunkan skor CVSS dari 9,8 ke 8,8 dengan vektor Adjacent. Indeks eksploitasi juga turun menjadi 'Exploitation Less Likely' karena mitigasi /GS di Windows."
+        }
+      ],
+      "akar_masalah": "RFC 8106 mengukur panjang opsi RDNSS dalam satuan 8 byte, dan nilainya selalu ganjil, minimal 3: kepala 8 byte ditambah 16 byte per alamat DNS. Bila penyerang mengirim nilai genap, Windows maju 8 byte terlalu sedikit di buffer. Sisa opsi lalu dibaca sebagai awal opsi kedua, sehingga terjadi buffer overflow yang berpotensi menjalankan kode. Karena RA tidak diautentikasi, siapa pun di link yang sama bisa mengirimnya.",
+      "kaitan": "Celah ini berangkat dari bagian Router Advertisement: Jantung Konfigurasi IPv6, yang mendaftar RDNSS (RFC 8106) sebagai isi RA. Bagian First-Hop Security IPv6 menyatakan 'RA dan NDP tidak terautentikasi, siapa pun di segmen bisa berpura-pura menjadi router', dan itulah syarat serangan ini. RA Guard di subbagian Mitigasi membuang RA dari port pengguna, sehingga penyerang di port biasa tidak bisa mengirimkannya ke korban. Ingat peringatan modul bahwa RA Guard lama bisa dilewati dengan RA yang difragmentasi.",
+      "pelajaran": [
+        "Pasang pembaruan keamanan sistem operasi segera. Celah di tumpukan jaringan bisa dipicu tanpa interaksi pengguna.",
+        "Aktifkan RA Guard di semua port akses dengan `device-role host`, dan beri `device-role router` hanya pada uplink ke router. Di MikroTik, pakai bridge filter untuk ICMPv6 tipe 134.",
+        "Bila tambalan belum bisa dipasang, CERT-EU menyebut dua jalan sementara: matikan RDNSS dengan `netsh int ipv6 set int *INTERFACENUMBER* rabaseddnsconfig=disable`, atau matikan IPv6 bila memungkinkan.",
+        "Untuk deteksi, cari RA (ICMPv6 tipe 134) yang membawa opsi 25 dengan Length genap, seperti saran CERT-EU."
+      ],
+      "sumber": [
+        {
+          "judul": "CVE-2020-16898: Windows TCP/IP Remote Code Execution Vulnerability",
+          "penerbit": "Microsoft Security Response Center",
+          "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2020-16898"
+        },
+        {
+          "judul": "Security Advisory 2020-048: Critical Vulnerability in Microsoft Windows TCP/IP Stack",
+          "penerbit": "CERT-EU",
+          "url": "https://cert.europa.eu/publications/security-advisories/2020-048/"
+        },
+        {
+          "judul": "RFC 8106: IPv6 Router Advertisement Options for DNS Configuration",
+          "penerbit": "IETF (RFC Editor)",
+          "url": "https://www.rfc-editor.org/rfc/rfc8106"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Laboratorium SMK di Makassar memakai MikroTik sebagai router IPv6. Setelah seorang guru 'menghemat trafik RA', siswa mengeluh IPv6 sering putus sekitar 10-20 menit, lalu tersambung lagi sendiri. Konfigurasi `/ipv6 nd` kini berisi `ra-interval=1200s-1800s` dan `ra-lifetime=10m`. Di PC Linux, `ip -6 route show default` sempat menampilkan `default via fe80::1 dev eth0 proto ra ... expires 412sec`, lalu beberapa menit kemudian baris itu hilang. Alamat global PC tetap ada. Jelaskan penyebabnya dan perbaikannya.",
+      "petunjuk": [
+        "Alamat global tetap ada, tetapi default route hilang. Dari mana host IPv6 mendapat default gateway?",
+        "Bandingkan jarak antar-RA dengan masa berlaku router (router lifetime) yang diumumkan di setiap RA.",
+        "Lihat contoh konfigurasi RA di bagian MikroTik modul."
+      ],
+      "jawaban": "1. Amati gejalanya. Alamat global tetap ada karena valid lifetime prefix panjang. Yang hilang hanya default route, dan default gateway IPv6 hanya berasal dari RA. Kolom `expires` yang menghitung mundur adalah router lifetime dari RA terakhir.\n2. Susun dugaan. Setiap RA mengumumkan bahwa router sah sebagai gateway selama 10 menit (`ra-lifetime=10m`). RA berikutnya baru datang 20 sampai 30 menit kemudian (`ra-interval=1200s-1800s`). Setelah 10 menit host menghapus default route, sehingga IPv6 putus sampai RA berikutnya tiba. Jedanya sekitar 10-20 menit, sesuai keluhan siswa. RFC 4861 mensyaratkan router lifetime tidak lebih kecil daripada interval RA maksimum.\n3. Uji dugaan itu. Jalankan `sudo tcpdump -ni eth0 'icmp6 && ip6[40] == 134'` dan catat jam setiap RA. Bandingkan dengan saat default route hilang di `ip -6 route show default`. Selisihnya akan cocok dengan 10 menit setelah RA terakhir.\n4. Perbaiki penyebabnya. Kembalikan ke nilai seperti contoh di modul: `/ipv6 nd set [find interface=bridge-LAN] ra-interval=30s-60s ra-lifetime=30m`. Trafik RA tetap kecil, hanya satu paket setiap 30-60 detik.\n5. Verifikasi hasilnya. Kolom `expires` di PC kini selalu terisi ulang sebelum habis, dan IPv6 tidak putus lagi."
+    }
+  },
+  "08-ipv6/03-routing-transisi-ipv6": {
+    "intinya": {
+      "satu_kalimat": "Routing IPv6 memakai protokol versi baru (OSPFv3, MP-BGP), dan selama internet masih campuran, jaringan menjembatani IPv4 dengan dual stack, tunnel, atau penerjemah.",
+      "analogi": "Bayangkan kota yang sedang pindah dari jalan lama ke jalan tol baru. Dual stack berarti setiap kendaraan boleh memakai keduanya. Tunnel seperti menaikkan mobil ke truk pengangkut untuk melintasi ruas yang belum punya tol. NAT64 seperti loket di perbatasan yang mengganti plat nomor, dan 464XLAT menambah loket kecil di dalam mobil untuk penumpang yang hanya mengerti aturan lama. Analogi ini berhenti di satu titik: di jaringan, penggantian alamat bisa merusak apa pun yang bergantung pada alamat asli, misalnya alamat IPv4 di dalam aplikasi.",
+      "kenapa_penting": "Operator seluler besar sudah menjalankan jaringan IPv6-only, dan operator di Indonesia sedang didorong mengaktifkan IPv6. Saat kantor Anda menyalakan dual stack, pekerjaan bertambah: rute dan firewall untuk dua protokol. Pilihan transisi yang salah bisa membuat aplikasi tertentu macet tanpa alasan yang jelas.",
+      "istilah": [
+        {
+          "kata": "Dual stack",
+          "arti": "Menjalankan IPv4 dan IPv6 bersamaan di perangkat dan jaringan yang sama."
+        },
+        {
+          "kata": "NAT64/DNS64",
+          "arti": "Penerjemah di sisi operator yang membuat klien IPv6-only bisa mencapai server IPv4-only, dibantu DNS yang membuat record AAAA sintetis."
+        },
+        {
+          "kata": "464XLAT",
+          "arti": "Gabungan CLAT di sisi pelanggan dan PLAT (NAT64) di operator, supaya aplikasi IPv4-only tetap jalan di jaringan IPv6-only (RFC 6877)."
+        },
+        {
+          "kata": "CLAT",
+          "arti": "Penerjemah di sisi pelanggan, misalnya di ponsel, yang memberi aplikasi alamat IPv4 privat lalu menerjemahkan paketnya ke IPv6."
+        },
+        {
+          "kata": "Happy Eyeballs",
+          "arti": "Cara klien mencoba IPv6 dan IPv4 hampir bersamaan, lalu memakai yang lebih dulu berhasil (RFC 8305)."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "T-Mobile US menjalankan 8 juta ponsel di jaringan IPv6-only dengan 464XLAT",
+      "kapan": "2014-06",
+      "di_mana": "T-Mobile US, jaringan seluler Amerika Serikat",
+      "ringkas": "T-Mobile US kehabisan alamat IPv4 dan butuh strategi transisi ke IPv6. Operator seluler ini memilih menjalankan ponsel pelanggan hanya dengan IPv6. NAT64 dan DNS64 di jaringan operator melayani sebagian besar aplikasi, tetapi aplikasi seperti Skype dan WhatsApp tidak bisa berjalan lewat NAT64 saja. Karena itu T-Mobile memakai 464XLAT, yang menambahkan penerjemah di sisi ponsel. Menurut studi kasus Internet Society bulan Juni 2014, cara ini sudah berjalan di 8 juta ponsel, dan 27 persen trafiknya sudah IPv6 asli.",
+      "kronologi": [
+        {
+          "waktu": "April 2013",
+          "peristiwa": "RFC 6877 terbit dan mendefinisikan arsitektur 464XLAT. Cameron Byrne dari T-Mobile USA termasuk penulisnya."
+        },
+        {
+          "waktu": "2014",
+          "peristiwa": "Cameron Byrne memaparkan pengalaman T-Mobile di forum operator NANOG 61 dengan judul '464XLAT Breaking Free of IPv4'."
+        },
+        {
+          "waktu": "13 Juni 2014",
+          "peristiwa": "Internet Society menerbitkan studi kasus: 464XLAT sudah berjalan di 8 juta ponsel T-Mobile, dan 27 persen trafik ponsel-ponsel itu sudah IPv6 asli."
+        }
+      ],
+      "akar_masalah": "Ada dua masalah. Pertama, alamat IPv4 menipis. Di jaringan seluler 3GPP yang umum saat itu, dual stack juga melipatduakan jumlah sesi data (PDP) per ponsel. Kedua, NAT64/DNS64 hanya menolong aplikasi yang memakai nama domain dan socket IPv6. Aplikasi yang memakai alamat IPv4 literal atau socket IPv4 tidak pernah sampai ke NAT64. CLAT di ponsel memberi aplikasi itu alamat IPv4 privat, lalu menerjemahkan paketnya ke IPv6.",
+      "kaitan": "Pengalaman T-Mobile adalah TIP di subbagian 464XLAT pada bagian Translation, yang menyebut T-Mobile US menjalankan jaringan IPv6-only tanpa disadari penggunanya. Masalah Skype dan WhatsApp adalah keterbatasan NAT64/DNS64 yang ditulis modul: aplikasi yang menyertakan alamat IPv4 literal tidak akan bekerja. Pembagian kerja CLAT di ponsel dan PLAT di operator sama dengan diagram 464XLAT di modul.",
+      "pelajaran": [
+        "Sebelum mematikan IPv4 di sebuah segmen, inventarisasi aplikasi yang memakai alamat IPv4 literal. Aplikasi itu butuh CLAT atau pengecualian.",
+        "Uji NAT64/DNS64 dengan `dig AAAA` ke nama yang hanya punya record A. Jawabannya harus berawalan `64:ff9b::` bila memakai prefix well-known.",
+        "Ukur porsi trafik IPv6 asli setelah peluncuran, seperti angka 27 persen milik T-Mobile, untuk menilai seberapa besar beban yang masih ditanggung penerjemah."
+      ],
+      "sumber": [
+        {
+          "judul": "Case Study: T-Mobile US Goes IPv6-only Using 464XLAT",
+          "penerbit": "Internet Society (Deploy360)",
+          "url": "https://www.internetsociety.org/resources/deploy360/2014/case-study-t-mobile-us-goes-ipv6-only-using-464xlat/"
+        },
+        {
+          "judul": "RFC 6877: 464XLAT: Combination of Stateful and Stateless Translation",
+          "penerbit": "IETF (RFC Editor)",
+          "url": "https://www.rfc-editor.org/rfc/rfc6877"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Kantor konsultan pajak di Surabaya baru mengaktifkan dual stack. Sejak itu browser membuka `erp.kantor.id` dengan normal, tetapi aplikasi akuntansi desktop lama butuh sekitar 20 detik sebelum tersambung ke server yang sama. DNS internal mengembalikan A `10.20.0.15` dan AAAA `2001:db8:abcd:20::15`. Dari PC staf, `curl -4 -I https://erp.kantor.id` menjawab dalam 0,1 detik, sedangkan `curl -6 -I https://erp.kantor.id` menggantung lalu timeout. Dari router, `ping -6 2001:db8:abcd:20::15` berhasil. Firewall IPv6 antar-VLAN baru berisi aturan 'izinkan established, buang sisanya'. Apa yang terjadi, dan bagaimana memperbaikinya tanpa mematikan IPv6?",
+      "petunjuk": [
+        "Bila sebuah nama punya record A dan AAAA, protokol mana yang dicoba host lebih dulu?",
+        "Kenapa browser tidak terasa lambat, sedangkan aplikasi lama menunggu 20 detik? Ingat Happy Eyeballs.",
+        "Bandingkan isi firewall IPv4 dan firewall IPv6 antar-VLAN untuk jalur staf ke server."
+      ],
+      "jawaban": "1. Amati gejalanya. Server bisa dijangkau lewat IPv4 dan bisa di-ping dari router lewat IPv6, tetapi koneksi IPv6 dari VLAN staf menggantung. Masalahnya ada di jalur IPv6 antara staf dan server, bukan di server.\n2. Susun dugaan. Host mengutamakan IPv6 bila ada record AAAA (RFC 6724). Browser memakai Happy Eyeballs, jadi IPv6 yang gagal cepat ditinggalkan dan IPv4 dipakai. Aplikasi lama tidak melakukannya: ia mencoba IPv6 dulu, menunggu timeout TCP sekitar 20 detik, baru kembali ke IPv4. Penyebab gagalnya: firewall IPv6 antar-VLAN belum punya aturan izin dari VLAN staf ke server, sedangkan firewall IPv4 sudah punya. Inilah bahaya dual stack yang disebut modul: firewall IPv6 tidak setara dengan IPv4.\n3. Uji dugaan itu. Lihat penghitung drop aturan 'buang sisanya' di firewall IPv6 saat `curl -6` dijalankan. Tangkap paket di VLAN server: SYN IPv6 dari PC staf tidak pernah sampai.\n4. Perbaiki penyebabnya. Tambahkan aturan IPv6 yang setara dengan aturan IPv4: izinkan VLAN staf ke `2001:db8:abcd:20::15` pada port 443 dan port aplikasi akuntansi. Bila perbaikan firewall butuh waktu, hapus sementara record AAAA `erp.kantor.id` supaya klien langsung memakai IPv4.\n5. Verifikasi hasilnya. `curl -6 -I https://erp.kantor.id` menjawab secepat `curl -4`, dan aplikasi lama tersambung dalam hitungan detik. Masukkan uji dua protokol ini ke daftar periksa setiap kali aturan firewall diubah."
+    }
+  }
+}

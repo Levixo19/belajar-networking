@@ -1,0 +1,211 @@
+{
+  "10-wireless/01-rf-dasar": {
+    "intinya": {
+      "satu_kalimat": "Wi-Fi adalah gelombang radio, jadi jangkauan dan kecepatannya ditentukan oleh frekuensi, kekuatan sinyal dibanding derau di sekitarnya, penghalang di jalurnya, dan aturan pemakaian frekuensi.",
+      "analogi": "Bayangkan Anda mengobrol di pasar yang riuh: suara Anda adalah sinyal dan riuh pasar adalah derau. Teman Anda paham kalau suara Anda cukup jauh di atas riuh itu, dan selisih inilah yang disebut SNR. Suara bas lebih tembus tembok daripada suara cempreng, sama seperti 2,4 GHz lebih tembus dinding daripada 5 GHz. Analogi ini berhenti pada soal izin: di udara, sebagian frekuensi sudah dipesan untuk radar cuaca dan tidak boleh dipakai Wi-Fi.",
+      "kenapa_penting": "Saat ponsel menunjukkan sinyal penuh tetapi internet lambat, penyebabnya sering derau atau kanal yang bertabrakan. Teknisi Wi-Fi, WISP, dan RT/RW Net juga harus memilih kanal yang sah dan menghitung daya pancar (EIRP). Kanal yang salah bisa mengganggu radar cuaca BMKG dan berujung teguran dari petugas monitor spektrum.",
+      "istilah": [
+        { "kata": "dBm", "arti": "Satuan kekuatan sinyal terhadap 1 miliwatt. 0 dBm sama dengan 1 mW, 20 dBm sama dengan 100 mW. Sinyal yang diterima bernilai negatif, misalnya -67 dBm, dan makin negatif makin lemah." },
+        { "kata": "SNR", "arti": "Signal-to-Noise Ratio: selisih kekuatan sinyal dengan derau, dalam dB. SNR 25-40 dB tergolong baik; di bawah 15 dB modulasi turun ke QPSK dan koneksi jauh melambat." },
+        { "kata": "Kanal", "arti": "Potongan frekuensi tempat AP memancar. Di 2,4 GHz hanya kanal 1, 6, dan 11 yang tidak saling tumpang tindih." },
+        { "kata": "DFS", "arti": "Dynamic Frequency Selection: kewajiban AP di sebagian kanal 5 GHz untuk mendengarkan radar lebih dulu dan pindah kanal bila radar terdeteksi." },
+        { "kata": "EIRP", "arti": "Daya pancar efektif: daya pemancar dikurangi rugi kabel, lalu ditambah gain antena. Batas EIRP diatur pemerintah." },
+        { "kata": "Spectrum analyzer", "arti": "Alat yang menampilkan energi radio di setiap frekuensi, termasuk pancaran yang bukan Wi-Fi. Dipakai untuk memburu sumber gangguan." }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Access point Wi-Fi 5 GHz di luar alokasi mengganggu radar cuaca BMKG Gorontalo",
+      "kapan": "2019",
+      "di_mana": "Gorontalo, Indonesia",
+      "ringkas": "Radar cuaca BMKG di Stasiun Meteorologi Kelas I Djalaluddin, Gorontalo, memancar di 5600 MHz. Citranya terganggu pancaran dari arah Kota Gorontalo. Tim Loka Monitor Spektrum Frekuensi Radio Gorontalo melacak sumbernya. Mereka menemukan banyak access point akses internet nirkabel (BWA) 5 GHz yang bekerja di luar pita yang diizinkan, 5725-5825 MHz. Setelah perangkat itu dimatikan dan dipindah kanal, tampilan radar kembali bersih.",
+      "kronologi": [
+        { "waktu": "15 Juni 2009", "peristiwa": "Permenkominfo Nomor 27 Tahun 2009 menetapkan pita 5725-5825 MHz untuk layanan pita lebar nirkabel 5,8 GHz, dengan batas lebar pita dan daya pancar." },
+        { "waktu": "Akhir 2012", "peristiwa": "BMKG mengoperasikan 27 radar cuaca C-band di 5,6-5,65 GHz. Rentang ini ada di pita 5470-5725 MHz, yang sejak WRC-03 dibuka untuk pemakaian bebas dengan syarat DFS." },
+        { "waktu": "Juni 2018", "peristiwa": "Loka Monitor Spektrum Frekuensi Radio Gorontalo sudah pernah menangani gangguan pada radar cuaca BMKG Gorontalo." },
+        { "waktu": "1 November 2018", "peristiwa": "Ditjen SDPPI mengumumkan Surat Edaran No. 325 Tahun 2018. AP 5,8 GHz wajib bersertifikat, dan pabrik serta importir harus memastikan perangkat bisa dikunci sesuai alokasi frekuensi Indonesia, demi radar cuaca di 5600-5650 MHz." },
+        { "waktu": "2019, pemeriksaan", "peristiwa": "Radar kembali terganggu dari azimuth 155 derajat, arah Kota Gorontalo. Tim memeriksa radar lebih dulu dan memastikan gangguan datang dari luar, bukan dari kerusakan perangkat." },
+        { "waktu": "2019, pelacakan", "peristiwa": "Dengan mobil direction finder dan spectrum analyzer, tim menyisir 5540-5660 MHz di Kota Gorontalo. Mereka menemukan banyak AP BWA 5 GHz di luar pita 5725-5825 MHz." },
+        { "waktu": "2019, penanganan", "peristiwa": "Pemilik ditegur, AP dimatikan sementara, pemilik menandatangani surat pernyataan, lalu perangkat dipindah ke pita yang diizinkan. Tampilan radar kembali bersih." },
+        { "waktu": "23 September 2019", "peristiwa": "Surat Edaran Dirjen SDPPI No. 227 Tahun 2019 terbit. Lokasi AP 5,8 GHz wajib dilaporkan, kanal 116, 120, 124, 128, dan 132 (5570-5670 MHz) dilarang, dan DFS wajib aktif bila tersedia." }
+      ],
+      "akar_masalah": "Radar BMKG Gorontalo memancar di 5600 MHz, dan penerimanya memakai osilator lokal di 5540 MHz, sehingga rentang 5540-5660 MHz harus bersih. Rentang frekuensi yang bisa dipilih di AP berbeda menurut merek dan tipe, dan AP pengganggu diatur ke kanal di rentang radar itu. Padahal di Indonesia layanan ini hanya boleh memakai 5725-5825 MHz. Pancaran AP yang salah kanal masuk ke penerima radar sebagai interferensi, sehingga informasi di citra radar melemah bahkan hilang.",
+      "kaitan": "Bagian 4 (Band Frekuensi) menyebut kanal 5 GHz UNII-2C (kanal 100-144) dipakai bersama radar cuaca sehingga wajib DFS. Radar BMKG berada tepat di kanal 116-132 itu. Subbagian EIRP di Bagian 6 (Antena) mengingatkan bahwa daya dan frekuensi dibatasi regulasi Komdigi. Bagian 8 (Praktik Pengukuran) memakai spectrum analyzer, alat yang juga dipakai tim monitor untuk memburu sumber gangguan.",
+      "pelajaran": [
+        "Sebelum memasang AP 5 GHz untuk link atau hotspot, atur kode negara dengan benar. Pastikan kanal dan lebar kanalnya berada di pita yang diizinkan, misalnya 5725-5825 MHz untuk layanan 5,8 GHz.",
+        "Jangan memakai kanal 116, 120, 124, 128, dan 132 di Indonesia, dan aktifkan DFS bila perangkat mendukungnya.",
+        "Saat ada keluhan gangguan, pastikan dulu masalahnya datang dari luar atau dari perangkat sendiri, lalu buru sumbernya dengan spectrum analyzer dan antena terarah."
+      ],
+      "sumber": [
+        { "judul": "Studi Penanganan Gangguan Spektrum Frekuensi Radio di Loka Monitor Gorontalo (Kasus Gangguan pada Radar Cuaca BMKG Gorontalo)", "penerbit": "Jambura Journal of Electrical and Electronics Engineering, UNG", "url": "https://ejurnal.ung.ac.id/index.php/jjeee/article/view/2886" },
+        { "judul": "Surat Edaran Dirjen SDPPI No. 227 Tahun 2019 tentang Pendataan Lokasi Perangkat Wireless Access Point pada Pita Frekuensi Radio 5,8 GHz", "penerbit": "Ditjen SDPPI Kominfo (kini Ditjen Infrastruktur Digital Komdigi)", "url": "https://www.postel.go.id/berita-pendataan-lokasi-perangkat-wireless-access-pointpada-pita-frekuensi-radio-5-28-4391" },
+        { "judul": "Surat Edaran Dirjen SDPPI No. 325 Tahun 2018 tentang Penggunaan Perangkat Wireless Access Point 5,8 GHz dan Perangkat CCTV", "penerbit": "Ditjen SDPPI Kominfo", "url": "https://postel.go.id/berita-surat-edaran-dirjen-sdppi-tentang-penggunaan-perangkat-wireless-access-point-5-8-ghz-dan-perangkat-cctv-28-3936" },
+        { "judul": "Analisis Interferensi Frekuensi Radar Cuaca C-Band di Indonesia", "penerbit": "InComTech: Jurnal Telekomunikasi dan Komputer, Universitas Mercu Buana", "url": "https://publikasi.mercubuana.ac.id/index.php/Incomtech/article/view/1139" }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda membantu RT/RW Net di sebuah desa di Jawa Tengah. Link point-to-point 5,8 GHz sejauh 4 km menghubungkan menara utama dan balai desa. Kedua antena terpasang di tiang 12 m di tanah datar. Saat dipasang dua tahun lalu, sinyalnya -60 dBm. Sekarang sinyal -71 dBm, dan turun ke -75 dBm saat hujan dan angin. Noise floor tetap -96 dBm dan konfigurasi tidak pernah diubah. Di tengah jalur ada kebun sengon warga yang kini setinggi sekitar 8 m. Sensitivitas radio pada laju yang dipakai -77 dBm. Apa dugaan Anda, dan bagaimana membuktikan serta memperbaikinya?",
+      "petunjuk": [
+        "Konfigurasi dan derau tidak berubah. Cari apa yang berubah secara fisik di jalur sinyal selama dua tahun.",
+        "Hitung radius zona Fresnel pertama di titik tengah, lalu batas bawah 60%-nya, dan bandingkan dengan tinggi pohon.",
+        "Hitung margin link sekarang terhadap sensitivitas, lalu bandingkan dengan target 15-20 dB untuk iklim Indonesia."
+      ],
+      "jawaban": "1. Amati gejalanya. Noise floor tetap -96 dBm, jadi SNR turun karena sinyal yang melemah. Penurunannya perlahan dan memburuk saat hujan serta angin, tanda ada penghalang yang bergerak atau basah.\n2. Susun dugaan. Kandidatnya: pohon yang tumbuh masuk zona Fresnel, arah antena bergeser, atau konektor kemasukan air. Pohon 8 m di titik tengah paling mencurigakan.\n3. Uji dengan hitungan. Radius zona Fresnel pertama: `r = 17,32 × √(4 / (4 × 5,8)) ≈ 7,2 m`. Yang wajib bebas 60%, yaitu sekitar 4,3 m. Garis pandang di titik tengah setinggi 12 m, jadi ruang bebas harus dimulai dari 12 - 4,3 = 7,7 m ke atas. Pohon 8 m sudah masuk ke ruang itu, padahal dua tahun lalu pohonnya masih pendek.\n4. Uji di lapangan. Jalankan `/interface wireless align monitor wlan1` untuk memastikan arah antena tidak bergeser, lalu periksa konektor dan kabel. Kalau semuanya baik, dugaan Fresnel makin kuat.\n5. Hitung margin. -71 - (-77) = 6 dB, jauh di bawah target 15-20 dB untuk daerah bercurah hujan tinggi. Itu sebabnya link tumbang saat hujan.\n6. Perbaiki. Naikkan kedua antena, misalnya ke 16 m, sehingga batas bawah 60% menjadi sekitar 11,7 m, jauh di atas pohon. Pilihan lain: bersepakat dengan pemilik kebun untuk memangkas pohon secara berkala. Setelah itu hitung ulang margin, dan masukkan pengecekan tinggi pohon ke jadwal pemeliharaan."
+    }
+  },
+  "10-wireless/02-802-11": {
+    "intinya": {
+      "satu_kalimat": "Standar 802.11 mengatur cara perangkat Wi-Fi bergiliran memakai udara yang sama, bergabung ke AP lewat frame manajemen, dan memilih kecepatan sesuai kualitas sinyal.",
+      "analogi": "Wi-Fi mirip rapat RT dengan satu pengeras suara: hanya satu orang boleh bicara, dan setiap pesan dibalas 'sudah dengar' (ACK). Peserta yang bicaranya lambat membuat semua orang menunggu lebih lama, persis klien jauh yang memakai kecepatan rendah. Pengumuman pengurus seperti 'rapat selesai, silakan pulang' tidak diperiksa siapa pengucapnya, sehingga orang luar bisa menirunya; itulah frame deauthentication palsu. Bedanya, rapat Wi-Fi tidak punya moderator: setiap perangkat menunggu waktu acak (backoff) sebelum bicara.",
+      "kenapa_penting": "Angka 'sampai 9,6 Gbps' di kotak router adalah kecepatan PHY teoretis. Throughput nyata biasanya 40-60% dari angka itu dan dibagi ke semua pengguna di kanal yang sama. Dengan memahami CSMA/CA, ACK, MCS, dan frame manajemen, Anda bisa menjelaskan kenapa Wi-Fi melambat saat ramai dan kenapa perangkat bisa diputus paksa.",
+      "istilah": [
+        { "kata": "CSMA/CA", "arti": "Aturan antre di Wi-Fi: dengarkan kanal, tunggu jeda acak, baru kirim. Setiap frame data harus dibalas ACK; tanpa ACK, frame dikirim ulang." },
+        { "kata": "Beacon", "arti": "Frame yang dipancarkan AP sekitar 10 kali per detik untuk setiap SSID, berisi nama jaringan dan kemampuannya." },
+        { "kata": "Frame manajemen", "arti": "Frame untuk mengelola koneksi, misalnya beacon, probe, asosiasi, dan deauthentication. Pada WPA2 biasa, frame ini tidak dienkripsi." },
+        { "kata": "Deauthentication", "arti": "Frame manajemen yang memerintahkan perangkat memutus koneksi dari AP. Tanpa PMF, frame ini mudah dipalsukan." },
+        { "kata": "PMF (802.11w)", "arti": "Protected Management Frames: frame manajemen dilindungi kunci sesi, sehingga deauth palsu ditolak. Wajib di WPA3, opsional di WPA2." },
+        { "kata": "MCS", "arti": "Pasangan modulasi dan coding yang dipilih otomatis sesuai kualitas sinyal. MCS rendah lebih tahan derau, tetapi lebih lambat." }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "FCC mendenda Marriott 600.000 dolar karena memutus hotspot pribadi tamu dengan frame deauthentication",
+      "kapan": "2014-10-03",
+      "di_mana": "Gaylord Opryland, Nashville, Amerika Serikat",
+      "ringkas": "Di pusat konvensi Gaylord Opryland, karyawan Marriott memakai fitur containment pada sistem pemantau Wi-Fi untuk menahan hotspot pribadi pengunjung. Dalam beberapa kasus, sistem mengirim paket deauthentication ke hotspot sasaran, sehingga perangkat tamu terlepas dari hotspot-nya sendiri. Pada saat yang sama, peserta pameran membayar 250-1.000 dolar per perangkat untuk memakai Wi-Fi hotel. FCC menilainya melanggar Section 333 Communications Act, dan Marriott membayar denda 600.000 dolar.",
+      "kronologi": [
+        { "waktu": "Oktober 2012", "peristiwa": "Marriott, lewat anak usahanya Marriott Hotel Services, mulai mengelola operasional harian Gaylord Opryland Resort and Convention Center di Nashville." },
+        { "waktu": "Maret 2013", "peristiwa": "FCC menerima pengaduan seorang peserta acara: hotspot pribadinya diganggu sehingga tidak bisa dipakai di ruang konvensi." },
+        { "waktu": "25 September 2013", "peristiwa": "Biro Penegakan FCC memulai penyelidikan dengan surat permintaan keterangan (Letter of Inquiry) kepada Marriott." },
+        { "waktu": "Selama penyelidikan", "peristiwa": "Marriott mengakui karyawannya memakai fitur containment untuk mencegah tamu tersambung ke internet lewat hotspot sendiri. Setelah tahu sedang diselidiki, Marriott meminta properti kelolaannya berhenti memakai fitur itu dengan cara tersebut." },
+        { "waktu": "3 Oktober 2014", "peristiwa": "FCC mengumumkan Consent Decree DA 14-1444 dengan denda 600.000 dolar. Marriott juga wajib melapor setiap tiga bulan selama tiga tahun, termasuk setiap pemakaian fitur containment di properti kelolaannya di AS." }
+      ],
+      "akar_masalah": "Sistem pemantau Wi-Fi itu punya fitur containment untuk menetralkan AP liar. Saat diaktifkan, sistem mengirim paket deauthentication sehingga perangkat terlepas dari AP sasaran. Deauthentication adalah frame manajemen; tanpa PMF, perangkat tidak bisa memeriksa apakah frame itu benar dari AP-nya, jadi perangkat tamu langsung memutus koneksi. Menurut FCC, fitur ini dipakai terhadap pengguna yang tidak mengancam keamanan jaringan hotel maupun tamunya.",
+      "kaitan": "Bagian 4 (Frame 802.11) mencatat deauthentication sebagai frame manajemen yang dipakai untuk serangan, dan menegaskan bahwa frame manajemen tidak terenkripsi pada WPA2 biasa. Kasus ini contoh nyatanya, dilakukan oleh pengelola gedung sendiri. Tip 802.11w (PMF) di bagian yang sama adalah penangkalnya: deauth yang tidak dilindungi kunci sesi ditolak.",
+      "pelajaran": [
+        "Aktifkan PMF (802.11w): `management-protection=required` di WPA3, dan minimal `allowed` di WPA2 agar klien yang mendukung ikut terlindungi.",
+        "Kalau banyak klien putus serentak tanpa sebab, rekam udara dengan adaptor monitor mode dan saring `wlan.fc.type_subtype == 0x0c` untuk melihat banjir deauthentication.",
+        "Fitur containment di WIPS punya batas hukum. Di AS, FCC menghukum pemakaiannya untuk memutus hotspot pengunjung, jadi pakai hanya sesuai kebijakan dan aturan setempat."
+      ],
+      "sumber": [
+        { "judul": "Marriott to Pay $600,000 to Resolve WiFi-Blocking Investigation", "penerbit": "Federal Communications Commission (FCC)", "url": "https://docs.fcc.gov/public/attachments/DOC-329743A1.pdf" },
+        { "judul": "Order and Consent Decree DA 14-1444: Marriott International, Inc. dan Marriott Hotel Services, Inc.", "penerbit": "FCC Enforcement Bureau", "url": "https://docs.fcc.gov/public/attachments/DA-14-1444A1.pdf" }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda membantu pemilik kafe di Yogyakarta yang berlangganan internet 300 Mbps. Satu AP Wi-Fi 5 (5 GHz, kanal 80 MHz) di dalam ruangan juga melayani meja di teras luar. Pagi hari, dengan lima pengunjung, speed test di meja kasir mencapai 200 Mbps. Sore hari ada sekitar 40 pengunjung dan hasilnya turun ke 8 Mbps. Tabel registrasi AP menunjukkan enam perangkat di teras dengan sinyal -80 sampai -84 dBm, tx-rate 6 Mbps, dan selisih besar antara `frames` dan `hw-frames`. Pemilik ingin menaikkan daya pancar AP ke maksimum. Apa diagnosis Anda, dan apa saran Anda?",
+      "petunjuk": [
+        "Wi-Fi adalah media bersama. Yang dibagi antarklien adalah waktu di udara (airtime), dan setiap frame data harus dibalas ACK.",
+        "Bandingkan lama airtime untuk mengirim 1 MB pada 6 Mbps dengan pada 400 Mbps.",
+        "Daya pancar AP hanya memperkuat arah AP ke klien. Bagaimana dengan arah sebaliknya?"
+      ],
+      "jawaban": "1. Amati pola gejalanya. Wi-Fi lambat hanya saat ramai, dan klien dekat ikut lambat walau sinyalnya bagus. Enam klien teras memakai laju terendah (6 Mbps), dan selisih `frames` dengan `hw-frames` menandakan banyak retransmisi.\n2. Susun dugaan. Klien lambat memakan airtime (Bagian 3), ditambah antrean CSMA/CA 40 perangkat dan frame yang harus dikirim ulang.\n3. Uji dengan hitungan. 1 MB sama dengan 8 Mbit. Pada 6 Mbps butuh sekitar 1,3 detik airtime, pada 400 Mbps hanya 0,02 detik. Untuk data yang sama, satu klien teras memakai udara sekitar 65 kali lebih lama daripada klien dekat.\n4. Uji di lapangan. Untuk sementara, tolak klien bersinyal di bawah -75 dBm lewat `/interface wireless access-list` dengan `signal-range`, lalu ulangi speed test. Kalau hasil di kasir melonjak, dugaan terbukti.\n5. Simpulkan dan perbaiki. Pasang AP kedua khusus teras di kanal yang tidak bertabrakan, matikan laju rendah, dan aktifkan batas sinyal minimum serta airtime fairness bila tersedia.\n6. Jelaskan kenapa menaikkan daya pancar tidak menolong. Ponsel dan laptop pelanggan tetap memancar dengan daya kecil, jadi arah klien ke AP tetap lemah dan retransmisi tetap terjadi. Sel yang membesar malah menarik klien yang lebih jauh lagi."
+    }
+  },
+  "10-wireless/03-keamanan-wireless": {
+    "intinya": {
+      "satu_kalimat": "Keamanan Wi-Fi bergantung pada enkripsi dan autentikasi yang benar serta perangkat yang rutin diperbarui, karena siapa pun dalam jangkauan sinyal bisa menangkap dan mengirim frame.",
+      "analogi": "Wi-Fi seperti mengobrol lewat jendela yang terbuka ke gang ramai: siapa pun yang lewat bisa mendengar, jadi Anda butuh bahasa sandi. WPA2 dan WPA3 adalah bahasa sandi itu, dan 4-way handshake adalah saat Anda dan AP menyepakati kunci sandi untuk sesi ini. Serangan KRACK mirip orang yang memaksa Anda mengulang kesepakatan, sehingga Anda memakai lagi nomor urut sandi yang sudah terpakai. Bedanya dengan gang sungguhan, penyadap Wi-Fi tidak perlu terlihat; ia cukup berada di mana pun sinyal Anda masih sampai.",
+      "kenapa_penting": "WPA2 masih dipakai luas, sering dengan satu password untuk semua orang. Handshake WPA2-PSK bisa ditangkap lalu ditebak offline, deauth bisa dipalsukan, dan AP palsu bisa meniru SSID Anda. Dengan memahaminya, Anda bisa memilih WPA3, PMF, 802.1X, dan jaringan tamu yang terpisah untuk kantor, sekolah, atau rumah.",
+      "istilah": [
+        { "kata": "4-way handshake", "arti": "Empat pesan antara AP dan klien untuk menurunkan kunci sesi (PTK) dan kunci grup (GTK) sebelum data mulai dienkripsi." },
+        { "kata": "Nonce", "arti": "Angka yang hanya boleh dipakai sekali. Pada enkripsi Wi-Fi, nonce berupa nomor paket yang terus naik; kalau berulang, isi paket bisa dibongkar." },
+        { "kata": "WPA3-SAE", "arti": "Pengganti PSK di WPA3. Setiap tebakan password harus dicoba langsung ke AP, sehingga tidak bisa ditebak offline, dan sesi lama tetap aman bila password bocor (forward secrecy)." },
+        { "kata": "PMF (802.11w)", "arti": "Perlindungan frame manajemen sehingga frame deauthentication palsu ditolak. Wajib di WPA3." },
+        { "kata": "802.1X / EAP", "arti": "Autentikasi per pengguna lewat server RADIUS. Akses satu orang bisa dicabut tanpa mengganti password semua orang." },
+        { "kata": "Evil twin", "arti": "AP palsu dengan SSID sama dan sinyal lebih kuat, dipasang untuk menjebak klien agar tersambung ke penyerang." }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "KRACK: celah di standar WPA2 memaksa klien memasang ulang kunci sehingga nonce terpakai ulang",
+      "kapan": "2017-10-16",
+      "di_mana": "Global; ditemukan di imec-DistriNet, KU Leuven, Belgia",
+      "ringkas": "Mathy Vanhoef dari KU Leuven menunjukkan bahwa celahnya ada di standar WPA2 sendiri, sehingga setiap implementasi WPA2 yang benar kemungkinan besar terdampak. Penyerang yang berada di antara AP dan klien memutar ulang pesan ke-3 4-way handshake. Klien lalu memasang ulang kunci yang sedang dipakai, dan nomor paket kembali ke awal. Pada AES-CCMP paket bisa didekripsi; pada TKIP atau GCMP paket juga bisa dipalsukan.",
+      "kronologi": [
+        { "waktu": "14 Juli 2017", "peristiwa": "Vanhoef mulai memberi tahu vendor yang produknya ia uji sendiri." },
+        { "waktu": "28 Agustus 2017", "peristiwa": "Setelah yakin celahnya ada di protokol, ia meminta CERT/CC mengoordinasikan pengungkapan. CERT/CC mengirim pemberitahuan luas ke vendor." },
+        { "waktu": "30 Agustus 2017", "peristiwa": "OpenBSD merilis tambalan diam-diam sebelum masa embargo berakhir. OpenBSD sudah diberi tahu sejak 15 Juli 2017." },
+        { "waktu": "16 Oktober 2017", "peristiwa": "Celah diumumkan di krackattacks.com. CERT/CC menerbitkan VU#228519 dengan sepuluh CVE, dari CVE-2017-13077 sampai CVE-2017-13088." },
+        { "waktu": "16 Oktober 2017", "peristiwa": "Terungkap bahwa Linux dan Android 6.0 ke atas bisa dipaksa memasang kunci yang seluruhnya nol, sehingga lalu lintasnya mudah disadap dan dimanipulasi. Saat itu sekitar 50% perangkat Android rentan terhadap varian ini." },
+        { "waktu": "30 Oktober-3 November 2017", "peristiwa": "Makalah Vanhoef dan Frank Piessens terbit di prosiding konferensi ACM CCS 2017 di Dallas, Amerika Serikat." }
+      ],
+      "akar_masalah": "Saat pesan ke-3 handshake hilang, AP mengirimnya ulang, dan klien memasang kunci setiap kali pesan itu diterima. Pemasangan ulang mengembalikan nomor paket (nonce) dan penghitung replay ke nilai awal. Enkripsi AES-CCMP mensyaratkan nonce tidak pernah berulang. Begitu berulang, penyerang mendapat aliran kunci (keystream) yang sama untuk paket berbeda dan bisa membongkar isinya.",
+      "kaitan": "Bagian 2 (Evolusi Keamanan Wi-Fi) menyebut KRACK sebagai Kelemahan 2 WPA2, dan Bagian 4 (Empat-Way Handshake) menjelaskan pesan 1-4 serta hierarki PMK, PTK, dan GTK. KRACK menyerang pesan ke-3, saat AP mengirim GTK dan klien memasang kunci. Kasus ini juga memperlihatkan bahwa WPA2-AES dengan password kuat tetap rentan bila perangkatnya tidak diperbarui.",
+      "pelajaran": [
+        "Perbarui firmware AP dan sistem operasi semua klien. Mengganti password Wi-Fi tidak mencegah serangan ini.",
+        "Klien dan AP sama-sama perlu ditambal. Tambalannya kompatibel ke belakang, jadi perangkat yang sudah diperbarui tetap bisa tersambung dengan yang belum.",
+        "Kalau AP mendukung 802.11r (Fast BSS Transition) dan belum ditambal, matikan dulu fitur itu, karena CVE-2017-13082 ada di handshake FT.",
+        "Pindahkan perangkat yang tidak lagi mendapat pembaruan, seperti kamera atau printer lama, ke SSID dan VLAN terpisah dengan akses terbatas."
+      ],
+      "sumber": [
+        { "judul": "KRACK Attacks: Breaking WPA2", "penerbit": "Mathy Vanhoef, imec-DistriNet, KU Leuven", "url": "https://www.krackattacks.com/" },
+        { "judul": "VU#228519: Wi-Fi Protected Access (WPA) handshake traffic can be manipulated to induce nonce and session key reuse", "penerbit": "CERT Coordination Center, Carnegie Mellon University", "url": "https://www.kb.cert.org/vuls/id/228519" },
+        { "judul": "Key Reinstallation Attacks: Forcing Nonce Reuse in WPA2 (ACM CCS 2017)", "penerbit": "Mathy Vanhoef dan Frank Piessens", "url": "https://papers.mathyvanhoef.com/ccs2017.pdf" }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda dipanggil kantor konsultan pajak di Surabaya dengan 25 karyawan. Wi-Fi kantor memakai WPA2-PSK dengan password yang sama sejak 2021, ditambah MAC filtering. Bulan lalu dua karyawan keluar. Log AP minggu ini mencatat sebuah perangkat tersambung pukul 21.00, saat kantor tutup, dengan sinyal -78 dBm. MAC-nya sama dengan MAC printer kantor, padahal printer itu sedang dimatikan. Pemilik minta solusi yang tidak merepotkan semua staf setiap kali ada yang keluar. Apa yang terjadi, dan apa rencana Anda?",
+      "petunjuk": [
+        "Siapa saja yang tahu password Wi-Fi saat ini, dan bisakah Anda mencabut pengetahuan itu dari satu orang saja?",
+        "MAC filtering memeriksa alamat MAC, dan alamat MAC bisa dipalsukan.",
+        "Cari mekanisme yang memberi setiap orang kredensial sendiri."
+      ],
+      "jawaban": "1. Amati. Perangkat asing masuk di luar jam kerja dengan sinyal lemah, tanda ia berada di luar ruangan atau di ruko sebelah. Ia memakai MAC printer yang sedang mati, jadi MAC itu dipalsukan.\n2. Susun dugaan. Seseorang tahu password Wi-Fi: mantan karyawan, atau orang yang menerimanya dari mereka. MAC filtering tidak menghalanginya karena MAC mudah ditiru (Bagian 9, Praktik Terbaik).\n3. Uji. Ganti password segera dengan passphrase acak minimal 20 karakter, lalu pantau tabel registrasi beberapa malam. Kalau perangkat asing hilang, dugaan password bocor terbukti.\n4. Perbaiki untuk jangka pendek. Aktifkan PMF dan WPA3, atau mode transisi WPA2/WPA3 bila masih ada klien lama, agar handshake tidak bisa ditebak offline. Pindahkan printer ke SSID dan VLAN terpisah yang hanya boleh dihubungi dari VLAN staf.\n5. Perbaiki untuk jangka panjang. Pindah ke WPA2/WPA3-Enterprise (802.1X) dengan server RADIUS dan satu akun per karyawan (Bagian 5). Saat ada yang keluar, cukup nonaktifkan akunnya. Pakai EAP-TLS, atau PEAP dengan validasi sertifikat server di setiap laptop, agar AP palsu tidak bisa memancing password.\n6. Tulis prosedur keluar karyawan: akun Wi-Fi dinonaktifkan pada hari terakhirnya bekerja."
+    }
+  },
+  "10-wireless/04-desain-wlan": {
+    "intinya": {
+      "satu_kalimat": "Desain WLAN menentukan jumlah dan letak AP, kanal, daya pancar, serta cara AP dikelola, agar setiap pengguna mendapat sinyal dan kapasitas yang cukup.",
+      "analogi": "Merancang WLAN mirip mengatur pelayan di rumah makan. Untuk warung sepi, satu pelayan bersuara lantang (AP berdaya tinggi) sudah cukup, tetapi di aula pesta yang penuh, tamu menunggu lama. Untuk tamu banyak, Anda perlu lebih banyak pelayan bersuara pelan yang masing-masing melayani beberapa meja terdekat (sel kecil berdaya rendah). Bedanya, pelayan Wi-Fi di kanal yang sama berbagi satu 'udara', jadi mereka tetap harus bergantian bicara.",
+      "kenapa_penting": "Ruang kelas, aula, kantor, dan kafe makin padat perangkat. Desain berbasis kapasitas, site survey, dan pilihan arsitektur (controller, FlexConnect, CAPsMAN) menentukan apakah Wi-Fi tetap lancar saat ruangan penuh. Uji di ruangan kosong sering memberi hasil yang terlalu optimistis.",
+      "istilah": [
+        { "kata": "Site survey", "arti": "Pengukuran sinyal, derau, dan interferensi di lokasi: prediktif dari denah sebelum pemasangan, lalu pasif atau aktif sesudah AP terpasang." },
+        { "kata": "Capacity-driven design", "arti": "Desain yang berangkat dari jumlah pengguna aktif dan kebutuhan bandwidth, sehingga menghasilkan banyak AP berdaya rendah dengan sel kecil." },
+        { "kata": "WLC dan CAPWAP", "arti": "Wireless LAN Controller mengelola banyak AP secara terpusat lewat protokol CAPWAP (UDP 5246 untuk kontrol, 5247 untuk data)." },
+        { "kata": "FlexConnect", "arti": "Mode AP Cisco yang meneruskan trafik klien langsung di cabang, sementara kontrol tetap lewat WLC. Cocok untuk cabang dengan WAN lambat." },
+        { "kata": "Channel utilization", "arti": "Persentase waktu kanal sedang sibuk dipakai. Makin mendekati 100%, makin lama setiap klien menunggu giliran." },
+        { "kata": "Airtime", "arti": "Waktu pemakaian udara. Klien yang memakai laju rendah memakan airtime jauh lebih lama untuk data yang sama." }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Wi-Fi rapat IETF ke-62 kewalahan: 38 AP untuk 1.138 peserta, laju 1 Mbps menghabiskan airtime",
+      "kapan": "2005-03",
+      "di_mana": "Rapat IETF ke-62, Minneapolis, Amerika Serikat",
+      "ringkas": "Hampir semua dari 1.138 peserta rapat IETF ke-62 memakai laptop di jaringan 802.11b dengan 38 AP di tiga lantai. Peneliti UC Santa Barbara merekam sekitar 57 juta frame selama dua hari dan menemukan jaringan berulang kali macet. Saat macet, banyak frame dikirim pada laju 1 Mbps yang memakan airtime jauh lebih lama. Akibatnya throughput seluruh jaringan makin turun.",
+      "kronologi": [
+        { "waktu": "6-11 Maret 2005", "peristiwa": "Rapat IETF ke-62 di Minneapolis dihadiri 1.138 peserta. Hampir semuanya memakai laptop atau perangkat nirkabel lain." },
+        { "waktu": "Desain jaringan", "peristiwa": "Ada 38 AP 802.11b Airespace: 23 di satu lantai dan 15 di dua lantai sebelahnya. AP memakai penetapan kanal dinamis, penyeimbangan klien, dan kendali daya, dengan trafik tersebar di kanal 1, 6, dan 11." },
+        { "waktu": "8 Maret 2005", "peristiwa": "Peneliti menguji penempatan sniffer di beberapa ruang untuk memperkirakan perilaku trafik sebelum perekaman utama." },
+        { "waktu": "9 Maret 2005", "peristiwa": "Perekaman sesi siang di tiga kanal. Pada pukul 15.48 tercatat puncak 523 pengguna yang terasosiasi ke jaringan." },
+        { "waktu": "10 Maret 2005", "peristiwa": "Untuk sesi pleno malam, dinding sementara antar-ballroom dibuka menjadi satu ruang besar. Pada pukul 20.45 tercatat puncak 325 pengguna." },
+        { "waktu": "Hasil analisis", "peristiwa": "Sekitar 57 juta frame (45 GB) dianalisis. Saat macet berat, frame 11 Mbps memakai sekitar separuh waktu frame 1 Mbps, tetapi membawa sekitar 300% lebih banyak byte." },
+        { "waktu": "IMC 2005", "peristiwa": "Temuan diterbitkan: adaptasi laju sebagai respons kemacetan justru merusak kinerja, dan RTS-CTS membuat segelintir node yang memakainya tidak mendapat akses adil ke kanal." }
+      ],
+      "akar_masalah": "Ratusan klien berbagi tiga kanal 2,4 GHz, jadi setiap kanal berisi banyak perangkat yang harus bergiliran. Saat frame gagal karena kanal macet, algoritma adaptasi laju tetap menurunkan laju, sering sampai 1 Mbps. Frame lambat memakan airtime lebih lama dan menambah kemacetan. Peneliti menyimpulkan bahwa pemakaian laju data rendah menurunkan throughput dan goodput jaringan secara signifikan.",
+      "kaitan": "Bagian 4 (Coverage vs Capacity Design) menyebut batas klien per AP sebagai faktor penentu, dan subbagian kepadatan tinggi menyarankan sel kecil, daya rendah, mematikan laju rendah, dan airtime fairness. Kasus ini memperlihatkan alasannya dengan data. Bagian 5 (Perencanaan Kanal) menjelaskan 2,4 GHz hanya punya tiga kanal, dan subbagian Auto RF mengingatkan bahwa penyesuaian otomatis tetap perlu ditinjau.",
+      "pelajaran": [
+        "Untuk ruang padat, rancang berbasis kapasitas: mulai dari jumlah klien aktif per radio (praktik baik 25-30), baru kemudian cakupan.",
+        "Matikan laju data rendah di ruang padat agar klien tidak terseret ke 1 Mbps yang memakan airtime.",
+        "Uji jaringan saat ruangan penuh dan pantau channel utilization pada sesi puncak; hasil di ruangan kosong menyesatkan."
+      ],
+      "sumber": [
+        { "judul": "Understanding Congestion in IEEE 802.11b Wireless Networks (Jardosh, Ramachandran, Almeroth, Belding-Royer)", "penerbit": "USENIX/ACM Internet Measurement Conference 2005", "url": "https://www.usenix.org/legacy/events/imc05/tech/full_papers/jardosh/jardosh.pdf" }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Sebuah kampus di Semarang memasang 6 AP Wi-Fi 6 berbasis controller di aula 350 kursi. Saat seminar penuh, Wi-Fi nyaris tidak bisa dipakai. Dari WLC Anda melihat: keenam AP memakai kanal 5 GHz selebar 80 MHz dengan daya 20 dBm, radio 2,4 GHz aktif di semua AP, ada 8 SSID, laju minimum masih 1 Mbps, dan channel utilization 95%. Sekitar 500 perangkat tersambung. Apa diagnosis Anda, dan apa rencana perbaikannya?",
+      "petunjuk": [
+        "Hitung rata-rata klien per AP, lalu bandingkan dengan praktik baik 25-30 klien aktif per radio.",
+        "Dengan kanal 80 MHz, berapa kanal 5 GHz yang tidak tumpang tindih? Apa akibatnya untuk enam AP yang berdekatan dengan daya 20 dBm?",
+        "Perhatikan 8 SSID dan laju minimum 1 Mbps. Berapa airtime yang habis untuk beacon dan klien lambat?"
+      ],
+      "jawaban": "1. Amati. Channel utilization 95% berarti udara hampir selalu sibuk. Sekitar 500 perangkat di 6 AP berarti rata-rata lebih dari 80 klien per AP, jauh di atas 25-30 per radio.\n2. Susun dugaan. Ada empat masalah yang saling memperburuk: kapasitas AP kurang, interferensi kanal sama karena kanal 80 MHz dan daya tinggi, beacon dari 8 SSID pada laju rendah, serta klien jauh yang memakai laju 1 Mbps.\n3. Uji dengan hitungan. Dengan 80 MHz hanya ada sekitar 6 kanal tidak tumpang tindih, dan sebagian di antaranya kanal DFS. Enam AP berdaya 20 dBm di satu ruangan praktis saling mendengar, sehingga harus bergiliran seolah satu sel.\n4. Perbaiki konfigurasi. Turunkan lebar kanal ke 20 atau 40 MHz agar kanal bertambah, turunkan daya ke sekitar 8-11 dBm, naikkan laju minimum ke 12 atau 24 Mbps, kurangi SSID menjadi 2-3, matikan radio 2,4 GHz di sebagian AP, dan aktifkan band steering serta airtime fairness.\n5. Tambah kapasitas. Kalau 70% perangkat aktif bersamaan, ada sekitar 350 klien aktif; dengan 30 klien per radio, Anda butuh sekitar 12 radio 5 GHz. Tambahkan AP sampai jumlah itu tercapai, pasang lebih dekat ke peserta, dan atur kanalnya secara manual sesudah survei.\n6. Validasi. Lakukan survei saat aula penuh, ulangi pengukuran channel utilization pada sesi puncak, dan dokumentasikan hasilnya sebagai acuan acara berikutnya."
+    }
+  }
+}

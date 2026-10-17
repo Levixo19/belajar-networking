@@ -1,0 +1,55 @@
+{
+  "11-wan-vpn/04-satelit-antarplanet": {
+    "intinya": {
+      "satu_kalimat": "Internet satelit membawa data naik ke orbit lalu turun lagi, jadi ketinggian orbit menentukan latensinya; untuk jarak antarplanet, TCP/IP diganti DTN yang menyimpan data di setiap simpul sampai jalur berikutnya tersedia.",
+      "analogi": "Bayangkan mengirim paket ke kerabat di pulau terpencil. Kurir motor di kota (kabel serat) cepat, tetapi tidak sampai ke sana. Kapal perintis (satelit GEO) sampai ke mana saja, tetapi setiap kali Anda bertanya lalu menunggu jawaban, perjalanannya panjang. Untuk tujuan yang sangat jauh, kantor pos tidak menunggu jalan tersambung dari ujung ke ujung: paket disimpan di tiap kantor sampai kendaraan berikutnya berangkat, persis cara DTN. Analogi ini berhenti di satu titik: sinyal satelit sudah melaju secepat cahaya, jadi lamanya hanya karena jarak, bukan karena kendaraannya pelan.",
+      "kenapa_penting": "Sekolah, puskesmas, dan kantor desa di daerah 3T banyak tersambung lewat satelit seperti SATRIA-1. Kalau Anda bekerja di ISP, operator VSAT, atau tim TI kantor cabang di pelosok, Anda akan menemui keluhan paket besar tapi lambat, yang sumbernya RTT setengah detik, VPN yang mematikan PEP, atau window TCP yang terlalu kecil.",
+      "istilah": [
+        { "kata": "GEO, MEO, LEO", "arti": "Tiga kelas orbit menurut ketinggian. GEO 35.786 km di atas khatulistiwa dan tampak diam dari darat, LEO di bawah 2.000 km dan bergerak cepat, MEO di antaranya." },
+        { "kata": "VSAT", "arti": "Very Small Aperture Terminal: antena parabola kecil plus modem di lokasi pengguna untuk tersambung ke satelit." },
+        { "kata": "Gateway", "arti": "Stasiun bumi besar yang menyambungkan satelit ke internet darat. SATRIA-1 punya 11 gateway, dari Batam sampai Jayapura." },
+        { "kata": "BDP", "arti": "Bandwidth-delay product: bandwidth dikali RTT, yaitu banyaknya data yang sedang di jalan. Window TCP harus paling sedikit sebesar ini supaya link penuh." },
+        { "kata": "PEP", "arti": "Performance Enhancing Proxy: perangkat di modem dan hub VSAT yang memecah koneksi TCP dan mengirim ACK lokal, supaya TCP tidak menunggu RTT satelit." },
+        { "kata": "DTN dan bundle", "arti": "Delay/Disruption Tolerant Networking: jaringan yang menyimpan data (bundle) di setiap simpul sampai kontak berikutnya, untuk jalur yang sering putus atau berjarak menit cahaya." }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "NASA mengirim foto hewan peliharaan ke ISS lewat laser dan DTN, melalui satelit relay di orbit geosinkron",
+      "kapan": "2024",
+      "di_mana": "NASA: stasiun bumi optik di California dan Hawaii, satelit LCRD, dan ISS",
+      "ringkas": "NASA menguji sistem relay laser dua arah pertamanya. Data dikirim dari stasiun bumi optik ke satelit relay LCRD di orbit geosinkron, lalu diteruskan ke terminal ILLUMA-T yang terpasang di luar Stasiun Luar Angkasa Internasional (ISS). Lebih dari 500 foto hewan peliharaan pegawai NASA dikirim dengan laju 1,2 Gbps. Pengirimannya memakai HDTN, implementasi DTN berkecepatan tinggi buatan NASA Glenn, yang menyimpan data bila link terganggu lalu meneruskannya kembali.",
+      "kronologi": [
+        { "waktu": "7 Desember 2021", "peristiwa": "LCRD diluncurkan dengan roket Atlas V 551 dari Cape Canaveral ke orbit geosinkron, sekitar 22.000 mil (lebih dari 35.000 km) di atas Bumi." },
+        { "waktu": "9 November 2023", "peristiwa": "Terminal laser ILLUMA-T diluncurkan ke ISS dengan misi kargo SpaceX ke-29 untuk NASA, lalu dipasang di bagian luar stasiun." },
+        { "waktu": "5 Desember 2023", "peristiwa": "ILLUMA-T dan LCRD membentuk link laser pertama (first light). NASA kini punya sistem relay optik dua arah ujung ke ujung dengan pengguna di orbit rendah." },
+        { "waktu": "2024", "peristiwa": "Foto dan video hewan peliharaan berangkat dari pusat operasi di Las Cruces, New Mexico, lewat stasiun bumi optik di California dan Hawaii, ke LCRD, lalu ke ILLUMA-T di ISS dan kembali, dengan laju 1,2 Gbps." },
+        { "waktu": "6 Juni 2024", "peristiwa": "NASA mengumumkan hasilnya. HDTN memakai kemampuan simpan-lalu-teruskan DTN dan bekerja hingga empat kali lebih cepat daripada teknologi DTN sebelumnya." },
+        { "waktu": "2024", "peristiwa": "Uji HDTN berikutnya mengalirkan video 4K antara pesawat PC-12 NASA dan ISS, dengan pengiriman berkas di atas 900 Mbps." }
+      ],
+      "akar_masalah": "Laser membawa data jauh lebih banyak daripada radio, tetapi sinar inframerahnya sangat peka terhadap awan dan kondisi atmosfer, sehingga link ke satu stasiun bumi bisa putus kapan saja. Karena itu NASA memakai dua stasiun bumi optik di lokasi tinggi yang jarang berawan dan bisa berpindah di antara keduanya. Jalurnya juga terdiri dari beberapa ruas (stasiun bumi, relay, ISS) yang bisa terputus sendiri-sendiri, padahal TCP/IP biasa mengandaikan jalur ujung ke ujung yang utuh. HDTN menjawabnya dengan pola DTN: data disimpan di simpul yang sedang tidak punya jalur keluar, lalu diteruskan begitu link pulih.",
+      "kaitan": "Kasus ini menyentuh tiga bagian modul. Relay LCRD berada di ketinggian geosinkron yang sama dengan GEO di bagian 2 (Orbit GEO, MEO, dan LEO), sehingga perjalanan satu arah stasiun bumi ke relay ke ISS saja sudah sekitar seperempat detik. Link optiknya kerabat laser antarsatelit di bagian 3, dengan kelemahan yang mirip rain fade: peka awan. HDTN adalah implementasi Bundle Protocol dari bagian 6 (Arsitektur DTN dan Bundle Protocol versi 7): store-and-forward membuat data tetap selamat walau satu ruas putus.",
+      "pelajaran": [
+        "Untuk link yang bisa putus karena cuaca, sediakan jalur cadangan di lokasi lain, seperti dua stasiun bumi optik di California dan Hawaii.",
+        "Saat jalur sering terputus, simpan data di simpul perantara lalu teruskan ketika link pulih, alih-alih mengulang pengiriman dari ujung ke ujung.",
+        "Hitung latensi per ruas. Rantai stasiun bumi, relay geosinkron, dan stasiun luar angkasa punya latensi propagasi yang tidak turun walau bandwidth dinaikkan."
+      ],
+      "sumber": [
+        { "judul": "NASA's Laser Relay System Sends Pet Imagery to, from Space Station", "penerbit": "NASA", "url": "https://www.nasa.gov/missions/station/nasas-laser-relay-system-sends-pet-imagery-to-from-space-station/" },
+        { "judul": "Laser Communications Relay Demonstration (LCRD) Overview", "penerbit": "NASA", "url": "https://www.nasa.gov/directorates/stmd/tech-demo-missions-program/laser-communications-relay-demonstration-lcrd-overview/" },
+        { "judul": "High-Rate Delay Tolerant Networking", "penerbit": "NASA Glenn Research Center", "url": "https://www.nasa.gov/glenn/glenn-expertise-space-exploration/scan/high-rate-delay-tolerant-networking/" },
+        { "judul": "Delay/Disruption Tolerant Networking Overview", "penerbit": "NASA", "url": "https://www.nasa.gov/technology/space-comms/dtn-overview-benefits-successstories-learningresources/" }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda teknisi TI sebuah koperasi simpan pinjam di Kepulauan Aru. Kantor cabang tersambung ke kantor pusat di Ambon lewat VSAT GEO 10 Mbps, dan semua lalu lintas ke pusat dibungkus VPN IPsec site-to-site. Backup harian 2 GB ke server pusat butuh hampir 6 jam. `ping` ke server pusat: min 610 ms, avg 640 ms. `iperf3` satu aliran mendapat 0,8 Mbps, sedangkan `iperf3 -P 8` mendapat sekitar 6 Mbps. Di server backup (Linux), `ss -ti` untuk koneksi backup tidak menampilkan `wscale` sama sekali. Apa penyebab lambatnya, dan apa yang Anda perbaiki lebih dulu?",
+      "petunjuk": [
+        "Bandingkan satu aliran dengan delapan aliran. Kalau delapan aliran jauh lebih cepat, link-nya belum penuh: yang membatasi adalah sesuatu per koneksi.",
+        "Hitung BDP link ini, lalu hitung throughput maksimum satu koneksi dengan window 65.535 byte pada RTT 640 ms.",
+        "Ingat kenapa PEP milik operator VSAT tidak bisa membantu lalu lintas yang sudah dibungkus IPsec, dan apa artinya bila `ss` tidak menampilkan `wscale`."
+      ],
+      "jawaban": "1. **Amati.** Satu aliran 0,8 Mbps, delapan aliran sekitar 6 Mbps. Kapasitas link masih tersisa, jadi batasnya ada per koneksi, bukan di VSAT.\n2. **Hitung.** BDP = 10 Mbps x 0,64 s = 6,4 Mbit, sekitar 800 KB. Tanpa window scaling, window paling besar 65.535 byte, sehingga satu koneksi paling cepat 65.535 x 8 / 0,64 = sekitar 819 kbps. Angka ini cocok dengan 0,8 Mbps, dan 2 GB pada 0,8 Mbps memang sekitar 5,6 jam.\n3. **Kenapa RTT-nya penuh.** Lalu lintas berada di dalam IPsec ESP, jadi PEP operator tidak bisa membaca header TCP dan tidak bisa mengirim ACK lokal. TCP ujung ke ujung menanggung RTT 640 ms.\n4. **Dugaan.** `ss -ti` hanya menampilkan `wscale` bila opsi window scaling dinegosiasikan. Periksa `sysctl net.ipv4.tcp_window_scaling` di server dan di klien cabang. Nilai 0 biasanya sisa skrip \"tuning\" lama.\n5. **Perbaiki.** Jalankan `sudo sysctl -w net.ipv4.tcp_window_scaling=1` dan simpan di `/etc/sysctl.d/`. Pastikan nilai ketiga `tcp_rmem` dan `tcp_wmem` jauh di atas BDP (misalnya 2 MB atau lebih), dan aplikasi backup tidak mengunci ukuran buffer lewat `setsockopt()`. Opsi ini dinegosiasikan saat handshake, jadi hanya koneksi baru yang mendapat manfaatnya.\n6. **Uji ulang.** Jalankan `iperf3` satu aliran lagi. Hasilnya seharusnya mendekati kapasitas link dikurangi overhead IPsec. Pada sekitar 9 Mbps, backup 2 GB selesai dalam kurang lebih 30 menit.\n7. **Jangan mematikan VPN demi kecepatan.** Data keuangan koperasi harus tetap terenkripsi. Kalau server belum boleh diubah, backup dengan beberapa aliran paralel bisa menjadi tambalan sementara."
+    }
+  }
+}

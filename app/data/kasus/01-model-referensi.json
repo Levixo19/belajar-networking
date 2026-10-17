@@ -1,0 +1,305 @@
+{
+  "01-model-referensi/01-osi": {
+    "intinya": {
+      "satu_kalimat": "Model OSI membagi komunikasi jaringan menjadi tujuh lapisan, dari sinyal di kabel sampai protokol aplikasi, sehingga masalah bisa diperiksa lapis demi lapis.",
+      "analogi": "Bayangkan pengiriman paket lewat jasa ekspedisi. Ada bagian yang mengemas barang, menulis alamat, menyortir di gudang, dan mengemudikan truk, dan masing-masing tidak perlu tahu detail kerja bagian lain. Saat paket tidak sampai, Anda memeriksa per tahap: truknya jalan atau tidak, alamatnya benar atau tidak, gudangnya macet atau tidak. OSI memberi daftar tahap seperti itu untuk jaringan, walau di dunia nyata batas antarlapisan tidak selalu serapi analogi ini.",
+      "kenapa_penting": "Saat pengguna bilang 'internet mati', teknisi yang berpikir per lapisan bisa membedakan dalam beberapa menit apakah masalahnya di kabel, alamat IP, DNS, atau aplikasi. Istilah seperti 'masalah layer 2' atau 'layer 7' juga dipakai sehari-hari di tiket gangguan dan wawancara kerja.",
+      "istilah": [
+        {
+          "kata": "Layer 1 (Physical)",
+          "arti": "Lapisan yang mengubah bit menjadi sinyal listrik, cahaya, atau radio. Masalahnya berupa kabel, konektor, atau lampu link yang padam."
+        },
+        {
+          "kata": "Layer 3 (Network)",
+          "arti": "Lapisan alamat IP dan routing, yang mengantar paket antarjaringan. Diuji dengan `ping` dan `traceroute`."
+        },
+        {
+          "kata": "Layer 7 (Application)",
+          "arti": "Lapisan protokol aplikasi seperti HTTP dan DNS. Browser bukan layer 7; HTTP yang dipakainya yang termasuk layer 7."
+        },
+        {
+          "kata": "CDN (Content Delivery Network)",
+          "arti": "Jaringan server di banyak kota yang menyimpan salinan isi situs, sehingga pengguna dilayani dari lokasi terdekat."
+        },
+        {
+          "kata": "Kode status HTTP",
+          "arti": "Angka di jawaban server web. Kelompok 5xx, misalnya 500 atau 503, berarti server gagal memproses permintaan."
+        },
+        {
+          "kata": "Top-down",
+          "arti": "Cara troubleshooting dari layer 7 turun ke layer 1. Cocok saat hanya satu aplikasi bermasalah sementara yang lain normal."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Fastly: satu perubahan konfigurasi pelanggan memicu bug, 85% jaringan CDN membalas error",
+      "kapan": "2021-06-08",
+      "di_mana": "Fastly (CDN), global",
+      "ringkas": "Fastly adalah CDN: server-servernya di banyak kota mengantar isi situs milik pelanggannya. Pada 8 Juni 2021, seorang pelanggan memasang perubahan konfigurasi yang sah. Perubahan itu memicu bug yang terbawa pembaruan perangkat lunak sejak 12 Mei, dan 85% jaringan Fastly langsung membalas permintaan dengan error. Situs pelanggan Fastly di berbagai negara tidak bisa dibuka. Dalam 49 menit, 95% jaringan Fastly kembali normal.",
+      "kronologi": [
+        {
+          "waktu": "12 Mei 2021",
+          "peristiwa": "Fastly mulai menyebarkan pembaruan perangkat lunak yang membawa bug. Bug itu hanya muncul pada konfigurasi pelanggan tertentu dalam kondisi tertentu."
+        },
+        {
+          "waktu": "8 Juni 2021, 09.47 UTC",
+          "peristiwa": "Seorang pelanggan memasang perubahan konfigurasi yang sah dan kebetulan memenuhi kondisi pemicu. Gangguan global dimulai."
+        },
+        {
+          "waktu": "09.48 UTC",
+          "peristiwa": "Pemantauan Fastly mendeteksi gangguan."
+        },
+        {
+          "waktu": "09.58 UTC",
+          "peristiwa": "Fastly menerbitkan pemberitahuan di halaman status."
+        },
+        {
+          "waktu": "10.27 UTC",
+          "peristiwa": "Teknisi menemukan konfigurasi pelanggan yang menjadi pemicunya."
+        },
+        {
+          "waktu": "10.36 UTC",
+          "peristiwa": "Layanan yang terdampak mulai pulih. Dalam 49 menit sejak awal gangguan, 95% jaringan kembali normal."
+        },
+        {
+          "waktu": "12.35 UTC",
+          "peristiwa": "Insiden dinyatakan termitigasi."
+        },
+        {
+          "waktu": "17.25 UTC",
+          "peristiwa": "Perbaikan permanen untuk bug itu mulai disebarkan."
+        }
+      ],
+      "akar_masalah": "Penyebabnya bug di perangkat lunak server CDN, yang bekerja di layer 7, dan baru aktif oleh kombinasi konfigurasi tertentu. Kabel, router, dan routing internet tetap bekerja, sehingga permintaan pengguna sampai ke server Fastly. Masalahnya, server itu menjawab dengan pesan error, bukan isi halaman.",
+      "kaitan": "Bagian 11 (OSI Sebagai Alat Troubleshooting) mengajarkan: kalau lapisan bawah terbukti sehat, naik ke lapisan atas. Di kasus ini browser sudah melewati layer 1 sampai 4 dan menerima jawaban HTTP. Yang rusak adalah layer 7, sesuai daftar gejala di bagian 9 (Layer 7: Application) yang menyebut HTTP 500. Pendekatan top-down cocok karena situs yang tidak memakai Fastly tetap normal.",
+      "pelajaran": [
+        "Pesan error dari server adalah bukti bahwa jaringan sampai ke server itu bekerja. Mulailah memeriksa dari lapisan aplikasi.",
+        "Kalau banyak situs berbeda gagal bersamaan, cari kesamaan di antara mereka, misalnya CDN, DNS, atau penyedia cloud yang sama.",
+        "Bagi pengelola layanan: sebarkan perubahan secara bertahap dan siapkan cara cepat menonaktifkan konfigurasi pemicu."
+      ],
+      "sumber": [
+        {
+          "judul": "Summary of June 8 outage",
+          "penerbit": "Fastly (Nick Rockwell)",
+          "url": "https://www.fastly.com/blog/summary-of-june-8-outage"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Pagi ini tiga staf kantor kelurahan melapor 'internet mati'. PC A: ikon jaringan bertanda silang, dan lampu port switch-nya padam. PC B: kemarin kabelnya dipindah teknisi ke port lain, dan sekarang alamat IP-nya 169.254.20.7. PC C: bisa membuka google.com, tetapi aplikasi e-Kelurahan menampilkan 'sertifikat tidak valid', padahal staf di lantai atas lancar membukanya. Jam di PC C menunjukkan tahun 2019. Tentukan layer masalah tiap PC dan langkah pertama Anda.",
+      "petunjuk": [
+        "Untuk setiap PC, cari lapisan terendah yang sudah terbukti gagal. Lampu link termasuk layer 1.",
+        "Alamat 169.254.x.x muncul saat PC tidak mendapat jawaban DHCP. DHCP butuh layer 2 yang sehat dan port di VLAN yang benar.",
+        "Sertifikat punya tanggal berlaku. Apa jadinya kalau jam komputer salah?"
+      ],
+      "jawaban": "1. **PC A: layer 1.** Lampu port padam berarti tidak ada sinyal. Cek kabel tertancap, coba kabel atau port lain, lalu lihat status di PC (`ipconfig` menampilkan 'Media disconnected').\n2. **PC B: layer 2.** Alamat 169.254.x.x berarti DHCP tidak menjawab. Karena kabelnya baru dipindah, dugaan terkuat port barunya ada di VLAN yang salah. Cek konfigurasi port di switch (`show vlan brief` atau menu VLAN switch), samakan dengan port lama, lalu minta ulang alamat dengan `ipconfig /renew`.\n3. **PC C: layer 7 (sertifikat TLS).** Layer 1 sampai 4 sehat karena google.com terbuka. Sertifikat e-Kelurahan dianggap tidak valid karena jam PC tertinggal bertahun-tahun, sehingga masa berlaku sertifikat tampak belum dimulai. Perbaiki jam, aktifkan sinkronisasi waktu otomatis, dan cek baterai CMOS kalau jamnya terus kembali.\n4. **Pelajaran.** Tiga keluhan yang sama ('internet mati') ternyata tiga masalah di tiga lapisan berbeda. Dengan berpikir per layer, Anda tidak akan mengganti kabel untuk masalah jam, atau menelepon ISP untuk masalah VLAN."
+    }
+  },
+  "01-model-referensi/02-tcp-ip": {
+    "intinya": {
+      "satu_kalimat": "Model TCP/IP adalah empat lapisan yang benar-benar dipakai internet (link, internet, transport, aplikasi), dengan IP sebagai satu-satunya 'leher' di tengah dan kecerdasan di kedua ujung.",
+      "analogi": "Bayangkan sistem jalan nasional. Di atasnya ada banyak jenis kendaraan (aplikasi), di bawahnya banyak jenis jalan (kabel, Wi-Fi, satelit), tetapi semua kendaraan memakai satu aturan pelat nomor yang sama, yaitu IP. Karena aturan tengahnya sederhana, kendaraan dan jalan baru bisa muncul tanpa mengubah aturan itu. Masalah muncul ketika petugas di tengah jalan (middlebox) mulai memeriksa isi kendaraan dan menolak model yang belum pernah ia lihat.",
+      "kenapa_penting": "Firewall kantor, NAT di router rumah, dan proxy sekolah adalah kotak di tengah jalan yang bisa membuat aplikasi baru gagal tanpa pesan jelas. Prinsip end-to-end dan masalah ossification menjelaskan kenapa protokol modern seperti TLS 1.3 dan QUIC dirancang 'menyamar' agar lolos.",
+      "istilah": [
+        {
+          "kata": "Middlebox",
+          "arti": "Perangkat di tengah jalur yang membaca atau mengubah paket, misalnya NAT, firewall, dan proxy inspeksi TLS."
+        },
+        {
+          "kata": "Ossification (pengerasan)",
+          "arti": "Keadaan ketika middlebox hanya mengenal bentuk protokol lama dan membuang yang baru, sehingga protokol sulit berkembang."
+        },
+        {
+          "kata": "TLS",
+          "arti": "Protokol enkripsi untuk HTTPS dan banyak aplikasi lain. Versi 1.3 terbit sebagai RFC 8446 pada Agustus 2018."
+        },
+        {
+          "kata": "Handshake",
+          "arti": "Pertukaran pesan pembuka sebelum data dikirim. Pada TLS, klien dan server menyepakati versi, algoritma, dan kunci."
+        },
+        {
+          "kata": "Argumen end-to-end",
+          "arti": "Prinsip bahwa fungsi seperti keandalan dan keamanan hanya bisa dijamin benar oleh aplikasi di kedua ujung komunikasi."
+        },
+        {
+          "kata": "Proxy inspeksi TLS",
+          "arti": "Kotak yang membuka trafik terenkripsi untuk diperiksa, misalnya filter konten sekolah, lalu mengenkripsinya lagi sebelum diteruskan."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Proxy sekolah memutus koneksi TLS 1.3, protokol baru terpaksa menyamar sebagai TLS 1.2",
+      "kapan": "2017-02",
+      "di_mana": "Sekolah di Maryland, AS, dan proses standar TLS 1.3 di IETF",
+      "ringkas": "Februari 2017, Chrome 56 dan Chrome OS 56 mulai memakai TLS 1.3, yang saat itu masih berupa draft. Di Montgomery County Public Schools, Maryland, ribuan Chromebook dan PC macet berpindah-pindah antara layar login dan pesan 'Network not available'. Penyebabnya proxy Blue Coat yang memeriksa trafik terenkripsi: alih-alih menurunkan versi ke TLS 1.2, proxy itu memutus koneksi. Google menarik dukungan TLS 1.3, dan pengukuran browser menunjukkan masalah serupa terjadi di banyak middlebox lain.",
+      "kronologi": [
+        {
+          "waktu": "Februari 2017",
+          "peristiwa": "Chrome dan Firefox mulai mengaktifkan TLS 1.3 (draft) untuk sebagian pengguna."
+        },
+        {
+          "waktu": "21 Februari 2017",
+          "peristiwa": "Masalah dilaporkan: di Montgomery County Public Schools, ribuan Chromebook dan PC dengan Chrome OS 56 macet di belakang proxy Blue Coat ber-SGOS 6.5."
+        },
+        {
+          "waktu": "23 Februari 2017",
+          "peristiwa": "Google mengumumkan penarikan TLS 1.3, lalu merilis pembaruan Chrome yang mematikannya."
+        },
+        {
+          "waktu": "2017",
+          "peristiwa": "Pengukuran Chrome ke Gmail: koneksi TLS 1.2 berhasil 98,3%, sedangkan TLS 1.3 hanya 92,3%. Pengukuran Firefox ke Cloudflare: 97,8% berbanding 96,1%."
+        },
+        {
+          "waktu": "Akhir 2017",
+          "peristiwa": "Desain diubah: ClientHello kembali menulis versi TLS 1.2, versi sebenarnya dipindah ke ekstensi supported_versions, dan pesan ChangeCipherSpec palsu ditambahkan. Uji Chrome mencatat keberhasilan 98,8%, setara TLS 1.2 (98,6%)."
+        },
+        {
+          "waktu": "Agustus 2018",
+          "peristiwa": "RFC 8446 (TLS 1.3) terbit dengan 'middlebox compatibility mode', yang membuat handshake TLS 1.3 menyerupai TLS 1.2 session resumption."
+        }
+      ],
+      "akar_masalah": "Proxy dan firewall yang membuka trafik TLS dibuat dengan asumsi tentang bentuk protokol pada masanya. Saat menerima versi atau struktur pesan yang belum dikenal, sebagian dari kotak itu memutus koneksi, padahal TLS menyediakan negosiasi agar kedua pihak bisa turun ke versi lama. Akibatnya, bentuk protokol yang seharusnya hanya urusan browser dan server ikut dibekukan oleh kotak di tengah jalan.",
+      "kaitan": "Kasus ini contoh langsung bagian 7.5 (Layering sebagai abstraksi, dan kapan dilanggar) dan 7.6 (Ossification): middlebox membaca lapisan yang bukan urusannya lalu membekukan protokol. Bagian 7.6 menyebut TLS memakai GREASE dengan prinsip yang sama seperti QUIC: apa yang tidak bisa dibaca middlebox tidak bisa ia bekukan. Argumen end-to-end di bagian 7.1 menjelaskan kenapa negosiasi versi seharusnya cukup diurus klien dan server.",
+      "pelajaran": [
+        "Sebelum memasang perangkat inspeksi TLS (proxy atau NGFW), pastikan vendornya rutin memperbarui dukungan versi protokol, dan uji dengan versi browser terbaru.",
+        "Kalau aplikasi gagal hanya di jaringan kantor atau sekolah tetapi lancar di data seluler, curigai middlebox di jalur sebelum menyalahkan aplikasinya.",
+        "Catat versi firmware setiap middlebox. Saat muncul keluhan massal sesudah pembaruan browser atau OS, versi itulah yang pertama dicek."
+      ],
+      "sumber": [
+        {
+          "judul": "TLS Bug in Blue Coat Proxy Breaks Chromebooks, PCs",
+          "penerbit": "SecurityWeek",
+          "url": "https://www.securityweek.com/tls-bug-blue-coat-proxy-breaks-chromebooks-pcs/"
+        },
+        {
+          "judul": "Chrome backs out of TLS 1.3 support after proxy issues",
+          "penerbit": "TechTarget (Peter Loshin)",
+          "url": "https://www.techtarget.com/searchsecurity/news/450413934/Chrome-backs-out-of-TLS-13-support-after-proxy-issues"
+        },
+        {
+          "judul": "Why TLS 1.3 isn't in browsers yet",
+          "penerbit": "Cloudflare Blog (Nick Sullivan)",
+          "url": "https://blog.cloudflare.com/why-tls-1-3-isnt-in-browsers-yet/"
+        },
+        {
+          "judul": "RFC 8446: The Transport Layer Security (TLS) Protocol Version 1.3",
+          "penerbit": "RFC Editor (IETF)",
+          "url": "https://www.rfc-editor.org/rfc/rfc8446"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Sebuah kantor dinas memasang firewall baru dengan kebijakan 'izinkan hanya TCP 80 dan 443 ke internet'. Sejak itu pegawai mengeluh video YouTube di browser lebih lama mulai diputar dibanding saat memakai data seluler, walau akhirnya jalan. Log firewall penuh dengan paket UDP tujuan port 443 yang dibuang. Jelaskan apa yang terjadi memakai konsep di modul ini, lalu beri dua pilihan perbaikan beserta risikonya.",
+      "petunjuk": [
+        "Protokol transport apa yang berjalan di atas UDP port 443?",
+        "Browser mencoba QUIC untuk layanan yang mendukungnya. Apa yang terjadi kalau paketnya dibuang diam-diam, tanpa balasan?",
+        "Ingat bagian 7.6: apa akibat jangka panjang kalau kotak di tengah jalan memblokir protokol baru?"
+      ],
+      "jawaban": "1. **Kenali trafiknya.** UDP/443 adalah QUIC, transport untuk HTTP/3 yang dipakai layanan Google. QUIC sengaja berjalan di atas UDP supaya lolos NAT dan firewall (bagian 7.6).\n2. **Jelaskan gejalanya.** Browser mencoba QUIC, tetapi firewall membuang paketnya tanpa balasan. Browser baru memakai TCP setelah percobaan QUIC gagal atau kalah cepat, dan handshake TCP ditambah TLS butuh 2 RTT, bukan 1 RTT seperti QUIC. Gabungan keduanya terasa sebagai lambat di awal.\n3. **Bandingkan dengan seluler.** Di jaringan seluler UDP/443 lolos, sehingga QUIC langsung jalan.\n4. **Pilihan A: izinkan UDP 443 keluar** dengan aturan stateful. Risikonya, firewall tidak bisa memeriksa isi QUIC yang terenkripsi, jadi kemampuan inspeksi konten berkurang.\n5. **Pilihan B: tetap blokir, tetapi percepat peralihan ke TCP.** Caranya, tolak paket secara aktif (reject) alih-alih membuangnya diam-diam, atau matikan QUIC di browser lewat kebijakan perangkat. Risikonya, pegawai kehilangan manfaat QUIC, dan kantor ikut menjadi kotak di tengah jalan yang membekukan protokol (ossification).\n6. **Saran.** Pilih A kalau tidak ada kewajiban inspeksi konten. Pilih B kalau kebijakan keamanan mewajibkan inspeksi, lalu catat keputusan itu di dokumentasi jaringan."
+    }
+  },
+  "01-model-referensi/03-enkapsulasi": {
+    "intinya": {
+      "satu_kalimat": "Enkapsulasi adalah proses setiap lapisan membungkus data dengan headernya sendiri, lalu penerima membukanya satu per satu; di setiap router bungkus layer 2 diganti, sedangkan alamat IP tetap.",
+      "analogi": "Bayangkan mengirim barang lewat ekspedisi antarpulau. Barang (data) masuk kardus berlabel nama penerima, kardus masuk karung bertuliskan kota tujuan, dan karung dinaikkan ke truk yang berganti di setiap pelabuhan. Alamat kota di karung tidak berubah, tetapi nomor truknya berganti, persis seperti IP yang tetap dan MAC yang berganti di tiap hop. Kalau bak sebuah truk lebih pendek dari karung (MTU kecil), karung itu ditolak, dan pengirim harus diberi tahu supaya mengirim karung yang lebih kecil.",
+      "kenapa_penting": "VPN, PPPoE di internet fiber rumah, dan tunnel di data center semuanya menambah bungkus, sehingga ruang untuk data mengecil. Banyak keluhan 'VPN tersambung tapi file besar macet' berakar di sini.",
+      "istilah": [
+        {
+          "kata": "Header",
+          "arti": "Informasi tambahan yang ditempelkan tiap lapisan di depan data, misalnya alamat MAC, alamat IP, dan nomor port."
+        },
+        {
+          "kata": "MTU (Maximum Transmission Unit)",
+          "arti": "Ukuran paket terbesar yang bisa dibawa sebuah link. Ethernet standar 1.500 byte."
+        },
+        {
+          "kata": "Tunnel",
+          "arti": "Paket yang dibungkus di dalam paket lain, misalnya VPN atau IPv6 di dalam IPv4. Bungkus tambahan memperkecil ruang untuk data."
+        },
+        {
+          "kata": "ICMP Packet Too Big",
+          "arti": "Pesan dari router kepada pengirim bahwa paketnya terlalu besar untuk link berikutnya. Di IPv4 disebut 'Fragmentation Needed' (tipe 3 kode 4)."
+        },
+        {
+          "kata": "PMTUD (Path MTU Discovery)",
+          "arti": "Cara pengirim menemukan MTU terkecil di sepanjang jalur, dengan mengandalkan pesan ICMP Packet Too Big."
+        },
+        {
+          "kata": "ECMP (Equal-Cost Multi-Path)",
+          "arti": "Teknik router membagi trafik ke beberapa jalur atau server yang setara, dengan memilih tujuan berdasarkan hash isi header paket."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Cloudflare: pesan ICMP 'paket terlalu besar' nyasar ke server lain, pengguna tunnel tidak bisa membuka situs",
+      "kapan": "2015",
+      "di_mana": "Cloudflare, jaringan global",
+      "ringkas": "Sebagian kecil pengguna Cloudflare yang memakai tunnel, terutama IPv6 yang dibungkus di dalam IPv4, tiba-tiba tidak bisa mengakses layanannya. Penyebabnya perubahan jaringan internal yang merusak Path MTU Discovery di server Cloudflare. Router penyeimbang beban (ECMP) meneruskan pesan ICMP 'paket terlalu besar' ke server yang berbeda dari server yang melayani koneksi. Server pengirim tidak pernah tahu harus mengecilkan paket, sehingga paket besarnya terus hilang di jalan.",
+      "kronologi": [
+        {
+          "waktu": "Sebelum insiden",
+          "peristiwa": "Cloudflare makin banyak memakai ECMP untuk membagi trafik masuk ke banyak server di satu data center."
+        },
+        {
+          "waktu": "Sepekan sebelum 4 Februari 2015",
+          "peristiwa": "Sebagian kecil pengguna tunnel tidak bisa mengakses layanan Cloudflare."
+        },
+        {
+          "waktu": "Saat penyelidikan",
+          "peristiwa": "Untuk paket TCP, router ECMP menghitung hash dari alamat dan port, jadi semua paket satu koneksi sampai ke server yang sama. Untuk ICMP, hash hanya memakai alamat IP sumber dan tujuan, sehingga pesan itu mendarat di server lain."
+        },
+        {
+          "waktu": "Perbaikan pertama",
+          "peristiwa": "MTU IPv6 di server diturunkan ke 1.280 byte, ukuran minimum IPv6, dan probing MTU ala RFC 4821 diaktifkan untuk IPv4."
+        },
+        {
+          "waktu": "Perbaikan kedua",
+          "peristiwa": "Cloudflare membuat daemon pmtud dan merilisnya sebagai open source. Daemon ini menyiarkan pesan ICMP ke semua server di data center, supaya server yang tepat pasti menerimanya."
+        },
+        {
+          "waktu": "4 Februari 2015",
+          "peristiwa": "Cloudflare menerbitkan penjelasan lengkapnya di blog."
+        }
+      ],
+      "akar_masalah": "Tunnel menambah header, sehingga MTU di jalur pengguna lebih kecil dari 1.500 byte. Router yang menerima paket kebesaran dengan bit Don't Fragment membuangnya dan mengirim ICMP tipe 3 kode 4 ke pengirim. Pengirimnya server Cloudflare di belakang router ECMP. Karena hash ECMP untuk ICMP berbeda dengan hash untuk TCP, pesan itu sampai ke server yang tidak memegang koneksi tersebut. Hasilnya MTU black hole: koneksi terbentuk, tetapi data besar tidak pernah sampai.",
+      "kaitan": "Bagian 7 (Enkapsulasi Bertingkat) menjelaskan bahwa overhead tunnel mengurangi MTU efektif dan menyebut MTU black hole sebagai salah satu masalah VPN paling umum. Bagian 3 (Field penanda protokol berikutnya) menjelaskan rantai EtherType, Protocol, dan port yang dibaca perangkat. Router ECMP membaca rantai itu untuk memilih server; pesan ICMP tidak punya port TCP, jadi hasil pilihannya berbeda.",
+      "pelajaran": [
+        "Jangan memblokir ICMP 'Fragmentation Needed' atau 'Packet Too Big' di firewall. Tanpa pesan itu, Path MTU Discovery tidak bisa bekerja.",
+        "Kalau memakai tunnel atau PPPoE, atur MTU interface atau MSS clamping secara eksplisit, alih-alih berharap PMTUD selalu berhasil.",
+        "Saat menguji layanan baru, sertakan pengguna dengan MTU kecil (VPN, PPPoE, tunnel IPv6) dalam skenario uji."
+      ],
+      "sumber": [
+        {
+          "judul": "Path MTU discovery in practice",
+          "penerbit": "Cloudflare Blog (Marek Majkowski)",
+          "url": "https://blog.cloudflare.com/path-mtu-discovery-in-practice/"
+        },
+        {
+          "judul": "RFC 4821: Packetization Layer Path MTU Discovery",
+          "penerbit": "RFC Editor (IETF)",
+          "url": "https://www.rfc-editor.org/rfc/rfc4821"
+        },
+        {
+          "judul": "RFC 1191: Path MTU discovery",
+          "penerbit": "RFC Editor (IETF)",
+          "url": "https://www.rfc-editor.org/rfc/rfc1191"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda menyelidiki keluhan di kantor cabang dan menangkap paket yang sama di dua tempat. (A) Di port switch PC kasir: MAC sumber `aa:aa:aa:00:00:25`, MAC tujuan `bb:bb:bb:00:00:01` (router kantor), IP `192.168.10.25:51000` ke `198.51.100.80:443`, TTL 128. (B) Di sisi WAN router kantor yang memakai NAT: MAC sumber `cc:cc:cc:00:00:02`, MAC tujuan `dd:dd:dd:00:00:09` (router ISP), IP `203.0.113.77:62011` ke `198.51.100.80:443`, TTL 127. Rekan Anda curiga paket itu dimodifikasi penyerang karena hampir semua field berubah. Benarkah? Jelaskan field mana yang wajar berubah dan apa yang justru patut dicurigai.",
+      "petunjuk": [
+        "Pakai tabel 'yang berubah dan tidak berubah di setiap hop' di bagian 4.",
+        "Router kantor juga menjalankan NAT. Field apa saja yang diubah NAT (langkah 14 di bagian 5)?",
+        "Bandingkan dengan field yang seharusnya tetap. Adakah yang ikut berubah?"
+      ],
+      "jawaban": "1. **MAC sumber dan tujuan berubah: wajar.** Router membuang header Ethernet lama dan membuat yang baru untuk segmen berikutnya. MAC sumber kini milik interface WAN router, MAC tujuan milik router ISP (bagian 4).\n2. **TTL 128 menjadi 127: wajar.** Setiap router mengurangi TTL sebanyak 1, dan nilai awal 128 cocok dengan PC Windows.\n3. **IP sumber 192.168.10.25 menjadi 203.0.113.77, port 51000 menjadi 62011: wajar** karena NAT/PAT di router kantor. Router mencatat pemetaan ini agar balasan bisa dikembalikan ke PC kasir (langkah 14).\n4. **Checksum IP dan TCP ikut berubah: wajar,** karena TTL, alamat, dan port berubah.\n5. **IP tujuan 198.51.100.80 dan port 443 tetap.** Inilah yang memang seharusnya tidak berubah.\n6. **Yang patut dicurigai:** perubahan IP atau port tujuan tanpa ada DNAT atau proxy, dan TTL yang turun lebih dari 1 di satu router. Isi data yang berubah padahal tidak ada perangkat inspeksi juga patut dicurigai.\n7. **Kesimpulan.** Semua perubahan di capture ini bisa dijelaskan oleh routing dan NAT. Tidak ada tanda modifikasi oleh penyerang."
+    }
+  }
+}

@@ -1,0 +1,381 @@
+{
+  "14-monitoring-troubleshooting/01-metodologi": {
+    "intinya": {
+      "satu_kalimat": "Cara andal memperbaiki gangguan jaringan adalah bekerja berurutan: pahami gejala, cari apa yang baru berubah, uji satu dugaan setiap kali, lalu catat akar masalahnya.",
+      "analogi": "Bayangkan dokter di puskesmas. Ia tidak langsung memberi lima obat sekaligus. Ia bertanya dulu: sakitnya sejak kapan, habis makan apa, adakah orang serumah yang sakit juga. Lalu ia mengukur suhu dan tensi, membandingkannya dengan angka normal, dan meminta satu tes untuk menguji dugaannya. Me-restart router mirip memberi obat pereda nyeri: keluhannya hilang sebentar, penyebabnya tetap ada. Bedanya, restart juga menghapus bukti, misalnya log dan tabel yang tersimpan di memori.",
+      "kenapa_penting": "Keluhan 'internet mati' di kantor atau di rumah bisa ditelusuri dengan urutan yang sama. Teknisi yang bekerja berurutan menemukan penyebabnya lebih cepat dan bisa menunjukkan buktinya. Teknisi yang menebak sering mengganti perangkat yang sehat, lalu masalahnya kambuh minggu depan.",
+      "istilah": [
+        {
+          "kata": "Akar masalah (root cause)",
+          "arti": "Penyebab paling dasar sebuah gangguan. Kalau akar masalah diperbaiki, gangguan tidak kambuh. Kalau hanya gejalanya yang hilang, gangguan akan datang lagi."
+        },
+        {
+          "kata": "Scope",
+          "arti": "Luas dampak masalah: berapa banyak pengguna yang terkena, aplikasi apa saja, sejak kapan, dan ke arah mana. Menentukan scope mempersempit daerah pencarian."
+        },
+        {
+          "kata": "Baseline",
+          "arti": "Angka normal jaringan Anda, misalnya latency ke server DNS biasanya 5 ms. Tanpa baseline, Anda tidak bisa tahu apakah angka hari ini aneh."
+        },
+        {
+          "kata": "5 Whys",
+          "arti": "Teknik bertanya 'kenapa?' berulang kali, biasanya sampai lima kali, untuk turun dari gejala ke akar masalah."
+        },
+        {
+          "kata": "Postmortem blameless",
+          "arti": "Laporan sesudah gangguan yang mencari celah di sistem dan proses, bukan mencari orang untuk disalahkan."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "GitLab.com kehilangan sekitar enam jam data setelah direktori database utama terhapus",
+      "kapan": "2017-01-31",
+      "di_mana": "GitLab.com, layanan hosting kode global",
+      "ringkas": "Malam itu database GitLab.com kewalahan oleh beban spam, dan replikasi ke server cadangan putus. Saat memperbaikinya, seorang engineer menghapus direktori data di server yang ia kira cadangan. Ternyata itu server utama. Backup dengan pg_dump ternyata gagal tanpa ada yang tahu, snapshot disk tidak diaktifkan, dan replika sudah dikosongkan. Data akhirnya dipulihkan dari snapshot yang dibuat enam jam sebelumnya untuk keperluan lain. GitLab.com mati sekitar 18 jam, dan perubahan data selama sekitar enam jam hilang.",
+      "kronologi": [
+        {
+          "waktu": "sekitar 17.20 UTC",
+          "peristiwa": "Seorang engineer membuat snapshot LVM dari database produksi untuk menyiapkan server staging. Snapshot inilah yang belakangan dipakai untuk memulihkan data."
+        },
+        {
+          "waktu": "sekitar 19.00 UTC",
+          "peristiwa": "Beban database naik, diduga karena spam. Sebagian pengguna tidak bisa mengirim komentar di issue dan merge request."
+        },
+        {
+          "waktu": "sekitar 23.00 UTC",
+          "peristiwa": "Replikasi ke server cadangan db2 putus karena catatan perubahan (WAL) yang dibutuhkannya sudah terhapus di server utama db1. Replika harus disalin ulang secara manual."
+        },
+        {
+          "waktu": "23.00-23.30 UTC",
+          "peristiwa": "Penyalinan ulang dengan `pg_basebackup` terus macet. Tim menaikkan `max_wal_senders` dari 3 ke 32, lalu menurunkan `max_connections` dari 8000 ke 2000. Penyalinan tetap tidak jalan."
+        },
+        {
+          "waktu": "sekitar 23.30 UTC",
+          "peristiwa": "Mengira sedang berada di db2, engineer menghapus direktori data PostgreSQL di db1. Ia menghentikan perintahnya satu atau dua detik kemudian, tetapi sekitar 300 GB data sudah terhapus."
+        },
+        {
+          "waktu": "jam-jam berikutnya",
+          "peristiwa": "Backup `pg_dump` ternyata berhenti dengan galat karena versinya (9.2) tidak cocok dengan database (9.6). Email peringatannya ditolak server penerima karena tidak memakai DMARC. Snapshot disk Azure tidak diaktifkan."
+        },
+        {
+          "waktu": "1 Februari, 17.00-18.00 UTC",
+          "peristiwa": "Database pulih dari salinan staging. Menyalin data dari staging ke produksi saja makan sekitar 18 jam karena disknya dibatasi sekitar 60 Mbps. Selama pemulihan, GitLab menyiarkan prosesnya di YouTube dan mencatat kemajuan di Google Doc terbuka."
+        }
+      ],
+      "akar_masalah": "Perintah di server yang salah hanyalah pemicu. Dengan 5 Whys, GitLab menelusuri rantai di belakangnya. Lonjakan spam membuat replikasi putus. Membangun ulang replika masih pekerjaan manual yang tidak diotomasi dan tidak didokumentasikan dengan baik. Backup gagal tanpa suara karena email peringatannya ditolak. Prosedur backup tidak diuji secara rutin karena tidak ada orang yang ditugasi memegangnya.",
+      "kaitan": "Postmortem GitLab memakai teknik **5 Whys** dari bagian Membedakan Gejala vs Penyebab, untuk dua masalah terpisah: kenapa layanan mati dan kenapa pemulihan lama. Isinya mengikuti pola bagian Dokumentasi dan RCA: gejala, timeline, akar penyebab, pencegahan. GitLab juga berjanji menyamarkan nama engineer pada laporan berikutnya, sejalan dengan postmortem blameless. Kronologinya memperlihatkan peringatan di bagian yang sama: dalam setengah jam, tim mengubah dua setelan database sebelum perintah yang fatal.",
+      "pelajaran": [
+        "Jadwalkan uji pemulihan backup, misalnya sebulan sekali, dan tunjuk satu orang penanggung jawabnya. GitLab baru tahu backup-nya gagal saat benar-benar membutuhkannya.",
+        "Pastikan peringatan kegagalan benar-benar sampai. Kirim notifikasi uji secara berkala, atau pantau hasil backup lewat sistem monitoring, bukan email saja.",
+        "Buat server produksi dan cadangan mudah dibedakan, misalnya lewat nama host dan prompt terminal yang berbeda. GitLab memasukkan perubahan prompt (PS1) ke daftar perbaikannya.",
+        "Saat gangguan, ubah satu hal, periksa hasilnya, baru lanjut. Catat setiap langkah beserta jamnya supaya RCA bisa disusun sesudahnya."
+      ],
+      "sumber": [
+        {
+          "judul": "Postmortem of database outage of January 31",
+          "penerbit": "GitLab Blog",
+          "url": "https://about.gitlab.com/blog/2017/02/10/postmortem-of-database-outage-of-january-31/"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda teknisi di sebuah SMK di Medan. Senin pukul 07.15, guru melapor 30 PC di Lab 2 tidak bisa membuka aplikasi ujian berbasis web di server sekolah. YouTube dan Google di PC yang sama lancar. Dari ruang guru, aplikasi ujian terbuka normal. Catatan perubahan menunjukkan Sabtu lalu vendor mengganti switch Lab 2 dan menambah aturan firewall antar-VLAN di router. Ujian mulai pukul 08.00. Apa urutan pemeriksaan Anda, dan bagaimana Anda membuktikan penyebabnya tanpa mengubah banyak hal sekaligus?",
+      "petunjuk": [
+        "Tentukan scope dulu: siapa yang terkena, aplikasi apa, sejak kapan. Internet yang lancar memberi tahu Anda lapisan mana yang kemungkinan sehat.",
+        "Ikuti alur diagnosis universal dari satu PC Lab 2: ping IP server, cek nama server, lalu cek port aplikasinya. Ulangi dari PC ruang guru sebagai pembanding.",
+        "Perubahan Sabtu ada dua. Kalau ping ke server berhasil tetapi koneksi ke port 80 berhenti karena timeout, perubahan mana yang lebih mungkin?"
+      ],
+      "jawaban": "1. Mulai dari scope. Yang terkena satu segmen (Lab 2) dan satu aplikasi di server lokal, sejak sesudah akhir pekan. Internet lancar, jadi kabel, IP, dan gateway Lab 2 kemungkinan sehat. Masalahnya ada di jalur Lab 2 ke server, di DNS lokal, atau di server.\n2. Tanyakan apa yang berubah. Ada dua tersangka: switch baru dan aturan firewall antar-VLAN. Jangan langsung menyalahkan salah satunya; kumpulkan bukti dulu.\n3. Uji dari dua titik, satu PC Lab 2 dan satu PC ruang guru: `ping <IP server>`, `nslookup <nama server>`, lalu `curl -v --connect-timeout 5 http://<IP server>/`. Misalkan di Lab 2 ping berhasil dan nama terjawab dengan IP yang benar, tetapi curl berhenti karena timeout. Di ruang guru ketiganya berhasil.\n4. Tarik kesimpulan sementara. Ping yang berhasil berarti switch dan routing Lab 2 ke server bekerja. Timeout, bukan *connection refused*, berarti paketnya dibuang di jalan, bukan ditolak server. Tersangka terkuat: aturan firewall baru yang mengizinkan ICMP tetapi membuang TCP 80 dari subnet Lab 2.\n5. Buktikan sebelum mengubah. Lihat penghitung (hit counter) atau log aturan itu di router saat PC Lab 2 mencoba membuka aplikasi. Kalau angkanya naik, buktinya cukup. Simpan konfigurasi lama sebagai rencana rollback.\n6. Ubah satu hal saja: tambahkan izin TCP 80/443 dari subnet Lab 2 ke IP server. Jangan mematikan firewall, mengganti switch, atau me-restart server sekaligus.\n7. Verifikasi dari beberapa PC Lab 2 dan pastikan ruang guru tetap normal. Terakhir, tulis gejala, timeline, akar masalah, dan pencegahannya, misalnya daftar uji wajib sesudah setiap perubahan firewall."
+    }
+  },
+  "14-monitoring-troubleshooting/02-tools": {
+    "intinya": {
+      "satu_kalimat": "Perintah diagnosis seperti ping, traceroute, tcpdump, dan iperf3 mudah dijalankan; keahliannya ada pada membaca hasilnya dengan benar, karena angka yang dilihat sekilas sering menyesatkan.",
+      "analogi": "Bayangkan Anda mengirim pesan WhatsApp. Centang satu berarti pesan sudah keluar dari HP Anda. Centang dua berarti pesan sudah sampai di HP teman. Kalau sudah centang dua tetapi balasan baru datang sejam kemudian, yang lambat temannya, bukan jaringannya. Kalau balasan tidak pernah datang, belum tentu HP-nya mati; mungkin ia memilih tidak membalas, seperti server yang memblokir ping. Analogi ini berhenti pada router perantara, yang sengaja lambat menjawab ping tetapi tetap cepat meneruskan paket orang lain.",
+      "kenapa_penting": "Saat pelanggan atau atasan berkata 'internet lambat', angka dari alat-alat inilah bukti Anda. Salah baca berarti salah tuduh: Anda bisa menyalahkan ISP padahal yang lambat server sendiri, atau mengganti router yang sebenarnya sehat.",
+      "istilah": [
+        {
+          "kata": "RTT (round-trip time)",
+          "arti": "Waktu pulang-pergi paket: dari Anda ke tujuan dan kembali lagi. Ping menampilkannya sebagai min, avg, max, dan mdev."
+        },
+        {
+          "kata": "mdev",
+          "arti": "Angka terakhir di statistik ping. Ia menunjukkan seberapa jauh RTT berayun dari rata-ratanya. Makin besar, makin tidak stabil (jitter tinggi), dan makin buruk untuk panggilan video."
+        },
+        {
+          "kata": "tcpdump",
+          "arti": "Program yang merekam paket yang lewat di sebuah interface, lengkap dengan waktunya. Anda bisa melihat kapan paket datang dan kapan dijawab."
+        },
+        {
+          "kata": "Hop",
+          "arti": "Satu router yang dilewati paket dalam perjalanan. Traceroute menampilkan daftar hop dari yang terdekat sampai tujuan."
+        },
+        {
+          "kata": "Kernel",
+          "arti": "Inti sistem operasi. Salah satu tugasnya menerima paket dari kartu jaringan sebelum diserahkan ke aplikasi."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Cloudflare melacak lonjakan ping 1,87 detik yang ternyata berasal dari kernel server, bukan jaringan",
+      "kapan": "2015-11",
+      "di_mana": "Cloudflare, server CDN di pusat data",
+      "ringkas": "Seorang pelanggan melapor sebagian kecil permintaan HTTP ke CDN Cloudflare sangat lambat, sampai 30 detik. Kejadiannya jarang, dan monitoring biasa tidak menangkapnya. Tim Cloudflare lalu menjalankan ping selama berjam-jam ke dua titik dan merekam paket dengan tcpdump. Hasilnya menunjukkan jaringan sehat, sedangkan server sesekali terlambat menjawab. Penyebabnya ada di cara kernel Linux merapikan buffer penerima TCP yang terlalu besar. Kisahnya ditulis di blog Cloudflare pada November 2015.",
+      "kronologi": [
+        {
+          "waktu": "Laporan awal",
+          "peristiwa": "Pelanggan melapor sebagian permintaan HTTP butuh sampai 30 detik. Di lapisan aplikasi (NGINX) semuanya tampak normal, dan monitoring biasa tidak menangkap apa pun."
+        },
+        {
+          "waktu": "Uji HTTP",
+          "peristiwa": "Ribuan permintaan HTTP ke satu server selama beberapa jam: hampir semua selesai dalam milidetik, tetapi 5 permintaan butuh sampai 1.000 ms."
+        },
+        {
+          "waktu": "Ping ke router",
+          "peristiwa": "Ping dari mesin uji di luar ke router pusat data: 114.890 paket, 0% loss, rata-rata 11,0 ms, max 122,8 ms. Dua puncak sekitar 120 ms disebut berasal dari VPS penguji. Jalur sampai router sehat."
+        },
+        {
+          "waktu": "Ping ke server",
+          "peristiwa": "Ping ke server di belakang router: 0% loss juga dan rata-rata 11,6 ms, tetapi max 1.868 ms dan mdev 22,7 ms. Masalahnya ada di antara router dan server."
+        },
+        {
+          "waktu": "tcpdump di server",
+          "peristiwa": "Rekaman `tcpdump -ttt -n -i eth2 icmp` menunjukkan echo request tiba pada detik 0, tetapi echo reply baru keluar 1,3 detik kemudian. Paketnya sudah sampai; servernya yang telat menjawab."
+        },
+        {
+          "waktu": "Pelacakan kernel",
+          "peristiwa": "Dengan SystemTap, tim melihat fungsi `net_rx_action` (pengolah paket masuk) dipanggil 3,6 juta kali dalam 30 detik. Hampir semuanya di bawah 1 ms, tetapi satu kali tertahan 23 ms. Pelakunya `tcp_collapse`, yang sampai 21 ms."
+        },
+        {
+          "waktu": "Perbaikan",
+          "peristiwa": "Batas atas buffer penerima `net.ipv4.tcp_rmem` diturunkan dari 32 MiB. Pada uji 2 MiB, `tcp_collapse` tidak pernah lebih dari 3 ms. Cloudflare akhirnya memakai 4 MiB sebagai kompromi."
+        }
+      ],
+      "akar_masalah": "Linux menyesuaikan sendiri ukuran buffer penerima TCP, dan di server itu batas atasnya 32 MiB. Kalau buffer sebuah koneksi penuh oleh banyak paket kecil, kernel menjalankan `tcp_collapse` untuk menggabungkan paket-paket itu dan membebaskan memori. Proses ini semacam bersih-bersih memori (garbage collection), dan pada buffer sebesar itu bisa makan puluhan milidetik. Selama pengolahan paket di kernel tertahan, ping pun tidak dijawab tepat waktu. Jaringannya sendiri tidak bermasalah.",
+      "kaitan": "Kasus ini memakai dua alat modul secara berurutan. Bagian 1 tentang ping mengingatkan bahwa 0% loss belum tentu sehat. Rata-rata 11,6 ms tampak bagus, padahal max 1.868 ms dan mdev 22,7 ms membuka masalahnya. Bagian 6, subbagian Menangkap di titik yang TEPAT, terlihat saat rekaman tcpdump di server membuktikan paket sudah tiba. Pola itu sama dengan baris 'Jeda besar sebelum respons' di tabel Wireshark bagian 7: yang lambat server, bukan jaringan.",
+      "pelajaran": [
+        "Baca baris statistik ping sampai habis. Lonjakan yang jarang terjadi tersembunyi di rata-rata; max dan mdev yang membukanya.",
+        "Ping dua titik berurutan, misalnya router lalu server, untuk mempersempit letak masalah sebelum menyalahkan ISP atau perangkat.",
+        "Kalau tcpdump di server menunjukkan permintaan tiba tepat waktu tetapi jawabannya telat, cari penyebabnya di dalam server: kernel, CPU, atau aplikasi.",
+        "Ukur sebelum dan sesudah mengubah setelan. Cloudflare menguji 2 MiB, lalu memilih 4 MiB karena 2 MiB berisiko menurunkan kinerja koneksi cepat yang latency-nya tinggi."
+      ],
+      "sumber": [
+        {
+          "judul": "The story of one latency spike",
+          "penerbit": "Cloudflare Blog",
+          "url": "https://blog.cloudflare.com/the-story-of-one-latency-spike/"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda admin jaringan sebuah klinik di Makassar. Staf mengeluh aplikasi rekam medis di server lokal kadang butuh 3 detik untuk membuka satu halaman. Rekan Anda ingin mengganti switch karena 'jaringannya lambat'. Dari PC staf, Anda mengumpulkan tiga data. Pertama, `ping -c 500` ke server memberi 0% loss dengan `rtt min/avg/max/mdev = 0.5/0.8/3.0/0.3 ms`. Kedua, `iperf3 -c server -P 4` mencatat 941 Mbits/sec di link 1 Gbps. Ketiga, rekaman tcpdump menunjukkan SYN pada detik 0, SYN-ACK pada detik 0,0004, permintaan GET pada detik 0,0011, dan respons pertama pada detik 3,1. Setujukah Anda mengganti switch? Apa yang Anda periksa berikutnya?",
+      "petunjuk": [
+        "Pisahkan tiga pertanyaan: apakah paket sampai, berapa lama perjalanannya, dan berapa lama server berpikir sebelum menjawab.",
+        "Lihat max ping ke server. Bisakah jaringan dengan max 3 ms menjelaskan jeda 3 detik?",
+        "Di rekaman paket, bandingkan jarak SYN ke SYN-ACK dengan jarak GET ke respons pertama. Tabel di bagian Wireshark punya baris untuk pola ini."
+      ],
+      "jawaban": "1. Paketnya sampai: ping 500 paket tanpa loss.\n2. Perjalanannya cepat dan stabil: max ping 3,0 ms dan mdev 0,3 ms. Tidak ada lonjakan, apalagi sampai 3 detik.\n3. Kapasitasnya cukup: 941 Mbit/s di link 1 Gbps itu normal, sekitar 94% sesudah overhead protokol.\n4. Waktunya habis di server. SYN-ACK datang 0,4 ms sesudah SYN, jadi jaringan dan stack TCP server menjawab cepat. GET tiba di detik 0,0011, tetapi respons pertama baru keluar di detik 3,1. Itu pola 'jeda besar sebelum respons': server lambat memproses.\n5. Jadi, jangan ganti switch. Mengganti perangkat tanpa bukti membuang waktu dan menambah variabel baru.\n6. Langkah berikutnya ada di server: periksa pemakaian CPU, memori, dan disk; log aplikasi dan database pada jam-jam lambat; serta query yang lama. Cek juga apakah jeda muncul bersamaan dengan pekerjaan terjadwal, misalnya backup. Bawa angka-angka di atas saat melapor supaya diskusinya berbasis data."
+    }
+  },
+  "14-monitoring-troubleshooting/03-observability": {
+    "intinya": {
+      "satu_kalimat": "Observability berarti terus-menerus mengumpulkan angka (metrics) dan catatan kejadian (log) dari jaringan, supaya Anda melihat masalah sebelum pengguna mengeluh dan punya data saat mencari penyebabnya.",
+      "analogi": "Bayangkan pemilik warung yang mencatat omzet setiap jam di buku tulis, dan menulis kejadian di halaman belakang: 'pukul 10 kulkas mati', 'pukul 11 pemasok telat'. Saat penjualan Selasa anjlok, ia tinggal mencocokkan angka dengan catatan pada jam yang sama. Alarm kulkas yang baik berbunyi saat suhu benar-benar naik, bukan setiap kali pintunya dibuka. Bedanya, di jaringan pencatatan berjalan otomatis setiap menit atau detik, dan jam semua perangkat harus disamakan lewat NTP supaya catatannya bisa dicocokkan.",
+      "kenapa_penting": "Keluhan 'internet kemarin sore lambat' hanya bisa dijawab kalau ada grafik kemarin sore. Di tempat kerja, Anda akan membaca dasbor seperti Zabbix atau Grafana, dan menerima alert saat link mati atau sertifikat hampir kedaluwarsa.",
+      "istilah": [
+        {
+          "kata": "Metrics",
+          "arti": "Angka yang dicatat berkala, misalnya utilisasi link, CPU, atau latency, sehingga bisa digambar sebagai grafik dari waktu ke waktu."
+        },
+        {
+          "kata": "Log",
+          "arti": "Catatan kejadian satu per satu dengan cap waktu, misalnya 'interface Gi0/1 down pukul 14.03'."
+        },
+        {
+          "kata": "SNMP polling",
+          "arti": "Cara lama mengambil metrics: server monitoring bertanya ke perangkat setiap 1-5 menit. Lonjakan singkat di antara dua pertanyaan tidak terlihat."
+        },
+        {
+          "kata": "Alert fatigue",
+          "arti": "Keadaan ketika alert terlalu sering berbunyi untuk hal sepele, sehingga petugas mulai mengabaikan semuanya, termasuk alert yang serius."
+        },
+        {
+          "kata": "Synthetic monitoring",
+          "arti": "Uji otomatis berkala yang meniru pengguna, misalnya membuka halaman web atau bertanya ke DNS, untuk mengukur pengalaman dari sisi pengguna."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Jaringan internal AWS us-east-1 macet, dan tim operasinya kehilangan data monitoring",
+      "kapan": "2021-12-07",
+      "di_mana": "Amazon Web Services, region us-east-1 (Virginia Utara, AS)",
+      "ringkas": "AWS memisahkan jaringan internal, tempat layanan dasar seperti monitoring dan DNS internal berjalan, dari jaringan utama tempat layanan pelanggan berjalan. Pada 7 Desember 2021, aktivitas otomatis untuk menambah kapasitas memicu banjir koneksi dari banyak klien internal. Perangkat jaringan yang menghubungkan kedua jaringan itu kewalahan. Data monitoring real-time ikut hilang, sehingga tim operasi harus menelusuri masalah lewat log. Perangkat jaringan baru pulih penuh hampir tujuh jam kemudian.",
+      "kronologi": [
+        {
+          "waktu": "07.30 PST",
+          "peristiwa": "Aktivitas otomatis untuk menambah kapasitas sebuah layanan AWS memicu perilaku tak terduga dari banyak klien di jaringan internal. Lonjakan koneksi membanjiri perangkat jaringan penghubung kedua jaringan."
+        },
+        {
+          "waktu": "sejak awal gangguan",
+          "peristiwa": "Keterlambatan memicu makin banyak percobaan koneksi ulang (retry), sehingga kemacetan bertahan. Data monitoring real-time untuk tim operasi langsung tidak tersedia."
+        },
+        {
+          "waktu": "07.33 PST",
+          "peristiwa": "Pembuatan tiket dukungan pelanggan terganggu karena Support Contact Center juga bergantung pada jaringan internal. Gangguan ini berlangsung sampai 14.25 PST."
+        },
+        {
+          "waktu": "08.22 PST",
+          "peristiwa": "Alat Service Health Dashboard (halaman status AWS) sempat gagal pindah ke region cadangan karena kemacetan. Mulai pukul ini halaman itu bisa diperbarui."
+        },
+        {
+          "waktu": "09.28 PST",
+          "peristiwa": "Dari log, tim menemukan galat DNS internal yang tinggi, lalu memindahkan trafik DNS internal dari jalur yang macet. Galat DNS pulih, tetapi kemacetan belum hilang dan data monitoring masih tidak terlihat."
+        },
+        {
+          "waktu": "13.34 PST",
+          "peristiwa": "Langkah yang dikerjakan sejak pagi mulai berhasil: sumber trafik terbesar dipindah ke perangkat jaringan khusus, beberapa layanan berat trafik dimatikan, dan kapasitas ditambah. Kemacetan membaik jauh."
+        },
+        {
+          "waktu": "14.22 PST",
+          "peristiwa": "Semua perangkat jaringan pulih penuh. Dalam laporannya, AWS menyatakan aktivitas penskalaan pemicunya dihentikan dan tidak dijalankan lagi sebelum semua perbaikan terpasang."
+        }
+      ],
+      "akar_masalah": "Klien jaringan internal AWS sebenarnya dirancang untuk mundur (back off) saat jaringan macet. Namun ada cacat laten yang membuat mereka gagal mundur. Jalur kode itu sudah bertahun-tahun di produksi, dan aktivitas penskalaan otomatis memicu perilaku yang belum pernah teramati. Lonjakan koneksi dan retry menyumbat perangkat penghubung. Karena monitoring berjalan di jaringan internal yang sama, data yang dibutuhkan untuk mencari sumber kemacetan ikut tidak tersedia.",
+      "kaitan": "Bagian Tiga Pilar Observability membedakan metrics dan log. Saat metrics hilang, tim AWS bertahan dengan log, dan dari log itulah galat DNS internal ketahuan. Ini alasan bagian Syslog Terpusat menuntut log disimpan terpusat dengan waktu tersinkron. Kasus ini juga menyentuh prinsip konteks bisnis di bagian Menyusun Dashboard yang Bermakna. AWS mengakui bahwa satu banner global di halaman statusnya membuat sebagian pelanggan sulit menemukan informasi tentang gangguan ini.",
+      "pelajaran": [
+        "Pasang jalur monitoring yang tidak bergantung pada jaringan yang dipantau, misalnya lewat link atau ISP terpisah, supaya grafik tetap ada saat jaringan utama macet.",
+        "Kumpulkan log secara terpusat dengan jam yang disinkronkan lewat NTP. Saat grafik hilang, log menjadi petunjuk yang tersisa.",
+        "Pastikan halaman status dan kanal dukungan tidak bergantung pada sistem yang sedang dilaporkannya.",
+        "Klien yang mengulang koneksi harus menunggu makin lama di setiap percobaan. Retry tanpa jeda yang memanjang ikut memperparah kemacetan."
+      ],
+      "sumber": [
+        {
+          "judul": "Summary of the AWS Service Event in the Northern Virginia (US-EAST-1) Region",
+          "penerbit": "Amazon Web Services",
+          "url": "https://aws.amazon.com/message/12721/"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda mengelola RT/RW net dengan 120 pelanggan di Kupang. Zabbix memantau router inti lewat SNMP setiap 5 menit, dan satu-satunya alert adalah 'interface uplink down'. Sudah seminggu pelanggan melapor internet hilang 1-2 menit, biasanya antara pukul 20.00 dan 22.00. Grafik utilisasi uplink tampak mulus di 60-70% dan alert tidak pernah berbunyi. Rekan Anda menyimpulkan jaringan sehat dan masalahnya ada di HP pelanggan. Kenapa kesimpulan itu belum bisa dipegang, dan apa yang Anda tambahkan ke monitoring agar kejadian berikutnya tertangkap?",
+      "petunjuk": [
+        "Hitung: kalau Zabbix bertanya setiap 5 menit, apa yang tercatat untuk gangguan 90 detik yang terjadi di antara dua pertanyaan?",
+        "Status up/down dan utilisasi rata-rata belum mengukur pengalaman pelanggan. Cari cara mengukur dari sisi pelanggan.",
+        "Router mencatat setiap kejadian link putus-sambung. Ke mana catatan itu dikirim sekarang, dan apakah jamnya akurat?"
+      ],
+      "jawaban": "1. Kesimpulan rekan Anda belum berdasar. Polling 5 menit hanya melihat dua titik waktu. Link yang putus 90 detik lalu tersambung lagi di antara dua polling tetap terbaca 'up', jadi alert tidak berbunyi. Utilisasi dihitung dari rata-rata 5 menit, sehingga jeda 90 detik hanya membuat grafik sedikit turun. Tidak adanya alert bukan bukti jaringan sehat.\n2. Tambahkan synthetic monitoring. Jalankan ping otomatis setiap 10-30 detik ke gateway, ke upstream ISP, dan ke DNS publik. Sumbernya bisa server monitoring atau perangkat kecil di sisi pelanggan. Pasang alert kalau loss tinggi lebih dari satu menit.\n3. Kirim syslog router ke server terpusat. Kejadian seperti link down/up atau tetangga routing yang putus tercatat satu per satu dengan cap waktu. Sinkronkan jam router dan server lewat NTP.\n4. Perpendek interval untuk metrik kunci. Ambil counter uplink, error, dan discard setiap 30-60 detik, atau pakai streaming telemetry kalau perangkatnya mendukung.\n5. Periksa jalur monitoring itu sendiri. Kalau server monitoring keluar lewat uplink yang sama, ia ikut buta saat uplink bermasalah. Siapkan probe dari jalur lain.\n6. Setelah data terkumpul, cocokkan jam keluhan dengan log dan hasil ping. Misalnya log menunjukkan uplink putus pukul 20.14 dan tersambung pukul 20.15. Dari situ pencarian akar masalah bisa dimulai dengan data."
+    }
+  },
+  "14-monitoring-troubleshooting/04-studi-kasus": {
+    "intinya": {
+      "satu_kalimat": "Lima belas kasus khas, dari DNS sampai sertifikat kedaluwarsa, melatih Anda menautkan gejala ke akar penyebab: tentukan scope, cari perubahan, ukur, lalu isolasi.",
+      "analogi": "Montir motor yang sudah lama bekerja hafal banyak pola. Lampu sein berkedip terlalu cepat, ia curigai salah satu bohlamnya putus. Klakson lemah dan lampu redup bersamaan, ia curigai aki. Meski begitu, ia tetap memeriksa dulu sebelum mengganti onderdil. Modul ini mengisi kumpulan pola yang sama untuk jaringan. Bedanya, satu gejala jaringan seperti 'internet lambat' bisa berasal dari belasan penyebab, jadi pola hanya menunjuk tempat mulai memeriksa.",
+      "kenapa_penting": "Banyak tiket gangguan di kantor atau warnet berulang dengan pola yang sama: DNS, MTU di VPN, DHCP habis, loop di switch, atau sertifikat kedaluwarsa. Mengenali polanya memangkas waktu diagnosis dari jam menjadi menit.",
+      "istilah": [
+        {
+          "kata": "Sertifikat digital",
+          "arti": "Berkas elektronik yang membuktikan identitas sebuah server atau perangkat lunak. Ia punya tanggal kedaluwarsa; lewat dari tanggal itu, sistem yang memeriksanya bisa menolak bekerja."
+        },
+        {
+          "kata": "SGSN-MME",
+          "arti": "Perangkat di jaringan inti operator seluler yang mengurus pendaftaran ponsel dan sesi datanya. SGSN untuk 2G/3G, MME untuk 4G."
+        },
+        {
+          "kata": "MTU black hole",
+          "arti": "Paket besar hilang tanpa kabar karena melebihi MTU jalur, sementara pesan ICMP yang seharusnya memberi tahu justru diblokir. Paket kecil lolos, paket besar macet."
+        },
+        {
+          "kata": "APIPA (169.254.x.x)",
+          "arti": "Alamat yang diberikan sistem operasi pada dirinya sendiri saat tidak mendapat jawaban dari server DHCP. Dengan alamat ini, PC tidak bisa ke internet."
+        },
+        {
+          "kata": "Bufferbloat",
+          "arti": "Antrean terlalu panjang di modem atau router, sehingga latency melonjak saat ada unduhan besar meski tidak ada paket yang hilang."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Sertifikat kedaluwarsa di software Ericsson memutus layanan seluler O2 di Inggris dan SoftBank di Jepang",
+      "kapan": "2018-12-06",
+      "di_mana": "O2 (Inggris), SoftBank (Jepang), dan operator lain di 11 negara",
+      "ringkas": "Pada 6 Desember 2018, layanan seluler sejumlah operator di 11 negara terganggu pada waktu yang hampir sama. Di Inggris, jaringan O2, yang juga dipakai giffgaff, Sky Mobile, Tesco Mobile, dan Lyca, melayani sekitar 32,1 juta orang; layanan datanya mati sepanjang hari. Di Jepang, layanan 4G SoftBank dan Y!mobile tidak bisa dipakai sekitar 4,5 jam. Ericsson, pembuat perangkat jaringan intinya, menyebut penyebab utamanya sertifikat kedaluwarsa di dua versi software SGSN-MME. Layar jadwal bus TfL di London ikut padam karena kartu SIM-nya memakai jaringan O2.",
+      "kronologi": [
+        {
+          "waktu": "sekitar 04.00 GMT",
+          "peristiwa": "Laporan gangguan layanan data O2 mulai masuk ke situs DownDetector."
+        },
+        {
+          "waktu": "13.39 JST (04.39 GMT)",
+          "peristiwa": "Di Jepang, layanan 4G SoftBank dan Y!mobile, telepon rumah 'Ouchi no Denwa', dan SoftBank Air di sebagian wilayah mulai tidak bisa dipakai atau sulit dipakai."
+        },
+        {
+          "waktu": "07.00 GMT",
+          "peristiwa": "O2 mengakui masalah lewat Twitter. Menurut O2, salah satu pemasok pihak ketiganya menemukan masalah software global di sistem pemasok itu."
+        },
+        {
+          "waktu": "18.04 JST (09.04 GMT)",
+          "peristiwa": "Gangguan SoftBank berakhir, sekitar 4,5 jam sejak awal. SoftBank kemudian menyatakan masalah selesai dengan memakai software yang memproses tanggal kedaluwarsa dengan benar."
+        },
+        {
+          "waktu": "6 Desember",
+          "peristiwa": "Ericsson mengumumkan penyebab utamanya: sertifikat kedaluwarsa pada dua versi software SGSN-MME. Sebagian besar layanan pelanggannya pulih hari itu, dan software yang bermasalah sedang ditarik."
+        },
+        {
+          "waktu": "malam 6 Desember",
+          "peristiwa": "O2 memaksa semua pelanggan pindah ke 3G untuk memulihkan sebagian koneksi, sambil menargetkan 4G pulih paling lambat pukul 03.00 Jumat."
+        },
+        {
+          "waktu": "12 Desember",
+          "peristiwa": "SoftBank menjelaskan bahwa tanggal kedaluwarsa itu ditanam Ericsson saat software dikirim, sehingga SoftBank tidak bisa memeriksanya sendiri."
+        }
+      ],
+      "akar_masalah": "Dua versi software SGSN-MME buatan Ericsson memuat sertifikat digital yang tanggal kedaluwarsanya ditanam sejak software dikirim. Begitu tanggal itu lewat, masa berlakunya diproses dengan salah dan layanan pelanggan terganggu. Pemicunya waktu, bukan beban atau perubahan konfigurasi, sehingga semua operator dengan versi yang sama terkena hampir bersamaan. Operator juga tidak bisa memantaunya: menurut SoftBank, tanggal itu tidak bisa mereka periksa.",
+      "kaitan": "Ini versi skala besar dari Kasus 12 (Sertifikat TLS Kedaluwarsa): gangguan mulai pada satu waktu tertentu tanpa ada perubahan konfigurasi dari operator. Pola 8 di bagian Pola Umum dari 15 Kasus, 'otomatisasi yang terlupa (sertifikat)', menjelaskan akarnya: masa berlaku sertifikat tidak dipantau. Langkah 1 checklist mental juga terlihat: scope-nya banyak operator di banyak negara sekaligus, jadi penyebabnya pasti komponen bersama, yaitu software dari pemasok yang sama.",
+      "pelajaran": [
+        "Kalau gangguan mulai serentak di banyak tempat tanpa perubahan apa pun, curigai sesuatu yang berbasis waktu: sertifikat, lisensi, atau jadwal otomatis.",
+        "Minta pemasok mendaftar sertifikat dan tanggal kedaluwarsa yang tertanam di perangkat atau software mereka, lalu masukkan ke kalender dan alert.",
+        "Pantau tanggal kedaluwarsa sertifikat milik Anda sendiri dan pasang alert jauh hari, misalnya 30 dan 14 hari sebelumnya.",
+        "Ketahui opsi darurat Anda. O2 bisa memindahkan semua pelanggan ke 3G untuk memulihkan sebagian koneksi sambil menunggu perbaikan."
+      ],
+      "sumber": [
+        {
+          "judul": "Update on software issue impacting certain customers",
+          "penerbit": "Ericsson",
+          "url": "https://www.ericsson.com/en/press-releases/2018/12/update-on-software-issue-impacting-certain-customers"
+        },
+        {
+          "judul": "12月6日の通信障害に関するお詫び",
+          "penerbit": "SoftBank Corp.",
+          "url": "https://www.softbank.jp/corp/special/20181206/"
+        },
+        {
+          "judul": "Total Inability To Support User Phones: O2 fries, burning data for 32 million Brits",
+          "penerbit": "The Register",
+          "url": "https://www.theregister.com/2018/12/06/o2_fries_burning_data_for_32_million_brits/"
+        },
+        {
+          "judul": "Why millions of Brits' mobile phones were knackered on Thursday: An expired Ericsson software certificate",
+          "penerbit": "The Register",
+          "url": "https://www.theregister.com/on-prem/2018/12/06/why-millions-of-brits-mobile-phones-were-knackered-on-thursday-an-expired-ericsson-software-certificate/339700"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda mengelola warnet dengan 20 PC di Yogyakarta. Router MikroTik menjadi server DHCP dengan pool 192.168.10.100-192.168.10.120 dan lease time 3 hari. Wi-Fi untuk pengunjung memakai jaringan dan pool yang sama. Kemarin ada turnamen game, dan banyak HP pengunjung tersambung ke Wi-Fi. Pagi ini, setelah listrik padam lalu menyala, 5 PC mendapat alamat 169.254.x.x dan tidak bisa internet, sedangkan 15 PC lain normal. Kabel dan lampu port kelima PC itu menyala. Apa diagnosis Anda, bagaimana membuktikannya, dan apa perbaikannya?",
+      "petunjuk": [
+        "Alamat 169.254.x.x punya arti khusus. Apa yang tidak diterima PC itu?",
+        "Server DHCP-nya hidup, karena 15 PC lain mendapat alamat. Hitung jumlah alamat di pool dan bandingkan dengan jumlah perangkat.",
+        "Lease 3 hari berarti alamat yang dipinjam HP kemarin masih tercatat terpakai."
+      ],
+      "jawaban": "1. Gejalanya APIPA. Alamat 169.254.x.x diberikan PC pada dirinya sendiri karena tidak mendapat jawaban DHCP. Kabel dan lampu port menyala, jadi lapisan fisik kemungkinan sehat.\n2. Scope-nya 5 dari 20 PC, sesudah semua PC menyala bersamaan. Server DHCP jelas hidup karena 15 PC lain mendapat alamat.\n3. Dugaan terkuat: pool habis. Pool .100-.120 hanya berisi 21 alamat, sudah pas-pasan untuk 20 PC, apalagi ditambah HP pengunjung. Dengan lease 3 hari, alamat yang dipinjam HP kemarin masih tercatat terpakai walau HP-nya sudah pulang.\n4. Uji dengan melihat daftar lease di router (`/ip dhcp-server lease print`) dan menghitung lease yang aktif. Kalau 21 alamat sudah terisi dan sebagian milik perangkat yang tidak ada di warnet, dugaan terbukti. Periksa juga log router untuk pesan kegagalan DHCP.\n5. Perbaiki dengan memisahkan Wi-Fi pengunjung ke subnet dan pool sendiri dengan lease pendek, misalnya 1-2 jam. Perbesar pool untuk PC, atau beri reservasi alamat tetap untuk ke-20 PC agar tidak berebut dengan HP.\n6. Verifikasi di PC yang bermasalah: jalankan `ipconfig /release` lalu `ipconfig /renew`. Pastikan alamatnya 192.168.10.x, ping ke gateway berhasil, dan internet jalan. Catat perubahan ini di dokumentasi warnet."
+    }
+  }
+}

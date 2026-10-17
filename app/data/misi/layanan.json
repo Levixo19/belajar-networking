@@ -1,0 +1,1956 @@
+[
+  {
+    "id": "mikrotik-masquerade-isp-baru",
+    "judul": "Ganti ISP, PC warnet tidak bisa ke internet padahal router lancar",
+    "tingkat": "menengah",
+    "modul": [
+      "19-mikrotik/03-firewall-nat",
+      "09-nat-acl-firewall/01-nat",
+      "19-mikrotik/01-pengenalan-routeros"
+    ],
+    "gejala": "Sejak ISP baru dipasang di ether2, semua PC warnet tidak bisa membuka situs. Teknisi ISP bilang ping dari router ke internet berhasil.",
+    "briefing": "**Tiket #0412, Senin 08.40.** Pelapor: Yoga, pemilik warnet di Purwokerto.\n\n> Kontrak ISP lama habis hari Sabtu. Minggu sore teknisi ISP baru memasang ONT (perangkat ujung kabel fiber), mencolokkan kabelnya ke port ether2 MikroTik, lalu menyalakan DHCP client di ether2 supaya router mendapat alamat dari ISP. Katanya sudah dites dari router dan lancar. Pagi ini 14 PC billing tidak bisa membuka situs apa pun. Kabel ISP lama masih tercolok di ether1-wan karena modemnya belum diambil.\n\nOperator sudah me-restart router dua kali dan mencabut-pasang kabel PC kasir. Hasilnya sama.\n\nAnda punya akses terminal ke router (hEX, RouterOS 7) dan ke PC kasir. Konfigurasi router dibuat teknisi lama tiga tahun lalu, tanpa catatan.",
+    "lokasi": {
+      "kota": "Purwokerto",
+      "lat": -7.426,
+      "lon": 109.242
+    },
+    "topologi": {
+      "simpul": [
+        {
+          "id": "PC1",
+          "label": "PC kasir",
+          "jenis": "pc",
+          "x": 8,
+          "y": 50,
+          "info": "192.168.88.23/24"
+        },
+        {
+          "id": "SW1",
+          "label": "Switch warnet",
+          "jenis": "switch",
+          "x": 30,
+          "y": 50
+        },
+        {
+          "id": "R1",
+          "label": "MikroTik hEX",
+          "jenis": "router",
+          "x": 54,
+          "y": 50,
+          "info": "bridge-lan 192.168.88.1/24"
+        },
+        {
+          "id": "ISPL",
+          "label": "ISP lama",
+          "jenis": "isp",
+          "x": 88,
+          "y": 22,
+          "info": "layanan sudah diputus"
+        },
+        {
+          "id": "ISPB",
+          "label": "ISP baru",
+          "jenis": "isp",
+          "x": 88,
+          "y": 78,
+          "info": "DHCP, gateway 203.0.113.41"
+        }
+      ],
+      "sisi": [
+        {
+          "dari": "PC1",
+          "ke": "SW1"
+        },
+        {
+          "dari": "SW1",
+          "ke": "R1",
+          "label": "ether3 (bridge-lan)"
+        },
+        {
+          "dari": "R1",
+          "ke": "ISPL",
+          "label": "ether1-wan"
+        },
+        {
+          "dari": "R1",
+          "ke": "ISPB",
+          "label": "ether2"
+        }
+      ]
+    },
+    "langkah": [
+      {
+        "id": "ipconfig-kasir",
+        "label": "Lihat konfigurasi IP di PC kasir",
+        "perangkat": "PC1",
+        "perintah": "ipconfig",
+        "keluaran": "Windows IP Configuration\n\n\nEthernet adapter Ethernet:\n\n   Connection-specific DNS Suffix  . :\n   Link-local IPv6 Address . . . . . : fe80::4d2a:91c3:7b10:e5f2%6\n   IPv4 Address. . . . . . . . . . . : 192.168.88.23\n   Subnet Mask . . . . . . . . . . . : 255.255.255.0\n   Default Gateway . . . . . . . . . : 192.168.88.1",
+        "makna": "Alamat, mask, dan gateway sesuai rancangan LAN warnet. PC mendapat konfigurasi dari DHCP router dengan benar, jadi masalahnya tidak ada di pengaturan PC.",
+        "berguna": false
+      },
+      {
+        "id": "ping-gateway",
+        "label": "Ping gateway dari PC kasir",
+        "perangkat": "PC1",
+        "perintah": "ping 192.168.88.1",
+        "keluaran": "Pinging 192.168.88.1 with 32 bytes of data:\nReply from 192.168.88.1: bytes=32 time<1ms TTL=64\nReply from 192.168.88.1: bytes=32 time<1ms TTL=64\nReply from 192.168.88.1: bytes=32 time<1ms TTL=64\nReply from 192.168.88.1: bytes=32 time<1ms TTL=64\n\nPing statistics for 192.168.88.1:\n    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),\nApproximate round trip times in milli-seconds:\n    Minimum = 0ms, Maximum = 0ms, Average = 0ms",
+        "makna": "LAN sehat. Kabel, switch, dan alamat PC beres sampai ke router. Ini menyingkirkan gangguan di jaringan lokal, tetapi belum menjelaskan kenapa internet mati.",
+        "berguna": false
+      },
+      {
+        "id": "nslookup-kasir",
+        "label": "Tanya DNS dari PC kasir",
+        "perangkat": "PC1",
+        "perintah": "nslookup example.com",
+        "keluaran": "Server:  UnKnown\nAddress:  192.168.88.1\n\nNon-authoritative answer:\nName:    example.com\nAddress:  192.0.2.10",
+        "makna": "Nama terjawab. PC bertanya ke router, dan router meneruskan pertanyaan ke DNS ISP memakai alamat publiknya sendiri. Jadi DNS jalan. Tulisan UnKnown cuma berarti router tidak punya nama balik (PTR) untuk alamatnya; itu wajar.",
+        "berguna": false
+      },
+      {
+        "id": "ping-internet-pc",
+        "label": "Ping server di internet dari PC kasir",
+        "perangkat": "PC1",
+        "perintah": "ping 192.0.2.10",
+        "keluaran": "Pinging 192.0.2.10 with 32 bytes of data:\nRequest timed out.\nRequest timed out.\nRequest timed out.\nRequest timed out.\n\nPing statistics for 192.0.2.10:\n    Packets: Sent = 4, Received = 0, Lost = 4 (100% loss),",
+        "makna": "Ping ke alamat IP gagal total. Ping ke IP tidak memakai DNS, jadi masalahnya ada di perjalanan paket dari PC ke internet, di suatu tempat sesudah gateway.",
+        "berguna": true
+      },
+      {
+        "id": "tracert-pc",
+        "label": "Telusuri jalur dari PC kasir ke internet",
+        "perangkat": "PC1",
+        "perintah": "tracert -d 192.0.2.10",
+        "keluaran": "Tracing route to 192.0.2.10 over a maximum of 30 hops\n\n  1    <1 ms    <1 ms    <1 ms  192.168.88.1\n  2     *        *        *     Request timed out.\n  3     *        *        *     Request timed out.\n  4     *        *        *     Request timed out.\n^C",
+        "makna": "Lompatan pertama (router) menjawab, sesudahnya hening. Paket keluar dari router, tetapi tidak satu pun router ISP yang balasannya sampai ke PC. Pola ini cocok dengan paket yang berangkat masih membawa alamat privat 192.168.88.23: ISP membuangnya atau tidak tahu jalan pulang ke alamat itu.",
+        "berguna": true
+      },
+      {
+        "id": "ping-dari-router",
+        "label": "Ping server yang sama dari router",
+        "perangkat": "R1",
+        "perintah": "/ping 192.0.2.10 count=3",
+        "keluaran": "  SEQ HOST                                     SIZE TTL TIME       STATUS\n    0 192.0.2.10                                 56  54 9ms412us\n    1 192.0.2.10                                 56  54 9ms87us\n    2 192.0.2.10                                 56  54 9ms203us\n    sent=3 received=3 packet-loss=0% min-rtt=9ms87us avg-rtt=9ms234us max-rtt=9ms412us",
+        "makna": "Router sendiri tembus ke internet. Paket buatan router langsung memakai alamat publik ether2 sebagai sumber, jadi tidak perlu NAT (penerjemahan alamat). Paket PC berbeda: alamat privatnya harus diganti dulu oleh aturan srcnat. Kecurigaan mengarah ke NAT.",
+        "berguna": true
+      },
+      {
+        "id": "route-print",
+        "label": "Lihat tabel routing router",
+        "perangkat": "R1",
+        "perintah": "/ip route print",
+        "keluaran": "Flags: D - DYNAMIC; A - ACTIVE; c - CONNECT, d - DHCP\nColumns: DST-ADDRESS, GATEWAY, DISTANCE\n    DST-ADDRESS      GATEWAY       DISTANCE\nDAd 0.0.0.0/0        203.0.113.41         1\nDAc 192.168.88.0/24  bridge-lan           0\nDAc 203.0.113.40/29  ether2               0",
+        "makna": "Rute default aktif (A) lewat 203.0.113.41, gateway ISP baru, dan dipasang otomatis oleh DHCP (d). Jaringan 203.0.113.40/29 menempel di ether2. Routing sudah benar dan trafik internet keluar lewat ether2. Ingat nama interface ini.",
+        "berguna": true
+      },
+      {
+        "id": "nat-print",
+        "label": "Lihat aturan NAT",
+        "perangkat": "R1",
+        "perintah": "/ip firewall nat print",
+        "keluaran": "Flags: X - disabled, I - invalid; D - dynamic\n 0    ;;; NAT internet\n      chain=srcnat action=masquerade out-interface=ether1-wan",
+        "makna": "Satu-satunya aturan srcnat hanya berlaku untuk paket yang KELUAR lewat ether1-wan, port ISP lama. Masquerade adalah srcnat yang otomatis memakai alamat interface keluar. Paket PC sekarang keluar lewat ether2, jadi tidak cocok dengan aturan ini dan berangkat tanpa diterjemahkan.",
+        "berguna": true
+      },
+      {
+        "id": "nat-stats",
+        "label": "Lihat penghitung paket aturan NAT",
+        "perangkat": "R1",
+        "perintah": "/ip firewall nat print stats",
+        "keluaran": "Flags: X - disabled, I - invalid; D - dynamic\n #    CHAIN   ACTION      BYTES  PACKETS\n 0    ;;; NAT internet\n      srcnat  masquerade      0        0",
+        "makna": "Penghitung nol, padahal 14 PC terus mencoba sejak router dinyalakan ulang pagi ini. Tidak satu paket pun cocok dengan aturan masquerade. Artinya NAT sama sekali tidak bekerja untuk trafik yang lewat ether2.",
+        "berguna": true
+      },
+      {
+        "id": "dns-print",
+        "label": "Lihat pengaturan DNS router",
+        "perangkat": "R1",
+        "perintah": "/ip dns print",
+        "keluaran": "                      servers:\n              dynamic-servers: 203.0.113.53,203.0.113.54\n               use-doh-server:\n              verify-doh-cert: no\n   doh-max-server-connections: 5\n   doh-max-concurrent-queries: 50\n                  doh-timeout: 5s\n        allow-remote-requests: yes\n          max-udp-packet-size: 4096\n         query-server-timeout: 2s\n          query-total-timeout: 10s\n       max-concurrent-queries: 100\n  max-concurrent-tcp-sessions: 20\n                   cache-size: 2048KiB\n                cache-max-ttl: 1w\n                          vrf: main\n                   cache-used: 38KiB",
+        "makna": "Router memakai server DNS dari DHCP ISP baru (dynamic-servers) dan melayani pertanyaan dari LAN (allow-remote-requests=yes). Pengaturan DNS tidak bermasalah, sesuai dengan nslookup yang berhasil.",
+        "berguna": false
+      }
+    ],
+    "dugaan": [
+      {
+        "id": "nat-interface-lama",
+        "teks": "Aturan masquerade masih memakai out-interface=ether1-wan, sehingga paket PC yang kini keluar lewat ether2 tidak diterjemahkan.",
+        "benar": true,
+        "umpan": "Tepat. Aturan NAT dicocokkan dengan interface keluar. Penghitungnya nol walau 14 PC terus mencoba, sementara router sendiri, yang tidak butuh NAT, tembus ke internet lewat jalur yang sama."
+      },
+      {
+        "id": "rute-default",
+        "teks": "Rute default masih mengarah ke ISP lama.",
+        "benar": false,
+        "umpan": "/ip route print menunjukkan rute default aktif lewat 203.0.113.41 di ether2, dan ping dari router berhasil. Kalau rutenya salah, router sendiri juga akan gagal."
+      },
+      {
+        "id": "dns-isp-baru",
+        "teks": "DNS ISP baru bermasalah sehingga nama situs tidak bisa diterjemahkan.",
+        "benar": false,
+        "umpan": "nslookup dari PC kasir menjawab example.com dengan benar. Lagi pula ping ke alamat IP 192.0.2.10 juga gagal, padahal ping ke IP tidak memakai DNS sama sekali."
+      },
+      {
+        "id": "dhcp-gateway",
+        "teks": "DHCP server router membagikan gateway yang salah ke PC.",
+        "benar": false,
+        "umpan": "ipconfig menunjukkan gateway 192.168.88.1, dan ping ke alamat itu berhasil. tracert juga mencatat router sebagai lompatan pertama. PC sudah mengirim paketnya ke router yang benar."
+      },
+      {
+        "id": "isp-belum-aktif",
+        "teks": "ISP baru belum mengaktifkan layanan atau memblokir ping dari pelanggan baru.",
+        "benar": false,
+        "umpan": "Ping dari router ke 192.0.2.10 berhasil lewat ISP yang sama, jadi layanannya sudah aktif. Yang tidak mendapat balasan hanya paket yang masih membawa alamat privat 192.168.88.x."
+      }
+    ],
+    "pembahasan": "Mulai dari yang dekat. `ipconfig` dan ping ke gateway menunjukkan PC dan LAN sehat. nslookup juga berhasil, dan di sinilah banyak orang tersesat: mereka menyimpulkan \"internet jalan, berarti masalahnya di PC\". Padahal yang bertanya ke DNS ISP adalah router, bukan PC.\n\nPetunjuk penentunya adalah dua ping ke alamat yang sama. Dari PC gagal, dari router berhasil. Keduanya keluar lewat ether2 dengan rute default yang sama, jadi routing dan ISP tidak bisa disalahkan. Bedanya ada di alamat sumber. Paket buatan router sudah membawa alamat publik ether2. Paket PC membawa 192.168.88.23, alamat privat yang tidak bisa dipakai di internet, dan baru bisa pulang kalau srcnat menggantinya dengan alamat publik.\n\n`/ip firewall nat print` menunjukkan aturan masquerade terikat ke `out-interface=ether1-wan`. RouterOS mencocokkan NAT pada paket pertama setiap koneksi. Paket yang keluar lewat ether2 tidak cocok, jadi berangkat apa adanya. ISP menerima paket bersumber alamat privat lalu membuangnya. Penghitung `print stats` yang tetap nol mengunci kesimpulan ini.\n\nAda dua jebakan lain. Nama `ether1-wan` terdengar seperti \"port internet\", sehingga aturan NAT tampak benar sekilas; nama interface hanyalah label yang ditulis orang. Restart router juga tidak menolong karena konfigurasinya tidak berubah.\n\nSetiap kali port WAN berpindah, periksa semua yang menyebut interface lama: NAT, filter firewall, mangle, rute statis, dan netwatch. Interface list (`out-interface-list=WAN`) membuat perpindahan berikutnya cukup dengan mengganti anggota list.\n\nBacaan: `19-mikrotik/03-firewall-nat` untuk srcnat dan masquerade, `09-nat-acl-firewall/01-nat` untuk konsep PAT, dan `19-mikrotik/01-pengenalan-routeros` untuk perintah dasar RouterOS.",
+    "perbaikan": {
+      "penjelasan": "Arahkan aturan masquerade ke interface yang sekarang tersambung ke internet. Cara yang lebih tahan perubahan adalah interface list WAN berisi ether2, lalu aturan memakai out-interface-list=WAN. Kerjakan dalam Safe Mode (Ctrl+X) supaya perubahan dibatalkan otomatis kalau sesi Anda terputus. Koneksi yang sempat tercatat tanpa NAT sebelum perbaikan bisa tetap gagal sampai entrinya di connection tracking kedaluwarsa; menutup lalu membuka ulang aplikasi biasanya cukup.",
+      "perintah": "# Perbaikan langsung\n/ip firewall nat set [find comment=\"NAT internet\"] out-interface=ether2\n\n# Atau, lebih tahan perubahan: pakai interface list\n/interface list add name=WAN\n/interface list member add list=WAN interface=ether2\n/ip firewall nat add chain=srcnat out-interface-list=WAN action=masquerade comment=\"NAT internet (list WAN)\"\n/ip firewall nat remove [find comment=\"NAT internet\"]\n\n# Verifikasi: penghitung harus naik, ping dari PC kasir harus dibalas\n/ip firewall nat print stats"
+    },
+    "sumber": [
+      {
+        "judul": "MikroTik RouterOS: NAT (masquerade, out-interface, pencocokan paket pertama)",
+        "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/3211299/NAT"
+      },
+      {
+        "judul": "MikroTik RouterOS: IP Routing (format /ip route print)",
+        "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/328084/IP+Routing"
+      },
+      {
+        "judul": "MikroTik RouterOS: First Time Configuration (contoh keluaran ping)",
+        "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/328151/First+Time+Configuration"
+      },
+      {
+        "judul": "MikroTik RouterOS: Command Line Interface (Safe Mode, move)",
+        "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/328134/Command+Line+Interface"
+      },
+      {
+        "judul": "Microsoft Learn: tracert",
+        "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/tracert"
+      }
+    ]
+  },
+  {
+    "id": "acl-implicit-deny-dns",
+    "judul": "ACL baru di router klinik, aplikasi rekam medis tidak bisa dibuka",
+    "tingkat": "menengah",
+    "modul": [
+      "09-nat-acl-firewall/02-acl",
+      "09-nat-acl-firewall/03-firewall",
+      "06-aplikasi/01-dns"
+    ],
+    "gejala": "Pagi ini semua PC klinik gagal membuka situs, termasuk aplikasi rekam medis. Ping ke alamat IP server tetap dibalas. Sore kemarin vendor memasang ACL di router.",
+    "briefing": "**Tiket #2291, Kamis 07.45.** Pelapor: Ratna, kepala administrasi sebuah klinik pratama di Palembang.\n\n> Komputer pendaftaran tidak bisa membuka aplikasi rekam medis di rme.example.net. Browser menulis \"Situs ini tidak dapat dijangkau\". Situs lain juga sama. Kemarin sore masih lancar. Pasien sudah antre.\n\nCatatan dari Andi, vendor TI klinik: Rabu pukul 17.30 ia memasang ACL \"pengaman\" di interface WAN router, mengikuti rekomendasi hasil uji penetrasi: semua yang masuk dari internet ditolak, kecuali balasan. Ia mengetes dengan ping ke 192.0.2.80, berhasil, lalu pulang.\n\nAnda punya akses console ke router Cisco ISR 4321 (IOS XE) dan remote desktop ke PC pendaftaran. PC mendapat alamat dan server DNS dari DHCP router.",
+    "lokasi": {
+      "kota": "Palembang",
+      "lat": -2.983,
+      "lon": 104.764
+    },
+    "topologi": {
+      "simpul": [
+        {
+          "id": "PC1",
+          "label": "PC pendaftaran",
+          "jenis": "pc",
+          "x": 8,
+          "y": 50,
+          "info": "192.168.20.31/24 (DHCP)"
+        },
+        {
+          "id": "SW1",
+          "label": "Switch klinik",
+          "jenis": "switch",
+          "x": 28,
+          "y": 50
+        },
+        {
+          "id": "R1",
+          "label": "Router klinik",
+          "jenis": "router",
+          "x": 50,
+          "y": 50,
+          "info": "WAN 203.0.113.10/29, LAN 192.168.20.1/24"
+        },
+        {
+          "id": "ISP",
+          "label": "ISP",
+          "jenis": "isp",
+          "x": 72,
+          "y": 50,
+          "info": "gateway 203.0.113.9"
+        },
+        {
+          "id": "DNS",
+          "label": "DNS ISP",
+          "jenis": "server",
+          "x": 92,
+          "y": 24,
+          "info": "198.51.100.53 dan 198.51.100.54"
+        },
+        {
+          "id": "RME",
+          "label": "Server rekam medis",
+          "jenis": "server",
+          "x": 92,
+          "y": 76,
+          "info": "rme.example.net, 192.0.2.80"
+        }
+      ],
+      "sisi": [
+        {
+          "dari": "PC1",
+          "ke": "SW1"
+        },
+        {
+          "dari": "SW1",
+          "ke": "R1",
+          "label": "Gi0/0/1"
+        },
+        {
+          "dari": "R1",
+          "ke": "ISP",
+          "label": "Gi0/0/0"
+        },
+        {
+          "dari": "ISP",
+          "ke": "DNS"
+        },
+        {
+          "dari": "ISP",
+          "ke": "RME"
+        }
+      ]
+    },
+    "langkah": [
+      {
+        "id": "ipconfig-all",
+        "label": "Lihat konfigurasi IP lengkap di PC pendaftaran",
+        "perangkat": "PC1",
+        "perintah": "ipconfig /all",
+        "keluaran": "Windows IP Configuration\n\n   Host Name . . . . . . . . . . . . : PENDAFTARAN-01\n   Primary Dns Suffix  . . . . . . . :\n   Node Type . . . . . . . . . . . . : Hybrid\n   IP Routing Enabled. . . . . . . . : No\n   WINS Proxy Enabled. . . . . . . . : No\n\nEthernet adapter Ethernet:\n\n   Connection-specific DNS Suffix  . :\n   Description . . . . . . . . . . . : Realtek PCIe GbE Family Controller\n   Physical Address. . . . . . . . . : 8C-16-45-2A-90-1E\n   DHCP Enabled. . . . . . . . . . . : Yes\n   Autoconfiguration Enabled . . . . : Yes\n   Link-local IPv6 Address . . . . . : fe80::b1c4:6e0a:2f7d:91a3%7(Preferred)\n   IPv4 Address. . . . . . . . . . . : 192.168.20.31(Preferred)\n   Subnet Mask . . . . . . . . . . . : 255.255.255.0\n   Lease Obtained. . . . . . . . . . : Thursday, October 15, 2026 7:21:04 AM\n   Lease Expires . . . . . . . . . . : Friday, October 16, 2026 7:21:04 AM\n   Default Gateway . . . . . . . . . : 192.168.20.1\n   DHCP Server . . . . . . . . . . . : 192.168.20.1\n   DNS Servers . . . . . . . . . . . : 198.51.100.53\n                                       198.51.100.54\n   NetBIOS over Tcpip. . . . . . . . : Enabled",
+        "makna": "PC memakai server DNS ISP 198.51.100.53 dan .54 dengan gateway 192.168.20.1, semuanya dari DHCP. Ini konfigurasi yang sama seperti kemarin. PC tidak berubah, jadi cari perubahan di tempat lain.",
+        "berguna": false
+      },
+      {
+        "id": "ping-nama",
+        "label": "Ping server rekam medis memakai nama",
+        "perangkat": "PC1",
+        "perintah": "ping rme.example.net",
+        "keluaran": "Ping request could not find host rme.example.net. Please check the name and try again.",
+        "makna": "Windows bahkan tidak mendapat alamat untuk nama itu. Kegagalan terjadi di tahap mencari nama (DNS), sebelum satu paket pun dikirim ke server rekam medis.",
+        "berguna": true
+      },
+      {
+        "id": "ping-ip",
+        "label": "Ping server rekam medis memakai alamat IP",
+        "perangkat": "PC1",
+        "perintah": "ping 192.0.2.80",
+        "keluaran": "Pinging 192.0.2.80 with 32 bytes of data:\nReply from 192.0.2.80: bytes=32 time=14ms TTL=54\nReply from 192.0.2.80: bytes=32 time=13ms TTL=54\nReply from 192.0.2.80: bytes=32 time=13ms TTL=54\nReply from 192.0.2.80: bytes=32 time=15ms TTL=54\n\nPing statistics for 192.0.2.80:\n    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),\nApproximate round trip times in milli-seconds:\n    Minimum = 13ms, Maximum = 15ms, Average = 13ms",
+        "makna": "Dengan alamat IP, ping tembus dan dibalas. Routing, NAT, dan jalur ke internet bekerja, dan balasan ping bisa masuk ke klinik. Yang gagal hanya penerjemahan nama.",
+        "berguna": true
+      },
+      {
+        "id": "nslookup-udp",
+        "label": "Tanya DNS ISP dengan nslookup",
+        "perangkat": "PC1",
+        "perintah": "nslookup rme.example.net",
+        "keluaran": "DNS request timed out.\n    timeout was 2 seconds.\nServer:  UnKnown\nAddress:  198.51.100.53\n\nDNS request timed out.\n    timeout was 2 seconds.\nDNS request timed out.\n    timeout was 2 seconds.\nDNS request timed out.\n    timeout was 2 seconds.\nDNS request timed out.\n    timeout was 2 seconds.\n*** Request to UnKnown timed-out",
+        "makna": "nslookup bertanya ke 198.51.100.53 lewat UDP port 53 dan tidak pernah mendapat jawaban, bahkan untuk nama server itu sendiri (karena itu tertulis UnKnown). Bisa jadi pertanyaannya hilang saat berangkat, bisa juga jawabannya hilang saat pulang.",
+        "berguna": true
+      },
+      {
+        "id": "nslookup-tcp",
+        "label": "Tanya server DNS yang sama lewat TCP",
+        "perangkat": "PC1",
+        "perintah": "nslookup -vc rme.example.net",
+        "keluaran": "Server:  ns1.isp.example.net\nAddress:  198.51.100.53\n\nNon-authoritative answer:\nName:    rme.example.net\nAddress:  192.0.2.80",
+        "makna": "Opsi -vc (virtual circuit) memaksa nslookup memakai TCP. Server DNS yang sama langsung menjawab, termasuk nama dirinya. Jadi server DNS ISP hidup dan bisa dijangkau. Yang gagal khusus DNS lewat UDP.",
+        "berguna": true
+      },
+      {
+        "id": "ip-int-brief",
+        "label": "Lihat status interface router",
+        "perangkat": "R1",
+        "perintah": "show ip interface brief",
+        "keluaran": "Interface              IP-Address      OK? Method Status                Protocol\nGigabitEthernet0/0/0   203.0.113.10    YES NVRAM  up                    up\nGigabitEthernet0/0/1   192.168.20.1    YES NVRAM  up                    up\nGigabitEthernet0       unassigned      YES NVRAM  administratively down down",
+        "makna": "Interface WAN dan LAN up/up dengan alamat yang benar. Gi0 adalah port manajemen yang memang tidak dipakai. Lapisan fisik dan alamat router beres.",
+        "berguna": false
+      },
+      {
+        "id": "rute-default",
+        "label": "Periksa rute default router",
+        "perangkat": "R1",
+        "perintah": "show ip route | include Gateway|0.0.0.0",
+        "keluaran": "Gateway of last resort is 203.0.113.9 to network 0.0.0.0\nS*    0.0.0.0/0 [1/0] via 203.0.113.9",
+        "makna": "Rute default statis (S*) menunjuk gateway ISP 203.0.113.9. Routing ke internet tidak berubah, sesuai dengan ping ke IP yang berhasil.",
+        "berguna": false
+      },
+      {
+        "id": "acl-terpasang",
+        "label": "Cari ACL yang terpasang di interface WAN",
+        "perangkat": "R1",
+        "perintah": "show ip interface GigabitEthernet0/0/0 | include access list",
+        "keluaran": "  Outgoing Common access list is not set\n  Outgoing access list is not set\n  Inbound Common access list is not set\n  Inbound  access list is WAN-IN",
+        "makna": "ACL bernama WAN-IN memeriksa setiap paket yang MASUK ke Gi0/0/0 dari internet, termasuk jawaban untuk pertanyaan yang dikirim PC. Arah keluar tidak disaring.",
+        "berguna": true
+      },
+      {
+        "id": "isi-acl",
+        "label": "Lihat isi ACL WAN-IN beserta penghitungnya",
+        "perangkat": "R1",
+        "perintah": "show ip access-lists WAN-IN",
+        "keluaran": "Extended IP access list WAN-IN\n    10 permit tcp any any established (51234 matches)\n    20 permit icmp any any echo-reply (48 matches)\n    30 permit icmp any any unreachable (6 matches)\n    40 permit icmp any any time-exceeded (12 matches)",
+        "makna": "ACL hanya mengizinkan TCP yang koneksinya sudah berjalan (established: segmen dengan bit ACK atau RST) dan tiga jenis ICMP. Tidak ada satu baris pun untuk UDP. Paket yang tidak cocok dengan baris mana pun jatuh ke implicit deny, aturan tolak-semua tak terlihat di akhir setiap ACL Cisco. Aturan itu tidak punya penghitung, jadi penolakannya tidak tampil di sini.",
+        "berguna": true
+      },
+      {
+        "id": "nat-udp",
+        "label": "Lihat terjemahan NAT untuk UDP",
+        "perangkat": "R1",
+        "perintah": "show ip nat translations | include udp",
+        "keluaran": "udp  203.0.113.10:61022    192.168.20.31:61022   198.51.100.53:53      198.51.100.53:53\nudp  203.0.113.10:61023    192.168.20.31:61023   198.51.100.53:53      198.51.100.53:53\nudp  203.0.113.10:52417    192.168.20.44:52417   198.51.100.54:53      198.51.100.54:53\nudp  203.0.113.10:57809    192.168.20.12:57809   198.51.100.53:53      198.51.100.53:53",
+        "makna": "Router mencatat terjemahan PAT untuk pertanyaan DNS dari beberapa PC ke port 53 server ISP. Artinya pertanyaan berhasil keluar lewat Gi0/0/0. Jawabannya yang tidak pernah sampai ke PC, dan pintu masuk Gi0/0/0 adalah tempat WAN-IN bekerja.",
+        "berguna": true
+      }
+    ],
+    "dugaan": [
+      {
+        "id": "dns-isp-mati",
+        "teks": "Server DNS ISP (198.51.100.53 dan .54) sedang mati.",
+        "benar": false,
+        "umpan": "nslookup -vc ke server yang sama dijawab lengkap lewat TCP. Server DNS-nya hidup. Hanya jawaban lewat UDP yang tidak pernah sampai ke PC."
+      },
+      {
+        "id": "acl-tanpa-udp",
+        "teks": "ACL WAN-IN tidak mengizinkan UDP, sehingga jawaban DNS dari port 53 ISP dibuang oleh implicit deny di akhir ACL.",
+        "benar": true,
+        "umpan": "Benar. established hanya cocok untuk TCP, dan tidak ada baris untuk UDP. Tabel NAT mencatat pertanyaan DNS keluar, jawaban UDP-nya ditolak saat masuk Gi0/0/0, sedangkan DNS lewat TCP lolos sebagai trafik established."
+      },
+      {
+        "id": "nat-rusak",
+        "teks": "NAT overload di router rusak sehingga PC tidak bisa keluar ke internet.",
+        "benar": false,
+        "umpan": "Ping ke 192.0.2.80 dibalas, dan tabel NAT berisi terjemahan untuk pertanyaan DNS PC. NAT bekerja; paket keluar diterjemahkan dengan benar."
+      },
+      {
+        "id": "server-rme",
+        "teks": "Server rekam medis di rme.example.net sedang gangguan.",
+        "benar": false,
+        "umpan": "Situs lain juga gagal, dan kegagalannya terjadi saat mencari nama (could not find host), sebelum PC sempat menghubungi server mana pun. Server rekam medis sendiri menjawab ping."
+      },
+      {
+        "id": "dhcp-dns-salah",
+        "teks": "DHCP router membagikan alamat server DNS yang salah.",
+        "benar": false,
+        "umpan": "ipconfig /all menunjukkan 198.51.100.53 dan .54, server DNS ISP yang sama seperti sebelumnya, dan server itu menjawab lewat TCP. Alamatnya benar."
+      }
+    ],
+    "pembahasan": "Mulai dari lapisan bawah. PC mendapat alamat dari DHCP, dan ping ke 192.0.2.80 dibalas. Jalur IP sampai ke internet berfungsi, termasuk NAT. Ping memakai nama gagal di tahap pencarian nama, jadi fokus pindah ke DNS.\n\nDua percobaan nslookup membelah masalahnya. Lewat UDP (bawaan nslookup) tidak ada jawaban sama sekali. Lewat TCP (`-vc`) server yang sama langsung menjawab. Server DNS hidup dan bisa dijangkau. Bedanya hanya protokol transpor, dan perbedaan seperti itu biasanya menunjuk ke penyaring paket.\n\nDi router, Gi0/0/0 memasang ACL `WAN-IN` untuk arah masuk. Isinya `permit tcp any any established` dan tiga jenis ICMP. Kata kunci `established` mencocokkan segmen TCP yang membawa bit ACK atau RST, tanda koneksi sudah berjalan. UDP tidak punya koneksi dan tidak punya bit seperti itu. Jawaban DNS dari port 53 ISP tidak cocok dengan baris mana pun, lalu jatuh ke implicit deny. Tabel NAT membuktikan pertanyaannya keluar; jawabannya dibuang di pintu masuk.\n\nPengecoh terbesar justru tes Andi sendiri. Ping ke IP lolos karena echo-reply diizinkan, jadi ACL terlihat aman. Implicit deny juga tidak punya penghitung matches, sehingga tidak ada angka yang naik untuk ditunjuk. Dari sisi pengguna gejalanya mirip \"DNS mati\", padahal DNS sehat.\n\nACL bersifat stateless: ia tidak ingat paket yang keluar, jadi setiap jenis balasan butuh izin sendiri. UDP lain ikut terblokir, misalnya NTP (port 123) dan QUIC (UDP 443). Untuk QUIC, browser diam-diam mundur ke TCP, jadi gejalanya tidak terlihat.\n\nBacaan: `09-nat-acl-firewall/02-acl` untuk implicit deny, established, dan trafik balik; `09-nat-acl-firewall/03-firewall` untuk firewall stateful; `06-aplikasi/01-dns` untuk DNS yang memakai UDP dan TCP.",
+    "perbaikan": {
+      "penjelasan": "Izinkan jawaban DNS dari dua server ISP sesempit mungkin: UDP, port sumber 53 (domain), tujuan alamat WAN router. Named ACL bisa disisipi baris bernomor tanpa dihapus, jadi tidak ada jeda tanpa perlindungan. Rollback: no 15 dan no 16 di mode ip access-list. Untuk jangka panjang, firewall stateful (Zone-Based Firewall) lebih tepat karena ia mengingat setiap pertanyaan dan hanya mengizinkan jawaban yang cocok. Baris deny ip any any log di akhir membuat penolakan tercatat di log; nyalakan sementara saja karena log bisa membanjir.",
+      "perintah": "R-KLINIK# configure terminal\nR-KLINIK(config)# ip access-list extended WAN-IN\nR-KLINIK(config-ext-nacl)# 15 permit udp host 198.51.100.53 eq domain host 203.0.113.10\nR-KLINIK(config-ext-nacl)# 16 permit udp host 198.51.100.54 eq domain host 203.0.113.10\nR-KLINIK(config-ext-nacl)# end\nR-KLINIK# show ip access-lists WAN-IN\n! Uji dari PC pendaftaran: nslookup rme.example.net harus dijawab\nR-KLINIK# copy running-config startup-config"
+    },
+    "sumber": [
+      {
+        "judul": "Cisco: Configure Commonly Used IP ACLs (implicit deny, kata kunci established)",
+        "url": "https://www.cisco.com/c/en/us/support/docs/ip/access-lists/26448-ACLsamples.html"
+      },
+      {
+        "judul": "Cisco: Verify NAT Operation and Basic NAT Troubleshooting",
+        "url": "https://www.cisco.com/c/en/us/support/docs/ip/network-address-translation-nat/8605-13.html"
+      },
+      {
+        "judul": "Microsoft Learn: nslookup (opsi baris perintah dan pesan galat)",
+        "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/nslookup"
+      },
+      {
+        "judul": "Microsoft Learn: nslookup set vc",
+        "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/nslookup-set-vc"
+      },
+      {
+        "judul": "RFC 7766: DNS Transport over TCP",
+        "url": "https://www.rfc-editor.org/rfc/rfc7766"
+      }
+    ]
+  },
+  {
+    "id": "pmtud-black-hole-wireguard",
+    "judul": "Portal pemasok macet dari cabang Medan sejak internet lewat VPN pusat",
+    "tingkat": "lanjut",
+    "modul": [
+      "11-wan-vpn/02-tunneling-vpn",
+      "04-network-layer/04-arp-icmp",
+      "05-transport/02-tcp",
+      "13-linux-networking/03-nftables-firewall"
+    ],
+    "gejala": "Sejak internet cabang dialihkan lewat terowongan WireGuard ke kantor pusat, portal pemasok tidak pernah selesai dimuat. Situs lain lancar, dan dari kantor pusat portal itu juga lancar.",
+    "briefing": "**Tiket #3307, Rabu 09.30.** Pelapor: Rina Siregar, staf pembelian cabang Medan.\n\n> Portal pemesanan pemasok di portal.example.net cuma menampilkan halaman putih, lalu muncul ERR_TIMED_OUT. Sudah ganti browser dan laptop, sama saja. Situs berita dan video lancar. Teman di kantor pusat Jakarta bilang portal itu normal di tempat mereka.\n\nKonteks dari tim TI: Senin lalu semua trafik internet cabang Medan dialihkan lewat terowongan WireGuard ke gateway kantor pusat, supaya ikut filter web pusat. gw-medan mengirim semua trafik ke wg0; gw-jakarta meneruskannya ke internet dengan NAT.\n\nAnda bisa masuk ke laptop Bayu (staf TI cabang, Linux), gw-medan, dan gw-jakarta. Keduanya gateway Linux. Anda tidak punya akses ke jaringan milik portal pemasok.",
+    "lokasi": {
+      "kota": "Medan",
+      "lat": 3.589,
+      "lon": 98.674
+    },
+    "topologi": {
+      "simpul": [
+        {
+          "id": "L1",
+          "label": "Laptop Bayu",
+          "jenis": "laptop",
+          "x": 8,
+          "y": 50,
+          "info": "10.20.0.15/24"
+        },
+        {
+          "id": "GWM",
+          "label": "gw-medan",
+          "jenis": "router",
+          "x": 30,
+          "y": 50,
+          "info": "LAN 10.20.0.1, WAN 192.0.2.77"
+        },
+        {
+          "id": "GWJ",
+          "label": "gw-jakarta",
+          "jenis": "firewall",
+          "x": 62,
+          "y": 50,
+          "info": "wg0 10.255.0.1, WAN 198.51.100.20"
+        },
+        {
+          "id": "S1",
+          "label": "portal.example.net",
+          "jenis": "server",
+          "x": 92,
+          "y": 24,
+          "info": "203.0.113.45"
+        },
+        {
+          "id": "S2",
+          "label": "berita.example.org",
+          "jenis": "server",
+          "x": 92,
+          "y": 76,
+          "info": "192.0.2.150"
+        }
+      ],
+      "sisi": [
+        {
+          "dari": "L1",
+          "ke": "GWM"
+        },
+        {
+          "dari": "GWM",
+          "ke": "GWJ",
+          "label": "terowongan WireGuard"
+        },
+        {
+          "dari": "GWJ",
+          "ke": "S1",
+          "label": "internet"
+        },
+        {
+          "dari": "GWJ",
+          "ke": "S2",
+          "label": "internet"
+        }
+      ]
+    },
+    "langkah": [
+      {
+        "id": "dig-portal",
+        "label": "Cari alamat portal dengan dig",
+        "perangkat": "L1",
+        "perintah": "dig +short portal.example.net",
+        "keluaran": "203.0.113.45",
+        "makna": "Nama portal terjawab dengan alamat yang benar. DNS tidak bermasalah.",
+        "berguna": false
+      },
+      {
+        "id": "ping-portal",
+        "label": "Ping portal dari laptop",
+        "perangkat": "L1",
+        "perintah": "ping -c 3 portal.example.net",
+        "keluaran": "PING portal.example.net (203.0.113.45) 56(84) bytes of data.\n\n--- portal.example.net ping statistics ---\n3 packets transmitted, 0 received, 100% packet loss, time 2050ms",
+        "makna": "Ping tidak dibalas. Itu belum berarti portal mati: banyak jaringan sengaja membuang semua ICMP. Simpan dugaan ini, karena ICMP juga dipakai untuk pesan lain yang penting bagi TCP.",
+        "berguna": true
+      },
+      {
+        "id": "curl-portal",
+        "label": "Buka portal dengan curl verbose",
+        "perangkat": "L1",
+        "perintah": "curl -sSv --max-time 20 -o /dev/null https://portal.example.net/",
+        "keluaran": "*   Trying 203.0.113.45:443...\n* Connected to portal.example.net (203.0.113.45) port 443\n* ALPN: curl offers h2,http/1.1\n} [5 bytes data]\n* TLSv1.3 (OUT), TLS handshake, Client hello (1):\n} [512 bytes data]\n*  CAfile: /etc/ssl/certs/ca-certificates.crt\n*  CApath: /etc/ssl/certs\n* Operation timed out after 20002 milliseconds with 0 bytes received\n* Closing connection\ncurl: (28) Operation timed out after 20002 milliseconds with 0 bytes received",
+        "makna": "Jabat tangan TCP selesai (Connected), jadi server hidup dan port 443 terbuka. Laptop mengirim ClientHello, pesan pembuka TLS yang kecil. Jawaban server, yang berisi sertifikat dan berukuran beberapa kilobyte, tidak pernah tiba. Paket kecil lewat dan paket besar hilang, pola yang khas untuk masalah MTU.",
+        "berguna": true
+      },
+      {
+        "id": "curl-berita",
+        "label": "Unduh halaman situs berita sebagai pembanding",
+        "perangkat": "L1",
+        "perintah": "curl -sS -o /dev/null -w '%{http_code} %{size_download}\\n' https://berita.example.org/",
+        "keluaran": "200 184213",
+        "makna": "Situs berita mengirim halaman 180 KB lewat terowongan yang sama tanpa masalah. Ini cocok dengan laporan Rina, tetapi belum menjelaskan kenapa portal macet.",
+        "berguna": false
+      },
+      {
+        "id": "tracepath-portal",
+        "label": "Ukur path MTU ke portal dengan tracepath",
+        "perangkat": "L1",
+        "perintah": "tracepath -n 203.0.113.45",
+        "keluaran": " 1?: [LOCALHOST]                      pmtu 1500\n 1:  10.20.0.1                                             0.412ms\n 1:  10.20.0.1                                             0.388ms\n 2:  10.20.0.1                                             0.405ms pmtu 1400\n 2:  10.255.0.1                                           31.877ms\n 3:  198.51.100.17                                        33.104ms\n 4:  192.0.2.254                                          34.912ms\n 5:  203.0.113.1                                          42.618ms\n 6:  no reply\n 7:  no reply\n 8:  no reply\n^C",
+        "makna": "Path MTU (paket terbesar yang bisa lewat utuh) turun dari 1500 ke 1400 di gw-medan, tempat paket masuk ke terowongan. Laptop menerima pesan itu dan menyesuaikan diri. Sesudah 203.0.113.1, jaringan portal tidak menjawab sama sekali, sesuai dugaan bahwa mereka membuang ICMP.",
+        "berguna": true
+      },
+      {
+        "id": "mtu-wg-medan",
+        "label": "Lihat MTU interface wg0 di gw-medan",
+        "perangkat": "GWM",
+        "perintah": "ip link show wg0",
+        "keluaran": "5: wg0: <POINTOPOINT,NOARP,UP,LOWER_UP> mtu 1400 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000\n    link/none",
+        "makna": "wg0 memakai MTU 1400 karena enkapsulasi WireGuard menambah header di setiap paket. Paket IP 1500 byte dari Ethernet biasa tidak muat di terowongan ini tanpa dipecah. Ujung terowongan di gw-jakarta dikonfigurasi sama.",
+        "berguna": true
+      },
+      {
+        "id": "wg-show",
+        "label": "Periksa status terowongan di gw-jakarta",
+        "perangkat": "GWJ",
+        "perintah": "sudo wg show wg0",
+        "keluaran": "interface: wg0\n  public key: VlPKLuw15bPBSRymPgw3RmZO/HFzrKD7uV6Le6jdxxw=\n  private key: (hidden)\n  listening port: 51820\n\npeer: HhGaM8iu9LgysPVoHjLGTocMW/8cyJyrxsu/LYKCWTc=\n  endpoint: 192.0.2.77:41322\n  allowed ips: 10.255.0.2/32, 10.20.0.0/24\n  latest handshake: 1 minute, 12 seconds ago\n  transfer: 3.21 GiB received, 18.77 GiB sent",
+        "makna": "Handshake terakhir semenit lalu dan belasan GiB sudah lewat. Terowongan hidup dan stabil. Kalau terowongan putus, semua situs akan gagal, bukan cuma portal.",
+        "berguna": false
+      },
+      {
+        "id": "tcpdump-jakarta",
+        "label": "Tangkap paket ke portal di sisi internet gw-jakarta",
+        "perangkat": "GWJ",
+        "perintah": "sudo tcpdump -ni enp1s0 host 203.0.113.45",
+        "keluaran": "tcpdump: verbose output suppressed, use -v[v]... for full protocol decode\nlistening on enp1s0, link-type EN10MB (Ethernet), snapshot length 262144 bytes\n09:41:07.218334 IP 198.51.100.20.51834 > 203.0.113.45.443: Flags [S], seq 3810021455, win 64240, options [mss 1460,sackOK,TS val 912331 ecr 0,nop,wscale 7], length 0\n09:41:07.229812 IP 203.0.113.45.443 > 198.51.100.20.51834: Flags [S.], seq 1290034411, ack 3810021456, win 65160, options [mss 1460,sackOK,TS val 4401871 ecr 912331,nop,wscale 7], length 0\n09:41:07.261204 IP 198.51.100.20.51834 > 203.0.113.45.443: Flags [.], ack 1, win 502, options [nop,nop,TS val 912374 ecr 4401871], length 0\n09:41:07.261690 IP 198.51.100.20.51834 > 203.0.113.45.443: Flags [P.], seq 1:518, ack 1, win 502, options [nop,nop,TS val 912374 ecr 4401871], length 517\n09:41:07.273150 IP 203.0.113.45.443 > 198.51.100.20.51834: Flags [.], seq 1:1449, ack 518, win 506, options [nop,nop,TS val 4401915 ecr 912374], length 1448\n09:41:07.273181 IP 198.51.100.20 > 203.0.113.45: ICMP 198.51.100.20 unreachable - need to frag (mtu 1400), length 556\n09:41:07.273188 IP 203.0.113.45.443 > 198.51.100.20.51834: Flags [.], seq 1449:2897, ack 518, win 506, options [nop,nop,TS val 4401915 ecr 912374], length 1448\n09:41:07.273210 IP 198.51.100.20 > 203.0.113.45: ICMP 198.51.100.20 unreachable - need to frag (mtu 1400), length 556\n09:41:07.273215 IP 203.0.113.45.443 > 198.51.100.20.51834: Flags [P.], seq 2897:3309, ack 518, win 506, options [nop,nop,TS val 4401915 ecr 912374], length 412\n09:41:07.304602 IP 198.51.100.20.51834 > 203.0.113.45.443: Flags [.], ack 1, win 502, options [nop,nop,TS val 912417 ecr 4401871,nop,nop,sack 1 {2897:3309}], length 0\n09:41:07.327045 IP 203.0.113.45.443 > 198.51.100.20.51834: Flags [.], seq 1:1449, ack 518, win 506, options [nop,nop,TS val 4401969 ecr 912417], length 1448\n09:41:07.327071 IP 198.51.100.20 > 203.0.113.45: ICMP 198.51.100.20 unreachable - need to frag (mtu 1400), length 556\n09:41:07.570318 IP 203.0.113.45.443 > 198.51.100.20.51834: Flags [.], seq 1:1449, ack 518, win 506, options [nop,nop,TS val 4402212 ecr 912417], length 1448\n09:41:07.570342 IP 198.51.100.20 > 203.0.113.45: ICMP 198.51.100.20 unreachable - need to frag (mtu 1400), length 556\n09:41:08.058127 IP 203.0.113.45.443 > 198.51.100.20.51834: Flags [.], seq 1:1449, ack 518, win 506, options [nop,nop,TS val 4402700 ecr 912417], length 1448\n09:41:08.058150 IP 198.51.100.20 > 203.0.113.45: ICMP 198.51.100.20 unreachable - need to frag (mtu 1400), length 556\n09:41:09.034466 IP 203.0.113.45.443 > 198.51.100.20.51834: Flags [.], seq 1:1449, ack 518, win 506, options [nop,nop,TS val 4403676 ecr 912417], length 1448\n09:41:09.034493 IP 198.51.100.20 > 203.0.113.45: ICMP 198.51.100.20 unreachable - need to frag (mtu 1400), length 556\n^C\n18 packets captured\n18 packets received by filter\n0 packets dropped by kernel",
+        "makna": "Server mengirim segmen 1448 byte, yaitu paket IP 1500 byte. gw-jakarta tidak bisa memasukkannya ke wg0, membuangnya, lalu mengirim ICMP need to frag (mtu 1400) ke server. Segmen 412 byte lolos, maka laptop mengirim SACK yang menandai data sebelumnya hilang. Server terus mengirim ulang segmen 1448 byte yang sama dengan jeda makin panjang. Kalau ICMP itu sampai, server akan mengecilkan segmennya. Ia tidak pernah melakukannya.",
+        "berguna": true
+      },
+      {
+        "id": "nft-forward",
+        "label": "Lihat aturan forward nftables di gw-jakarta",
+        "perangkat": "GWJ",
+        "perintah": "sudo nft list chain inet filter forward",
+        "keluaran": "table inet filter {\n\tchain forward {\n\t\ttype filter hook forward priority filter; policy drop;\n\t\tct state established,related accept\n\t\tiifname \"wg0\" oifname \"enp1s0\" accept\n\t}\n}",
+        "makna": "Tidak ada aturan yang menyentuh MSS (maximum segment size, ukuran data TCP terbesar yang diumumkan tiap sisi di paket SYN). SYN dari laptop lewat dengan mss 1460, sehingga server merasa boleh mengirim segmen 1448 byte. Tanpa ICMP yang sampai, tidak ada yang mengoreksinya.",
+        "berguna": true
+      },
+      {
+        "id": "uptime-jakarta",
+        "label": "Cek beban gateway pusat",
+        "perangkat": "GWJ",
+        "perintah": "uptime",
+        "keluaran": " 09:44:31 up 41 days,  3:12,  1 user,  load average: 0.08, 0.11, 0.09",
+        "makna": "Gateway menyala 41 hari dengan beban hampir nol. Kinerja perangkat tidak ada hubungannya dengan gejala ini.",
+        "berguna": false
+      }
+    ],
+    "dugaan": [
+      {
+        "id": "dns-salah",
+        "teks": "DNS cabang menerjemahkan portal.example.net ke alamat yang salah.",
+        "benar": false,
+        "umpan": "dig menjawab 203.0.113.45, dan curl tersambung ke alamat itu sampai jabat tangan TCP selesai. Server yang menjawab adalah server yang benar."
+      },
+      {
+        "id": "portal-mati",
+        "teks": "Server portal pemasok sedang mati.",
+        "benar": false,
+        "umpan": "Jabat tangan TCP selesai, dan tcpdump memperlihatkan server aktif mengirim data serta mengirim ulang. Ping gagal karena jaringan portal membuang ICMP, bukan karena servernya mati."
+      },
+      {
+        "id": "terowongan-putus",
+        "teks": "Terowongan WireGuard putus-sambung.",
+        "benar": false,
+        "umpan": "wg show mencatat handshake semenit lalu dengan belasan GiB terkirim, dan situs berita mengirim 180 KB lewat terowongan yang sama. Terowongannya utuh, hanya MTU-nya lebih kecil dari 1500 byte."
+      },
+      {
+        "id": "pmtud-black-hole",
+        "teks": "PMTUD black hole: segmen 1448 byte dari server tidak muat di terowongan ber-MTU 1400, ICMP \"fragmentation needed\" tidak sampai ke server, dan MSS tidak dijepit.",
+        "benar": true,
+        "umpan": "Tepat. tcpdump memperlihatkan ICMP need to frag dikirim setiap kali server mengirim segmen penuh, tetapi server terus mengirim ulang ukuran yang sama. Jaringan portal membuang ICMP, jadi Path MTU Discovery gagal diam-diam."
+      },
+      {
+        "id": "filter-web",
+        "teks": "Filter web di kantor pusat memblokir portal.example.net.",
+        "benar": false,
+        "umpan": "Filter yang memblokir akan menolak koneksi, mengirim reset, atau menampilkan halaman blokir. Di sini koneksi terbentuk, ClientHello lewat, dan server menjawab. Paket server dibuang karena ukurannya, dengan ICMP need to frag sebagai jejaknya."
+      }
+    ],
+    "pembahasan": "Mulai dari yang gampang dibuktikan. dig menjawab dan curl tersambung ke 203.0.113.45 port 443, jadi DNS dan routing beres. Ping ke portal tidak dibalas, padahal servernya jelas hidup karena jabat tangan TCP selesai. Artinya jaringan portal membuang ICMP.\n\ncurl macet tepat sesudah ClientHello. Paket kecil (SYN, ACK, ClientHello 517 byte) lewat. Begitu server mengirim sertifikat dalam segmen penuh, tidak ada yang sampai. Pola \"paket kecil lolos, paket besar hilang\" hampir selalu berarti masalah MTU.\n\ntracepath menunjukkan path MTU turun ke 1400 di pintu terowongan. Untuk arah unggah, gw-medan mengirim ICMP \"fragmentation needed\" ke laptop dan laptop menyesuaikan diri. Untuk arah unduh, gw-jakarta yang membuang paket dan mengirim ICMP ke server. tcpdump di gw-jakarta memperlihatkan ICMP itu keluar setiap kali server mengirim segmen 1448 byte, dan server terus mengirim ulang segmen yang sama. Server tidak pernah menerimanya. Path MTU Discovery (PMTUD) bergantung pada ICMP tipe 3 kode 4; kalau pesan itu dibuang, koneksi macet tanpa pesan galat apa pun. Kondisi ini disebut PMTUD black hole.\n\nKenapa situs berita lancar? Jaringannya tidak membuang ICMP, jadi servernya menerima pesan dari gw-jakarta lalu mengecilkan segmen. Kenapa dari kantor pusat lancar? Trafik pusat tidak lewat terowongan, jadi MTU-nya tetap 1500.\n\nKita tidak bisa mengubah firewall milik portal. Solusi di sisi kita adalah MSS clamping: gateway menulis ulang nilai MSS di paket SYN yang melewati terowongan, sehingga server sejak awal mengirim segmen yang muat. Cara ini tidak bergantung pada ICMP. Pengecohnya, wg show yang sehat dan situs lain yang lancar membuat terowongan tampak tidak bersalah. Terowongannya tidak putus; MTU-nya saja yang lebih kecil dari 1500 byte.\n\nBacaan: `11-wan-vpn/02-tunneling-vpn` (MTU tunnel dan MSS clamping), `04-network-layer/04-arp-icmp` (ICMP tipe 3 kode 4 dan PMTUD), `05-transport/02-tcp` (MSS), dan `13-linux-networking/03-nftables-firewall`.",
+    "perbaikan": {
+      "penjelasan": "Pasang MSS clamping di gw-jakarta untuk kedua arah, karena MSS diumumkan di SYN dan di SYN+ACK. SYN dari cabang (masuk lewat wg0) diberi MSS 1360, yaitu MTU 1400 dikurangi 20 byte header IPv4 dan 20 byte header TCP. SYN+ACK menuju cabang (keluar lewat wg0) dijepit otomatis ke MTU rute dengan rt mtu. Pakai insert agar aturan berada di atas aturan accept; aturan ini tidak punya verdict, jadi paket tetap lanjut diperiksa. Tulis juga ke /etc/nftables.conf supaya bertahan setelah reboot. Rollback: cari handle dengan nft -a list chain inet filter forward, lalu nft delete rule. Kalau bisa menghubungi pengelola portal, minta mereka mengizinkan ICMP tipe 3 kode 4.",
+      "perintah": "# di gw-jakarta\nsudo nft insert rule inet filter forward iifname \"wg0\" tcp flags syn tcp option maxseg size set 1360\nsudo nft insert rule inet filter forward oifname \"wg0\" tcp flags syn tcp option maxseg size set rt mtu\nsudo nft list chain inet filter forward\n\n# verifikasi: SYN dari cabang sekarang keluar dengan mss 1360\nsudo tcpdump -ni enp1s0 'host 203.0.113.45 and tcp[tcpflags] & tcp-syn != 0'\n\n# dari laptop Bayu\ncurl -sS -o /dev/null -w '%{http_code}\\n' https://portal.example.net/"
+    },
+    "sumber": [
+      {
+        "judul": "nftables wiki: Mangling packet headers (tcp option maxseg, rt mtu)",
+        "url": "https://wiki.nftables.org/wiki-nftables/index.php/Mangling_packet_headers"
+      },
+      {
+        "judul": "tracepath(8), manual iputils",
+        "url": "https://man7.org/linux/man-pages/man8/tracepath.8.html"
+      },
+      {
+        "judul": "RFC 1191: Path MTU Discovery",
+        "url": "https://www.rfc-editor.org/rfc/rfc1191"
+      },
+      {
+        "judul": "RFC 2923: TCP Problems with Path MTU Discovery (black hole)",
+        "url": "https://www.rfc-editor.org/rfc/rfc2923"
+      },
+      {
+        "judul": "wg(8), manual WireGuard",
+        "url": "https://man7.org/linux/man-pages/man8/wg.8.html"
+      },
+      {
+        "judul": "tcpdump(1), manual resmi",
+        "url": "https://www.tcpdump.org/manpages/tcpdump.1.html"
+      }
+    ]
+  },
+  {
+    "id": "wifi-kanal-24ghz-sama",
+    "judul": "Wi-Fi kantor lemot di jam sibuk padahal sinyal penuh",
+    "tingkat": "pemula",
+    "modul": [
+      "10-wireless/01-rf-dasar",
+      "10-wireless/02-802-11",
+      "10-wireless/04-desain-wlan"
+    ],
+    "gejala": "Sejak kantor menambah dua access point, Wi-Fi terasa lambat dan video call putus-putus, terutama pukul 09.00 sampai 11.00. Sinyal di laptop selalu penuh. Komputer yang memakai kabel normal.",
+    "briefing": "**Tiket #0157, Selasa 10.15.** Pelapor: Sari, staf administrasi kantor koperasi simpan pinjam di Yogyakarta.\n\n> Wi-Fi kantor lemot sekali, terutama jam 9 sampai 11 waktu semua orang sudah datang. Sinyal penuh, tapi video call dengan anggota putus-putus dan unggah berkas ke aplikasi koperasi bisa lima menit. PC admin yang pakai kabel katanya normal.\n\nKonteks: dua minggu lalu kantor menambah dua access point (AP, pemancar Wi-Fi) supaya lantai 2 dan ruang rapat terjangkau. Ketiga AP dipasang keponakan bendahara dengan menyalin pengaturan AP pertama. Semua AP hanya memancar di 2,4 GHz. Paket internet kantor 50 Mbps.\n\nAnda datang membawa laptop Linux dengan adaptor Wi-Fi USB untuk survei, dan boleh memakai laptop Sari (Windows 10) serta PC admin.",
+    "lokasi": {
+      "kota": "Yogyakarta",
+      "lat": -7.8,
+      "lon": 110.391
+    },
+    "topologi": {
+      "simpul": [
+        {
+          "id": "L1",
+          "label": "Laptop Sari",
+          "jenis": "laptop",
+          "x": 8,
+          "y": 22,
+          "info": "Windows 10, lantai 2"
+        },
+        {
+          "id": "L2",
+          "label": "Laptop teknisi",
+          "jenis": "laptop",
+          "x": 8,
+          "y": 78,
+          "info": "Linux, adaptor Wi-Fi USB"
+        },
+        {
+          "id": "AP1",
+          "label": "AP lantai 1",
+          "jenis": "ap",
+          "x": 34,
+          "y": 15,
+          "info": "192.168.10.2"
+        },
+        {
+          "id": "AP2",
+          "label": "AP lantai 2",
+          "jenis": "ap",
+          "x": 34,
+          "y": 50,
+          "info": "192.168.10.3"
+        },
+        {
+          "id": "AP3",
+          "label": "AP ruang rapat",
+          "jenis": "ap",
+          "x": 34,
+          "y": 85,
+          "info": "192.168.10.4"
+        },
+        {
+          "id": "SW1",
+          "label": "Switch PoE",
+          "jenis": "switch",
+          "x": 58,
+          "y": 50
+        },
+        {
+          "id": "PC1",
+          "label": "PC admin (kabel)",
+          "jenis": "pc",
+          "x": 58,
+          "y": 85,
+          "info": "192.168.10.50"
+        },
+        {
+          "id": "R1",
+          "label": "Router kantor",
+          "jenis": "router",
+          "x": 76,
+          "y": 50,
+          "info": "192.168.10.1"
+        },
+        {
+          "id": "ISP",
+          "label": "ISP 50 Mbps",
+          "jenis": "isp",
+          "x": 92,
+          "y": 50
+        }
+      ],
+      "sisi": [
+        {
+          "dari": "L1",
+          "ke": "AP2",
+          "label": "Wi-Fi"
+        },
+        {
+          "dari": "L2",
+          "ke": "AP2",
+          "label": "Wi-Fi"
+        },
+        {
+          "dari": "AP1",
+          "ke": "SW1"
+        },
+        {
+          "dari": "AP2",
+          "ke": "SW1"
+        },
+        {
+          "dari": "AP3",
+          "ke": "SW1"
+        },
+        {
+          "dari": "PC1",
+          "ke": "SW1"
+        },
+        {
+          "dari": "SW1",
+          "ke": "R1"
+        },
+        {
+          "dari": "R1",
+          "ke": "ISP"
+        }
+      ]
+    },
+    "langkah": [
+      {
+        "id": "netsh-interfaces",
+        "label": "Lihat status Wi-Fi di laptop Sari",
+        "perangkat": "L1",
+        "perintah": "netsh wlan show interfaces",
+        "keluaran": "There is 1 interface on the system:\n\n    Name                   : Wi-Fi\n    Description            : Intel(R) Dual Band Wireless-AC 8265\n    GUID                   : 8b6f63a1-5c8b-4d6f-9d8e-1f2e3d4c5b6a\n    Physical address       : 4c:79:6e:a2:13:5f\n    State                  : connected\n    SSID                   : KANTOR-STAFF\n    BSSID                  : 60:a4:b7:11:22:02\n    Network type           : Infrastructure\n    Radio type             : 802.11n\n    Authentication         : WPA2-Personal\n    Cipher                 : CCMP\n    Connection mode        : Auto Connect\n    Channel                : 6\n    Receive rate (Mbps)    : 130\n    Transmit rate (Mbps)   : 130\n    Signal                 : 92%\n    Profile                : KANTOR-STAFF\n\n    Hosted network status  : Not available",
+        "makna": "Sinyal 92% dan laju 130 Mbps. Dari sisi kekuatan sinyal tidak ada masalah, dan banyak orang berhenti mencari di sini. Padahal kekuatan sinyal hanya menjawab seberapa keras AP terdengar, bukan berapa banyak perangkat lain yang berebut kanal yang sama.",
+        "berguna": false
+      },
+      {
+        "id": "ping-wifi",
+        "label": "Ping router dari laptop Sari lewat Wi-Fi",
+        "perangkat": "L1",
+        "perintah": "ping -n 10 192.168.10.1",
+        "keluaran": "Pinging 192.168.10.1 with 32 bytes of data:\nReply from 192.168.10.1: bytes=32 time=4ms TTL=64\nReply from 192.168.10.1: bytes=32 time=87ms TTL=64\nReply from 192.168.10.1: bytes=32 time=23ms TTL=64\nRequest timed out.\nReply from 192.168.10.1: bytes=32 time=145ms TTL=64\nReply from 192.168.10.1: bytes=32 time=6ms TTL=64\nReply from 192.168.10.1: bytes=32 time=212ms TTL=64\nReply from 192.168.10.1: bytes=32 time=58ms TTL=64\nReply from 192.168.10.1: bytes=32 time=9ms TTL=64\nReply from 192.168.10.1: bytes=32 time=131ms TTL=64\n\nPing statistics for 192.168.10.1:\n    Packets: Sent = 10, Received = 9, Lost = 1 (10% loss),\nApproximate round trip times in milli-seconds:\n    Minimum = 4ms, Maximum = 212ms, Average = 75ms",
+        "makna": "Router ada di jaringan lokal, jadi ping ke sana seharusnya beberapa milidetik saja. Di sini jedanya melompat antara 4 dan 212 ms, dan satu paket hilang. Gangguannya sudah terjadi di lompatan pertama, sebelum paket menyentuh internet.",
+        "berguna": true
+      },
+      {
+        "id": "ping-kabel",
+        "label": "Ping router dari PC admin lewat kabel",
+        "perangkat": "PC1",
+        "perintah": "ping -n 10 192.168.10.1",
+        "keluaran": "Pinging 192.168.10.1 with 32 bytes of data:\nReply from 192.168.10.1: bytes=32 time<1ms TTL=64\nReply from 192.168.10.1: bytes=32 time<1ms TTL=64\nReply from 192.168.10.1: bytes=32 time<1ms TTL=64\nReply from 192.168.10.1: bytes=32 time=1ms TTL=64\nReply from 192.168.10.1: bytes=32 time<1ms TTL=64\nReply from 192.168.10.1: bytes=32 time<1ms TTL=64\nReply from 192.168.10.1: bytes=32 time<1ms TTL=64\nReply from 192.168.10.1: bytes=32 time<1ms TTL=64\nReply from 192.168.10.1: bytes=32 time=1ms TTL=64\nReply from 192.168.10.1: bytes=32 time<1ms TTL=64\n\nPing statistics for 192.168.10.1:\n    Packets: Sent = 10, Received = 10, Lost = 0 (0% loss),\nApproximate round trip times in milli-seconds:\n    Minimum = 0ms, Maximum = 1ms, Average = 0ms",
+        "makna": "Lewat kabel, ping ke router yang sama stabil di bawah 1 ms tanpa ada yang hilang. Switch dan router sehat. Bedanya dengan laptop Sari hanya satu: udara antara laptop dan AP.",
+        "berguna": true
+      },
+      {
+        "id": "unduh-kabel",
+        "label": "Ukur kecepatan unduh dari PC admin",
+        "perangkat": "PC1",
+        "perintah": "curl -s -o NUL -w \"%{speed_download}\\n\" http://unduh.example.net/50MB.bin",
+        "keluaran": "5912337",
+        "makna": "curl melaporkan 5.912.337 byte per detik, sekitar 47 Mbit/s dari paket 50 Mbps. Jalur internet longgar dan ISP memberi kecepatan sesuai paket.",
+        "berguna": false
+      },
+      {
+        "id": "nslookup-sari",
+        "label": "Tanya DNS dari laptop Sari",
+        "perangkat": "L1",
+        "perintah": "nslookup example.com",
+        "keluaran": "Server:  UnKnown\nAddress:  192.168.10.1\n\nNon-authoritative answer:\nName:    example.com\nAddress:  192.0.2.10",
+        "makna": "DNS menjawab dengan benar. Lambatnya Wi-Fi tidak berasal dari penerjemahan nama.",
+        "berguna": false
+      },
+      {
+        "id": "nmcli-scan",
+        "label": "Pindai jaringan Wi-Fi di sekitar dengan laptop teknisi",
+        "perangkat": "L2",
+        "perintah": "nmcli dev wifi list",
+        "keluaran": "IN-USE  BSSID              SSID            MODE   CHAN  RATE        SIGNAL  BARS  SECURITY\n*       60:A4:B7:11:22:02  KANTOR-STAFF    Infra  6     130 Mbit/s  92      ▂▄▆█  WPA2\n        60:A4:B7:11:22:01  KANTOR-STAFF    Infra  6     130 Mbit/s  81      ▂▄▆█  WPA2\n        60:A4:B7:11:22:03  KANTOR-STAFF    Infra  6     130 Mbit/s  74      ▂▄▆_  WPA2\n        D8:47:32:5E:90:11  Kopi Senja      Infra  6     270 Mbit/s  57      ▂▄▆_  WPA2\n        2C:3A:FD:0B:44:7C  WARUNG-BU-TINI  Infra  11    130 Mbit/s  24      ▂___  WPA2\n        F4:F2:6D:81:0A:3E  ruko-12         Infra  1     65 Mbit/s   19      ▂___  WPA1 WPA2",
+        "makna": "Ketiga AP kantor (tiga BSSID untuk SSID KANTOR-STAFF) memakai kanal 6, dan ketiganya terdengar kuat dari satu titik. Kafe sebelah juga di kanal 6. Semua perangkat ini saling mendengar, sehingga mereka berbagi satu kanal seolah satu AP besar.",
+        "berguna": true
+      },
+      {
+        "id": "survey-kanal",
+        "label": "Ukur kesibukan kanal yang sedang dipakai",
+        "perangkat": "L2",
+        "perintah": "iw dev wlx00c0cab1e2f3 survey dump | grep -A5 'in use'",
+        "keluaran": "\tfrequency:\t\t\t2437 MHz [in use]\n\tnoise:\t\t\t\t-91 dBm\n\tchannel active time:\t\t64712 ms\n\tchannel busy time:\t\t53104 ms\n\tchannel receive time:\t\t49876 ms\n\tchannel transmit time:\t\t1203 ms",
+        "makna": "Frekuensi 2437 MHz adalah kanal 6. Dari 64,7 detik pengamatan, kanal sibuk 53,1 detik (82%), hampir semuanya waktu menerima siaran perangkat lain. Laptop teknisi sendiri hanya mengirim 2% dari waktu. Noise -91 dBm rendah, jadi udara penuh oleh siaran Wi-Fi, bukan oleh derau.",
+        "berguna": true
+      }
+    ],
+    "dugaan": [
+      {
+        "id": "paket-kurang",
+        "teks": "Paket internet 50 Mbps sudah tidak cukup untuk kantor.",
+        "benar": false,
+        "umpan": "PC admin lewat kabel mengunduh sekitar 47 Mbit/s, dan ping kabel ke router stabil di bawah 1 ms. Jalur internet longgar; yang macet adalah udara di sekitar AP."
+      },
+      {
+        "id": "sinyal-lemah",
+        "teks": "Sinyal kurang kuat, jadi kantor perlu menambah AP lagi.",
+        "benar": false,
+        "umpan": "Sinyal di laptop Sari 92%, dan ketiga AP terdengar kuat. Menambah AP lagi di kanal 6 justru menambah perangkat yang berebut waktu siar."
+      },
+      {
+        "id": "kanal-sama",
+        "teks": "Ketiga AP kantor, ditambah AP kafe sebelah, memakai kanal 6 yang sama sehingga semuanya harus bergiliran memakai udara.",
+        "benar": true,
+        "umpan": "Benar. nmcli memperlihatkan tiga BSSID kantor di kanal 6 dengan sinyal kuat, dan survey dump mencatat kanal itu sibuk 82% dari waktu. Di Wi-Fi, perangkat yang saling mendengar di kanal yang sama harus antre."
+      },
+      {
+        "id": "router-lelah",
+        "teks": "Router kantor kelebihan beban dan perlu diganti.",
+        "benar": false,
+        "umpan": "Kalau router yang lambat, PC admin lewat kabel juga merasakannya. Ping kabel ke router di bawah 1 ms dan unduhan lewat kabel hampir penuh."
+      },
+      {
+        "id": "laptop-virus",
+        "teks": "Laptop Sari terkena virus yang menghabiskan bandwidth.",
+        "benar": false,
+        "umpan": "Keluhannya datang dari semua pengguna Wi-Fi, bukan satu laptop. Laptop teknisi yang bersih juga melihat kanal 6 sibuk 82%."
+      }
+    ],
+    "pembahasan": "Langkah pertama: pisahkan kabel dan udara. PC admin yang memakai kabel mendapat ping di bawah 1 ms ke router dan unduhan hampir 50 Mbps. Router, switch, dan ISP sehat. Laptop Sari ke router yang sama mendapat ping 4 sampai 212 ms dengan satu paket hilang. Masalahnya ada di lompatan pertama, yaitu udara antara laptop dan AP.\n\nSinyal 92% sering membuat orang berhenti mencari. Wi-Fi bekerja seperti ruang rapat dengan satu mikrofon: di satu kanal, hanya satu perangkat yang boleh mengirim pada satu waktu, dan yang lain menunggu giliran. Aturan bergiliran ini disebut CSMA/CA. Kalau tiga AP, semua laptop, dan kafe sebelah memakai kanal yang sama, semuanya antre di mikrofon yang sama. Kondisi ini disebut co-channel interference.\n\nnmcli memperlihatkan ketiga AP kantor di kanal 6 dengan sinyal kuat, ditambah Kopi Senja di kanal 6 juga. survey dump menunjukkan kanal 6 sibuk 82% dari waktu, hampir semuanya untuk menerima siaran perangkat lain. Sisa udara untuk semua orang tinggal sedikit, maka jeda melonjak saat jam sibuk dan video call putus.\n\nDi 2,4 GHz, kanal yang tidak saling tumpang tindih pada lebar 20 MHz hanya 1, 6, dan 11. Memilih kanal di antaranya, misalnya 3 atau 8, lebih buruk lagi: kanal yang tumpang tindih sebagian tidak bisa saling mendengar untuk bergiliran, jadi siarannya bertabrakan.\n\nMenambah AP atau menaikkan daya pancar terdengar masuk akal, padahal keduanya memperluas wilayah yang berebut kanal yang sama.\n\nBacaan: `10-wireless/01-rf-dasar` (kanal 1, 6, 11), `10-wireless/02-802-11` (airtime dan media bersama), dan `10-wireless/04-desain-wlan` (rencana kanal dan daya pancar).",
+    "perbaikan": {
+      "penjelasan": "Beri tiap AP kanal berbeda dari himpunan 1, 6, 11 dengan lebar 20 MHz, misalnya AP lantai 1 di kanal 1, AP ruang rapat di kanal 11, dan kanal 6 untuk AP yang paling jauh dari kafe sebelah. Turunkan daya pancar sampai tiap ruang tetap mendapat sekitar -67 dBm; sel yang lebih kecil berarti lebih sedikit perangkat yang saling dengar. Kalau AP dan laptop mendukung 5 GHz, aktifkan, karena di sana kanal yang tidak tumpang tindih jauh lebih banyak. Pengaturan ini dilakukan di halaman admin tiap AP. Catat pengaturan lama supaya bisa dikembalikan, lalu ulangi survei untuk memastikan hasilnya.",
+      "perintah": "# Sesudah kanal diganti, ulangi survei dari laptop teknisi\nnmcli dev wifi rescan\nnmcli -f IN-USE,BSSID,SSID,CHAN,SIGNAL dev wifi list\niw dev wlx00c0cab1e2f3 survey dump | grep -A5 'in use'\n\n# Dari laptop Sari (Windows): jeda ke router harus stabil beberapa ms\nping -n 20 192.168.10.1"
+    },
+    "sumber": [
+      {
+        "judul": "Linux Wireless: dokumentasi iw (link, survey)",
+        "url": "https://wireless.docs.kernel.org/en/latest/en/users/documentation/iw.html"
+      },
+      {
+        "judul": "NetworkManager: manual nmcli (device wifi list, rescan)",
+        "url": "https://networkmanager.dev/docs/api/latest/nmcli.html"
+      },
+      {
+        "judul": "Microsoft Learn: ping",
+        "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ping"
+      }
+    ]
+  },
+  {
+    "id": "ntp-jam-mundur-tls",
+    "judul": "Setelah listrik padam, server gudang menolak sertifikat API pemasok",
+    "tingkat": "menengah",
+    "modul": [
+      "06-aplikasi/05-layanan-lain",
+      "06-aplikasi/04-tls-pki",
+      "13-linux-networking/04-layanan-jaringan-linux"
+    ],
+    "gejala": "Sejak listrik padam akhir pekan, aplikasi gudang gagal mengirim pesanan ke API pemasok dengan galat sertifikat. Dari laptop admin, API yang sama bisa dibuka normal.",
+    "briefing": "**Tiket #0921, Senin 08.40 WITA.** Pelapor: Yusuf, kepala gudang sebuah distributor alat tulis di Makassar.\n\n> Aplikasi gudang tidak bisa kirim pesanan ke pemasok sejak pagi. Di log aplikasi tertulis \"SSL certificate problem\". Dari laptop saya, situs pemasok bisa dibuka biasa.\n\nKonteks: Sabtu sampai Minggu listrik padam lama karena pemeliharaan jaringan PLN. Senin pagi server gudang (mini PC, Ubuntu 24.04) sempat berhenti di layar \"CMOS checksum error\", lalu Yusuf menekan F1 supaya server lanjut menyala. Bulan lalu server Windows lama di kantor sudah dimatikan karena semua fungsinya dipindah ke layanan cloud.\n\nAplikasi gudang memanggil API pemasok di https://api.example.net. Anda punya akses SSH ke server gudang dan remote desktop ke laptop Yusuf.",
+    "lokasi": {
+      "kota": "Makassar",
+      "lat": -5.133,
+      "lon": 119.414
+    },
+    "topologi": {
+      "simpul": [
+        {
+          "id": "ADM",
+          "label": "Laptop Yusuf",
+          "jenis": "laptop",
+          "x": 8,
+          "y": 25,
+          "info": "192.168.1.31, Windows 11"
+        },
+        {
+          "id": "SRV",
+          "label": "Server gudang",
+          "jenis": "server",
+          "x": 8,
+          "y": 75,
+          "info": "192.168.1.20, Ubuntu 24.04, chrony"
+        },
+        {
+          "id": "SW1",
+          "label": "Switch kantor",
+          "jenis": "switch",
+          "x": 32,
+          "y": 50
+        },
+        {
+          "id": "R1",
+          "label": "Router kantor",
+          "jenis": "router",
+          "x": 55,
+          "y": 50,
+          "info": "192.168.1.1"
+        },
+        {
+          "id": "ISP",
+          "label": "ISP",
+          "jenis": "isp",
+          "x": 74,
+          "y": 50
+        },
+        {
+          "id": "API",
+          "label": "API pemasok",
+          "jenis": "server",
+          "x": 92,
+          "y": 50,
+          "info": "api.example.net, 203.0.113.80"
+        }
+      ],
+      "sisi": [
+        {
+          "dari": "ADM",
+          "ke": "SW1"
+        },
+        {
+          "dari": "SRV",
+          "ke": "SW1"
+        },
+        {
+          "dari": "SW1",
+          "ke": "R1"
+        },
+        {
+          "dari": "R1",
+          "ke": "ISP"
+        },
+        {
+          "dari": "ISP",
+          "ke": "API",
+          "label": "HTTPS"
+        }
+      ]
+    },
+    "langkah": [
+      {
+        "id": "curl-server",
+        "label": "Panggil API pemasok dari server gudang",
+        "perangkat": "SRV",
+        "perintah": "curl -sS https://api.example.net/v1/status",
+        "keluaran": "curl: (60) SSL certificate problem: certificate is not yet valid\nMore details here: https://curl.se/docs/sslcerts.html\n\ncurl failed to verify the legitimacy of the server and therefore could not\nestablish a secure connection to it. To learn more about this situation and\nhow to fix it, please visit the web page mentioned above.",
+        "makna": "curl tersambung dan menerima sertifikat, lalu menolaknya karena \"belum berlaku\". Artinya waktu saat ini, menurut server gudang, lebih awal daripada tanggal mulai berlaku (notBefore) di sertifikat. Pertanyaannya: sertifikat yang aneh, atau jam server?",
+        "berguna": true
+      },
+      {
+        "id": "dig-api",
+        "label": "Cari alamat API dari server gudang",
+        "perangkat": "SRV",
+        "perintah": "dig +short api.example.net",
+        "keluaran": "203.0.113.80",
+        "makna": "DNS menjawab dengan alamat yang benar. Server gudang menghubungi API yang sama dengan laptop Yusuf.",
+        "berguna": false
+      },
+      {
+        "id": "ping-api",
+        "label": "Ping API dari server gudang",
+        "perangkat": "SRV",
+        "perintah": "ping -c 3 api.example.net",
+        "keluaran": "PING api.example.net (203.0.113.80) 56(84) bytes of data.\n64 bytes from 203.0.113.80: icmp_seq=1 ttl=52 time=18.4 ms\n64 bytes from 203.0.113.80: icmp_seq=2 ttl=52 time=18.1 ms\n64 bytes from 203.0.113.80: icmp_seq=3 ttl=52 time=18.6 ms\n\n--- api.example.net ping statistics ---\n3 packets transmitted, 3 received, 0% packet loss, time 2003ms\nrtt min/avg/max/mdev = 18.100/18.366/18.600/0.205 ms",
+        "makna": "Jalur dari server ke API lancar. Masalahnya tidak ada di jaringan.",
+        "berguna": false
+      },
+      {
+        "id": "tanggal-sertifikat",
+        "label": "Baca tanggal berlaku sertifikat API",
+        "perangkat": "SRV",
+        "perintah": "echo | openssl s_client -connect api.example.net:443 -servername api.example.net 2>/dev/null | openssl x509 -noout -subject -dates",
+        "keluaran": "subject=CN = api.example.net\nnotBefore=Sep 28 01:12:44 2026 GMT\nnotAfter=Dec 27 01:12:43 2026 GMT",
+        "makna": "Sertifikat diterbitkan untuk api.example.net dan berlaku 28 September sampai 27 Desember 2026. Hari ini 12 Oktober 2026, jadi sertifikatnya sah. Kalau server tetap menganggapnya belum berlaku, server pasti mengira sekarang sebelum 28 September.",
+        "berguna": true
+      },
+      {
+        "id": "curl-laptop",
+        "label": "Panggil API yang sama dari laptop Yusuf",
+        "perangkat": "ADM",
+        "perintah": "curl -sI https://api.example.net/v1/status",
+        "keluaran": "HTTP/1.1 200 OK\nServer: nginx\nDate: Mon, 12 Oct 2026 00:43:18 GMT\nContent-Type: application/json\nContent-Length: 15\nConnection: keep-alive",
+        "makna": "Laptop dengan jam yang benar menerima sertifikat yang sama dan mendapat HTTP 200. Header Date dari server API juga menyebut 12 Oktober 2026. Sertifikat dan API sehat; yang berbeda adalah mesin pemeriksanya.",
+        "berguna": true
+      },
+      {
+        "id": "timedatectl",
+        "label": "Periksa jam dan status sinkronisasi server",
+        "perangkat": "SRV",
+        "perintah": "timedatectl",
+        "keluaran": "               Local time: Tue 2026-03-10 19:12:12 WITA\n           Universal time: Tue 2026-03-10 11:12:12 UTC\n                 RTC time: Sat 2000-01-01 01:10:20\n                Time zone: Asia/Makassar (WITA, +0800)\nSystem clock synchronized: no\n              NTP service: active\n          RTC in local TZ: no",
+        "makna": "Server mengira sekarang 10 Maret 2026, tujuh bulan mundur. RTC, jam perangkat keras di papan induk yang terus berjalan saat server mati, menunjuk 1 Januari 2000: tanda baterai CMOS habis dan jamnya ter-reset. Tahun 2000 tidak dipakai karena systemd memajukan jam ke tanggal pembuatan paketnya sendiri bila RTC lebih tua; dari situlah Maret 2026. Layanan NTP aktif, tetapi jam belum pernah tersinkron.",
+        "berguna": true
+      },
+      {
+        "id": "chrony-sources",
+        "label": "Lihat sumber waktu yang dipakai chrony",
+        "perangkat": "SRV",
+        "perintah": "chronyc sources -v",
+        "keluaran": "  .-- Source mode  '^' = server, '=' = peer, '#' = local clock.\n / .- Source state '*' = current best, '+' = combined, '-' = not combined,\n| /             'x' = may be in error, '~' = too variable, '?' = unusable.\n||                                                 .- xxxx [ yyyy ] +/- zzzz\n||      Reachability register (octal) -.           |  xxxx = adjusted offset,\n||      Log2(Polling interval) --.      |          |  yyyy = measured offset,\n||                                \\     |          |  zzzz = estimated error.\n||                                 |    |           \\\nMS Name/IP address         Stratum Poll Reach LastRx Last sample\n===============================================================================\n^? 192.168.1.5                   0   9     0     -     +0ns[   +0ns] +/-    0ns",
+        "makna": "chrony hanya punya satu sumber, 192.168.1.5. Tanda ? berarti sumber tidak bisa dipakai, dan Reach 0 berarti tidak satu pun dari delapan permintaan terakhir dijawab. Tanpa sumber yang hidup, chrony tidak punya acuan untuk membetulkan jam.",
+        "berguna": true
+      },
+      {
+        "id": "ping-ntp-lama",
+        "label": "Ping sumber NTP yang terdaftar",
+        "perangkat": "SRV",
+        "perintah": "ping -c 3 192.168.1.5",
+        "keluaran": "PING 192.168.1.5 (192.168.1.5) 56(84) bytes of data.\nFrom 192.168.1.20 icmp_seq=1 Destination Host Unreachable\nFrom 192.168.1.20 icmp_seq=2 Destination Host Unreachable\nFrom 192.168.1.20 icmp_seq=3 Destination Host Unreachable\n\n--- 192.168.1.5 ping statistics ---\n3 packets transmitted, 0 received, +3 errors, 100% packet loss, time 2051ms\npipe 3",
+        "makna": "Tidak ada perangkat yang menjawab ARP untuk 192.168.1.5 di jaringan lokal, jadi server sendiri yang melaporkan unreachable. Itu alamat server Windows lama yang dimatikan bulan lalu. Sumber waktu satu-satunya sudah tidak ada sejak saat itu.",
+        "berguna": true
+      },
+      {
+        "id": "ip-br-a",
+        "label": "Lihat alamat IP server gudang",
+        "perangkat": "SRV",
+        "perintah": "ip -br a",
+        "keluaran": "lo               UNKNOWN        127.0.0.1/8 ::1/128\nenp2s0           UP             192.168.1.20/24 fe80::6e4b:90ff:fe3a:1c2d/64",
+        "makna": "Interface enp2s0 UP dengan alamat 192.168.1.20/24 seperti biasa. Konfigurasi jaringan server tidak berubah setelah listrik padam.",
+        "berguna": false
+      }
+    ],
+    "dugaan": [
+      {
+        "id": "sertifikat-kedaluwarsa",
+        "teks": "Sertifikat API pemasok sudah kedaluwarsa.",
+        "benar": false,
+        "umpan": "notAfter-nya 27 Desember 2026, dan galatnya berbunyi \"not yet valid\", bukan \"expired\". Laptop Yusuf menerima sertifikat yang sama tanpa protes."
+      },
+      {
+        "id": "jam-mundur-ntp-mati",
+        "teks": "Jam server mundur ke Maret 2026 setelah baterai CMOS habis, dan chrony tidak bisa membetulkannya karena satu-satunya sumber NTP-nya (192.168.1.5) sudah dimatikan.",
+        "benar": true,
+        "umpan": "Tepat. Sertifikat berlaku mulai 28 September 2026, sedangkan server mengira sekarang 10 Maret 2026. timedatectl menyatakan jam tidak tersinkron, dan chrony hanya mengenal 192.168.1.5 yang tidak lagi ada."
+      },
+      {
+        "id": "api-gangguan",
+        "teks": "Server API pemasok sedang gangguan.",
+        "benar": false,
+        "umpan": "Laptop Yusuf mendapat HTTP 200 dari alamat yang sama, dan server gudang bisa ping ke API. TLS bahkan sudah sampai tahap memeriksa sertifikat."
+      },
+      {
+        "id": "ca-usang",
+        "teks": "Daftar CA tepercaya (paket ca-certificates) di server sudah usang.",
+        "benar": false,
+        "umpan": "CA yang tidak dikenal menghasilkan galat \"unable to get local issuer certificate\". Galat di sini menyebut tanggal: certificate is not yet valid."
+      },
+      {
+        "id": "firewall-443",
+        "teks": "Firewall kantor memblokir HTTPS dari server gudang.",
+        "benar": false,
+        "umpan": "curl sudah tersambung dan menerima sertifikat dari server API. Pemeriksaan tanggal terjadi sesudah port 443 terbuka, jadi firewall tidak menghalangi."
+      }
+    ],
+    "pembahasan": "Pesan galatnya sudah memberi arah: certificate is not yet valid. Menurut mesin yang memeriksa, waktu sekarang lebih awal daripada notBefore di sertifikat. Tinggal ditentukan: sertifikatnya yang aneh, atau jam mesinnya.\n\nPengecoh menyingkirkan jaringan. dig menjawab, ping ke API lancar, dan curl sudah sampai tahap memeriksa sertifikat, jadi port 443 terbuka. openssl menunjukkan sertifikat berlaku 28 September sampai 27 Desember 2026, dan laptop Yusuf menerimanya. Sertifikatnya sah; yang berbeda adalah mesin pemeriksanya.\n\ntimedatectl menjawab sisanya. Server mengira sekarang 10 Maret 2026, RTC menunjuk 1 Januari 2000, dan jam sistem tidak tersinkron. Baterai CMOS yang habis membuat RTC kehilangan waktunya saat listrik padam; layar \"CMOS checksum error\" adalah jejaknya. Sistem menyala dengan tanggal lama, sehingga sertifikat yang terbit September terlihat belum berlaku.\n\nKenapa NTP tidak membetulkannya? chronyc sources hanya berisi 192.168.1.5 dengan tanda ? dan Reach 0, dan ping ke alamat itu gagal. Itu server Windows lama yang dimatikan bulan lalu. Selama sebulan RTC menutupi masalah ini karena jamnya cukup akurat, dan masalahnya baru terlihat setelah listrik padam.\n\nKesalahan yang sering terjadi adalah memperbarui sertifikat atau CA bundle. Itu tidak menolong, karena masalahnya ada di jam. Jam yang salah juga merusak hal lain: log dan transaksi pagi ini tercatat dengan tanggal Maret, Kerberos menolak login bila selisih waktunya lebih dari 5 menit, dan token berbatas waktu ikut ditolak.\n\nBacaan: `06-aplikasi/05-layanan-lain` (NTP dan chrony), `06-aplikasi/04-tls-pki` (tabel galat TLS), dan `13-linux-networking/04-layanan-jaringan-linux`.",
+    "perbaikan": {
+      "penjelasan": "Beri chrony sumber waktu yang hidup, lompatkan jam sekali dengan makestep, lalu tulis waktu yang benar ke RTC. Pool NTP Indonesia (id.pool.ntp.org) atau router kantor yang menjalankan NTP bisa dipakai; sediakan lebih dari satu sumber supaya satu server mati tidak lagi membuat jam liar. Ganti baterai CMOS (biasanya CR2032) agar RTC tidak lupa lagi. Sesudah jam benar, periksa data yang tercatat dengan tanggal Maret 2026 pagi ini. Rollback: salin kembali chrony.conf.bak lalu restart chrony.",
+      "perintah": "sudo cp /etc/chrony/chrony.conf /etc/chrony/chrony.conf.bak\nsudo sed -i 's/^server 192.168.1.5 iburst$/pool 0.id.pool.ntp.org iburst maxsources 4/' /etc/chrony/chrony.conf\nsudo systemctl restart chrony\nchronyc sources\nsudo chronyc makestep\ntimedatectl\nsudo hwclock --systohc\n\n# verifikasi: API harus menjawab 200\ncurl -sS -o /dev/null -w '%{http_code}\\n' https://api.example.net/v1/status"
+    },
+    "sumber": [
+      {
+        "judul": "chrony: manual chronyc (sources, tracking, makestep)",
+        "url": "https://chrony-project.org/doc/4.5/chronyc.html"
+      },
+      {
+        "judul": "chrony: manual chrony.conf (server, pool, makestep)",
+        "url": "https://chrony-project.org/doc/4.5/chrony.conf.html"
+      },
+      {
+        "judul": "systemd: timedatectl(1)",
+        "url": "https://man7.org/linux/man-pages/man1/timedatectl.1.html"
+      },
+      {
+        "judul": "OpenSSL 3.0: openssl-x509 (-dates, -subject)",
+        "url": "https://docs.openssl.org/3.0/man1/openssl-x509/"
+      },
+      {
+        "judul": "curl: SSL CA certificates dan galat 60",
+        "url": "https://curl.se/docs/sslcerts.html"
+      },
+      {
+        "judul": "NTP Pool Project: zona Indonesia",
+        "url": "https://www.ntppool.org/zone/id"
+      }
+    ]
+  },
+  {
+    "id": "sertifikat-internal-kedaluwarsa",
+    "judul": "Guru tidak bisa absen: peringatan sertifikat di aplikasi absensi sekolah",
+    "tingkat": "pemula",
+    "modul": [
+      "06-aplikasi/04-tls-pki",
+      "06-aplikasi/03-http"
+    ],
+    "gejala": "Jumat pagi semua guru mendapat peringatan NET::ERR_CERT_DATE_INVALID saat membuka aplikasi absensi sekolah. Kamis sore aplikasi masih normal.",
+    "briefing": "**Tiket #0088, Jumat 07.10 WIB.** Pelapor: Bu Wening, wakil kepala sekolah sebuah SMK di Sleman, Yogyakarta.\n\n> Guru-guru tidak bisa absen. Begitu membuka https://absensi.example.org, browser menampilkan peringatan merah dengan kode NET::ERR_CERT_DATE_INVALID. Ada guru yang menekan \"lanjutkan\" saja, tapi saya tidak yakin itu aman. Kemarin sore masih bisa.\n\nKonteks: aplikasi absensi berjalan di server internal sekolah (Ubuntu, nginx). Sertifikat HTTPS-nya diterbitkan CA internal sekolah, yaitu otoritas sertifikat milik sekolah sendiri yang sudah dipasang di semua laptop guru. Pak Hadi, teknisi yang menyiapkannya tahun lalu, sudah pindah tugas sejak Agustus.\n\nAnda teknisi pengganti. Anda membawa laptop Linux, boleh memakai laptop Bu Wening (Windows 11), dan punya akses SSH ke server absensi.",
+    "lokasi": {
+      "kota": "Sleman",
+      "lat": -7.7,
+      "lon": 110.333
+    },
+    "topologi": {
+      "simpul": [
+        {
+          "id": "L1",
+          "label": "Laptop Bu Wening",
+          "jenis": "laptop",
+          "x": 8,
+          "y": 25,
+          "info": "192.168.50.123, Windows 11"
+        },
+        {
+          "id": "AP1",
+          "label": "AP ruang guru",
+          "jenis": "ap",
+          "x": 24,
+          "y": 25
+        },
+        {
+          "id": "L2",
+          "label": "Laptop teknisi",
+          "jenis": "laptop",
+          "x": 8,
+          "y": 75,
+          "info": "192.168.50.77, Linux"
+        },
+        {
+          "id": "SW1",
+          "label": "Switch sekolah",
+          "jenis": "switch",
+          "x": 40,
+          "y": 50
+        },
+        {
+          "id": "SRV",
+          "label": "Server absensi",
+          "jenis": "server",
+          "x": 64,
+          "y": 25,
+          "info": "absensi.example.org, 192.168.50.10"
+        },
+        {
+          "id": "R1",
+          "label": "Router sekolah",
+          "jenis": "router",
+          "x": 64,
+          "y": 75,
+          "info": "192.168.50.1, DNS lokal"
+        },
+        {
+          "id": "ISP",
+          "label": "ISP",
+          "jenis": "isp",
+          "x": 90,
+          "y": 75
+        }
+      ],
+      "sisi": [
+        {
+          "dari": "L1",
+          "ke": "AP1",
+          "label": "Wi-Fi"
+        },
+        {
+          "dari": "AP1",
+          "ke": "SW1"
+        },
+        {
+          "dari": "L2",
+          "ke": "SW1"
+        },
+        {
+          "dari": "SW1",
+          "ke": "SRV"
+        },
+        {
+          "dari": "SW1",
+          "ke": "R1"
+        },
+        {
+          "dari": "R1",
+          "ke": "ISP"
+        }
+      ]
+    },
+    "langkah": [
+      {
+        "id": "ping-absensi",
+        "label": "Ping server absensi dari laptop Bu Wening",
+        "perangkat": "L1",
+        "perintah": "ping absensi.example.org",
+        "keluaran": "Pinging absensi.example.org [192.168.50.10] with 32 bytes of data:\nReply from 192.168.50.10: bytes=32 time=2ms TTL=64\nReply from 192.168.50.10: bytes=32 time=1ms TTL=64\nReply from 192.168.50.10: bytes=32 time=1ms TTL=64\nReply from 192.168.50.10: bytes=32 time=2ms TTL=64\n\nPing statistics for 192.168.50.10:\n    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),\nApproximate round trip times in milli-seconds:\n    Minimum = 1ms, Maximum = 2ms, Average = 1ms",
+        "makna": "Server absensi hidup dan terjangkau dari laptop guru. Masalahnya tidak ada di kabel, Wi-Fi, atau alamat IP.",
+        "berguna": false
+      },
+      {
+        "id": "nslookup-absensi",
+        "label": "Periksa nama server absensi di DNS",
+        "perangkat": "L1",
+        "perintah": "nslookup absensi.example.org",
+        "keluaran": "Server:  UnKnown\nAddress:  192.168.50.1\n\nNon-authoritative answer:\nName:    absensi.example.org\nAddress:  192.168.50.10",
+        "makna": "DNS router sekolah menjawab 192.168.50.10, alamat server absensi yang benar. Guru tidak diarahkan ke server lain.",
+        "berguna": false
+      },
+      {
+        "id": "port-443",
+        "label": "Uji port HTTPS dengan PowerShell",
+        "perangkat": "L1",
+        "perintah": "Test-NetConnection absensi.example.org -Port 443",
+        "keluaran": "ComputerName     : absensi.example.org\nRemoteAddress    : 192.168.50.10\nRemotePort       : 443\nInterfaceAlias   : Wi-Fi\nSourceAddress    : 192.168.50.123\nTcpTestSucceeded : True",
+        "makna": "TcpTestSucceeded True: port 443 terbuka dan server menerima koneksi. Web server berjalan. Masalahnya ada di tahap sesudah koneksi tersambung.",
+        "berguna": false
+      },
+      {
+        "id": "date-teknisi",
+        "label": "Pastikan jam laptop teknisi benar",
+        "perangkat": "L2",
+        "perintah": "date",
+        "keluaran": "Fri Oct 16 07:14:05 WIB 2026",
+        "makna": "Jam laptop teknisi benar: Jumat 16 Oktober 2026, pukul 07.14. Galat tanggal sertifikat bisa berasal dari jam perangkat yang salah, jadi ini dicek dulu. Dengan jam yang benar, uji berikutnya bisa dipercaya.",
+        "berguna": true
+      },
+      {
+        "id": "curl-absensi",
+        "label": "Buka aplikasi absensi dengan curl",
+        "perangkat": "L2",
+        "perintah": "curl -sS https://absensi.example.org/",
+        "keluaran": "curl: (60) SSL certificate problem: certificate has expired\nMore details here: https://curl.se/docs/sslcerts.html\n\ncurl failed to verify the legitimacy of the server and therefore could not\nestablish a secure connection to it. To learn more about this situation and\nhow to fix it, please visit the web page mentioned above.",
+        "makna": "curl menolak sertifikat server karena sudah kedaluwarsa (certificate has expired). Ini terjadi di laptop yang jamnya benar, jadi masalahnya ada di sertifikat, bukan di laptop guru.",
+        "berguna": true
+      },
+      {
+        "id": "tanggal-sertifikat",
+        "label": "Baca tanggal berlaku sertifikat server",
+        "perangkat": "L2",
+        "perintah": "echo | openssl s_client -connect absensi.example.org:443 -servername absensi.example.org 2>/dev/null | openssl x509 -noout -subject -issuer -dates",
+        "keluaran": "subject=CN = absensi.example.org\nissuer=CN = CA Internal Sekolah\nnotBefore=Oct 15 14:22:07 2025 GMT\nnotAfter=Oct 15 14:22:07 2026 GMT",
+        "makna": "Sertifikat atas nama absensi.example.org, diterbitkan CA internal sekolah, berlaku satu tahun sampai 15 Oktober 2026 pukul 14.22 GMT. GMT tertinggal 7 jam dari WIB, jadi sertifikat habis Kamis pukul 21.22 WIB, beberapa jam setelah guru terakhir absen.",
+        "berguna": true
+      },
+      {
+        "id": "status-nginx",
+        "label": "Periksa status nginx di server",
+        "perangkat": "SRV",
+        "perintah": "systemctl status nginx --no-pager",
+        "keluaran": "● nginx.service - A high performance web server and a reverse proxy server\n     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: enabled)\n     Active: active (running) since Mon 2026-09-28 06:51:33 WIB; 2 weeks 4 days ago\n       Docs: man:nginx(8)\n   Main PID: 1042 (nginx)\n      Tasks: 5 (limit: 9387)\n     Memory: 7.9M (peak: 9.6M)\n        CPU: 2min 13.402s\n     CGroup: /system.slice/nginx.service\n             ├─1042 \"nginx: master process /usr/sbin/nginx -g daemon on; master_process on;\"\n             ├─1043 \"nginx: worker process\"\n             ├─1044 \"nginx: worker process\"\n             ├─1045 \"nginx: worker process\"\n             └─1046 \"nginx: worker process\"",
+        "makna": "nginx aktif tanpa henti sejak 28 September. Web server sehat. Me-restart nginx tidak akan menolong, karena ia akan memuat berkas sertifikat yang sama.",
+        "berguna": false
+      },
+      {
+        "id": "berkas-sertifikat",
+        "label": "Cek tanggal habis berkas sertifikat di server",
+        "perangkat": "SRV",
+        "perintah": "sudo openssl x509 -in /etc/nginx/ssl/absensi.crt -noout -enddate",
+        "keluaran": "notAfter=Oct 15 14:22:07 2026 GMT",
+        "makna": "Berkas yang dipakai nginx masih sertifikat lama yang sama. Belum pernah ada yang menerbitkan dan memasang penggantinya.",
+        "berguna": true
+      }
+    ],
+    "dugaan": [
+      {
+        "id": "jam-laptop",
+        "teks": "Jam di laptop para guru salah.",
+        "benar": false,
+        "umpan": "Laptop teknisi menunjukkan Jumat 16 Oktober 2026, tanggal yang benar, dan tetap mendapat galat yang sama. Semua perangkat terkena, bukan satu laptop."
+      },
+      {
+        "id": "sertifikat-habis",
+        "teks": "Sertifikat server absensi habis masa berlakunya pada 15 Oktober 2026 dan belum diperbarui.",
+        "benar": true,
+        "umpan": "Benar. notAfter sertifikat adalah 15 Oktober 2026 pukul 14.22 GMT, yaitu 21.22 WIB Kamis malam. Sejak itu setiap browser menolaknya, dan berkas di server masih berkas yang sama."
+      },
+      {
+        "id": "server-mati",
+        "teks": "Server absensi mati atau nginx berhenti.",
+        "benar": false,
+        "umpan": "Ping dibalas, port 443 terbuka, dan nginx aktif sejak 28 September. Server melayani koneksi; yang ditolak browser adalah sertifikatnya."
+      },
+      {
+        "id": "dns-salah",
+        "teks": "DNS mengarahkan absensi.example.org ke server yang salah.",
+        "benar": false,
+        "umpan": "nslookup menjawab 192.168.50.10, alamat server absensi, dan sertifikat yang diterima memang atas nama absensi.example.org."
+      },
+      {
+        "id": "ca-belum-dipasang",
+        "teks": "Laptop guru belum memasang sertifikat CA internal sekolah.",
+        "benar": false,
+        "umpan": "Kalau CA belum terpasang, galatnya \"unable to get local issuer certificate\", dan laptop itu tidak akan pernah bisa absen. Galat di sini jelas menyebut kedaluwarsa."
+      }
+    ],
+    "pembahasan": "Mulai dari yang paling dasar. Ping dibalas, nama terjawab ke 192.168.50.10, dan Test-NetConnection membuktikan port 443 terbuka. Jaringan dan server hidup. Masalahnya ada di TLS, lapisan yang mengamankan HTTPS.\n\nKode NET::ERR_CERT_DATE_INVALID dan pesan curl \"certificate has expired\" sama-sama menunjuk ke tanggal. Ada dua kemungkinan: jam perangkat yang salah, atau sertifikat yang memang sudah lewat masa berlakunya. Karena itu `date` dicek lebih dulu. Laptop teknisi menunjuk 16 Oktober 2026, tanggal yang benar, dan tetap ditolak.\n\nopenssl memperlihatkan sertifikat berlaku dari 15 Oktober 2025 sampai 15 Oktober 2026 pukul 14.22 GMT, yaitu Kamis 21.22 WIB. Berkas di server masih yang lama. Sertifikat itu dibuat dengan masa berlaku 365 hari, dan tidak ada yang mencatat kapan harus diganti.\n\nSertifikat sengaja punya tanggal habis. Kalau kunci rahasianya bocor, kerugiannya terbatas pada masa berlaku itu. Akibatnya setiap sertifikat butuh orang atau sistem yang ingat memperbaruinya. Di sini orang yang ingat sudah pindah tugas.\n\nPengecohnya adalah \"server hidup tapi situs tidak bisa dibuka\". Banyak orang langsung me-restart server atau nginx, padahal nginx akan memuat sertifikat yang sama. Menyuruh guru menekan \"lanjutkan\" juga berbahaya: mereka jadi terbiasa mengabaikan peringatan yang suatu hari bisa berarti serangan sungguhan.\n\nBacaan: `06-aplikasi/04-tls-pki` (masa berlaku sertifikat, tabel galat TLS, skrip pemantau kedaluwarsa) dan `06-aplikasi/03-http` (HTTPS).",
+    "perbaikan": {
+      "penjelasan": "Terbitkan sertifikat baru dari CA internal sekolah dengan SAN (Subject Alternative Name, daftar nama yang sah) untuk absensi.example.org, pasang di server, lalu muat ulang nginx. Cadangkan berkas lama lebih dulu. nginx -t memeriksa konfigurasi sebelum reload, jadi nginx tidak dimuat ulang bila ada yang salah. Setelah itu pasang pengingat di kalender 30 hari sebelum tanggal habis, atau jalankan skrip pemantau kedaluwarsa dari modul 06-aplikasi/04 lewat cron. Untuk jangka panjang, CA internal yang mendukung ACME bisa memperbarui sertifikat otomatis.",
+      "perintah": "# Di mesin CA sekolah: buat kunci dan CSR baru dengan SAN\nopenssl req -new -newkey rsa:2048 -nodes -keyout absensi.key -out absensi.csr \\\n  -subj \"/CN=absensi.example.org\" -addext \"subjectAltName=DNS:absensi.example.org\"\n\n# Tandatangani dengan CA internal, berlaku 365 hari\nopenssl x509 -req -in absensi.csr -CA ca-sekolah.crt -CAkey ca-sekolah.key \\\n  -CAcreateserial -days 365 -sha256 -copy_extensions copy -out absensi.crt\n\n# Di server absensi: cadangkan, pasang, uji, muat ulang\nsudo cp /etc/nginx/ssl/absensi.crt /etc/nginx/ssl/absensi.crt.2025\nsudo cp /etc/nginx/ssl/absensi.key /etc/nginx/ssl/absensi.key.2025\nsudo install -m 644 absensi.crt /etc/nginx/ssl/absensi.crt\nsudo install -m 600 absensi.key /etc/nginx/ssl/absensi.key\nsudo nginx -t && sudo systemctl reload nginx\n\n# Verifikasi dari laptop teknisi\necho | openssl s_client -connect absensi.example.org:443 -servername absensi.example.org 2>/dev/null | openssl x509 -noout -dates"
+    },
+    "sumber": [
+      {
+        "judul": "OpenSSL 3.0: openssl-x509 (-dates, -enddate, -copy_extensions)",
+        "url": "https://docs.openssl.org/3.0/man1/openssl-x509/"
+      },
+      {
+        "judul": "OpenSSL 3.0: openssl-req (-addext, -subj)",
+        "url": "https://docs.openssl.org/3.0/man1/openssl-req/"
+      },
+      {
+        "judul": "curl: SSL CA certificates dan galat 60",
+        "url": "https://curl.se/docs/sslcerts.html"
+      },
+      {
+        "judul": "Microsoft Learn: Test-NetConnection",
+        "url": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/test-netconnection"
+      },
+      {
+        "judul": "nginx: Configuring HTTPS servers",
+        "url": "https://nginx.org/en/docs/http/configuring_https_servers.html"
+      }
+    ]
+  },
+  {
+    "id": "rp-filter-dua-nic",
+    "judul": "Server database baru tidak pernah membalas Zabbix lewat jaringan manajemen",
+    "tingkat": "lanjut",
+    "modul": [
+      "13-linux-networking/01-iproute2",
+      "04-network-layer/05-routing-dasar",
+      "12-keamanan/03-serangan-l3-l7",
+      "13-linux-networking/03-nftables-firewall"
+    ],
+    "gejala": "Zabbix menandai server db-01 tidak tersedia lewat IP manajemen, dan ping ke IP itu tidak pernah dibalas. Lewat IP produksi server menjawab, dan aplikasi berjalan normal.",
+    "briefing": "**Tiket #4410, Rabu 10.05.** Pelapor: Dimas, admin sistem di kantor pusat sebuah perusahaan logistik di Surabaya.\n\n> Server database baru db-01 sudah jalan sejak Senin dan aplikasi lancar. Tapi Zabbix terus menandainya Unavailable lewat IP manajemen 10.20.20.15, dengan pesan cannot connect to [[10.20.20.15]:10050]: [4] Interrupted system call. Ping dari Zabbix ke IP itu juga tidak dibalas. Firewall sudah saya cek, port Zabbix terbuka.\n\nKonteks: mulai bulan ini semua server dipantau lewat jaringan manajemen 10.20.20.0/24, terpisah dari jaringan produksi 10.10.10.0/24. db-01 server pertama yang dipasang dengan NIC kedua untuk itu; server lain masih satu NIC. Sistem operasinya Rocky Linux 8, mengikuti versi yang disertifikasi vendor database. Zabbix ada di subnet 10.30.0.0/24, di belakang router manajemen.\n\nAnda punya akses ke Zabbix server, server backup di jaringan manajemen, dan db-01.",
+    "lokasi": {
+      "kota": "Surabaya",
+      "lat": -7.246,
+      "lon": 112.738
+    },
+    "topologi": {
+      "simpul": [
+        {
+          "id": "MON",
+          "label": "Zabbix server",
+          "jenis": "server",
+          "x": 8,
+          "y": 22,
+          "info": "10.30.0.5"
+        },
+        {
+          "id": "RM",
+          "label": "Router manajemen",
+          "jenis": "router",
+          "x": 32,
+          "y": 22,
+          "info": "10.30.0.1 dan 10.20.20.1"
+        },
+        {
+          "id": "SWM",
+          "label": "Switch manajemen",
+          "jenis": "switch",
+          "x": 58,
+          "y": 22,
+          "info": "10.20.20.0/24"
+        },
+        {
+          "id": "BKP",
+          "label": "Server backup",
+          "jenis": "server",
+          "x": 58,
+          "y": 50,
+          "info": "10.20.20.30"
+        },
+        {
+          "id": "CORE",
+          "label": "Core L3",
+          "jenis": "router",
+          "x": 32,
+          "y": 78,
+          "info": "10.10.10.1"
+        },
+        {
+          "id": "SWP",
+          "label": "Switch produksi",
+          "jenis": "switch",
+          "x": 58,
+          "y": 78,
+          "info": "10.10.10.0/24"
+        },
+        {
+          "id": "DB",
+          "label": "db-01",
+          "jenis": "server",
+          "x": 88,
+          "y": 50,
+          "info": "ens192 10.10.10.15, ens224 10.20.20.15"
+        }
+      ],
+      "sisi": [
+        {
+          "dari": "MON",
+          "ke": "RM"
+        },
+        {
+          "dari": "RM",
+          "ke": "SWM"
+        },
+        {
+          "dari": "SWM",
+          "ke": "BKP"
+        },
+        {
+          "dari": "SWM",
+          "ke": "DB",
+          "label": "ens224"
+        },
+        {
+          "dari": "RM",
+          "ke": "CORE",
+          "label": "antar-router"
+        },
+        {
+          "dari": "CORE",
+          "ke": "SWP"
+        },
+        {
+          "dari": "SWP",
+          "ke": "DB",
+          "label": "ens192"
+        }
+      ]
+    },
+    "langkah": [
+      {
+        "id": "ping-mgmt",
+        "label": "Ping IP manajemen db-01 dari Zabbix",
+        "perangkat": "MON",
+        "perintah": "ping -c 3 10.20.20.15",
+        "keluaran": "PING 10.20.20.15 (10.20.20.15) 56(84) bytes of data.\n\n--- 10.20.20.15 ping statistics ---\n3 packets transmitted, 0 received, 100% packet loss, time 2047ms",
+        "makna": "Tidak ada balasan sama sekali, dan tidak ada pesan galat ICMP dari router. Paketnya hilang diam-diam di suatu tempat antara Zabbix dan db-01.",
+        "berguna": true
+      },
+      {
+        "id": "ping-prod",
+        "label": "Ping IP produksi db-01 dari Zabbix",
+        "perangkat": "MON",
+        "perintah": "ping -c 3 10.10.10.15",
+        "keluaran": "PING 10.10.10.15 (10.10.10.15) 56(84) bytes of data.\n64 bytes from 10.10.10.15: icmp_seq=1 ttl=62 time=0.612 ms\n64 bytes from 10.10.10.15: icmp_seq=2 ttl=62 time=0.540 ms\n64 bytes from 10.10.10.15: icmp_seq=3 ttl=62 time=0.571 ms\n\n--- 10.10.10.15 ping statistics ---\n3 packets transmitted, 3 received, 0% packet loss, time 2044ms\nrtt min/avg/max/mdev = 0.540/0.574/0.612/0.029 ms",
+        "makna": "Lewat IP produksi, db-01 menjawab. Server hidup, ICMP tidak diblokir, dan Zabbix bisa menjangkaunya lewat jalur router manajemen lalu core. Yang gagal hanya tujuan 10.20.20.15.",
+        "berguna": true
+      },
+      {
+        "id": "ping-dari-backup",
+        "label": "Ping IP manajemen db-01 dari server backup",
+        "perangkat": "BKP",
+        "perintah": "ping -c 3 10.20.20.15",
+        "keluaran": "PING 10.20.20.15 (10.20.20.15) 56(84) bytes of data.\n64 bytes from 10.20.20.15: icmp_seq=1 ttl=64 time=0.311 ms\n64 bytes from 10.20.20.15: icmp_seq=2 ttl=64 time=0.287 ms\n64 bytes from 10.20.20.15: icmp_seq=3 ttl=64 time=0.298 ms\n\n--- 10.20.20.15 ping statistics ---\n3 packets transmitted, 3 received, 0% packet loss, time 2051ms\nrtt min/avg/max/mdev = 0.287/0.298/0.311/0.009 ms",
+        "makna": "Dari server backup yang satu subnet dengan ens224, IP manajemen menjawab. Kabel, NIC, dan alamat ens224 bekerja. Bedanya dengan Zabbix: backup berada di 10.20.20.0/24, sedangkan Zabbix datang dari subnet lain, 10.30.0.0/24.",
+        "berguna": true
+      },
+      {
+        "id": "ip-br-a",
+        "label": "Lihat alamat interface db-01",
+        "perangkat": "DB",
+        "perintah": "ip -br a",
+        "keluaran": "lo               UNKNOWN        127.0.0.1/8 ::1/128\nens192           UP             10.10.10.15/24 fe80::250:56ff:fe8a:1f20/64\nens224           UP             10.20.20.15/24 fe80::250:56ff:fe8a:6b41/64",
+        "makna": "Kedua interface UP dengan alamat yang benar: ens192 di jaringan produksi, ens224 di jaringan manajemen. Konfigurasi alamat beres.",
+        "berguna": false
+      },
+      {
+        "id": "ip-route",
+        "label": "Lihat tabel routing db-01",
+        "perangkat": "DB",
+        "perintah": "ip route",
+        "keluaran": "default via 10.10.10.1 dev ens192 proto static metric 100\n10.10.10.0/24 dev ens192 proto kernel scope link src 10.10.10.15 metric 100\n10.20.20.0/24 dev ens224 proto kernel scope link src 10.20.20.15 metric 101",
+        "makna": "db-01 hanya tahu 10.20.20.0/24 lewat ens224. Semua tujuan lain, termasuk 10.30.0.0/24 tempat Zabbix, lewat rute default di ens192. Jadi paket dari Zabbix masuk lewat ens224, tetapi jalan pulang menurut db-01 lewat ens192. Jalur seperti ini disebut asimetris.",
+        "berguna": true
+      },
+      {
+        "id": "tcpdump-ens224",
+        "label": "Tangkap paket dari Zabbix di ens224",
+        "perangkat": "DB",
+        "perintah": "sudo tcpdump -ni ens224 host 10.30.0.5",
+        "keluaran": "dropped privs to tcpdump\ntcpdump: verbose output suppressed, use -v[v]... for full protocol decode\nlistening on ens224, link-type EN10MB (Ethernet), capture size 262144 bytes\n10:02:09.118204 IP 10.30.0.5.46820 > 10.20.20.15.10050: Flags [S], seq 2716620937, win 64240, options [mss 1460,sackOK,TS val 3822913 ecr 0,nop,wscale 7], length 0\n10:02:10.120417 IP 10.30.0.5.46820 > 10.20.20.15.10050: Flags [S], seq 2716620937, win 64240, options [mss 1460,sackOK,TS val 3823915 ecr 0,nop,wscale 7], length 0\n10:02:11.402881 IP 10.30.0.5 > 10.20.20.15: ICMP echo request, id 4113, seq 1, length 64\n10:02:12.124380 IP 10.30.0.5.46820 > 10.20.20.15.10050: Flags [S], seq 2716620937, win 64240, options [mss 1460,sackOK,TS val 3825919 ecr 0,nop,wscale 7], length 0\n10:02:12.403927 IP 10.30.0.5 > 10.20.20.15: ICMP echo request, id 4113, seq 2, length 64\n10:02:13.405114 IP 10.30.0.5 > 10.20.20.15: ICMP echo request, id 4113, seq 3, length 64\n^C\n6 packets captured\n6 packets received by filter\n0 packets dropped by kernel",
+        "makna": "Permintaan dari Zabbix tiba di ens224: SYN ke port 10050 (agent Zabbix) yang dikirim ulang, dan echo request dari ping. Router manajemen sudah mengantar paketnya. Tidak ada satu pun balasan dari db-01, baik lewat ens224 maupun lewat interface lain. Paket hilang di dalam server.",
+        "berguna": true
+      },
+      {
+        "id": "firewalld-internal",
+        "label": "Lihat zona firewalld untuk ens224",
+        "perangkat": "DB",
+        "perintah": "sudo firewall-cmd --zone=internal --list-all",
+        "keluaran": "internal (active)\n  target: default\n  icmp-block-inversion: no\n  interfaces: ens224\n  sources:\n  services: cockpit dhcpv6-client mdns samba-client ssh zabbix-agent\n  ports:\n  protocols:\n  masquerade: no\n  forward-ports:\n  source-ports:\n  icmp-blocks:\n  rich rules:",
+        "makna": "Zona internal untuk ens224 mengizinkan layanan zabbix-agent (TCP 10050), dan daftar icmp-blocks kosong sehingga ping diizinkan. Firewall tidak menolak trafik Zabbix, persis seperti kata Dimas.",
+        "berguna": false
+      },
+      {
+        "id": "agent-aktif",
+        "label": "Periksa apakah agent Zabbix berjalan",
+        "perangkat": "DB",
+        "perintah": "systemctl is-active zabbix-agent2",
+        "keluaran": "active",
+        "makna": "Agent berjalan. Lagi pula ping ICMP juga gagal, dan ICMP dijawab kernel, bukan agent. Masalahnya terjadi sebelum paket sampai ke aplikasi mana pun.",
+        "berguna": false
+      },
+      {
+        "id": "sysctl-rp-filter",
+        "label": "Baca pengaturan reverse path filter",
+        "perangkat": "DB",
+        "perintah": "sysctl net.ipv4.conf.all.rp_filter net.ipv4.conf.ens224.rp_filter",
+        "keluaran": "net.ipv4.conf.all.rp_filter = 1\nnet.ipv4.conf.ens224.rp_filter = 0",
+        "makna": "rp_filter memeriksa alamat sumber setiap paket masuk: kalau saya membalas pengirim ini, lewat interface mana? Nilai 1 berarti strict, jawabannya harus interface tempat paket masuk. Kernel memakai nilai terbesar antara all dan interface, jadi ens224 tetap strict walau nilainya sendiri 0. Rocky Linux 8 memasang all=1 secara bawaan.",
+        "berguna": true
+      },
+      {
+        "id": "route-get-iif",
+        "label": "Simulasikan paket dari Zabbix yang masuk lewat ens224",
+        "perangkat": "DB",
+        "perintah": "ip route get 10.20.20.15 from 10.30.0.5 iif ens224",
+        "keluaran": "RTNETLINK answers: Invalid cross-device link",
+        "makna": "Dengan iif, ip route get meniru keputusan kernel untuk paket yang MASUK lewat ens224. Kernel menolaknya: rute balik ke 10.30.0.5 ada di ens192, bukan ens224, sehingga pemeriksaan reverse path gagal dengan galat cross-device link.",
+        "berguna": true
+      },
+      {
+        "id": "nstat-rpfilter",
+        "label": "Lihat penghitung paket yang dibuang rp_filter",
+        "perangkat": "DB",
+        "perintah": "nstat -az TcpExtIPReversePathFilter",
+        "keluaran": "#kernel\nTcpExtIPReversePathFilter       2214               0.0",
+        "makna": "Kernel sudah membuang 2.214 paket karena gagal pemeriksaan reverse path, dan angkanya naik setiap kali Zabbix mencoba. Ini bukti langsung: paket dibuang di tahap routing, sebelum sampai ke firewalld atau agent.",
+        "berguna": true
+      }
+    ],
+    "dugaan": [
+      {
+        "id": "nic-rusak",
+        "teks": "Kabel atau NIC ens224 di db-01 rusak.",
+        "benar": false,
+        "umpan": "Server backup di subnet yang sama mendapat balasan dari 10.20.20.15, dan tcpdump di ens224 menangkap paket dari Zabbix. NIC dan kabelnya bekerja."
+      },
+      {
+        "id": "firewalld-blokir",
+        "teks": "firewalld di db-01 memblokir Zabbix dan ping di jaringan manajemen.",
+        "benar": false,
+        "umpan": "Zona internal untuk ens224 mengizinkan zabbix-agent dan tidak memblokir ICMP. Penghitung IPReversePathFilter yang terus naik menunjukkan paket dibuang di tahap routing, sebelum firewall memeriksanya."
+      },
+      {
+        "id": "rp-filter-strict",
+        "teks": "rp_filter strict membuang paket dari 10.30.0.5 yang masuk lewat ens224, karena rute balik ke 10.30.0.0/24 lewat ens192.",
+        "benar": true,
+        "umpan": "Tepat. ip route get dengan iif ens224 ditolak Invalid cross-device link, dan penghitung IPReversePathFilter terus naik. Nilai all=1 membuat ens224 strict walau nilainya sendiri 0."
+      },
+      {
+        "id": "agent-mati",
+        "teks": "Agent Zabbix di db-01 tidak berjalan.",
+        "benar": false,
+        "umpan": "Agent aktif, dan ping ICMP ke 10.20.20.15 juga gagal. ICMP dijawab kernel, bukan agent, jadi masalahnya terjadi sebelum aplikasi mana pun."
+      },
+      {
+        "id": "router-mgmt",
+        "teks": "Router manajemen tidak meneruskan paket ke 10.20.20.0/24.",
+        "benar": false,
+        "umpan": "tcpdump di ens224 menunjukkan echo request dan SYN dari 10.30.0.5 tiba di db-01. Router sudah mengantar paketnya sampai ke server."
+      }
+    ],
+    "pembahasan": "Lapisan bawah dulu. Server backup yang satu subnet dengan ens224 mendapat balasan, jadi kabel, NIC, dan alamatnya sehat. Zabbix ke IP produksi 10.10.10.15 juga dibalas, jadi server hidup dan bisa dijangkau lewat jalur lain. Yang gagal hanya kombinasi Zabbix (10.30.0.5) ke ens224.\n\ntcpdump di ens224 menunjukkan permintaan dari 10.30.0.5 tiba, tetapi tidak satu pun dijawab. Router sudah mengantar paketnya; paket hilang di dalam db-01.\n\nTabel routing menjelaskan alasannya. db-01 hanya tahu 10.20.20.0/24 lewat ens224; selebihnya, termasuk 10.30.0.0/24, lewat rute default di ens192. Untuk setiap paket yang masuk, kernel bertanya: kalau saya membalas pengirim ini, lewat interface mana? Itulah reverse path filter (rp_filter), versi Linux dari uRPF di router. Dalam mode strict (1), jawabannya harus interface tempat paket masuk. Untuk 10.30.0.5 jawabannya ens192, padahal paket masuk lewat ens224, maka paket dibuang sebelum sampai ke firewall atau aplikasi. Pengirim tidak menerima balasan maupun pesan galat.\n\nsysctl menunjukkan all=1 dan ens224=0. Kernel memakai nilai terbesar dari keduanya, sehingga ens224 tetap strict. `ip route get` dengan `iif ens224` meniru paket masuk dan langsung ditolak, dan penghitung IPReversePathFilter terus naik.\n\nPengecohnya: firewalld adalah tersangka pertama yang wajar, padahal zona internal sudah mengizinkan zabbix-agent dan ICMP. Agent Zabbix juga hidup. Keduanya tidak pernah melihat paketnya. Server lain tidak pernah kena karena hanya punya satu NIC, jadi jalur pergi dan pulangnya selalu sama.\n\nBacaan: `13-linux-networking/01-iproute2` (ip route get, sysctl rp_filter), `04-network-layer/05-routing-dasar` (routing asimetris), `12-keamanan/03-serangan-l3-l7` (spoofing dan uRPF), dan `13-linux-networking/03-nftables-firewall` (firewalld).",
+    "perbaikan": {
+      "penjelasan": "Buat jalur balik yang simetris: rute statis ke 10.30.0.0/24 lewat router manajemen di ens224. Dengan rute itu, jalur balik ke 10.30.0.5 adalah ens224, sehingga rp_filter strict meloloskan paketnya dan balasan server keluar lewat jaringan manajemen juga. Cara ini mempertahankan rp_filter strict yang berguna melawan alamat palsu (spoofing). Mengubah rp_filter ke 2 (loose) juga menghilangkan gejala, tetapi membuang perlindungan itu dan membiarkan balasan keluar lewat jaringan produksi. Simpan rute lewat NetworkManager supaya bertahan setelah reboot.",
+      "perintah": "# Uji dulu tanpa menyimpan permanen\nsudo ip route add 10.30.0.0/24 via 10.20.20.1 dev ens224\nip route get 10.20.20.15 from 10.30.0.5 iif ens224\nnstat -az TcpExtIPReversePathFilter   # angkanya berhenti naik\n\n# Jadikan permanen lewat NetworkManager\nsudo nmcli connection modify ens224 +ipv4.routes \"10.30.0.0/24 10.20.20.1\"\nsudo nmcli connection up ens224\n\n# Rollback bila perlu\nsudo nmcli connection modify ens224 -ipv4.routes \"10.30.0.0/24 10.20.20.1\"\nsudo nmcli connection up ens224"
+    },
+    "sumber": [
+      {
+        "judul": "Dokumentasi kernel Linux: ip-sysctl (rp_filter, nilai maksimum all dan interface)",
+        "url": "https://docs.kernel.org/networking/ip-sysctl.html"
+      },
+      {
+        "judul": "RFC 3704: Ingress Filtering for Multihomed Networks (strict dan loose)",
+        "url": "https://www.rfc-editor.org/rfc/rfc3704"
+      },
+      {
+        "judul": "systemd v239: sysctl.d/50-default.conf (net.ipv4.conf.all.rp_filter = 1)",
+        "url": "https://github.com/systemd/systemd/blob/v239/sysctl.d/50-default.conf"
+      },
+      {
+        "judul": "ip-route(8), manual iproute2 (ip route get, iif)",
+        "url": "https://man7.org/linux/man-pages/man8/ip-route.8.html"
+      },
+      {
+        "judul": "nstat(8), manual iproute2",
+        "url": "https://man7.org/linux/man-pages/man8/nstat.8.html"
+      },
+      {
+        "judul": "NetworkManager: manual nmcli (connection modify, ipv4.routes)",
+        "url": "https://networkmanager.dev/docs/api/latest/nmcli.html"
+      }
+    ]
+  },
+  {
+    "id": "mikrotik-urutan-filter-input",
+    "judul": "Setelah Winbox ditutup dari internet, semua situs tidak bisa dibuka",
+    "tingkat": "menengah",
+    "modul": [
+      "19-mikrotik/03-firewall-nat",
+      "09-nat-acl-firewall/03-firewall",
+      "12-keamanan/05-hardening-zero-trust"
+    ],
+    "gejala": "Sehari setelah teknisi menambah aturan firewall untuk menutup Winbox dari internet, semua PC dan HP kantor tidak bisa membuka situs. Ping ke alamat IP di internet tetap lancar.",
+    "briefing": "**Tiket #0630, Kamis 08.20.** Pelapor: Pak Hendra, pemilik biro perjalanan umrah di Banda Aceh.\n\n> Sejak pagi semua komputer tidak bisa membuka situs, termasuk sistem pemesanan tiket. HP yang pakai Wi-Fi kantor juga sama. Kemarin sore Fikri mengutak-atik router.\n\nCatatan Fikri, teknisi paruh waktu: Rabu sore log router penuh pesan login failure for user admin via winbox dari alamat asing. Ia menambah aturan drop untuk semua trafik yang masuk dari ether1-wan di chain input, dan menaruhnya paling atas dengan place-before=0 \"supaya pasti kena\". Ia belum sempat mengetes karena harus pulang.\n\nAnda punya akses terminal ke router (hAP ac2, RouterOS 7) dari LAN, dan ke PC staf. Semua perangkat mendapat alamat dan DNS dari DHCP router.",
+    "lokasi": {
+      "kota": "Banda Aceh",
+      "lat": 5.55,
+      "lon": 95.318
+    },
+    "topologi": {
+      "simpul": [
+        {
+          "id": "PC1",
+          "label": "PC staf",
+          "jenis": "pc",
+          "x": 8,
+          "y": 28,
+          "info": "192.168.88.24 (DHCP)"
+        },
+        {
+          "id": "HP1",
+          "label": "HP staf",
+          "jenis": "ponsel",
+          "x": 8,
+          "y": 74,
+          "info": "Wi-Fi kantor"
+        },
+        {
+          "id": "R1",
+          "label": "MikroTik hAP ac2",
+          "jenis": "router",
+          "x": 42,
+          "y": 50,
+          "info": "LAN 192.168.88.1, WAN 198.51.100.10"
+        },
+        {
+          "id": "ISP",
+          "label": "ISP",
+          "jenis": "isp",
+          "x": 70,
+          "y": 50,
+          "info": "gateway 198.51.100.9"
+        },
+        {
+          "id": "DNS",
+          "label": "DNS ISP",
+          "jenis": "server",
+          "x": 92,
+          "y": 24,
+          "info": "203.0.113.53 dan 203.0.113.54"
+        },
+        {
+          "id": "WEB",
+          "label": "Server pemesanan",
+          "jenis": "server",
+          "x": 92,
+          "y": 76,
+          "info": "192.0.2.10"
+        }
+      ],
+      "sisi": [
+        {
+          "dari": "PC1",
+          "ke": "R1",
+          "label": "ether2"
+        },
+        {
+          "dari": "HP1",
+          "ke": "R1",
+          "label": "Wi-Fi"
+        },
+        {
+          "dari": "R1",
+          "ke": "ISP",
+          "label": "ether1-wan"
+        },
+        {
+          "dari": "ISP",
+          "ke": "DNS"
+        },
+        {
+          "dari": "ISP",
+          "ke": "WEB"
+        }
+      ]
+    },
+    "langkah": [
+      {
+        "id": "ping-ip-internet",
+        "label": "Ping server pemesanan memakai alamat IP dari PC staf",
+        "perangkat": "PC1",
+        "perintah": "ping 192.0.2.10",
+        "keluaran": "Pinging 192.0.2.10 with 32 bytes of data:\nReply from 192.0.2.10: bytes=32 time=21ms TTL=56\nReply from 192.0.2.10: bytes=32 time=20ms TTL=56\nReply from 192.0.2.10: bytes=32 time=22ms TTL=56\nReply from 192.0.2.10: bytes=32 time=20ms TTL=56\n\nPing statistics for 192.0.2.10:\n    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),\nApproximate round trip times in milli-seconds:\n    Minimum = 20ms, Maximum = 22ms, Average = 20ms",
+        "makna": "PC tembus ke internet memakai alamat IP. Routing, NAT, dan jalur ISP bekerja untuk trafik PC. Masalahnya lebih sempit dari \"internet mati\".",
+        "berguna": true
+      },
+      {
+        "id": "nslookup-router",
+        "label": "Tanya DNS dari PC staf",
+        "perangkat": "PC1",
+        "perintah": "nslookup example.com",
+        "keluaran": "DNS request timed out.\n    timeout was 2 seconds.\nServer:  UnKnown\nAddress:  192.168.88.1\n\nDNS request timed out.\n    timeout was 2 seconds.\nDNS request timed out.\n    timeout was 2 seconds.\nDNS request timed out.\n    timeout was 2 seconds.\nDNS request timed out.\n    timeout was 2 seconds.\n*** Request to UnKnown timed-out",
+        "makna": "PC bertanya ke 192.168.88.1, yaitu router, dan tidak pernah mendapat jawaban. Router bertugas meneruskan pertanyaan DNS semua perangkat kantor ke ISP. Kalau router tidak menjawab, semua situs gagal dibuka walau internet sebenarnya tersambung.",
+        "berguna": true
+      },
+      {
+        "id": "nslookup-isp",
+        "label": "Tanya DNS ISP langsung dari PC staf",
+        "perangkat": "PC1",
+        "perintah": "nslookup example.com 203.0.113.53",
+        "keluaran": "Server:  ns1.isp.example.net\nAddress:  203.0.113.53\n\nNon-authoritative answer:\nName:    example.com\nAddress:  192.0.2.10",
+        "makna": "Bertanya langsung ke DNS ISP berhasil. Server DNS ISP hidup, dan pertanyaan PC yang diteruskan router (chain forward) beserta jawabannya lewat dengan lancar. Yang gagal khusus router ketika bertanya atas namanya sendiri.",
+        "berguna": true
+      },
+      {
+        "id": "ipconfig-staf",
+        "label": "Lihat konfigurasi IP lengkap PC staf",
+        "perangkat": "PC1",
+        "perintah": "ipconfig /all",
+        "keluaran": "Windows IP Configuration\n\n   Host Name . . . . . . . . . . . . : STAF-02\n   Primary Dns Suffix  . . . . . . . :\n   Node Type . . . . . . . . . . . . : Hybrid\n   IP Routing Enabled. . . . . . . . : No\n   WINS Proxy Enabled. . . . . . . . : No\n   DNS Suffix Search List. . . . . . : lan\n\nEthernet adapter Ethernet:\n\n   Connection-specific DNS Suffix  . : lan\n   Description . . . . . . . . . . . : Intel(R) Ethernet Connection (7) I219-V\n   Physical Address. . . . . . . . . : 3C-52-82-6B-10-4D\n   DHCP Enabled. . . . . . . . . . . : Yes\n   Autoconfiguration Enabled . . . . : Yes\n   IPv4 Address. . . . . . . . . . . : 192.168.88.24(Preferred)\n   Subnet Mask . . . . . . . . . . . : 255.255.255.0\n   Lease Obtained. . . . . . . . . . : Thursday, October 15, 2026 7:58:12 AM\n   Lease Expires . . . . . . . . . . : Thursday, October 15, 2026 5:58:12 PM\n   Default Gateway . . . . . . . . . : 192.168.88.1\n   DHCP Server . . . . . . . . . . . : 192.168.88.1\n   DNS Servers . . . . . . . . . . . : 192.168.88.1\n   NetBIOS over Tcpip. . . . . . . . : Enabled",
+        "makna": "Konfigurasi PC normal dan sesuai rancangan: alamat, gateway, dan DNS semuanya menunjuk ke router. Tidak ada yang berubah di PC.",
+        "berguna": false
+      },
+      {
+        "id": "ping-dari-router",
+        "label": "Ping DNS ISP dari router",
+        "perangkat": "R1",
+        "perintah": "/ping 203.0.113.53 count=3",
+        "keluaran": "  SEQ HOST                                     SIZE TTL TIME       STATUS\n    0 203.0.113.53                                                 timeout\n    1 203.0.113.53                                                 timeout\n    2 203.0.113.53                                                 timeout\n    sent=3 received=0 packet-loss=100%",
+        "makna": "Router sendiri tidak mendapat balasan dari alamat yang bisa dijangkau PC. Paket yang diteruskan router lancar, tetapi paket yang dibuat router dan balasannya bermasalah. Balasan untuk router masuk lewat chain input, bukan chain forward.",
+        "berguna": true
+      },
+      {
+        "id": "route-print",
+        "label": "Lihat tabel routing router",
+        "perangkat": "R1",
+        "perintah": "/ip route print",
+        "keluaran": "Flags: D - DYNAMIC; A - ACTIVE; c - CONNECT, s - STATIC\nColumns: DST-ADDRESS, GATEWAY, DISTANCE\n#     DST-ADDRESS      GATEWAY       DISTANCE\n0  As 0.0.0.0/0        198.51.100.9         1\n  DAc 192.168.88.0/24  bridge-lan           0\n  DAc 198.51.100.8/29  ether1-wan           0",
+        "makna": "Rute default statis aktif lewat gateway ISP 198.51.100.9. Routing tidak berubah dan tidak bermasalah.",
+        "berguna": false
+      },
+      {
+        "id": "dns-print",
+        "label": "Lihat pengaturan DNS router",
+        "perangkat": "R1",
+        "perintah": "/ip dns print",
+        "keluaran": "                      servers: 203.0.113.53,203.0.113.54\n              dynamic-servers:\n               use-doh-server:\n              verify-doh-cert: no\n   doh-max-server-connections: 5\n   doh-max-concurrent-queries: 50\n                  doh-timeout: 5s\n        allow-remote-requests: yes\n          max-udp-packet-size: 4096\n         query-server-timeout: 2s\n          query-total-timeout: 10s\n       max-concurrent-queries: 100\n  max-concurrent-tcp-sessions: 20\n                   cache-size: 2048KiB\n                cache-max-ttl: 1w\n                          vrf: main\n                   cache-used: 9KiB",
+        "makna": "Server DNS ISP tercatat benar dan router melayani pertanyaan dari LAN (allow-remote-requests=yes). Pengaturannya tidak berubah. Cache yang hampir kosong (9KiB) hanya menandakan sudah lama tidak ada nama baru yang berhasil diterjemahkan.",
+        "berguna": false
+      },
+      {
+        "id": "nat-stats",
+        "label": "Lihat penghitung aturan NAT",
+        "perangkat": "R1",
+        "perintah": "/ip firewall nat print stats",
+        "keluaran": "Flags: X - disabled, I - invalid; D - dynamic\n #    CHAIN   ACTION             BYTES    PACKETS\n 0    ;;; NAT internet\n      srcnat  masquerade   184 330 912    611 420",
+        "makna": "Masquerade terus menghitung paket. NAT bekerja untuk trafik PC dan tidak ada hubungannya dengan gejala ini.",
+        "berguna": false
+      },
+      {
+        "id": "filter-print",
+        "label": "Lihat urutan aturan filter firewall",
+        "perangkat": "R1",
+        "perintah": "/ip firewall filter print",
+        "keluaran": "Flags: X - disabled, I - invalid; D - dynamic\n 0    ;;; tutup akses dari WAN\n      chain=input action=drop in-interface=ether1-wan\n\n 1    ;;; terima koneksi yang sudah berjalan\n      chain=input action=accept connection-state=established,related,untracked\n\n 2    chain=input action=drop connection-state=invalid\n\n 3    chain=input action=accept protocol=icmp\n\n 4    chain=forward action=accept connection-state=established,related,untracked\n\n 5    chain=forward action=drop connection-state=invalid\n\n 6    chain=forward action=drop connection-state=new in-interface=ether1-wan",
+        "makna": "Aturan diperiksa dari atas ke bawah, dan aturan pertama yang cocok menentukan nasib paket. Aturan 0 membuang SEMUA yang masuk dari ether1-wan di chain input tanpa melihat status koneksi, termasuk jawaban untuk permintaan router sendiri. Aturan 1, yang seharusnya meloloskan jawaban itu, tidak pernah sempat diperiksa.",
+        "berguna": true
+      },
+      {
+        "id": "filter-stats",
+        "label": "Nolkan penghitung, tunggu semenit, lihat chain input",
+        "perangkat": "R1",
+        "perintah": "/ip firewall filter reset-counters-all ; :delay 60s ; /ip firewall filter print stats where chain=input",
+        "keluaran": "Flags: X - disabled, I - invalid; D - dynamic\n #    CHAIN  ACTION   BYTES  PACKETS\n 0    ;;; tutup akses dari WAN\n      input  drop    48 211      402\n 1    ;;; terima koneksi yang sudah berjalan\n      input  accept   3 960       58\n 2    input  drop         0        0\n 3    input  accept       0        0",
+        "makna": "Dalam semenit, aturan 0 membuang 402 paket dari WAN. Aturan 1 hanya menghitung paket dari LAN, misalnya sesi terminal Anda sendiri. Aturan 3 (accept ICMP) nol karena balasan ping dari internet sudah dibuang aturan 0 lebih dulu.",
+        "berguna": true
+      },
+      {
+        "id": "log-drop",
+        "label": "Catat paket yang dibuang aturan 0 ke log",
+        "perangkat": "R1",
+        "perintah": "/ip firewall filter set 0 log=yes log-prefix=WAN-DROP ; :delay 10s ; /log print where message~\"WAN-DROP\"",
+        "keluaran": " 08:52:40 firewall,info WAN-DROP input: in:ether1-wan out:(unknown 0), connection-state:established src-mac 64:d1:54:0a:11:9e, proto UDP, 203.0.113.53:53->198.51.100.10:41877, len 92\n 08:52:41 firewall,info WAN-DROP input: in:ether1-wan out:(unknown 0), connection-state:established src-mac 64:d1:54:0a:11:9e, proto UDP, 203.0.113.54:53->198.51.100.10:38114, len 108\n 08:52:43 firewall,info WAN-DROP input: in:ether1-wan out:(unknown 0), connection-state:new src-mac 64:d1:54:0a:11:9e, proto TCP (SYN), 192.0.2.201:51122->198.51.100.10:8291, len 60\n 08:52:44 firewall,info WAN-DROP input: in:ether1-wan out:(unknown 0), connection-state:established src-mac 64:d1:54:0a:11:9e, proto UDP, 203.0.113.53:53->198.51.100.10:52306, len 92\n 08:52:47 firewall,info WAN-DROP input: in:ether1-wan out:(unknown 0), connection-state:established src-mac 64:d1:54:0a:11:9e, proto UDP, 192.0.2.123:123->198.51.100.10:123, len 76",
+        "makna": "Sebagian besar paket yang dibuang berstatus established: jawaban DNS dari port 53 ISP dan jawaban NTP dari port 123, semuanya untuk permintaan router sendiri. Hanya satu yang memang ingin dibuang Fikri: SYN baru ke port 8291 (Winbox) dari alamat asing.",
+        "berguna": true
+      }
+    ],
+    "dugaan": [
+      {
+        "id": "dns-isp-mati",
+        "teks": "Server DNS ISP (203.0.113.53 dan .54) sedang mati.",
+        "benar": false,
+        "umpan": "PC staf yang bertanya langsung ke 203.0.113.53 mendapat jawaban. Server DNS ISP hidup. Yang gagal hanya router ketika bertanya atas nama PC."
+      },
+      {
+        "id": "drop-di-atas-established",
+        "teks": "Aturan drop dari ether1-wan di nomor 0 chain input mendahului accept established,related, sehingga jawaban DNS untuk router ikut dibuang.",
+        "benar": true,
+        "umpan": "Benar. Log memperlihatkan aturan 0 membuang jawaban DNS berstatus established dari port 53 ISP, dan router tidak bisa ping ke luar. Trafik PC yang lewat chain forward tidak terkena, sehingga ping ke IP tetap lancar."
+      },
+      {
+        "id": "nat-rusak",
+        "teks": "NAT masquerade rusak sehingga PC tidak bisa ke internet.",
+        "benar": false,
+        "umpan": "PC bisa ping 192.0.2.10 dan bertanya langsung ke DNS ISP, dan penghitung masquerade terus naik. NAT bekerja."
+      },
+      {
+        "id": "rute-hilang",
+        "teks": "Rute default di router hilang setelah perubahan kemarin.",
+        "benar": false,
+        "umpan": "/ip route print menunjukkan rute default statis aktif lewat 198.51.100.9, dan PC bisa ping ke internet lewat router itu."
+      },
+      {
+        "id": "dns-pc-salah",
+        "teks": "Pengaturan DNS di PC dan HP salah.",
+        "benar": false,
+        "umpan": "DHCP memang memberi 192.168.88.1 sebagai DNS, sesuai rancangan. Semua perangkat terkena sekaligus, dan PC yang sama berhasil ketika bertanya langsung ke DNS ISP."
+      }
+    ],
+    "pembahasan": "Petunjuk pertama ada di PC. Ping ke 192.0.2.10 dibalas, jadi routing, NAT, dan jalur internet bekerja. nslookup ke router tidak dijawab, tetapi nslookup langsung ke 203.0.113.53 dijawab. Server DNS ISP sehat; yang gagal adalah router, yang meneruskan pertanyaan DNS semua perangkat kantor.\n\nDi router, /ping ke 203.0.113.53 gagal, padahal PC bisa sampai ke alamat yang sama. Bedanya ada di jalur paket di dalam RouterOS. Paket PC diteruskan router lewat chain forward. Ping dan pertanyaan DNS milik router dibuat router sendiri, dan balasannya masuk lewat chain input.\n\nAturan filter diperiksa dari atas ke bawah, dan aturan pertama yang cocok menang. Aturan 0 membuang semua yang datang dari ether1-wan tanpa melihat status koneksi. Jawaban DNS dari ISP datang lewat ether1-wan, jadi dibuang di aturan 0 sebelum aturan 1 (accept established,related) sempat memeriksanya. Log membuktikannya: paket yang dibuang berstatus connection-state:established, yaitu jawaban untuk permintaan router sendiri.\n\nNiat Fikri menutup Winbox dari internet sudah benar; aturannya saja yang dipasang di posisi yang salah. Pola baku di modul 19-mikrotik/03: terima established,related, buang invalid, izinkan yang perlu, lalu drop sisa trafik dari WAN di paling bawah. Firewall filter MikroTik juga tidak punya implicit deny: paket yang tidak cocok dengan aturan mana pun diterima. Karena tidak ada drop di akhir chain input, Winbox sempat terbuka ke internet.\n\nPengecohnya, gejala \"situs tidak bisa dibuka\" membuat orang mencurigai ISP atau NAT, padahal NAT terus menghitung paket dan PC tembus ke internet lewat IP.\n\nBacaan: `19-mikrotik/03-firewall-nat` (connection-state, urutan aturan, packet flow), `09-nat-acl-firewall/03-firewall` (firewall stateful), dan `12-keamanan/05-hardening-zero-trust` (menutup akses manajemen dari WAN).",
+    "perbaikan": {
+      "penjelasan": "Pindahkan aturan drop ke akhir daftar. Perintah move tanpa tujuan menaruh aturan di urutan terakhir, sehingga jawaban yang sah lolos lewat aturan 1 dan hanya koneksi baru dari WAN yang dibuang. Aktifkan Safe Mode (Ctrl+X) lebih dulu; kalau perubahan memutus sesi Anda, RouterOS membatalkannya. Matikan juga log pada aturan itu supaya log tidak membanjir. Untuk lapisan kedua, batasi Winbox dan SSH ke subnet LAN lewat /ip service. Rollback: aturan bisa dinonaktifkan sementara dengan disable [find comment=\"tutup akses dari WAN\"].",
+      "perintah": "# Tekan Ctrl+X untuk masuk Safe Mode, lalu:\n/ip firewall filter set [find comment=\"tutup akses dari WAN\"] log=no\n/ip firewall filter move [find comment=\"tutup akses dari WAN\"]\n/ip firewall filter print\n\n# Lapisan kedua: layanan manajemen hanya dari LAN\n/ip service set winbox address=192.168.88.0/24\n/ip service set ssh address=192.168.88.0/24\n\n# Verifikasi: router harus bisa ping keluar dan menjawab DNS PC\n/ping 203.0.113.53 count=3\n/ip firewall filter print stats where chain=input\n# Tekan Ctrl+X lagi untuk keluar dari Safe Mode"
+    },
+    "sumber": [
+      {
+        "judul": "MikroTik RouterOS: Filter (urutan aturan, connection-state)",
+        "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/48660574/Filter"
+      },
+      {
+        "judul": "MikroTik RouterOS: Building Your First Firewall",
+        "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/328513/Building+Your+First+Firewall"
+      },
+      {
+        "judul": "MikroTik RouterOS: Command Line Interface (move, Safe Mode)",
+        "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/328134/Command+Line+Interface"
+      },
+      {
+        "judul": "MikroTik RouterOS: First Time Configuration (aturan input dan forward yang disarankan)",
+        "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/328151/First+Time+Configuration"
+      },
+      {
+        "judul": "Microsoft Learn: nslookup",
+        "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/nslookup"
+      }
+    ]
+  }
+]

@@ -1,0 +1,286 @@
+{
+  "23-jalur-vendor/01-junos": {
+    "intinya": {
+      "satu_kalimat": "Junos adalah sistem operasi router Juniper yang menampung perubahan Anda di salinan kerja (candidate) lebih dulu, lalu baru menerapkannya ke jaringan saat Anda menjalankan commit.",
+      "analogi": "Mengubah konfigurasi di Cisco IOS atau MikroTik mirip menulis langsung di papan pengumuman kantor: setiap huruf langsung terbaca semua orang. Di Junos Anda menulis di draf dulu, membandingkannya dengan papan yang sedang terpasang (`show | compare`), meminta pemeriksaan (`commit check`), baru menempelkannya (`commit`), bahkan bisa menempel sementara yang otomatis dicopot bila tidak Anda konfirmasi (`commit confirmed`). Bedanya, pemeriksaan Junos hanya menguji sintaks dan konsistensi, bukan maksud Anda, sehingga perubahan yang sah tetap bisa salah logika.",
+      "kenapa_penting": "Juniper banyak dipakai di backbone operator dan data center. Kalau Anda bekerja di ISP besar, Anda akan bertemu Junos, dan kebiasaan `show | compare` serta `commit confirmed` membuat Anda bisa mengubah router jarak jauh tanpa takut mengunci diri sendiri.",
+      "istilah": [
+        {
+          "kata": "Candidate configuration",
+          "arti": "Salinan kerja konfigurasi yang Anda ubah dengan `set` dan `delete`. Belum berpengaruh ke jaringan sampai di-commit."
+        },
+        {
+          "kata": "commit confirmed",
+          "arti": "Commit yang otomatis dibatalkan bila tidak dikonfirmasi dengan commit kedua dalam batas waktu tertentu. Bawaannya 10 menit."
+        },
+        {
+          "kata": "rollback",
+          "arti": "Memuat versi konfigurasi lama dari arsip ke candidate. Versi itu baru aktif setelah Anda menjalankan commit."
+        },
+        {
+          "kata": "policy-statement",
+          "arti": "Kebijakan routing Junos yang berisi term berurutan. Setiap term punya kondisi (`from`) dan aksi (`then`), misalnya accept atau reject."
+        },
+        {
+          "kata": "deactivate",
+          "arti": "Perintah yang menonaktifkan satu cabang konfigurasi tanpa menghapusnya. Cabang itu ditandai `inactive:` dan diabaikan saat commit."
+        },
+        {
+          "kata": "Routing Engine dan PFE",
+          "arti": "Routing Engine adalah otak kontrol yang menjalankan protokol routing. Packet Forwarding Engine meneruskan paket memakai tabel yang diturunkan Routing Engine."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Satu baris deactivate di policy Junos membuat router Atlanta menarik trafik backbone Cloudflare",
+      "kapan": "2020-07-17",
+      "di_mana": "Cloudflare, backbone global (router di Atlanta, Amerika Serikat)",
+      "ringkas": "Cloudflare punya backbone berupa jalur privat antar-data center. Untuk mengurangi kemacetan, seorang engineer mengubah satu baris policy BGP di router Atlanta. Perubahan itu justru membuat router Atlanta mengiklankan semua rute BGP-nya ke seluruh backbone dengan preferensi lebih tinggi. Trafik dari banyak lokasi tertarik ke Atlanta, router itu kewalahan, dan trafik Cloudflare turun sekitar 50% selama 27 menit di lokasi seperti San Jose, Chicago, London, Frankfurt, dan São Paulo.",
+      "kronologi": [
+        {
+          "waktu": "17 Juli 2020, 20.25 UTC",
+          "peristiwa": "Link backbone Newark-Chicago putus, sehingga backbone antara Atlanta dan Washington DC macet."
+        },
+        {
+          "waktu": "21.12 UTC",
+          "peristiwa": "Untuk mengurangi kemacetan, engineer mengubah konfigurasi router Atlanta. Router itu mulai menarik trafik dari seluruh backbone dan CPU-nya kelebihan beban, sementara data center yang terdampak berhenti menangani trafik."
+        },
+        {
+          "waktu": "21.39 UTC",
+          "peristiwa": "Setelah penyebabnya dipahami, router Atlanta dilepas dari backbone dan trafik kembali mengalir normal."
+        },
+        {
+          "waktu": "21.47 sampai 22.10 UTC",
+          "peristiwa": "Kemacetan di salah satu data center inti membuat sebagian log terbuang, tetapi jaringan tepi tetap beroperasi normal."
+        },
+        {
+          "waktu": "22.10 UTC",
+          "peristiwa": "Pemulihan penuh, termasuk log dan metrik."
+        },
+        {
+          "waktu": "20 Juli 2020",
+          "peristiwa": "Jadwal pemasangan batas maximum-prefix di sesi BGP backbone. Nilai local-preference untuk rute server lokal sudah diubah segera setelah insiden."
+        }
+      ],
+      "akar_masalah": "Policy `6-BBONE-OUT` di router Atlanta punya term `6-SITE-LOCAL` dengan kondisi `from prefix-list 6-SITE-LOCAL` dan aksi `local-preference 200` lalu `accept`. Engineer bermaksud menonaktifkan term itu, tetapi yang dinonaktifkan justru baris prefix-list di dalam `from`. Tanpa kondisi, term itu berlaku untuk semua rute, sehingga router mengirim seluruh rute BGP-nya ke router backbone lain dengan local-preference 200. Rute lokal di router tepi hanya bernilai 100, jadi trafik yang seharusnya ke server lokal ditarik ke Atlanta.",
+      "kaitan": "Bagian 10 ('Policy-Options') menjelaskan bahwa term dievaluasi berurutan, setiap term punya `from` (kondisi) dan `then` (aksi), dan `accept` menghentikan evaluasi. Bagian 6 memperkenalkan `deactivate` dan tanda `inactive:`. Kasus Cloudflare menggabungkan keduanya: `deactivate` di tingkat yang salah mengosongkan `from`, sehingga term berlaku untuk semua rute. Diff `show | compare` (bagian 5) menampilkan perubahan itu sebagai satu baris `inactive:` yang mudah terlewat.",
+      "pelajaran": [
+        "Saat membaca `show | compare`, tanyakan apa efek perubahan terhadap kondisi `from`, bukan hanya baris mana yang berubah. Term yang kehilangan semua kondisinya berlaku untuk semua rute.",
+        "Bila maksud Anda menghentikan sebuah term, nonaktifkan term itu utuh, bukan baris di dalamnya.",
+        "Pasang `maximum-prefix` di sesi BGP backbone sebagai pengaman. Menurut Cloudflare, batas itu akan memutus backbone Atlanta, sedangkan jaringannya tetap berfungsi tanpa backbone.",
+        "Jangan memberi rute dari satu lokasi local-preference yang bisa mengalahkan rute lokal di semua lokasi lain."
+      ],
+      "sumber": [
+        {
+          "judul": "Cloudflare outage on July 17, 2020",
+          "penerbit": "Cloudflare Blog",
+          "url": "https://blog.cloudflare.com/cloudflare-outage-on-july-17-2020/"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda admin jaringan sebuah kampus yang router intinya Juniper MX. Pukul 14.00 Anda menambah interface VLAN baru untuk laboratorium, menjalankan `commit confirmed 10`, mengetes ping dari lab, lalu pergi rapat. Pukul 14.15 seorang dosen melapor jaringan lab yang tadi sempat jalan kini mati lagi, padahal tidak ada yang menyentuh router. Konfigurasi interface lab juga tidak terlihat lagi di `show configuration`. Apa yang terjadi, bagaimana membuktikannya, dan bagaimana mengembalikan perubahan Anda dengan aman?",
+      "petunjuk": [
+        "Apa yang dijanjikan `commit confirmed 10` bila tidak ada perintah kedua dalam 10 menit?",
+        "Junos menyimpan riwayat commit: siapa, kapan, dan lewat cara apa. Perintah apa yang menampilkannya?",
+        "Setelah rollback otomatis, konfigurasi Anda tidak hilang. Ia tersimpan di arsip dengan nomor tertentu."
+      ],
+      "jawaban": "1. Gejalanya: perubahan bekerja sebentar lalu hilang tanpa campur tangan siapa pun, sekitar 10 menit setelah commit. Pola ini cocok dengan `commit confirmed 10` yang tidak dikonfirmasi.\n2. Dugaan: Anda lupa menjalankan `commit` kedua. Junos menunggu 10 menit, lalu otomatis memuat dan meng-commit konfigurasi sebelumnya. Pengguna yang sedang login juga menerima pesan siaran tentang rollback itu.\n3. Buktikan dengan `show system commit`. Anda akan melihat commit Anda sekitar pukul 14.00 dan commit rollback otomatis sekitar pukul 14.10. Dari mode konfigurasi, `show | compare rollback 1` memperlihatkan bahwa interface lab ada di versi sebelumnya.\n4. Pulihkan dengan aman:\n   - Masuk `configure`, lalu jalankan `rollback 1` untuk memuat versi yang berisi interface lab ke candidate.\n   - Periksa dengan `show | compare` bahwa hanya interface lab yang berubah.\n   - Jalankan `commit confirmed 10`, uji dari lab, lalu segera jalankan `commit` untuk mengonfirmasi.\n5. Kesimpulannya, `commit confirmed` bekerja sesuai rancangan. Jadikan konfirmasi bagian dari langkah uji yang tertulis, dan pakai `commit comment` agar riwayat commit mudah dibaca rekan Anda."
+    }
+  },
+  "23-jalur-vendor/02-sd-access-sd-wan": {
+    "intinya": {
+      "satu_kalimat": "SD-Access dan Catalyst SD-WAN adalah cara Cisco mengatur jaringan kampus dan jaringan antarcabang dari satu pengendali pusat, dengan kebijakan yang tidak lagi terikat pada topologi fisik.",
+      "analogi": "Di kampus, SD-Access mirip kartu identitas yang mencantumkan golongan pemiliknya: setiap pintu memeriksa golongan (SGT), bukan nomor lantai atau alamat IP. Catalyst SD-WAN mirip kantor pusat ekspedisi yang memeriksa surat tugas cabang baru (Validator), lalu memberi tahu setiap cabang jalur mana yang dipakai untuk paket jenis apa (Manager dan Controller), sementara barangnya diangkut langsung antarcabang lewat jalur terenkripsi. Konsekuensinya, siapa pun yang menguasai kantor pusat bisa mengubah aturan untuk semua cabang sekaligus.",
+      "kenapa_penting": "Perusahaan dengan banyak cabang memakai SD-WAN untuk memadukan MPLS, internet biasa, dan 4G/5G dengan kebijakan per aplikasi. Kalau Anda menuju CCNP Enterprise atau bekerja di perusahaan pengguna Cisco, Anda akan mengelola pengendali pusat ini, termasuk menambal dan mengamankannya.",
+      "istilah": [
+        {
+          "kata": "Catalyst SD-WAN Manager",
+          "arti": "Konsol manajemen terpusat SD-WAN, dulu bernama vManage. Di sini templat, kebijakan, dan pemantauan dikelola."
+        },
+        {
+          "kata": "Catalyst SD-WAN Controller",
+          "arti": "Otak kontrol SD-WAN, dulu bernama vSmart. Ia menjalankan OMP, memantulkan rute ke semua WAN Edge, dan membagikan kebijakan serta kunci enkripsi."
+        },
+        {
+          "kata": "Validator",
+          "arti": "Komponen SD-WAN yang dulu bernama vBond. Ia memeriksa identitas perangkat baru dan memberi tahu alamat Controller dan Manager."
+        },
+        {
+          "kata": "OMP",
+          "arti": "Overlay Management Protocol. Protokol mirip BGP antara WAN Edge dan Controller untuk bertukar rute, TLOC, dan informasi layanan."
+        },
+        {
+          "kata": "SGT",
+          "arti": "Scalable Group Tag. Label golongan 16 bit pada endpoint di SD-Access, dipakai untuk aturan akses yang tidak bergantung pada alamat IP."
+        },
+        {
+          "kata": "LISP dan VXLAN",
+          "arti": "Di SD-Access, LISP mencatat lokasi setiap endpoint, sedangkan VXLAN membungkus trafik endpoint untuk melintasi jaringan kampus."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "CISA mewajibkan penambalan darurat Cisco Catalyst SD-WAN setelah celah autentikasi di Controller dieksploitasi",
+      "kapan": "2026-02-25",
+      "di_mana": "Pengguna Cisco Catalyst SD-WAN, termasuk lembaga federal Amerika Serikat",
+      "ringkas": "Cisco Talos melaporkan eksploitasi aktif CVE-2026-20127, celah autentikasi di Catalyst SD-WAN Controller (dulu vSmart) yang memberi penyerang tanpa kredensial hak administrator. Jejak aktivitas pelaku, yang dinamai UAT-8616, ditemukan setidaknya sejak 2023. Pada hari yang sama CISA mengeluarkan Emergency Directive 26-03, yang mewajibkan lembaga federal AS mendata sistem, mengumpulkan bukti forensik, dan menambal Catalyst SD-WAN Manager dan Controller dalam dua hari.",
+      "kronologi": [
+        {
+          "waktu": "Sejak 2023",
+          "peristiwa": "Menurut Talos, aktivitas berbahaya pelaku yang kini dinamai UAT-8616 sudah berlangsung setidaknya sejak 2023 sebelum ketahuan."
+        },
+        {
+          "waktu": "25 Februari 2026",
+          "peristiwa": "Cisco Talos menerbitkan laporan eksploitasi aktif CVE-2026-20127 beserta panduan berburu jejak, misalnya peering control connection yang tidak dikenal dan kunci SSH asing pada akun vmanage-admin."
+        },
+        {
+          "waktu": "25 Februari 2026",
+          "peristiwa": "CISA menerbitkan Emergency Directive 26-03 untuk Catalyst SD-WAN Manager (dulu vManage) dan Controller (dulu vSmart), dan memasukkan CVE itu ke katalog celah yang sudah dieksploitasi."
+        },
+        {
+          "waktu": "26 Februari 2026",
+          "peristiwa": "Batas waktu lembaga federal mendata semua sistem SD-WAN, menyimpan log di luar perangkat SD-WAN, dan mengumpulkan artefak forensik."
+        },
+        {
+          "waktu": "27 Februari 2026, 17.00 ET",
+          "peristiwa": "Batas waktu memasang pembaruan Cisco untuk semua CVE dalam arahan itu."
+        },
+        {
+          "waktu": "11 Maret 2026",
+          "peristiwa": "CISA memperbarui arahan dengan langkah tambahan, termasuk kewajiban mengirim seluruh syslog perangkat SD-WAN ke CISA paling lambat 23 Maret 2026."
+        }
+      ],
+      "akar_masalah": "Mekanisme autentikasi peering di Controller, Manager, dan Validator tidak bekerja dengan benar. Permintaan yang dirancang khusus membuat penyerang bisa masuk ke Controller sebagai akun internal berhak tinggi, tetapi bukan root, lalu memakai NETCONF untuk mengubah konfigurasi seluruh fabric SD-WAN. Menurut Talos, pelaku diduga menurunkan versi perangkat lunak ke versi yang rentan CVE-2022-20775, memakainya untuk menjadi root, lalu mengembalikan versi semula.",
+      "kaitan": "Bagian 1 ('Nama produk: ini sudah berganti beberapa kali') menyebut nama lama tetap muncul di CLI dan API. Arahan CISA memakai keduanya, dan jejak yang diburu Talos tertulis dengan nama lama: log `vSmart`, peer-type `vmanage`, akun `vmanage-admin`. Bagian 6 menjelaskan Controller menjaga koneksi kontrol ke setiap WAN Edge, dan bagian 8 ('Membandingkan dan Memilih') mengingatkan bahwa titik kendali pusat harus tangguh. Kasus ini memperlihatkan artinya: siapa yang menguasai Controller bisa mengatur konfigurasi seluruh fabric.",
+      "pelajaran": [
+        "Simpan log perangkat pengendali di sistem terpisah. Talos mencantumkan log yang dihapus atau dipotong sebagai salah satu tanda pembobolan, dan CISA mewajibkan log disimpan di luar perangkat SD-WAN.",
+        "Periksa secara berkala setiap control connection baru di Controller: waktunya, alamat IP publiknya, dan jenis peer-nya harus cocok dengan perangkat yang memang Anda punya.",
+        "Batasi siapa yang bisa menjangkau antarmuka pengelolaan Manager dan Controller, dan tambal secepatnya bila ada celah yang sudah dieksploitasi.",
+        "Waspadai penurunan versi perangkat lunak yang tidak tercatat di riwayat perubahan. Dalam kasus ini, downgrade diduga dipakai sebagai jalan menuju akses root."
+      ],
+      "sumber": [
+        {
+          "judul": "ED 26-03: Mitigate Vulnerabilities in Cisco SD-WAN Systems",
+          "penerbit": "CISA",
+          "url": "https://www.cisa.gov/news-events/directives/ed-26-03-mitigate-vulnerabilities-cisco-sd-wan-systems"
+        },
+        {
+          "judul": "Active exploitation of Cisco Catalyst SD-WAN by UAT-8616",
+          "penerbit": "Cisco Talos",
+          "url": "https://blog.talosintelligence.com/uat-8616-sd-wan/"
+        },
+        {
+          "judul": "CVE-2026-20127 Detail",
+          "penerbit": "NIST National Vulnerability Database",
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-20127"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda engineer di perusahaan ritel dengan 200 toko yang memakai Catalyst SD-WAN. WAN Edge baru di toko Ambon sudah menyala dan mendapat IP dari modem 4G, tetapi tidak pernah muncul di SD-WAN Manager. Di router itu, riwayat control connection menunjukkan percobaan ke Validator yang gagal karena verifikasi sertifikat, dan `show clock` menampilkan tanggal 1 Januari 2019. Toko lain normal. Apa dugaan Anda dan bagaimana menyelesaikannya?",
+      "petunjuk": [
+        "Urutkan alur onboarding di bagian 6: siapa yang pertama dihubungi WAN Edge, dan apa yang diperiksa di sana?",
+        "Sertifikat punya tanggal mulai dan tanggal berakhir. Apa arti tanggal 2019 di router bagi pemeriksaan itu?",
+        "Bagian 9 punya satu kesalahan umum yang persis berkaitan dengan jam."
+      ],
+      "jawaban": "1. Amati letak kegagalannya. Router punya IP dan koneksi internet, tetapi gagal di langkah pertama onboarding, yaitu saat menghubungi Validator. Pesan gagalnya soal sertifikat, dan hanya toko ini yang bermasalah.\n2. Dugaan terkuat: jam router salah. Sertifikat diperiksa terhadap jam lokal. Bila router mengira sekarang tahun 2019, sertifikat yang terbit setelah itu dianggap belum berlaku, sehingga verifikasi gagal dan router tidak pernah sampai ke Controller maupun Manager.\n3. Uji dugaan itu. Setel jam mendekati waktu sebenarnya, misalnya dengan `clock set` dari mode privileged, atau pastikan router bisa menjangkau server NTP lewat transport (VPN 0). Lalu amati lagi riwayat control connection.\n4. Bila jam sudah benar dan koneksi kontrol naik, router akan menghubungi Controller dan Manager, lalu muncul di Manager. Bila masih gagal, baru periksa kemungkinan lain, seperti nomor seri yang belum terdaftar sebagai perangkat sah.\n5. Cegah terulang di toko berikutnya: masukkan NTP ke konfigurasi bootstrap, dan jadikan pengecekan jam langkah pertama setiap troubleshooting onboarding. Bagian 9 sudah memperingatkan bahwa perangkat gagal bergabung bila waktu atau sertifikatnya salah."
+    }
+  },
+  "23-jalur-vendor/03-api-platform-cisco": {
+    "intinya": {
+      "satu_kalimat": "API platform seperti Catalyst Center dan Meraki memungkinkan skrip Python mengatur ratusan perangkat lewat HTTPS dan JSON, asalkan skrip menangani token, batas laju, halaman data, dan rahasia dengan benar.",
+      "analogi": "API mirip loket layanan di kantor samsat: Anda tidak masuk ke ruang kerja pegawai, melainkan menunjukkan tanda pengenal (token), menyerahkan formulir baku (JSON), dan menerima jawaban baku. Loket punya jatah antrean (rate limit), menyerahkan berkas tebal halaman demi halaman (pagination), dan nomor antrean Anda kedaluwarsa setelah waktu tertentu (token expiry). Bedanya, kunci API yang bocor bisa dipakai siapa saja tanpa perlu datang ke loket, jadi kunci itu harus dijaga seperti kata sandi.",
+      "kenapa_penting": "Tim jaringan modern menarik inventori, memeriksa status, dan mengubah konfigurasi lewat API, bukan lewat CLI satu per satu. Skrip yang ceroboh bisa menggantung tanpa timeout, mengambil data separuh karena lupa pagination, atau membocorkan kunci akses bila kunci itu tertulis di kode yang diunggah ke Git.",
+      "istilah": [
+        {
+          "kata": "API",
+          "arti": "Application Programming Interface. Pintu yang disediakan sebuah sistem agar program lain bisa meminta data atau perubahan secara terstruktur, biasanya lewat HTTPS dengan JSON."
+        },
+        {
+          "kata": "Token",
+          "arti": "Tanda pengenal sementara yang didapat setelah login, lalu dikirim di setiap permintaan. Token Catalyst Center berlaku 60 menit."
+        },
+        {
+          "kata": "API key",
+          "arti": "Kunci akses tetap yang dibuat di dashboard, misalnya pada Meraki. Kunci berlaku sampai dicabut, jadi harus diperlakukan seperti kata sandi."
+        },
+        {
+          "kata": "Rate limit",
+          "arti": "Batas jumlah permintaan per detik. Bila terlampaui, API membalas status 429, dan klien harus menunggu sesuai header Retry-After."
+        },
+        {
+          "kata": "Pagination",
+          "arti": "Pembagian data besar menjadi beberapa halaman. Skrip harus terus meminta halaman berikutnya sampai habis agar datanya lengkap."
+        },
+        {
+          "kata": "Variabel lingkungan",
+          "arti": "Nilai yang disimpan di lingkungan sistem operasi, bukan di kode. Cara umum menyimpan rahasia agar tidak ikut terunggah ke Git."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Kunci akses server data Toyota T-Connect terbuka di GitHub hampir lima tahun",
+      "kapan": "2022-10-07",
+      "di_mana": "Toyota Motor Corporation, Jepang",
+      "ringkas": "Pada Desember 2017, perusahaan pengembang yang dikontrak Toyota mengunggah sebagian kode sumber situs pengguna T-Connect, layanan konektivitas kendaraan Toyota, ke akun GitHub yang terbuka untuk umum. Kode itu memuat kunci akses ke server data berisi alamat email dan nomor pengelolaan pelanggan. Kode tersebut bisa diakses pihak ketiga sampai 15 September 2022, sehingga 296.019 data berpotensi bocor. Toyota tidak bisa memastikan ada akses pihak ketiga, tetapi juga tidak bisa menyangkalnya sepenuhnya.",
+      "kronologi": [
+        {
+          "waktu": "Juli 2017",
+          "peristiwa": "Pelanggan yang mendaftarkan alamat email di situs pengguna T-Connect sejak bulan ini kelak termasuk yang datanya berpotensi bocor."
+        },
+        {
+          "waktu": "Desember 2017",
+          "peristiwa": "Perusahaan pengembang yang dikontrak Toyota, melanggar aturan penanganan, mengunggah sebagian kode sumber situs T-Connect ke akun GitHub dengan pengaturan publik. Kode itu memuat kunci akses ke server data."
+        },
+        {
+          "waktu": "15 September 2022",
+          "peristiwa": "Toyota mendapati kode tersebut terbuka di GitHub, dan pada hari yang sama menjadikannya privat."
+        },
+        {
+          "waktu": "17 September 2022",
+          "peristiwa": "Toyota mengganti kunci akses server data."
+        },
+        {
+          "waktu": "7 Oktober 2022",
+          "peristiwa": "Toyota mengumumkan bahwa 296.019 alamat email beserta nomor pengelolaan pelanggan berpotensi bocor. Nama, nomor telepon, dan data kartu kredit tidak termasuk."
+        }
+      ],
+      "akar_masalah": "Kunci akses ke server data ditulis langsung di dalam kode sumber. Begitu kode itu terunggah ke repositori publik, siapa pun yang membacanya bisa memperoleh kunci tersebut. Kunci baru diganti pada 17 September 2022, dua hari setelah kebocoran ditemukan. Penyebab langsungnya pelanggaran aturan oleh pihak pengembang, tetapi kerusakannya terjadi karena rahasia disimpan di tempat yang ikut tersalin bersama kode.",
+      "kaitan": "Bagian 3 meminta kredensial disimpan lewat variabel lingkungan atau vault, bukan di berkas yang masuk Git, dan bagian 8 ('Kesalahan Umum') memperingatkan soal menanam token atau API key di kode lalu mengunggahnya ke Git. Kasus Toyota adalah contoh nyata peringatan itu, termasuk langkah terakhirnya: kunci yang bocor harus segera dirotasi. Contoh Python di modul ini membaca `CATC_PASS` dan `MERAKI_API_KEY` dari `os.environ` untuk menghindari kesalahan yang sama.",
+      "pelajaran": [
+        "Jangan menulis API key, token, atau kata sandi di kode. Baca dari variabel lingkungan atau vault, seperti contoh di modul ini.",
+        "Pasang pemindai rahasia di repositori dan periksa riwayat commit, karena rahasia yang pernah terunggah tetap ada di riwayat Git walau barisnya sudah dihapus.",
+        "Begitu kunci bocor, ganti kuncinya dulu, baru selidiki. Menyembunyikan repositori tidak membatalkan kunci yang sudah sempat tersalin.",
+        "Terapkan aturan yang sama untuk vendor dan kontraktor. Di kasus ini, kebocoran berasal dari perusahaan pengembang yang dikontrak."
+      ],
+      "sumber": [
+        {
+          "judul": "お客様のメールアドレス等の漏洩可能性に関するお詫びとお知らせについて",
+          "penerbit": "Toyota Motor Corporation (siaran pers berbahasa Jepang)",
+          "url": "https://global.toyota/jp/newsroom/corporate/38095972.html"
+        },
+        {
+          "judul": "Toyota discloses data leak after access key exposed on GitHub",
+          "penerbit": "BleepingComputer",
+          "url": "https://www.bleepingcomputer.com/news/security/toyota-discloses-data-leak-after-access-key-exposed-on-github/"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda bekerja di tim jaringan sebuah jaringan klinik dengan 40 cabang yang memakai Meraki. Seorang rekan magang mengunggah skrip inventorinya ke repositori GitHub publik untuk portofolio. Seminggu kemudian Anda membaca skrip itu dan menemukan baris `KEY = \"6bec40cf...\"`, yaitu API key Meraki milik akun admin organisasi, tertulis langsung di kode. Rekan Anda menawarkan diri menghapus baris itu lalu mengunggah ulang. Apakah itu cukup? Susun urutan tindakan Anda.",
+      "petunjuk": [
+        "Menghapus baris di commit baru tidak menghapus riwayat Git. Siapa saja yang sudah menyalin repositori masih memegang kuncinya.",
+        "Bagian 4 modul ini menyebut satu identitas Meraki boleh punya dua key aktif. Bagaimana itu membantu rotasi tanpa memutus otomasi lain?",
+        "Setelah kunci diganti, pikirkan pertanyaan berikutnya: apakah kunci lama sempat dipakai orang lain?"
+      ],
+      "jawaban": "1. Tidak cukup. Kunci sudah terbuka seminggu, dan riwayat Git serta salinan orang lain tetap memuatnya. Anggap kunci itu sudah bocor.\n2. Urutan tindakannya:\n   - Buat API key baru untuk identitas itu (Meraki mengizinkan dua key aktif), pindahkan semua skrip yang sah ke key baru, lalu cabut key lama. Ini langkah paling mendesak.\n   - Periksa change log organisasi di dashboard Meraki untuk seminggu terakhir. Cari perubahan yang tidak Anda kenali, misalnya SSID, aturan firewall, atau admin baru.\n   - Setelah itu bersihkan repositori: hapus kunci dari kode dan riwayatnya, atau jadikan repositori privat sementara.\n   - Ubah skrip agar membaca kunci dari variabel lingkungan, misalnya `KEY = os.environ[\"MERAKI_API_KEY\"]` seperti contoh di bagian 4.\n3. Cegah terulang. Untuk skrip yang hanya membaca inventori, pakai key dari akun admin read-only. Pasang pemindai rahasia di repositori, dan jadikan pemeriksaan rahasia bagian dari review kode.\n4. Kasus Toyota memperlihatkan alasannya: kunci di kode publik bisa terbuka bertahun-tahun tanpa ada yang sadar. Rotasi dulu, penyelidikan kemudian."
+    }
+  }
+}

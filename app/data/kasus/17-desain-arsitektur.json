@@ -1,0 +1,487 @@
+{
+  "17-desain-arsitektur/01-prinsip-desain": {
+    "intinya": {
+      "satu_kalimat": "Desain jaringan yang baik membagi jaringan menjadi lapisan dan modul dengan peran jelas, lalu menghilangkan titik kegagalan tunggal sejauh anggaran memungkinkan.",
+      "analogi": "Bayangkan jaringan jalan sebuah kota. Jalan lingkungan (access) menyambung ke rumah, jalan kolektor (distribution) mengatur lampu lalu lintas dan belokan, dan jalan tol (core) hanya untuk melaju cepat tanpa persimpangan. Kota yang baik juga punya jalan alternatif, supaya satu jembatan ambruk tidak memutus seluruh kota. Dua jalan yang sama-sama melewati satu jembatan bukanlah jalan alternatif, dan prinsip itu berlaku juga untuk perangkat 'redundan' yang berbagi listrik atau rak.",
+      "kenapa_penting": "Jaringan yang tumbuh tanpa desain biasanya bekerja sampai satu perangkat mati, lalu seluruh kantor ikut berhenti. Saat PKL atau bekerja, Anda akan diminta menilai di mana titik kegagalan tunggalnya dan berapa biaya untuk menghilangkannya. CCNA menguji model desain ini di topik 1.2.",
+      "istilah": [
+        {
+          "kata": "Core, distribution, access",
+          "arti": "Tiga lapis model hierarkis. Access tempat perangkat pengguna tersambung, distribution tempat kebijakan dan routing antar-VLAN, core tulang punggung yang hanya meneruskan secepatnya."
+        },
+        {
+          "kata": "Collapsed core",
+          "arti": "Desain dua lapis: core dan distribution digabung di sepasang switch. Cocok untuk kampus kecil sampai menengah."
+        },
+        {
+          "kata": "SPOF",
+          "arti": "Single point of failure: satu komponen yang, bila rusak, menjatuhkan layanan karena tidak ada cadangannya."
+        },
+        {
+          "kata": "Fault domain",
+          "arti": "Wilayah yang ikut mati bersama saat satu komponen gagal, misalnya semua perangkat di satu rak, satu jalur listrik, atau satu gedung."
+        },
+        {
+          "kata": "Control plane layanan",
+          "arti": "Bagian layanan yang dipakai untuk mengatur dan memberi perintah, seperti situs web pengelolaan dan API. Lalu lintas pengguna dilayani bagian lain."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Listrik satu data center padam, dan control plane Cloudflare ternyata bergantung padanya",
+      "kapan": "2023-11-02",
+      "di_mana": "Cloudflare, data center PDX-04 di dekat Hillsboro, Oregon, AS",
+      "ringkas": "Control plane Cloudflare adalah situs web dan API tempat pelanggan mengatur layanannya. Bersama layanan log dan analitik, control plane itu dirancang berjalan di tiga data center terpisah di dekat Hillsboro, Oregon. Ketiganya terus menyinkronkan data, jadi bila satu mati, dua lainnya seharusnya tetap berjalan. Pada 2 November 2023, listrik data center PDX-04 padam total. Ternyata sebagian layanan yang dianggap redundan bergantung pada layanan yang hanya ada di PDX-04. Gangguannya berlangsung hampir dua hari, sementara jaringan dan layanan keamanan Cloudflare tetap berjalan normal.",
+      "kronologi": [
+        {
+          "waktu": "2 Nov 2023, 08.50 UTC",
+          "peristiwa": "PGE, perusahaan listrik setempat, mengalami pemeliharaan tak terencana pada salah satu jalur listrik independen ke gedung PDX-04."
+        },
+        {
+          "waktu": "sekitar 11.40 UTC",
+          "peristiwa": "Terjadi gangguan arus ke tanah (ground fault) pada trafo PGE di PDX-04. Mekanisme pengaman ikut mematikan semua genset gedung."
+        },
+        {
+          "waktu": "11.44 UTC",
+          "peristiwa": "Baterai UPS yang seharusnya tahan sekitar 10 menit mulai gagal setelah 4 menit. Dua router yang menyambungkan PDX-04 ke dunia luar mati."
+        },
+        {
+          "waktu": "12.48 UTC",
+          "peristiwa": "Flexential, pengelola gedung, berhasil menyalakan kembali genset."
+        },
+        {
+          "waktu": "13.40 UTC",
+          "peristiwa": "Karena lebih banyak layanan mati daripada perkiraan, Cloudflare memutuskan pindah ke situs pemulihan bencana di Eropa. Layanan pertama menyala di sana pukul 13.43."
+        },
+        {
+          "waktu": "17.57 UTC",
+          "peristiwa": "Layanan yang berhasil dipindahkan sudah stabil, dan sebagian besar pelanggan tidak lagi terdampak langsung."
+        },
+        {
+          "waktu": "4 Nov 2023, 04.25 UTC",
+          "peristiwa": "Semua layanan pulih sepenuhnya."
+        }
+      ],
+      "akar_masalah": "Cloudflare membangun cluster high availability di tiga data center, tetapi tidak semua produk berada di dalamnya. Sebagian layanan di cluster itu ternyata bergantung pada layanan lain, seperti Kafka dan ClickHouse, yang hanya berjalan di PDX-04. Beberapa produk yang lebih baru juga belum dipasang di cluster tersebut. Cloudflare menulis bahwa mereka belum pernah menguji pemadaman total seluruh PDX-04, sehingga ketergantungan itu luput.",
+      "kaitan": "Bagian 6 modul meminta Anda menghilangkan single point of failure dan membagi sistem menjadi modul, agar kegagalan satu modul tidak merembet. Di atas kertas, desain Cloudflare memenuhi itu: tiga data center yang saling menyinkronkan data. Kenyataannya, ketergantungan tersembunyi menjadikan PDX-04 sebuah SPOF. Kasus ini juga contoh 'redundansi di atas kertas' yang dibahas lagi di modul 17.5: redundansi baru terbukti setelah diuji.",
+      "pelajaran": [
+        "Gambarkan ketergantungan setiap layanan, termasuk basis data dan antrean pesan di belakangnya, lalu periksa apakah semuanya ada di lebih dari satu lokasi.",
+        "Uji pemadaman total satu lokasi secara terjadwal. Cloudflare menetapkan uji chaos yang mencakup pencabutan penuh setiap data center intinya.",
+        "Wajibkan produk baru masuk desain redundan dan punya rencana pemulihan yang teruji sebelum dinyatakan siap dipakai umum.",
+        "Jangan mengandalkan durasi baterai UPS di atas kertas. Di PDX-04, baterai yang dirancang sekitar 10 menit mulai gagal setelah 4 menit."
+      ],
+      "sumber": [
+        {
+          "judul": "Post Mortem on Cloudflare Control Plane and Analytics Outage",
+          "penerbit": "Cloudflare Blog",
+          "url": "https://blog.cloudflare.com/post-mortem-on-cloudflare-control-plane-and-analytics-outage/"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda diminta meninjau jaringan sebuah klinik besar di Palembang. Diagramnya tampak redundan: dua core switch, dua ISP, dua access switch per lantai. Data inventaris menunjukkan beberapa hal. Kedua core switch digabung dalam satu stack, dan semua catu daya ruang server tersambung ke satu UPS. Kabel kedua ISP masuk lewat tiang dan jalur yang sama. Firewall hanya satu, dan server DHCP berupa satu VM. Tadi malam UPS itu mati dan seluruh klinik putus. Daftarkan titik kegagalan tunggal yang tersembunyi, lalu urutkan perbaikannya.",
+      "petunjuk": [
+        "Untuk setiap komponen 'ganda', tanyakan apa yang dipakai bersama oleh keduanya: listrik, jalur kabel, perangkat lunak, atau konfigurasi.",
+        "Bedakan SPOF yang menjatuhkan seluruh klinik dari yang hanya mengganggu sebagian layanan.",
+        "Urutkan perbaikan berdasarkan dampak terbesar per rupiah, bukan berdasarkan solusi yang paling canggih."
+      ],
+      "jawaban": "1. **UPS tunggal (dampak terbesar).** Semua perangkat 'ganda' mati bersama karena berbagi satu sumber listrik. Perbaikan: pasang UPS kedua, sambungkan PSU kedua tiap perangkat ke UPS itu, lalu uji dengan mematikan satu UPS di jam sepi.\n2. **Satu firewall.** Semua lalu lintas keluar lewat satu perangkat. Perbaikan: pasangan firewall active-passive, atau setidaknya unit cadangan dengan konfigurasi yang selalu tersimpan.\n3. **Jalur fisik ISP yang sama.** Satu tiang roboh memutus kedua ISP sekaligus. Perbaikan: minta salah satu ISP masuk lewat jalur lain, atau tambahkan jalur seluler sebagai cadangan.\n4. **DHCP satu VM.** Bila host atau VM-nya mati, perangkat baru dan perangkat yang masa sewa IP-nya habis tidak mendapat alamat. Perbaikan: server DHCP kedua dengan failover, atau dua server dengan rentang terpisah.\n5. **Stack core.** Dua switch fisik dalam satu stack berbagi perangkat lunak dan konfigurasi, jadi satu bug atau salah konfigurasi bisa menjatuhkan keduanya. Kejadiannya lebih jarang, tetapi dampaknya besar. Pertimbangkan dua switch terpisah dengan FHRP saat penggantian berikutnya.\n\n**Urutan yang masuk akal:** UPS dulu, karena paling murah dan baru saja terbukti menjatuhkan semuanya. Lalu firewall dan jalur ISP, kemudian DHCP, dan desain ulang core saat siklus penggantian. Setelah tiap perbaikan, uji dengan benar-benar mematikan satu sisi."
+    }
+  },
+  "17-desain-arsitektur/02-desain-per-domain": {
+    "intinya": {
+      "satu_kalimat": "Kampus, WAN, data center, wireless, dan zona keamanan masing-masing punya aturan desain sendiri, tetapi semuanya mengejar segmentasi yang jelas dan jalur cadangan yang nyata.",
+      "analogi": "Bayangkan merancang bandara. Terminal (kampus), rute penerbangan (WAN), gudang kargo (data center), dan ruang tunggu (wireless) diatur dengan aturan berbeda. Kursi ruang tunggu dihitung dari jumlah penumpang, bukan dari luas ruangan, sama seperti AP dihitung dari jumlah klien. Aula kedatangan yang terbuka untuk umum mirip DMZ: siapa pun boleh masuk, tetapi pintu ke area steril tetap dijaga ketat.",
+      "kenapa_penting": "Banyak pekerjaan jaringan sehari-hari jatuh ke salah satu domain ini: menambah VLAN di kampus, memasang jalur cadangan untuk cabang, atau menghitung jumlah AP untuk aula. Kesalahan desain di satu domain bisa menjatuhkan layanan di domain lain, misalnya ATM bank yang ikut mati saat satu-satunya jalur WAN-nya putus.",
+      "istilah": [
+        {
+          "kata": "VSAT",
+          "arti": "Very Small Aperture Terminal: antena parabola kecil yang menyambungkan satu lokasi, misalnya ATM di daerah terpencil, ke jaringan lewat satelit."
+        },
+        {
+          "kata": "Transponder",
+          "arti": "Bagian satelit yang menerima sinyal dari bumi lalu memancarkannya kembali. Kapasitasnya biasanya disewakan kepada operator dan perusahaan."
+        },
+        {
+          "kata": "Repointing",
+          "arti": "Mengarahkan ulang antena parabola dari satu satelit ke satelit lain. Untuk VSAT, ini biasanya dikerjakan teknisi di lokasi."
+        },
+        {
+          "kata": "Redundansi transport",
+          "arti": "Punya lebih dari satu jalur WAN, idealnya dari penyedia dan teknologi berbeda, agar satu gangguan tidak memutus sebuah lokasi."
+        },
+        {
+          "kata": "DMZ",
+          "arti": "Zona untuk server yang diakses publik, dipisahkan dari jaringan internal, sehingga server yang dibobol tidak langsung membuka jalan ke dalam."
+        },
+        {
+          "kata": "Out-of-band management",
+          "arti": "Jalur manajemen yang terpisah dari jaringan produksi, agar perangkat tetap bisa diakses saat jaringan utama bermasalah."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Anomali satelit Telkom 1 memutus sekitar 15.000 titik VSAT, termasuk ribuan ATM",
+      "kapan": "2017-08-25",
+      "di_mana": "Telkom Indonesia, seluruh Indonesia",
+      "ringkas": "Satelit Telkom 1 milik Telkom Indonesia, yang saat itu berumur 18 tahun, mengalami anomali pada sore hari 25 Agustus 2017. Kualitas layanannya turun perlahan sampai seluruh layanan mati menjelang Magrib. Sekitar 15.000 titik di permukaan bumi yang memakai satelit itu terputus, termasuk 11.574 lokasi VSAT untuk ATM bank. Pemulihannya makan waktu sekitar dua pekan, karena layanan harus dipindah ke satelit lain dan ribuan antena diarahkan ulang di lokasi masing-masing.",
+      "kronologi": [
+        {
+          "waktu": "25 Agustus 2017, 16.51 WIB",
+          "peristiwa": "Anomali Telkom 1 terdeteksi di Stasiun Pengendali Cibinong. Kualitas layanan turun perlahan."
+        },
+        {
+          "waktu": "menjelang Magrib",
+          "peristiwa": "Seluruh layanan Telkom 1 mati. Satelit itu melayani 63 pelanggan, delapan di antaranya penyedia VSAT dengan 12.030 lokasi."
+        },
+        {
+          "waktu": "26 Agustus 2017",
+          "peristiwa": "Migrasi layanan ke satelit lain dimulai, antara lain Telkom 2 dan Telkom 3S."
+        },
+        {
+          "waktu": "28 Agustus 2017",
+          "peristiwa": "Direktur Utama Telkom, Alex J. Sinaga, menargetkan penyediaan transponder pengganti selesai pada 30 Agustus."
+        },
+        {
+          "waktu": "awal September 2017",
+          "peristiwa": "Sekitar 66% ATM terdampak, yaitu 7.658 dari 11.574 lokasi VSAT ATM, sudah bisa dipakai lagi."
+        },
+        {
+          "waktu": "10 September 2017",
+          "peristiwa": "Telkom menyatakan pemulihan tuntas untuk 15.019 lokasi. Selama antena diarahkan ulang, sebagian lokasi sementara memakai serat optik (5%) atau layanan M2M (14%)."
+        }
+      ],
+      "akar_masalah": "Penyebab teknis anomalinya tidak dijelaskan dalam sumber berita yang tersedia, jadi bagian ini membahas kenapa dampaknya luas. Belasan ribu lokasi bergantung pada satu satelit. Selama antenanya belum diarahkan ulang, lokasi itu tidak punya jalur lain, kecuali yang sementara dialihkan ke serat optik atau M2M. Pemulihan butuh dua langkah: menyiapkan transponder di satelit lain, lalu mengarahkan ulang antena di setiap lokasi. Langkah kedua lambat karena harus dikerjakan di lapangan.",
+      "kaitan": "Bagian 2 modul, Desain WAN, menuntut redundansi transport: minimal dua jalur, idealnya dari dua penyedia. Bagi ribuan ATM dalam kasus ini, satu satelit menjadi satu-satunya jalur yang siap pakai. Pemulihan juga memperlihatkan nilai teknologi cadangan yang berbeda: sebagian lokasi bisa hidup lagi lebih cepat lewat serat optik atau M2M, tanpa menunggu antena diarahkan ulang. Umur satelit 18 tahun mengingatkan pada siklus hidup aset di modul 17.5.",
+      "pelajaran": [
+        "Untuk lokasi yang transaksinya penting, siapkan jalur cadangan dengan teknologi berbeda, misalnya satelit dan seluler, yang aktif otomatis.",
+        "Hitung waktu pemulihan nyata, termasuk kerja lapangan. Memindahkan layanan di pusat bisa selesai dalam hitungan hari, tetapi mengarahkan ulang ribuan antena butuh lebih lama.",
+        "Catat umur dan rencana penggantian infrastruktur yang menjadi tumpuan banyak lokasi, termasuk satelit yang kapasitasnya Anda sewa."
+      ],
+      "sumber": [
+        {
+          "judul": "30 Agustus, Proses Migrasi Layanan Satelit Telkom 1 yang Bermasalah Selesai",
+          "penerbit": "Okezone Economy",
+          "url": "https://economy.okezone.com/read/2017/08/28/320/1764508/30-agustus-proses-migrasi-layanan-satelit-telkom-1-yang-bermasalah-selesai"
+        },
+        {
+          "judul": "Telkom Klaim Telah Pulihkan 66 Persen ATM",
+          "penerbit": "CNN Indonesia",
+          "url": "https://www.cnnindonesia.com/teknologi/20170905185552-213-239656/telkom-klaim-telah-pulihkan-66-persen-atm"
+        },
+        {
+          "judul": "Telkom Tuntaskan Pemulihan Layanan Satelit",
+          "penerbit": "kumparanTECH",
+          "url": "https://kumparan.com/kumparantech/telkom-tuntaskan-pemulihan-layanan-satelit"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Sebuah koperasi simpan pinjam punya kantor pusat di Kupang dan 8 cabang di pulau-pulau sekitarnya. Setiap cabang tersambung ke pusat hanya lewat VSAT, dan default route router cabang mengarah ke modem VSAT. Bulan lalu hujan deras memutus VSAT dua cabang selama sehari, dan transaksi berhenti. Di semua cabang ada sinyal 4G. Rancang jalur cadangannya: perangkat apa yang ditambah, bagaimana router tahu kapan pindah jalur, dan lalu lintas apa yang diprioritaskan di jalur cadangan?",
+      "petunjuk": [
+        "Jalur cadangan sebaiknya memakai teknologi yang tidak terganggu oleh penyebab yang sama. Hujan mengganggu satelit, tetapi bagaimana dengan seluler?",
+        "Route statis biasa tidak tahu VSAT putus selama interface-nya masih up. Cari cara agar router menguji jalurnya sendiri.",
+        "Kapasitas 4G terbatas dan sering dibayar per kuota. Lalu lintas mana yang wajib jalan, dan mana yang bisa menunggu?"
+      ],
+      "jawaban": "1. **Pilih jalur cadangan.** Tambahkan modem atau router 4G di setiap cabang, dari operator yang sinyalnya paling stabil di pulau itu. Hujan deras bisa memutus satelit, sedangkan 4G jarang terganggu oleh penyebab yang sama, jadi kecil kemungkinan keduanya putus bersamaan.\n2. **Amankan jalurnya.** Lalu lintas cadangan lewat internet publik, jadi bangun tunnel IPsec dari router cabang ke pusat, sesuai prinsip enkripsi di bagian 2 modul.\n3. **Atur perpindahan otomatis.** Pasang route statis utama ke VSAT dengan pelacakan IP SLA: router mem-ping alamat di kantor pusat lewat VSAT setiap beberapa detik. Pasang juga floating static route ke tunnel 4G dengan administrative distance lebih besar, misalnya 250. Bila ping gagal beberapa kali, route utama dicabut dan route cadangan otomatis aktif. Saat VSAT pulih, route utama kembali.\n4. **Prioritaskan lalu lintas.** Di jalur 4G, utamakan aplikasi transaksi dan sinkronisasi data anggota dengan QoS. Tunda pembaruan sistem operasi, backup besar, dan streaming sampai VSAT pulih.\n5. **Uji.** Cabut kabel modem VSAT di satu cabang pada jam sepi. Pastikan transaksi pindah ke 4G dalam hitungan detik, lalu kembali ke VSAT setelah kabel dipasang lagi. Catat hasilnya di runbook."
+    }
+  },
+  "17-desain-arsitektur/03-perencanaan-dokumentasi": {
+    "intinya": {
+      "satu_kalimat": "Jaringan yang mudah dirawat punya alamat IP berpola hierarkis yang bisa diringkas, nama perangkat yang konsisten, dan dokumentasi yang selalu cocok dengan kenyataan.",
+      "analogi": "Angka pertama kode pos Indonesia menunjuk wilayah besar, dan angka berikutnya mempersempit sampai desa. Kantor pos di Jakarta cukup punya satu aturan untuk semua kode berawalan sama, tanpa menghafal setiap desa. Itulah route summarization: alamat yang disusun bertingkat bisa diringkas menjadi satu baris. Kalau kode pos dibagikan acak, setiap kantor pos harus menyimpan daftar semua desa, dan tabel routing pun membengkak dengan cara yang sama.",
+      "kenapa_penting": "Saat jaringan bermasalah pukul dua pagi, nama perangkat, deskripsi interface, dan tabel IP yang rapi menentukan seberapa cepat Anda menemukan perangkat dan kabel yang tepat. Rencana IP yang buruk juga sulit diperbaiki belakangan, karena alamatnya sudah terpasang di banyak perangkat.",
+      "istilah": [
+        {
+          "kata": "Route summarization",
+          "arti": "Meringkas banyak subnet yang berdekatan menjadi satu rute, misalnya puluhan /24 milik satu cabang menjadi satu 10.2.0.0/16."
+        },
+        {
+          "kata": "Deagregasi",
+          "arti": "Kebalikan summarization: satu blok besar diumumkan sebagai banyak potongan kecil, sehingga jumlah rute bertambah."
+        },
+        {
+          "kata": "Tabel BGP global",
+          "arti": "Daftar semua blok alamat yang diumumkan di internet. Router inti ISP yang menerima full feed menyimpan daftar ini secara utuh."
+        },
+        {
+          "kata": "TCAM",
+          "arti": "Memori khusus di router dan switch agar pencarian rute dikerjakan langsung oleh perangkat keras. Ukurannya terbatas dan dibagi untuk IPv4, IPv6, dan fitur lain."
+        },
+        {
+          "kata": "Source of truth",
+          "arti": "Satu tempat data jaringan yang dianggap benar, misalnya NetBox, tempat konfigurasi dan dokumentasi diturunkan."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "512K Day: tabel routing internet melewati 512.000 rute dan router lama tersendat",
+      "kapan": "2014-08-12",
+      "di_mana": "Internet global (prefix dari Verizon, AS701 dan AS705)",
+      "ringkas": "Pada 12 Agustus 2014, tabel routing BGP global berisi sekitar 500.000 rute. Banyak router Cisco lama punya batas bawaan 512.000 rute IPv4 di memori TCAM-nya. Sekitar pukul 07.48 UTC, kira-kira 15.000 rute baru tiba-tiba muncul, hampir semuanya potongan /24 dari blok besar milik Verizon. Tabel sempat mencapai 515.000 rute, dan pengguna di milis, forum, dan Twitter melaporkan internet lambat dan putus-putus. BGPmon mencatat jumlah prefix dan AS yang terganggu hari itu sebagai yang tertinggi dalam 12 bulan.",
+      "kronologi": [
+        {
+          "waktu": "12 Agustus 2014, pagi UTC",
+          "peristiwa": "Tabel BGP global berisi sekitar 491.000 sampai 501.000 rute, tergantung penyedia, beberapa ribu di bawah batas 512.000."
+        },
+        {
+          "waktu": "07.48 UTC",
+          "peristiwa": "Sekitar 15.000 prefix baru masuk ke tabel global. Hampir semuanya diumumkan AS701 dan AS705 milik Verizon, sebagai potongan dari blok yang biasanya diumumkan utuh."
+        },
+        {
+          "waktu": "sekitar 08.00 UTC",
+          "peristiwa": "Pada pelanggan Level3 di Chicago, jumlah prefix memuncak di sekitar 515.000. Laporan internet lambat dan putus-putus bermunculan di milis Outages dan NANOG."
+        },
+        {
+          "waktu": "beberapa menit kemudian",
+          "peristiwa": "Verizon membereskan deagregasinya, dan tabel kembali ke sekitar 500.000. Hari itu BGPmon mencatat gangguan pada 12.563 prefix dan 2.587 AS."
+        },
+        {
+          "waktu": "13 Agustus 2014",
+          "peristiwa": "BGPmon menerbitkan analisisnya dan mengingatkan bahwa tabel akan terus tumbuh melewati 512.000. Cisco menyediakan perintah untuk menggeser jatah TCAM, yang baru berlaku setelah reload."
+        }
+      ],
+      "akar_masalah": "Di internal Verizon, sesuatu membuat agregasi gagal, sehingga blok besar seperti 72.69.0.0/16 diumumkan sebagai 170 potongan /24. Router di seluruh internet harus menyimpan setiap potongan itu. Pada Cisco Catalyst 6500 dan 7600 dengan modul tertentu, jatah bawaan TCAM untuk IPv4 (bersama MPLS) hanya 512.000 entri. Saat tabel melewati batas itu, sebagian rute tidak bisa dipasang di perangkat keras dan diproses CPU, yang jauh lebih lambat.",
+      "kaitan": "Bagian 1 modul memperingatkan bahwa route summarization hanya mungkin bila alamat hierarkis, dan tanpa itu tabel routing membengkak. Pada 512K Day kebalikannya terjadi dalam skala internet: blok yang biasanya diringkas mendadak diumumkan dalam ribuan potongan. Kasus ini juga menyentuh inventaris perangkat di bagian 4. Operator yang mencatat model perangkat beserta batas kapasitasnya bisa tahu lebih dulu router mana yang akan tersendat.",
+      "pelajaran": [
+        "Umumkan blok alamat Anda dalam bentuk ringkas, dan pasang filter agar deagregasi yang tidak disengaja tidak bocor ke luar.",
+        "Catat batas kapasitas perangkat, seperti jumlah rute, TCAM, dan memori, di inventaris, lalu bandingkan dengan pertumbuhan tabel secara berkala.",
+        "Siapkan perubahan yang butuh reload, seperti pembagian ulang TCAM, sebelum batasnya tercapai, di jendela pemeliharaan yang terencana."
+      ],
+      "sumber": [
+        {
+          "judul": "What caused today's Internet hiccup (salinan arsip)",
+          "penerbit": "BGPmon, lewat Internet Archive",
+          "url": "https://web.archive.org/web/20150102173014/https://www.bgpmon.net/what-caused-todays-internet-hiccup/"
+        },
+        {
+          "judul": "CAT 6500 and 7600 Series Routers and Switches TCAM Allocation Adjustment Procedures",
+          "penerbit": "Cisco",
+          "url": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/117712-problemsolution-cat6500-00.html"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Perusahaan distribusi obat dengan kantor di Jakarta, Bandung, dan Surabaya memakai skema `10.<cabang>.<vlan>.0/24`: Bandung 10.2.0.0/16, Surabaya 10.3.0.0/16. Agar tabel routing ringkas, teknisi memasang ringkasan 10.2.0.0/16 di router Bandung, plus filter yang hanya mengizinkan rute itu keluar ke pusat. Sejak itu, karyawan Surabaya tidak bisa mencetak ke printer jaringan Bandung yang beralamat 192.168.50.20, padahal printer itu menyala dan bisa dipakai dari kantor Bandung sendiri. Apa yang terjadi, dan bagaimana memperbaikinya dengan benar?",
+      "petunjuk": [
+        "Bandingkan alamat printer dengan blok yang kini diumumkan Bandung. Apakah alamat itu termasuk di dalamnya?",
+        "Periksa tabel routing di router pusat dan Surabaya. Rute apa yang hilang sejak perubahan?",
+        "Perbaikan cepat memang bisa dengan mengizinkan satu rute tambahan, tetapi tanyakan kenapa subnet itu ada di luar rencana."
+      ],
+      "jawaban": "1. **Amati.** Printer bisa dipakai dari Bandung, jadi printernya sehat. Yang gagal hanya akses dari luar Bandung, dan mulainya sejak perubahan ringkasan rute.\n2. **Susun dugaan.** Alamat 192.168.50.20 tidak termasuk 10.2.0.0/16. Selama ini subnet 192.168.50.0/24 diumumkan terpisah. Filter baru hanya mengizinkan 10.2.0.0/16, jadi rute ke subnet printer ikut hilang dari tabel routing pusat dan Surabaya.\n3. **Uji.** Di router pusat, `show ip route 192.168.50.20` tidak menemukan rute spesifik, sehingga paket ikut default route dan hilang. Di router Bandung, `show ip route connected` menampilkan 192.168.50.0/24 sebagai subnet lokal yang kini tidak diumumkan.\n4. **Perbaiki dengan benar.** Pindahkan printer ke subnet yang sesuai rencana, misalnya VLAN 50 Bandung di 10.2.50.0/24. Perbarui IP statis atau reservasi DHCP-nya, lalu alamat printer di komputer pengguna. Perbaikan cepat sementara: izinkan 192.168.50.0/24 di filter, tetapi catat sebagai pekerjaan yang harus dibereskan.\n5. **Cegah terulang.** Sebelum meringkas, daftarkan semua subnet aktif dari IPAM atau NetBox dan cocokkan dengan tabel routing sungguhan. Subnet yang muncul di router tetapi tidak ada di dokumentasi adalah tanda dokumentasinya sudah usang."
+    }
+  },
+  "17-desain-arsitektur/04-studi-kasus-desain": {
+    "intinya": {
+      "satu_kalimat": "Desain jaringan dimulai dari kebutuhan bisnis (pengguna, aplikasi penting, keamanan, anggaran, rencana tumbuh), dan teknologinya dipilih sesudahnya untuk memenuhi kebutuhan itu.",
+      "analogi": "Membangun jaringan mirip membangun rumah. Arsitek yang baik bertanya dulu: berapa penghuninya, apa kebiasaannya, berapa dananya, dan apakah keluarga akan bertambah, baru menggambar denah dan memilih bahan. Kontraktor yang mulai dari 'saya ingin pakai kaca mahal ini' bisa menghasilkan rumah indah yang tidak cocok untuk penghuninya. Bedanya, jaringan terus diubah setelah dibangun, jadi siklus PPDIOO berputar kembali ke perencanaan, tidak berhenti saat serah terima.",
+      "kenapa_penting": "Saat PKL atau bekerja, Anda mungkin diminta membuat usulan jaringan untuk kantor cabang, sekolah, atau klinik. Usulan yang dimulai dari kebutuhan lebih mudah dibela di depan atasan, karena setiap perangkat punya alasan dan biayanya bisa dihitung.",
+      "istilah": [
+        {
+          "kata": "PPDIOO",
+          "arti": "Siklus hidup jaringan versi Cisco: Prepare, Plan, Design, Implement, Operate, Optimize, lalu kembali ke perencanaan."
+        },
+        {
+          "kata": "Requirements",
+          "arti": "Daftar kebutuhan yang harus dipenuhi desain, misalnya jumlah pengguna, aplikasi penting, target uptime, aturan keamanan, dan anggaran."
+        },
+        {
+          "kata": "Satelit geostasioner",
+          "arti": "Satelit yang mengorbit sekitar 36.000 km di atas khatulistiwa dan tampak diam dari bumi, sehingga antena di darat cukup diarahkan sekali."
+        },
+        {
+          "kata": "CapEx dan OpEx",
+          "arti": "CapEx adalah belanja modal di muka, misalnya membeli satelit atau switch. OpEx adalah biaya rutin, misalnya sewa transponder per tahun."
+        },
+        {
+          "kata": "Trade-off",
+          "arti": "Pertukaran antara dua tujuan yang saling tarik, misalnya keandalan lebih tinggi dengan biaya lebih besar."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "BRIsat: bank yang membeli satelit sendiri untuk menjangkau layanan di pelosok",
+      "kapan": "2016-06-19",
+      "di_mana": "Bank Rakyat Indonesia (BRI), seluruh Indonesia",
+      "ringkas": "BRI melayani nasabah sampai desa terpencil, termasuk lewat puluhan ribu agen Laku Pandai, dan sebagian jaringannya memakai satelit. Selama ini BRI menyewa transponder satelit dengan biaya sekitar Rp500 miliar per tahun. BRI lalu membeli satelit sendiri, BRIsat, buatan SSL dari Amerika Serikat. Satelit itu diluncurkan dengan roket Ariane 5 pada 19 Juni 2016 WIB, menuju orbit geostasioner 150,5 derajat Bujur Timur di atas Papua. BRI memperkirakan biaya operasional satelitnya turun sekitar 40%.",
+      "kronologi": [
+        {
+          "waktu": "awal Juni 2016",
+          "peristiwa": "Peluncuran pertama ditunda karena Arianespace menemukan gangguan teknis pada konektor fluida roket Ariane 5."
+        },
+        {
+          "waktu": "19 Juni 2016, sekitar 04.39 WIB",
+          "peristiwa": "BRIsat meluncur dengan roket Ariane 5 dari Bandar Antariksa Guyana di Kourou, Amerika Selatan."
+        },
+        {
+          "waktu": "Agustus 2016",
+          "peristiwa": "BRI menjadwalkan BRIsat mulai melayani operasional perbankan sekitar 50 hari setelah peluncuran, pada pekan kedua Agustus 2016."
+        },
+        {
+          "waktu": "Agustus-September 2017",
+          "peristiwa": "Saat satelit Telkom 1 gagal, 321 ATM BRI terganggu. BRI memigrasikan jaringan yang terdampak ke BRIsat sebagai jaringan utama, dan menyatakan seluruhnya pulih sejak 4 September 2017."
+        }
+      ],
+      "akar_masalah": "Kebutuhan BRI berasal dari bisnisnya: menjangkau desa yang tidak punya jaringan komunikasi darat, dengan biaya sewa satelit yang besar setiap tahun. Pilihannya ada dua: terus menyewa (biaya rutin, kendali terbatas) atau membeli satelit sendiri (belanja awal triliunan rupiah, tetapi kapasitas dan kendalinya di tangan sendiri). BRI memilih membeli. Konsekuensinya, satu satelit menjadi tumpuan banyak lokasi, sehingga cadangan dan rencana penggantiannya ikut menjadi tanggung jawab BRI.",
+      "kaitan": "Modul ini menekankan PPDIOO dan urutan kebutuhan, desain, lalu teknologi. BRIsat memperlihatkan urutan itu dalam skala besar: kebutuhan bisnis (menjangkau pelosok dan menekan biaya sewa) melahirkan keputusan memiliki satelit sendiri. Checklist di bagian 4 juga relevan: anggaran, skalabilitas, dan jalur WAN yang redundan. Dalam gangguan Telkom 1 tahun 2017, satelit milik sendiri memberi BRI jalur untuk memindahkan ATM yang terdampak.",
+      "pelajaran": [
+        "Tulis kebutuhan bisnis dalam angka, seperti jumlah lokasi, biaya sewa per tahun, dan target uptime, sebelum membandingkan pilihan teknologi.",
+        "Bandingkan total biaya beli dan sewa sepanjang umur pakai perangkat, termasuk biaya operasi dan penggantiannya.",
+        "Aset tunggal yang menjadi tumpuan banyak lokasi tetap butuh jalur cadangan dan rencana penggantian di akhir umur pakainya."
+      ],
+      "sumber": [
+        {
+          "judul": "Satelit BRI Akhirnya Mengorbit",
+          "penerbit": "CNN Indonesia",
+          "url": "https://www.cnnindonesia.com/ekonomi/20160619052530-78-139214/satelit-bri-akhirnya-mengorbit/"
+        },
+        {
+          "judul": "BRIsat Berhasil Diluncurkan",
+          "penerbit": "Republika",
+          "url": "https://ekonomi.republika.co.id/berita/o8zpur/brisat-berhasil-diluncurkan"
+        },
+        {
+          "judul": "Satelit BRI Diluncurkan Pekan Depan",
+          "penerbit": "Republika",
+          "url": "https://ekonomi.republika.co.id/berita/o8hw2e368/satelit-bri-diluncurkan-pekan-depan"
+        },
+        {
+          "judul": "Pasca Gangguan Satelit Telkom 1, ATM Tiga Bank BUMN Ini Pulih 100 Persen",
+          "penerbit": "Bareksa",
+          "url": "https://www.bareksa.com/berita/berita-ekonomi-terkini/2017-09-12/pasca-gangguan-satelit-telkom-1-atm-tiga-bank-bumn-ini-pulih-100-persen"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Sebuah yayasan pendidikan di Makassar punya tiga sekolah dalam satu kota, masing-masing sekitar 400 siswa dan 40 guru. Ketua yayasan berkata: 'Kami mau Wi-Fi paling canggih dan server sendiri di tiap sekolah. Anggarannya Rp300 juta.' Dari obrolan, Anda tahu bahwa ujian berbasis komputer (CBT) diadakan serentak dua kali setahun dan data nilai siswa wajib dilindungi. Administrasi sudah memakai email cloud, dan tiap sekolah hanya punya satu teknisi paruh waktu. Susun langkah berpikir Anda sebelum mengusulkan perangkat, lalu buat usulan tingkat tinggi.",
+      "petunjuk": [
+        "Pisahkan permintaan teknologi ('Wi-Fi paling canggih', 'server di tiap sekolah') dari kebutuhan sebenarnya. Kebutuhan apa yang tersirat dari CBT, data nilai, dan satu teknisi paruh waktu?",
+        "Untuk Wi-Fi, hitung kapasitasnya: berapa perangkat yang aktif bersamaan di satu ruang ujian?",
+        "Server di tiap sekolah berarti tiga server yang harus dirawat, di-backup, dan diamankan. Siapa yang akan melakukannya?"
+      ],
+      "jawaban": "1. **Kumpulkan kebutuhan (Prepare dan Plan).** Tanyakan aplikasi apa yang wajib jalan, berapa perangkat aktif bersamaan saat CBT, data apa yang sensitif, berapa lama layanan boleh mati, dan siapa yang merawat. Dari cerita ketua yayasan, CBT butuh kapasitas Wi-Fi atau kabel di ruang ujian, dan data nilai butuh segmentasi serta backup. Satu teknisi paruh waktu berarti desain harus sederhana dan bisa dikelola dari pusat.\n2. **Terjemahkan ke desain.**\n   - Wi-Fi: hitung dari kapasitas di ruang ujian dan aula. Pakai AP yang dikelola terpusat, dengan SSID terpisah untuk guru, siswa, dan tamu.\n   - Segmentasi: VLAN terpisah untuk siswa, guru, administrasi, dan server, dengan ACL antar-VLAN. Data nilai hanya bisa diakses dari VLAN guru dan administrasi.\n   - Server: satu server pusat atau aplikasi berbasis cloud, dengan backup ke lokasi lain, alih-alih tiga server yang masing-masing butuh perawatan.\n   - WAN: tiap sekolah punya internet utama dan cadangan. Server CBT lokal per sekolah layak dipertimbangkan bila koneksi antarsekolah tidak cukup andal saat ujian.\n   - Pengalamatan: skema `10.<sekolah>.<vlan>.0/24` agar konsisten dan mudah diringkas.\n3. **Validasi trade-off.** Bandingkan usulan dengan anggaran Rp300 juta dan kemampuan satu teknisi. Bila melebihi anggaran, dahulukan kapasitas Wi-Fi untuk CBT dan backup data nilai, lalu tunda yang lain.\n4. **Jelaskan ke yayasan.** Tautkan setiap perangkat ke kebutuhannya, misalnya 'AP di ruang ujian untuk 40 laptop CBT serentak', agar keputusannya bisa dibela."
+    }
+  },
+  "17-desain-arsitektur/05-operasi-kontinuitas": {
+    "intinya": {
+      "satu_kalimat": "Kontinuitas layanan berarti menetapkan berapa data dan waktu yang boleh hilang, menyiapkan backup dan site cadangan, dan mengubah jaringan dengan rencana kembali yang teruji.",
+      "analogi": "Bayangkan Anda menyimpan foto keluarga di HP. RPO menjawab 'kalau HP hilang hari ini, foto sejak kapan yang boleh ikut hilang?', sedangkan RTO menjawab 'berapa lama saya sanggup tanpa foto itu?'. Aturan 3-2-1 berarti tiga salinan foto, di dua jenis media (misalnya HP dan flashdisk), dengan satu salinan disimpan di rumah orang tua. Cadangan yang disimpan di laci yang sama dengan HP akan ikut hilang bila rumahnya kebakaran.",
+      "kenapa_penting": "Gangguan bisa datang dari perubahan yang dibuat tim sendiri, atau dari kejadian di luar kendali seperti kebakaran dan listrik padam. Di tempat kerja, Anda akan menulis MOP, bekerja di jendela pemeliharaan, dan ikut uji pemulihan bencana. Bisnis juga akan bertanya berapa menit layanan boleh mati, dan Anda harus bisa menjawab dengan angka.",
+      "istilah": [
+        {
+          "kata": "RPO",
+          "arti": "Recovery Point Objective: batas data yang boleh hilang, diukur dalam waktu. RPO satu jam berarti backup atau replikasi minimal tiap jam."
+        },
+        {
+          "kata": "RTO",
+          "arti": "Recovery Time Objective: batas waktu layanan boleh mati sampai pulih kembali."
+        },
+        {
+          "kata": "Aturan 3-2-1",
+          "arti": "Simpan tiga salinan data, di dua jenis media berbeda, dengan satu salinan di luar lokasi."
+        },
+        {
+          "kata": "Hot, warm, cold site",
+          "arti": "Lokasi cadangan dengan tingkat kesiapan berbeda: hot siap dalam menit, warm dalam jam, cold butuh hari sampai minggu."
+        },
+        {
+          "kata": "MOP",
+          "arti": "Method of Procedure: naskah langkah demi langkah sebuah perubahan, lengkap dengan pre-check, post-check, dan rollback."
+        },
+        {
+          "kata": "Rencana pemulihan bencana (DRP)",
+          "arti": "Rencana tertulis untuk memulihkan layanan di lokasi lain setelah bencana, termasuk siapa melakukan apa."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Kebakaran data center OVHcloud di Strasbourg, dengan backup yang ternyata satu gedung",
+      "kapan": "2021-03-10",
+      "di_mana": "OVHcloud, kompleks data center Strasbourg (SBG1 sampai SBG4), Prancis",
+      "ringkas": "OVHcloud, penyedia cloud asal Prancis, punya empat data center berdampingan di Strasbourg: SBG1 sampai SBG4. Pada 10 Maret 2021 pukul 00.47, kebakaran terjadi di SBG2. Gedung itu hancur bersama 14.046 server yang sedang beroperasi, dan sebagian SBG1 ikut rusak. Seluruh situs dimatikan, dan sekitar 120.000 layanan pelanggan terdampak. Belakangan, pengadilan memutuskan OVHcloud wajib membayar ganti rugi kepada dua pelanggan yang backup berbayarnya ternyata disimpan di gedung yang sama dengan server utamanya.",
+      "kronologi": [
+        {
+          "waktu": "10 Mar 2021, 00.47",
+          "peristiwa": "Kebakaran terjadi di SBG2, dan sistem deteksi langsung aktif."
+        },
+        {
+          "waktu": "sekitar 01.20",
+          "peristiwa": "Petugas perusahaan listrik Électricité de Strasbourg tiba. Menurut laporan pemadam kebakaran yang dikutip media, gedung itu tidak punya pemadam api otomatis maupun pemutus listrik darurat."
+        },
+        {
+          "waktu": "sekitar 03.29",
+          "peristiwa": "Aliran listrik ke situs akhirnya berhasil diputus, hampir tiga jam setelah api muncul."
+        },
+        {
+          "waktu": "04.09",
+          "peristiwa": "Api berhasil dikendalikan. SBG2 hancur, sebagian SBG1 rusak, sedangkan SBG3 dan SBG4 tidak terbakar tetapi ikut dimatikan."
+        },
+        {
+          "waktu": "10 Mar 2021",
+          "peristiwa": "OVHcloud menyarankan pelanggan yang produksinya di Strasbourg mengaktifkan rencana pemulihan bisnis mereka."
+        },
+        {
+          "waktu": "mulai 17 Mar 2021",
+          "peristiwa": "SBG1, SBG3, dan SBG4 dinyalakan kembali bertahap. OVHcloud menggandakan produksi server dari 1.500 menjadi lebih dari 3.000 per pekan untuk mengganti yang hilang."
+        },
+        {
+          "waktu": "23 Apr 2021",
+          "peristiwa": "Dari sekitar 120.000 layanan yang terdampak, 113.000 sudah pulih sepenuhnya."
+        },
+        {
+          "waktu": "Februari-Maret 2023",
+          "peristiwa": "Pengadilan niaga Lille Métropole memenangkan Bati Courtage dan Bluepad, dengan ganti rugi sekitar 101.000 dan 154.000 euro. OVHcloud menyatakan akan banding."
+        }
+      ],
+      "akar_masalah": "Laporan pemadam kebakaran yang dikutip media menyebut api berawal dari inverter listrik di lantai satu. Desain gedung mempercepat penyebaran: tidak ada pemadam otomatis, plafon kayunya hanya tahan api sekitar satu jam, dan listrik baru bisa diputus hampir tiga jam kemudian. Bagi pelanggan, masalahnya lain: sebagian data hanya ada di kompleks itu. Empat gedung yang berdampingan berbagi satu risiko kebakaran, dan sebagian backup disimpan di gedung yang sama dengan server utamanya.",
+      "kaitan": "Bagian 4 modul menjelaskan aturan 3-2-1: satu salinan wajib berada di luar lokasi. Bagi pelanggan yang backup-nya ternyata ada di SBG2 bersama server utama, salinan di luar lokasi itu tidak pernah ada, walau mereka sudah membayar layanan backup. Bagian 3 tentang jenis site juga terlihat: empat data center di satu kompleks tidak bisa saling menjadi site pemulihan, karena satu kebakaran mematikan semuanya. Saran OVHcloud agar pelanggan mengaktifkan rencana pemulihan hanya menolong yang sudah menyiapkan dan menguji rencana itu (bagian 5).",
+      "pelajaran": [
+        "Pastikan sendiri di mana salinan backup Anda disimpan, sampai tingkat gedung atau kota. Jangan hanya percaya label 'backup' di tagihan.",
+        "Simpan salinan data yang tidak boleh hilang di region atau penyedia lain, sesuai aturan 3-2-1.",
+        "Latih pemulihan ke lokasi lain sebelum dibutuhkan, karena saran 'aktifkan rencana pemulihan Anda' hanya berguna bila rencananya sudah teruji.",
+        "Saat menilai data center, tanyakan sistem pemadam api, cara memutus listrik darurat, dan jarak antargedung yang diklaim saling mencadangkan."
+      ],
+      "sumber": [
+        {
+          "judul": "Strasbourg datacentre: latest information",
+          "penerbit": "OVHcloud",
+          "url": "https://corporate.ovhcloud.com/en/newsroom/news/informations-site-strasbourg/"
+        },
+        {
+          "judul": "OVH data centre destroyed by fire in Strasbourg - all services unavailable",
+          "penerbit": "The Register",
+          "url": "https://www.theregister.com/2021/03/10/ovh_strasbourg_fire/"
+        },
+        {
+          "judul": "OVHcloud datacenter 'lacked' automatic fire extinguishers, electrical cutoff",
+          "penerbit": "The Register",
+          "url": "https://www.theregister.com/2022/03/22/ovhcloud_fire_datacenter/"
+        },
+        {
+          "judul": "OVHcloud must pay damages for lost backup data",
+          "penerbit": "Blocks and Files",
+          "url": "https://blocksandfiles.com/2023/03/23/ovh-cloud-must-pay-damages-for-lost-backup-data/"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda bekerja di ISP kecil di Pontianak. SLO internal untuk layanan internet pelanggan bisnis adalah 99,9% per bulan (30 hari). Sampai tanggal 20, pelanggan sudah mengalami gangguan total 30 menit akibat kabel putus. Tim berencana mengganti router edge pada tanggal 25 malam, dengan perkiraan layanan mati 20 menit, dan rencana itu sudah disetujui CAB bulan lalu. Apakah rencana itu sebaiknya tetap jalan? Hitung sisa error budget, lalu usulkan cara melanjutkan yang aman.",
+      "petunjuk": [
+        "Hitung anggaran downtime 99,9% untuk 30 hari, lalu kurangi dengan yang sudah terpakai.",
+        "Bandingkan sisa anggaran dengan perkiraan downtime pekerjaan. Perkiraan itu juga bisa meleset, jadi pikirkan kemungkinan rollback.",
+        "Bisakah penggantian router dibuat hampir tanpa downtime, misalnya dengan memindahkan pelanggan per kelompok ke router baru?"
+      ],
+      "jawaban": "1. **Hitung anggaran.** 30 hari sama dengan 43.200 menit. 0,1% x 43.200 = 43,2 menit per bulan. Sudah terpakai 30 menit, jadi sisanya sekitar 13,2 menit.\n2. **Bandingkan.** Pekerjaan diperkirakan memakan 20 menit downtime, lebih besar dari sisa anggaran. Bila ada kendala dan perlu rollback, angkanya bisa jauh lebih besar. Melanjutkan sesuai rencana hampir pasti melanggar SLO.\n3. **Pilihan yang masuk akal.**\n   - Tunda ke awal bulan berikutnya, saat anggaran kembali penuh, dan beri tahu CAB bahwa kondisinya sudah berubah sejak persetujuan.\n   - Atau ubah caranya: pasang router baru berdampingan, lalu pindahkan pelanggan per kelompok, sehingga tiap kelompok hanya mati sebentar. Ini perubahan rencana, jadi MOP-nya perlu ditinjau ulang.\n4. **Lengkapi MOP.** Tulis pre-check (sesi BGP, rute, jumlah pelanggan aktif), langkah bernomor, dan post-check yang sama. Tambahkan kriteria rollback, misalnya 'bila sesi BGP belum naik dalam 10 menit, kembali ke router lama'.\n5. **Komunikasikan.** Umumkan jendela pemeliharaan ke pelanggan bisnis jauh hari, karena SLA mereka mungkin memuat kompensasi bila dilanggar."
+    }
+  }
+}

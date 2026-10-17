@@ -1,0 +1,202 @@
+{
+  "13-linux-networking/01-iproute2": {
+    "intinya": {
+      "satu_kalimat": "iproute2 adalah seperangkat perintah modern (terutama `ip`) untuk mengatur alamat, rute, dan tetangga di Linux, menggantikan perintah lama seperti `ifconfig` yang sudah usang.",
+      "analogi": "Kalau `ifconfig` seperti peta kota lama yang sudah tidak dicetak ulang dan melewatkan beberapa jalan baru, `ip` adalah peta digital resmi yang selalu menunjukkan keadaan jalan sebenarnya. Keduanya menunjukkan kota yang sama, tetapi hanya yang baru menampilkan semua jalan dengan benar.",
+      "kenapa_penting": "Hampir semua server, container, dan cloud berjalan di Linux, jadi memeriksa alamat dan rute dengan `ip` adalah keterampilan harian. Saat koneksi server bermasalah, `ip route get` langsung menunjukkan jalur yang benar-benar dipakai.",
+      "istilah": [
+        { "kata": "iproute2", "arti": "Paket perintah jaringan Linux modern: `ip` (alamat, rute, tetangga), `ss` (soket), `tc` (antrean)." },
+        { "kata": "ARP", "arti": "Protokol yang memetakan alamat IP ke alamat fisik (MAC) di jaringan lokal, agar paket tahu harus dikirim ke perangkat mana." },
+        { "kata": "ARP cache / neighbor table", "arti": "Tabel di kernel yang menyimpan hasil pemetaan IP ke MAC. Ukurannya terbatas." },
+        { "kata": "sysctl", "arti": "Cara membaca dan mengubah setelan kernel Linux, termasuk parameter jaringan seperti ukuran ARP cache." },
+        { "kata": "Pod", "arti": "Unit terkecil di Kubernetes, berisi satu atau beberapa container. Tiap pod punya alamat IP sendiri." }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "ARP cache Linux penuh saat OpenAI menskalakan klaster Kubernetes",
+      "kapan": "2018-01",
+      "di_mana": "OpenAI, klaster Kubernetes di Azure",
+      "ringkas": "Saat menskalakan klaster Kubernetes hingga lebih dari 2.500 node, OpenAI menemui kegagalan jaringan yang membingungkan: koneksi menggantung berdetik-detik dan DNS gagal. Penyebabnya bukan kabel atau routing, melainkan ARP cache (neighbor table) kernel yang penuh karena tiap pod memakai satu alamat IP. Perbaikannya hanya beberapa baris sysctl untuk memperbesar batas tabel.",
+      "kronologi": [
+        { "waktu": "Gejala", "peristiwa": "Seorang engineer melapor `nc -v` ke server Redis butuh lebih dari 30 detik untuk menyatakan koneksi tersambung. Komunikasi di port mana pun menggantung beberapa detik." },
+        { "waktu": "Investigasi awal", "peristiwa": "Resolusi DNS lewat dnsmasq lokal gagal, dan `dig` hanya mencetak pesan galat samar `internal_send: 127.0.0.1#53: Invalid argument`." },
+        { "waktu": "Petunjuk kunci", "peristiwa": "Log kernel (`dmesg`) menunjukkan pesan yang jauh lebih jelas: `neighbor table overflow!`, artinya ARP cache kehabisan ruang." },
+        { "waktu": "Penyebab", "peristiwa": "Di Kubernetes, tiap pod punya alamat IP sendiri yang memakan ruang di ARP cache, sehingga klaster besar melampaui batas bawaan tabel." },
+        { "waktu": "Perbaikan", "peristiwa": "OpenAI menaikkan batas lewat sysctl: `gc_thresh1=80000`, `gc_thresh2=90000`, `gc_thresh3=100000`. Setelahnya klaster bebas insiden selama sekitar tiga bulan sampai artikel ditulis." }
+      ],
+      "akar_masalah": "ARP cache kernel punya batas jumlah entri (bawaan gc_thresh3 hanya 1024 entri non-permanen). Setiap pod Kubernetes memakai satu alamat IP yang perlu dipetakan ke MAC, jadi klaster dengan ribuan node dan pod cepat melampaui batas itu. Saat tabel penuh, kernel tidak bisa memetakan tetangga baru, komunikasi menggantung, dan DNS gagal.",
+      "kaitan": "Kasus ini langsung menyentuh bagian 5 (`ip neigh`: Tabel Tetangga ARP/NDP) dan bagian 9 (sysctl: Tuning Kernel Network). Gejalanya persis alur troubleshooting modul: masalah yang tampak seperti DNS ternyata di lapisan ARP/kernel, dan ditemukan lewat `dmesg`, bukan dengan menebak lapisan atas. Perbaikannya memakai sysctl `net.ipv4.neigh.default.gc_thresh*` seperti yang dibahas.",
+      "pelajaran": [
+        "Saat koneksi menggantung dan DNS gagal bersamaan, periksa `dmesg`; pesan seperti `neighbor table overflow` menunjuk ARP cache, bukan DNS.",
+        "Di lingkungan dengan banyak alamat IP (Kubernetes, HPC), naikkan `gc_thresh1/2/3` lewat sysctl sebelum tabel penuh.",
+        "Gejala di lapisan atas (DNS, aplikasi lambat) bisa berakar di lapisan bawah (ARP/kernel). Telusuri dari bawah ke atas.",
+        "Setelan sysctl bersifat sementara; tulis ke `/etc/sysctl.d/` agar bertahan setelah reboot."
+      ],
+      "sumber": [
+        { "judul": "Scaling Kubernetes to 2,500 Nodes", "penerbit": "OpenAI", "url": "https://openai.com/index/scaling-kubernetes-to-2500-nodes/" },
+        { "judul": "IP sysctl (neigh/default/gc_thresh)", "penerbit": "Linux Kernel Documentation", "url": "https://docs.kernel.org/networking/ip-sysctl.html" }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda mengelola satu server Linux yang menjadi gateway lab dengan banyak perangkat IoT (ratusan sensor) di satu subnet besar `/16`. Beberapa hari terakhir, koneksi dari server ke sebagian sensor kadang menggantung beberapa detik, lalu normal lagi, tanpa pola jelas. Ping ke sensor yang sama kadang jalan kadang timeout. Kabel dan switch sudah dicek, tidak ada error fisik. Dari mana Anda mulai, dan apa dugaan terkuat Anda?",
+      "petunjuk": [
+        "Gejalanya menggantung lalu normal, acak, ke banyak tujuan di subnet besar. Apa yang perlu kernel simpan untuk tiap tujuan di LAN?",
+        "Perintah apa yang menunjukkan isi tabel tetangga, dan di mana kernel mencatat tabel yang penuh?",
+        "Kalau banyak tetangga aktif sekaligus di satu subnet, batas apa yang mungkin terlampaui?"
+      ],
+      "jawaban": "1. **Baca polanya.** Menggantung lalu pulih secara acak, ke banyak tujuan di satu subnet `/16` dengan ratusan perangkat aktif, mengarah ke **ARP cache (neighbor table) yang penuh**, bukan masalah fisik (yang sudah disingkirkan).\n2. **Kumpulkan bukti.** Lihat jumlah entri tetangga: `ip neigh show | wc -l`. Cek log kernel: `dmesg | grep -i 'neighbor table overflow'`. Bandingkan dengan batas saat ini: `sysctl net.ipv4.neigh.default.gc_thresh1 gc_thresh2 gc_thresh3` (bawaan 128/512/1024).\n3. **Simpulkan.** Bila jumlah tetangga aktif mendekati atau melewati `gc_thresh3` dan ada pesan overflow, tabel penuh: kernel membuang entri lalu harus ARP ulang, itulah jeda beberapa detik yang Anda lihat.\n4. **Perbaiki.** Naikkan batas sesuai jumlah perangkat, lalu buat permanen:\n   ```\n   net.ipv4.neigh.default.gc_thresh1 = 2048\n   net.ipv4.neigh.default.gc_thresh2 = 4096\n   net.ipv4.neigh.default.gc_thresh3 = 8192\n   ```\n   Tulis ke `/etc/sysctl.d/99-neigh.conf` lalu `sysctl --system`.\n5. **Verifikasi.** Pantau `ip -s neigh show` dan `dmesg`; pesan overflow harus berhenti dan jeda hilang. Pertimbangkan juga memecah subnet `/16` yang terlalu besar menjadi beberapa subnet lebih kecil untuk mengurangi jumlah tetangga per segmen."
+    }
+  },
+  "13-linux-networking/02-virtual-networking": {
+    "intinya": {
+      "satu_kalimat": "Jaringan virtual Linux dibangun dari beberapa balok dasar, seperti network namespace, veth, dan bridge, yang sama persis dipakai container dan cloud di baliknya.",
+      "analogi": "Bayangkan satu gedung (host) yang disekat menjadi banyak kamar kedap suara (namespace). Tiap kamar punya saklar dan colokan sendiri. veth adalah kabel yang menembus dinding menghubungkan dua kamar, dan bridge adalah terminal colokan bersama tempat banyak kabel bertemu, seperti switch mini.",
+      "kenapa_penting": "Jaringan Docker dan Kubernetes tersusun dari balok-balok ini. Memahaminya membuat Anda bisa membaca dan memperbaiki jaringan container ketika ia bermasalah, alih-alih menatapnya sebagai kotak hitam.",
+      "istilah": [
+        { "kata": "Network namespace", "arti": "Stack jaringan terpisah di dalam satu Linux: punya interface, tabel rute, dan firewall sendiri. Dasar isolasi container." },
+        { "kata": "veth pair", "arti": "Sepasang interface virtual yang terhubung seperti kabel: apa yang masuk satu ujung keluar ujung lain." },
+        { "kata": "Linux bridge", "arti": "Switch layer 2 dalam perangkat lunak. `docker0` adalah contohnya." },
+        { "kata": "SNAT / masquerade", "arti": "Mengganti alamat IP sumber paket keluar dengan alamat host, lalu dibalik lagi saat jawaban datang. Dipakai agar container bisa ke internet." },
+        { "kata": "conntrack", "arti": "Modul kernel yang melacak status tiap koneksi, termasuk pemetaan NAT, agar paket lanjutan diperlakukan konsisten." }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Timeout koneksi misterius di Kubernetes karena balapan SNAT di conntrack",
+      "kapan": "2018-02",
+      "di_mana": "XING (platform karier), Hamburg, Jerman",
+      "ringkas": "Tim arsitektur backend XING melihat timeout koneksi yang aneh setelah memindahkan aplikasi ke Kubernetes: hampir tiap detik ada satu permintaan yang lambat, tepat 1 atau 3 detik. Setelah menelusuri sampai ke kode kernel, mereka menemukan race condition pada SNAT: dua koneksi bisa mendapat port terjemahan yang sama, lalu satu paket SYN dibuang. Perbaikannya mengaktifkan alokasi port acak penuh (`--random-fully`).",
+      "kronologi": [
+        { "waktu": "Gejala", "peristiwa": "Setelah pindah ke Kubernetes, aplikasi Scala sering punya satu permintaan yang lambat tiap detik, dengan penundaan tepat 1 atau 3 detik, bukan ratusan milidetik seperti biasa." },
+        { "waktu": "Menyingkirkan DNS", "peristiwa": "Tim menduga KubeDNS, tetapi pengukuran menunjukkan resolusi nama cepat, sehingga DNS disingkirkan sebagai penyebab." },
+        { "waktu": "Menangkap paket", "peristiwa": "Jejak jaringan menunjukkan paket SYN pertama hilang antara bridge dan `eth0`, lalu dikirim ulang; penundaan 1 dan 3 detik cocok dengan jadwal retransmisi SYN." },
+        { "waktu": "Petunjuk kunci", "peristiwa": "Perintah `conntrack -S` menunjukkan penghitung `insert_failed` bernilai bukan nol, naik seiring jumlah paket yang hilang." },
+        { "waktu": "Akar di kernel", "peristiwa": "Ada jeda antara pengalokasian port SNAT dan pencatatannya di tabel conntrack; dua koneksi paralel ke tujuan sama bisa memilih port sama, lalu satu dibuang." },
+        { "waktu": "Perbaikan", "peristiwa": "Mengaktifkan flag `NF_NAT_RANGE_PROTO_RANDOM_FULLY` (`--random-fully`) pada aturan masquerade menekan galat insert; di klaster hidup, galat turun dari satu tiap beberapa detik menjadi satu tiap beberapa jam." }
+      ],
+      "akar_masalah": "Docker dan Flannel memakai masquerade (SNAT) untuk lalu lintas keluar container. Saat beberapa container membuka koneksi ke tujuan yang sama secara bersamaan, kernel harus memilih port sumber baru. Ada jeda antara pemilihan port dan pencatatannya di conntrack, sehingga dua proses paralel bisa memilih port yang sama; saat salah satu gagal dicatat, paketnya dibuang. Itulah SYN yang hilang dan menimbulkan penundaan 1 atau 3 detik.",
+      "kaitan": "Kasus ini menghidupkan bagian 10 (Membangun Firewall/NAT untuk Namespace) dan bagian 11 (Cara Docker Bekerja): masquerade yang dipasang Docker/Flannel di `postrouting` adalah tempat race ini terjadi. Ia juga menjelaskan kenapa memahami **SNAT dan conntrack** penting saat men-debug jaringan container, bukan hanya bagan veth-bridge-NAT yang rapi.",
+      "pelajaran": [
+        "Penundaan tepat 1 atau 3 detik pada koneksi adalah tanda paket SYN hilang lalu dikirim ulang, bukan server lambat.",
+        "Saat men-debug jaringan container, periksa `conntrack -S`; penghitung `insert_failed` yang naik menunjuk race pada alokasi port SNAT.",
+        "Aktifkan alokasi port acak penuh (`--random-fully` di iptables, atau flag `fully-random` di nftables) pada aturan masquerade untuk menekan tabrakan.",
+        "Kurangi beban dengan tidak mengarahkan semua lalu lintas ke satu endpoint yang sama bila bisa; variasi tujuan mengurangi tabrakan port."
+      ],
+      "sumber": [
+        { "judul": "A reason for unexplained connection timeouts on Kubernetes/Docker", "penerbit": "XING Engineering (Maxime Lagresle)", "url": "https://tech.new-work.se/a-reason-for-unexplained-connection-timeouts-on-kubernetes-docker-abd041cf7e02" },
+        { "judul": "iptables-extensions: --random-fully", "penerbit": "man7.org (Linux man-pages)", "url": "https://man7.org/linux/man-pages/man8/iptables-extensions.8.html" }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda menjalankan beberapa container di satu host Docker. Container-container itu sering memanggil satu layanan internal yang sama (satu alamat IP dan port). Kebanyakan panggilan cepat, tetapi kira-kira satu dari sekian banyak menggantung persis 1 detik, kadang 3 detik, lalu berhasil. Jaringan fisik sehat dan server tujuan tidak sibuk. Apa dugaan Anda dan bagaimana membuktikannya tanpa langsung menebak?",
+      "petunjuk": [
+        "Penundaan yang selalu mendekati 1 atau 3 detik itu khas. Mekanisme TCP apa yang jadwal pengirimannya 1, lalu 3, lalu 6 detik?",
+        "Banyak container ke satu tujuan yang sama lewat satu host. Operasi apa yang dilakukan host pada alamat sumber paket keluar?",
+        "Penghitung apa di `conntrack -S` yang naik tiap kali sebuah paket dibuang karena bentrok pencatatan?"
+      ],
+      "jawaban": "1. **Baca gejalanya.** Penundaan tepat 1 atau 3 detik cocok dengan jadwal **retransmisi SYN** TCP (1 detik untuk percobaan kedua, 3 detik untuk ketiga). Artinya paket SYN pertama hilang, bukan server lambat.\n2. **Pikirkan mengapa SYN hilang padahal jaringan sehat.** Semua container keluar lewat host yang melakukan **SNAT/masquerade**. Banyak koneksi serentak ke tujuan yang sama memaksa kernel memilih port sumber baru, dan ada jeda antara memilih port dan mencatatnya di conntrack.\n3. **Buktikan, jangan menebak.**\n   - Tangkap paket di host: `tcpdump -ni <if> 'tcp[tcpflags] & tcp-syn != 0'` dan cocokkan SYN yang tidak berbalas lalu dikirim ulang dengan permintaan yang lambat.\n   - Lihat penghitung: `conntrack -S` dan perhatikan `insert_failed`. Bila ia naik seiring jumlah panggilan lambat, race alokasi port SNAT terkonfirmasi.\n4. **Perbaiki.** Aktifkan alokasi port acak penuh pada aturan masquerade: `--random-fully` (iptables) atau flag `fully-random` (nftables). Ini menyebar titik awal pencarian port sehingga tabrakan jarang terjadi.\n5. **Verifikasi dan kurangi beban.** Pantau `insert_failed` setelah perubahan; angkanya harus turun drastis. Kalau memungkinkan, kurangi memusatkan semua panggilan ke satu endpoint (misalnya beberapa alamat tujuan), karena itu yang memperparah tabrakan."
+    }
+  },
+  "13-linux-networking/03-nftables-firewall": {
+    "intinya": {
+      "satu_kalimat": "nftables adalah firewall Linux modern yang menggantikan iptables, dengan aturan yang lebih ringkas dan pencarian berbasis tabel (map/set) yang jauh lebih cepat saat aturannya banyak.",
+      "analogi": "iptables seperti satpam yang memeriksa daftar tamu baris demi baris dari atas; makin panjang daftarnya, makin lama tiap tamu menunggu. nftables seperti satpam dengan buku indeks: ia langsung membuka halaman nama yang dicari, jadi lama pemeriksaan hampir sama walau daftarnya puluhan ribu.",
+      "kenapa_penting": "Firewall Linux ada di hampir setiap server dan di balik jaringan Kubernetes. Saat jumlah layanan membengkak, cara aturan disusun menentukan apakah paket diproses dalam waktu tetap atau makin lambat seiring pertumbuhan.",
+      "istilah": [
+        { "kata": "nftables", "arti": "Kerangka firewall Linux modern (perintah `nft`), pengganti iptables di distribusi baru." },
+        { "kata": "iptables", "arti": "Firewall Linux lama yang memproses aturan baris demi baris. Masih banyak ditemui di sistem dan skrip lama." },
+        { "kata": "kube-proxy", "arti": "Komponen Kubernetes yang mengatur aturan jaringan agar lalu lintas ke sebuah Service sampai ke pod yang tepat." },
+        { "kata": "Service (Kubernetes)", "arti": "Alamat tetap yang mewakili sekumpulan pod; lalu lintas ke sana diteruskan ke salah satu pod." },
+        { "kata": "verdict map", "arti": "Fitur nftables: satu aturan mencari tujuan di sebuah peta dan langsung menentukan tindakannya, tanpa menelusuri banyak baris." }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "Kubernetes memindahkan kube-proxy dari iptables ke nftables",
+      "kapan": "2025-04",
+      "di_mana": "Proyek Kubernetes (SIG Network), global",
+      "ringkas": "Kubernetes menambahkan mode nftables untuk kube-proxy guna mengatasi masalah skala pada mode iptables. Di mode lama, aturan ditelusuri baris demi baris, sehingga biaya memproses paket pertama tiap koneksi tumbuh sebanding dengan jumlah Service. Mode nftables memakai verdict map sehingga pencarian nyaris berwaktu tetap. Fitur ini masuk sebagai alpha di versi 1.29 dan dinyatakan stabil di versi 1.33.",
+      "kronologi": [
+        { "waktu": "Masalah skala", "peristiwa": "Di mode iptables, ada satu aturan untuk tiap kemungkinan IP Service di puncak ruleset, jadi biaya memeriksa paket tumbuh sebanding jumlah Service (O(n))." },
+        { "waktu": "Masalah control plane", "peristiwa": "Memperbarui aturan berarti memproses ruleset yang bisa mencapai ratusan ribu baris; mulai Kubernetes 1.26 pembaruan dibuat lebih hemat, tetapi tetap O(n) terhadap jumlah Service." },
+        { "waktu": "Pendekatan nftables", "peristiwa": "nftables memakai satu aturan dengan verdict map: tujuan paket dicari di peta `service-ips` dan langsung mendapat tindakannya, sehingga waktu proses nyaris tetap berapa pun jumlah Service." },
+        { "waktu": "Kubernetes 1.29", "peristiwa": "Mode nftables untuk kube-proxy diperkenalkan sebagai fitur alpha." },
+        { "waktu": "Kubernetes 1.33 (23 April 2025)", "peristiwa": "Backend nftables dinyatakan stabil. Demi kompatibilitas, iptables tetap menjadi mode bawaan di node Linux." }
+      ],
+      "akar_masalah": "Antarmuka iptables dirancang untuk firewall sederhana, bukan untuk meneruskan puluhan ribu Service. Karena aturan ditelusuri berurutan, baik waktu memproses paket maupun waktu memperbarui aturan tumbuh seiring jumlah Service. nftables memakai struktur pencarian (map dan set) dan pembaruan bertahap, sehingga biaya tidak lagi tumbuh sebanding jumlah total Service.",
+      "kaitan": "Kasus ini memperkuat bagian 9 (iptables: Masih Anda Temui) dan pesan modul bahwa **nftables menggantikan iptables** di sistem modern. Keunggulan map/set dan verdict map yang dibahas di bagian 7 (Fitur Lanjutan) persis yang dipakai kube-proxy untuk menggantikan rantai aturan panjang. Alasan kompatibilitas, yakni iptables tetap bawaan, juga sejalan dengan nasihat modul: pelajari iptables secukupnya untuk membaca sistem lama.",
+      "pelajaran": [
+        "Jumlah aturan firewall yang besar bisa menjadi hambatan kinerja; cara aturan disusun (penelusuran berurutan vs pencarian map) sangat menentukan.",
+        "nftables memakai map/set dan verdict map agar pencarian nyaris berwaktu tetap, cocok untuk skala besar seperti ribuan Service Kubernetes.",
+        "Perubahan default berjalan hati-hati: meski nftables stabil, iptables tetap bawaan demi kompatibilitas, jadi uji dulu sebelum beralih.",
+        "Untuk sistem baru, tulis aturan dengan nftables; pelajari iptables secukupnya untuk membaca sistem dan skrip lama."
+      ],
+      "sumber": [
+        { "judul": "NFTables mode for kube-proxy", "penerbit": "Kubernetes Blog", "url": "https://kubernetes.io/blog/2025/02/28/nftables-kube-proxy/" },
+        { "judul": "Kubernetes v1.33: Octarine (nftables backend for kube-proxy is now stable)", "penerbit": "Kubernetes Blog", "url": "https://kubernetes.io/blog/2025/04/23/kubernetes-v1-33-release/" }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Sebuah tim melaporkan masalah. Di klaster Kubernetes kecil (sekitar 200 Service) semuanya mulus. Di klaster besar (puluhan ribu Service) koneksi baru terasa lambat di awal, dan kube-proxy butuh waktu lama memperbarui aturan tiap ada perubahan Service. Semua node memakai kube-proxy mode iptables. Mereka bertanya apakah ini masalah perangkat keras. Bagaimana Anda menjelaskan sebabnya dan apa yang Anda sarankan?",
+      "petunjuk": [
+        "Perhatikan bahwa masalah muncul hanya saat jumlah Service besar. Bagaimana iptables menelusuri aturannya, dan bagaimana itu tumbuh dengan jumlah Service?",
+        "Ada dua sisi: waktu memproses paket (data plane) dan waktu memperbarui aturan (control plane). Keduanya terpengaruh jumlah Service di mode iptables.",
+        "Fitur nftables apa yang membuat pencarian tidak lagi baris demi baris, dan sejak versi berapa ia stabil?"
+      ],
+      "jawaban": "1. **Tolak dulu dugaan perangkat keras.** Gejalanya hanya muncul saat jumlah Service besar dan hilang di klaster kecil, jadi ini soal cara aturan disusun, bukan CPU atau NIC.\n2. **Jelaskan data plane.** Di mode iptables, ada satu aturan per IP Service yang ditelusuri berurutan. Untuk paket pertama tiap koneksi, waktunya tumbuh sebanding jumlah Service (O(n)). Di puluhan ribu Service, itu terasa sebagai koneksi baru yang lambat.\n3. **Jelaskan control plane.** Tiap perubahan Service membuat kube-proxy memproses ruleset yang sangat besar. Walau sejak Kubernetes 1.26 pembaruan dibuat lebih hemat, biayanya tetap tumbuh seiring jumlah Service, jadi update terasa lama.\n4. **Sarankan solusi.** Beralih ke kube-proxy **mode nftables**, yang memakai verdict map sehingga pencarian tujuan nyaris berwaktu tetap dan pembaruan bisa bertahap. Mode ini stabil sejak Kubernetes 1.33 (meski iptables tetap bawaan demi kompatibilitas).\n5. **Terapkan dengan hati-hati.** Pastikan kernel dan versi `nft` cukup baru, periksa kecocokan dengan plugin jaringan/NetworkPolicy, dan uji di sebagian node dulu sebelum menyebar ke seluruh klaster."
+    }
+  },
+  "13-linux-networking/04-layanan-jaringan-linux": {
+    "intinya": {
+      "satu_kalimat": "Linux bisa menjalankan layanan jaringan inti seperti DNS, DHCP, reverse proxy, dan RADIUS dengan perangkat lunak gratis, menggantikan appliance mahal, asalkan setiap layanan dibatasi aksesnya dengan benar.",
+      "analogi": "Satu komputer Linux bisa berperan seperti beberapa loket di kantor pelayanan: satu loket membagi nomor antrean (DHCP), satu menunjukkan arah (DNS), satu mengarahkan antrean ke petugas yang kosong (load balancer). Bahayanya kalau sebuah loket melayani siapa saja dari jalan tanpa memeriksa, termasuk orang yang berniat menyalahgunakannya.",
+      "kenapa_penting": "Banyak layanan yang Anda pakai sehari-hari, dari Wi-Fi yang memberi alamat IP sampai situs di balik load balancer, berjalan di layanan Linux seperti ini. Salah satu kesalahan termahal adalah membiarkan sebuah layanan terbuka ke internet tanpa batas akses.",
+      "istilah": [
+        { "kata": "DNS resolver", "arti": "Layanan yang menerjemahkan nama situs menjadi alamat IP untuk klien." },
+        { "kata": "Open resolver", "arti": "Resolver DNS yang menjawab permintaan dari siapa saja di internet, sehingga bisa disalahgunakan untuk serangan amplifikasi." },
+        { "kata": "access-control", "arti": "Aturan di resolver (misalnya Unbound) yang membatasi siapa yang boleh mengirim permintaan." },
+        { "kata": "Elasticsearch", "arti": "Basis data pencarian. Bila dibiarkan tanpa autentikasi dan terbuka ke internet, isinya bisa dibaca siapa saja." },
+        { "kata": "bind ke 0.0.0.0", "arti": "Layanan mendengarkan di semua alamat, termasuk yang menghadap internet. Sering jadi penyebab kebocoran bila tanpa firewall." }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Data eHAC bocor lewat Elasticsearch yang terbuka tanpa autentikasi",
+      "kapan": "2021-08",
+      "di_mana": "Kementerian Kesehatan RI, Indonesia",
+      "ringkas": "Aplikasi eHAC (kartu kewaspadaan kesehatan untuk pelaku perjalanan) memakai basis data Elasticsearch yang dibiarkan terbuka ke internet tanpa autentikasi dan tanpa enkripsi. Tim riset vpnMentor bisa membacanya lewat peramban biasa. Sekitar 1,3 juta orang terekspos, dengan lebih dari 1,4 juta catatan, dan server baru ditutup pada 24 Agustus 2021 setelah BSSN merespons.",
+      "kronologi": [
+        { "waktu": "15 Juli 2021", "peristiwa": "Tim vpnMentor menemukan basis data Elasticsearch eHAC lewat pemetaan web berskala besar. Mereka bisa mengaksesnya tanpa hambatan karena tidak ada autentikasi maupun enkripsi." },
+        { "waktu": "21-26 Juli 2021", "peristiwa": "vpnMentor menghubungi Kemenkes (21 Juli), lalu ID-CERT (22 Juli) dan Google sebagai penyedia hosting (25 Juli), dengan upaya lanjutan 26 Juli, tanpa balasan yang menyelesaikan masalah." },
+        { "waktu": "22 Agustus 2021", "peristiwa": "vpnMentor menghubungi BSSN, dan BSSN membalas pada hari yang sama." },
+        { "waktu": "24 Agustus 2021", "peristiwa": "Server yang terbuka ditutup, dua hari setelah BSSN merespons." },
+        { "waktu": "30 Agustus 2021", "peristiwa": "vpnMentor menerbitkan laporan: sekitar 1,3 juta orang terekspos, lebih dari 1,4 juta catatan berisi data pribadi, hasil tes COVID-19, serta data 226 rumah sakit." }
+      ],
+      "akar_masalah": "Basis data Elasticsearch dibiarkan mendengarkan ke internet tanpa aturan akses dan tanpa autentikasi, sehingga siapa pun yang menemukan alamatnya bisa membaca seluruh isinya. Ini kesalahan konfigurasi layanan jaringan yang klasik: komponen yang seharusnya hanya melayani jaringan internal justru terekspos luas tanpa pembatasan sama sekali.",
+      "kaitan": "Kasus ini menguatkan bagian 10 (Keamanan Layanan Linux), khususnya peringatan modul agar layanan **tidak bind ke 0.0.0.0** sembarangan dan diperiksa dengan `ss -tulnp`. Polanya sama dengan nasihat bagian 1 soal **open resolver**: layanan yang menerima dari siapa saja disalahgunakan. Di sini bukan amplifikasi, melainkan pembacaan data langsung karena tidak ada autentikasi.",
+      "pelajaran": [
+        "Jangan pernah membiarkan basis data (Elasticsearch, MongoDB, Redis) terbuka ke internet tanpa autentikasi; ikat ke alamat internal dan pasang firewall default-deny.",
+        "Periksa `ss -tulnp` di tiap server untuk menemukan layanan yang bind ke 0.0.0.0 tanpa perlu.",
+        "Sediakan jalur penerimaan laporan kerentanan yang jelas, agar temuan ditindaklanjuti cepat, bukan setelah berpekan-pekan.",
+        "Data kesehatan dan identitas sangat sensitif; terapkan prinsip akses sekecil mungkin dan enkripsi sejak awal."
+      ],
+      "sumber": [
+        { "judul": "Report: Indonesian Government's Covid-19 App Accidentally Exposes Over 1 Million People in Massive Data Leak", "penerbit": "vpnMentor", "url": "https://www.vpnmentor.com/blog/cybersecurity/report-ehac-indonesia-leak/" }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda menyiapkan server Linux untuk klinik: ia menjalankan Unbound sebagai DNS resolver untuk LAN, dan sebuah basis data untuk aplikasi internal. Server punya dua kaki: satu ke LAN (`192.168.10.0/24`), satu ke internet dengan IP publik. Seorang rekan memasang semuanya cepat-cepat dengan setelan bawaan. Sebelum dipakai, Anda diminta memastikan tidak ada yang bocor ke internet. Apa saja yang Anda periksa dan perbaiki?",
+      "petunjuk": [
+        "Dua layanan rawan di sini: resolver DNS dan basis data. Masing-masing berisiko apa kalau terbuka ke internet?",
+        "Perintah apa yang menunjukkan layanan mendengarkan di alamat mana? Perhatikan 0.0.0.0 vs alamat internal.",
+        "Untuk Unbound, aturan apa yang membatasi siapa yang boleh bertanya? Untuk basis data, ke alamat mana seharusnya ia bind?"
+      ],
+      "jawaban": "1. **Petakan risikonya.** Resolver yang terbuka menjadi **open resolver** yang bisa dipakai serangan amplifikasi DNS. Basis data yang terbuka bisa dibaca siapa saja, persis kebocoran eHAC.\n2. **Lihat apa yang mendengarkan.** Jalankan `ss -tulnp`. Perhatikan layanan yang bind ke `0.0.0.0` atau `::` (semua alamat, termasuk IP publik). Saring yang bukan loopback: `ss -tulnp | grep -v 127.0.0.1`.\n3. **Batasi Unbound.** Di konfigurasi, izinkan hanya LAN dan tolak sisanya:\n   ```\n   access-control: 192.168.10.0/24 allow\n   access-control: 0.0.0.0/0 refuse\n   ```\n   Kalau bisa, ikat `interface` ke alamat LAN saja, bukan ke IP publik.\n4. **Batasi basis data.** Ubah bind ke `127.0.0.1` (bila hanya aplikasi di server itu yang memakainya) atau ke alamat LAN, bukan `0.0.0.0`. Nyalakan autentikasi.\n5. **Pasang pagar dan verifikasi.** Tambah firewall default-deny yang menolak port 53 dan port basis data dari sisi internet. Lalu uji dari luar: pindai IP publik Anda sendiri dengan `nmap` dan cek Shodan untuk memastikan kedua layanan tidak terlihat dari internet."
+    }
+  }
+}

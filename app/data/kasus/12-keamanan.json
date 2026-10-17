@@ -1,0 +1,313 @@
+{
+  "12-keamanan/01-konsep-keamanan": {
+    "intinya": {
+      "satu_kalimat": "Keamanan jaringan adalah upaya menjaga agar data hanya dibaca yang berhak, tidak diubah diam-diam, dan tetap bisa dipakai, dengan beberapa lapis pertahanan.",
+      "analogi": "Bayangkan toko emas di pasar. Satpam di pintu, etalase berkunci, brankas, dan CCTV adalah lapisan yang berbeda: pencuri yang lolos dari satpam masih harus membuka etalase lalu brankas. Bedanya, penyerang internet bisa mencoba ribuan toko sekaligus dari jauh, dan lebih sering masuk lewat karyawan yang tertipu email daripada lewat pintu depan.",
+      "kenapa_penting": "Saat layanan pemerintah atau bank lumpuh karena ransomware, Anda merasakan hilangnya ketersediaan secara langsung: antrean mengular, formulir daring tidak bisa diisi. Di tempat kerja, Anda akan diminta memilih kontrol mana yang dipasang dulu, misalnya patch, MFA, segmentasi, atau backup, dengan anggaran yang terbatas.",
+      "istilah": [
+        { "kata": "CIA Triad", "arti": "Tiga tujuan keamanan: confidentiality (hanya yang berhak bisa membaca), integrity (data tidak diubah tanpa izin), dan availability (sistem bisa dipakai saat dibutuhkan)." },
+        { "kata": "Vulnerability", "arti": "Kelemahan yang bisa dimanfaatkan penyerang, misalnya software yang belum ditambal (patch) atau password lemah." },
+        { "kata": "Exploit", "arti": "Cara atau kode konkret untuk memanfaatkan sebuah vulnerability." },
+        { "kata": "Risk", "arti": "Perkiraan bahaya: seberapa mungkin serangan terjadi dikalikan seberapa besar kerugiannya." },
+        { "kata": "Defense in depth", "arti": "Pertahanan berlapis. Setiap lapis dianggap bisa jebol, jadi lapis berikutnya tetap harus melindungi." },
+        { "kata": "Ransomware", "arti": "Program jahat yang mengunci (mengenkripsi) data korban, lalu meminta tebusan agar data bisa dibuka lagi." }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Ransomware Brain Cipher melumpuhkan Pusat Data Nasional Sementara 2 di Surabaya",
+      "kapan": "2024-06-20",
+      "di_mana": "PDNS 2, Surabaya, Indonesia",
+      "ringkas": "Sejak 20 Juni 2024, layanan ratusan instansi pemerintah yang datanya dititipkan di Pusat Data Nasional Sementara (PDNS) 2 berhenti, termasuk layanan imigrasi. Penyebabnya ransomware Brain Cipher, turunan LockBit 3.0, yang mengunci data lalu meminta tebusan 8 juta dolar AS. Belakangan terungkap hanya sekitar 2 persen data PDNS 2 yang punya cadangan.",
+      "kronologi": [
+        { "waktu": "17 Juni 2024, 23.15 WIB", "peristiwa": "Menurut BSSN, mulai ada upaya mematikan fitur keamanan Windows Defender di server. Langkah ini membuka jalan bagi aktivitas jahat berikutnya." },
+        { "waktu": "20 Juni 2024, 00.54 WIB", "peristiwa": "Aktivitas jahat dimulai: memasang file berbahaya, menghapus file sistem penting, dan mematikan layanan yang sedang berjalan." },
+        { "waktu": "20 Juni 2024, 00.55 WIB", "peristiwa": "Windows Defender crash dan tidak bisa beroperasi lagi. Data di PDNS 2 terkunci dan layanan instansi yang bergantung padanya berhenti." },
+        { "waktu": "26 Juni 2024", "peristiwa": "BSSN memaparkan hasil forensik awal: sumber serangan adalah Brain Cipher, pengembangan terbaru ransomware LockBit 3.0. Jumlah yang terdampak disebut 282 tenant, naik dari angka awal 210 instansi." },
+        { "waktu": "27 Juni 2024", "peristiwa": "Di rapat kerja dengan Komisi I DPR, Kepala BSSN Hinsa Siburian menyebut masalah utamanya tata kelola dan tidak adanya backup. Hanya sekitar 2 persen data PDNS 2 yang tercadangkan di pusat data Batam." },
+        { "waktu": "27 Juni 2024", "peristiwa": "Menkominfo Budi Arie Setiadi menjelaskan tebusan yang diminta 8 juta dolar AS. Ia juga menyebut keputusan memakai fasilitas backup diserahkan ke tenant, dan ke depan backup akan dibuat wajib." },
+        { "waktu": "17 Maret 2025", "peristiwa": "Kejaksaan Negeri Jakarta Pusat menyidik dugaan korupsi pengadaan PDNS 2020-2024 senilai sekitar Rp959 miliar. Menurut jaksa, pertimbangan kelaikan dari BSSN tidak dijadikan syarat penawaran." }
+      ],
+      "akar_masalah": "Penyerang sudah berada di dalam sistem sekitar dua hari sebelum enkripsi: pelindung di server mulai dimatikan 17 Juni, data baru dikunci 20 Juni. Lapisan terakhir, yaitu cadangan data di lokasi terpisah, nyaris tidak ada karena pemakaian backup diserahkan ke tiap tenant. Sumber yang dirujuk di sini tidak merinci bagaimana penyerang pertama kali masuk.",
+      "kaitan": "Kasus ini contoh hilangnya **availability** pada CIA Triad (bagian 1): layanan mati karena datanya terkunci. Urutannya cocok dengan taktik MITRE ATT&CK di bagian 7, yaitu Defense Evasion (mematikan antivirus) lalu Impact (mengunci data). Minimnya backup menunjukkan defense in depth (bagian 3) gagal di lapis terakhir. Backup yang dibuat opsional juga contoh keputusan accept dalam bagian 2 (Menangani risiko): keputusan itu sah hanya bila disadari dan disetujui pihak yang menanggung akibatnya.",
+      "pelajaran": [
+        "Simpan cadangan di lokasi terpisah yang tidak bisa dijangkau dari jaringan produksi, lalu uji pemulihannya secara berkala. Cadangan yang bisa dihapus dari server yang sama ikut lenyap saat server dibobol.",
+        "Jadikan kejadian 'antivirus atau EDR dimatikan' sebagai alarm prioritas tinggi. Di PDNS 2, jeda dari kejadian itu sampai enkripsi sekitar dua hari.",
+        "Catat secara tertulis siapa yang memutuskan menerima sebuah risiko. Bila backup bersifat opsional, setiap pemilik layanan harus tahu akibatnya sebelum memilih tidak memakainya.",
+        "Masukkan syarat keamanan sejak dokumen pengadaan (security by design), misalnya penilaian kelaikan dari BSSN sebagai syarat penawaran."
+      ],
+      "sumber": [
+        { "judul": "BSSN: Windows Defender Pusat Data Crash Sebelum Ransomware Beraksi", "penerbit": "detikInet", "url": "https://inet.detik.com/security/d-7409026/bssn-windows-defender-pusat-data-i-crash-i-sebelum-ransomware-beraksi" },
+        { "judul": "Menkominfo jelaskan kronologi serangan siber PDNS 2", "penerbit": "ANTARA Kalsel", "url": "https://kalsel.antaranews.com/berita/419220/menkominfo-jelaskan-kronologi-serangan-siber-pdns-2" },
+        { "judul": "Akui Data tak Selamat Usai Diserang Hacker, BSSN Ungkap PDNS tak Punya Back Up", "penerbit": "Republika", "url": "https://news.republika.co.id/berita/sfqm5d409/akui-data-tak-selamat-usai-diserang-hacker-bssn-ungkap-pdns-tak-punya-back-up" },
+        { "judul": "PDN Diserang Hacker, Menkominfo Jawab Rentetan Pertanyaan DPR", "penerbit": "CNBC Indonesia", "url": "https://www.cnbcindonesia.com/tech/20240627194454-37-550015/pdn-diserang-hacker-menkominfo-jawab-rentetan-pertanyaan-dpr" },
+        { "judul": "Gegara Korupsi Rp 959 M, Serangan Ransomware Lumpuhkan PDNS Juni 2024", "penerbit": "detikInet", "url": "https://inet.detik.com/law-and-policy/d-7827218/gegara-korupsi-rp-959-m-serangan-ransomware-lumpuhkan-pdns-juni-2024" }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda membantu sebuah klinik pratama di Sleman. Semua perangkat ada di satu jaringan: PC resepsionis, PC dokter, server rekam medis, NAS tempat backup harian, dan Wi-Fi pasien. NAS dipasang sebagai drive `Z:` di semua PC agar mudah dipakai. Server bisa dibuka lewat Remote Desktop (port 3389) dari internet supaya dokter bisa bekerja dari rumah, cukup dengan password. Pemilik klinik membaca berita PDNS 2 dan bertanya: kalau ransomware masuk, apa yang hilang, dan tiga perbaikan apa yang harus dikerjakan lebih dulu?",
+      "petunjuk": [
+        "Mulai dari pilar CIA mana yang paling merugikan klinik bila hilang. Pasien tidak bisa dilayani kalau rekam medis tidak bisa dibuka.",
+        "Telusuri jalur serangan dengan kill chain: lewat mana penyerang paling mungkin masuk, ke mana ia bisa bergerak, dan apa yang akan ia kunci.",
+        "Perhatikan drive `Z:`. Apa yang terjadi pada file backup bila satu PC yang memetakan drive itu terkena ransomware?"
+      ],
+      "jawaban": "1. **Amati aset dan pilar yang terancam.** Aset terpenting adalah rekam medis. Ransomware menyerang **availability**: data masih ada tetapi terkunci, sehingga pasien tidak bisa dilayani.\n2. **Cari jalan masuk yang paling mungkin.** RDP yang terbuka ke internet dengan password saja termasuk jalan masuk tersering (bagian 9). Itu vulnerability-nya; kelompok ransomware yang terus memindai internet adalah threat-nya.\n3. **Ikuti pergerakan penyerang.** Jaringan datar membuat satu PC yang terinfeksi bisa menjangkau server dan NAS (lateral movement). Karena NAS terpasang sebagai `Z:` di semua PC, ransomware di PC mana pun ikut mengenkripsi file backup. Klinik lalu berada di posisi PDNS 2: tidak punya salinan untuk memulihkan.\n4. **Urutkan perbaikan berdasarkan risiko (kemungkinan kali dampak):**\n   - Tutup port 3389 dari internet. Ganti dengan VPN yang memakai MFA. Ini memutus tahap Delivery dan Exploitation.\n   - Pisahkan backup: lepas drive `Z:` dari semua PC, jalankan backup dari server ke NAS dengan akun khusus, dan simpan satu salinan offline, misalnya disk yang dicabut sesudah backup. Uji pemulihan sebulan sekali.\n   - Segmentasi: Wi-Fi pasien di VLAN tamu yang hanya boleh ke internet; server dan NAS di segmen sendiri yang hanya menerima port aplikasi dari PC staf.\n5. **Simpulkan dan dokumentasikan.** Risiko yang belum tertangani bulan ini, misalnya belum ada EDR, ditulis sebagai keputusan accept yang disetujui pemilik klinik, lengkap dengan tanggal tinjau ulang."
+    }
+  },
+  "12-keamanan/02-serangan-l2": {
+    "intinya": {
+      "satu_kalimat": "Serangan layer 2 menyalahgunakan protokol dasar di dalam satu jaringan lokal, seperti switch dan ARP, untuk menyadap atau membelokkan lalu lintas sebelum enkripsi sempat melindunginya.",
+      "analogi": "Bayangkan kantor pos kecil yang percaya begitu saja pada siapa pun yang mengaku petugas loket. ARP dan DHCP bekerja seperti itu: tidak ada pemeriksaan identitas, jadi orang yang mengaku 'saya gerbang keluar' langsung dipercaya. Bedanya, di jaringan satu penyusup bisa mengaku ke semua warga sekaligus dalam sekejap.",
+      "kenapa_penting": "Kalau Anda mengelola jaringan sekolah, warnet, atau kantor cabang, serangan dan kecelakaan layer 2 terjadi di jaringan Anda sendiri. Sering tanpa niat jahat, misalnya seseorang menancapkan router Wi-Fi rumahan yang langsung membagikan alamat IP ke semua orang.",
+      "istilah": [
+        { "kata": "Layer 2", "arti": "Lapisan data link, tempat switch bekerja memakai MAC address di dalam satu jaringan lokal. Belum ada alamat IP di sini." },
+        { "kata": "DHCP", "arti": "Protokol yang otomatis memberi perangkat baru alamat IP, alamat gerbang, dan alamat DNS saat tersambung ke jaringan." },
+        { "kata": "Rogue DHCP", "arti": "Server DHCP tidak sah di jaringan yang membagikan alamat palsu, sering menunjuk gerbang atau DNS milik penyerang." },
+        { "kata": "DHCP snooping", "arti": "Fitur switch yang hanya mengizinkan jawaban DHCP dari port tepercaya, lalu mencatat pasangan IP-MAC tiap perangkat." },
+        { "kata": "ARP spoofing", "arti": "Mengirim pesan ARP palsu agar lalu lintas korban melewati penyerang, karena ARP tidak punya autentikasi." }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Worm Rorpian memasang server DHCP palsu untuk membelokkan korban satu LAN",
+      "kapan": "2011-06",
+      "di_mana": "Terdeteksi global, dianalisis Kaspersky Lab",
+      "ringkas": "Peneliti Kaspersky mendokumentasikan worm Net-Worm.Win32.Rorpian, pemuat rootkit TDSS/TDL4, yang menyebar di jaringan lokal dengan menjalankan server DHCP palsu. Satu komputer yang terinfeksi cukup untuk membelokkan DNS komputer lain di LAN yang sama, lalu memancing pemiliknya memasang berkas berbahaya yang menyamar sebagai pembaruan peramban.",
+      "kronologi": [
+        { "waktu": "Langkah 1", "peristiwa": "Worm di satu komputer memeriksa apakah jaringan memakai DHCP, lalu memindai alamat IP yang masih kosong di LAN itu." },
+        { "waktu": "Langkah 2", "peristiwa": "Worm menjalankan server DHCP-nya sendiri dan menunggu permintaan dari komputer lain, berusaha menjawab lebih cepat daripada server DHCP yang sah." },
+        { "waktu": "Langkah 3", "peristiwa": "Kepada korban, server palsu memberi alamat IP yang kosong, gerbang yang memang dipakai komputer terinfeksi, dan alamat server DNS milik penyerang." },
+        { "waktu": "Langkah 4", "peristiwa": "Karena DNS korban kini dikuasai penyerang, setiap kali korban membuka situs apa pun, ia dialihkan ke server berbahaya dan diminta memasang 'pembaruan peramban'." },
+        { "waktu": "Langkah 5", "peristiwa": "Bila korban menyetujui, komputernya ikut terinfeksi Rorpian. Setelahnya DNS diubah ke alamat server Google agar korban bisa menjelajah normal dan tidak curiga." }
+      ],
+      "akar_masalah": "DHCP tidak punya mekanisme untuk membuktikan bahwa jawaban berasal dari server yang sah: klien memakai jawaban pertama yang datang. Worm memanfaatkan itu dengan menjawab lebih cepat, lalu menanam alamat DNS palsu. Karena resolusi nama dikendalikan penyerang, korban bisa diarahkan ke mana saja walau mengetikkan alamat yang benar.",
+      "kaitan": "Ini contoh nyata **Rogue DHCP Server** di bagian 3 (DHCP Attacks). Mitigasinya persis yang dibahas di sana: **DHCP snooping** menandai hanya port uplink sebagai trusted sehingga jawaban DHCP dari port pengguna dibuang. Di MikroTik, padanannya `dhcp-snooping=yes` plus `arp=reply-only` dan `add-arp=yes` seperti pada bagian 2 dan 3.",
+      "pelajaran": [
+        "Aktifkan DHCP snooping dan tandai hanya port menuju server DHCP sah sebagai trusted. Jawaban DHCP dari port pengguna otomatis dibuang.",
+        "Server DHCP palsu sering muncul tanpa niat jahat, misalnya router Wi-Fi rumahan yang dicolok terbalik lewat port LAN-nya. Kontrol yang sama menangkap keduanya.",
+        "Pakai resolver DNS internal yang diawasi dan batasi port 53 keluar, agar DNS yang dibelokkan lebih mudah terdeteksi.",
+        "Curigai 'pembaruan peramban' yang muncul dari situs biasa. Pembaruan asli datang dari peramban itu sendiri, bukan dari halaman web."
+      ],
+      "sumber": [
+        { "judul": "TDSS loader now got legs", "penerbit": "Securelist (Kaspersky)", "url": "https://securelist.com/tdss-loader-now-got-legs/30844/" },
+        { "judul": "Notorious rootkit gets self-propagation powers", "penerbit": "The Register", "url": "https://www.theregister.com/2011/06/03/tdss_self_propagation_powers" }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda menjaga warnet dan game center dengan 24 PC pada satu switch yang belum dikonfigurasi, plus satu MikroTik sebagai gerbang dan server DHCP. Siang ini sebagian pelanggan mengeluh: situs lokal terbuka, tetapi beberapa situs lain mengarah ke halaman iklan aneh yang meminta memasang aplikasi. Pelanggan lain normal. Saat Anda cek, PC yang bermasalah memakai alamat DNS yang bukan punya MikroTik Anda. Apa dugaan Anda dan bagaimana membuktikan serta memperbaikinya?",
+      "petunjuk": [
+        "Perhatikan bahwa yang berubah adalah alamat DNS, bukan alamat gerbang. Dari mana klien biasanya mendapat alamat DNS?",
+        "Kalau ada dua server DHCP di satu LAN, mana yang dipakai klien? Mengapa hanya sebagian PC yang kena?",
+        "Pikirkan satu kontrol di switch yang membuat jawaban DHCP hanya sah dari port menuju MikroTik."
+      ],
+      "jawaban": "1. **Baca gejalanya.** DNS klien berubah menjadi alamat yang bukan milik Anda, padahal Anda tidak mengubah apa pun. Berarti ada **server DHCP palsu (rogue DHCP)** di LAN yang membagikan DNS sendiri.\n2. **Jelaskan kenapa hanya sebagian kena.** Klien memakai jawaban DHCP yang datang lebih dulu. PC yang kebetulan dijawab server palsu memakai DNS palsu; yang lebih dulu dijawab MikroTik tetap normal. Itu sebabnya hasilnya campur.\n3. **Buktikan.** Dari sebuah PC, lihat alamat DHCP yang diterima: di Windows `ipconfig /all` pada baris `DHCP Server`; di Linux lihat `journalctl` DHCP atau `ip addr`. Bandingkan alamat server DHCP yang tercatat dengan alamat MikroTik. Di MikroTik, nyalakan `ip dhcp-server alert` untuk melaporkan server DHCP asing beserta MAC-nya. Lalu telusuri MAC itu ke port switch, biasanya menuju router Wi-Fi rumahan yang dicolok terbalik lewat port LAN-nya.\n4. **Perbaiki.** Aktifkan DHCP snooping di switch, tandai hanya port menuju MikroTik sebagai `trusted`; jawaban DHCP dari port lain dibuang. Di MikroTik: `/interface bridge set <bridge> dhcp-snooping=yes` dan `trusted=yes` pada port uplink. Cabut perangkat liar, lalu minta pelanggan yang terdampak memperbarui lease (`ipconfig /renew`).\n5. **Cegah berulang.** Port akses dipaksa mode access, port tak terpakai dimatikan, dan `arp=reply-only` plus `add-arp=yes` agar hanya perangkat yang dikenal bisa berkomunikasi."
+    }
+  },
+  "12-keamanan/03-serangan-l3-l7": {
+    "intinya": {
+      "satu_kalimat": "Serangan dari layer 3 sampai layer 7 menyerang alamat IP, protokol, dan aplikasi, termasuk DDoS yang menenggelamkan korban dengan banjir lalu lintas.",
+      "analogi": "Bayangkan ribuan orang disuruh menelepon satu nomor darurat sekaligus pakai nomor penelepon palsu, sehingga saluran penuh dan warga yang benar-benar butuh tidak bisa menembus. Pada serangan amplifikasi, penyerang menelepon banyak kantor yang suka menjawab panjang, tetapi menuliskan nomor korban sebagai pengirim, jadi semua jawaban panjang itu membanjiri korban.",
+      "kenapa_penting": "Saat sebuah situs atau layanan daring tiba-tiba tidak bisa diakses ramai-ramai, sering penyebabnya DDoS. Bila Anda mengelola server atau router, salah konfigurasi bisa membuat perangkat Anda ikut dipakai menyerang orang lain dan menghabiskan kuota Anda.",
+      "istilah": [
+        { "kata": "DDoS", "arti": "Distributed Denial of Service: membanjiri korban dari banyak sumber sekaligus agar layanannya tidak bisa diakses pengguna sah." },
+        { "kata": "Amplifikasi", "arti": "Teknik DDoS: kirim permintaan kecil ke server yang menjawab besar, dengan alamat pengirim dipalsukan jadi alamat korban, sehingga korban kebanjiran jawaban." },
+        { "kata": "Spoofing alamat sumber", "arti": "Memalsukan alamat IP pengirim di sebuah paket, biasanya di UDP yang tidak memeriksa pengirim." },
+        { "kata": "memcached", "arti": "Server cache data di memori untuk mempercepat aplikasi. Seharusnya hanya dipakai di jaringan internal, bukan terbuka ke internet." },
+        { "kata": "BCP 38", "arti": "Praktik menyaring paket keluar yang alamat pengirimnya bukan milik jaringan sendiri, untuk mencegah spoofing di sumbernya." }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "GitHub dihantam DDoS amplifikasi memcached 1,35 Tbps",
+      "kapan": "2018-02-28",
+      "di_mana": "GitHub, global",
+      "ringkas": "GitHub terkena serangan DDoS yang saat itu menjadi yang terbesar yang pernah dilaporkan, memuncak di 1,35 terabit per detik. Penyerang menyalahgunakan ribuan server memcached yang terbuka ke internet: permintaan kecil dengan alamat pengirim dipalsukan menjadi alamat GitHub membuat server-server itu membanjiri GitHub dengan jawaban raksasa. GitHub mengalihkan lalu lintasnya ke layanan scrubbing Akamai dan pulih dalam hitungan menit.",
+      "kronologi": [
+        { "waktu": "17.21 UTC", "peristiwa": "Pemantauan GitHub mendeteksi kejanggalan pada rasio lalu lintas masuk dan keluar; bandwidth masuk di satu lokasi melampaui 100 Gbps." },
+        { "waktu": "17.26 UTC", "peristiwa": "GitHub menarik pengumuman rutenya lewat transit dan mengarahkan lalu lintas hanya lewat Akamai, agar serangan disaring di jaringan Akamai." },
+        { "waktu": "17.30 UTC", "peristiwa": "Layanan GitHub pulih sepenuhnya. Serangan tercatat memuncak di 1,35 Tbps lewat 126,9 juta paket per detik." },
+        { "waktu": "setelah 18.00 UTC", "peristiwa": "Muncul lonjakan kedua sekitar 400 Gbps, tetapi kali ini sudah tersaring oleh Akamai tanpa mengganggu layanan." }
+      ],
+      "akar_masalah": "memcached, bila terekspos ke internet lewat UDP port 11211, menjawab permintaan kecil dengan balasan jauh lebih besar. Karena UDP tidak memverifikasi alamat pengirim, penyerang menuliskan alamat GitHub sebagai pengirim, sehingga semua jawaban besar mengalir ke GitHub. Faktor amplifikasinya bisa mencapai puluhan ribu kali, misalnya permintaan 15 byte memicu jawaban ratusan kilobyte.",
+      "kaitan": "Ini contoh paling tajam dari **DNS/amplification attack** dan kategori **volumetric** di bagian 5 (DDoS). Serangan sebesar ini cocok dengan peringatan modul: lalu lintas volumetrik besar tidak bisa disaring di tepi jaringan sendiri, harus di hulu lewat scrubbing, persis yang dilakukan GitHub dengan Akamai. Pencegahan di sumbernya adalah **BCP 38** (bagian 1) dan tidak mengekspos memcached ke internet.",
+      "pelajaran": [
+        "Jangan pernah mengekspos memcached, Redis, atau layanan sejenis ke internet. Matikan UDP memcached (`-U 0`) dan ikat ke localhost.",
+        "Serangan volumetrik besar harus dimitigasi di hulu (layanan scrubbing atau CDN); tepi jaringan Anda sudah penuh sebelum paket mencapai firewall.",
+        "Terapkan BCP 38: saring paket keluar yang alamat pengirimnya bukan milik jaringan Anda, agar spoofing berhenti di sumbernya.",
+        "Siapkan mekanisme pengalihan rute (BGP ke penyedia scrubbing) sebelum serangan, supaya peralihan bisa cepat seperti GitHub."
+      ],
+      "sumber": [
+        { "judul": "February 28th DDoS Incident Report", "penerbit": "The GitHub Blog", "url": "https://github.blog/news-insights/company-news/ddos-incident-report/" },
+        { "judul": "Memcrashed - Major amplification attacks from UDP port 11211", "penerbit": "The Cloudflare Blog", "url": "https://blog.cloudflare.com/memcrashed-major-amplification-attacks-from-port-11211/" }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda admin jaringan ISP kecil. Seorang pelanggan menelepon marah: tagihan bandwidth-nya membengkak dan koneksinya lambat, padahal ia hanya menjalankan satu server kecil di rumah dengan IP publik. Anda lihat di grafik trafik: lalu lintas KELUAR dari server pelanggan pada UDP port 53 sangat besar dan konstan, jauh lebih besar daripada lalu lintas masuk. Pelanggan bersikeras tidak melakukan apa-apa. Apa yang terjadi dan apa saran Anda?",
+      "petunjuk": [
+        "Perhatikan arah dan jenis trafik: keluar, UDP 53, jauh lebih besar daripada masuk. Layanan apa yang memakai UDP 53 dan bisa menjawab besar?",
+        "Kalau server itu menjawab permintaan DNS dari siapa pun di internet, perannya apa, dan bagaimana penyerang menyalahgunakannya?",
+        "Pikirkan pelanggan sebagai korban sekaligus alat. Apa dua perbaikan: satu di server pelanggan, satu kebijakan di sisi Anda."
+      ],
+      "jawaban": "1. **Baca polanya.** Lalu lintas keluar yang besar dan konstan pada UDP 53, jauh melebihi yang masuk, adalah tanda server itu dipakai sebagai **open DNS resolver** untuk serangan amplifikasi. Permintaan kecil masuk, jawaban besar keluar ke korban yang alamatnya dipalsukan.\n2. **Jelaskan perannya.** Pelanggan memang korban (bandwidth dan reputasi IP-nya dipakai), tetapi servernya juga menjadi alat serang bagi orang lain. Ini sejajar dengan peran memcached pada kasus GitHub, hanya saja di sini protokolnya DNS.\n3. **Buktikan.** Tangkap sampel paket di sisi Anda (`tcpdump -ni <if> udp port 53 and src host <ip-pelanggan>`). Kalau isinya jawaban DNS untuk domain yang bukan milik pelanggan dan tujuannya macam-macam, dugaan terkonfirmasi.\n4. **Perbaiki di server pelanggan.** Tutup resolver dari internet: kalau ia hanya butuh DNS untuk dirinya, ikat ke localhost; kalau melayani klien tertentu, batasi dengan `access-control`. Pada MikroTik, matikan `allow-remote-requests` atau saring UDP/TCP 53 dari WAN.\n5. **Perbaiki kebijakan di sisi Anda.** Terapkan **BCP 38**: saring paket keluar yang alamat pengirimnya bukan milik blok pelanggan, sehingga paket ber-spoof tidak lolos dari jaringan Anda. Pertimbangkan juga rate limit DNS dan memberi tahu pelanggan agar servernya ditambal dan diamankan."
+    }
+  },
+  "12-keamanan/04-aaa-identitas": {
+    "intinya": {
+      "satu_kalimat": "AAA mengatur siapa Anda (authentication), apa yang boleh Anda lakukan (authorization), dan mencatat apa yang Anda lakukan (accounting), dan MFA yang tahan phishing jauh lebih melindungi daripada sekadar password.",
+      "analogi": "Bayangkan masuk gedung kantor. Satpam mencocokkan wajah dengan kartu identitas (authentication), kartu akses Anda hanya membuka lantai tertentu (authorization), dan mesin absen mencatat kapan Anda masuk dan keluar (accounting). MFA seperti meminta dua bukti berbeda: kartu yang Anda bawa plus PIN yang Anda tahu, bukan dua-duanya hal yang sama.",
+      "kenapa_penting": "Setiap kali Anda login dengan kode dari aplikasi di ponsel, Anda memakai MFA. Di tempat kerja, masuk ke router dan switch juga lewat AAA, dan satu kesalahan di sana, seperti tidak menyiapkan akun cadangan, bisa mengunci semua admin dari perangkatnya sendiri.",
+      "istilah": [
+        { "kata": "MFA", "arti": "Multi-Factor Authentication: butuh minimal dua faktor dari kategori berbeda, misalnya password (yang Anda tahu) plus kode dari ponsel (yang Anda punya)." },
+        { "kata": "MFA fatigue", "arti": "Serangan membanjiri korban dengan permintaan persetujuan login MFA berulang sampai ia lelah lalu menyetujuinya." },
+        { "kata": "RADIUS", "arti": "Protokol AAA untuk akses jaringan pengguna, misalnya 802.1X, VPN, dan Wi-Fi." },
+        { "kata": "TACACS+", "arti": "Protokol AAA untuk administrasi perangkat jaringan, bisa mengizinkan atau menolak tiap perintah dan mengenkripsi seluruh isi pesan." },
+        { "kata": "PAM", "arti": "Privileged Access Management: sistem yang menyimpan dan mengelola kredensial akun istimewa agar admin tidak memegang password perangkat langsung." },
+        { "kata": "Number matching", "arti": "Pencocokan angka: layar login menampilkan angka yang harus diketik ulang di aplikasi, agar persetujuan MFA tidak bisa dilakukan tanpa sadar." }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Uber dibobol lewat MFA fatigue dan kredensial admin di skrip",
+      "kapan": "2022-09-15",
+      "di_mana": "Uber, global",
+      "ringkas": "Seorang kontraktor Uber menyetujui satu permintaan login MFA setelah dibanjiri permintaan berulang, dan penyerang pun masuk. Dari dalam, menurut pengakuan penyerang sendiri, ia menemukan skrip di sebuah network share. Skrip itu berisi username dan password admin untuk sistem pengelola kata sandi (PAM) Thycotic, yang membuka akses ke banyak sistem internal Uber. Uber mengaitkan serangan ini dengan kelompok Lapsus$.",
+      "kronologi": [
+        { "waktu": "Awal", "peristiwa": "Password korporat kontraktor Uber kemungkinan dibeli penyerang di dark web, setelah perangkat pribadi kontraktor terinfeksi malware." },
+        { "waktu": "Saat masuk", "peristiwa": "Penyerang berulang kali mencoba login. Tiap kali kontraktor menerima permintaan persetujuan MFA. Awalnya ditolak, tetapi akhirnya satu permintaan disetujui dan penyerang berhasil masuk." },
+        { "waktu": "Setelah masuk", "peristiwa": "Menurut pengakuan penyerang, ia menemukan skrip PowerShell di sebuah network share internal yang memuat username dan password admin untuk Thycotic (PAM), lalu memakainya mengambil rahasia berbagai layanan." },
+        { "waktu": "Eskalasi", "peristiwa": "Penyerang mengakses sejumlah akun karyawan dan alat internal seperti G-Suite dan Slack, memposting pesan di kanal Slack seluruh perusahaan, dan mengubah konfigurasi OpenDNS." },
+        { "waktu": "15 September 2022", "peristiwa": "Slack dimatikan sementara setelah karyawan menerima pesan dari penyerang. Uber mulai menangani insiden dan berkoordinasi dengan penegak hukum." },
+        { "waktu": "19 September 2022", "peristiwa": "Uber merilis pembaruan resmi: akun yang terdampak diblokir atau diminta reset, kunci akses dirotasi, basis kode dikunci, dan kebijakan MFA diperketat. Serangan dikaitkan dengan Lapsus$." }
+      ],
+      "akar_masalah": "Dua kelemahan berantai. Pertama, MFA berbasis push rentan terhadap MFA fatigue: persetujuan bisa dilakukan tanpa benar-benar memverifikasi upaya login. Kedua, kredensial admin untuk sistem PAM tersimpan sebagai teks di dalam skrip pada network share, sehingga satu pijakan awal cukup untuk meraih kunci yang membuka banyak sistem sekaligus.",
+      "kaitan": "Kasus ini menyentuh beberapa bagian modul. Ada **MFA fatigue** dan mitigasi number matching (bagian 2), serta pentingnya **FIDO2/passkey** yang tahan phishing. Ada pula **Privileged Access Management** (bagian 9) yang justru menjadi titik lemah karena kredensialnya tersimpan sembarangan. Menyimpan password di skrip juga kebalikan dari manajemen kredensial perangkat yang benar di bagian 7.",
+      "pelajaran": [
+        "Pakai MFA tahan phishing (FIDO2/passkey) untuk akun istimewa; bila masih memakai push, aktifkan number matching dan batasi laju permintaan.",
+        "Jangan simpan kredensial sebagai teks di skrip atau network share. Pakai vault, dan beri akun layanan hak sekecil mungkin.",
+        "Latih pengguna melaporkan permintaan MFA yang tidak mereka minta, karena itu tanda password mereka sudah bocor.",
+        "Terapkan least privilege agar satu akun yang jebol tidak membuka seluruh sistem."
+      ],
+      "sumber": [
+        { "judul": "Security Update (Exhibit 99.1, Form 8-K)", "penerbit": "Uber Technologies via U.S. SEC", "url": "https://www.sec.gov/Archives/edgar/data/1543151/000155278122000558/e22427_ex99-1.htm" },
+        { "judul": "Uber hacked, attacker tears through the company's systems", "penerbit": "Help Net Security", "url": "https://www.helpnetsecurity.com/2022/09/16/uber-hacked-attacker-tears-through-the-companys-systems/" }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda mengelola IT sebuah perusahaan menengah. Seorang staf keuangan lapor: semalam ponselnya berbunyi puluhan kali meminta persetujuan login ke akun email kantor, bahkan saat ia tidur. Ia mengaku 'akhirnya menekan Setujui supaya berhenti'. Pagi ini ada email tagihan aneh terkirim dari akunnya. MFA yang dipakai adalah notifikasi push sederhana (tekan Setujui atau Tolak). Apa yang terjadi, dan langkah apa yang Anda ambil sekarang serta untuk mencegahnya terulang?",
+      "petunjuk": [
+        "Mengapa ada puluhan permintaan login? Dari mana penyerang tahu password staf itu?",
+        "Push sederhana hanya 'Setujui/Tolak'. Apa bedanya dengan metode yang menampilkan angka untuk diketik ulang?",
+        "Pisahkan tindakan darurat (hentikan akses sekarang) dari perbaikan jangka menengah (ubah jenis MFA)."
+      ],
+      "jawaban": "1. **Kenali serangannya.** Puluhan permintaan push berulang adalah **MFA fatigue**. Penyerang sudah memegang password staf (bocor atau phishing) dan hanya terhalang MFA, lalu membanjiri push sampai korban menekan Setujui. Setelah masuk, ia mengirim email tagihan palsu (upaya penipuan pembayaran).\n2. **Tindakan darurat sekarang:**\n   - Cabut sesi aktif akun itu dan paksa logout di semua perangkat.\n   - Reset password dan daftarkan ulang faktor MFA (anggap yang lama sudah dikuasai penyerang).\n   - Periksa aturan penerusan email dan email terkirim; penipu sering memasang auto-forward diam-diam.\n   - Beri tahu tim keuangan dan penerima tagihan palsu agar tidak membayar.\n3. **Perbaikan agar tidak terulang:**\n   - Ganti push sederhana dengan **number matching** (pengguna mengetik angka dari layar login), atau lebih baik **FIDO2/passkey** yang tahan phishing karena terikat ke domain.\n   - Batasi laju permintaan MFA dan nyalakan alarm untuk pola percobaan login berulang yang gagal.\n   - Latih staf untuk **menolak dan melaporkan** permintaan yang tidak mereka mulai, bukan menyetujui agar berhenti.\n4. **Simpulkan.** Akar masalahnya password yang sudah bocor plus MFA yang bisa disetujui tanpa verifikasi. Memperbaiki jenis MFA menutup celah itu untuk semua pengguna, bukan hanya korban."
+    }
+  },
+  "12-keamanan/05-hardening-zero-trust": {
+    "intinya": {
+      "satu_kalimat": "Hardening berarti mematikan yang tidak dipakai, membatasi akses manajemen, dan memakai kata sandi kuat, sedangkan Zero Trust berarti tidak mempercayai apa pun hanya karena berada di dalam jaringan.",
+      "analogi": "Router yang baru dibeli seperti rumah dengan semua pintu dan jendela terbuka serta kunci bawaan dari pabrik. Hardening adalah menutup yang tidak dipakai, mengganti semua kunci, dan membatasi siapa yang boleh memegang kunci. Zero Trust menambah satu aturan: tamu tetap diperiksa di setiap pintu, tidak otomatis dipercaya hanya karena sudah di dalam pagar.",
+      "kenapa_penting": "Perangkat jaringan yang dibiarkan dengan setelan bawaan dan terbuka ke internet rutin dibajak dan dijadikan alat serang. Kalau Anda memasang router kantor atau warnet, langkah hardening dasar menentukan apakah perangkat itu aman atau menjadi beban orang lain.",
+      "istilah": [
+        { "kata": "Hardening", "arti": "Memperkuat perangkat dengan mematikan layanan tak terpakai, membatasi akses, dan memakai kredensial kuat." },
+        { "kata": "WinBox", "arti": "Alat dan port manajemen MikroTik RouterOS. Tidak boleh dibuka ke internet." },
+        { "kata": "CVE", "arti": "Nomor identitas resmi sebuah kerentanan keamanan yang sudah diumumkan, misalnya CVE-2018-14847." },
+        { "kata": "Patch", "arti": "Pembaruan perangkat lunak yang menambal kerentanan. Menundanya membiarkan celah tetap terbuka." },
+        { "kata": "Botnet", "arti": "Kumpulan perangkat yang sudah dibajak dan dikendalikan dari jauh untuk, misalnya, melancarkan serangan DDoS." },
+        { "kata": "Zero Trust", "arti": "Pendekatan yang tidak memberi kepercayaan hanya berdasarkan lokasi jaringan; setiap permintaan tetap diverifikasi." }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Celah WinBox MikroTik menjadi bahan bakar botnet Mēris",
+      "kapan": "2021-09",
+      "di_mana": "Global, banyak router MikroTik",
+      "ringkas": "Pada 2018, kerentanan WinBox (CVE-2018-14847) memungkinkan penyerang membaca kredensial router MikroTik tanpa autentikasi. MikroTik cepat menambalnya, tetapi banyak pemilik tidak memperbarui dan tidak mengganti password. Tiga tahun kemudian, router-router yang masih terbajak muncul sebagai bagian botnet Mēris. Pada September 2021 botnet itu melancarkan salah satu serangan DDoS terbesar yang tercatat, memuncak di 21,8 juta permintaan per detik ke Yandex.",
+      "kronologi": [
+        { "waktu": "2018-04-23", "peristiwa": "MikroTik merilis perbaikan untuk kerentanan WinBox (versi 6.40.8, 6.42.1, dan 6.43rc4). Celah ini memungkinkan pembacaan basis data pengguna router tanpa autentikasi." },
+        { "waktu": "2018-08-02", "peristiwa": "Kerentanan terdaftar resmi sebagai CVE-2018-14847: directory traversal di antarmuka WinBox pada RouterOS sampai versi 6.42." },
+        { "waktu": "2021-09", "peristiwa": "Qrator Labs dan Yandex melaporkan botnet Mēris yang terdiri dari banyak perangkat MikroTik, dengan estimasi sekitar 250.000 perangkat, melancarkan DDoS raksasa lewat HTTP pipelining." },
+        { "waktu": "2021-09-05", "peristiwa": "Serangan Mēris ke Yandex memuncak di 21,8 juta permintaan per detik, naik bertahap dari 5,2 juta pada 7 Agustus." },
+        { "waktu": "2021-09-15", "peristiwa": "MikroTik menegaskan tidak ada kerentanan baru: perangkat terbajak sejak 2018, dan upgrade saja tidak cukup bila password tidak ikut diganti dan konfigurasi tidak diperiksa." }
+      ],
+      "akar_masalah": "Celah 2018 membocorkan kredensial, tetapi kerugian jangka panjang datang dari kelalaian operasional. Banyak router tidak di-patch. Setelah password bocor, menambal saja tidak mengusir penyerang yang sudah menanam konfigurasi jahat seperti penjadwal, SOCKS proxy, dan aturan firewall asing. Router yang terbuka ke internet lewat WinBox memperluas permukaan serangan yang seharusnya tertutup.",
+      "kaitan": "Kasus ini membumikan bagian 1 (Hardening Perangkat), khususnya peringatan modul bahwa **RouterOS punya riwayat CVE serius** dan **WinBox/API tidak boleh diekspos ke internet**. Ini juga menunjukkan kenapa patching dan penggantian kredensial harus berjalan bersama, serta kenapa membatasi akses manajemen ke jaringan tepercaya (checklist MikroTik di modul) sangat menentukan.",
+      "pelajaran": [
+        "Jangan pernah mengekspos WinBox (8291), API (8728), atau layanan manajemen lain ke internet; batasi ke subnet manajemen lewat `IP > Services`.",
+        "Setelah kredensial mungkin bocor, upgrade saja tidak cukup: ganti semua password dan periksa konfigurasi dari penjadwal, proxy, atau aturan firewall yang tidak Anda buat.",
+        "Jalankan versi RouterOS terkini secara rutin; menunda patch meninggalkan celah yang diketahui umum.",
+        "Perangkat yang dibiarkan rentan bukan hanya risiko bagi Anda; ia bisa menjadi senjata DDoS bagi korban lain."
+      ],
+      "sumber": [
+        { "judul": "Meris botnet", "penerbit": "MikroTik", "url": "https://mikrotik.com/supportsec/meris-botnet/" },
+        { "judul": "Winbox vulnerability", "penerbit": "MikroTik", "url": "https://mikrotik.com/supportsec/winbox-vulnerability" },
+        { "judul": "Mēris botnet, climbing to the record", "penerbit": "Qrator Labs", "url": "https://blog.qrator.net/en/meris-botnet-climbing-to-the-record_142/" }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda mewarisi pengelolaan sebuah MikroTik yang jadi gerbang internet sebuah RT/RW-Net. Dari luar, Anda bisa membuka WinBox-nya langsung memakai IP publik. Versi RouterOS-nya lama. Anda juga menemukan sebuah entri di `/system scheduler` yang menjalankan skrip fetch ke alamat asing tiap jam, padahal tidak ada yang mengaku membuatnya. Apa dugaan Anda, dan apa urutan tindakan yang aman untuk membersihkan dan mengamankannya tanpa memutus pelanggan lebih lama dari perlu?",
+      "petunjuk": [
+        "WinBox terbuka dari IP publik plus versi lama. Celah apa yang mungkin pernah dipakai, dan apa artinya bagi kredensial?",
+        "Kalau password mungkin sudah bocor sejak lama, apakah cukup hanya meng-upgrade? Apa lagi yang harus Anda lakukan?",
+        "Penjadwal yang menjalankan skrip asing itu petunjuk apa? Apa saja tempat lain yang perlu Anda periksa dari sisa-sisa penyerang?"
+      ],
+      "jawaban": "1. **Susun dugaan.** WinBox terbuka ke internet plus RouterOS lama mengarah ke CVE-2018-14847: kredensial router kemungkinan sudah bocor. Penjadwal yang menjalankan skrip fetch asing adalah sisa penyerang (persistence), pola yang sama dengan router korban Mēris.\n2. **Amankan jalur dulu, baru bersihkan.** Dari sesi yang masih berjalan, batasi WinBox dan layanan manajemen ke IP Anda saja (`/ip service set winbox address=<ip-anda>`), dan saring port manajemen dari WAN. Ini menghentikan akses penyerang sambil Anda bekerja.\n3. **Anggap kredensial bocor.** Upgrade RouterOS ke versi stabil terkini, lalu **ganti semua password** dan kunci. Upgrade saja tidak mengusir penyerang yang sudah menanam konfigurasi.\n4. **Bersihkan persistence.** Hapus entri penjadwal asing. Periksa juga tempat lain yang biasa ditinggali: `/system scheduler`, `/system script`, SOCKS proxy (`/ip proxy`, `/ip socks`), klien L2TP asing, dan aturan firewall yang membuka port tak dikenal (misalnya 5678). Bandingkan dengan konfigurasi bersih yang Anda pahami.\n5. **Verifikasi dan pantau.** Pindai IP publik Anda dari luar untuk memastikan WinBox tidak lagi terbuka. Aktifkan logging dan jadwalkan pembaruan rutin. Kalau ragu konfigurasinya masih kotor, pertimbangkan reset ke konfigurasi bersih lalu bangun ulang dengan hardening penuh."
+    }
+  },
+  "12-keamanan/06-tools-keamanan": {
+    "intinya": {
+      "satu_kalimat": "Alat keamanan dipakai untuk memeriksa pertahanan sendiri, misalnya memindai layanan yang terbuka dan memantau lalu lintas, dan hanya boleh dipakai pada sistem milik sendiri atau dengan izin tertulis.",
+      "analogi": "Alat ini seperti kunci serep dan alat pembuka kunci milik tukang kunci. Di tangan yang berhak, mereka memeriksa apakah rumah sendiri sudah terkunci rapat. Memakainya di rumah orang lain tanpa izin tetap melanggar hukum, sekalipun niatnya 'cuma mengecek'.",
+      "kenapa_penting": "Alat pemindai dan pemantau hanya berguna bila Anda tahu batasnya: pemindai bisa melewatkan celah nyata, dan alat pemantau bisa diam-diam berhenti memeriksa. Di tempat kerja, Anda akan diminta membuktikan bahwa alat keamanan yang terpasang memang bekerja.",
+      "istilah": [
+        { "kata": "Vulnerability scanner", "arti": "Alat yang memindai sistem untuk mencari kelemahan yang sudah diketahui. Hasilnya harus diverifikasi karena bisa salah lapor (false positive)." },
+        { "kata": "False negative", "arti": "Celah nyata yang tidak terdeteksi alat pemindai atau pemantau. Lebih berbahaya daripada salah lapor karena memberi rasa aman palsu." },
+        { "kata": "nmap", "arti": "Alat pemindai jaringan untuk menemukan host hidup, port terbuka, dan versi layanan." },
+        { "kata": "IDS/IPS", "arti": "Sistem yang memantau lalu lintas untuk mencari tanda serangan (IDS) atau sekaligus memblokirnya (IPS), misalnya Suricata dan Snort." },
+        { "kata": "Inspeksi TLS", "arti": "Perangkat keamanan membuka sementara lalu lintas terenkripsi agar isinya bisa diperiksa. Butuh sertifikat yang masih berlaku." },
+        { "kata": "Shodan", "arti": "Mesin pencari yang memindai internet dan mencatat layanan yang terbuka, berguna untuk melihat apa yang terekspos dari organisasi sendiri." }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Equifax dibobol 76 hari tanpa ketahuan: pemindai melewatkan celah, alat inspeksi lalu lintas tidak bekerja",
+      "kapan": "2017-05-13",
+      "di_mana": "Equifax, Amerika Serikat",
+      "ringkas": "Biro kredit Equifax dibobol lewat celah Apache Struts di portal sengketa daringnya. Celah itu sudah diumumkan dan patch-nya tersedia, tetapi pemindaian kerentanan Equifax tidak mendeteksinya. Penyerang lalu mengambil data pribadi sedikitnya 145,5 juta orang selama sekitar 76 hari. Aksinya tidak ketahuan karena alat pemeriksa lalu lintas tidak bekerja: sertifikat digitalnya sudah kedaluwarsa sekitar 10 bulan.",
+      "kronologi": [
+        { "waktu": "Maret 2017", "peristiwa": "US-CERT mengumumkan kerentanan Apache Struts yang memungkinkan penyerang menjalankan perintah di sistem. Equifax meneruskan pemberitahuan itu, tetapi daftar penerimanya usang, sehingga petugas yang bertugas memasang patch tidak menerimanya." },
+        { "waktu": "10 Maret 2017", "peristiwa": "Pihak tak dikenal memindai sistem Equifax untuk mencari celah itu, menemukan server portal sengketa daring yang rentan, dan berhasil menjalankan perintah. Saat itu belum ada data yang diambil." },
+        { "waktu": "Sepekan setelah celah diumumkan", "peristiwa": "Equifax memindai jaringannya sendiri, tetapi pemindaian itu tidak mendeteksi kerentanan di portal sengketa daring." },
+        { "waktu": "13 Mei 2017", "peristiwa": "Penyerang masuk lewat portal itu dan menyamarkan aktivitasnya di saluran terenkripsi yang sudah ada. Mereka menemukan username dan password yang disimpan tanpa enkripsi, lalu memperluas akses dari 3 basis data ke tambahan 48 basis data lain." },
+        { "waktu": "Mei sampai Juli 2017", "peristiwa": "Sekitar 9.000 kueri dijalankan. Data diambil sedikit demi sedikit lewat protokol web terenkripsi agar tampak seperti lalu lintas biasa, sementara alat pemeriksa lalu lintas tidak memeriksa trafik terenkripsi." },
+        { "waktu": "29 Juli 2017", "peristiwa": "Dalam pemeriksaan rutin, administrator jaringan mengganti sertifikat yang kedaluwarsa. Setelah inspeksi berjalan lagi, ia melihat tanda penyusupan, misalnya perintah sistem yang dijalankan di luar pola normal. Equifax memblokir sejumlah alamat IP penyerang." },
+        { "waktu": "30 Juli 2017", "peristiwa": "Aktivitas mencurigakan masih berlanjut, sehingga portal sengketa daring dimatikan." }
+      ],
+      "akar_masalah": "Dua alat keamanan gagal tanpa ada yang sadar. Pemindai kerentanan tidak menemukan celah Apache Struts di portal yang rentan, sehingga patch tidak terpasang di sana. Alat inspeksi lalu lintas memang terpasang, tetapi sertifikatnya kedaluwarsa sekitar 10 bulan sebelum pembobolan, jadi lalu lintas terenkripsi lewat tanpa diperiksa. Basis data yang tidak tersegmentasi, kredensial tanpa enkripsi, dan tidak adanya batas laju kueri memperbesar kerusakan.",
+      "kaitan": "Kasus ini memperlihatkan dua batas alat yang dibahas modul. Bagian 3 (Vulnerability Scanning) mengingatkan hasil pemindai harus diverifikasi; di Equifax pemindai justru melewatkan celah nyata (false negative). Bagian 7 (Deteksi dan Monitoring) mengandaikan alat pemantau benar-benar melihat lalu lintas, padahal alat Equifax buta terhadap trafik terenkripsi berbulan-bulan. Pemindaian penyerang pada 10 Maret adalah contoh nyata tahap discovery dan scanning di bagian 2, dilakukan oleh pihak yang tidak berhak.",
+      "pelajaran": [
+        "Jangan menganggap laporan pemindaian 'bersih' sebagai bukti aman. Uji pemindai dengan target yang Anda tahu rentan, dan cocokkan daftar target dengan inventaris server.",
+        "Pantau alat pemantau Anda: pasang pengingat masa berlaku sertifikat dan alarm bila jumlah peringatan atau paket yang diperiksa tiba-tiba turun ke nol.",
+        "Pastikan pemberitahuan kerentanan sampai ke orang yang memasang patch. Di Equifax, daftar penerima pemberitahuan sudah usang.",
+        "Segmentasikan basis data, simpan kredensial di vault, dan batasi laju kueri, agar satu celah tidak membuka puluhan basis data sekaligus."
+      ],
+      "sumber": [
+        { "judul": "Data Protection: Actions Taken by Equifax and Federal Agencies in Response to the 2017 Breach (GAO-18-559)", "penerbit": "U.S. Government Accountability Office", "url": "https://www.gao.gov/products/gao-18-559" }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda admin TI di sebuah BPR (bank perkreditan rakyat) di Bandung. Kantor memasang Suricata pada port mirror (SPAN) switch inti, dan pemindaian kerentanan berjalan otomatis tiap bulan. Dulu Suricata mencatat beberapa peringatan per hari. Enam minggu terakhir dasbornya menunjukkan nol peringatan, dan laporan pemindaian bulan ini juga 'bersih'. Atasan Anda senang. Mengapa Anda justru curiga, dan bagaimana membuktikan kedua alat itu benar-benar bekerja?",
+      "petunjuk": [
+        "Penurunan mendadak dari beberapa peringatan per hari menjadi nol jarang berarti jaringan tiba-tiba aman. Apa saja yang bisa membuat sensor berhenti melihat sesuatu?",
+        "Uji dari bawah ke atas: apakah paket sampai ke interface sensor, apakah Suricata berjalan dan menulis log, dan apakah ia bisa membaca isi lalu lintasnya.",
+        "Untuk pemindai, uji dengan target yang Anda tahu pasti rentan. Kalau target itu pun dilaporkan bersih, apa artinya?"
+      ],
+      "jawaban": "1. **Curigai keheningan.** Turun dari beberapa peringatan per hari menjadi nol hampir selalu berarti alatnya berhenti melihat; ancaman jarang hilang mendadak. Ini pola Equifax: alat pemeriksa lalu lintas terpasang, tetapi berbulan-bulan tidak memeriksa trafik terenkripsi.\n2. **Susun dugaan untuk Suricata.** (a) Paket tidak lagi sampai ke sensor, misalnya konfigurasi SPAN berubah saat switch diganti. (b) Paket sampai, tetapi isinya tidak terbaca, misalnya sertifikat inspeksi TLS kedaluwarsa. (c) Suricata mati, aturannya tidak diperbarui, atau disk log penuh.\n3. **Uji satu per satu.**\n   - Paket sampai? Jalankan `ip -s link show <if-sensor>` dua kali dan lihat penghitung RX bertambah, lalu `tcpdump -ni <if-sensor> -c 20`.\n   - Suricata hidup dan menulis? `systemctl status suricata`, lalu cek apakah `/var/log/suricata/eve.json` atau `fast.log` masih bertambah.\n   - Bisa mendeteksi? Pasang satu aturan uji yang mencocokkan string unik yang tidak berbahaya, kirim string itu antara dua host lewat jalur yang di-mirror, dan pastikan peringatan muncul.\n   - Kalau ada inspeksi TLS, cek masa berlaku sertifikatnya: `openssl x509 -in <sertifikat.pem> -noout -enddate`.\n4. **Uji pemindai dengan target yang pasti rentan.** Siapkan VM lab dengan software versi lama yang celahnya diketahui, lalu pindai. Kalau tetap 'bersih', pemindai melewatkan celah nyata (false negative). Periksa juga daftar target: server baru yang tidak masuk inventaris tidak akan pernah dipindai. Cocokkan hasilnya dengan pengecekan manual `nmap -sV` pada server penting.\n5. **Simpulkan dan pasang pengaman.** Perbaiki penyebab yang terbukti. Lalu pantau alat pemantau Anda: alarm bila jumlah peringatan atau paket yang diterima sensor turun ke nol selama beberapa jam, dan pengingat 30 hari sebelum sertifikat kedaluwarsa."
+    }
+  }
+}

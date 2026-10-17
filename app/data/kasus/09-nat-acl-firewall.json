@@ -1,0 +1,153 @@
+{
+  "09-nat-acl-firewall/01-nat": {
+    "intinya": {
+      "satu_kalimat": "NAT membuat banyak perangkat berbagi satu alamat IP publik dengan menukar alamat dan port saat paket melewati router, sehingga alamat IPv4 yang terbatas bisa dipakai bersama.",
+      "analogi": "Bayangkan satu kantor dengan satu nomor telepon utama dan banyak pegawai di dalamnya. Resepsionis (router NAT) mencatat siapa yang menelepon keluar, lalu mengarahkan jawaban yang masuk ke pegawai yang tepat lewat nomor ekstensi (port). Orang luar hanya tahu satu nomor kantor, bukan ekstensi tiap pegawai. Analogi ini berhenti pada panggilan masuk mendadak: tanpa janji sebelumnya, resepsionis tidak tahu harus menyambungkan ke siapa, persis seperti NAT yang menolak koneksi masuk yang tidak diminta.",
+      "kenapa_penting": "Hampir semua router rumah dan kantor Anda memakai NAT (PAT). Ia yang membuat satu langganan internet melayani banyak perangkat. NAT juga yang membuat server rumahan, panggilan video, dan game kadang sulit menerima koneksi masuk, dan sebabnya ada pada cara NAT serta fitur bantuannya bekerja.",
+      "istilah": [
+        { "kata": "NAT / PAT", "arti": "Network Address Translation. PAT (NAT overload) membuat banyak host berbagi satu alamat publik, dibedakan lewat nomor port sumber yang diubah router." },
+        { "kata": "Alamat privat", "arti": "Alamat seperti 192.168.x.x atau 10.x.x.x yang hanya berlaku di jaringan lokal dan tidak bisa dirutekan langsung di internet." },
+        { "kata": "Port forwarding", "arti": "Aturan yang meneruskan koneksi masuk pada port tertentu ke satu host internal, misalnya agar server web di rumah bisa diakses dari luar." },
+        { "kata": "ALG", "arti": "Application Level Gateway: fitur router yang mengintip isi protokol tertentu (misalnya SIP) dan membuka port otomatis agar protokol itu bekerja di balik NAT." },
+        { "kata": "STUN", "arti": "Cara klien bertanya ke server publik, alamat dan port apa yang terlihat dari luar, supaya aplikasi P2P tahu pemetaan NAT-nya." },
+        { "kata": "CGNAT", "arti": "Carrier-Grade NAT: dua lapis NAT di sisi operator (blok 100.64.0.0/10) saat IPv4 publik habis, sehingga port forwarding tidak mungkin." }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "NAT Slipstreaming: situs jahat membujuk ALG router membuka port ke perangkat internal",
+      "kapan": "2020-10-31",
+      "di_mana": "Global; diteliti Samy Kamkar lalu Armis",
+      "ringkas": "Peneliti Samy Kamkar menunjukkan bahwa cukup dengan membuka sebuah situs jahat, browser korban bisa dipakai mengirim data yang bagi router tampak seperti pesan SIP. Fitur ALG di router mengira itu panggilan VoIP sungguhan, lalu membuka port ke perangkat di jaringan internal korban. Versi kedua bersama Armis memperluas serangan sampai ke perangkat lain di jaringan itu, melampaui komputer korban.",
+      "kronologi": [
+        { "waktu": "31 Oktober 2020", "peristiwa": "Samy Kamkar merilis NAT Slipstreaming. Korban cukup membuka situs atau iklan jahat, lalu browser-nya dipakai mengirim data yang bagi router tampak seperti pesan SIP." },
+        { "waktu": "Saat ALG tertipu", "peristiwa": "ALG SIP di router mengira ada panggilan VoIP sungguhan dan membuka port ke perangkat internal. Karena routerlah yang membuka port, batasan port di browser tidak berlaku." },
+        { "waktu": "26 Januari 2021", "peristiwa": "Kamkar bersama Ben Seri dan Gregory Vishnipolsky dari Armis merilis versi 2 yang memakai ALG H.323. Versi ini menghindari tambalan untuk versi 1 dan bisa menjangkau perangkat lain di jaringan internal." }
+      ],
+      "akar_masalah": "ALG adalah fitur bantuan NAT untuk protokol yang memakai banyak port, seperti SIP dan H.323. Ia mengintip isi paket dan membuka port otomatis agar aliran media bisa masuk. Serangan ini menyalahgunakan sifat itu: browser korban dipakai menghasilkan data yang menyerupai SIP, lalu ALG membuka port untuk penyerang. Jadi yang membuka pintu adalah router korban sendiri, dari dalam jaringan.",
+      "kaitan": "Bagian 6 (NAT dan Protokol Bermasalah) menjelaskan SIP ALG yang mengintip dan menulis ulang payload, dan menyarankan sering mematikannya. Slipstreaming memperlihatkan bahwa ALG juga bisa menjadi permukaan serangan. Peringatan UPnP di Bagian 5 (NAT Traversal) senada: fitur yang membuka port dari dalam adalah risiko keamanan.",
+      "pelajaran": [
+        "Matikan SIP ALG di router bila penyedia VoIP Anda tidak memerlukannya; banyak penyedia justru menyarankan demikian.",
+        "Perbarui browser secara rutin. Versi pertama serangan ini sudah ditambal, sehingga versi kedua harus memakai jalan lain.",
+        "Jangan menganggap NAT sebagai pengaman; perlindungan datang dari firewall stateful dan segmentasi."
+      ],
+      "sumber": [
+        { "judul": "NAT Slipstreaming v2.0", "penerbit": "Samy Kamkar", "url": "https://samy.pl/slipstream/" }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Kantor notaris di Medan memakai router Cisco dengan blok IP publik /29 dari ISP. Rekan Anda memasang NAT dinamis: `ip nat pool PUBLIK 203.0.113.10 203.0.113.14 netmask 255.255.255.248` dan `ip nat inside source list 1 pool PUBLIK`. Pagi hari semua lancar. Menjelang siang, saat sekitar 15 PC aktif, sebagian PC tidak bisa membuka situs apa pun, sementara PC lain lancar. Apa dugaan Anda, bagaimana membuktikannya, dan apa perbaikannya?",
+      "petunjuk": [
+        "Berapa alamat publik di pool itu, dan berapa host yang bisa keluar bersamaan dengan NAT dinamis tanpa overload?",
+        "Lihat keluaran `show ip nat statistics` dan `show ip nat translations`.",
+        "Apa yang berubah bila Anda menambahkan kata kunci `overload`?"
+      ],
+      "jawaban": "1. Amati. Masalah muncul saat jumlah PC aktif bertambah. Sebagian PC lancar, sebagian gagal total, dan tidak ada pola per situs.\n2. Susun dugaan. NAT dinamis memetakan satu alamat privat ke satu alamat publik dari pool. Pool hanya berisi 5 alamat (203.0.113.10 sampai .14), jadi hanya 5 host yang bisa keluar bersamaan. Host keenam tidak kebagian alamat (Bagian 3, Dynamic NAT).\n3. Buktikan. `show ip nat statistics` akan menunjukkan seluruh alamat pool terpakai, dan `show ip nat translations` menampilkan pemetaan satu-ke-satu. Entri dinamis bertahan sampai kedaluwarsa, jadi PC yang sudah diam pun masih memegang alamat.\n4. Perbaiki. Ganti baris NAT dengan `ip nat inside source list 1 pool PUBLIK overload`, atau pakai interface WAN dengan `overload`. Dengan PAT, banyak host berbagi alamat yang sama karena dibedakan lewat port (Bagian 3, PAT).\n5. Bersihkan pemetaan lama di luar jam sibuk dengan `clear ip nat translation *`, karena perintah ini memutus sesi yang sedang berjalan. Lalu uji dari beberapa PC sekaligus.\n6. Simpulkan. NAT dinamis tanpa overload hanya cocok bila jumlah host bersamaan tidak melebihi isi pool. Untuk kantor, PAT hampir selalu pilihan yang benar."
+    }
+  },
+  "09-nat-acl-firewall/02-acl": {
+    "intinya": {
+      "satu_kalimat": "ACL adalah daftar aturan berurutan yang memutuskan paket mana yang diizinkan atau ditolak, dan sering dipakai untuk membatasi siapa saja yang boleh menyentuh antarmuka manajemen perangkat.",
+      "analogi": "ACL seperti daftar tamu satpam di gerbang perumahan: dibaca dari atas ke bawah, dan begitu satu baris cocok, keputusan diambil dan sisa daftar diabaikan. Kalau tidak ada baris yang cocok, aturan tak terlihat di akhir menolak semua (implicit deny di Cisco). Karena itu urutan menentukan: menaruh 'izinkan siapa saja' di atas membuat baris larangan di bawahnya tidak pernah terbaca. Di MikroTik, satpamnya justru meloloskan yang tidak tercantum, jadi Anda wajib menambahkan baris 'tolak sisanya' sendiri.",
+      "kenapa_penting": "Satu ACL yang salah urut atau salah tempat bisa memblokir seluruh kantor, atau sebaliknya membiarkan antarmuka admin router terbuka ke internet. Membatasi akses manajemen (SSH, VTY, WinBox) ke subnet admin saja adalah salah satu pemakaian ACL yang paling menentukan untuk keamanan.",
+      "istilah": [
+        { "kata": "Implicit deny", "arti": "Aturan tak terlihat di akhir ACL Cisco yang menolak semua paket yang tidak cocok dengan baris mana pun. MikroTik tidak punya ini, jadi harus ditambahkan manual." },
+        { "kata": "Standard vs extended", "arti": "ACL standard hanya melihat alamat sumber; extended melihat sumber, tujuan, protokol, dan port. Keduanya ditempatkan di titik berbeda." },
+        { "kata": "VTY / access-class", "arti": "VTY adalah jalur masuk manajemen jarak jauh (SSH/Telnet) ke perangkat Cisco. `access-class` memasang ACL untuk membatasi siapa yang boleh masuk." },
+        { "kata": "Antarmuka manajemen", "arti": "Jalur untuk mengatur perangkat, seperti SSH, WinBox, SNMP, atau protokol provisioning. Tidak boleh terbuka ke internet." },
+        { "kata": "Address list", "arti": "Fitur MikroTik yang mengelompokkan alamat IP. Bisa diisi otomatis oleh aturan firewall, misalnya untuk blacklist brute force." },
+        { "kata": "Smart Install (SMI)", "arti": "Fitur Cisco untuk memasang switch baru tanpa sentuhan, lewat TCP 4786. Bisa disalahgunakan untuk mengubah konfigurasi bila port-nya terjangkau dari internet." }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Lebih dari 168.000 perangkat Cisco terekspos lewat Smart Install karena port manajemen tak difilter",
+      "kapan": "2018-04",
+      "di_mana": "Global, termasuk infrastruktur kritis",
+      "ringkas": "Cisco Talos menemukan lebih dari 168.000 sistem yang berpotensi terekspos lewat Smart Install (TCP 4786). Bila port ini terjangkau, protokolnya bisa disalahgunakan untuk mengubah setelan TFTP, menyedot konfigurasi, mengganti image IOS, dan membuat akun. Talos mencatat insiden nyata di beberapa negara, sebagian menyasar infrastruktur kritis. Mitigasinya sesederhana mematikan fitur itu atau membatasi aksesnya dengan ACL.",
+      "kronologi": [
+        { "waktu": "5 April 2018", "peristiwa": "Talos menerbitkan analisis: lebih dari 168.000 sistem berpotensi terekspos lewat Smart Install Client pada TCP 4786, dan protokol itu sudah disalahgunakan di beberapa negara." },
+        { "waktu": "Cara penyalahgunaan", "peristiwa": "Pada perangkat yang port-nya terjangkau, protokol itu bisa dipakai mengubah setelan server TFTP, menyedot berkas konfigurasi, mengganti image IOS, membuat akun, dan menjalankan perintah IOS." },
+        { "waktu": "16 April 2018", "peristiwa": "CISA menerbitkan peringatan TA18-106A: aktor menyasar perangkat jaringan lewat Telnet, SNMP, dan SMI, lalu membuat tunnel GRE untuk membelokkan trafik." },
+        { "waktu": "Saran CISA", "peristiwa": "Jangan izinkan akses internet ke antarmuka manajemen perangkat jaringan mana pun, dan matikan protokol lama tanpa enkripsi seperti Telnet dan SNMPv1/v2c." },
+        { "waktu": "Mitigasi Talos", "peristiwa": "Cara paling sederhana adalah menjalankan `no vstack` pada perangkat. Bila fitur masih diperlukan, batasi aksesnya dengan ACL pada antarmuka." }
+      ],
+      "akar_masalah": "Smart Install adalah fitur untuk memasang switch baru tanpa sentuhan, lewat TCP 4786. Fitur itu tidak perlu terjangkau dari internet, tetapi di lebih dari 168.000 sistem port-nya berpotensi terbuka karena tidak ada filter. Begitu terjangkau, protokolnya bisa disalahgunakan untuk mengubah konfigurasi. Inti masalahnya adalah antarmuka manajemen yang terbuka tanpa ACL pembatas.",
+      "kaitan": "Bagian 5 (Membatasi Akses Manajemen/VTY) menyebut pembatasan akses manajemen sebagai salah satu pemakaian ACL terpenting untuk keamanan. Kasus ini memperlihatkan akibatnya bila port manajemen tidak difilter: lebih dari 168.000 sistem berpotensi terjangkau dari internet. Mitigasi yang disarankan Talos pun berupa ACL pada antarmuka, selain mematikan fiturnya.",
+      "pelajaran": [
+        "Batasi akses manajemen (SSH, SNMP, protokol provisioning) hanya dari subnet admin memakai ACL atau address list, lalu tolak sisanya.",
+        "Matikan fitur yang tidak dipakai, seperti Smart Install dengan `no vstack`, agar port-nya tidak lagi menjadi sasaran.",
+        "Nonaktifkan protokol manajemen tanpa enkripsi seperti Telnet dan SNMPv1/v2c, dan jangan pernah mengeksposnya ke internet."
+      ],
+      "sumber": [
+        { "judul": "Cisco Smart Install Client: Critical Infrastructure at Risk", "penerbit": "Cisco Talos Intelligence", "url": "https://blog.talosintelligence.com/critical-infrastructure-at-risk/" },
+        { "judul": "Alert TA18-106A: Russian State-Sponsored Cyber Actors Targeting Network Infrastructure Devices", "penerbit": "CISA (US-CERT)", "url": "https://www.cisa.gov/news-events/alerts/2018/04/16/russian-state-sponsored-cyber-actors-targeting-network-infrastructure" }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda magang di sebuah SMK. Router Cisco memisahkan VLAN guru (192.168.10.0/24) dan VLAN siswa (192.168.20.0/24). Rekan Anda ingin hanya VLAN guru yang bisa SSH ke router. Ia membuat `ip access-list standard AKSES-SSH` berisi satu baris `permit 192.168.10.0 0.0.0.255`, lalu memasangnya dengan `ip access-group AKSES-SSH in` di subinterface VLAN siswa. Sejak itu siswa sama sekali tidak bisa internet. Jelaskan apa yang terjadi dan seperti apa konfigurasi yang benar.",
+      "petunjuk": [
+        "Paket dari VLAN siswa bersumber 192.168.20.x. Baris mana di ACL itu yang cocok dengan paket tersebut?",
+        "Ingat aturan tak terlihat di akhir setiap ACL Cisco.",
+        "Untuk membatasi siapa yang boleh SSH ke router, perintah apa yang dipasang di `line vty`?"
+      ],
+      "jawaban": "1. Amati. Semua trafik siswa mati, termasuk yang sama sekali tidak berhubungan dengan SSH.\n2. Analisis. Paket siswa bersumber 192.168.20.x dan tidak cocok dengan satu-satunya baris `permit 192.168.10.0 0.0.0.255`. Paket itu jatuh ke implicit deny dan dibuang (Bagian 2). ACL inbound di subinterface siswa memeriksa semua paket yang masuk dari VLAN itu, termasuk yang menuju internet.\n3. Pulihkan dulu. Lepas ACL dari interface dengan `no ip access-group AKSES-SSH in` di subinterface VLAN siswa. Trafik siswa langsung kembali.\n4. Pasang di tempat yang benar:\n   ```\n   line vty 0 15\n    transport input ssh\n    access-class AKSES-SSH in\n   ```\n   `access-class` hanya membatasi siapa yang boleh masuk ke jalur VTY router (Bagian 5), sehingga trafik biasa tidak tersentuh.\n5. Lengkapi ACL dengan `deny any log` di akhir agar percobaan dari luar subnet guru tercatat. Uji dari sesi kedua: SSH dari PC guru harus bisa, dari PC siswa harus ditolak, dan internet siswa tetap jalan.\n6. Simpulkan. ACL yang sama bisa memutus satu VLAN penuh bila dipasang di interface, karena implicit deny berlaku untuk setiap paket yang tidak cocok."
+    }
+  },
+  "09-nat-acl-firewall/03-firewall": {
+    "intinya": {
+      "satu_kalimat": "Firewall stateful mengingat koneksi yang Anda mulai dan otomatis mengizinkan balasannya, sedangkan segmentasi memisahkan jaringan agar satu bagian yang jebol tidak membuka seluruhnya.",
+      "analogi": "Firewall stateful seperti satpam gedung yang mencatat tamu undangan Anda. Saat tamu itu kembali membawa jawaban, ia langsung masuk, tetapi orang asing tanpa undangan ditolak. Segmentasi adalah pintu-pintu dalam gedung: ruang tamu (DMZ) boleh diakses pengunjung, tetapi pintu ke ruang arsip (LAN internal) tetap terkunci. Kalau ruang tamu dibobol, pencuri belum tentu bisa menembus ruang arsip, asalkan pintu antar-ruang memang dikunci.",
+      "kenapa_penting": "Hampir setiap jaringan kantor memisahkan server publik, jaringan internal, Wi-Fi tamu, dan perangkat IoT. Prinsip default deny dan 'DMZ tidak boleh menjangkau LAN' adalah yang membatasi kerusakan saat ada bagian yang diretas. Memahaminya membantu Anda merancang aturan yang benar dan mendiagnosis saat trafik sah justru terbuang.",
+      "istilah": [
+        { "kata": "Stateful", "arti": "Firewall yang melacak status koneksi, sehingga cukup mengizinkan arah inisiasi; balasan ditangani otomatis lewat tabel koneksi." },
+        { "kata": "Default deny", "arti": "Kebijakan menolak semua lebih dulu, lalu hanya mengizinkan yang memang diperlukan. Kebalikan dari mengizinkan semua lalu menambal yang berbahaya." },
+        { "kata": "Segmentasi", "arti": "Memecah jaringan menjadi zona terpisah (LAN, DMZ, tamu, IoT) agar pelanggaran di satu zona tidak langsung membuka zona lain." },
+        { "kata": "DMZ", "arti": "Zona untuk server yang diakses dari internet. Dirancang dengan asumsi bisa diretas, sehingga aksesnya ke LAN internal ditolak." },
+        { "kata": "Lateral movement", "arti": "Gerak penyerang berpindah dari satu sistem yang sudah dikuasai ke sistem lain di jaringan yang sama." },
+        { "kata": "IDS/IPS", "arti": "IDS mendeteksi dan memberi alarm atas pola serangan; IPS dipasang inline dan bisa langsung memblokirnya." }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Pembobolan Target: dari vendor pendingin ke mesin kasir karena jaringan tak tersegmentasi",
+      "kapan": "2013-11",
+      "di_mana": "Target Corporation, Amerika Serikat",
+      "ringkas": "Penyerang masuk ke jaringan peritel Target lewat kredensial portal vendor milik Fazio Mechanical, sebuah perusahaan pendingin dan HVAC. Dari pijakan itu mereka bergerak sampai ke sistem kasir (POS) dan menanam malware pengambil data kartu. Sekitar 40 juta kartu dan data 70 juta pelanggan dicuri. Perangkat lunak pemantau sempat memberi alarm, tetapi tidak ditindaklanjuti, dan Target baru tahu setelah dihubungi Departemen Kehakiman AS.",
+      "kronologi": [
+        { "waktu": "Setidaknya 2 bulan sebelumnya", "peristiwa": "Email berisi malware menyerang karyawan Fazio Mechanical, vendor pendingin dan HVAC. Malware itu mencuri kredensial portal vendor yang diberikan Target." },
+        { "waktu": "15 November 2013", "peristiwa": "Penyerang memakai kredensial Fazio untuk masuk ke jaringan Target lewat portal vendor." },
+        { "waktu": "15-28 November 2013", "peristiwa": "Malware pengambil data kartu diunggah ke sejumlah kecil mesin kasir untuk diuji." },
+        { "waktu": "Akhir November 2013", "peristiwa": "Malware sudah tersebar ke mayoritas mesin kasir dan memanen data kartu dari transaksi pelanggan secara langsung." },
+        { "waktu": "Saat serangan berlangsung", "peristiwa": "Perangkat pemantau FireEye memberi peringatan ke tim di Bangalore, India, yang meneruskannya ke staf Target di Minneapolis. Tidak ada tindakan yang diambil." },
+        { "waktu": "Selama serangan", "peristiwa": "Data kartu dipindahkan lewat FTP ke server penampung (drop) yang sudah dibobol di berbagai tempat, antara lain Miami dan Brasil, lalu diambil penyerang." },
+        { "waktu": "27 November-15 Desember 2013", "peristiwa": "Menurut Target, sekitar 40 juta kartu debit dan kredit terekspos dalam rentang ini. Target baru mengetahui pembobolan setelah dihubungi Departemen Kehakiman AS." },
+        { "waktu": "Kemudian", "peristiwa": "Target merevisi dampaknya: data pribadi sekitar 70 juta pelanggan juga ikut dicuri." }
+      ],
+      "akar_masalah": "Portal vendor seharusnya terpisah dari jaringan sistem pembayaran, tetapi penyerang bisa berpindah dari pijakan vendor sampai ke sistem kasir. Jaringan yang kurang tersegmentasi membuat satu kredensial pihak ketiga membuka jalan ke data kartu. Diperparah alarm pemantau yang terbit tetapi tidak ditindaklanjuti, sehingga malware bekerja berminggu-minggu.",
+      "kaitan": "Bagian 3 (Struktur Kebijakan Firewall) menegaskan default deny dan aturan 'DMZ tidak boleh menjangkau LAN' agar satu zona yang jebol tidak membuka zona lain. Target adalah contoh mahal saat prinsip itu tidak diterapkan: jaringan vendor dan jaringan kartu tidak terpisah tegas. Bagian 7 (NGFW dan IDS/IPS) relevan pada alarm yang terbit tetapi diabaikan; deteksi tanpa tindakan tidak menolong.",
+      "pelajaran": [
+        "Pisahkan jaringan pihak ketiga dan sistem sensitif. Akses vendor hanya boleh ke host dan port yang benar-benar diperlukan.",
+        "Terapkan default deny dan larang zona berisiko menjangkau zona inti, setara aturan 'DMZ ke LAN ditolak'.",
+        "Alarm harus ditindaklanjuti. IDS/IPS yang memberi peringatan tetapi diabaikan sama saja dengan tidak ada."
+      ],
+      "sumber": [
+        { "judul": "Target Hackers Broke in Via HVAC Company", "penerbit": "Krebs on Security", "url": "https://krebsonsecurity.com/2014/02/target-hackers-broke-in-via-hvac-company/" },
+        { "judul": "Email Attack on Vendor Set Up Breach at Target", "penerbit": "Krebs on Security", "url": "https://krebsonsecurity.com/2014/02/email-attack-on-vendor-set-up-breach-at-target/" },
+        { "judul": "Case Study: Critical Controls that Could Have Prevented Target Breach", "penerbit": "SANS Institute (Teri Radichel)", "url": "https://www.sans.org/white-papers/35412/" }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda memasang MikroTik untuk sebuah hotel kecil. Ada tiga jaringan: STAF (192.168.10.0/24), TAMU Wi-Fi (192.168.30.0/24), dan satu server reservasi (PMS) di 192.168.20.10. Semua sudah bisa internet. Tetapi staf melapor kadang ada tamu yang bisa membuka halaman login sistem reservasi dari ponselnya. Anda memeriksa chain forward dan menemukan hanya ada `accept established,related`, `accept` untuk LAN ke WAN, lalu `accept all` di akhir. Apa masalahnya, dan bagaimana memperbaikinya?",
+      "petunjuk": [
+        "Baris apa di akhir chain forward yang membuat trafik antar-jaringan internal tetap lolos?",
+        "Terapkan prinsip default deny dan pikirkan arah mana yang harus ditolak: tamu ke jaringan server.",
+        "Uji perbaikan dari perangkat tamu dengan mencoba membuka sistem reservasi."
+      ],
+      "jawaban": "1. Amati. Tamu bisa menjangkau server PMS, padahal seharusnya tidak. Penyebabnya baris `accept all` di akhir: itu kebalikan dari default deny, sehingga trafik tamu ke 192.168.20.10 ikut lolos.\n2. Susun rencana. Ganti `accept all` dengan `drop`, lalu izinkan hanya yang perlu, dan tolak tegas arah tamu ke jaringan internal (setara aturan 'DMZ ke LAN ditolak').\n3. Perbaiki urutan di chain forward:\n   ```\n   /ip firewall filter\n   add chain=forward connection-state=established,related action=accept\n   add chain=forward connection-state=invalid action=drop\n   add chain=forward in-interface-list=LAN out-interface-list=WAN action=accept comment=\"Staf ke internet\"\n   add chain=forward src-address=192.168.30.0/24 out-interface-list=WAN action=accept comment=\"Tamu ke internet saja\"\n   add chain=forward src-address=192.168.30.0/24 action=drop comment=\"Tamu TIDAK boleh ke jaringan internal\"\n   add chain=forward action=drop comment=\"Default deny forward\"\n   ```\n4. Isolasi antar-tamu juga: pada bridge Wi-Fi tamu, set `horizon=1` agar perangkat tamu tidak saling melihat.\n5. Uji dari ponsel yang tersambung ke Wi-Fi tamu: buka internet (harus bisa), lalu coba buka 192.168.20.10 (harus gagal). Periksa `/ip firewall filter print stats` untuk memastikan aturan drop tamu benar-benar kena.\n6. Simpulkan. Masalahnya kebijakan default permit; dengan default deny dan penolakan arah tamu ke internal, satu baris yang salah tidak lagi membuka seluruh jaringan."
+    }
+  }
+}

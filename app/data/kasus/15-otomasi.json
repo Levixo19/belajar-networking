@@ -1,0 +1,494 @@
+{
+  "15-otomasi/01-mengapa-otomasi": {
+    "intinya": {
+      "satu_kalimat": "Otomasi dan SDN memindahkan kerja dari mengetik perintah di tiap perangkat ke skrip atau controller pusat; perubahan jadi cepat dan seragam, begitu pula kesalahannya.",
+      "analogi": "Bayangkan aplikasi ojek daring. Pengemudi mengantar penumpang, sedangkan server aplikasi memutuskan siapa menjemput siapa. Pembagian itu mirip data plane dan control plane di SDN. Kalau tarif berubah, kantor pusat cukup mengubahnya sekali di server, tanpa menelepon ribuan pengemudi. Tarif yang salah ketik pun langsung berlaku untuk semua. Kalau server mati, pengemudi yang sedang di jalan masih bisa menuntaskan perjalanan, hanya saja order baru tidak datang. Bedanya, pengemudi bisa berpikir sendiri, sedangkan switch di SDN hanya mengikuti tabel yang dipasang controller.",
+      "kenapa_penting": "Mengganti server DNS di 200 switch secara manual makan berjam-jam dan rawan salah ketik; dengan skrip, cukup beberapa menit. Di tempat kerja Anda akan bertemu controller seperti Cisco Catalyst Center atau Meraki, dan materi ini termasuk domain 6 ujian CCNA.",
+      "istilah": [
+        {
+          "kata": "Control plane",
+          "arti": "Bagian 'otak' jaringan yang memutuskan ke mana paket harus pergi, misalnya protokol routing seperti OSPF dan BGP."
+        },
+        {
+          "kata": "Data plane",
+          "arti": "Bagian yang benar-benar meneruskan paket berdasarkan tabel yang sudah jadi. Biasanya dikerjakan chip khusus (ASIC) supaya cepat."
+        },
+        {
+          "kata": "SDN (Software-Defined Networking)",
+          "arti": "Cara mengelola jaringan dengan memusatkan control plane di controller, sehingga switch dan router tinggal meneruskan paket."
+        },
+        {
+          "kata": "Controller",
+          "arti": "Software pusat yang menyimpan kebijakan dan mengirim konfigurasi ke banyak perangkat. Kalau mati tanpa cadangan, perubahan jaringan berhenti."
+        },
+        {
+          "kata": "Idempoten",
+          "arti": "Sifat operasi yang hasil akhirnya sama walau dijalankan sekali atau berkali-kali, misalnya 'pastikan VLAN 10 ada'."
+        },
+        {
+          "kata": "Fail static",
+          "arti": "Perilaku jaringan yang tetap meneruskan paket dengan tabel terakhirnya untuk sementara saat control plane hilang."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Otomasi pemeliharaan Google ikut mematikan control plane jaringan di beberapa lokasi sekaligus",
+      "kapan": "2019-06-02",
+      "di_mana": "Google Cloud, enam region di Amerika Utara dan Amerika Selatan",
+      "ringkas": "Pada Minggu, 2 Juni 2019, acara pemeliharaan di satu lokasi fisik Google ikut menghentikan control plane jaringan di beberapa lokasi lain. Jaringan masih berjalan beberapa menit dengan tabel terakhirnya, lalu rute BGP antarlokasi ditarik dan kapasitas jaringan anjlok. Google Cloud, G Suite, dan YouTube terganggu, terutama di Amerika Serikat bagian timur. Layanan baru normal lebih dari empat jam kemudian, sebagian karena alat diagnosisnya ikut berebut jaringan yang macet.",
+      "kronologi": [
+        {
+          "waktu": "11.45 waktu Pasifik",
+          "peristiwa": "Acara pemeliharaan dimulai di satu lokasi fisik. Software otomasi menyusun daftar job yang harus dihentikan di lokasi itu, termasuk klaster logis yang menjalankan control plane jaringan."
+        },
+        {
+          "waktu": "menit-menit berikutnya",
+          "peristiwa": "Klaster logis itu ternyata juga berisi job control plane di lokasi lain, dan otomasi menghentikan semuanya. Jaringan tetap berjalan normal beberapa menit dengan tabel terakhir (fail static)."
+        },
+        {
+          "waktu": "11.47-11.49",
+          "peristiwa": "Rute BGP antarlokasi yang terdampak ditarik. Kapasitas jaringan turun tajam, sebagian region tidak bisa diakses, dan pengguna mulai merasakan gangguan."
+        },
+        {
+          "waktu": "sekitar 11.47",
+          "peristiwa": "Engineer Google menerima peringatan dua menit sesudah kegagalan dimulai. Diagnosis terhambat karena alat-alat mereka ikut berebut jaringan yang sedang macet."
+        },
+        {
+          "waktu": "13.01",
+          "peristiwa": "Akar masalah ditemukan, dan software otomasi pemeliharaan dihentikan. Tim mulai menjalankan ulang control plane jaringan."
+        },
+        {
+          "waktu": "14.03",
+          "peristiwa": "Data konfigurasi control plane ternyata hilang dan harus dibangun ulang. Konfigurasi baru mulai disebar ke lokasi-lokasi yang terdampak."
+        },
+        {
+          "waktu": "15.19-16.10",
+          "peristiwa": "Kapasitas jaringan mulai kembali pukul 15.19, dan layanan normal sepenuhnya pukul 16.10 waktu Pasifik."
+        }
+      ],
+      "akar_masalah": "Google menyebut dua salah konfigurasi yang biasanya tidak berbahaya, ditambah satu bug. Pertama, job control plane jaringan di region itu diatur untuk berhenti saat ada pemeliharaan. Kedua, klaster software yang menjalankan control plane boleh ikut dalam satu jenis pemeliharaan yang jarang dipakai. Ketiga, software pemicu pemeliharaan punya bug yang membuatnya bisa menghentikan beberapa klaster sekaligus, walau letaknya di lokasi fisik berbeda.",
+      "kaitan": "Kasus ini memperlihatkan dua isi modul sekaligus. Bagian SDN (Pemisahan Control Plane dan Data Plane) terlihat nyata. Saat control plane dihentikan, data plane masih meneruskan paket beberapa menit, lalu ambruk ketika rute BGP ditarik. Peringatan di bagian Kenapa Otomasi juga terbukti: otomasi memperbesar kesalahan. Peringatan 'controller adalah single point of failure' di bagian Traditional vs Controller-Based ikut terlihat, karena cadangan di lokasi lain dihentikan oleh perintah yang sama.",
+      "pelajaran": [
+        "Batasi ruang lingkup setiap otomasi. Software pemeliharaan sebaiknya menolak permintaan yang menyentuh banyak lokasi sekaligus, seperti perbaikan yang dijanjikan Google.",
+        "Simpan konfigurasi control plane secara persisten, supaya tidak perlu dibangun ulang dari nol saat semua job berhenti. Google memperkirakan langkah ini memangkas waktu pemulihan sampai sepersepuluhnya.",
+        "Siapkan alat darurat yang tidak berebut jaringan produksi, lalu latih pemakaiannya dalam uji pemulihan bencana yang rutin.",
+        "Pastikan cadangan control plane benar-benar terpisah. Replika di lokasi lain tidak menolong kalau satu perintah bisa menghentikan semuanya."
+      ],
+      "sumber": [
+        {
+          "judul": "Google Cloud Networking Incident #19009",
+          "penerbit": "Google Cloud Status Dashboard",
+          "url": "https://status.cloud.google.com/incident/cloud-networking/19009"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda bekerja di ISP kecil di Lombok yang mengelola 40 router MikroTik pelanggan. Rekan Anda menulis skrip yang login ke setiap router dan menjalankan dua perintah: `/ip dns set servers=10.10.0.53` dan `/ip firewall filter add chain=input protocol=udp dst-port=53 in-interface=ether1 action=drop`. Koneksi putus di router ke-25, jadi skrip dijalankan ulang dari awal. Sekarang 25 router pertama punya dua aturan drop yang sama. Kenapa perintah pertama aman diulang, sedangkan yang kedua tidak? Bagaimana Anda memperbaiki skrip dan menjalankan perubahan berikutnya dengan lebih aman?",
+      "petunjuk": [
+        "Bandingkan kata kerjanya: `set` dan `add`. Mana yang menyatakan keadaan akhir, mana yang menambah sesuatu setiap kali dijalankan?",
+        "Skrip yang idempoten memeriksa keadaan sekarang dulu, lalu hanya mengubah yang berbeda.",
+        "Ingat tahapan perjalanan otomasi di modul. Sebelum menyentuh 40 router, apa yang bisa dicoba pada satu atau dua router?"
+      ],
+      "jawaban": "1. `set` menyatakan keadaan akhir: server DNS adalah 10.10.0.53. Dijalankan sekali atau sepuluh kali, hasilnya sama. Perintah itu idempoten.\n2. `add` menambah satu baris setiap kali dijalankan, jadi mengulangnya menghasilkan aturan ganda. Perintah itu tidak idempoten, dan skrip yang diulang sesudah putus di tengah jalan meninggalkan duplikat.\n3. Bersihkan dulu duplikatnya di 25 router pertama. Beri aturan itu `comment` yang unik, misalnya `comment=blok-dns-luar`, supaya mudah dicari dan dihapus.\n4. Ubah skrip menjadi pola \"pastikan ada\". Cari dulu aturan dengan comment itu, misalnya `/ip firewall filter print where comment=\"blok-dns-luar\"`. Kalau sudah ada, lewati; kalau belum, baru `add`. Laporkan apakah ada perubahan di setiap router.\n5. Jalankan perubahan berikutnya bertahap. Uji di satu router lab, lalu jalankan dry-run yang hanya mencetak rencana perubahan. Setelah itu coba di 2-3 router pelanggan dan periksa hasilnya, baru lanjut ke semua.\n6. Catat hasil setiap router, termasuk yang gagal, supaya skrip bisa melanjutkan dari router yang belum selesai kalau koneksi putus lagi. Untuk jangka panjang, alat deklaratif seperti Ansible sudah menyediakan perilaku idempoten ini."
+    }
+  },
+  "15-otomasi/02-data-dan-api": {
+    "intinya": {
+      "satu_kalimat": "Program otomasi bertukar data terstruktur (JSON, YAML, XML) dengan perangkat lewat API seperti REST, NETCONF, RESTCONF, dan gNMI, karena output CLI sulit dibaca mesin.",
+      "analogi": "Bayangkan setiap puskesmas melaporkan data pasien ke dinas kesehatan. Kalau laporannya berupa surat bebas, petugas harus membaca dan menafsirkan satu per satu. Kalau semua mengisi formulir yang sama, kolom nama, tanggal, dan diagnosis selalu ada di tempat yang sama, dan komputer bisa membacanya otomatis. JSON dan YAML adalah formulir itu, YANG adalah aturan pengisiannya, dan API adalah loket tempat formulir diserahkan. Bedanya, mesin tidak memaafkan salah isi: satu koma berlebih di JSON membuat seluruh berkas ditolak.",
+      "kenapa_penting": "Controller seperti Meraki dan Catalyst Center, juga router MikroTik dengan RouterOS v7, menyediakan REST API. Kalau Anda bisa membaca JSON dan memahami kode status HTTP, data puluhan perangkat bisa diambil dengan satu skrip. Materi ini juga termasuk topik 6.5-6.7 ujian CCNA.",
+      "istilah": [
+        {
+          "kata": "JSON",
+          "arti": "Format data teks berisi pasangan kunci dan nilai, misalnya `{\"vlan\": 10}`. Kuncinya wajib berkutip ganda, dan tidak boleh ada koma di akhir daftar."
+        },
+        {
+          "kata": "REST API",
+          "arti": "Cara program membaca atau mengubah data lewat HTTP: GET untuk membaca, POST untuk membuat, PUT atau PATCH untuk mengubah, DELETE untuk menghapus."
+        },
+        {
+          "kata": "Bearer token",
+          "arti": "Kunci sementara yang didapat sesudah autentikasi lewat API, lalu dikirim di header `Authorization: Bearer <token>` pada setiap permintaan."
+        },
+        {
+          "kata": "YANG",
+          "arti": "Bahasa untuk menulis model data perangkat. Model YANG menentukan nama, struktur, dan tipe setiap isian yang dipakai NETCONF, RESTCONF, dan gNMI."
+        },
+        {
+          "kata": "Sandbox",
+          "arti": "Lingkungan uji yang meniru sistem sungguhan. Di sana Anda mencoba API tanpa risiko merusak data produksi."
+        },
+        {
+          "kata": "HL7 FHIR",
+          "arti": "Standar internasional untuk format data kesehatan beserta API-nya. Datanya berupa 'resource' seperti Patient dan Encounter yang ditulis dalam JSON."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "SATUSEHAT: data rekam medis fasilitas kesehatan di Indonesia dikirim lewat REST API berformat JSON",
+      "kapan": "2022-07-26",
+      "di_mana": "Kementerian Kesehatan RI, seluruh Indonesia",
+      "ringkas": "Kementerian Kesehatan meluncurkan platform SATUSEHAT pada 26 Juli 2022 untuk mengintegrasikan data kesehatan dari rumah sakit, puskesmas, klinik, laboratorium, sampai apotek. Kuncinya standar: semua aplikasi harus mengikuti format dan protokol pertukaran data yang ditetapkan Kemenkes. SATUSEHAT memakai HL7 FHIR, standar internasional yang menetapkan bentuk data dalam JSON sekaligus API-nya. Fasilitas kesehatan mendapat kode akses, mencoba integrasinya di sandbox, lalu mengirim data ke server produksi dengan token OAuth 2.0.",
+      "kronologi": [
+        {
+          "waktu": "26 Juli 2022",
+          "peristiwa": "Menteri Kesehatan Budi Gunadi Sadikin meluncurkan SATUSEHAT di Jakarta. Tujuannya mengintegrasikan data kesehatan serta menstandarkan format dan protokol pertukaran datanya."
+        },
+        {
+          "waktu": "sebelum peluncuran",
+          "peristiwa": "Uji coba versi alfa dilakukan di sekitar 41 rumah sakit, yaitu 9 RS vertikal dan 32 RSUD DKI Jakarta. Saat peluncuran, uji beta sedang berjalan di 31 institusi."
+        },
+        {
+          "waktu": "target 2022-2023",
+          "peristiwa": "Kemenkes menargetkan sekitar 8.000 fasilitas kesehatan terintegrasi pada akhir 2022, dan seluruhnya pada 2023."
+        },
+        {
+          "waktu": "1 September 2026",
+          "peristiwa": "Kemenkes meluncurkan SATUSEHAT Rekam Medis Elektronik. Data rekam medis disimpan per individu, tidak lagi per fasilitas, dan penerapannya dimulai bertahap, antara lain di RSUP Dr. Wahidin Sudirohusodo Makassar."
+        }
+      ],
+      "akar_masalah": "Sebelumnya data rekam medis tersimpan terpisah di setiap fasilitas, dalam aplikasi yang beragam. SATUSEHAT menetapkan satu model data, yaitu resource FHIR seperti Patient dan Encounter dalam JSON, dan satu cara bertukar: REST API. Aplikasi meminta token lewat `POST .../oauth2/v1/accesstoken` dengan `client_id` dan `client_secret`. Token itu lalu dikirim di header `Authorization: Bearer` pada setiap permintaan. Data yang melanggar aturan ditolak dengan pesan galat berformat JSON.",
+      "kaitan": "Praktik ini memakai pola bagian 2 (REST API): token Bearer dari OAuth 2.0, data berformat JSON, dan jawaban dengan kode status 2xx atau 4xx. Peran FHIR mirip OpenConfig di bagian 6 (YANG): satu model data bersama, sehingga aplikasi dari vendor berbeda bisa bertukar data. Dokumentasinya juga mengikuti alur bagian 9 (Dari CLI ke API). Semua contohnya memakai sandbox, ada koleksi Postman untuk eksplorasi, dan produksi baru dipakai sesudahnya.",
+      "pelajaran": [
+        "Validasi data sebelum dikirim. SATUSEHAT menolak waktu yang tidak berformat UTC, misalnya `2022-06-14`, dengan galat `Invalid date time format`. Waktu WIB harus dikurangi 7 jam.",
+        "POST tidak idempoten. SATUSEHAT menolak kiriman yang sama dua kali dengan galat `Found duplicate resource`, jadi skrip pengirim perlu mencatat data mana yang sudah berhasil.",
+        "Perlakukan `client_secret` seperti kata sandi. Dokumentasi SATUSEHAT melarang kode akses API diduplikasi atau dibagikan kepada pihak yang tidak sah.",
+        "Token punya masa berlaku (`expires_in`, dalam detik). Minta token baru sebelum masa berlakunya habis; contoh di dokumentasi memakai 3599 detik, sekitar satu jam."
+      ],
+      "sumber": [
+        {
+          "judul": "Kemenkes Luncurkan Platform SATUSEHAT Untuk Integrasikan Data Kesehatan Nasional",
+          "penerbit": "Kementerian Kesehatan RI",
+          "url": "https://kemkes.go.id/id/kemenkes-ri-resmi-luncurkan-platform-integrasi-data-layanan-kesehatan-bernama-satusehat"
+        },
+        {
+          "judul": "FHIR (Dokumentasi SATUSEHAT Platform)",
+          "penerbit": "SATUSEHAT, Kementerian Kesehatan RI",
+          "url": "https://satusehat.kemkes.go.id/platform/docs/id/fhir/"
+        },
+        {
+          "judul": "Akses Token (Katalog ReST API SATUSEHAT)",
+          "penerbit": "SATUSEHAT, Kementerian Kesehatan RI",
+          "url": "https://satusehat.kemkes.go.id/platform/docs/id/api-catalogue/authentication/apis/token/"
+        },
+        {
+          "judul": "Daftar Response Validasi",
+          "penerbit": "SATUSEHAT, Kementerian Kesehatan RI",
+          "url": "https://satusehat.kemkes.go.id/platform/docs/id/api-catalogue/validasi/list-response/"
+        },
+        {
+          "judul": "Kemenkes Luncurkan SATUSEHAT RME, Rekam Medis Pasien Terintegrasi Secara Nasional",
+          "penerbit": "Kementerian Kesehatan RI",
+          "url": "https://kemkes.go.id/id/kemenkes-luncurkan-satusehat-rme-rekam-medis-pasien-terintegrasi-secara-nasional"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda magang di kantor cabang di Semarang. Tugasnya mengubah deskripsi interface di 30 router Cisco IOS XE lewat RESTCONF, dan Anda mencoba dulu pada satu router dengan curl. Percobaan pertama dijawab `401 Unauthorized`. Setelah itu diperbaiki, PATCH ke `.../ietf-interfaces:interface=GigabitEthernet02` dijawab `404 Not Found`. Setelah URL dibetulkan menjadi `GigabitEthernet2`, body `{\"ietf-interfaces:interface\": {\"name\": \"GigabitEthernet2\", \"description\": \"Uplink-Core\",}}` dijawab `400 Bad Request`. Teman Anda menyarankan menambah `-k` supaya semua error hilang. Apa arti tiap kode status, apa yang salah, dan tepatkah saran teman Anda?",
+      "petunjuk": [
+        "Kode 4xx berarti kesalahan ada di sisi permintaan Anda. Cocokkan tiap kode dengan daftar status code di bagian REST API.",
+        "Di URL RESTCONF, bagian sesudah `interface=` adalah kunci yang harus persis sama dengan nama interface di perangkat.",
+        "Periksa body JSON karakter demi karakter. Apa yang ada tepat sebelum kurung kurawal penutup?"
+      ],
+      "jawaban": "1. Ketiga kode status itu dikirim server RESTCONF, artinya koneksi TLS sudah berhasil. Semuanya 4xx, jadi kesalahannya ada di permintaan Anda, bukan di router.\n2. `401 Unauthorized` berarti autentikasi gagal. Periksa username dan password, dan pastikan akun itu boleh memakai RESTCONF. Basic Auth hanya base64, jadi wajib lewat HTTPS.\n3. `404 Not Found` berarti resource yang diminta tidak ada. Router tidak mengenal interface bernama `GigabitEthernet02`; namanya `GigabitEthernet2`. Biasakan GET dulu untuk melihat nama yang benar.\n4. `400 Bad Request` berarti server tidak bisa memahami body. Ada koma sesudah `\"Uplink-Core\"`, padahal JSON tidak mengizinkan trailing comma. Body yang benar: `{\"ietf-interfaces:interface\": {\"name\": \"GigabitEthernet2\", \"description\": \"Uplink-Core\"}}`. Validasi dulu dengan `python3 -m json.tool` atau `jq .` sebelum mengirim.\n5. Saran teman Anda keliru. `-k` hanya mematikan verifikasi sertifikat TLS, yang terjadi sebelum percakapan HTTP dimulai, jadi ketiga galat tadi tidak tersentuh. Di produksi, `-k` malah membuka peluang serangan man-in-the-middle yang bisa mencuri kredensial.\n6. Setelah satu router berhasil, verifikasi hasilnya dengan GET, lalu jalankan skrip ke router lain sedikit demi sedikit."
+    }
+  },
+  "15-otomasi/03-python-jaringan": {
+    "intinya": {
+      "satu_kalimat": "Python dengan library seperti Netmiko, NAPALM, dan Jinja2 membuat Anda bisa membaca dan mengubah puluhan perangkat sekaligus, asal skripnya diuji, punya dry-run, dan dijalankan bertahap.",
+      "analogi": "Bayangkan usaha kue rumahan yang menerima pesanan 300 kotak. Cetakan kue menjamin bentuknya sama, sedangkan isiannya boleh berbeda per pemesan. Itulah Jinja2: template sebagai cetakan, data YAML sebagai isian. Sebelum memanggang 300 kotak, Anda memanggang satu loyang dulu dan mencicipinya. Itulah dry-run dan uji di lab. Bedanya, kue yang gagal cuma membuang satu loyang, sedangkan skrip yang salah bisa memutus ratusan router dalam beberapa detik.",
+      "kenapa_penting": "Pekerjaan rutin seperti backup konfigurasi, audit 'apakah Telnet masih aktif', atau mengganti server NTP di semua switch bisa dikerjakan skrip dalam hitungan menit. Skrip yang baik juga melaporkan perangkat mana yang berhasil dan mana yang gagal.",
+      "istilah": [
+        {
+          "kata": "Netmiko",
+          "arti": "Library Python untuk login SSH ke perangkat berbagai merek, menjalankan perintah CLI, lalu mengambil output-nya."
+        },
+        {
+          "kata": "NAPALM",
+          "arti": "Library yang memberi fungsi sama untuk banyak merek, misalnya `get_interfaces()`, sehingga hasilnya berbentuk sama walau perangkatnya berbeda."
+        },
+        {
+          "kata": "Jinja2",
+          "arti": "Mesin template. Anda menulis kerangka konfigurasi sekali, lalu mengisinya dengan data yang berbeda untuk setiap perangkat."
+        },
+        {
+          "kata": "Dry-run",
+          "arti": "Menjalankan skrip dalam mode simulasi yang hanya menampilkan apa yang akan berubah, tanpa benar-benar mengubah perangkat."
+        },
+        {
+          "kata": "Blast radius",
+          "arti": "Seberapa luas kerusakan yang bisa timbul kalau sebuah perubahan ternyata salah. Uji bertahap memperkecilnya."
+        },
+        {
+          "kata": "IGP",
+          "arti": "Protokol routing di dalam jaringan milik satu organisasi, misalnya OSPF atau IS-IS. Router yang tergabung saling bertukar informasi topologi."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Satu perintah yang perilakunya berbeda per merek router memicu gangguan WAN global Microsoft",
+      "kapan": "2023-01-25",
+      "di_mana": "Microsoft Azure dan Microsoft 365, WAN global Microsoft",
+      "ringkas": "Pada 25 Januari 2023, seorang engineer Microsoft sedang menambah kapasitas WAN di Madrid. Prosedurnya baru diubah tanpa diuji ulang, dan memuat perintah untuk menghapus database IGP. Di router dari satu merek, perintah itu berlaku untuk semua router di domain IGP, sehingga semuanya menghitung ulang topologi. Dari 07.08 sampai 12.43 UTC, pengguna Azure, Microsoft 365, dan Power Platform mengalami latency tinggi, timeout, bahkan putus koneksi.",
+      "kronologi": [
+        {
+          "waktu": "sebelum hari H",
+          "peristiwa": "Prosedur standar (SOP) untuk pekerjaan ini diubah demi mengatasi masalah pada pelaksanaan sebelumnya. Perubahan itu tidak diuji ulang dan tidak dilengkapi post-check."
+        },
+        {
+          "waktu": "07.08 UTC",
+          "peristiwa": "Engineer menjalankan pekerjaan di router baru di Madrid, termasuk perintah penghapusan database IGP. Ia hanya punya akses ke satu router, tetapi router itu tersambung ke seluruh WAN lewat IGP."
+        },
+        {
+          "waktu": "07.11 UTC",
+          "peristiwa": "Monitoring mendeteksi masalah DNS dan WAN. Alert ke engineer jaga terkirim dalam 5 menit, tetapi engineer pelaksana tidak diberi tahu."
+        },
+        {
+          "waktu": "33 menit kemudian",
+          "peristiwa": "Operasi yang sama diulang di router Madrid kedua, sehingga gangguan datang dalam dua gelombang."
+        },
+        {
+          "waktu": "08.20 UTC",
+          "peristiwa": "Sambil meninjau semua perubahan terbaru, tim menemukan perintah pemicunya. Saat itu jaringan sedang pulih sendiri."
+        },
+        {
+          "waktu": "09.05-09.25 UTC",
+          "peristiwa": "Hampir semua perangkat jaringan pulih pukul 09.05, dan perangkat terakhir pukul 09.25. Butuh sekitar 1 jam 40 menit sampai konektivitas ke semua prefix pulih."
+        },
+        {
+          "waktu": "12.43 UTC",
+          "peristiwa": "Sistem otomatis penjaga kesehatan WAN, yang terhenti selama kejadian, dinyalakan ulang secara manual. Sisa packet loss hilang dan pemulihan selesai."
+        }
+      ],
+      "akar_masalah": "Perintah untuk menghapus database IGP berperilaku berbeda menurut merek router. Router dari dua merek hanya menjalankannya di router itu sendiri. Router dari merek ketiga meneruskannya ke semua router di domain IGP, sehingga semuanya menghitung ulang topologi. Akibatnya, router BGP juga mengumumkan dan memvalidasi ulang prefix dari internet. Sistem AAA Microsoft punya daftar perintah berdampak global yang diblokir, tetapi perilaku perintah ini di model router tersebut belum ketahuan, jadi lolos.",
+      "kaitan": "Bagian 2 dan 3 modul membedakan Netmiko dan NAPALM. Netmiko mengirim perintah CLI apa adanya, sedangkan NAPALM menyeragamkan fungsi lintas vendor. Kasus ini menunjukkan risikonya: perintah yang sama bisa bermakna lain di merek berbeda, dan skrip yang mengirim CLI mentah ikut mewarisi perbedaan itu. Bagian 10 (pyATS/Genie) dan bagian 11 (Praktik Terbaik Skrip Otomasi) menutup celah itu. Caranya: snapshot sebelum dan sesudah sebagai post-check, uji di lab per platform, dan mulai dari satu perangkat.",
+      "pelajaran": [
+        "Uji setiap perintah di setiap merek dan model perangkat yang Anda kelola. Lulus di satu merek belum membuktikan aman di merek lain.",
+        "Pasang daftar blokir untuk perintah berdampak luas di skrip Anda, seperti Microsoft yang mengaudit perintah serupa di ketiga vendornya.",
+        "Jalankan post-check sesudah perangkat pertama, dan hentikan skrip kalau hasilnya buruk sebelum lanjut ke perangkat kedua.",
+        "Membatasi akses ke satu perangkat belum tentu membatasi dampak. Perubahan pada protokol routing bisa menjalar ke semua router yang tersambung."
+      ],
+      "sumber": [
+        {
+          "judul": "Post Incident Review (PIR): Azure Networking, Global WAN issues (Tracking ID VSG1-B90)",
+          "penerbit": "Microsoft Azure Status History",
+          "url": "https://azure.status.microsoft/en-us/status/history/?trackingId=VSG1-B90"
+        },
+        {
+          "judul": "Microsoft blames router IP address change for global outage",
+          "penerbit": "The Register",
+          "url": "https://www.theregister.com/2023/01/30/wan_router_ip_address_change/"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda menjalankan skrip audit seperti contoh di bagian 8 ke 50 switch Cisco di sebuah kampus di Malang. Laporannya menyatakan tidak ada switch yang Telnet-nya aktif. Tetapi dari laptop Anda, `nc -zv 10.20.0.17 23` dan `nc -zv 10.20.0.31 23` menjawab succeeded. Di running-config kedua switch itu, baris VTY-nya berbunyi `transport input ssh telnet` dan `transport input all`. Kenapa audit melewatkan keduanya, dan bagaimana Anda memperbaiki serta menguji skrip audit itu?",
+      "petunjuk": [
+        "Lihat cara skrip contoh memeriksa Telnet: ia mencari potongan teks yang persis sama.",
+        "Tulis semua variasi baris `transport input` yang mungkin, lalu tandai mana yang mengizinkan Telnet.",
+        "Sebelum menjalankan ulang ke 50 switch, uji fungsi auditnya dengan beberapa contoh teks konfigurasi."
+      ],
+      "jawaban": "1. Fakta lapangan menang atas laporan. Port 23 menjawab, jadi Telnet memang terbuka, dan laporan audit itu negatif palsu.\n2. Penyebabnya cara memeriksa. Skrip mencari teks persis `transport input telnet`. Baris `transport input ssh telnet` dan `transport input all` sama-sama mengizinkan Telnet, tetapi tidak memuat potongan teks itu. Inilah sisi rapuh CLI scraping: arti sama, tulisan berbeda.\n3. Perbaiki logikanya. Periksa setiap baris yang diawali `transport input`, lalu tandai bila kata sesudahnya memuat `telnet` atau `all`. Contohnya dengan regex `^\\s*transport input .*\\b(telnet|all)\\b`. Ingat, satu switch bisa punya beberapa blok `line vty`.\n4. Uji sebelum dipakai. Siapkan contoh teks: `transport input ssh` harus lolos, sedangkan `transport input telnet`, `transport input ssh telnet`, dan `transport input all` harus ditandai. Jalankan fungsi audit pada contoh itu dan pastikan hasilnya benar.\n5. Cocokkan dengan kenyataan. Jalankan `nc -zv <IP> 23` ke ke-50 switch dan bandingkan dengan hasil audit. Setiap perbedaan menunjukkan bug yang tersisa.\n6. Untuk jangka panjang, pertimbangkan parser terstruktur seperti Genie dari bagian 10, supaya pemeriksaan tidak bergantung pada urutan kata."
+    }
+  },
+  "15-otomasi/04-ansible-cicd": {
+    "intinya": {
+      "satu_kalimat": "Ansible dan Terraform mengubah konfigurasi menjadi berkas teks di Git yang bisa ditinjau dan diuji otomatis lewat pipeline CI/CD sebelum diterapkan bertahap ke perangkat.",
+      "analogi": "Bayangkan jaringan minimarket yang mengganti tata letak rak di semua cabangnya. Rencana ditulis di satu dokumen, diperiksa atasan, lalu dicoba dulu di satu toko percontohan. Kalau toko percontohan kacau, cabang lain belum tersentuh, dan rencananya bisa diperbaiki. Git berperan sebagai dokumen itu, pull request sebagai pemeriksaan atasan, dan canary sebagai toko percontohan. Bedanya, perubahan jaringan bisa sampai ke ribuan perangkat dalam hitungan detik, jadi pemeriksaan otomatis harus berjalan sebelum perubahan menyebar.",
+      "kenapa_penting": "Di tim jaringan yang lebih besar, perubahan tidak lagi diketik langsung di router produksi. Anda akan membuat branch, membuka pull request, menunggu pipeline lulus, lalu menerapkannya ke satu perangkat dulu. Topik ini termasuk CCNA 6.6, yang meminta Anda mengenali kemampuan Ansible dan Terraform.",
+      "istilah": [
+        {
+          "kata": "Playbook",
+          "arti": "Berkas YAML Ansible berisi daftar tugas, misalnya 'pastikan VLAN 10 ada di semua access switch'."
+        },
+        {
+          "kata": "Check mode (--check --diff)",
+          "arti": "Mode simulasi Ansible yang menampilkan apa yang akan berubah tanpa benar-benar mengubah perangkat."
+        },
+        {
+          "kata": "Pipeline CI/CD",
+          "arti": "Rangkaian pemeriksaan otomatis yang berjalan setiap ada perubahan di Git: lint, validasi, uji di lab, persetujuan, lalu deploy."
+        },
+        {
+          "kata": "Canary",
+          "arti": "Menerapkan perubahan ke satu perangkat atau satu lokasi dulu, memeriksa hasilnya, baru memperluasnya."
+        },
+        {
+          "kata": "Source of truth",
+          "arti": "Satu sumber resmi tentang bagaimana jaringan seharusnya, misalnya NetBox. Otomasi membaca data dari sana."
+        },
+        {
+          "kata": "Regex (regular expression)",
+          "arti": "Pola untuk mencari teks, misalnya untuk mengenali serangan di permintaan HTTP. Pola yang ditulis kurang hati-hati bisa menghabiskan CPU."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Aturan WAF baru disebar ke seluruh dunia sekaligus, dan Cloudflare kehilangan 80% trafiknya",
+      "kapan": "2019-07-02",
+      "di_mana": "Cloudflare, jaringan CDN global",
+      "ringkas": "Seorang engineer Cloudflare menerapkan perubahan kecil pada aturan WAF untuk mendeteksi serangan XSS. Aturan itu berisi regex yang bisa melakukan backtracking berlebihan, sehingga CPU server di seluruh dunia penuh. Pengunjung situs pelanggan menerima error 502, dan Cloudflare kehilangan 80% trafiknya selama 27 menit. Software Cloudflare biasanya disebar bertahap, tetapi prosedur untuk aturan WAF mengizinkan penyebaran global dalam sekali jalan.",
+      "kronologi": [
+        {
+          "waktu": "13.31 UTC",
+          "peristiwa": "Pull request berisi perubahan aturan di-merge sesudah disetujui."
+        },
+        {
+          "waktu": "13.37 UTC",
+          "peristiwa": "TeamCity membangun aturan dan menjalankan tes. Semua tes lulus, padahal tes itu tidak mengukur pemakaian CPU."
+        },
+        {
+          "waktu": "13.42 UTC",
+          "peristiwa": "Perubahan disebar otomatis lewat Quicksilver, sistem konfigurasi Cloudflare yang menjangkau setiap mesin di dunia dalam hitungan detik (p99 2,29 detik)."
+        },
+        {
+          "waktu": "13.45 UTC",
+          "peristiwa": "Panggilan PagerDuty pertama terkirim, dipicu uji sintetis yang memeriksa WAF dari luar Cloudflare. Pada menit-menit awal sempat muncul dugaan serangan jenis baru."
+        },
+        {
+          "waktu": "14.00 UTC",
+          "peristiwa": "WAF teridentifikasi sebagai penyebab, dan dugaan serangan dicoret. Data CPU dari sebuah mesin menunjukkan WAF yang menghabiskannya."
+        },
+        {
+          "waktu": "14.07-14.09 UTC",
+          "peristiwa": "Tim memakai 'global terminate' untuk mematikan WAF di seluruh dunia. Akses ke panel internal sempat tersendat karena layanan login Cloudflare sendiri ikut lumpuh. Dua menit kemudian trafik dan CPU kembali normal."
+        },
+        {
+          "waktu": "14.52 UTC",
+          "peristiwa": "Sesudah perbaikan diuji di satu kota dengan sebagian trafik, WAF dinyalakan lagi secara global."
+        }
+      ],
+      "akar_masalah": "Regex baru mengandung pola `.*(?:.*=.*)` yang membuat mesin regex mencoba sangat banyak kemungkinan (backtracking) pada teks tertentu. Aturan itu dipasang dalam mode simulasi, tetapi tetap dijalankan pada trafik sungguhan. Pengaman yang bisa mencegah regex memakan CPU berlebihan terhapus tanpa sengaja saat refactoring WAF beberapa minggu sebelumnya. Prosedurnya juga mengizinkan perubahan aturan yang tidak darurat langsung ke seluruh dunia, tanpa tahap bertahap.",
+      "kaitan": "Pipeline di bagian CI/CD untuk Jaringan menaruh tahap DEPLOY bertahap (canary, sebagian, semua) sesudah lint, validasi, dan uji. Cloudflare sudah memakai pola itu untuk software, dengan urutan DOG, PIG, Canary, lalu global. Aturan WAF justru lewat jalur cepat yang melompati semuanya. Bagian Praktik Aman Otomasi Perubahan menyebut approval gate, canary, dan rollback otomatis sebagai tiga pengaman terpenting. Di kasus ini canary tidak ada, dan rollback-nya lambat karena harus menjalankan build WAF lengkap dua kali.",
+      "pelajaran": [
+        "Perlakukan perubahan konfigurasi seperti software: sebar bertahap. Cloudflare mengubah prosedurnya agar aturan WAF melewati tahapan yang sama, kecuali untuk menangkal serangan yang sedang berlangsung.",
+        "Ukur kinerja di pipeline. Cloudflare menambahkan profiling performa untuk setiap aturan ke rangkaian tesnya, karena tes lama tidak bisa mendeteksi pemakaian CPU berlebihan.",
+        "Siapkan jalan darurat yang tidak bergantung pada sistem yang sedang rusak. Engineer Cloudflare kesulitan masuk ke panel internal karena layanan login mereka sendiri ikut lumpuh.",
+        "Pastikan rollback cepat dan pernah dilatih. Rencana rollback yang butuh dua kali build penuh terlalu lambat saat seluruh jaringan terganggu."
+      ],
+      "sumber": [
+        {
+          "judul": "Details of the Cloudflare outage on July 2, 2019",
+          "penerbit": "Cloudflare Blog",
+          "url": "https://blog.cloudflare.com/details-of-the-cloudflare-outage-on-july-2-2019/"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda di tim TI sebuah universitas di Padang. Rekan Anda membuka merge request untuk menambah VLAN 40 (IoT) ke 60 access switch, memakai modul `cisco.ios.ios_vlans` dengan `state: overridden`. Pipeline CI menjalankan `ansible-playbook --check --diff`. Keluarannya menunjukkan perintah yang akan dikirim, termasuk `no vlan 99` di 12 switch. Menurut catatan kampus, VLAN 99 dipakai kamera CCTV gedung. Rekan Anda berkata, \"Itu cuma check mode, langsung deploy saja ke semua switch.\" Apa yang Anda lakukan, dan kenapa?",
+      "petunjuk": [
+        "Ingat perbedaan `merged`, `replaced`, dan `overridden`. Apa yang dilakukan `overridden` pada VLAN yang tidak disebut di playbook?",
+        "Check mode menampilkan apa yang AKAN terjadi. Apa akibat `no vlan 99` bagi kamera di 12 switch itu?",
+        "VLAN 99 ada di switch tetapi tidak ada di data playbook. Apa artinya bagi source of truth Anda?"
+      ],
+      "jawaban": "1. Tolak deploy untuk sementara. Check mode bukan formalitas; ia menampilkan apa yang akan terjadi. `no vlan 99` berarti VLAN kamera akan dihapus di 12 switch, dan CCTV gedung-gedung itu akan putus.\n2. Penyebabnya `state: overridden`. Mode ini memaksa konfigurasi persis sama dengan deklarasi, sehingga VLAN yang tidak disebut ikut dihapus. Untuk sekadar menambah VLAN 40, pakai `state: merged`, yang menambah tanpa menghapus yang lain.\n3. Perbaiki data juga. VLAN 99 ada di perangkat tetapi tidak ada di source of truth. Itu drift: catat VLAN 99 di NetBox atau di data playbook, supaya otomasi berikutnya tidak menghapusnya lagi.\n4. Jalankan ulang `--check --diff`. Hasil yang benar hanya menambah VLAN 40, tanpa satu pun baris yang menghapus.\n5. Deploy bertahap lewat approval gate. Terapkan ke satu switch dulu sebagai canary, lalu verifikasi dengan `show vlan brief` dan pastikan kamera tetap tampil. Setelah itu lanjut ke beberapa switch, baru semuanya.\n6. Tulis temuan ini di merge request. Diff yang menghapus sesuatu selalu layak dibaca dua kali sebelum disetujui."
+    }
+  },
+  "15-otomasi/05-rekayasa-perangkat-lunak": {
+    "intinya": {
+      "satu_kalimat": "Skrip otomasi perlu dikelola seperti software: disimpan di Git, ditinjau lewat pull request, diuji tanpa perangkat, dan aman diulang berkat idempotensi dan retry berjeda.",
+      "analogi": "Bayangkan seratus pembeli menunggu di depan minimarket yang listriknya baru menyala lagi. Kalau semuanya menyerbu kasir pada saat yang sama, mesin kasir bisa macet lagi. Lebih baik setiap orang kembali dengan jeda yang makin panjang dan sedikit acak. Ada yang kembali semenit lagi, ada yang tiga menit, ada yang tujuh menit. Itulah retry dengan exponential backoff dan jitter. Bedanya, di sistem komputer jedanya dalam hitungan detik, dan pembelinya adalah program yang bisa mengulang ribuan kali per detik. Karena itu jedanya harus ditulis di kode dan diuji.",
+      "kenapa_penting": "Skrip yang menyentuh 200 switch membawa bug yang ikut berlipat 200 kali. Kebiasaan seperti review, tes tanpa perangkat, dan menyimpan rahasia di environment variable membuat skrip Anda bisa dipercaya rekan kerja. Semuanya juga termasuk topik ujian Cisco CCNA Automation (200-901).",
+      "istilah": [
+        {
+          "kata": "Pull request",
+          "arti": "Usulan menggabungkan perubahan ke branch utama, lengkap dengan diff, diskusi, dan hasil tes, supaya ditinjau orang lain dulu."
+        },
+        {
+          "kata": "Test double",
+          "arti": "Pengganti perangkat atau server dalam tes, misalnya `FakeSession`, yang menjawab sesuai skenario sehingga tes berjalan tanpa router sungguhan."
+        },
+        {
+          "kata": "Exponential backoff",
+          "arti": "Jeda yang berlipat dua setiap kali percobaan ulang gagal, misalnya 0,5 detik, lalu 1, 2, dan 4 detik, dengan batas maksimum."
+        },
+        {
+          "kata": "Jitter",
+          "arti": "Tambahan acak pada jeda retry, supaya ribuan klien tidak mencoba ulang pada saat yang persis sama."
+        },
+        {
+          "kata": "Feature flag",
+          "arti": "Saklar di konfigurasi untuk menyalakan fitur baru sedikit demi sedikit, atau mematikannya cepat tanpa memasang ulang software."
+        },
+        {
+          "kata": "Null",
+          "arti": "Nilai kosong. Kode yang memakai nilai tanpa memeriksa apakah ia kosong bisa crash, sebuah galat yang disebut null pointer."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Field kosong di data kebijakan membuat Service Control Google crash global, lalu retry serentak memperlambat pemulihan",
+      "kapan": "2025-06-12",
+      "di_mana": "Google Cloud dan Google Workspace, global",
+      "ringkas": "Service Control adalah bagian sistem Google yang memastikan setiap permintaan API berizin dan lolos pemeriksaan kebijakan seperti kuota. Pada 12 Juni 2025, sebuah perubahan kebijakan berisi field kosong menyebar ke seluruh region dalam hitungan detik. Kode baru yang memprosesnya tidak menangani nilai kosong, sehingga Service Control crash berulang di seluruh dunia. Banyak produk Google Cloud dan Workspace membalas error 503. Sebagian besar region pulih dalam sekitar dua jam, tetapi us-central1 butuh lebih lama.",
+      "kronologi": [
+        {
+          "waktu": "29 Mei 2025",
+          "peristiwa": "Fitur baru untuk pemeriksaan kuota tambahan dipasang di Service Control lewat rollout per region. Jalur kode yang bermasalah belum pernah berjalan, karena baru aktif bila ada perubahan kebijakan tertentu."
+        },
+        {
+          "waktu": "12 Juni, sekitar 10.45 PDT",
+          "peristiwa": "Sebuah perubahan kebijakan dimasukkan ke tabel Spanner regional. Isinya memuat field kosong yang tidak disengaja, dan data itu tereplikasi ke seluruh dunia dalam hitungan detik."
+        },
+        {
+          "waktu": "segera sesudahnya",
+          "peristiwa": "Field kosong memicu null pointer di kode baru. Binary Service Control crash berulang (crash loop) di setiap region."
+        },
+        {
+          "waktu": "dalam 2 menit",
+          "peristiwa": "Tim SRE Google mulai menangani insiden."
+        },
+        {
+          "waktu": "dalam 10 menit",
+          "peristiwa": "Akar masalah ditemukan, dan 'red button' untuk mematikan jalur kode itu mulai disiapkan. Tombol itu siap disebar sekitar 25 menit sejak awal insiden."
+        },
+        {
+          "waktu": "dalam 40 menit",
+          "peristiwa": "Red button selesai disebar, dan region mulai pulih, dimulai dari region yang kecil."
+        },
+        {
+          "waktu": "sampai sekitar 2 jam 40 menit",
+          "peristiwa": "Di us-central1, tugas Service Control yang menyala ulang serentak membebani tabel Spanner (herd effect). Google memperlambat pembuatan tugas dan mengalihkan trafik ke database multi-region sampai pulih."
+        },
+        {
+          "waktu": "13.49 PDT",
+          "peristiwa": "Menurut laporan insiden, gangguan utama berakhir pukul 13.49, sekitar 3 jam sejak dimulai pukul 10.49. Beberapa produk masih punya dampak sisa sesudahnya."
+        }
+      ],
+      "akar_masalah": "Kode baru itu tidak menangani error dengan benar dan tidak dilindungi feature flag. Rollout per region tidak menangkapnya, karena jalur kode tersebut baru berjalan saat ada data kebijakan tertentu. Data kebijakan sendiri tereplikasi global hampir seketika, jadi field kosong langsung sampai ke semua region. Saat pemulihan, Service Control juga belum memakai randomized exponential backoff, sehingga tugas-tugas yang menyala ulang menyerbu database yang sama.",
+      "kaitan": "Kasus ini menyentuh dua bagian modul. Bagian 5 (Pengujian dengan pytest) memakai test double untuk menguji logika dengan skenario apa pun tanpa perangkat. Data berisi field kosong adalah skenario yang layak dites sebelum rilis. Bagian 6 (Retry dengan backoff) menjelaskan kenapa jeda harus makin panjang dan diberi jitter: tanpa itu, banyak klien mencoba ulang serentak. Laporan Google mengakui hal yang sama, karena Service Control tidak punya randomized exponential backoff sehingga terjadi herd effect di us-central1.",
+      "pelajaran": [
+        "Tulis tes untuk data yang tidak lengkap: field kosong, null, atau daftar kosong. Kode yang hanya diuji dengan data rapi akan gagal begitu bertemu data rusak.",
+        "Lindungi fitur baru dengan feature flag yang mati secara bawaan, lalu nyalakan bertahap. Menurut Google, dengan flag, masalah ini akan tertangkap di staging.",
+        "Pakai retry dengan exponential backoff dan jitter, seperti fungsi `retry` di modul ini, terutama untuk proses yang menyala ulang bersamaan.",
+        "Sebar perubahan data dan konfigurasi secara bertahap juga, dengan waktu yang cukup untuk memeriksa hasilnya di setiap tahap."
+      ],
+      "sumber": [
+        {
+          "judul": "Multiple GCP products are experiencing Service issues (Incident Report)",
+          "penerbit": "Google Cloud Service Health",
+          "url": "https://status.cloud.google.com/incidents/ow5i3PPK96RduMcb1SsW"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda membuat skrip laporan untuk 25 router MikroTik di jaringan sekolah-sekolah di Pontianak. Skrip memanggil `GET /rest/interface` lewat kelas seperti `MikroTikRest`, lalu menjalankan `row['comment'].strip()` untuk setiap interface. Di 24 router laporannya lancar. Di router ke-25 skrip berhenti dengan `KeyError: 'comment'`, dan laporan semua router tidak tersimpan. Bagaimana Anda mereproduksi galat ini tanpa router, memperbaikinya, dan mencegahnya terulang?",
+      "petunjuk": [
+        "`KeyError` berarti kunci itu tidak ada di dict. Apa bedanya data dari router ke-25?",
+        "Pakai `FakeSession` dan `FakeResp` dari modul untuk membuat router palsu yang mengembalikan interface tanpa kunci `comment`.",
+        "Ada dua tempat yang perlu diperbaiki: kode yang membaca satu baris data, dan loop yang memproses banyak router."
+      ],
+      "jawaban": "1. Amati dulu. Skrip berhasil di 24 router dan gagal di satu, dengan `KeyError: 'comment'`. Artinya data router ke-25 berbeda: ada interface yang JSON-nya tidak memuat kunci `comment`, misalnya interface tanpa keterangan.\n2. Reproduksi tanpa router. Buat `FakeSession(FakeResp(body=[{'name': 'ether1', 'comment': 'uplink'}, {'name': 'ether2'}]))`, lalu jalankan fungsi laporan dengan sesi palsu itu. Tesnya harus gagal dengan galat yang sama; ini tahap red.\n3. Perbaiki pembacaannya, misalnya `(row.get('comment') or '').strip()`. Bentuk ini juga aman kalau nilainya `null`. Jalankan tes lagi sampai lulus; ini tahap green.\n4. Perbaiki loop-nya. Bungkus pemrosesan tiap router dengan `try/except`, catat router yang gagal, dan tetap simpan laporan router lain. Satu router bermasalah tidak boleh membuang 24 laporan yang sudah benar.\n5. Cegah terulang. Tambahkan tes untuk data tidak lengkap lainnya, seperti daftar kosong atau nilai `null`. Simpan satu contoh JSON asli dari router sebagai bahan tes.\n6. Kirim perbaikan dan tesnya lewat pull request, supaya rekan bisa meninjau diff-nya sebelum skrip dipakai lagi."
+    }
+  }
+}

@@ -1,0 +1,1860 @@
+[
+  {
+    "id": "duplex-mismatch-cabang-medan",
+    "judul": "Internet cabang Medan merayap sejak switch diganti",
+    "tingkat": "menengah",
+    "modul": [
+      "03-data-link/01-ethernet-frame-mac",
+      "02-layer-fisik/02-kabel-copper",
+      "14-monitoring-troubleshooting/04-studi-kasus"
+    ],
+    "gejala": "Sejak switch diganti, unduhan dan aplikasi kantor pusat merayap. Ping ke gateway lancar, dan menyalin berkas antar-PC di dalam kantor tetap cepat.",
+    "briefing": "**Tiket #MDN-0412** dari Darwin Sitorus, kepala cabang Medan, Senin pukul 08.40:\n\n> Sejak pagi semua komputer lambat kalau membuka aplikasi kantor pusat. Unduh PDF 20 MB tadi hampir 6 menit, biasanya belasan detik. Panggilan video dengan Jakarta putus-putus. Anehnya, menyalin folder dari PC Fitri ke PC kasir tetap cepat.\n\nCatatan tim TI: Sabtu lalu switch lama di cabang mati tersambar petir, dan konfigurasinya tidak pernah dicadangkan. Vendor memasang Cisco Catalyst 2960 cadangan dengan konfigurasi minimal: IP manajemen dan deskripsi uplink. Router R-MDN tidak disentuh. ISP sudah memeriksa dari sisi mereka dan menyatakan jalur 50 Mbps bersih. Restart PC dan modem sudah dicoba tanpa hasil.\n\nAnda punya akses SSH ke switch dan router cabang.",
+    "lokasi": {
+      "kota": "Medan",
+      "lat": 3.589,
+      "lon": 98.674
+    },
+    "topologi": {
+      "simpul": [
+        {
+          "id": "PC1",
+          "label": "PC Fitri",
+          "jenis": "pc",
+          "x": 10,
+          "y": 28,
+          "info": "10.20.0.31/24, port Fa0/5"
+        },
+        {
+          "id": "PC2",
+          "label": "PC Kasir",
+          "jenis": "pc",
+          "x": 10,
+          "y": 72,
+          "info": "10.20.0.32/24, port Fa0/6"
+        },
+        {
+          "id": "SW1",
+          "label": "SW-MDN",
+          "jenis": "switch",
+          "x": 38,
+          "y": 50,
+          "info": "Catalyst 2960, dipasang Sabtu"
+        },
+        {
+          "id": "R1",
+          "label": "R-MDN",
+          "jenis": "router",
+          "x": 64,
+          "y": 50,
+          "info": "Cisco 2911, Gi0/1 10.20.0.1/24"
+        },
+        {
+          "id": "ISP",
+          "label": "ISP 50 Mbps",
+          "jenis": "isp",
+          "x": 90,
+          "y": 50,
+          "info": "Gi0/0 203.0.113.2/30"
+        }
+      ],
+      "sisi": [
+        {
+          "dari": "PC1",
+          "ke": "SW1",
+          "label": "Fa0/5"
+        },
+        {
+          "dari": "PC2",
+          "ke": "SW1",
+          "label": "Fa0/6"
+        },
+        {
+          "dari": "SW1",
+          "ke": "R1",
+          "label": "Gi0/1 ke Gi0/1"
+        },
+        {
+          "dari": "R1",
+          "ke": "ISP",
+          "label": "Gi0/0"
+        }
+      ]
+    },
+    "langkah": [
+      {
+        "id": "ping-gateway",
+        "label": "Ping gateway dari PC Fitri",
+        "perangkat": "PC1",
+        "perintah": "ping 10.20.0.1",
+        "keluaran": "Pinging 10.20.0.1 with 32 bytes of data:\nReply from 10.20.0.1: bytes=32 time=1ms TTL=255\nReply from 10.20.0.1: bytes=32 time=1ms TTL=255\nReply from 10.20.0.1: bytes=32 time=1ms TTL=255\nReply from 10.20.0.1: bytes=32 time=1ms TTL=255\n\nPing statistics for 10.20.0.1:\n    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),\nApproximate round trip times in milli-seconds:\n    Minimum = 1ms, Maximum = 1ms, Average = 1ms",
+        "makna": "Ping mengirim paket kecil, satu per detik, sehingga hampir tidak pernah bertabrakan dengan trafik lain. Hasilnya normal walaupun link sedang bermasalah. Ping yang lancar hanya membuktikan jalurnya tersambung, bukan bahwa link sanggup membawa beban berat.",
+        "berguna": false
+      },
+      {
+        "id": "ipconfig-pc",
+        "label": "Lihat konfigurasi IP PC Fitri",
+        "perangkat": "PC1",
+        "perintah": "ipconfig",
+        "keluaran": "Windows IP Configuration\n\n\nEthernet adapter Ethernet:\n\n   Connection-specific DNS Suffix  . : medan.example.com\n   Link-local IPv6 Address . . . . . : fe80::9c41:2d7a:61e3:5b08%11\n   IPv4 Address. . . . . . . . . . . : 10.20.0.31\n   Subnet Mask . . . . . . . . . . . : 255.255.255.0\n   Default Gateway . . . . . . . . . : 10.20.0.1",
+        "makna": "Alamat, subnet mask, dan gateway PC benar. Konfigurasi IP yang salah biasanya membuat koneksi gagal total, sedangkan di sini unduhan tetap berjalan, hanya lambat. Langkah ini tidak menjelaskan gejalanya.",
+        "berguna": false
+      },
+      {
+        "id": "status-port-switch",
+        "label": "Lihat status semua port di switch",
+        "perangkat": "SW1",
+        "perintah": "show interfaces status",
+        "keluaran": "Port      Name               Status       Vlan       Duplex  Speed Type\nFa0/1                        connected    1          a-full  a-100 10/100BaseTX\nFa0/2                        connected    1          a-full  a-100 10/100BaseTX\nFa0/3                        connected    1          a-full  a-100 10/100BaseTX\nFa0/4                        connected    1          a-full  a-100 10/100BaseTX\nFa0/5                        connected    1          a-full  a-100 10/100BaseTX\nFa0/6                        connected    1          a-full  a-100 10/100BaseTX\nFa0/7                        notconnect   1            auto   auto 10/100BaseTX\nFa0/8                        connected    1          a-full  a-100 10/100BaseTX\nFa0/9                        notconnect   1            auto   auto 10/100BaseTX\nFa0/10                       notconnect   1            auto   auto 10/100BaseTX\nFa0/11                       notconnect   1            auto   auto 10/100BaseTX\nFa0/12                       notconnect   1            auto   auto 10/100BaseTX\nFa0/13                       notconnect   1            auto   auto 10/100BaseTX\nFa0/14                       notconnect   1            auto   auto 10/100BaseTX\nFa0/15                       notconnect   1            auto   auto 10/100BaseTX\nFa0/16                       notconnect   1            auto   auto 10/100BaseTX\nFa0/17                       notconnect   1            auto   auto 10/100BaseTX\nFa0/18                       notconnect   1            auto   auto 10/100BaseTX\nFa0/19                       notconnect   1            auto   auto 10/100BaseTX\nFa0/20                       notconnect   1            auto   auto 10/100BaseTX\nFa0/21                       notconnect   1            auto   auto 10/100BaseTX\nFa0/22                       notconnect   1            auto   auto 10/100BaseTX\nFa0/23                       notconnect   1            auto   auto 10/100BaseTX\nFa0/24                       notconnect   1            auto   auto 10/100BaseTX\nGi0/1     Uplink R-MDN       connected    1          a-half  a-100 10/100/1000BaseTX\nGi0/2                        notconnect   1            auto   auto 10/100/1000BaseTX",
+        "makna": "Port PC tampil `a-full a-100`, hasil autonegosiasi yang normal. Awalan `a-` berarti nilai itu didapat dari negosiasi otomatis. Uplink Gi0/1 ke router justru `a-half`: switch berhasil menebak kecepatan 100 Mb/s dari sinyal, tetapi tidak menerima tawaran duplex dari router, lalu memilih half duplex. Half duplex artinya kedua ujung harus bergantian bicara, seperti walkie-talkie.",
+        "berguna": true
+      },
+      {
+        "id": "error-uplink-switch",
+        "label": "Periksa penghitung error uplink di switch",
+        "perangkat": "SW1",
+        "perintah": "show interfaces GigabitEthernet0/1",
+        "keluaran": "GigabitEthernet0/1 is up, line protocol is up (connected)\n  Hardware is Gigabit Ethernet, address is 0000.5e00.5319 (bia 0000.5e00.5319)\n  Description: Uplink R-MDN\n  MTU 1500 bytes, BW 100000 Kbit/sec, DLY 100 usec,\n     reliability 253/255, txload 4/255, rxload 16/255\n  Encapsulation ARPA, loopback not set\n  Keepalive set (10 sec)\n  Half-duplex, 100Mb/s, media type is 10/100/1000BaseTX\n  input flow-control is off, output flow-control is unsupported\n  ARP type: ARPA, ARP Timeout 04:00:00\n  Last input never, output 00:00:00, output hang never\n  Last clearing of \"show interface\" counters never\n  Input queue: 0/75/0/0 (size/max/drops/flushes); Total output drops: 0\n  Queueing strategy: fifo\n  Output queue: 0/40 (size/max)\n  5 minute input rate 6122000 bits/sec, 541 packets/sec\n  5 minute output rate 1405000 bits/sec, 307 packets/sec\n     2318442 packets input, 2846251173 bytes, 0 no buffer\n     Received 21407 broadcasts (14283 multicasts)\n     0 runts, 0 giants, 0 throttles\n     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored\n     0 watchdog, 14283 multicast, 0 pause input\n     0 input packets with dribble condition detected\n     1187331 packets output, 196508722 bytes, 0 underruns\n     9412 output errors, 61873 collisions, 1 interface resets\n     0 unknown protocol drops\n     0 babbles, 9412 late collision, 23518 deferred\n     0 lost carrier, 0 no carrier, 0 pause output\n     0 output buffer failures, 0 output buffers swapped out",
+        "makna": "Sisi switch berjalan half duplex, dan penghitung `collisions`, `late collision`, serta `deferred` naik. Tabrakan tidak mungkin terjadi di link full duplex. Late collision adalah tabrakan yang baru terdeteksi setelah 64 byte pertama terkirim. Frame yang kena dibuang tanpa dikirim ulang, jadi TCP yang harus mengulang dan kecepatan anjlok. Menurut Cisco, late collision di sisi half duplex adalah tanda duplex mismatch.",
+        "berguna": true
+      },
+      {
+        "id": "error-lan-router",
+        "label": "Periksa penghitung error port LAN router",
+        "perangkat": "R1",
+        "perintah": "show interfaces GigabitEthernet0/1",
+        "keluaran": "GigabitEthernet0/1 is up, line protocol is up \n  Hardware is CN Gigabit Ethernet, address is 0000.5e00.5302 (bia 0000.5e00.5302)\n  Description: LAN cabang Medan\n  Internet address is 10.20.0.1/24\n  MTU 1500 bytes, BW 100000 Kbit/sec, DLY 100 usec, \n     reliability 252/255, txload 16/255, rxload 4/255\n  Encapsulation ARPA, loopback not set\n  Keepalive set (10 sec)\n  Full Duplex, 100Mbps, media type is RJ45\n  output flow-control is unsupported, input flow-control is unsupported\n  ARP type: ARPA, ARP Timeout 04:00:00\n  Last input 00:00:00, output 00:00:00, output hang never\n  Last clearing of \"show interface\" counters 00:47:12\n  Input queue: 0/75/0/0 (size/max/drops/flushes); Total output drops: 0\n  Queueing strategy: fifo\n  Output queue: 0/40 (size/max)\n  5 minute input rate 1371000 bits/sec, 298 packets/sec\n  5 minute output rate 6164000 bits/sec, 547 packets/sec\n     843517 packets input, 139402931 bytes, 0 no buffer\n     Received 1204 broadcasts (0 IP multicasts)\n     3112 runts, 0 giants, 0 throttles\n     12408 input errors, 9296 CRC, 0 frame, 0 overrun, 0 ignored\n     0 watchdog, 0 multicast, 0 pause input\n     1549336 packets output, 1902566101 bytes, 0 underruns\n     0 output errors, 0 collisions, 0 interface resets\n     0 unknown protocol drops\n     0 babbles, 0 late collision, 0 deferred\n     0 lost carrier, 0 no carrier, 0 pause output\n     0 output buffer failures, 0 output buffers swapped out",
+        "makna": "Router berjalan full duplex, sedangkan switch half duplex. Dalam 47 menit sejak penghitung dihapus, router mencatat 9.296 CRC dan 3.112 runts. CRC berarti isi frame rusak saat diperiksa. Runts adalah potongan frame yang lebih pendek dari 64 byte. Keduanya muncul ketika switch menghentikan kirimannya di tengah jalan karena mengira ada tabrakan.",
+        "berguna": true
+      },
+      {
+        "id": "config-lan-router",
+        "label": "Lihat konfigurasi port LAN router",
+        "perangkat": "R1",
+        "perintah": "show running-config interface GigabitEthernet0/1",
+        "keluaran": "Building configuration...\n\nCurrent configuration : 166 bytes\n!\ninterface GigabitEthernet0/1\n description LAN cabang Medan\n ip address 10.20.0.1 255.255.255.0\n ip nat inside\n ip virtual-reassembly in\n duplex full\n speed 100\nend",
+        "makna": "Router dipaksa `duplex full` dan `speed 100`. Port yang dipaksa tidak lagi ikut autonegosiasi, dan dari situ seluruh masalah bermula. Switch yang memakai auto masih bisa mengukur kecepatan dari sinyal, tetapi duplex tidak bisa ditebak dari sinyal, jadi ia memakai half duplex sesuai aturan Ethernet. Switch lama kemungkinan juga dipaksa 100/full, sehingga dulu kedua ujung cocok.",
+        "berguna": true
+      },
+      {
+        "id": "brief-router",
+        "label": "Lihat ringkasan status interface router",
+        "perangkat": "R1",
+        "perintah": "show ip interface brief",
+        "keluaran": "Interface                  IP-Address      OK? Method Status                Protocol\nEmbedded-Service-Engine0/0 unassigned      YES NVRAM  administratively down down    \nGigabitEthernet0/0         203.0.113.2     YES NVRAM  up                    up      \nGigabitEthernet0/1         10.20.0.1       YES NVRAM  up                    up      \nGigabitEthernet0/2         unassigned      YES NVRAM  administratively down down    \nTunnel10                   172.16.10.2     YES NVRAM  up                    up      ",
+        "makna": "Semua interface yang dipakai berstatus `up/up`, termasuk tunnel ke kantor pusat. Status ini hanya berarti link menyala dan protokol lapis 2 berjalan. Ia tidak memberi tahu apakah frame yang lewat rusak. Untuk itu Anda perlu penghitung error di `show interfaces`.",
+        "berguna": false
+      },
+      {
+        "id": "wan-router",
+        "label": "Periksa port WAN ke ISP",
+        "perangkat": "R1",
+        "perintah": "show interfaces GigabitEthernet0/0 | include Duplex|rate|errors",
+        "keluaran": "  Full Duplex, 1Gbps, media type is RJ45\n  5 minute input rate 6203000 bits/sec, 561 packets/sec\n  5 minute output rate 1398000 bits/sec, 302 packets/sec\n     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored\n     0 output errors, 0 collisions, 0 interface resets",
+        "makna": "Port ke ISP bersih: nol error, dan trafiknya hanya sekitar 6 Mb/s dari langganan 50 Mb/s. Jalur internet tidak penuh dan tidak rusak. Pemeriksaan ini menyingkirkan ISP, tetapi belum menunjuk penyebabnya.",
+        "berguna": false
+      },
+      {
+        "id": "cpu-switch",
+        "label": "Cek beban CPU switch baru",
+        "perangkat": "SW1",
+        "perintah": "show processes cpu sorted | include CPU",
+        "keluaran": "CPU utilization for five seconds: 11%/0%; one minute: 9%; five minutes: 9%",
+        "makna": "CPU switch sekitar 9 persen, wajar untuk Catalyst 2960. Switch meneruskan frame lewat chip khusus, bukan lewat CPU, jadi CPU yang tenang tidak membuktikan link sehat. Langkah ini tidak mendekatkan Anda ke penyebab.",
+        "berguna": false
+      }
+    ],
+    "dugaan": [
+      {
+        "id": "duplex",
+        "teks": "Duplex mismatch di link switch ke router: router dipaksa 100/full, switch jatuh ke half duplex",
+        "benar": true,
+        "umpan": "Tepat. Switch menampilkan `a-half a-100` dan mencatat late collision. Router berjalan full duplex dan mencatat CRC serta runts. Konfigurasi router memaksa `duplex full` dan `speed 100`, sehingga switch tidak menemukan lawan negosiasi dan memilih half duplex."
+      },
+      {
+        "id": "kabel",
+        "teks": "Kabel antara switch dan router rusak dan perlu diganti",
+        "benar": false,
+        "umpan": "Kabel rusak memang bisa menaikkan CRC. Tetapi kabel rusak tidak membuat switch memilih half duplex, dan tidak menimbulkan tabrakan. Polanya di sini terbelah rapi: late collision hanya di sisi half duplex, CRC dan runts hanya di sisi full duplex. Itu jejak duplex mismatch."
+      },
+      {
+        "id": "isp",
+        "teks": "Bandwidth ISP penuh atau jalur ISP sedang gangguan",
+        "benar": false,
+        "umpan": "Port WAN ke ISP nol error dan trafiknya hanya sekitar 6 Mb/s dari 50 Mb/s. Error justru menumpuk di link LAN antara switch dan router, sebelum trafik sampai ke ISP."
+      },
+      {
+        "id": "switch-rusak",
+        "teks": "Switch pengganti rusak atau kewalahan, sehingga semua port lambat",
+        "benar": false,
+        "umpan": "Port PC berstatus `a-full a-100`, CPU switch normal, dan menyalin berkas antar-PC tetap cepat. Hanya uplink Gi0/1 yang bermasalah, dan penyebabnya pengaturan di ujung router."
+      },
+      {
+        "id": "ip-pc",
+        "teks": "Konfigurasi IP atau gateway di PC salah",
+        "benar": false,
+        "umpan": "Ping ke gateway lancar dan `ipconfig` menunjukkan alamat, mask, serta gateway yang benar. Konfigurasi IP yang salah membuat koneksi gagal, bukan lambat. Di sini unduhan tetap berjalan, hanya merayap."
+      }
+    ],
+    "pembahasan": "Mulai dari lapisan bawah. Keluhan \"lambat tapi tidak putus\" biasanya berarti ada frame yang rusak atau hilang di tengah jalan. Ping ke gateway lancar dan konfigurasi IP PC benar, jadi lapis 3 tidak menjelaskan gejalanya.\n\nPetunjuk pertama ada di briefing: menyalin berkas antar-PC tetap cepat. Trafik antar-PC hanya lewat switch, sedangkan trafik yang lambat melewati uplink Gi0/1 ke router. Jadi link itulah yang diperiksa.\n\n`show interfaces status` memperlihatkan uplink `a-half a-100`, sementara port PC `a-full a-100`. Duplex adalah aturan giliran bicara di kabel. Full duplex berarti kedua ujung boleh mengirim bersamaan. Half duplex berarti harus bergantian. Penghitung di kedua ujung memastikan dugaan itu:\n\n| Sisi | Mode | Penghitung yang naik |\n|---|---|---|\n| Switch Gi0/1 | half duplex | collisions, late collision, deferred |\n| Router Gi0/1 | full duplex | CRC, runts |\n\nRouter mengirim kapan saja karena merasa full duplex. Switch melihat sinyal masuk saat ia sedang mengirim, menyangka ada tabrakan, lalu menghentikan kirimannya. Potongan frame itu tiba di router sebagai runts dan CRC. Ping jarang kena karena paketnya kecil dan jarang, makanya ping terlihat normal.\n\n`show running-config` menjelaskan asal-usulnya: router dipaksa `duplex full` dan `speed 100`. Port yang dipaksa berhenti ikut autonegosiasi. Switch pengganti yang memakai auto hanya bisa menebak kecepatan dari sinyal. Duplex tidak bisa ditebak, maka ia memakai half duplex.\n\nDugaan kabel rusak mudah dipercaya karena kabel rusak juga menaikkan CRC. Bedanya, kabel rusak tidak membuat switch half duplex dan tidak menimbulkan late collision. Status `up/up` dan CPU yang tenang juga tidak berkata apa-apa soal frame yang rusak.\n\nMateri terkait: `03-data-link/01-ethernet-frame-mac` (bagian duplex mismatch), `02-layer-fisik/02-kabel-copper`, dan `14-monitoring-troubleshooting/04-studi-kasus`.",
+    "perbaikan": {
+      "penjelasan": "Kembalikan port router ke autonegosiasi supaya kedua ujung sepakat sendiri. Karena keduanya mendukung gigabit, hasilnya biasanya 1000/full. Mengubah speed dan duplex memutus link beberapa detik dan memutus panggilan video yang berjalan, jadi kerjakan saat jam istirahat dan kabari cabang lebih dulu. Simpan konfigurasi lama sebagai jalur mundur. Kalau kebijakan kantor pusat mewajibkan nilai tetap, paksa kedua ujung dengan nilai yang sama persis, jangan hanya satu sisi.",
+      "perintah": "! 1. Catat keadaan sekarang (jalur mundur)\nR-MDN# show running-config interface GigabitEthernet0/1\nR-MDN# copy running-config flash:sebelum-duplex.cfg\n\n! 2. Kembalikan ke autonegosiasi (speed dulu, baru duplex)\nR-MDN# configure terminal\nR-MDN(config)# interface GigabitEthernet0/1\nR-MDN(config-if)# speed auto\nR-MDN(config-if)# duplex auto\nR-MDN(config-if)# end\n\n! 3. Verifikasi di kedua ujung\nSW-MDN# show interfaces status | include Gi0/1\nGi0/1     Uplink R-MDN       connected    1          a-full a-1000 10/100/1000BaseTX\nR-MDN# clear counters GigabitEthernet0/1\nR-MDN# show interfaces GigabitEthernet0/1 | include Duplex|CRC|runts\nSW-MDN# show interfaces GigabitEthernet0/1 | include duplex|collision\n\n! 4. Penghitung tetap nol selama 15 menit? Simpan.\nR-MDN# copy running-config startup-config\n\n! Jalur mundur kalau link tidak naik (speed dulu, baru duplex):\nR-MDN(config-if)# speed 100\nR-MDN(config-if)# duplex full"
+    },
+    "sumber": [
+      {
+        "judul": "Cisco: Troubleshoot Switch Port and Interface Problems",
+        "url": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/12027-53.html"
+      },
+      {
+        "judul": "Cisco: Troubleshoot Catalyst Switches to NIC Compatibility Issues",
+        "url": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/17053-46.html"
+      },
+      {
+        "judul": "Cisco: Configure and Verify Ethernet 10/100/1000Mb Half/Full Duplex Auto-Negotiation",
+        "url": "https://www.cisco.com/c/en/us/support/docs/lan-switching/ethernet/10561-3.html"
+      }
+    ]
+  },
+  {
+    "id": "gateway-salah-pc-tata-usaha",
+    "judul": "PC Tata Usaha SMA di Yogyakarta tidak bisa membuka situs apa pun",
+    "tingkat": "pemula",
+    "modul": [
+      "04-network-layer/04-arp-icmp",
+      "04-network-layer/05-routing-dasar",
+      "04-network-layer/01-ipv4"
+    ],
+    "gejala": "Satu PC di ruang TU tidak bisa membuka situs mana pun, padahal masih bisa mencetak ke printer jaringan. PC lain di ruangan yang sama normal.",
+    "briefing": "**Pesan WhatsApp** dari Bu Sri Wahyuni, staf Tata Usaha sebuah SMA di Yogyakarta, Selasa pukul 07.15:\n\n> Mas, PC TU yang biasa saya pakai untuk input nilai tidak bisa buka web apa pun sejak kemarin sore. Browser bilang tidak ada koneksi internet. Tapi cetak ke printer TU masih bisa, folder bersama di PC Pak Bambang juga masih kebuka. PC Bu Ratna di sebelah saya lancar.\n\nCatatan dari operator sekolah, Pak Yusuf: kemarin siang ia mengubah PC TU dari DHCP ke alamat statis 192.168.10.25, karena aplikasi mesin absensi sidik jari butuh alamat PC yang tetap. Pengaturannya ia ketik dari buku catatan jaringan sekolah. Router lama sekolah diganti MikroTik tahun lalu.\n\nPC lain memakai DHCP dari router. Anda duduk di depan PC TU dan punya akses ke router.",
+    "lokasi": {
+      "kota": "Yogyakarta",
+      "lat": -7.8,
+      "lon": 110.391
+    },
+    "topologi": {
+      "simpul": [
+        {
+          "id": "PC1",
+          "label": "PC Tata Usaha",
+          "jenis": "pc",
+          "x": 10,
+          "y": 28,
+          "info": "192.168.10.25/24, statis sejak kemarin"
+        },
+        {
+          "id": "PC2",
+          "label": "PC Bu Ratna",
+          "jenis": "pc",
+          "x": 10,
+          "y": 72,
+          "info": "DHCP, lancar"
+        },
+        {
+          "id": "SW1",
+          "label": "Switch ruang TU",
+          "jenis": "switch",
+          "x": 38,
+          "y": 50,
+          "info": "Printer TU 192.168.10.40 juga di sini"
+        },
+        {
+          "id": "R1",
+          "label": "Router MikroTik",
+          "jenis": "router",
+          "x": 64,
+          "y": 50,
+          "info": "bridge-lan 192.168.10.1/24"
+        },
+        {
+          "id": "ISP",
+          "label": "ISP",
+          "jenis": "isp",
+          "x": 90,
+          "y": 50,
+          "info": "ether1 203.0.113.46/30"
+        }
+      ],
+      "sisi": [
+        {
+          "dari": "PC1",
+          "ke": "SW1"
+        },
+        {
+          "dari": "PC2",
+          "ke": "SW1"
+        },
+        {
+          "dari": "SW1",
+          "ke": "R1",
+          "label": "ether2"
+        },
+        {
+          "dari": "R1",
+          "ke": "ISP",
+          "label": "ether1"
+        }
+      ]
+    },
+    "langkah": [
+      {
+        "id": "ping-nama-situs",
+        "label": "Ping situs rapor dari PC TU",
+        "perangkat": "PC1",
+        "perintah": "ping rapor.example.org",
+        "keluaran": "Pinging rapor.example.org [198.51.100.27] with 32 bytes of data:\nReply from 192.168.10.25: Destination host unreachable.\nReply from 192.168.10.25: Destination host unreachable.\nReply from 192.168.10.25: Destination host unreachable.\nReply from 192.168.10.25: Destination host unreachable.\n\nPing statistics for 198.51.100.27:\n    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),",
+        "makna": "Dua hal terbaca di sini. Nama `rapor.example.org` berhasil diterjemahkan menjadi 198.51.100.27, jadi DNS bekerja. Lalu balasannya datang dari alamat PC sendiri: PC bahkan tidak berhasil menyerahkan paket ke perangkat berikutnya. Masalahnya ada sebelum paket keluar dari jaringan lokal.",
+        "berguna": true
+      },
+      {
+        "id": "ipconfig-all-tu",
+        "label": "Lihat konfigurasi IP lengkap PC TU",
+        "perangkat": "PC1",
+        "perintah": "ipconfig /all",
+        "keluaran": "Windows IP Configuration\n\n   Host Name . . . . . . . . . . . . : TU-01\n   Primary Dns Suffix  . . . . . . . :\n   Node Type . . . . . . . . . . . . : Hybrid\n   IP Routing Enabled. . . . . . . . : No\n   WINS Proxy Enabled. . . . . . . . : No\n\nEthernet adapter Ethernet:\n\n   Connection-specific DNS Suffix  . :\n   Description . . . . . . . . . . . : Realtek PCIe GbE Family Controller\n   Physical Address. . . . . . . . . : 00-00-5E-00-53-25\n   DHCP Enabled. . . . . . . . . . . : No\n   Autoconfiguration Enabled . . . . : Yes\n   Link-local IPv6 Address . . . . . : fe80::5d2c:8e1a:3b74:c9f0%7(Preferred)\n   IPv4 Address. . . . . . . . . . . : 192.168.10.25(Preferred)\n   Subnet Mask . . . . . . . . . . . : 255.255.255.0\n   Default Gateway . . . . . . . . . : 192.168.10.254\n   DHCPv6 IAID . . . . . . . . . . . : 117440605\n   DHCPv6 Client DUID. . . . . . . . : 00-01-00-01-2D-1A-6B-3F-00-00-5E-00-53-25\n   DNS Servers . . . . . . . . . . . : 192.168.10.1\n   NetBIOS over Tcpip. . . . . . . . : Enabled",
+        "makna": "PC memakai alamat statis (`DHCP Enabled: No`). Alamat dan mask wajar, dan DNS menunjuk router 192.168.10.1. Yang janggal adalah default gateway: 192.168.10.254, padahal router sekolah ada di 192.168.10.1. Default gateway adalah pintu keluar untuk semua tujuan di luar jaringan lokal.",
+        "berguna": true
+      },
+      {
+        "id": "ping-printer",
+        "label": "Ping printer TU",
+        "perangkat": "PC1",
+        "perintah": "ping 192.168.10.40",
+        "keluaran": "Pinging 192.168.10.40 with 32 bytes of data:\nReply from 192.168.10.40: bytes=32 time=2ms TTL=64\nReply from 192.168.10.40: bytes=32 time=1ms TTL=64\nReply from 192.168.10.40: bytes=32 time=1ms TTL=64\nReply from 192.168.10.40: bytes=32 time=1ms TTL=64\n\nPing statistics for 192.168.10.40:\n    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),\nApproximate round trip times in milli-seconds:\n    Minimum = 1ms, Maximum = 2ms, Average = 1ms",
+        "makna": "Printer menjawab. Untuk tujuan di jaringan sendiri, PC mengirim langsung lewat switch tanpa melibatkan gateway. Tes ini menjelaskan kenapa mencetak masih bisa, tetapi tidak menyentuh bagian yang bermasalah.",
+        "berguna": false
+      },
+      {
+        "id": "nslookup-tu",
+        "label": "Tanyakan nama situs ke DNS",
+        "perangkat": "PC1",
+        "perintah": "nslookup rapor.example.org",
+        "keluaran": "Server:  UnKnown\nAddress:  192.168.10.1\n\nNon-authoritative answer:\nName:    rapor.example.org\nAddress:  198.51.100.27",
+        "makna": "Nama berhasil diterjemahkan. Server DNS PC adalah router di 192.168.10.1, satu jaringan dengan PC, jadi pertanyaan DNS terkirim langsung tanpa lewat gateway. `Server: UnKnown` hanya berarti router tidak punya nama balik (PTR), bukan galat. DNS sehat.",
+        "berguna": false
+      },
+      {
+        "id": "ping-gateway-254",
+        "label": "Ping default gateway yang tercatat di PC TU",
+        "perangkat": "PC1",
+        "perintah": "ping 192.168.10.254",
+        "keluaran": "Pinging 192.168.10.254 with 32 bytes of data:\nReply from 192.168.10.25: Destination host unreachable.\nReply from 192.168.10.25: Destination host unreachable.\nReply from 192.168.10.25: Destination host unreachable.\nReply from 192.168.10.25: Destination host unreachable.\n\nPing statistics for 192.168.10.254:\n    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),",
+        "makna": "PC bertanya lewat ARP \"siapa pemilik 192.168.10.254?\" dan tidak ada yang menjawab, maka PC sendiri melapor \"Destination host unreachable\". ARP adalah cara PC mencari alamat MAC dari sebuah alamat IP di jaringan lokal. Tidak ada perangkat di alamat itu. Perhatikan jebakannya: Windows tetap menulis `Received = 4`, jadi baca baris balasannya, bukan statistiknya.",
+        "berguna": true
+      },
+      {
+        "id": "ping-router",
+        "label": "Ping router sekolah di 192.168.10.1",
+        "perangkat": "PC1",
+        "perintah": "ping 192.168.10.1",
+        "keluaran": "Pinging 192.168.10.1 with 32 bytes of data:\nReply from 192.168.10.1: bytes=32 time<1ms TTL=64\nReply from 192.168.10.1: bytes=32 time<1ms TTL=64\nReply from 192.168.10.1: bytes=32 time<1ms TTL=64\nReply from 192.168.10.1: bytes=32 time<1ms TTL=64\n\nPing statistics for 192.168.10.1:\n    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),\nApproximate round trip times in milli-seconds:\n    Minimum = 0ms, Maximum = 0ms, Average = 0ms",
+        "makna": "Router sekolah hidup dan menjawab di 192.168.10.1. Jaringan lokal sehat dan router siap meneruskan paket, tetapi PC TU tidak memakainya sebagai gateway.",
+        "berguna": true
+      },
+      {
+        "id": "ipconfig-ratna",
+        "label": "Bandingkan dengan PC Bu Ratna yang normal",
+        "perangkat": "PC2",
+        "perintah": "ipconfig",
+        "keluaran": "Windows IP Configuration\n\n\nEthernet adapter Ethernet:\n\n   Connection-specific DNS Suffix  . :\n   Link-local IPv6 Address . . . . . : fe80::a3f1:47c2:9e0d:6b15%9\n   IPv4 Address. . . . . . . . . . . : 192.168.10.112\n   Subnet Mask . . . . . . . . . . . : 255.255.255.0\n   Default Gateway . . . . . . . . . : 192.168.10.1",
+        "makna": "PC yang normal mendapat gateway 192.168.10.1 dari DHCP. Mask-nya sama dengan PC TU. Membandingkan dengan perangkat sehat di ruangan yang sama adalah cara cepat menemukan satu nilai yang berbeda.",
+        "berguna": true
+      },
+      {
+        "id": "flushdns",
+        "label": "Bersihkan cache DNS di PC TU",
+        "perangkat": "PC1",
+        "perintah": "ipconfig /flushdns",
+        "keluaran": "Windows IP Configuration\n\nSuccessfully flushed the DNS Resolver Cache.",
+        "makna": "Cache DNS di PC sudah kosong, tetapi browser tetap gagal. Ini langkah refleks yang sering dicoba, padahal DNS tidak bermasalah sejak awal.",
+        "berguna": false
+      },
+      {
+        "id": "route-router",
+        "label": "Lihat tabel routing router",
+        "perangkat": "R1",
+        "perintah": "/ip route print",
+        "keluaran": "Flags: D - DYNAMIC; A - ACTIVE; c - CONNECT, s - STATIC\nColumns: DST-ADDRESS, GATEWAY, DISTANCE\n#     DST-ADDRESS      GATEWAY       DISTANCE\n0  As 0.0.0.0/0        203.0.113.45         1\n  DAc 192.168.10.0/24  bridge-lan           0\n  DAc 203.0.113.44/30  ether1               0",
+        "makna": "Router punya rute default aktif ke ISP (`As 0.0.0.0/0`) dan mengenal jaringan sekolah. Routing di router normal. Masalahnya terjadi sebelum paket PC TU sampai ke router.",
+        "berguna": false
+      },
+      {
+        "id": "ping-dari-router",
+        "label": "Ping server rapor dari router",
+        "perangkat": "R1",
+        "perintah": "/ping 198.51.100.27 count=3",
+        "keluaran": "  SEQ HOST                                     SIZE TTL TIME       STATUS\n    0 198.51.100.27                              56  54 8ms644us\n    1 198.51.100.27                              56  54 8ms301us\n    2 198.51.100.27                              56  54 8ms512us\n    sent=3 received=3 packet-loss=0% min-rtt=8ms301us avg-rtt=8ms486us max-rtt=8ms644us",
+        "makna": "Router bisa menjangkau server rapor di internet. Koneksi ISP sehat, dan PC Bu Ratna memang lancar. Tes ini menyingkirkan ISP, tetapi tidak menunjuk penyebab di PC TU.",
+        "berguna": false
+      }
+    ],
+    "dugaan": [
+      {
+        "id": "gateway",
+        "teks": "Default gateway PC TU salah: menunjuk 192.168.10.254 yang tidak ada, padahal router di 192.168.10.1",
+        "benar": true,
+        "umpan": "Benar. `ipconfig /all` menunjukkan gateway 192.168.10.254. Ping ke alamat itu dijawab \"Destination host unreachable\" oleh PC sendiri, artinya tidak ada perangkat di sana. Router yang sebenarnya menjawab di 192.168.10.1, alamat yang juga dipakai PC Bu Ratna."
+      },
+      {
+        "id": "dns",
+        "teks": "Server DNS bermasalah sehingga nama situs tidak bisa diterjemahkan",
+        "benar": false,
+        "umpan": "`nslookup` berhasil, dan ping ke nama situs sudah menampilkan alamat 198.51.100.27. Nama diterjemahkan dengan benar. Paketnya yang tidak bisa keluar dari jaringan lokal."
+      },
+      {
+        "id": "kabel",
+        "teks": "Kabel atau port switch PC TU rusak",
+        "benar": false,
+        "umpan": "PC TU masih bisa ping printer dan router, dan masih membuka folder bersama. Kabel rusak akan memutus semua itu, bukan hanya akses ke luar."
+      },
+      {
+        "id": "isp",
+        "teks": "Internet sekolah dari ISP sedang putus",
+        "benar": false,
+        "umpan": "PC Bu Ratna lancar, dan router sendiri bisa ping server rapor di internet. Internet sekolah sehat. Masalahnya hanya di satu PC."
+      },
+      {
+        "id": "mask",
+        "teks": "Subnet mask PC TU salah",
+        "benar": false,
+        "umpan": "Mask 255.255.255.0 sama dengan PC Bu Ratna, dan PC TU menjangkau printer serta router di 192.168.10.0/24. Mask yang salah biasanya membuat sebagian perangkat lokal tidak terjangkau."
+      }
+    ],
+    "pembahasan": "Gejalanya selektif: printer dan folder bersama jalan, situs di internet tidak. Yang membedakan tujuan lokal dan tujuan jauh adalah default gateway. Untuk alamat di jaringan sendiri (192.168.10.0/24), PC mengirim langsung lewat switch. Untuk alamat lain, PC menyerahkan paket ke gateway, yaitu router.\n\nLapis 1 dan 2 sehat, karena ping ke printer dan router berhasil. DNS juga sehat. `nslookup` menjawab karena server DNS-nya, router di 192.168.10.1, ada di jaringan yang sama. Sampai di sini, yang tersisa adalah jalan keluarnya.\n\n`ipconfig /all` membuka jawabannya. PC TU memakai alamat statis dengan gateway 192.168.10.254. Ping ke alamat itu dijawab \"Destination host unreachable\" oleh PC sendiri (192.168.10.25). PC sudah bertanya lewat ARP siapa pemilik alamat itu, dan tidak ada yang menjawab. Router asli ada di 192.168.10.1, dan PC Bu Ratna yang sehat memakai alamat itu.\n\nKemungkinan besar 192.168.10.254 adalah alamat router lama yang masih tertulis di buku catatan. Routernya sudah diganti, catatannya belum.\n\nAda dua jebakan. Pertama, Windows menghitung \"Destination host unreachable\" sebagai paket diterima (`Received = 4, Lost = 0`), jadi baca baris balasannya. Kedua, `ipconfig /flushdns` sering jadi refleks, padahal DNS tidak bermasalah. Pemeriksaan di router juga normal, karena paket dari PC TU tidak pernah sampai ke sana.\n\nMateri terkait: `04-network-layer/04-arp-icmp` (host hanya ber-ARP untuk gateway saat tujuannya di luar subnet), `04-network-layer/05-routing-dasar`, dan `04-network-layer/01-ipv4`.",
+    "perbaikan": {
+      "penjelasan": "Ganti gateway PC TU menjadi 192.168.10.1. Cara yang lebih rapi: kembalikan PC ke DHCP dan buat reservasi (static lease) di MikroTik, sehingga mesin absensi tetap menemukan PC di alamat yang sama tanpa ada yang mengetik ulang. Perubahan ini hanya menyentuh satu PC. Jalur mundurnya adalah nilai lama dari `ipconfig /all` yang sudah Anda lihat. Perbarui juga buku catatan jaringan sekolah.",
+      "perintah": "REM Command Prompt sebagai Administrator di PC TU\nnetsh interface ipv4 set address name=\"Ethernet\" source=static address=192.168.10.25 mask=255.255.255.0 gateway=192.168.10.1\nipconfig\nping rapor.example.org\n\nREM Opsi yang lebih rapi: reservasi DHCP di MikroTik\n/ip dhcp-server lease add address=192.168.10.25 mac-address=00:00:5E:00:53:25 server=dhcp-lan comment=\"PC TU (absensi)\"\nREM lalu di PC TU:\nnetsh interface ipv4 set address name=\"Ethernet\" source=dhcp\nnetsh interface ipv4 set dnsservers name=\"Ethernet\" source=dhcp\nipconfig /renew\n\nREM Jalur mundur (nilai lama):\nnetsh interface ipv4 set address name=\"Ethernet\" source=static address=192.168.10.25 mask=255.255.255.0 gateway=192.168.10.254"
+    },
+    "sumber": [
+      {
+        "judul": "Microsoft Learn: ipconfig",
+        "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ipconfig"
+      },
+      {
+        "judul": "Microsoft Learn: ping",
+        "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ping"
+      },
+      {
+        "judul": "Microsoft Learn: netsh interface (ipv4 set address)",
+        "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netsh-interface"
+      },
+      {
+        "judul": "MikroTik RouterOS: DHCP (static lease)",
+        "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/24805500/DHCP"
+      }
+    ]
+  },
+  {
+    "id": "subnet-mask-salah-klinik",
+    "judul": "PC apotek klinik di Makassar tidak bisa membuka SIMKlinik",
+    "tingkat": "pemula",
+    "modul": [
+      "04-network-layer/02-subnetting",
+      "04-network-layer/01-ipv4",
+      "04-network-layer/04-arp-icmp"
+    ],
+    "gejala": "PC apotek yang baru dipasang bisa membuka internet dan mencetak, tetapi aplikasi SIMKlinik di server tidak pernah terbuka. PC kasir di sebelahnya normal.",
+    "briefing": "**Laporan** dari apt. Nurul Hidayah, apoteker sebuah klinik pratama di Makassar, Senin pukul 08.05:\n\n> PC baru di apotek tidak bisa buka SIMKlinik, keluarnya \"This site can't be reached\". Resep dari dokter jadi saya catat manual. Internet di PC itu jalan, cetak struk juga bisa. PC kasir buka SIMKlinik lancar.\n\nKonteks: PC apotek dipasang Sabtu oleh teknisi toko komputer, dengan alamat statis 192.168.1.40. Jaringan klinik dibagi dua oleh router MikroTik: jaringan pelayanan 192.168.1.0/24 untuk PC dan printer, dan jaringan server 192.168.2.0/24 tempat SIMKlinik berjalan di 192.168.2.10. Vendor SIMKlinik memisahkannya tahun lalu.\n\nAnda bisa memakai PC apotek, PC kasir, router, dan SSH ke server.",
+    "lokasi": {
+      "kota": "Makassar",
+      "lat": -5.133,
+      "lon": 119.414
+    },
+    "topologi": {
+      "simpul": [
+        {
+          "id": "PC1",
+          "label": "PC Apotek",
+          "jenis": "pc",
+          "x": 10,
+          "y": 28,
+          "info": "192.168.1.40 statis, dipasang Sabtu"
+        },
+        {
+          "id": "PC2",
+          "label": "PC Kasir",
+          "jenis": "pc",
+          "x": 10,
+          "y": 72,
+          "info": "192.168.1.23, DHCP"
+        },
+        {
+          "id": "SW1",
+          "label": "Switch pelayanan",
+          "jenis": "switch",
+          "x": 36,
+          "y": 50
+        },
+        {
+          "id": "R1",
+          "label": "Router MikroTik",
+          "jenis": "router",
+          "x": 62,
+          "y": 50,
+          "info": "ether2 192.168.1.1, ether3 192.168.2.1"
+        },
+        {
+          "id": "ISP",
+          "label": "ISP",
+          "jenis": "isp",
+          "x": 90,
+          "y": 24,
+          "info": "ether1 203.0.113.66/29"
+        },
+        {
+          "id": "SRV",
+          "label": "Server SIMKlinik",
+          "jenis": "server",
+          "x": 88,
+          "y": 76,
+          "info": "192.168.2.10, Debian 12, nginx"
+        }
+      ],
+      "sisi": [
+        {
+          "dari": "PC1",
+          "ke": "SW1"
+        },
+        {
+          "dari": "PC2",
+          "ke": "SW1"
+        },
+        {
+          "dari": "SW1",
+          "ke": "R1",
+          "label": "ether2"
+        },
+        {
+          "dari": "R1",
+          "ke": "ISP",
+          "label": "ether1"
+        },
+        {
+          "dari": "R1",
+          "ke": "SRV",
+          "label": "ether3"
+        }
+      ]
+    },
+    "langkah": [
+      {
+        "id": "ping-server-apotek",
+        "label": "Ping server SIMKlinik dari PC apotek",
+        "perangkat": "PC1",
+        "perintah": "ping 192.168.2.10",
+        "keluaran": "Pinging 192.168.2.10 with 32 bytes of data:\nReply from 192.168.1.40: Destination host unreachable.\nReply from 192.168.1.40: Destination host unreachable.\nReply from 192.168.1.40: Destination host unreachable.\nReply from 192.168.1.40: Destination host unreachable.\n\nPing statistics for 192.168.2.10:\n    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),",
+        "makna": "Balasan datang dari alamat PC apotek sendiri, bukan dari router. Artinya PC tidak pernah menyerahkan paket ini ke gateway. PC mencoba mencari 192.168.2.10 langsung di kabel lokal lewat ARP, dan tidak ada yang menjawab. Pertanyaannya: kenapa PC menganggap server itu tetangga satu jaringan?",
+        "berguna": true
+      },
+      {
+        "id": "ping-gateway-apotek",
+        "label": "Ping gateway dari PC apotek",
+        "perangkat": "PC1",
+        "perintah": "ping 192.168.1.1",
+        "keluaran": "Pinging 192.168.1.1 with 32 bytes of data:\nReply from 192.168.1.1: bytes=32 time<1ms TTL=64\nReply from 192.168.1.1: bytes=32 time<1ms TTL=64\nReply from 192.168.1.1: bytes=32 time<1ms TTL=64\nReply from 192.168.1.1: bytes=32 time<1ms TTL=64\n\nPing statistics for 192.168.1.1:\n    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),\nApproximate round trip times in milli-seconds:\n    Minimum = 0ms, Maximum = 0ms, Average = 0ms",
+        "makna": "Router menjawab. Kabel, switch, dan gateway PC apotek sehat. Tes ini menyingkirkan masalah fisik, tetapi tidak menjelaskan kenapa server gagal.",
+        "berguna": false
+      },
+      {
+        "id": "ping-internet-apotek",
+        "label": "Ping situs pemasok obat dari PC apotek",
+        "perangkat": "PC1",
+        "perintah": "ping pemasok.example.com",
+        "keluaran": "Pinging pemasok.example.com [198.51.100.120] with 32 bytes of data:\nReply from 198.51.100.120: bytes=32 time=21ms TTL=52\nReply from 198.51.100.120: bytes=32 time=20ms TTL=52\nReply from 198.51.100.120: bytes=32 time=22ms TTL=52\nReply from 198.51.100.120: bytes=32 time=21ms TTL=52\n\nPing statistics for 198.51.100.120:\n    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),\nApproximate round trip times in milli-seconds:\n    Minimum = 20ms, Maximum = 22ms, Average = 21ms",
+        "makna": "Internet dan DNS jalan dari PC apotek. Paket ke alamat publik dikirim lewat gateway dengan benar. Hasil normal ini justru petunjuk tidak langsung: hanya tujuan tertentu yang gagal.",
+        "berguna": false
+      },
+      {
+        "id": "ipconfig-apotek",
+        "label": "Lihat konfigurasi IP PC apotek",
+        "perangkat": "PC1",
+        "perintah": "ipconfig",
+        "keluaran": "Windows IP Configuration\n\n\nEthernet adapter Ethernet:\n\n   Connection-specific DNS Suffix  . :\n   Link-local IPv6 Address . . . . . : fe80::1c7e:93b2:4a05:d18e%12\n   IPv4 Address. . . . . . . . . . . : 192.168.1.40\n   Subnet Mask . . . . . . . . . . . : 255.255.0.0\n   Default Gateway . . . . . . . . . : 192.168.1.1",
+        "makna": "Alamat dan gateway wajar, tetapi subnet mask-nya 255.255.0.0 (/16). Subnet mask menentukan alamat mana yang dianggap satu jaringan. Dengan /16, PC menganggap semua alamat 192.168.x.x sebagai tetangga langsung, termasuk server 192.168.2.10.",
+        "berguna": true
+      },
+      {
+        "id": "ipconfig-kasir",
+        "label": "Bandingkan dengan PC kasir yang normal",
+        "perangkat": "PC2",
+        "perintah": "ipconfig",
+        "keluaran": "Windows IP Configuration\n\n\nEthernet adapter Ethernet:\n\n   Connection-specific DNS Suffix  . :\n   Link-local IPv6 Address . . . . . : fe80::6b0d:2f81:c4e7:93a2%5\n   IPv4 Address. . . . . . . . . . . : 192.168.1.23\n   Subnet Mask . . . . . . . . . . . : 255.255.255.0\n   Default Gateway . . . . . . . . . : 192.168.1.1",
+        "makna": "PC kasir mendapat mask 255.255.255.0 (/24) dari DHCP. Gateway-nya sama. Satu-satunya perbedaan dengan PC apotek adalah mask.",
+        "berguna": true
+      },
+      {
+        "id": "route-print-apotek",
+        "label": "Lihat tabel routing PC apotek",
+        "perangkat": "PC1",
+        "perintah": "route print -4",
+        "keluaran": "===========================================================================\nInterface List\n 12...00 00 5e 00 53 41 ......Intel(R) Ethernet Connection (7) I219-V\n  1...........................Software Loopback Interface 1\n===========================================================================\n\nIPv4 Route Table\n===========================================================================\nActive Routes:\nNetwork Destination        Netmask          Gateway       Interface  Metric\n          0.0.0.0          0.0.0.0      192.168.1.1     192.168.1.40     25\n        127.0.0.0        255.0.0.0         On-link         127.0.0.1    331\n        127.0.0.1  255.255.255.255         On-link         127.0.0.1    331\n  127.255.255.255  255.255.255.255         On-link         127.0.0.1    331\n      192.168.0.0      255.255.0.0         On-link      192.168.1.40    281\n     192.168.1.40  255.255.255.255         On-link      192.168.1.40    281\n  192.168.255.255  255.255.255.255         On-link      192.168.1.40    281\n        224.0.0.0        240.0.0.0         On-link         127.0.0.1    331\n        224.0.0.0        240.0.0.0         On-link      192.168.1.40    281\n  255.255.255.255  255.255.255.255         On-link         127.0.0.1    331\n  255.255.255.255  255.255.255.255         On-link      192.168.1.40    281\n===========================================================================\nPersistent Routes:\n  Network Address          Netmask  Gateway Address  Metric\n          0.0.0.0          0.0.0.0      192.168.1.1  Default\n===========================================================================",
+        "makna": "Lihat baris `192.168.0.0 255.255.0.0 On-link`. \"On-link\" berarti tujuan dalam rentang itu dikirim langsung tanpa gateway. Rentang 192.168.0.0/16 mencakup 192.168.2.10, jadi rute itu menang atas rute default `0.0.0.0`. Paket ke server tidak pernah diserahkan ke router.",
+        "berguna": true
+      },
+      {
+        "id": "alamat-router",
+        "label": "Lihat alamat IP di router",
+        "perangkat": "R1",
+        "perintah": "/ip address print",
+        "keluaran": "Columns: ADDRESS, NETWORK, INTERFACE\n# ADDRESS          NETWORK       INTERFACE\n;;; LAN pelayanan\n0 192.168.1.1/24   192.168.1.0   ether2\n;;; LAN server\n1 192.168.2.1/24   192.168.2.0   ether3\n2 203.0.113.66/29  203.0.113.64  ether1",
+        "makna": "Router memakai /24 di kedua jaringan klinik. Jaringan pelayanan dan jaringan server adalah dua jaringan terpisah yang hanya bisa saling bicara lewat router. Ini rancangan yang benar, dan ia bertentangan dengan mask /16 di PC apotek.",
+        "berguna": true
+      },
+      {
+        "id": "ping-server-router",
+        "label": "Ping server SIMKlinik dari router",
+        "perangkat": "R1",
+        "perintah": "/ping 192.168.2.10 count=3",
+        "keluaran": "  SEQ HOST                                     SIZE TTL TIME       STATUS\n    0 192.168.2.10                               56  64 412us\n    1 192.168.2.10                               56  64 377us\n    2 192.168.2.10                               56  64 391us\n    sent=3 received=3 packet-loss=0% min-rtt=377us avg-rtt=393us max-rtt=412us",
+        "makna": "Server hidup dan terjangkau dari router. Ini menyingkirkan server mati atau kabel server putus, tetapi tidak menunjuk penyebab di PC apotek.",
+        "berguna": false
+      },
+      {
+        "id": "ss-server",
+        "label": "Cek layanan web di server SIMKlinik",
+        "perangkat": "SRV",
+        "perintah": "sudo ss -tlnp",
+        "keluaran": "State  Recv-Q Send-Q Local Address:Port Peer Address:PortProcess\nLISTEN 0      128          0.0.0.0:22        0.0.0.0:*    users:((\"sshd\",pid=611,fd=3))\nLISTEN 0      511          0.0.0.0:80        0.0.0.0:*    users:((\"nginx\",pid=742,fd=6),(\"nginx\",pid=741,fd=6),(\"nginx\",pid=740,fd=6))\nLISTEN 0      511          0.0.0.0:443       0.0.0.0:*    users:((\"nginx\",pid=742,fd=8),(\"nginx\",pid=741,fd=8),(\"nginx\",pid=740,fd=8))\nLISTEN 0      128             [::]:22           [::]:*    users:((\"sshd\",pid=611,fd=4))\nLISTEN 0      511             [::]:80           [::]:*    users:((\"nginx\",pid=742,fd=7),(\"nginx\",pid=741,fd=7),(\"nginx\",pid=740,fd=7))",
+        "makna": "nginx mendengarkan di port 80 dan 443 (status `LISTEN`), jadi aplikasi web SIMKlinik berjalan. PC kasir pun bisa membukanya. Server bukan sumber masalah.",
+        "berguna": false
+      }
+    ],
+    "dugaan": [
+      {
+        "id": "mask",
+        "teks": "Subnet mask PC apotek terlalu lebar (255.255.0.0), sehingga PC mengira server 192.168.2.10 satu jaringan dan tidak mengirimnya lewat gateway",
+        "benar": true,
+        "umpan": "Benar. Mask /16 membuat tabel routing PC berisi `192.168.0.0 255.255.0.0 On-link`. PC lalu mencari server lewat ARP di kabel lokal dan tidak mendapat jawaban, sehingga ia sendiri melapor \"Destination host unreachable\". PC kasir dan router memakai /24."
+      },
+      {
+        "id": "server-mati",
+        "teks": "Server SIMKlinik mati atau aplikasinya berhenti",
+        "benar": false,
+        "umpan": "PC kasir bisa membuka SIMKlinik, router bisa ping server, dan nginx berstatus `LISTEN` di port 80 dan 443. Server sehat."
+      },
+      {
+        "id": "gateway",
+        "teks": "Default gateway PC apotek salah",
+        "benar": false,
+        "umpan": "Gateway PC apotek 192.168.1.1, sama dengan PC kasir, dan internet jalan dari PC apotek. Gateway-nya benar. Hanya saja PC tidak memakainya untuk 192.168.2.10, karena mask membuat server dianggap tetangga lokal."
+      },
+      {
+        "id": "firewall",
+        "teks": "Firewall router memblokir PC baru ke jaringan server",
+        "benar": false,
+        "umpan": "Balasan \"Destination host unreachable\" datang dari 192.168.1.40, yaitu PC apotek sendiri. Paketnya tidak pernah sampai ke router. Blokir oleh firewall akan terlihat sebagai \"Request timed out\" atau balasan dari alamat router."
+      },
+      {
+        "id": "kabel",
+        "teks": "Kabel jaringan PC apotek longgar",
+        "benar": false,
+        "umpan": "Ping ke gateway dan ke situs pemasok obat lancar. Kabel yang longgar tidak memilih tujuan: semua koneksi akan putus atau tersendat, bukan hanya ke server."
+      }
+    ],
+    "pembahasan": "Gateway, internet, dan printer bisa dijangkau dari PC apotek, tetapi server SIMKlinik tidak. Server sendiri sehat, karena PC kasir bisa membukanya dan router bisa ping ke sana. Jadi masalahnya ada pada cara PC apotek memilih jalan.\n\nSetiap kali mengirim paket, PC membandingkan alamat tujuan dengan alamat dan subnet mask miliknya. Kalau tujuan dianggap satu jaringan, PC mencari MAC tujuan lewat ARP lalu mengirim langsung. Kalau tidak, PC menyerahkan paket ke gateway.\n\nPC apotek memakai mask 255.255.0.0 (/16). Dengan mask itu, \"jaringan sendiri\" berarti seluruh 192.168.0.0 sampai 192.168.255.255. Server 192.168.2.10 masuk rentang itu, jadi PC bertanya lewat ARP di kabel lokal: siapa pemilik 192.168.2.10? Server ada di jaringan lain di belakang router, sehingga tidak ada yang menjawab. PC lalu melapor sendiri: \"Reply from 192.168.1.40: Destination host unreachable.\"\n\n`route print` memuat baris `192.168.0.0 255.255.0.0 On-link`: seluruh rentang itu dikirim tanpa gateway. Router memakai /24 di kedua jaringan, sama seperti PC kasir.\n\nInternet tetap jalan karena alamat publik tidak masuk 192.168.0.0/16, jadi paketnya tetap dikirim ke gateway. Karena hanya sebagian tujuan yang gagal, mask yang salah sering lolos dari pemeriksaan pertama.\n\nPemeriksaan server dan router menghasilkan keluaran normal, dan di titik itu banyak diagnosis berhenti. Penyebabnya baru ketemu saat konfigurasi PC yang gagal dibandingkan dengan PC yang berhasil.\n\nCatatan: di router Cisco, proxy ARP menyala secara bawaan dan bisa menjawab ARP itu atas nama server, sehingga mask yang salah kadang tetap \"berhasil\". MikroTik tidak melakukannya kecuali diatur, jadi di sini gejalanya langsung terlihat.\n\nMateri terkait: `04-network-layer/02-subnetting`, `04-network-layer/01-ipv4`, dan `04-network-layer/04-arp-icmp`.",
+    "perbaikan": {
+      "penjelasan": "Ubah mask PC apotek menjadi 255.255.255.0, sama dengan jaringan pelayanan. Perubahan ini hanya menyentuh satu PC dan memutus koneksinya beberapa detik. Sesudahnya, tabel routing harus menampilkan `192.168.1.0 255.255.255.0 On-link`, dan ping ke server dibalas dengan TTL=63: nilai awal 64 dari server Linux, dikurangi satu oleh router. Jalur mundurnya adalah nilai lama dari `ipconfig`.",
+      "perintah": "REM Command Prompt sebagai Administrator di PC apotek\nnetsh interface ipv4 set address name=\"Ethernet\" source=static address=192.168.1.40 mask=255.255.255.0 gateway=192.168.1.1\nroute print -4 192.168.*\nping 192.168.2.10\n\nREM Yang diharapkan:\nREM       192.168.1.0    255.255.255.0         On-link      192.168.1.40    281\nREM   Reply from 192.168.2.10: bytes=32 time<1ms TTL=63\n\nREM Jalur mundur (nilai lama):\nnetsh interface ipv4 set address name=\"Ethernet\" source=static address=192.168.1.40 mask=255.255.0.0 gateway=192.168.1.1"
+    },
+    "sumber": [
+      {
+        "judul": "RFC 1122 bagian 3.3.1: keputusan kirim langsung atau lewat gateway",
+        "url": "https://www.rfc-editor.org/rfc/rfc1122"
+      },
+      {
+        "judul": "Microsoft Learn: route",
+        "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/route_ws2008"
+      },
+      {
+        "judul": "Microsoft Learn: netsh interface (ipv4 set address)",
+        "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netsh-interface"
+      },
+      {
+        "judul": "MikroTik RouterOS: IP Addressing",
+        "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/328247/IP+Addressing"
+      }
+    ]
+  },
+  {
+    "id": "pool-dhcp-habis-kafe",
+    "judul": "Pelanggan kafe di Bandung tersambung Wi-Fi tapi tidak bisa internet",
+    "tingkat": "pemula",
+    "modul": [
+      "06-aplikasi/02-dhcp",
+      "14-monitoring-troubleshooting/04-studi-kasus",
+      "04-network-layer/01-ipv4"
+    ],
+    "gejala": "Sabtu sore, pelanggan yang baru datang bisa tersambung ke Wi-Fi tamu tetapi tidak bisa internet. Laptop mereka mendapat alamat 169.254.x.x. Pelanggan yang datang sejak siang tetap lancar.",
+    "briefing": "**Telepon** dari Teh Wulan, pemilik kafe Kopi Senja di Bandung, Sabtu pukul 15.50:\n\n> Kang, Wi-Fi tamu bermasalah lagi. Yang baru datang pada komplain: HP-nya tersambung, tapi katanya \"tidak ada internet\". Ada mahasiswa yang laptopnya dapat alamat aneh, 169 berapa gitu. Yang duduk dari siang aman-aman saja. Kasir juga lancar.\n\nKonteks: kafe memakai router MikroTik dengan dua jaringan. Wi-Fi tamu (`KopiSenja-Tamu`) lewat access point di ruang depan, dan jaringan staf untuk kasir. Teknisi sebelumnya memasang semuanya tiga bulan lalu. Sabtu ini kafe penuh sejak siang karena ada acara nonton bareng.\n\nAnda memegang laptop mahasiswa tadi (Windows 10) dan bisa login ke router.",
+    "lokasi": {
+      "kota": "Bandung",
+      "lat": -6.922,
+      "lon": 107.607
+    },
+    "topologi": {
+      "simpul": [
+        {
+          "id": "LAP",
+          "label": "Laptop pelanggan",
+          "jenis": "laptop",
+          "x": 10,
+          "y": 28,
+          "info": "Windows 10, baru datang"
+        },
+        {
+          "id": "HP",
+          "label": "HP pelanggan lama",
+          "jenis": "ponsel",
+          "x": 10,
+          "y": 72,
+          "info": "tersambung sejak siang, lancar"
+        },
+        {
+          "id": "AP",
+          "label": "AP ruang depan",
+          "jenis": "ap",
+          "x": 36,
+          "y": 50,
+          "info": "SSID KopiSenja-Tamu"
+        },
+        {
+          "id": "R1",
+          "label": "Router MikroTik",
+          "jenis": "router",
+          "x": 62,
+          "y": 50,
+          "info": "bridge-tamu 192.168.50.1/24, server DHCP"
+        },
+        {
+          "id": "ISP",
+          "label": "ISP",
+          "jenis": "isp",
+          "x": 90,
+          "y": 50,
+          "info": "ether1 203.0.113.18/30"
+        }
+      ],
+      "sisi": [
+        {
+          "dari": "LAP",
+          "ke": "AP",
+          "label": "Wi-Fi"
+        },
+        {
+          "dari": "HP",
+          "ke": "AP",
+          "label": "Wi-Fi"
+        },
+        {
+          "dari": "AP",
+          "ke": "R1",
+          "label": "ether3"
+        },
+        {
+          "dari": "R1",
+          "ke": "ISP",
+          "label": "ether1"
+        }
+      ]
+    },
+    "langkah": [
+      {
+        "id": "ipconfig-all-laptop",
+        "label": "Lihat konfigurasi IP lengkap laptop",
+        "perangkat": "LAP",
+        "perintah": "ipconfig /all",
+        "keluaran": "Windows IP Configuration\n\n   Host Name . . . . . . . . . . . . : LAPTOP-7Q2M4KD\n   Primary Dns Suffix  . . . . . . . :\n   Node Type . . . . . . . . . . . . : Hybrid\n   IP Routing Enabled. . . . . . . . : No\n   WINS Proxy Enabled. . . . . . . . : No\n\nWireless LAN adapter Wi-Fi:\n\n   Connection-specific DNS Suffix  . :\n   Description . . . . . . . . . . . : Intel(R) Wi-Fi 6 AX201 160MHz\n   Physical Address. . . . . . . . . : 00-00-5E-00-53-7C\n   DHCP Enabled. . . . . . . . . . . : Yes\n   Autoconfiguration Enabled . . . . : Yes\n   Link-local IPv6 Address . . . . . : fe80::4c1a:7b2e:9d03:21f6%14(Preferred)\n   Autoconfiguration IPv4 Address. . : 169.254.83.17(Preferred)\n   Subnet Mask . . . . . . . . . . . : 255.255.0.0\n   Default Gateway . . . . . . . . . :\n   DHCPv6 IAID . . . . . . . . . . . : 117440512\n   DHCPv6 Client DUID. . . . . . . . : 00-01-00-01-2C-8F-3A-11-00-00-5E-00-53-7C\n   DNS Servers . . . . . . . . . . . : fec0:0:0:ffff::1%1\n                                       fec0:0:0:ffff::2%1\n                                       fec0:0:0:ffff::3%1\n   NetBIOS over Tcpip. . . . . . . . : Enabled",
+        "makna": "Laptop meminta alamat lewat DHCP (`DHCP Enabled: Yes`) tetapi tidak mendapat jawaban. Windows lalu memberi dirinya alamat 169.254.x.x, yang disebut APIPA (Automatic Private IP Addressing). Alamat ini hanya untuk bicara dengan tetangga terdekat, tanpa gateway dan tanpa DNS. Arti 169.254 cuma satu: DHCP gagal.",
+        "berguna": true
+      },
+      {
+        "id": "renew-laptop",
+        "label": "Minta alamat baru ke DHCP",
+        "perangkat": "LAP",
+        "perintah": "ipconfig /renew",
+        "keluaran": "Windows IP Configuration\n\nAn error occurred while renewing interface Wi-Fi : unable to contact your DHCP server. Request has timed out.",
+        "makna": "Laptop sudah berkali-kali mengirim DHCP DISCOVER, pesan \"adakah server yang bisa memberi saya alamat?\", dan tidak ada tawaran yang datang. Wi-Fi tersambung, tetapi tidak ada server yang menawarkan alamat.",
+        "berguna": true
+      },
+      {
+        "id": "wlan-laptop",
+        "label": "Cek status Wi-Fi laptop",
+        "perangkat": "LAP",
+        "perintah": "netsh wlan show interfaces",
+        "keluaran": "\nThere is 1 interface on the system:\n\n    Name                   : Wi-Fi\n    Description            : Intel(R) Wi-Fi 6 AX201 160MHz\n    GUID                   : 5c3e1a9b-2f47-4d8e-a1b6-0e9f7c2d4b31\n    Physical address       : 00:00:5e:00:53:7c\n    State                  : connected\n    SSID                   : KopiSenja-Tamu\n    BSSID                  : 00:00:5e:00:53:a2\n    Network type           : Infrastructure\n    Radio type             : 802.11ac\n    Authentication         : WPA2-Personal\n    Cipher                 : CCMP\n    Connection mode        : Auto Connect\n    Channel                : 44\n    Receive rate (Mbps)    : 433.3\n    Transmit rate (Mbps)   : 433.3\n    Signal                 : 92%\n    Profile                : KopiSenja-Tamu\n\n    Hosted network status  : Not available",
+        "makna": "Laptop tersambung (`State: connected`) ke SSID tamu dengan sinyal 92 persen. Lapis fisik dan Wi-Fi beres. Langkah ini menyingkirkan masalah sinyal, tetapi tidak menjelaskan kenapa alamat IP tidak didapat.",
+        "berguna": false
+      },
+      {
+        "id": "ping-router-laptop",
+        "label": "Ping router dari laptop",
+        "perangkat": "LAP",
+        "perintah": "ping 192.168.50.1",
+        "keluaran": "Pinging 192.168.50.1 with 32 bytes of data:\nPING: transmit failed. General failure. \nPING: transmit failed. General failure. \nPING: transmit failed. General failure. \nPING: transmit failed. General failure. \n\nPing statistics for 192.168.50.1:\n    Packets: Sent = 4, Received = 0, Lost = 4 (100% loss),",
+        "makna": "Dengan alamat 169.254.x.x dan gateway kosong, laptop tidak punya rute ke 192.168.50.0/24, jadi Windows bahkan tidak bisa mengirim paket. \"General failure\" di sini adalah akibat dari DHCP yang gagal, bukan penyebabnya.",
+        "berguna": false
+      },
+      {
+        "id": "winsock-laptop",
+        "label": "Reset Winsock seperti saran di forum",
+        "perangkat": "LAP",
+        "perintah": "netsh winsock reset",
+        "keluaran": "\nSucessfully reset the Winsock Catalog.\nYou must restart the computer in order to complete the reset.\n",
+        "makna": "Reset Winsock memperbaiki tumpukan jaringan Windows yang rusak, kasus yang jarang terjadi. Masalah ini menimpa banyak pelanggan dengan perangkat berbeda, jadi penyebabnya ada pada sesuatu yang mereka pakai bersama. Restart sesudahnya hanya membuang waktu.",
+        "berguna": false
+      },
+      {
+        "id": "log-dhcp",
+        "label": "Baca log DHCP di router",
+        "perangkat": "R1",
+        "perintah": "/log print where topics~\"dhcp\"",
+        "keluaran": "2026-10-10 13:12:47 dhcp,info dhcp-tamu assigned 192.168.50.60 for 00:00:5E:00:53:91 Dinda-HP\n2026-10-10 15:41:52 dhcp,error dhcp-tamu: failed to give out IP address: pool <pool-tamu> is empty\n2026-10-10 15:42:01 dhcp,error dhcp-tamu: failed to give out IP address: pool <pool-tamu> is empty\n2026-10-10 15:42:13 dhcp,error dhcp-tamu: failed to give out IP address: pool <pool-tamu> is empty\n2026-10-10 15:43:30 dhcp,error dhcp-tamu: failed to give out IP address: pool <pool-tamu> is empty\n2026-10-10 15:43:38 dhcp,error dhcp-tamu: failed to give out IP address: pool <pool-tamu> is empty\n2026-10-10 15:44:02 dhcp,error dhcp-tamu: failed to give out IP address: pool <pool-tamu> is empty\n2026-10-10 15:46:19 dhcp,error dhcp-tamu: failed to give out IP address: pool <pool-tamu> is empty",
+        "makna": "Log router menyebut penyebabnya: server DHCP `dhcp-tamu` gagal memberi alamat karena pool `pool-tamu` kosong. Pool adalah daftar alamat yang boleh dipinjamkan ke perangkat. Peminjaman terakhir yang berhasil tercatat pukul 13.12, saat alamat terakhir, 192.168.50.60, diberikan.",
+        "berguna": true
+      },
+      {
+        "id": "pool-print",
+        "label": "Lihat isi pool alamat",
+        "perangkat": "R1",
+        "perintah": "/ip pool print",
+        "keluaran": "Columns: NAME, RANGES, TOTAL, USED, AVAILABLE\n# NAME       RANGES                         TOTAL  USED  AVAILABLE\n0 pool-tamu  192.168.50.10-192.168.50.60       51    51          0\n1 pool-staf  192.168.60.10-192.168.60.50       41     6         35",
+        "makna": "Pool tamu hanya berisi 51 alamat (192.168.50.10 sampai .60), dan semuanya terpakai (`AVAILABLE 0`). Pool staf masih longgar, tetapi itu jaringan lain, makanya kasir tidak terganggu.",
+        "berguna": true
+      },
+      {
+        "id": "dhcp-server-print",
+        "label": "Lihat pengaturan server DHCP",
+        "perangkat": "R1",
+        "perintah": "/ip dhcp-server print",
+        "keluaran": "Columns: NAME, INTERFACE, ADDRESS-POOL, LEASE-TIME\n# NAME       INTERFACE    ADDRESS-POOL  LEASE-TIME\n0 dhcp-tamu  bridge-tamu  pool-tamu     3d\n1 dhcp-staf  bridge-staf  pool-staf     30m",
+        "makna": "Masa pinjam (lease time) jaringan tamu 3 hari. Ponsel pelanggan yang datang Kamis masih memegang alamatnya sampai Minggu, walaupun pemiliknya sudah lama pulang. Jaringan staf memakai bawaan RouterOS, 30 menit.",
+        "berguna": true
+      },
+      {
+        "id": "ping-internet-router",
+        "label": "Ping server di internet dari router",
+        "perangkat": "R1",
+        "perintah": "/ping 198.51.100.80 count=3",
+        "keluaran": "  SEQ HOST                                     SIZE TTL TIME       STATUS\n    0 198.51.100.80                              56  55 14ms211us\n    1 198.51.100.80                              56  55 13ms874us\n    2 198.51.100.80                              56  55 14ms96us\n    sent=3 received=3 packet-loss=0% min-rtt=13ms874us avg-rtt=14ms60us max-rtt=14ms211us",
+        "makna": "Router bisa menjangkau internet, dan pelanggan lama memang lancar. Koneksi ISP sehat. Langkah ini menyingkirkan ISP, tetapi tidak menjelaskan kenapa perangkat baru tidak mendapat alamat.",
+        "berguna": false
+      }
+    ],
+    "dugaan": [
+      {
+        "id": "pool-habis",
+        "teks": "Pool DHCP jaringan tamu habis: 51 alamat semuanya dipinjam, dengan lease 3 hari",
+        "benar": true,
+        "umpan": "Benar. Laptop mendapat 169.254.x.x karena tidak ada tawaran DHCP. Log router mencatat `pool <pool-tamu> is empty`, dan `/ip pool print` menunjukkan 51 dari 51 alamat terpakai. Lease 3 hari membuat alamat milik tamu hari-hari sebelumnya belum kembali."
+      },
+      {
+        "id": "sinyal",
+        "teks": "Sinyal Wi-Fi terlalu lemah di meja pelanggan",
+        "benar": false,
+        "umpan": "Laptop berstatus `connected` dengan sinyal 92 persen. Sinyal lemah membuat koneksi putus-sambung. Ia tidak membuat semua pelanggan baru mendapat 169.254 secara konsisten."
+      },
+      {
+        "id": "isp",
+        "teks": "Internet dari ISP putus",
+        "benar": false,
+        "umpan": "Pelanggan yang datang sejak siang tetap lancar, dan router bisa ping ke internet. Lagi pula, internet yang putus tidak membuat laptop kehilangan alamat IP lokal."
+      },
+      {
+        "id": "ip-statis",
+        "teks": "Laptop pelanggan diatur memakai IP statis yang salah",
+        "benar": false,
+        "umpan": "`DHCP Enabled: Yes`. Alamat 169.254 tidak diketik orang; Windows memberikannya sendiri setelah tidak mendapat jawaban DHCP. Masalahnya juga menimpa banyak pelanggan sekaligus."
+      },
+      {
+        "id": "dns",
+        "teks": "Server DNS di router bermasalah",
+        "benar": false,
+        "umpan": "DNS baru dipakai sesudah perangkat punya alamat IP. Laptop ini belum mendapat alamat, dan daftar DNS-nya hanya alamat cadangan bawaan Windows (`fec0:0:0:ffff::1`)."
+      }
+    ],
+    "pembahasan": "Polanya terlihat sejak briefing: pelanggan lama lancar, pelanggan baru gagal. Perangkat yang sudah memegang alamat tetap bekerja. Yang gagal adalah proses mendapat alamat baru, yaitu DHCP.\n\nMulai dari laptop. Wi-Fi tersambung dengan sinyal 92 persen, jadi lapis fisik dan Wi-Fi beres. `ipconfig /all` menunjukkan `Autoconfiguration IPv4 Address 169.254.83.17` dan gateway kosong. Alamat 169.254.x.x (APIPA) dibuat Windows sendiri ketika tidak ada server DHCP yang menjawab. `ipconfig /renew` memastikannya: `unable to contact your DHCP server`.\n\nLalu periksa servernya. DHCP bekerja dalam empat langkah: DISCOVER, OFFER, REQUEST, ACK. Di sini prosesnya berhenti di langkah kedua. Router menerima DISCOVER, tetapi tidak punya alamat untuk ditawarkan. Log router menulis penyebabnya, `failed to give out IP address: pool <pool-tamu> is empty`, dan `/ip pool print` menunjukkan 51 dari 51 alamat terpakai.\n\nKenapa habis? Karena lease 3 hari. Setiap ponsel dan laptop yang tersambung dalam tiga hari terakhir masih memegang satu alamat, walaupun pemiliknya sudah pulang. Kafe dengan puluhan tamu sehari menghabiskan 51 alamat dalam satu-dua hari, apalagi saat acara nonton bareng.\n\nPesan \"General failure\" saat ping dan saran reset Winsock dari forum terdengar seperti kerusakan laptop. Padahal semua pelanggan baru mengalami hal yang sama, jadi penyebabnya ada di sesuatu yang mereka pakai bersama.\n\nMateri terkait: `06-aplikasi/02-dhcp` (bagian troubleshooting alamat 169.254), `14-monitoring-troubleshooting/04-studi-kasus` (kasus pool DHCP habis), dan `04-network-layer/01-ipv4`.",
+    "perbaikan": {
+      "penjelasan": "Perbesar pool dan perpendek lease. Untuk jaringan tamu, lease 1 jam sudah cukup: perangkat yang masih di kafe memperpanjang sendiri saat separuh masa pinjam lewat, dan alamat tamu yang sudah pulang cepat kembali ke pool. Sebelum memperluas rentang, pastikan 192.168.50.61 sampai .250 tidak dipakai perangkat beralamat statis seperti kamera CCTV. Lease lama yang 3 hari tidak ikut memendek, tetapi pool yang lebih besar langsung melayani pelanggan baru. Jalur mundurnya adalah nilai lama yang Anda catat di langkah pertama.",
+      "perintah": "# 1. Catat nilai lama (jalur mundur)\n/ip pool print\n/ip dhcp-server print\n\n# 2. Pastikan rentang baru belum dipakai perangkat statis\n/ip arp print where address in 192.168.50.0/24\n\n# 3. Perbesar pool, perpendek lease\n/ip pool set [find name=pool-tamu] ranges=192.168.50.10-192.168.50.250\n/ip dhcp-server set [find name=dhcp-tamu] lease-time=1h\n\n# 4. Verifikasi: AVAILABLE tidak lagi 0, log tidak lagi \"is empty\"\n/ip pool print\n/log print where topics~\"dhcp\"\n# Di laptop pelanggan:\nipconfig /renew\n\n# Jalur mundur\n/ip pool set [find name=pool-tamu] ranges=192.168.50.10-192.168.50.60\n/ip dhcp-server set [find name=dhcp-tamu] lease-time=3d"
+    },
+    "sumber": [
+      {
+        "judul": "MikroTik RouterOS: DHCP",
+        "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/24805500/DHCP"
+      },
+      {
+        "judul": "MikroTik RouterOS: IP Pools",
+        "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/129531938/IP+Pools"
+      },
+      {
+        "judul": "Microsoft Learn: ipconfig (catatan tentang APIPA)",
+        "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ipconfig"
+      },
+      {
+        "judul": "RFC 2131: Dynamic Host Configuration Protocol",
+        "url": "https://www.rfc-editor.org/rfc/rfc2131"
+      },
+      {
+        "judul": "RFC 3927: alamat link-local IPv4 (169.254.0.0/16)",
+        "url": "https://www.rfc-editor.org/rfc/rfc3927"
+      }
+    ]
+  },
+  {
+    "id": "dhcp-liar-router-rumahan",
+    "judul": "Laptop di kantor Surabaya kadang mendapat alamat 192.168.0.x dan putus dari jaringan",
+    "tingkat": "menengah",
+    "modul": [
+      "06-aplikasi/02-dhcp",
+      "12-keamanan/02-serangan-l2",
+      "03-data-link/02-switching"
+    ],
+    "gejala": "Sejak Senin pagi, sebagian laptop tidak bisa membuka NAS dan internet. Laptop yang bermasalah ternyata memegang alamat 192.168.0.x, padahal jaringan kantor memakai 10.10.10.0/24.",
+    "briefing": "**Tiket #SBY-0219** dari Maya Kristanti, staf kantor konsultan pajak di Surabaya, Senin pukul 09.05:\n\n> Laptop saya tidak bisa buka folder klien di NAS, internet juga mati. Bu Lina dan Mas Dimas sama. Tadi Mas Dimas restart laptopnya, lalu bisa lagi. Saya coba restart, tetap tidak bisa. PC Ari yang pakai kabel aman.\n\nKonteks: lantai 2 memakai satu switch Cisco Catalyst 2960 (SW-LT2) dan satu access point. Router MikroTik di lantai 1 membagikan alamat 10.10.10.100 sampai .200 lewat DHCP. Tidak ada perubahan konfigurasi sejak bulan lalu. Pak Hendra, yang mejanya di pojok dekat jendela, minggu lalu mengeluh sinyal Wi-Fi di mejanya lemah.\n\nAnda memegang laptop Maya, bisa memakai PC Ari, dan punya akses ke switch serta router.",
+    "lokasi": {
+      "kota": "Surabaya",
+      "lat": -7.246,
+      "lon": 112.738
+    },
+    "topologi": {
+      "simpul": [
+        {
+          "id": "LAP1",
+          "label": "Laptop Maya",
+          "jenis": "laptop",
+          "x": 10,
+          "y": 22,
+          "info": "Wi-Fi, bermasalah"
+        },
+        {
+          "id": "PC2",
+          "label": "PC Ari",
+          "jenis": "pc",
+          "x": 10,
+          "y": 78,
+          "info": "kabel, normal"
+        },
+        {
+          "id": "AP",
+          "label": "AP lantai 2",
+          "jenis": "ap",
+          "x": 32,
+          "y": 22
+        },
+        {
+          "id": "SW1",
+          "label": "SW-LT2",
+          "jenis": "switch",
+          "x": 52,
+          "y": 50,
+          "info": "Catalyst 2960, VLAN 10, 24 port meja"
+        },
+        {
+          "id": "NAS",
+          "label": "NAS berkas",
+          "jenis": "server",
+          "x": 52,
+          "y": 86,
+          "info": "10.10.10.20"
+        },
+        {
+          "id": "R1",
+          "label": "Router MikroTik",
+          "jenis": "router",
+          "x": 74,
+          "y": 50,
+          "info": "10.10.10.1/24, server DHCP kantor"
+        },
+        {
+          "id": "ISP",
+          "label": "ISP",
+          "jenis": "isp",
+          "x": 92,
+          "y": 50
+        }
+      ],
+      "sisi": [
+        {
+          "dari": "LAP1",
+          "ke": "AP",
+          "label": "Wi-Fi"
+        },
+        {
+          "dari": "AP",
+          "ke": "SW1",
+          "label": "Fa0/2"
+        },
+        {
+          "dari": "PC2",
+          "ke": "SW1",
+          "label": "Fa0/9"
+        },
+        {
+          "dari": "NAS",
+          "ke": "SW1",
+          "label": "Fa0/20"
+        },
+        {
+          "dari": "SW1",
+          "ke": "R1",
+          "label": "Gi0/1 ke ether2"
+        },
+        {
+          "dari": "R1",
+          "ke": "ISP",
+          "label": "ether1"
+        }
+      ]
+    },
+    "langkah": [
+      {
+        "id": "ipconfig-all-maya",
+        "label": "Lihat konfigurasi IP lengkap laptop Maya",
+        "perangkat": "LAP1",
+        "perintah": "ipconfig /all",
+        "keluaran": "Windows IP Configuration\n\n   Host Name . . . . . . . . . . . . : MAYA-NB\n   Primary Dns Suffix  . . . . . . . :\n   Node Type . . . . . . . . . . . . : Hybrid\n   IP Routing Enabled. . . . . . . . : No\n   WINS Proxy Enabled. . . . . . . . : No\n\nWireless LAN adapter Wi-Fi:\n\n   Connection-specific DNS Suffix  . :\n   Description . . . . . . . . . . . : Intel(R) Wi-Fi 6E AX211 160MHz\n   Physical Address. . . . . . . . . : 00-00-5E-00-53-4A\n   DHCP Enabled. . . . . . . . . . . : Yes\n   Autoconfiguration Enabled . . . . : Yes\n   Link-local IPv6 Address . . . . . : fe80::2b7d:c41e:8a90:5f3c%15(Preferred)\n   IPv4 Address. . . . . . . . . . . : 192.168.0.103(Preferred)\n   Subnet Mask . . . . . . . . . . . : 255.255.255.0\n   Lease Obtained. . . . . . . . . . : Monday, October 12, 2026 8:31:07 AM\n   Lease Expires . . . . . . . . . . : Tuesday, October 13, 2026 8:31:07 AM\n   Default Gateway . . . . . . . . . : 192.168.0.1\n   DHCP Server . . . . . . . . . . . : 192.168.0.1\n   DNS Servers . . . . . . . . . . . : 192.168.0.1\n   NetBIOS over Tcpip. . . . . . . . : Enabled",
+        "makna": "Laptop punya alamat lengkap, tetapi dari jaringan yang salah. Alamat, gateway, DNS, dan `DHCP Server` semuanya menunjuk 192.168.0.1, padahal server DHCP kantor adalah 10.10.10.1. Lease didapat pukul 08.31. Ada server DHCP lain yang menjawab di jaringan ini.",
+        "berguna": true
+      },
+      {
+        "id": "ipconfig-all-ari",
+        "label": "Bandingkan dengan PC Ari yang normal",
+        "perangkat": "PC2",
+        "perintah": "ipconfig /all",
+        "keluaran": "Windows IP Configuration\n\n   Host Name . . . . . . . . . . . . : PC-ARI\n   Primary Dns Suffix  . . . . . . . :\n   Node Type . . . . . . . . . . . . : Hybrid\n   IP Routing Enabled. . . . . . . . : No\n   WINS Proxy Enabled. . . . . . . . : No\n   DNS Suffix Search List. . . . . . : kantor.example.com\n\nEthernet adapter Ethernet:\n\n   Connection-specific DNS Suffix  . : kantor.example.com\n   Description . . . . . . . . . . . : Realtek PCIe GbE Family Controller\n   Physical Address. . . . . . . . . : 00-00-5E-00-53-57\n   DHCP Enabled. . . . . . . . . . . : Yes\n   Autoconfiguration Enabled . . . . : Yes\n   Link-local IPv6 Address . . . . . : fe80::d41a:6c0e:73b9:2a58%4(Preferred)\n   IPv4 Address. . . . . . . . . . . : 10.10.10.157(Preferred)\n   Subnet Mask . . . . . . . . . . . : 255.255.255.0\n   Lease Obtained. . . . . . . . . . : Monday, October 12, 2026 7:58:44 AM\n   Lease Expires . . . . . . . . . . : Monday, October 12, 2026 3:58:44 PM\n   Default Gateway . . . . . . . . . : 10.10.10.1\n   DHCP Server . . . . . . . . . . . : 10.10.10.1\n   DNS Servers . . . . . . . . . . . : 10.10.10.1\n   NetBIOS over Tcpip. . . . . . . . : Enabled",
+        "makna": "PC Ari mendapat semuanya dari router kantor 10.10.10.1, lengkap dengan akhiran DNS `kantor.example.com`. Perhatikan jamnya: lease didapat pukul 07.58, lebih awal dari laptop Maya. Jadi ada dua server DHCP, dan hasilnya bergantung pada kapan perangkat meminta alamat.",
+        "berguna": true
+      },
+      {
+        "id": "ping-nas-maya",
+        "label": "Ping NAS dari laptop Maya",
+        "perangkat": "LAP1",
+        "perintah": "ping 10.10.10.20",
+        "keluaran": "Pinging 10.10.10.20 with 32 bytes of data:\nRequest timed out.\nRequest timed out.\nRequest timed out.\nRequest timed out.\n\nPing statistics for 10.10.10.20:\n    Packets: Sent = 4, Received = 0, Lost = 4 (100% loss),",
+        "makna": "Laptop menyerahkan paket ke gatewaynya, 192.168.0.1, dan paket itu tidak pernah kembali. Ini mengulang gejala. Yang perlu dicari adalah siapa 192.168.0.1 dan kenapa laptop memakainya.",
+        "berguna": false
+      },
+      {
+        "id": "renew-maya",
+        "label": "Perbarui alamat laptop Maya",
+        "perangkat": "LAP1",
+        "perintah": "ipconfig /renew",
+        "keluaran": "Windows IP Configuration\n\nNo operation can be performed on Ethernet while it has its media disconnected.\n\nEthernet adapter Ethernet:\n\n   Media State . . . . . . . . . . . : Media disconnected\n   Connection-specific DNS Suffix  . :\n\nWireless LAN adapter Wi-Fi:\n\n   Connection-specific DNS Suffix  . :\n   Link-local IPv6 Address . . . . . : fe80::2b7d:c41e:8a90:5f3c%15\n   IPv4 Address. . . . . . . . . . . : 192.168.0.103\n   Subnet Mask . . . . . . . . . . . : 255.255.255.0\n   Default Gateway . . . . . . . . . : 192.168.0.1",
+        "makna": "Selama lease-nya masih berlaku, Windows meminta perpanjangan langsung ke server yang dulu memberi alamat, yaitu 192.168.0.1. Hasilnya alamat yang sama. Mengulang renew atau restart tidak menyelesaikan apa pun selama server itu masih tersambung.",
+        "berguna": false
+      },
+      {
+        "id": "arp-maya",
+        "label": "Lihat tabel ARP laptop Maya",
+        "perangkat": "LAP1",
+        "perintah": "arp -a",
+        "keluaran": "\nInterface: 192.168.0.103 --- 0xf\n  Internet Address      Physical Address      Type\n  192.168.0.1           00-00-5e-00-53-c8     dynamic\n  192.168.0.255         ff-ff-ff-ff-ff-ff     static\n  224.0.0.22            01-00-5e-00-00-16     static\n  224.0.0.251           01-00-5e-00-00-fb     static\n  224.0.0.252           01-00-5e-00-00-fc     static\n  239.255.255.250       01-00-5e-7f-ff-fa     static\n  255.255.255.255       ff-ff-ff-ff-ff-ff     static",
+        "makna": "Gateway 192.168.0.1 punya alamat MAC 00-00-5e-00-53-c8. Alamat MAC adalah identitas kartu jaringan, dan switch mencatat di port mana setiap MAC terlihat. Dengan MAC ini Anda bisa melacak di mana perangkat itu tersambung.",
+        "berguna": true
+      },
+      {
+        "id": "cari-mac",
+        "label": "Cari port switch tempat MAC itu terlihat",
+        "perangkat": "SW1",
+        "perintah": "show mac address-table address 0000.5e00.53c8",
+        "keluaran": "          Mac Address Table\n-------------------------------------------\n\nVlan    Mac Address       Type        Ports\n----    -----------       --------    -----\n  10    0000.5e00.53c8    DYNAMIC     Fa0/17\nTotal Mac Addresses for this criterion: 1",
+        "makna": "MAC itu terlihat di port Fa0/17. Cisco menulis MAC dalam tiga kelompok empat digit, tetapi isinya sama dengan 00-00-5e-00-53-c8 di Windows. Menurut label patch panel, Fa0/17 adalah titik kabel di meja Pak Hendra.",
+        "berguna": true
+      },
+      {
+        "id": "mac-port-17",
+        "label": "Lihat semua MAC di port Fa0/17",
+        "perangkat": "SW1",
+        "perintah": "show mac address-table interface FastEthernet0/17",
+        "keluaran": "          Mac Address Table\n-------------------------------------------\n\nVlan    Mac Address       Type        Ports\n----    -----------       --------    -----\n  10    0000.5e00.53c8    DYNAMIC     Fa0/17\n  10    0000.5e00.53d1    DYNAMIC     Fa0/17\n  10    0000.5e00.53d4    DYNAMIC     Fa0/17\nTotal Mac Addresses for this criterion: 3",
+        "makna": "Port meja normalnya berisi satu MAC, yaitu satu PC. Fa0/17 berisi tiga. Artinya di ujung kabel itu ada perangkat yang meneruskan perangkat lain, misalnya router Wi-Fi beserta ponsel dan laptop yang tersambung kepadanya.",
+        "berguna": true
+      },
+      {
+        "id": "log-port-17",
+        "label": "Cari kapan port Fa0/17 mulai dipakai",
+        "perangkat": "SW1",
+        "perintah": "show logging | include 0/17",
+        "keluaran": "Oct 12 08:12:39.511: %LINK-3-UPDOWN: Interface FastEthernet0/17, changed state to up\nOct 12 08:12:40.518: %LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/17, changed state to up",
+        "makna": "Port Fa0/17 menyala Senin pukul 08.12. PC Ari mendapat alamat pukul 07.58, sebelum itu, sedangkan laptop Maya pukul 08.31, sesudahnya. Waktunya cocok dengan munculnya alamat 192.168.0.x.",
+        "berguna": true
+      },
+      {
+        "id": "pool-kantor",
+        "label": "Cek sisa alamat di pool DHCP kantor",
+        "perangkat": "R1",
+        "perintah": "/ip pool print",
+        "keluaran": "Columns: NAME, RANGES, TOTAL, USED, AVAILABLE\n# NAME         RANGES                         TOTAL  USED  AVAILABLE\n0 pool-kantor  10.10.10.100-10.10.10.200        101    23         78",
+        "makna": "Pool DHCP kantor masih punya 78 alamat kosong. Server DHCP resmi sehat dan tidak kehabisan alamat. Ini menyingkirkan dugaan pool habis, tetapi tidak menjelaskan dari mana alamat 192.168.0.x datang.",
+        "berguna": false
+      }
+    ],
+    "dugaan": [
+      {
+        "id": "dhcp-liar",
+        "teks": "Ada server DHCP liar di port Fa0/17: router Wi-Fi rumahan ikut membagikan alamat 192.168.0.x",
+        "benar": true,
+        "umpan": "Benar. Laptop Maya mendapat alamat dari server 192.168.0.1, bukan dari router kantor. MAC 192.168.0.1 terlacak ke Fa0/17, port yang berisi tiga MAC dan baru menyala Senin 08.12. Setiap perangkat yang meminta alamat sesudah itu bisa mendapat tawaran dari router rumahan, tergantung server mana yang menjawab lebih dulu."
+      },
+      {
+        "id": "pool-habis",
+        "teks": "Pool DHCP router kantor habis",
+        "benar": false,
+        "umpan": "Pool kantor masih punya 78 alamat kosong. Lagi pula, perangkat yang kehabisan alamat mendapat 169.254.x.x. Laptop Maya justru mendapat alamat lengkap dari server lain."
+      },
+      {
+        "id": "virus",
+        "teks": "Laptop Maya terkena virus yang mengubah setelan IP",
+        "benar": false,
+        "umpan": "`ipconfig /all` menunjukkan alamat itu datang dari `DHCP Server 192.168.0.1`. Laptop lain yang tersambung pagi itu mengalami hal yang sama, dan MAC 192.168.0.1 ada di port Fa0/17, bukan di laptop Maya."
+      },
+      {
+        "id": "ap-rusak",
+        "teks": "Access point lantai 2 rusak dan membagikan alamat sendiri",
+        "benar": false,
+        "umpan": "Access point tersambung di Fa0/2, sedangkan MAC server 192.168.0.1 tercatat di Fa0/17. PC Ari yang memakai kabel ada di VLAN yang sama dan aman hanya karena mendapat alamat sebelum pukul 08.12."
+      },
+      {
+        "id": "router-kantor",
+        "teks": "Router kantor salah konfigurasi dan membagikan subnet yang keliru",
+        "benar": false,
+        "umpan": "PC Ari mendapat 10.10.10.157 dari 10.10.10.1, sesuai rancangan. Router kantor tidak pernah membagikan 192.168.0.x, dan konfigurasinya tidak berubah sejak bulan lalu."
+      }
+    ],
+    "pembahasan": "Petunjuk pertama ada di `ipconfig /all`. Laptop Maya punya alamat lengkap, tetapi dari jaringan yang salah: alamat, gateway, DNS, dan `DHCP Server` semuanya 192.168.0.1. PC Ari yang normal mendapat semuanya dari 10.10.10.1. Jadi ada dua server DHCP di jaringan ini.\n\nDHCP bekerja dengan siaran (broadcast). Perangkat yang baru tersambung berseru \"siapa bisa memberi saya alamat?\", dan seruan itu sampai ke semua port di VLAN yang sama. Setiap server DHCP yang mendengar boleh menawarkan alamat, dan klien biasanya mengambil tawaran pertama. Karena itu gejalanya acak: kadang router kantor menang, kadang router liar. Itu sebabnya restart menolong Mas Dimas, tetapi tidak menolong Maya.\n\nJam lease cocok dengan urutan kejadian. PC Ari mendapat alamat pukul 07.58, sebelum Fa0/17 menyala pukul 08.12, dan perpanjangan lease dikirim langsung ke server asalnya. Laptop Maya meminta alamat pukul 08.31, sesudah server liar ikut bersaing.\n\nMelacaknya cukup tiga perintah. `arp -a` memberi MAC gateway palsu, `show mac address-table address` menunjuk port Fa0/17, dan `show mac address-table interface` memperlihatkan tiga MAC di satu port meja. Itu ciri router Wi-Fi yang port LAN-nya dicolokkan ke jaringan kantor: fungsi DHCP-nya ikut menjawab permintaan dari seluruh lantai.\n\nPing ke NAS dan `ipconfig /renew` hanya mengulang gejala. Pool kantor yang sehat hanya menyingkirkan dugaan pool habis.\n\nDHCP liar paling sering terjadi tanpa sengaja, seperti di sini. Penangkalnya DHCP snooping: switch hanya meloloskan tawaran DHCP dari port yang dipercaya.\n\nMateri terkait: `06-aplikasi/02-dhcp`, `12-keamanan/02-serangan-l2` (rogue DHCP dan DHCP snooping), dan `03-data-link/02-switching` (tabel MAC).",
+    "perbaikan": {
+      "penjelasan": "Tangani dalam dua tahap. Sekarang: matikan port Fa0/17, cabut router rumahan bersama Pak Hendra, lalu minta pengguna yang terdampak melepas dan meminta ulang alamatnya. Sesudahnya, di luar jam kerja: nyalakan DHCP snooping dengan urutan ini: tandai dulu uplink ke router kantor sebagai trusted, baru aktifkan snooping di VLAN 10. Kalau terbalik, semua tawaran DHCP terblokir dan tidak ada yang mendapat alamat. `no ip dhcp snooping information option` mencegah switch menyisipkan opsi 82, yang membuat sebagian server DHCP menolak permintaan. Untuk sinyal lemah di meja Pak Hendra, pasang access point resmi.",
+      "perintah": "! Tahap 1: isolasi (sekarang)\nSW-LT2# configure terminal\nSW-LT2(config)# interface FastEthernet0/17\nSW-LT2(config-if)# description DIMATIKAN router rumahan, tiket SBY-0219\nSW-LT2(config-if)# shutdown\nSW-LT2(config-if)# end\n! Di laptop yang terdampak:\nipconfig /release\nipconfig /renew\n\n! Tahap 2: DHCP snooping (di luar jam kerja)\nSW-LT2# configure terminal\nSW-LT2(config)# interface GigabitEthernet0/1\nSW-LT2(config-if)# ip dhcp snooping trust\nSW-LT2(config-if)# exit\nSW-LT2(config)# no ip dhcp snooping information option\nSW-LT2(config)# ip dhcp snooping vlan 10\nSW-LT2(config)# ip dhcp snooping\nSW-LT2(config)# end\n\n! Verifikasi: klien baru mendapat 10.10.10.x dan tercatat di binding\nSW-LT2# show ip dhcp snooping\nSW-LT2# show ip dhcp snooping binding\n\n! Jalur mundur bila klien tidak mendapat alamat\nSW-LT2(config)# no ip dhcp snooping\nSW-LT2(config)# no ip dhcp snooping vlan 10"
+    },
+    "sumber": [
+      {
+        "judul": "Cisco Catalyst 2960: Configuring DHCP Features and IP Source Guard",
+        "url": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst2960/software/release/12-2_55_se/configuration/guide/scg_2960/swdhcp82.html"
+      },
+      {
+        "judul": "RFC 2131: Dynamic Host Configuration Protocol",
+        "url": "https://www.rfc-editor.org/rfc/rfc2131"
+      },
+      {
+        "judul": "Microsoft Learn: ipconfig",
+        "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ipconfig"
+      },
+      {
+        "judul": "Microsoft Learn: arp",
+        "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/arp"
+      }
+    ]
+  },
+  {
+    "id": "dns-resolver-mati-warnet",
+    "judul": "Semua PC warnet di Pontianak tidak bisa membuka situs, padahal ping ke IP lancar",
+    "tingkat": "pemula",
+    "modul": [
+      "06-aplikasi/01-dns",
+      "14-monitoring-troubleshooting/04-studi-kasus",
+      "06-aplikasi/02-dhcp"
+    ],
+    "gejala": "Pagi ini semua PC warnet gagal membuka situs dan launcher game. Ping ke alamat IP server game tetap dibalas, tetapi ping ke namanya gagal.",
+    "briefing": "**Pesan WhatsApp** dari Bang Rizal, pemilik warnet di Pontianak, Kamis pukul 09.40:\n\n> Semua PC tidak bisa buka web, launcher game juga \"tidak dapat terhubung\". Sudah restart PC, restart router juga. Anehnya, waktu saya ping ke IP server game yang ditulis di papan, 198.51.100.80, balasannya ada. Pelanggan sudah antre.\n\nKonteks: router MikroTik membagikan alamat lewat DHCP ke 20 PC. Operator lama, Pak Joni, dulu memasang PC kecil berisi server cache DNS di 192.168.100.5 supaya pembaruan game lebih cepat. Semalam listrik padam sekitar dua jam.\n\nAnda bisa memakai PC-07 di meja billing dan login ke router.",
+    "lokasi": {
+      "kota": "Pontianak",
+      "lat": -0.021,
+      "lon": 109.341
+    },
+    "topologi": {
+      "simpul": [
+        {
+          "id": "PC7",
+          "label": "PC-07 (billing)",
+          "jenis": "pc",
+          "x": 10,
+          "y": 28,
+          "info": "192.168.100.27, DHCP"
+        },
+        {
+          "id": "PC12",
+          "label": "PC-12",
+          "jenis": "pc",
+          "x": 10,
+          "y": 72,
+          "info": "192.168.100.32, DHCP"
+        },
+        {
+          "id": "SW1",
+          "label": "Switch 24 port",
+          "jenis": "switch",
+          "x": 34,
+          "y": 50
+        },
+        {
+          "id": "R1",
+          "label": "Router MikroTik",
+          "jenis": "router",
+          "x": 60,
+          "y": 36,
+          "info": "192.168.100.1/24, server DHCP"
+        },
+        {
+          "id": "DNS",
+          "label": "Server cache DNS",
+          "jenis": "server",
+          "x": 58,
+          "y": 80,
+          "info": "192.168.100.5, dipasang operator lama"
+        },
+        {
+          "id": "ISP",
+          "label": "ISP 100 Mbps",
+          "jenis": "isp",
+          "x": 90,
+          "y": 36,
+          "info": "resolver ISP 203.0.113.53 dan .54"
+        }
+      ],
+      "sisi": [
+        {
+          "dari": "PC7",
+          "ke": "SW1"
+        },
+        {
+          "dari": "PC12",
+          "ke": "SW1"
+        },
+        {
+          "dari": "SW1",
+          "ke": "R1",
+          "label": "ether2"
+        },
+        {
+          "dari": "SW1",
+          "ke": "DNS",
+          "label": "port 24"
+        },
+        {
+          "dari": "R1",
+          "ke": "ISP",
+          "label": "ether1"
+        }
+      ]
+    },
+    "langkah": [
+      {
+        "id": "ping-ip-game",
+        "label": "Ping alamat IP server game",
+        "perangkat": "PC7",
+        "perintah": "ping 198.51.100.80",
+        "keluaran": "Pinging 198.51.100.80 with 32 bytes of data:\nReply from 198.51.100.80: bytes=32 time=18ms TTL=56\nReply from 198.51.100.80: bytes=32 time=17ms TTL=56\nReply from 198.51.100.80: bytes=32 time=18ms TTL=56\nReply from 198.51.100.80: bytes=32 time=19ms TTL=56\n\nPing statistics for 198.51.100.80:\n    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),\nApproximate round trip times in milli-seconds:\n    Minimum = 17ms, Maximum = 19ms, Average = 18ms",
+        "makna": "Paket sampai ke server game di internet dan kembali dalam 18 ms. Kabel, switch, router, dan ISP bekerja sampai lapis 3. Jadi masalahnya bukan di jalur paket.",
+        "berguna": true
+      },
+      {
+        "id": "ping-nama-game",
+        "label": "Ping server game memakai namanya",
+        "perangkat": "PC7",
+        "perintah": "ping update.example.net",
+        "keluaran": "Ping request could not find host update.example.net. Please check the name and try again.",
+        "makna": "Ping bahkan tidak mengirim satu paket pun, karena PC tidak tahu alamat IP untuk nama itu. Menerjemahkan nama menjadi alamat adalah tugas DNS. Jadi lewat alamat IP bisa, lewat nama tidak.",
+        "berguna": true
+      },
+      {
+        "id": "ipconfig-all-pc07",
+        "label": "Lihat konfigurasi IP lengkap PC-07",
+        "perangkat": "PC7",
+        "perintah": "ipconfig /all",
+        "keluaran": "Windows IP Configuration\n\n   Host Name . . . . . . . . . . . . : PC-07\n   Primary Dns Suffix  . . . . . . . :\n   Node Type . . . . . . . . . . . . : Hybrid\n   IP Routing Enabled. . . . . . . . : No\n   WINS Proxy Enabled. . . . . . . . : No\n\nEthernet adapter Ethernet:\n\n   Connection-specific DNS Suffix  . :\n   Description . . . . . . . . . . . : Realtek PCIe GbE Family Controller\n   Physical Address. . . . . . . . . : 00-00-5E-00-53-27\n   DHCP Enabled. . . . . . . . . . . : Yes\n   Autoconfiguration Enabled . . . . : Yes\n   Link-local IPv6 Address . . . . . : fe80::83c2:5e19:a4d7:1b6e%6(Preferred)\n   IPv4 Address. . . . . . . . . . . : 192.168.100.27(Preferred)\n   Subnet Mask . . . . . . . . . . . : 255.255.255.0\n   Lease Obtained. . . . . . . . . . : Thursday, October 15, 2026 9:21:05 AM\n   Lease Expires . . . . . . . . . . : Thursday, October 15, 2026 9:51:05 AM\n   Default Gateway . . . . . . . . . : 192.168.100.1\n   DHCP Server . . . . . . . . . . . : 192.168.100.1\n   DNS Servers . . . . . . . . . . . : 192.168.100.5\n   NetBIOS over Tcpip. . . . . . . . : Enabled",
+        "makna": "PC mendapat semua pengaturan dari DHCP router, termasuk satu-satunya server DNS: 192.168.100.5, server cache buatan operator lama. Tidak ada DNS cadangan. Kalau server itu tidak menjawab, PC tidak punya tempat lain untuk bertanya.",
+        "berguna": true
+      },
+      {
+        "id": "nslookup-bawaan",
+        "label": "Tanyakan nama ke DNS yang dipakai PC",
+        "perangkat": "PC7",
+        "perintah": "nslookup update.example.net",
+        "keluaran": "DNS request timed out.\n    timeout was 2 seconds.\nServer:  UnKnown\nAddress:  192.168.100.5\n\nDNS request timed out.\n    timeout was 2 seconds.\nDNS request timed out.\n    timeout was 2 seconds.\nDNS request timed out.\n    timeout was 2 seconds.\nDNS request timed out.\n    timeout was 2 seconds.\n*** Request to UnKnown timed-out",
+        "makna": "Server DNS 192.168.100.5 tidak menjawab; yang muncul hanya timeout berulang. `Server: UnKnown` bukan masalahnya; itu hanya berarti nslookup tidak bisa menanyakan nama server DNS itu sendiri.",
+        "berguna": true
+      },
+      {
+        "id": "nslookup-isp",
+        "label": "Tanyakan nama yang sama ke DNS ISP",
+        "perangkat": "PC7",
+        "perintah": "nslookup update.example.net 203.0.113.53",
+        "keluaran": "Server:  ns1.isp.example.net\nAddress:  203.0.113.53\n\nNon-authoritative answer:\nName:    update.example.net\nAddress:  198.51.100.80",
+        "makna": "Resolver ISP langsung menjawab: `update.example.net` adalah 198.51.100.80, alamat yang tadi berhasil di-ping. Nama dan internetnya sehat. Yang tidak bekerja hanyalah resolver yang dipakai warnet.",
+        "berguna": true
+      },
+      {
+        "id": "ping-server-dns",
+        "label": "Ping server cache DNS",
+        "perangkat": "PC7",
+        "perintah": "ping 192.168.100.5",
+        "keluaran": "Pinging 192.168.100.5 with 32 bytes of data:\nReply from 192.168.100.27: Destination host unreachable.\nReply from 192.168.100.27: Destination host unreachable.\nReply from 192.168.100.27: Destination host unreachable.\nReply from 192.168.100.27: Destination host unreachable.\n\nPing statistics for 192.168.100.5:\n    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),",
+        "makna": "PC sendiri yang melapor `Destination host unreachable`: tidak ada yang menjawab ARP untuk 192.168.100.5. Mesinnya tidak hidup di jaringan, kemungkinan tidak menyala lagi sesudah listrik padam semalam.",
+        "berguna": true
+      },
+      {
+        "id": "flushdns",
+        "label": "Bersihkan cache DNS di PC-07",
+        "perangkat": "PC7",
+        "perintah": "ipconfig /flushdns",
+        "keluaran": "Windows IP Configuration\n\nSuccessfully flushed the DNS Resolver Cache.",
+        "makna": "Cache di PC kosong, tetapi pertanyaan berikutnya tetap dikirim ke 192.168.100.5 yang tidak menjawab. Membersihkan cache tidak menolong kalau servernya sendiri mati.",
+        "berguna": false
+      },
+      {
+        "id": "renew-pc07",
+        "label": "Perbarui alamat PC-07",
+        "perangkat": "PC7",
+        "perintah": "ipconfig /renew",
+        "keluaran": "Windows IP Configuration\n\n\nEthernet adapter Ethernet:\n\n   Connection-specific DNS Suffix  . :\n   Link-local IPv6 Address . . . . . : fe80::83c2:5e19:a4d7:1b6e%6\n   IPv4 Address. . . . . . . . . . . : 192.168.100.27\n   Subnet Mask . . . . . . . . . . . : 255.255.255.0\n   Default Gateway . . . . . . . . . : 192.168.100.1",
+        "makna": "Lease diperpanjang dengan nilai yang sama. DHCP memberi lagi DNS 192.168.100.5, karena memang itu yang tertulis di router. Renew tidak mengubah apa pun.",
+        "berguna": false
+      },
+      {
+        "id": "tracert-ip-game",
+        "label": "Lacak rute ke server game",
+        "perangkat": "PC7",
+        "perintah": "tracert -d 198.51.100.80",
+        "keluaran": "Tracing route to 198.51.100.80 over a maximum of 30 hops\n\n  1    <1 ms    <1 ms    <1 ms  192.168.100.1\n  2     2 ms     2 ms     3 ms  203.0.113.1\n  3     4 ms     3 ms     4 ms  203.0.113.129\n  4     4 ms     4 ms     5 ms  203.0.113.250\n  5    11 ms    10 ms    11 ms  192.0.2.13\n  6    12 ms    11 ms    12 ms  192.0.2.70\n  7    16 ms    17 ms    16 ms  198.51.100.254\n  8    18 ms    17 ms    18 ms  198.51.100.1\n  9    18 ms    18 ms    17 ms  198.51.100.80\n\nTrace complete.",
+        "makna": "Rute ke server game utuh, 9 lompatan tanpa satu pun timeout. `-d` membuat tracert tidak menerjemahkan alamat menjadi nama, jadi tes ini tidak memakai DNS. Hasilnya sehat, tetapi tidak menyentuh bagian yang rusak.",
+        "berguna": false
+      },
+      {
+        "id": "dhcp-network-router",
+        "label": "Lihat pengaturan DNS yang dibagikan DHCP",
+        "perangkat": "R1",
+        "perintah": "/ip dhcp-server network print",
+        "keluaran": "Columns: ADDRESS, GATEWAY, DNS-SERVER\n# ADDRESS           GATEWAY        DNS-SERVER\n;;; LAN warnet, DNS ke server cache\n0 192.168.100.0/24  192.168.100.1  192.168.100.5",
+        "makna": "Router membagikan 192.168.100.5 sebagai satu-satunya DNS ke semua PC. Perbaikannya cukup dilakukan di sini, tidak perlu di 20 PC satu per satu.",
+        "berguna": true
+      }
+    ],
+    "dugaan": [
+      {
+        "id": "dns-mati",
+        "teks": "Server DNS 192.168.100.5 yang dibagikan DHCP sedang mati, jadi nama tidak bisa diterjemahkan menjadi alamat IP",
+        "benar": true,
+        "umpan": "Benar. Ping ke IP lancar, ping ke nama gagal. Semua PC memakai DNS 192.168.100.5 dari DHCP, dan server itu tidak menjawab, bahkan ARP-nya pun tidak. Pertanyaan yang sama ke DNS ISP langsung dijawab."
+      },
+      {
+        "id": "isp-putus",
+        "teks": "Koneksi internet dari ISP putus",
+        "benar": false,
+        "umpan": "Ping ke 198.51.100.80 dibalas dalam 18 ms, dan tracert sampai ke tujuan. Internet jalan. Yang gagal hanya penerjemahan nama."
+      },
+      {
+        "id": "server-game",
+        "teks": "Server game sedang down",
+        "benar": false,
+        "umpan": "Server game membalas ping, dan DNS ISP mengenal namanya. Lagi pula semua situs lain juga gagal dibuka, padahal tidak mungkin semuanya down bersamaan."
+      },
+      {
+        "id": "cache-pc",
+        "teks": "Cache DNS di PC rusak, cukup jalankan ipconfig /flushdns di semua PC",
+        "benar": false,
+        "umpan": "Setelah flushdns, PC tetap bertanya ke 192.168.100.5 yang tidak menjawab. Cache di PC tidak ada hubungannya dengan server DNS yang mati."
+      },
+      {
+        "id": "firewall",
+        "teks": "Router memblokir situs dan server game lewat firewall",
+        "benar": false,
+        "umpan": "Firewall menyaring paket, dan paket ke 198.51.100.80 justru lolos. Kegagalan terjadi lebih awal: PC tidak menemukan alamat IP dari nama, jadi koneksi ke server game belum pernah dicoba."
+      }
+    ],
+    "pembahasan": "Briefing menyebut bahwa ping ke alamat IP server game dibalas. Artinya kabel, switch, router, dan ISP bekerja sampai lapis 3. Yang gagal adalah langkah sebelum koneksi dibuat, yaitu menerjemahkan nama menjadi alamat IP. Itu tugas DNS.\n\n`ping update.example.net` gagal dengan pesan `could not find host`. `ipconfig /all` menunjukkan PC hanya punya satu server DNS, 192.168.100.5, dan alamat itu datang dari DHCP router.\n\nDua `nslookup` lalu memisahkan masalahnya. Pertanyaan ke 192.168.100.5 berakhir timeout, sedangkan pertanyaan ke DNS ISP 203.0.113.53 langsung dijawab. Nama dan internetnya sehat; resolver yang dipakai warnet yang diam. Ping ke 192.168.100.5 menjawab sisanya: PC sendiri melapor `Destination host unreachable`, jadi mesinnya tidak hidup di jaringan. Kemungkinan besar PC server cache itu tidak menyala lagi sesudah listrik padam semalam.\n\nDua refleks umum, `ipconfig /flushdns` dan `ipconfig /renew`, hanya membuat PC bertanya lagi ke server yang sama. `tracert -d` ke IP tujuan terlihat sehat karena tes itu tidak memakai DNS.\n\nAda pelajaran desain juga. Jaringan ini hanya punya satu server DNS tanpa cadangan, jadi begitu server itu mati, 20 PC ikut lumpuh. DHCP sanggup membagikan dua alamat DNS sekaligus.\n\nMateri terkait: `06-aplikasi/01-dns`, `14-monitoring-troubleshooting/04-studi-kasus` (kasus ping ke IP berhasil tetapi ke nama gagal), dan `06-aplikasi/02-dhcp` (opsi DNS dari DHCP).",
+    "perbaikan": {
+      "penjelasan": "Pulihkan layanan dulu, baru perbaiki servernya. Ubah DNS yang dibagikan DHCP menjadi dua resolver ISP supaya ada cadangan. PC mengambil nilai baru saat lease diperpanjang (lease di sini 30 menit), atau seketika lewat `ipconfig /renew`. Setelah server cache hidup lagi dan terbukti menjawab, Anda boleh memakainya kembali sebagai DNS pertama, tetapi tetap cantumkan resolver kedua. Jalur mundurnya: kembalikan `dns-server=192.168.100.5`.",
+      "perintah": "# 1. Catat nilai lama\n/ip dhcp-server network print\n\n# 2. Bagikan dua resolver ISP\n/ip dhcp-server network set [find address=192.168.100.0/24] dns-server=203.0.113.53,203.0.113.54\n\n# 3. Di PC (atau tunggu lease diperpanjang)\nipconfig /renew\nnslookup update.example.net\nping update.example.net\n\n# 4. Setelah server cache menyala lagi, uji dulu sebelum dipakai kembali\nnslookup update.example.net 192.168.100.5\n/ip dhcp-server network set [find address=192.168.100.0/24] dns-server=192.168.100.5,203.0.113.53\n\n# Jalur mundur\n/ip dhcp-server network set [find address=192.168.100.0/24] dns-server=192.168.100.5"
+    },
+    "sumber": [
+      {
+        "judul": "Microsoft Learn: nslookup",
+        "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/nslookup"
+      },
+      {
+        "judul": "Microsoft Learn: ipconfig",
+        "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ipconfig"
+      },
+      {
+        "judul": "MikroTik RouterOS: DHCP (dhcp-server network, dns-server)",
+        "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/24805500/DHCP"
+      },
+      {
+        "judul": "RFC 1034: Domain Names, Concepts and Facilities",
+        "url": "https://www.rfc-editor.org/rfc/rfc1034"
+      }
+    ]
+  },
+  {
+    "id": "cache-dns-ttl-migrasi-toko",
+    "judul": "Setelah migrasi server, kantor batik di Pekalongan masih membuka toko daring yang lama",
+    "tingkat": "menengah",
+    "modul": [
+      "06-aplikasi/01-dns",
+      "14-monitoring-troubleshooting/02-tools"
+    ],
+    "gejala": "Toko daring sudah dipindah ke server baru semalam. Pelanggan melihat toko baru, tetapi semua PC di kantor masih membuka toko lama dan tidak melihat pesanan yang masuk.",
+    "briefing": "**Pesan grup WhatsApp** dari Bu Rahma, pemilik usaha batik di Pekalongan, Sabtu pukul 08.40:\n\n> Pagi ini admin tidak bisa lihat pesanan baru. Di PC kantor tampilan tokonya masih yang lama. Padahal ada tiga pembeli yang kirim bukti transfer, dan di HP saya (pakai data seluler) tokonya sudah yang baru.\n\nKonteks: Jumat pukul 22.00, Mas Bayu, pengembang lepas, memindahkan `toko.example.com` dari VPS lama (203.0.113.20) ke VPS baru (198.51.100.45). Ia mengganti catatan A di panel DNS dan sekaligus menurunkan TTL dari 86400 ke 300 detik. VPS lama masih menyala sampai akhir bulan. Admin shift malam bekerja sampai pukul 22.00. PC kantor memakai router MikroTik sebagai DNS (192.168.1.1).\n\nAnda membawa laptop Linux dan tersambung ke jaringan kantor.",
+    "lokasi": {
+      "kota": "Pekalongan",
+      "lat": -6.888,
+      "lon": 109.675
+    },
+    "topologi": {
+      "simpul": [
+        {
+          "id": "PC1",
+          "label": "PC admin pesanan",
+          "jenis": "pc",
+          "x": 10,
+          "y": 28,
+          "info": "Windows, DNS 192.168.1.1 dari DHCP"
+        },
+        {
+          "id": "LAP",
+          "label": "Laptop Anda",
+          "jenis": "laptop",
+          "x": 10,
+          "y": 72,
+          "info": "Ubuntu 24.04, di jaringan kantor"
+        },
+        {
+          "id": "R1",
+          "label": "Router MikroTik",
+          "jenis": "router",
+          "x": 36,
+          "y": 50,
+          "info": "192.168.1.1, cache DNS untuk kantor"
+        },
+        {
+          "id": "ISP",
+          "label": "ISP kantor",
+          "jenis": "isp",
+          "x": 62,
+          "y": 50,
+          "info": "resolver ISP 203.0.113.53"
+        },
+        {
+          "id": "BARU",
+          "label": "VPS baru",
+          "jenis": "server",
+          "x": 88,
+          "y": 22,
+          "info": "198.51.100.45, toko sejak Jumat 22.00"
+        },
+        {
+          "id": "LAMA",
+          "label": "VPS lama",
+          "jenis": "server",
+          "x": 88,
+          "y": 50,
+          "info": "203.0.113.20, masih menyala"
+        },
+        {
+          "id": "NS",
+          "label": "DNS otoritatif",
+          "jenis": "cloud",
+          "x": 88,
+          "y": 78,
+          "info": "ns1.example.com, 192.0.2.53"
+        }
+      ],
+      "sisi": [
+        {
+          "dari": "PC1",
+          "ke": "R1"
+        },
+        {
+          "dari": "LAP",
+          "ke": "R1"
+        },
+        {
+          "dari": "R1",
+          "ke": "ISP",
+          "label": "ether1"
+        },
+        {
+          "dari": "ISP",
+          "ke": "BARU",
+          "label": "internet"
+        },
+        {
+          "dari": "ISP",
+          "ke": "LAMA",
+          "label": "internet"
+        },
+        {
+          "dari": "ISP",
+          "ke": "NS",
+          "label": "internet"
+        }
+      ]
+    },
+    "langkah": [
+      {
+        "id": "nslookup-kantor",
+        "label": "Tanyakan alamat toko dari PC admin",
+        "perangkat": "PC1",
+        "perintah": "nslookup toko.example.com",
+        "keluaran": "Server:  UnKnown\nAddress:  192.168.1.1\n\nNon-authoritative answer:\nName:    toko.example.com\nAddress:  203.0.113.20",
+        "makna": "Router kantor menjawab dengan alamat VPS lama, 203.0.113.20. `Non-authoritative answer` berarti jawaban ini tidak datang langsung dari pemilik domain, melainkan dari resolver perantara, di sini router kantor. Pertanyaannya: apakah sumbernya yang salah, atau perantaranya yang menyimpan jawaban lama?",
+        "berguna": true
+      },
+      {
+        "id": "dig-otoritatif",
+        "label": "Tanyakan langsung ke server DNS otoritatif",
+        "perangkat": "LAP",
+        "perintah": "dig toko.example.com @ns1.example.com",
+        "keluaran": "; <<>> DiG 9.18.39-0ubuntu0.24.04.1-Ubuntu <<>> toko.example.com @ns1.example.com\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 5219\n;; flags: qr aa rd; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1\n;; WARNING: recursion requested but not available\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags:; udp: 1232\n;; QUESTION SECTION:\n;toko.example.com.\t\tIN\tA\n\n;; ANSWER SECTION:\ntoko.example.com.\t300\tIN\tA\t198.51.100.45\n\n;; Query time: 23 msec\n;; SERVER: 192.0.2.53#53(ns1.example.com) (UDP)\n;; WHEN: Sat Oct 17 08:47:30 WIB 2026\n;; MSG SIZE  rcvd: 61",
+        "makna": "Server otoritatif adalah server yang menyimpan catatan asli domain. Ia menjawab 198.51.100.45 dengan flag `aa` (authoritative answer) dan TTL baru 300 detik. Peringatan `recursion requested but not available` normal: server otoritatif tidak menanyakan domain lain untuk Anda. Sumbernya sudah benar.",
+        "berguna": true
+      },
+      {
+        "id": "dig-router",
+        "label": "Tanyakan ke router kantor dan lihat sisa TTL",
+        "perangkat": "LAP",
+        "perintah": "dig toko.example.com @192.168.1.1",
+        "keluaran": "; <<>> DiG 9.18.39-0ubuntu0.24.04.1-Ubuntu <<>> toko.example.com @192.168.1.1\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 41873\n;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags:; udp: 4096\n;; QUESTION SECTION:\n;toko.example.com.\t\tIN\tA\n\n;; ANSWER SECTION:\ntoko.example.com.\t46800\tIN\tA\t203.0.113.20\n\n;; Query time: 1 msec\n;; SERVER: 192.168.1.1#53(192.168.1.1) (UDP)\n;; WHEN: Sat Oct 17 08:47:12 WIB 2026\n;; MSG SIZE  rcvd: 61",
+        "makna": "Router memberi alamat lama dalam 1 ms, tanda jawaban diambil dari cache. Angka 46800 adalah sisa TTL dalam detik: router baru akan bertanya ulang 13 jam lagi. TTL asli catatan itu 86400, jadi router menyimpannya 86400 - 46800 = 39600 detik (11 jam) yang lalu, yaitu sekitar Jumat pukul 21.47.",
+        "berguna": true
+      },
+      {
+        "id": "dig-resolver-isp",
+        "label": "Bandingkan dengan resolver ISP",
+        "perangkat": "LAP",
+        "perintah": "dig +noall +answer toko.example.com @203.0.113.53",
+        "keluaran": "toko.example.com.\t287\tIN\tA\t198.51.100.45",
+        "makna": "Resolver ISP memberi alamat baru dengan sisa TTL 287 dari 300: ia baru bertanya ke sumber beberapa detik lalu. Nama yang sama mendapat jawaban berbeda dari dua resolver. Karena itu pelanggan di jaringan lain sudah melihat toko baru.",
+        "berguna": true
+      },
+      {
+        "id": "cache-router",
+        "label": "Lihat cache DNS di router",
+        "perangkat": "R1",
+        "perintah": "/ip dns cache print where name=\"toko.example.com\"",
+        "keluaran": "Columns: NAME, TYPE, DATA, TTL\n#   NAME              TYPE  DATA          TTL\n127 toko.example.com  A     203.0.113.20  12h59m52s",
+        "makna": "Catatan lama memang tersimpan di cache router dan baru kedaluwarsa hampir 13 jam lagi. Selama itu, setiap PC kantor yang bertanya mendapat 203.0.113.20.",
+        "berguna": true
+      },
+      {
+        "id": "flushdns-pc",
+        "label": "Bersihkan cache DNS di PC admin",
+        "perangkat": "PC1",
+        "perintah": "ipconfig /flushdns",
+        "keluaran": "Windows IP Configuration\n\nSuccessfully flushed the DNS Resolver Cache.",
+        "makna": "Cache di PC kosong, tetapi pertanyaan berikutnya dijawab router dari cache-nya sendiri: alamat lama lagi. Cache di PC hanya lapisan pertama. Langkah ini perlu dilakukan nanti, sesudah cache router dikosongkan, tetapi sendirian ia tidak menolong.",
+        "berguna": false
+      },
+      {
+        "id": "ping-vps-baru",
+        "label": "Ping VPS baru dari PC admin",
+        "perangkat": "PC1",
+        "perintah": "ping 198.51.100.45",
+        "keluaran": "Pinging 198.51.100.45 with 32 bytes of data:\nReply from 198.51.100.45: bytes=32 time=28ms TTL=55\nReply from 198.51.100.45: bytes=32 time=27ms TTL=55\nReply from 198.51.100.45: bytes=32 time=29ms TTL=55\nReply from 198.51.100.45: bytes=32 time=28ms TTL=55\n\nPing statistics for 198.51.100.45:\n    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),\nApproximate round trip times in milli-seconds:\n    Minimum = 27ms, Maximum = 29ms, Average = 28ms",
+        "makna": "VPS baru terjangkau dari kantor. Jalurnya sehat. Tes memakai alamat IP tidak melewati DNS, jadi ia tidak menyentuh bagian yang bermasalah.",
+        "berguna": false
+      },
+      {
+        "id": "curl-vps-baru",
+        "label": "Minta halaman toko langsung ke VPS baru",
+        "perangkat": "LAP",
+        "perintah": "curl -sI --resolve toko.example.com:443:198.51.100.45 https://toko.example.com/",
+        "keluaran": "HTTP/2 200 \nserver: nginx\ndate: Sat, 17 Oct 2026 01:48:05 GMT\ncontent-type: text/html; charset=UTF-8\nx-powered-by: PHP/8.3.6",
+        "makna": "`--resolve` memaksa curl memakai alamat tertentu tanpa bertanya ke DNS. VPS baru melayani toko dengan normal (`HTTP/2 200`). Server baru sehat; yang bermasalah adalah alamat yang diberikan DNS kepada kantor.",
+        "berguna": false
+      }
+    ],
+    "dugaan": [
+      {
+        "id": "cache-router",
+        "teks": "Router kantor masih menyimpan catatan A lama (TTL 86400) di cache-nya, sehingga PC kantor diarahkan ke VPS lama",
+        "benar": true,
+        "umpan": "Benar. Server otoritatif sudah menjawab 198.51.100.45 dengan flag `aa`. Router kantor masih memberi 203.0.113.20 dengan sisa TTL 46800 detik, dan `/ip dns cache` memperlihatkan catatan itu baru kedaluwarsa sekitar 13 jam lagi. Resolver ISP, yang tidak menyimpan catatan lama, sudah memberi alamat baru."
+      },
+      {
+        "id": "panel-dns",
+        "teks": "Perubahan di panel DNS penyedia domain belum tersimpan",
+        "benar": false,
+        "umpan": "`dig @ns1.example.com` menjawab 198.51.100.45 dengan flag `aa` (authoritative answer). Catatan di sumbernya sudah benar, lengkap dengan TTL baru 300."
+      },
+      {
+        "id": "server-baru",
+        "teks": "VPS baru belum siap atau mati",
+        "benar": false,
+        "umpan": "VPS baru menjawab ping dan melayani halaman toko dengan `HTTP/2 200` saat diminta langsung. Pelanggan lewat data seluler juga sudah melihat toko baru."
+      },
+      {
+        "id": "cache-pc",
+        "teks": "Cache DNS di PC staf, cukup jalankan ipconfig /flushdns di setiap PC",
+        "benar": false,
+        "umpan": "Sesudah flushdns, PC bertanya lagi ke router, dan router menjawab dari cache-nya sendiri. Lagi pula `nslookup` selalu bertanya langsung ke server DNS tanpa memakai cache PC, dan hasilnya tetap alamat lama."
+      },
+      {
+        "id": "propagasi",
+        "teks": "Propagasi DNS memang butuh 48 jam dan tidak bisa dipercepat",
+        "benar": false,
+        "umpan": "Tidak ada proses yang menyebarkan perubahan ke seluruh internet. Setiap resolver hanya menyimpan jawaban lama sampai TTL-nya habis. Resolver milik kantor sendiri bisa dikosongkan sekarang juga. Yang tidak bisa dipaksa hanyalah resolver milik orang lain."
+      }
+    ],
+    "pembahasan": "DNS bekerja berlapis. Server otoritatif (`ns1.example.com`) menyimpan catatan asli. Resolver, misalnya router kantor atau resolver ISP, bertanya ke sana lalu menyimpan jawabannya di cache selama TTL (time to live) yang menempel pada jawaban itu. Selama TTL belum habis, resolver menjawab dari cache tanpa bertanya lagi.\n\nMulai dari sumbernya. `dig @ns1.example.com` memberi 198.51.100.45 dengan flag `aa` dan TTL 300. Catatan di sumber sudah benar.\n\nLalu bandingkan resolver. Resolver ISP memberi alamat baru dengan TTL 287, tanda ia baru saja bertanya ke sumber. Router kantor memberi alamat lama dengan TTL 46800, dan `/ip dns cache` memastikan catatan itu tersimpan di router.\n\nSisa TTL bisa dihitung mundur. TTL lama 86400 detik dikurangi sisa 46800 berarti catatan disimpan 39600 detik (11 jam) sebelum pukul 08.47, yaitu sekitar Jumat 21.47. Saat itu admin shift malam masih membuka toko, 13 menit sebelum migrasi. Router menyimpan jawaban lama beserta TTL lamanya.\n\nKarena itu, menurunkan TTL bersamaan dengan pemindahan tidak menolong. Resolver yang sudah menyimpan jawaban lama tetap memegang TTL 86400. TTL harus diturunkan paling tidak satu TTL lama (di sini 24 jam) sebelum migrasi.\n\n`ipconfig /flushdns` menyesatkan karena hanya mengosongkan cache di PC, padahal jawaban lama datang dari router. Ping dan curl ke VPS baru membuktikan servernya sehat, tetapi tidak menyentuh DNS.\n\nSatu salah kaprah yang perlu dibuang adalah \"propagasi DNS 48 jam\". Tidak ada yang disebarkan; yang ada hanya cache yang menunggu kedaluwarsa.\n\nMateri terkait: `06-aplikasi/01-dns` (bagian TTL dan praktik migrasi) dan `14-monitoring-troubleshooting/02-tools` (dig dan nslookup).",
+    "perbaikan": {
+      "penjelasan": "Kosongkan cache DNS router kantor, lalu cache di PC. Ini langsung menyelesaikan masalah di kantor dan aman, karena router hanya bertanya ulang ke server otoritatif; tidak ada yang perlu dikembalikan. Untuk pelanggan di luar, resolver milik orang lain bisa masih memegang alamat lama sampai Sabtu pukul 22.00 (24 jam sesudah migrasi). Selama itu, jangan biarkan VPS lama menerima pesanan: teruskan permintaannya ke VPS baru lewat reverse proxy, atau tutup formulir pesanan di sana. Pindahkan juga pesanan yang terlanjur masuk ke VPS lama. Untuk migrasi berikutnya, turunkan TTL ke 300 sehari sebelumnya.",
+      "perintah": "# Router kantor (MikroTik)\n/ip dns cache print where name=\"toko.example.com\"\n/ip dns cache flush\n\n# Laptop Linux: router kini harus memberi alamat baru, TTL 300 atau kurang\ndig +noall +answer toko.example.com @192.168.1.1\n#   toko.example.com.  300  IN  A  198.51.100.45\n\n# PC admin (Windows)\nipconfig /flushdns\nnslookup toko.example.com\n\n# VPS lama, sementara sampai Sabtu 22.00: teruskan ke VPS baru (nginx)\nlocation / {\n    proxy_pass https://198.51.100.45;\n    proxy_set_header Host toko.example.com;\n    proxy_ssl_server_name on;\n    proxy_ssl_name toko.example.com;\n}\nsudo nginx -t && sudo systemctl reload nginx"
+    },
+    "sumber": [
+      {
+        "judul": "RFC 1035: Domain Names, Implementation and Specification (TTL)",
+        "url": "https://www.rfc-editor.org/rfc/rfc1035"
+      },
+      {
+        "judul": "MikroTik RouterOS: DNS (cache dan flush)",
+        "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/37748767/DNS"
+      },
+      {
+        "judul": "BIND 9 manual pages: dig",
+        "url": "https://bind9.readthedocs.io/en/stable/manpages.html"
+      },
+      {
+        "judul": "Microsoft Learn: ipconfig (/flushdns)",
+        "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ipconfig"
+      }
+    ]
+  },
+  {
+    "id": "konflik-ip-ganda-server-berkas",
+    "judul": "Server berkas kantor notaris di Padang putus-sambung sejak Selasa",
+    "tingkat": "menengah",
+    "modul": [
+      "04-network-layer/04-arp-icmp",
+      "03-data-link/02-switching",
+      "12-keamanan/02-serangan-l2"
+    ],
+    "gejala": "Sejak Selasa, drive bersama di server berkas sering hilang beberapa menit lalu muncul lagi. Ping ke server hampir selalu dibalas.",
+    "briefing": "**Tiket #PDG-0087** dari Ratna Sari, staf kantor notaris di Padang, Kamis pukul 10.20:\n\n> Drive S: (berkas akta) di PC saya sering putus. Kadang keluar pesan \"The network path was not found\", lima menit kemudian bisa lagi. Pak Andi dan Mbak Yeni juga sama. Kemarin dua kali kami kehilangan perubahan dokumen.\n\nKonteks: server berkas Linux (Samba) di 192.168.20.10 sudah berjalan tiga tahun tanpa masalah. Catatan perubahan minggu ini: Selasa pagi vendor CCTV memasang perekam (DVR) baru, dan Rabu printer lantai 1 diservis. Router Cisco 1921 adalah gateway dan server DHCP untuk rentang 192.168.20.100 sampai .199.\n\nAnda punya akses ke PC Ratna, SSH ke server berkas, switch, dan router.",
+    "lokasi": {
+      "kota": "Padang",
+      "lat": -0.956,
+      "lon": 100.361
+    },
+    "topologi": {
+      "simpul": [
+        {
+          "id": "PC1",
+          "label": "PC Ratna",
+          "jenis": "pc",
+          "x": 10,
+          "y": 28,
+          "info": "192.168.20.112, DHCP"
+        },
+        {
+          "id": "PC2",
+          "label": "PC Pak Andi",
+          "jenis": "pc",
+          "x": 10,
+          "y": 72,
+          "info": "192.168.20.105, DHCP"
+        },
+        {
+          "id": "SW1",
+          "label": "SW-Kantor",
+          "jenis": "switch",
+          "x": 36,
+          "y": 50,
+          "info": "Catalyst 2960, VLAN 1"
+        },
+        {
+          "id": "NAS",
+          "label": "Server berkas",
+          "jenis": "server",
+          "x": 62,
+          "y": 18,
+          "info": "192.168.20.10 statis, Debian 12, Samba"
+        },
+        {
+          "id": "R1",
+          "label": "R-Kantor",
+          "jenis": "router",
+          "x": 62,
+          "y": 50,
+          "info": "Cisco 1921, 192.168.20.1/24"
+        },
+        {
+          "id": "DVR",
+          "label": "DVR CCTV",
+          "jenis": "server",
+          "x": 62,
+          "y": 82,
+          "info": "dipasang vendor Selasa pagi"
+        },
+        {
+          "id": "ISP",
+          "label": "ISP",
+          "jenis": "isp",
+          "x": 90,
+          "y": 50
+        }
+      ],
+      "sisi": [
+        {
+          "dari": "PC1",
+          "ke": "SW1",
+          "label": "Fa0/3"
+        },
+        {
+          "dari": "PC2",
+          "ke": "SW1",
+          "label": "Fa0/4"
+        },
+        {
+          "dari": "SW1",
+          "ke": "NAS",
+          "label": "Fa0/10"
+        },
+        {
+          "dari": "SW1",
+          "ke": "R1",
+          "label": "Gi0/1"
+        },
+        {
+          "dari": "SW1",
+          "ke": "DVR",
+          "label": "Fa0/14"
+        },
+        {
+          "dari": "R1",
+          "ke": "ISP",
+          "label": "Gi0/0"
+        }
+      ]
+    },
+    "langkah": [
+      {
+        "id": "ping-server-berkas",
+        "label": "Ping server berkas delapan kali dari PC Ratna",
+        "perangkat": "PC1",
+        "perintah": "ping -n 8 192.168.20.10",
+        "keluaran": "Pinging 192.168.20.10 with 32 bytes of data:\nReply from 192.168.20.10: bytes=32 time<1ms TTL=64\nReply from 192.168.20.10: bytes=32 time<1ms TTL=64\nReply from 192.168.20.10: bytes=32 time=1ms TTL=64\nReply from 192.168.20.10: bytes=32 time<1ms TTL=64\nReply from 192.168.20.10: bytes=32 time=2ms TTL=64\nReply from 192.168.20.10: bytes=32 time<1ms TTL=64\nReply from 192.168.20.10: bytes=32 time<1ms TTL=64\nReply from 192.168.20.10: bytes=32 time=1ms TTL=64\n\nPing statistics for 192.168.20.10:\n    Packets: Sent = 8, Received = 8, Lost = 0 (0% loss),\nApproximate round trip times in milli-seconds:\n    Minimum = 0ms, Maximum = 2ms, Average = 0ms",
+        "makna": "Semua ping dibalas, dan TTL=64 cocok dengan server Linux. Tetapi ping hanya membuktikan ada perangkat yang menjawab untuk 192.168.20.10, bukan perangkat yang mana. Banyak perangkat lain berbasis Linux juga membalas dengan TTL 64.",
+        "berguna": false
+      },
+      {
+        "id": "arp-pc-ratna",
+        "label": "Lihat MAC yang dicatat PC Ratna untuk server",
+        "perangkat": "PC1",
+        "perintah": "arp -a 192.168.20.10",
+        "keluaran": "\nInterface: 192.168.20.112 --- 0x9\n  Internet Address      Physical Address      Type\n  192.168.20.10         00-00-5e-00-53-9b     dynamic",
+        "makna": "Tabel ARP adalah catatan PC tentang pasangan alamat IP dan alamat MAC di jaringan lokal. PC Ratna mencatat 192.168.20.10 berada di MAC 00-00-5e-00-53-9b. Di jaringan lokal, data dikirim ke MAC ini, bukan ke alamat IP. Bandingkan dengan MAC asli server.",
+        "berguna": true
+      },
+      {
+        "id": "mac-asli-server",
+        "label": "Lihat MAC asli kartu jaringan server",
+        "perangkat": "NAS",
+        "perintah": "ip -br link show enp2s0",
+        "keluaran": "enp2s0           UP             00:00:5e:00:53:10 <BROADCAST,MULTICAST,UP,LOWER_UP> ",
+        "makna": "MAC asli server adalah 00:00:5e:00:53:10. Windows menulis MAC dengan tanda hubung dan Linux dengan titik dua, tetapi angkanya bisa dibandingkan langsung: akhirannya 53:10, bukan 53:9b. Saat ini PC Ratna mengirim berkas ke perangkat lain yang juga memakai 192.168.20.10.",
+        "berguna": true
+      },
+      {
+        "id": "arping-dad",
+        "label": "Uji alamat ganda dari server dengan arping",
+        "perangkat": "NAS",
+        "perintah": "sudo arping -D -I enp2s0 -c 3 192.168.20.10",
+        "keluaran": "ARPING 192.168.20.10 from 0.0.0.0 enp2s0\nUnicast reply from 192.168.20.10 [00:00:5E:00:53:9B]  1.208ms\nSent 1 probes (1 broadcast(s))\nReceived 1 response(s)",
+        "makna": "`-D` adalah mode deteksi alamat ganda. Server bertanya \"adakah yang memakai 192.168.20.10?\" dengan alamat sumber 0.0.0.0, sehingga dirinya sendiri tidak ikut menjawab. Ada yang menjawab, dari MAC 00:00:5E:00:53:9B. Dua perangkat memakai alamat yang sama. arping berhenti di jawaban pertama, makanya hanya satu probe yang terkirim.",
+        "berguna": true
+      },
+      {
+        "id": "cari-mac-9b",
+        "label": "Cari port switch tempat MAC asing itu terlihat",
+        "perangkat": "SW1",
+        "perintah": "show mac address-table address 0000.5e00.539b",
+        "keluaran": "          Mac Address Table\n-------------------------------------------\n\nVlan    Mac Address       Type        Ports\n----    -----------       --------    -----\n   1    0000.5e00.539b    DYNAMIC     Fa0/14\nTotal Mac Addresses for this criterion: 1",
+        "makna": "MAC asing itu ada di port Fa0/14, port tempat DVR CCTV yang baru dipasang.",
+        "berguna": true
+      },
+      {
+        "id": "log-fa014",
+        "label": "Cari kapan port Fa0/14 mulai dipakai",
+        "perangkat": "SW1",
+        "perintah": "show logging | include 0/14",
+        "keluaran": "Oct 13 09:41:27.334: %LINK-3-UPDOWN: Interface FastEthernet0/14, changed state to up\nOct 13 09:41:28.341: %LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/14, changed state to up",
+        "makna": "Port DVR menyala Selasa 13 Oktober pukul 09.41. Keluhan dimulai sejak hari itu. Urutan waktunya cocok dengan dugaan bahwa DVR diberi alamat yang sama dengan server.",
+        "berguna": true
+      },
+      {
+        "id": "status-samba",
+        "label": "Cek layanan Samba di server berkas",
+        "perangkat": "NAS",
+        "perintah": "systemctl status smbd --no-pager",
+        "keluaran": "● smbd.service - Samba SMB Daemon\n     Loaded: loaded (/lib/systemd/system/smbd.service; enabled; preset: enabled)\n     Active: active (running) since Mon 2026-09-28 06:12:41 WIB; 2 weeks 3 days ago\n       Docs: man:smbd(8)\n             man:samba(7)\n             man:smb.conf(5)\n    Process: 702 ExecStartPre=/usr/share/samba/update-apparmor-samba-profile (code=exited, status=0/SUCCESS)\n   Main PID: 731 (smbd)\n     Status: \"smbd: ready to serve connections...\"\n      Tasks: 6 (limit: 9284)\n     Memory: 48.2M\n        CPU: 3min 41.207s\n     CGroup: /system.slice/smbd.service\n             ├─ 731 /usr/sbin/smbd --foreground --no-process-group\n             ├─ 744 /usr/sbin/smbd --foreground --no-process-group\n             ├─ 745 /usr/sbin/smbd --foreground --no-process-group\n             └─9817 /usr/sbin/smbd --foreground --no-process-group",
+        "makna": "Samba berjalan tanpa henti sejak 28 September, jauh sebelum keluhan muncul. Layanannya tidak pernah mati. Ini menyingkirkan dugaan Samba bermasalah, tetapi tidak menjelaskan kenapa koneksi putus.",
+        "berguna": false
+      },
+      {
+        "id": "port-server",
+        "label": "Cek kondisi port switch server berkas",
+        "perangkat": "SW1",
+        "perintah": "show interfaces FastEthernet0/10 | include line protocol|duplex|errors",
+        "keluaran": "FastEthernet0/10 is up, line protocol is up (connected)\n  Full-duplex, 100Mb/s, media type is 10/100BaseTX\n     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored\n     0 output errors, 0 collisions, 1 interface resets",
+        "makna": "Port server bersih: full duplex, nol error, dan hanya satu reset, yaitu saat pertama menyala. Kabel dan port server sehat. Langkah ini tidak mendekatkan Anda ke penyebab.",
+        "berguna": false
+      }
+    ],
+    "dugaan": [
+      {
+        "id": "ip-ganda",
+        "teks": "DVR CCTV baru memakai alamat statis 192.168.20.10, sama dengan server berkas, sehingga PC kadang mengirim data ke DVR",
+        "benar": true,
+        "umpan": "Benar. MAC asli server berakhiran 53:10, tetapi PC Ratna mencatat 192.168.20.10 di 53:9b. `arping -D` dari server mendapat jawaban dari 53:9b, dan switch menemukan MAC itu di Fa0/14, port DVR yang menyala Selasa pagi. Setiap kali catatan ARP diperbarui, pemenangnya bisa berganti, makanya koneksi putus-sambung."
+      },
+      {
+        "id": "samba",
+        "teks": "Layanan Samba di server berkas sering mati",
+        "benar": false,
+        "umpan": "smbd berjalan tanpa henti sejak 28 September. Saat koneksi putus, PC sedang mengirim data ke MAC lain, jadi permintaannya bahkan tidak sampai ke server."
+      },
+      {
+        "id": "kabel",
+        "teks": "Kabel atau port switch server berkas rusak",
+        "benar": false,
+        "umpan": "Port Fa0/10 full duplex, nol error, dan tidak pernah turun-naik. Kabel rusak juga tidak menjelaskan kenapa PC mencatat MAC yang bukan milik server."
+      },
+      {
+        "id": "arp-spoofing",
+        "teks": "Ada peretas yang melakukan ARP spoofing di jaringan kantor",
+        "benar": false,
+        "umpan": "Gejalanya memang mirip, karena ARP spoofing juga membuat MAC lain menjawab untuk sebuah IP. Tetapi MAC itu ada di port DVR yang baru dipasang vendor, dan munculnya tepat saat DVR dinyalakan. Penjelasan paling sederhana adalah alamat yang salah diketik. Serangan biasanya mengincar gateway, bukan satu server berkas."
+      },
+      {
+        "id": "dhcp",
+        "teks": "DHCP router memberikan alamat server berkas ke perangkat lain",
+        "benar": false,
+        "umpan": "Rentang DHCP router adalah 192.168.20.100 sampai .199, jauh dari .10. Alamat .10 hanya bisa dipakai perangkat lain kalau diketik manual."
+      }
+    ],
+    "pembahasan": "Gejala putus-sambung dengan ping yang lancar sering berarti ada dua pihak yang berebut sesuatu. Di jaringan lokal, PC mengirim data ke alamat MAC tujuan. Alamat IP dipakai untuk mencari MAC itu lewat ARP: PC bertanya \"siapa pemilik 192.168.20.10?\" lalu menyimpan jawabannya beberapa puluh detik. Kalau dua perangkat sama-sama menjawab, jawaban terakhirlah yang tercatat.\n\nBandingkan dua catatan. PC Ratna mencatat 192.168.20.10 di MAC 00-00-5e-00-53-9b. Server sendiri berkata MAC-nya 00:00:5e:00:53:10. Keduanya tidak cocok, jadi pada saat itu PC Ratna mengirim berkas ke perangkat lain. Perangkat itu tidak menjalankan Samba, sehingga Windows melapor \"The network path was not found\". Begitu catatan ARP berganti lagi ke server, drive S: kembali.\n\n`arping -D` dari server memastikannya. Mode ini bertanya dengan alamat sumber 0.0.0.0, sehingga hanya perangkat lain yang bisa menjawab. Jawaban datang dari 53:9b. Tabel MAC switch menunjuk Fa0/14, dan log switch mencatat port itu menyala Selasa 09.41, hari pemasangan DVR. Teknisi kemungkinan memberi DVR alamat statis tanpa memeriksa apakah alamat itu sudah dipakai.\n\nPing menyesatkan di kasus ini: ia tetap dibalas karena DVR juga menjawab ping. Status Samba dan port server sehat karena servernya memang tidak rusak. Masalahnya ada pada perangkat lain yang memakai alamat server.\n\nBedanya dengan ARP spoofing: hasilnya sama, MAC lain menjawab untuk sebuah IP, tetapi niat dan polanya berbeda. Di sini sumbernya perangkat yang baru dipasang, di port yang diketahui, pada waktu yang cocok dengan catatan perubahan.\n\nMateri terkait: `04-network-layer/04-arp-icmp` (ARP dan deteksi alamat ganda), `03-data-link/02-switching` (tabel MAC), dan `12-keamanan/02-serangan-l2` (ARP spoofing).",
+    "perbaikan": {
+      "penjelasan": "Pindahkan DVR ke alamat yang benar-benar kosong dan di luar rentang DHCP, misalnya 192.168.20.30, lalu catat di daftar alamat kantor. Server berkas tidak perlu diubah. Rekaman CCTV bisa terputus sebentar saat alamat DVR diganti, jadi kabari vendornya. Sesudahnya, minta server mengumumkan MAC-nya dengan ARP tak diminta (`arping -U`), supaya PC dan router memperbarui catatan tanpa menunggu kedaluwarsa. Jalur mundurnya adalah alamat lama DVR, tetapi jangan pernah biarkan dua perangkat memakai .10. Supaya tidak terulang, minta setiap teknisi menguji alamat dengan `arping -D` sebelum memakainya.",
+      "perintah": "# 1. Pastikan alamat pengganti kosong (dari server berkas)\nsudo arping -D -I enp2s0 -c 3 192.168.20.30\n#    \"Received 0 response(s)\" berarti aman dipakai\n\n# 2. Di menu jaringan DVR: alamat 192.168.20.30/24, gateway 192.168.20.1\n\n# 3. Umumkan MAC server agar catatan ARP di jaringan diperbarui\nsudo arping -U -I enp2s0 -c 3 192.168.20.10\n\n# 4. Verifikasi\nsudo arping -D -I enp2s0 -c 3 192.168.20.10\n#    Received 0 response(s)\nR-Kantor# clear ip arp 192.168.20.10\nR-Kantor# show ip arp 192.168.20.10\n#    Hardware Addr 0000.5e00.5310\nC:\\> arp -a 192.168.20.10\n#    00-00-5e-00-53-10"
+    },
+    "sumber": [
+      {
+        "judul": "arping(8), iputils: mode -D dan -U",
+        "url": "https://man7.org/linux/man-pages/man8/arping.8.html"
+      },
+      {
+        "judul": "RFC 5227: IPv4 Address Conflict Detection",
+        "url": "https://www.rfc-editor.org/rfc/rfc5227"
+      },
+      {
+        "judul": "RFC 826: An Ethernet Address Resolution Protocol",
+        "url": "https://www.rfc-editor.org/rfc/rfc826"
+      },
+      {
+        "judul": "Microsoft Learn: arp",
+        "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/arp"
+      }
+    ]
+  }
+]

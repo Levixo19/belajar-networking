@@ -1,0 +1,493 @@
+{
+  "19-mikrotik/01-pengenalan-routeros": {
+    "intinya": {
+      "satu_kalimat": "MikroTik membuat RouterOS, sistem operasi jaringan berbasis Linux yang murah dan serba-ada, dipakai dari router rumahan sampai mesin virtual, dan dominan di ISP kecil serta RT-RW Net Indonesia.",
+      "analogi": "RouterOS seperti satu aplikasi serba-bisa yang sama persis di ponsel murah maupun mahal: fiturnya lengkap sejak awal, tinggal Anda yang mengatur. Bedanya dengan router mahal yang tiap fiturnya harus dibeli terpisah, MikroTik memberi semuanya sekaligus. Itu membuatnya murah, tetapi juga mudah salah setel kalau Anda belum paham.",
+      "kenapa_penting": "Banyak lowongan teknisi jaringan di Indonesia mensyaratkan MikroTik, bukan Cisco. Warnet, hotel, RT-RW Net, dan ISP kecil memakainya karena murah. Belajar RouterOS membuka pintu kerja yang nyata di sini.",
+      "istilah": [
+        { "kata": "RouterOS", "arti": "Sistem operasi jaringan buatan MikroTik, berbasis Linux, yang menjalankan router, switch, dan fungsi jaringan lain." },
+        { "kata": "RouterBOARD", "arti": "Perangkat keras buatan MikroTik yang menjalankan RouterOS, dari model rumahan murah sampai router inti ISP." },
+        { "kata": "CHR", "arti": "Cloud Hosted Router: RouterOS yang berjalan di mesin virtual (VMware, KVM, cloud), dengan lisensi gratis berbatas kecepatan untuk belajar." }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "MikroTik: satu RouterOS untuk perangkat murah sampai mesin virtual",
+      "kapan": "1996",
+      "di_mana": "Riga, Latvia (dipakai global)",
+      "ringkas": "MikroTik adalah perusahaan asal Latvia yang berdiri pada 1996. Produk utamanya RouterOS, sistem operasi jaringan berbasis Linux, dan RouterBOARD, perangkat keras yang menjalankannya. Satu image RouterOS yang sama dipakai dari router rumahan murah sampai router inti ISP, dengan fitur lengkap sejak level dasar. MikroTik juga menyediakan Cloud Hosted Router (CHR) yang berjalan di mesin virtual, dengan lisensi gratis berbatas 1 Mbps per interface, khusus untuk belajar dan lab.",
+      "kronologi": [
+        { "waktu": "1996", "peristiwa": "MikroTik berdiri di Riga, Latvia, dan mulai mengembangkan RouterOS berbasis Linux." },
+        { "waktu": "Berikutnya", "peristiwa": "RouterOS dan RouterBOARD menyebar luas karena murah dan berfitur lengkap, dominan di ISP kecil, RT-RW Net, warnet, dan hotel, termasuk di Indonesia." },
+        { "waktu": "Kemudian", "peristiwa": "MikroTik merilis CHR, RouterOS untuk mesin virtual, dengan lisensi gratis berbatas 1 Mbps per interface agar siapa pun bisa belajar tanpa membeli perangkat." }
+      ],
+      "akar_masalah": "Router kelas enterprise seperti Cisco mahal dan banyak fiturnya berbayar bertingkat, sehingga sulit dijangkau operator kecil. MikroTik menjawabnya dengan satu lisensi berisi hampir semua fitur dan harga jauh lebih murah. Filosofinya memberi semua fitur dan membiarkan pengguna yang mengaturnya; ini memberi fleksibilitas besar, tetapi juga membuat salah konfigurasi lebih mudah terjadi.",
+      "kaitan": "Kasus ini melatarbelakangi seluruh modul. Bagian Apa Itu MikroTik dan Lini Produk menjelaskan RouterOS dan RouterBOARD, dan menyebut CHR gratis yang Anda pakai untuk lab. Karena satu OS yang sama berjalan di mana-mana, perintah yang Anda pelajari lewat WinBox, WebFig, atau SSH di bagian Cara Mengakses berlaku di semua perangkat MikroTik.",
+      "pelajaran": [
+        "Pakai CHR gratis di mesin virtual untuk berlatih RouterOS tanpa membeli perangkat; perintahnya sama dengan di RouterBOARD.",
+        "Fitur lengkap berarti tanggung jawab: router MikroTik baru relatif terbuka, jadi amankan sejak awal dengan ganti password dan batasi akses.",
+        "Keahlian MikroTik punya nilai kerja nyata di Indonesia, dari RT-RW Net sampai ISP."
+      ],
+      "sumber": [
+        { "judul": "About MikroTik", "penerbit": "MikroTik", "url": "https://mikrotik.com/aboutus" },
+        { "judul": "Cloud Hosted Router (CHR)", "penerbit": "MikroTik Documentation", "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/18350234/Cloud+Hosted+Router+CHR" }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda teknisi RT-RW Net dan harus mengubah aturan firewall sebuah router MikroTik di tower yang jauhnya 15 km, lewat WinBox. Anda sadar RouterOS menyimpan setiap perubahan otomatis tanpa undo, dan satu aturan salah bisa mengunci Anda. Bagaimana Anda bekerja agar tidak perlu naik ke tower kalau salah, dan apa penyelamat terakhir bila terlanjur terkunci lewat IP?",
+      "petunjuk": [
+        "RouterOS tidak punya write memory atau undo; ada mode khusus yang membatalkan perubahan bila koneksi Anda putus.",
+        "WinBox bisa terhubung tanpa IP sama sekali, lewat lapisan 2, selama Anda berada di segmen yang sama atau ada perangkat yang bisa menjangkaunya."
+      ],
+      "jawaban": "1. **Nyalakan Safe Mode sebelum menyentuh firewall.** Di terminal tekan `Ctrl+X` (atau tombol Safe Mode di WinBox). Semua perubahan dalam Safe Mode dibatalkan otomatis bila koneksi Anda putus, sehingga router kembali ke kondisi yang bisa dijangkau. Setelah yakin perubahan benar dan Anda masih terhubung, tekan `Ctrl+X` lagi untuk menerapkannya permanen.\n2. **Untuk perubahan sangat besar** yang melebihi kapasitas Safe Mode, jadwalkan reboot beberapa menit lagi dengan `/system scheduler`, lakukan perubahan, lalu hapus scheduler itu bila berhasil. Kalau Anda terkunci, router reboot sendiri ke konfigurasi tersimpan sebelum perubahan terakhir.\n3. **Penyelamat terakhir: WinBox lewat MAC address.** Karena RouterOS menyimpan otomatis dan tidak ada undo, aturan salah bisa memutus akses IP. WinBox tetap bisa terhubung lewat lapisan 2 (tab Neighbors, pilih berdasarkan MAC) tanpa butuh IP, asalkan Anda berada di segmen L2 yang sama atau lewat perangkat MikroTik lain yang menjangkaunya. Kalau tidak, pilihan terakhir adalah kabel konsol serial di lokasi.\n4. **Kesimpulan.** Disiplin Safe Mode mencegah perjalanan 15 km, dan WinBox MAC adalah jaring pengaman bila IP hilang."
+    }
+  },
+  "19-mikrotik/02-bridge-vlan-switching": {
+    "intinya": {
+      "satu_kalimat": "Di RouterOS, menyatukan beberapa port menjadi satu switch berarti membuat bridge; bila ada jalur ganda antar-switch, Spanning Tree Protocol (STP) mencegahnya berputar menjadi badai.",
+      "analogi": "Bayangkan beberapa ruangan dihubungkan banyak pintu. Kalau sebuah pengumuman diteriakkan dan diteruskan lewat semua pintu tanpa aturan, suaranya berputar-putar dan makin riuh sampai tak ada yang bisa bicara: itu badai broadcast. STP seperti kesepakatan menutup sebagian pintu sementara, menyisakan satu jalur, sehingga pengumuman sampai sekali tanpa menggema.",
+      "kenapa_penting": "Satu kabel yang tercolok membentuk lingkaran bisa melumpuhkan seluruh jaringan L2 dalam hitungan detik. STP yang menyala menjaga Anda dari bencana itu, dan modul ini meminta Anda tidak mematikannya tanpa alasan.",
+      "istilah": [
+        { "kata": "Bridge", "arti": "Di RouterOS, objek yang menyatukan beberapa port menjadi satu switch, yaitu satu broadcast domain." },
+        { "kata": "Broadcast storm", "arti": "Paket broadcast yang berputar tanpa henti pada jalur yang membentuk lingkaran, membanjiri dan melumpuhkan jaringan." },
+        { "kata": "STP", "arti": "Spanning Tree Protocol: protokol yang menonaktifkan jalur berlebih secara logis agar jaringan berjembatan bebas dari lingkaran." }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "Radia Perlman menciptakan Spanning Tree Protocol agar jaringan berjembatan tidak berputar",
+      "kapan": "1985",
+      "di_mana": "Digital Equipment Corporation (DEC), AS",
+      "ringkas": "Pada 1985, Radia Perlman, insinyur di Digital Equipment Corporation, merumuskan algoritma Spanning Tree Protocol dalam makalah berjudul 'An Algorithm for Distributed Computation of a Spanning Tree in an Extended LAN'. Masalah yang dipecahkannya: ketika switch dihubungkan dengan jalur ganda demi cadangan, paket broadcast bisa berputar tanpa henti dan melumpuhkan jaringan. STP membuat switch saling bersepakat memilih satu jalur bebas-lingkaran dan menonaktifkan sisanya. Algoritma ini kemudian menjadi dasar standar IEEE 802.1D.",
+      "kronologi": [
+        { "waktu": "1985", "peristiwa": "Radia Perlman di DEC menerbitkan algoritma spanning tree untuk mencegah lingkaran di jaringan berjembatan (bridged LAN)." },
+        { "waktu": "Standarisasi", "peristiwa": "Algoritma itu menjadi dasar standar IEEE 802.1D, lalu disempurnakan menjadi RSTP dan MSTP yang konvergensinya lebih cepat." },
+        { "waktu": "Hingga kini", "peristiwa": "STP, RSTP, dan MSTP tertanam di hampir semua switch, termasuk bridge RouterOS, dan tetap menjadi pengaman utama terhadap lingkaran L2." }
+      ],
+      "akar_masalah": "Jaringan L2 tidak punya TTL seperti IP, sehingga paket broadcast yang masuk lingkaran tidak pernah mati dan terus digandakan di tiap putaran. Jalur ganda yang dipasang untuk cadangan justru menjadi sumber bencana ini. STP menyelesaikannya tanpa mengorbankan cadangan: jalur berlebih tetap ada tetapi dinonaktifkan sampai dibutuhkan.",
+      "kaitan": "Modul mengaktifkan RSTP secara bawaan di bridge, di bagian STP di RouterOS, justru karena bahaya yang dipecahkan Perlman: lingkaran L2 memicu broadcast storm. Peringatan modul untuk tidak mematikan STP kecuali yakin tidak ada loop adalah warisan langsung dari masalah ini, dan berkait dengan konsep bridge sebagai satu broadcast domain di bagian Konsep Bridge.",
+      "pelajaran": [
+        "Biarkan STP atau RSTP menyala di bridge; ia menonaktifkan jalur berlebih sampai benar-benar diperlukan.",
+        "Jalur ganda antar-switch baik untuk cadangan, tetapi tanpa STP ia menjadi lingkaran yang mematikan.",
+        "Jaringan L2 tidak punya TTL, jadi paket yang masuk lingkaran tidak akan berhenti sendiri."
+      ],
+      "sumber": [
+        { "judul": "Spanning Tree Protocol (sejarah dan IEEE 802.1D)", "penerbit": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Spanning_Tree_Protocol" },
+        { "judul": "Radia Perlman", "penerbit": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Radia_Perlman" }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Di kantor cabang, setelah seorang staf merapikan kabel, seluruh jaringan tiba-tiba lumpuh: lampu semua port switch berkedip serempak sangat cepat, dan tidak ada yang bisa membuka apa pun. Router MikroTik Anda memakai bridge dengan beberapa port. Apa yang paling mungkin terjadi, bagaimana Anda memastikannya, dan fitur apa yang seharusnya mencegahnya?",
+      "petunjuk": [
+        "Lampu semua port berkedip serempak sangat cepat adalah ciri trafik yang berputar membanjir, bukan trafik normal.",
+        "Pikirkan apa yang berubah: kabel dirapikan. Mungkin ada dua port yang kini terhubung membentuk lingkaran.",
+        "Ada protokol bawaan di bridge yang seharusnya menutup jalur berlebih secara otomatis."
+      ],
+      "jawaban": "1. **Dugaan.** Terjadi lingkaran L2 (switching loop) yang memicu broadcast storm. Saat merapikan kabel, kemungkinan dua port switch terhubung langsung, atau sebuah switch kecil dicolok sehingga membentuk lingkaran. Karena L2 tidak punya TTL, broadcast berputar tanpa henti dan membanjiri jaringan.\n2. **Pastikan.** Ciri khasnya lampu semua port berkedip serempak di kecepatan penuh. Periksa beban dengan `/system resource print` (CPU melonjak bila bridge menangani trafik) dan `/interface monitor-traffic` yang menunjukkan trafik sangat tinggi tanpa sebab wajar. Telusuri kabel untuk menemukan lingkarannya, lalu cabut salah satu ujung; jaringan biasanya langsung pulih.\n3. **Pencegahan.** Pastikan STP atau RSTP menyala di bridge (`/interface bridge set bridge1 protocol-mode=rstp`, yang memang bawaan RouterOS). STP akan mendeteksi jalur berlebih dan menonaktifkannya sebelum menjadi lingkaran. Untuk port yang menuju pengguna, tambahkan `edge=yes` dan `bpdu-guard=yes` agar port langsung dimatikan bila ada perangkat yang membuat loop di sana.\n4. **Akar.** Inilah persis masalah yang membuat Spanning Tree Protocol diciptakan: menjaga jalur cadangan tanpa membiarkannya menjadi lingkaran yang mematikan."
+    }
+  },
+  "19-mikrotik/03-firewall-nat": {
+    "intinya": {
+      "satu_kalimat": "Firewall RouterOS menyaring paket berdasarkan status koneksi dan rantai: input menjaga router sendiri, forward mengatur trafik yang lewat, dan NAT membuat banyak perangkat berbagi satu IP publik.",
+      "analogi": "Bayangkan router sebagai gedung dengan satpam di pintu. Rantai input adalah tamu yang mau menemui satpam itu sendiri, rantai forward adalah orang yang cuma numpang lewat ke gedung sebelah. Connection tracking seperti buku tamu: sekali tamu dicatat masuk, ia boleh keluar-masuk tanpa diperiksa ulang. NAT seperti satu nomor telepon kantor yang menyambungkan banyak karyawan di dalam ke dunia luar.",
+      "kenapa_penting": "Router yang rantai input-nya terbuka bisa dikuasai orang asing dari internet dalam hitungan menit. Di warnet, kantor, atau RT-RW Net, satu router yang bocor menyeret semua pelanggan di belakangnya.",
+      "istilah": [
+        { "kata": "Chain input", "arti": "Rantai aturan untuk paket yang ditujukan ke router itu sendiri, misalnya saat Anda membuka WinBox atau SSH ke router." },
+        { "kata": "Masquerade", "arti": "Bentuk NAT yang menyamarkan alamat banyak perangkat LAN menjadi satu alamat publik router saat keluar ke internet." },
+        { "kata": "Address-list", "arti": "Daftar alamat IP yang bisa dipakai ulang di banyak aturan, dan bisa diisi otomatis, misalnya untuk memblokir pemindai." }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Ratusan ribu router MikroTik disusupi skrip penambang kripto Coinhive",
+      "kapan": "2018-08",
+      "di_mana": "Brasil, lalu menyebar global",
+      "ringkas": "Penyerang memindai internet mencari router MikroTik yang layanan manajemennya terbuka dan belum ditambal. Lewat celah lama di WinBox, mereka masuk lalu mengubah konfigurasi router agar menyisipkan skrip penambang kripto Coinhive ke halaman web yang dilewati pengguna. Komputer korban ikut menambang Monero untuk penyerang tanpa sepengetahuan mereka. Perusahaan keamanan Trustwave mencatat lebih dari 200.000 router terdampak.",
+      "kronologi": [
+        { "waktu": "31 Juli 2018", "peristiwa": "Simon Kenin dari Trustwave melihat lonjakan trafik Coinhive dari Brasil dan menelusurinya ke router MikroTik yang disusupi." },
+        { "waktu": "Awal Agustus 2018", "peristiwa": "Jumlah router terdampak terus bertambah hingga melewati 200.000 perangkat, dan serangan menyebar ke negara lain." },
+        { "waktu": "Berikutnya", "peristiwa": "Penyerang membatasi penyisipan skrip hanya pada halaman error agar lebih sulit terdeteksi, bukan lagi di semua halaman." }
+      ],
+      "akar_masalah": "Router memakai celah lama di layanan WinBox yang sudah ditambal MikroTik pada April 2018, tetapi pemiliknya tidak memperbarui RouterOS. Layanan manajemen router juga terbuka ke internet tanpa pembatasan. Setelah masuk, penyerang mengubah konfigurasi, termasuk web proxy, untuk menyuntik skrip ke trafik web pengguna.",
+      "kaitan": "Kalau router punya firewall chain `input` default-deny seperti di bagian Proteksi Router (Best Practice Keamanan), port manajemen tidak akan bisa dijangkau penyerang dari internet. Mematikan layanan yang tidak dipakai dan membatasi WinBox ke subnet admin menutup jalan masuk ini. Address-list dinamis di bagian Address-List bisa memblokir pemindai otomatis sebelum mereka mencoba masuk.",
+      "pelajaran": [
+        "Perbarui RouterOS segera setelah ada tambalan keamanan; menutup celah lebih mendesak daripada menunggu waktu luang.",
+        "Jangan pernah membuka WinBox, API, atau web admin ke internet. Batasi ke subnet admin dan pasang firewall input default-deny.",
+        "Kalau curiga router disusupi, periksa konfigurasi yang tidak Anda buat: web proxy, scheduler, dan script."
+      ],
+      "sumber": [
+        { "judul": "Siguen aprovechandose de routers MikroTik desactualizados en campanas de cryptojacking", "penerbit": "WeLiveSecurity (ESET)", "url": "https://www.welivesecurity.com/la-es/2018/09/13/siguen-aprovechandose-routers-mikrotik-desactualizados-campanas-de-criptojacking/" },
+        { "judul": "Other 3,700 MikroTik Routers compromised in cryptojacking campaigns", "penerbit": "Security Affairs", "url": "https://securityaffairs.com/76084/hacking/mikrotik-routers-cryptomining.html" }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda mengelola router MikroTik sebuah warnet. Pelanggan mengeluh kipas laptop mereka berisik dan panas setiap membuka situs lewat Wi-Fi warnet, padahal di jaringan lain biasa saja. Anda membuka `/ip firewall nat` dan menemukan aturan dst-nat ke port 8080 yang tidak Anda buat, dan `/ip proxy` ternyata menyala. RouterOS masih versi lama. Apa dugaan Anda, dan apa langkah pemeriksaan serta pembersihannya?",
+      "petunjuk": [
+        "CPU laptop korban memanas saat membuka web sering berarti ada skrip yang berjalan di browser mereka, bukan masalah di laptop.",
+        "Lihat apa yang router sisipkan ke trafik web: periksa `/ip proxy`, aturan NAT yang mengarah ke proxy, lalu `/system scheduler` dan `/system script`.",
+        "Tanyakan: bagaimana penyerang bisa masuk? Cek versi RouterOS dan apakah layanan manajemen terbuka ke internet (`/ip service print`)."
+      ],
+      "jawaban": "1. **Dugaan.** Router disusupi dan dipakai menyuntik skrip penambang kripto ke halaman web pelanggan, mirip kampanye Coinhive 2018. Aturan dst-nat ke proxy dan `/ip proxy` yang menyala adalah jalan penyisipannya; panas di laptop korban berasal dari skrip tambang yang berjalan di browser.\n2. **Amati dan uji.** Periksa `/ip proxy` dan `/ip proxy access`, `/ip firewall nat` (aturan dst-nat asing), lalu `/system scheduler`, `/system script`, dan `/user` untuk entri yang tidak Anda buat. Buka satu halaman uji dan lihat sumbernya untuk menemukan skrip tambang yang disisipkan.\n3. **Simpulkan jalan masuk.** Jalankan `/ip service print` dan `/system resource print`. Versi lama plus WinBox/API/www terbuka ke internet adalah jalur yang paling mungkin.\n4. **Bersihkan.** Matikan dan hapus proxy serta aturan NAT asing, hapus scheduler/script/user asing, ganti semua password, lalu perbarui RouterOS. Karena konfigurasi bisa sudah dirombak diam-diam, cara paling aman adalah reset lalu konfigurasi ulang dari awal.\n5. **Cegah berulang.** Pasang firewall chain `input` default-deny, matikan layanan yang tidak dipakai, dan batasi WinBox ke subnet admin. Jangan pernah mengekspos manajemen ke internet."
+    }
+  },
+  "19-mikrotik/04-qos-queue-hotspot": {
+    "intinya": {
+      "satu_kalimat": "Queue di RouterOS membagi dan membatasi bandwidth (simple queue, PCQ, burst), dan hotspot memberi portal login dengan voucher; keduanya inti bisnis warnet, kafe, dan RT-RW Net.",
+      "analogi": "Bayangkan bandwidth sebagai jalan tol. Simple queue seperti batas kecepatan untuk tiap kendaraan. PCQ seperti petugas yang membagi lajur rata ke semua mobil yang sedang lewat, jadi satu truk tidak memborong jalan. Burst seperti izin ngebut sebentar saat jalan sepi, lalu kembali ke batas saat ramai. Hotspot seperti gerbang tol dengan loket tiket: Anda harus punya karcis dulu sebelum masuk.",
+      "kenapa_penting": "Jutaan orang Indonesia memakai internet dari warnet, wifi kafe, dan RT-RW Net. Di balik layar, queue dan hotspot RouterOS-lah yang menjual paket kecepatan dan mengatur agar satu pengunduh tidak melumpuhkan koneksi tetangganya.",
+      "istilah": [
+        { "kata": "Simple queue", "arti": "Cara termudah membatasi bandwidth per alamat IP atau per pelanggan, misalnya memberi tiap rumah 10 Mbps." },
+        { "kata": "PCQ", "arti": "Per Connection Queue: membagi bandwidth bersama secara adil dan otomatis ke semua pengguna aktif saat itu." },
+        { "kata": "Hotspot", "arti": "Portal login (captive portal) yang mengharuskan pengguna memasukkan voucher atau akun sebelum bisa mengakses internet." }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "Internet desa Sepakung: jaringan gaya RT-RW Net untuk belajar jarak jauh",
+      "kapan": "2020-08",
+      "di_mana": "Desa Sepakung, Kabupaten Semarang, Jawa Tengah",
+      "ringkas": "Saat pandemi memaksa belajar dari rumah, Desa Sepakung membangun jaringan internet desa dengan dana desa. Dari satu sumber internet, sinyal disebar lewat Wi-Fi ke tingkat RW, lalu direncanakan sampai ke tiap RT, persis pola RT-RW Net. Jaringan ini melayani sekitar 300 pengguna per hari dan menggratiskan akses untuk siswa dari tiga sekolah agar bisa mengikuti pembelajaran jarak jauh.",
+      "kronologi": [
+        { "waktu": "8 Agustus 2020", "peristiwa": "Program internet desa Sepakung didokumentasikan: Pemerintah Desa membangunnya dengan dana desa, dipimpin Kepala Desa Ahmad Nuri." },
+        { "waktu": "Tahap awal", "peristiwa": "Wi-Fi sudah menjangkau seluruh RW; rencananya diperluas sampai ke tiap RT, melayani sekitar 300 pengguna per hari." },
+        { "waktu": "Berikutnya", "peristiwa": "Akses digratiskan untuk siswa dari tiga sekolah demi pembelajaran jarak jauh; pengelolaan direncanakan lewat BUMDes." }
+      ],
+      "akar_masalah": "Banyak daerah di Indonesia belum terjangkau internet murah, sementara pandemi tiba-tiba mewajibkan belajar dan bekerja dari rumah. Pola RT-RW Net menjawabnya dengan membeli satu sambungan lalu menyebar dan berbagi biayanya ke banyak rumah, sehingga biaya per pengguna jauh lebih ringan.",
+      "kaitan": "Jaringan seperti ini persis skenario di bagian Skenario RT-RW-Net Menyeluruh dan ringkasan modul. Untuk membagi satu sumber ke banyak rumah secara adil, operator memakai simple queue per pelanggan dan PCQ (Pembagian Adil Otomatis) agar satu pengunduh besar tidak menghabiskan jatah tetangga. Untuk akses publik atau voucher, hotspot dengan user profile dipakai, lengkap dengan walled garden untuk halaman informasi.",
+      "pelajaran": [
+        "Satu sambungan bisa melayani ratusan orang bila bandwidth dibagi adil dengan PCQ dan dibatasi per pelanggan dengan simple queue.",
+        "Hitung rasio langganan dengan jujur: paket 'up to' hanya adil bila jaminan minimum tiap pelanggan masih muat di kapasitas uplink.",
+        "Jaringan komunitas butuh pengelola yang jelas (misalnya BUMDes) agar biaya dan perawatan berkelanjutan."
+      ],
+      "sumber": [
+        { "judul": "Internet Gratis Sepakung Akan Jadi Program Nasional", "penerbit": "Pemerintah Provinsi Jawa Tengah", "url": "https://jatengprov.go.id/?p=81425" }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "RT-RW Net Anda punya uplink 100 Mbps yang dibagi ke 40 rumah. Satu rumah suka mengunduh file besar sepanjang hari, dan tetangganya mengeluh internet mereka lambat tiap kali itu terjadi. Anda ingin: tiap rumah tetap bisa 'terasa cepat' saat membuka web, tetapi tidak ada satu rumah pun yang bisa memonopoli jalur bersama. Mekanisme queue apa yang Anda pakai, dan bagaimana menyusunnya?",
+      "petunjuk": [
+        "Masalahnya bukan membatasi satu rumah ke angka tetap, melainkan membagi jalur bersama secara adil saat ramai.",
+        "Ada tipe queue yang membagi rata otomatis ke semua pengguna aktif, menyesuaikan jumlah yang sedang online.",
+        "Agar membuka web terasa gesit tanpa membiarkan unduhan besar terus kencang, ada fitur yang mengizinkan kecepatan ekstra sesaat."
+      ],
+      "jawaban": "1. **Diagnosis.** Gejala 'satu rumah mengunduh membuat semua lambat' adalah monopoli jalur bersama, bukan sekadar satu pelanggan melebihi paketnya.\n2. **Pakai PCQ untuk keadilan.** Buat tipe queue PCQ dengan `pcq-classifier=dst-address` untuk arah download dan `src-address` untuk upload, dengan `pcq-rate=0` agar total bandwidth dibagi rata ke semua pengguna aktif. Bila 4 rumah aktif, masing-masing dapat porsi setara; bila 10 aktif, porsinya menyusut otomatis. Ini mencegah satu rumah memborong.\n3. **Tambahkan burst agar terasa cepat.** Pada batas per pelanggan, beri `burst-limit` di atas `max-limit` dengan `burst-threshold` dan `burst-time` yang wajar. Membuka web (trafik singkat) mendapat ledakan cepat, sedangkan unduhan besar yang berkelanjutan turun ke batas paket.\n4. **Batasi di bawah kapasitas uplink.** Setel induk sekitar 95 persen kapasitas terukur agar antrean terbentuk di router Anda, bukan di perangkat ISP.\n5. **Verifikasi.** Pantau dengan `/queue simple print stats` dan `/tool torch` saat jam sibuk untuk memastikan pembagian berjalan dan tidak ada yang memonopoli."
+    }
+  },
+  "19-mikrotik/05-wireless-mikrotik": {
+    "intinya": {
+      "satu_kalimat": "Wireless RouterOS membangun jaringan nirkabel, dari AP untuk banyak klien sampai link jarak jauh antar-lokasi (PTP) dan satu menara ke banyak pelanggan (PTMP) untuk WISP.",
+      "analogi": "Link PTP seperti jembatan penyeberangan yang hanya menghubungkan dua gedung: lurus dan cepat. PTMP seperti terminal angkot: satu menara melayani banyak pelanggan yang datang dari berbagai arah. Nv2 mengatur giliran bicara tiap pelanggan seperti petugas terminal yang memberi nomor antre, supaya tidak semua bicara bersamaan lalu bertabrakan.",
+      "kenapa_penting": "Di banyak daerah Indonesia yang belum terjangkau kabel, internet datang lewat radio. WISP dan RT-RW Net memakai link nirkabel MikroTik di pita yang boleh dipakai umum. Memahami aturan frekuensi menjaga Anda dari interferensi dan sanksi.",
+      "istilah": [
+        { "kata": "PTMP", "arti": "Point-to-Multipoint: satu titik pusat (menara) melayani banyak titik pelanggan sekaligus lewat satu radio." },
+        { "kata": "EIRP", "arti": "Daya pancar efektif yang keluar dari antena, gabungan daya pemancar dan penguatan antena, yang dibatasi oleh regulator." },
+        { "kata": "Izin kelas", "arti": "Izin frekuensi yang berlaku otomatis untuk semua orang tanpa mendaftar satu per satu, selama mematuhi batas teknis." }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "Indonesia membuka pita 5,8 GHz sebagai izin kelas untuk akses nirkabel",
+      "kapan": "2009-06",
+      "di_mana": "Indonesia",
+      "ringkas": "Pemerintah lewat Peraturan Menteri Kominfo Nomor 27 Tahun 2009 menetapkan pita 5.725 sampai 5.825 MHz (5,8 GHz) untuk akses nirkabel pita lebar sebagai izin kelas. Artinya siapa pun boleh memakainya tanpa izin frekuensi perorangan, selama mematuhi batas teknis seperti daya pancar. Aturan ini menjadi dasar banyak WISP dan RT-RW Net memakai radio MikroTik untuk link PTP dan PTMP.",
+      "kronologi": [
+        { "waktu": "15 Juni 2009", "peristiwa": "Permen Kominfo Nomor 27 Tahun 2009 terbit, mengatur pita 5,8 GHz (5.725 sampai 5.825 MHz) untuk akses nirkabel pita lebar." },
+        { "waktu": "Sejak itu", "peristiwa": "Pita 5,8 GHz berlaku sebagai izin kelas: boleh dipakai umum tanpa izin perorangan, asal daya di luar ruang tidak melebihi 4 watt (36 dBm) EIRP." },
+        { "waktu": "Berkembang", "peristiwa": "WISP dan RT-RW Net di banyak daerah memakai pita ini dengan radio MikroTik untuk link PTP antar-lokasi dan PTMP dari menara ke pelanggan." }
+      ],
+      "akar_masalah": "Pita 5,8 GHz menarik karena bebas biaya izin frekuensi dan punya banyak kanal non-overlap yang relatif lengang dibanding 2,4 GHz. Batas daya dan kanal diatur agar pemakai tidak saling mengganggu dan tidak menabrak layanan lain. Perangkat MikroTik mendukung mode PTP, PTMP, dan Nv2 yang cocok untuk kondisi ini.",
+      "kaitan": "Pita ini dipakai persis untuk skenario di bagian Mode Wireless: link PTP untuk backhaul dan PTMP untuk WISP. Bagian Fitur Wireless Khas MikroTik mengingatkan untuk mematuhi regulasi frekuensi dan daya (EIRP) yang diatur Komdigi, dan Nv2 (TDMA) cocok untuk PTMP banyak pelanggan di pita ini.",
+      "pelajaran": [
+        "Pakai hanya pita yang diizinkan (2,4 GHz dan 5,8 GHz izin kelas) dan jangan melebihi batas daya EIRP yang ditetapkan.",
+        "Pindai kanal sebelum memasang link luar ruang; pita bebas berarti Anda berbagi dengan banyak pihak lain.",
+        "Gunakan Nv2 untuk PTMP jarak jauh agar antar-pelanggan tidak saling bertabrakan karena hidden node."
+      ],
+      "sumber": [
+        { "judul": "Peraturan Menteri Kominfo Nomor 27 Tahun 2009", "penerbit": "JDIH BPK RI", "url": "https://peraturan.bpk.go.id/Download/254689/Permen%20Kominfo%20Nomor%2027%20Tahun%202009.pdf" },
+        { "judul": "Katalog produk hukum Permen Kominfo Nomor 27 Tahun 2009", "penerbit": "JDIH Komdigi", "url": "https://jdih.komdigi.go.id/produk_hukum/katalog/391" }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda membangun RT-RW Net kecil. Dari menara di atas masjid, Anda ingin menyebarkan internet ke sekitar 15 rumah dalam radius 1 km dengan satu radio MikroTik. Tetangga RT sebelah juga baru memasang akses point 5 GHz. Pelanggan di sisi yang berjauhan sering terputus saat jam ramai. Pita dan mode apa yang Anda pilih, dan bagaimana mengurangi tabrakan serta interferensi?",
+      "petunjuk": [
+        "Satu menara melayani banyak pelanggan dari berbagai arah: itu skenario PTMP, bukan PTP.",
+        "Pelanggan yang berjauhan tidak bisa saling mendengar sehingga paket mereka bertabrakan di menara. Ada mode MikroTik yang mengatur giliran bicara.",
+        "Tetangga memasang AP 5 GHz juga: pikirkan pemilihan kanal dan batas daya yang legal."
+      ],
+      "jawaban": "1. **Pita.** Pilih 5,8 GHz. Sebagai izin kelas ia boleh dipakai umum, punya lebih banyak kanal non-overlap, dan lebih lengang daripada 2,4 GHz yang penuh sinyal rumah tangga.\n2. **Mode.** Ini PTMP: satu menara, banyak pelanggan. Putus saat ramai adalah ciri hidden node, yaitu pelanggan di sisi berlawanan tidak saling mendengar lalu bertabrakan di menara. Pakai Nv2 (TDMA) yang memberi slot waktu tiap pelanggan, bukan CSMA/CA biasa. Syaratnya kedua ujung perangkat MikroTik.\n3. **Interferensi.** Lakukan frequency scan dan spectral scan untuk memilih kanal yang paling sepi, hindari kanal yang dipakai tetangga.\n4. **Legalitas daya.** Jaga daya luar ruang tidak melebihi 4 watt (36 dBm) EIRP sesuai aturan pita 5,8 GHz.\n5. **Pelanggan jauh.** Pakai antena berpenguatan lebih tinggi dan arahkan tepat ke pelanggan jauh, bukan menaikkan daya melebihi batas. Keamanan dan pembagian bandwidth diurus di modul firewall dan QoS."
+    }
+  },
+  "19-mikrotik/06-vpn-tunnel": {
+    "intinya": {
+      "satu_kalimat": "VPN dan tunnel RouterOS menghubungkan lokasi atau pengguna jarak jauh lewat internet; pilihannya banyak (PPPoE, IPsec, WireGuard, EoIP), tetapi hanya yang enkripsinya kuat yang aman dipakai.",
+      "analogi": "Tunnel VPN seperti truk boks tertutup yang membawa surat Anda melewati jalan umum. IPsec dan WireGuard adalah boks berlapis baja dengan gembok modern. PPTP adalah boks dengan gembok murah yang kuncinya sudah bisa ditiru siapa saja: dari luar terlihat tertutup rapat, tetapi isinya bisa dibuka orang di tengah jalan.",
+      "kenapa_penting": "Banyak panduan lama masih mengajarkan PPTP karena mudah dan didukung Windows. Kalau Anda memakainya untuk data penting seperti akses kantor, kamera, atau data pelanggan, orang yang menyadap trafik bisa membuka isinya.",
+      "istilah": [
+        { "kata": "PPTP", "arti": "Protokol VPN lama yang membungkus trafik PPP; enkripsinya (MPPE) bergantung pada password dan kini dianggap tidak aman." },
+        { "kata": "MS-CHAPv2", "arti": "Cara PPTP dan beberapa VPN lain membuktikan identitas dengan password; kelemahannya memungkinkan kunci dipulihkan." },
+        { "kata": "Handshake", "arti": "Pertukaran pesan awal saat dua pihak saling membuktikan identitas sebelum koneksi aman terbentuk." }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "MS-CHAPv2 ditunjukkan bisa dibobol 100 persen, enkripsi PPTP runtuh",
+      "kapan": "2012-07",
+      "di_mana": "Konferensi DEF CON 20, Las Vegas, AS",
+      "ringkas": "Di konferensi keamanan DEF CON 20, peneliti Moxie Marlinspike dan David Hulton menunjukkan cara membobol MS-CHAPv2, mekanisme pembuktian identitas yang dipakai PPTP. Mereka merilis alat `chapcrack` yang menyederhanakan handshake yang disadap menjadi satu kunci DES, lalu layanan `cloudcracker` memecahkannya dalam waktu kurang dari sehari. Karena enkripsi PPTP (MPPE) berasal dari password yang sama, siapa pun yang menyadap trafik PPTP bisa membukanya.",
+      "kronologi": [
+        { "waktu": "28 Juli 2012", "peristiwa": "Marlinspike dan Hulton mempresentasikan 'Defeating PPTP VPNs and WPA2 Enterprise with MS-CHAPv2' di DEF CON 20." },
+        { "waktu": "Saat rilis", "peristiwa": "Mereka mengeluarkan `chapcrack` yang mereduksi seluruh keamanan handshake MS-CHAPv2 menjadi satu kunci DES." },
+        { "waktu": "Kurang dari sehari", "peristiwa": "Kunci itu dikirim ke `cloudcracker`, mesin FPGA khusus, yang memecahkannya dengan tingkat keberhasilan 100 persen." }
+      ],
+      "akar_masalah": "MS-CHAPv2 pada akhirnya hanya melindungi password dengan hash MD4 dan tiga operasi DES. Peneliti menunjukkan ketiga DES itu bisa direduksi menjadi satu kunci yang pasti bisa dipecahkan dengan perangkat keras khusus. Karena kunci enkripsi MPPE di PPTP diturunkan dari hash password yang sama, memecahkan MS-CHAPv2 berarti bisa mendekripsi seluruh sesi PPTP.",
+      "kaitan": "Ini bukti di balik peringatan di bagian Panduan Memilih bahwa PPTP sudah tidak aman karena enkripsi MPPE-nya lemah. Modul menyarankan L2TP/IPsec, SSTP, OpenVPN, atau WireGuard sebagai gantinya, persis karena serangan seperti ini. Untuk remote access pengguna Windows umumnya L2TP/IPsec atau SSTP; untuk site-to-site modern, WireGuard.",
+      "pelajaran": [
+        "Jangan memakai PPTP untuk data apa pun yang penting; ganti dengan WireGuard, IPsec, SSTP, atau OpenVPN.",
+        "Protokol yang terlihat terenkripsi belum tentu aman; ikuti anjuran terbaru, bukan panduan lama.",
+        "Keamanan sebuah VPN sering bertumpu pada cara pembuktian identitasnya, bukan hanya pada kata enkripsi."
+      ],
+      "sumber": [
+        { "judul": "End of Days for MS-CHAPv2", "penerbit": "SANS Internet Storm Center", "url": "https://isc.sans.edu/diary/13807" },
+        { "judul": "MS-CHAPv2 crack reveals VPNs' dirty little secret", "penerbit": "The Register", "url": "https://www.theregister.com/2012/07/31/ms_chapv2_crack/" }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Kantor cabang sebuah klinik memakai PPTP agar dokter bisa membuka rekam medis dari rumah. Kepala klinik membaca berita bahwa PPTP tidak aman dan meminta pendapat Anda. Jaringan dokter di rumah bermacam-macam (Windows, Android), dan sebagian di belakang NAT dari ISP. Apa risikonya meneruskan PPTP, dan apa penggantian yang Anda usulkan beserta alasannya?",
+      "petunjuk": [
+        "Rekam medis adalah data sensitif. Pikirkan siapa yang bisa menyadap trafik di jalur rumah ke klinik.",
+        "Pengganti harus didukung banyak jenis perangkat dan tahan melewati NAT. Bandingkan L2TP/IPsec, SSTP, dan WireGuard."
+      ],
+      "jawaban": "1. **Risiko.** Enkripsi PPTP (MPPE) berasal dari password lewat MS-CHAPv2, yang sudah bisa dibobol. Siapa pun yang menyadap trafik dokter-ke-klinik (di Wi-Fi publik, jaringan kos, atau di jalur ISP) berpotensi mendekripsi rekam medis. Untuk data kesehatan, ini juga masalah privasi dan hukum.\n2. **Pengganti.** Hentikan PPTP. Pilihan yang aman dan ramah NAT:\n   - **WireGuard**: modern, cepat, tahan ganti IP, tetapi perlu aplikasi klien dan pengaturan kunci.\n   - **SSTP**: berjalan di atas TLS port 443, bawaan Windows, mudah menembus NAT dan firewall.\n   - **L2TP/IPsec**: dukungan klien luas (Windows, Android bawaan).\n3. **Rekomendasi.** Untuk klien campuran plus NAT, pakai SSTP untuk laptop Windows dan WireGuard untuk perangkat lain, atau seragamkan ke WireGuard bila semua dokter bisa memasang aplikasinya.\n4. **Langkah.** Siapkan server VPN baru berdampingan, uji satu dokter, migrasikan sisanya, baru matikan PPTP. Pastikan sertifikat SSTP sah dan kunci WireGuard dibagikan lewat jalur aman."
+    }
+  },
+  "19-mikrotik/07-monitoring-scripting": {
+    "intinya": {
+      "satu_kalimat": "Monitoring dan scripting RouterOS memberi alat untuk melihat apa yang terjadi di jaringan (Torch, sniffer, log) dan mengotomasi tugas (netwatch, scheduler, script, API).",
+      "analogi": "Torch seperti CCTV lalu lintas yang menunjukkan kendaraan apa yang lewat saat ini juga. Log seperti buku catatan satpam: berguna, tetapi kalau cuma ditulis di kertas kecil yang dibuang tiap hari, bukti lama hilang. Mengirim log ke server terpusat seperti menyalin catatan itu ke kantor pusat, supaya tidak lenyap saat router dimatikan.",
+      "kenapa_penting": "Saat pelanggan bilang internet lambat atau router berperilaku aneh, alat monitoring mengubah tebakan menjadi bukti. Tanpa log yang tersimpan, Anda tidak akan tahu kapan dan bagaimana sebuah router mulai bermasalah.",
+      "istilah": [
+        { "kata": "Torch", "arti": "Alat RouterOS yang menampilkan trafik di sebuah interface secara langsung, dipecah per alamat, protokol, dan port." },
+        { "kata": "Sniffer", "arti": "Alat yang menangkap paket yang lewat untuk diperiksa, sama seperti `tcpdump` di Linux." },
+        { "kata": "Persisten", "arti": "Sifat program yang tetap bertahan walau perangkat dimatikan lalu dinyalakan ulang." }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "VPNFilter: malware menjangkiti lebih dari 500.000 perangkat jaringan",
+      "kapan": "2018-05",
+      "di_mana": "Global, lebih dari 50 negara",
+      "ringkas": "Tim Cisco Talos mengumumkan VPNFilter, malware bertingkat yang menjangkiti lebih dari 500.000 router dan perangkat jaringan rumahan serta kantor kecil di lebih dari 50 negara, termasuk perangkat MikroTik. Malware ini bisa menyadap trafik yang lewat untuk mencuri kata sandi, bahkan merusak perangkat. Sebagian komponennya bertahan walau router di-reboot. FBI mengaitkannya dengan kelompok APT28 dan mengambil alih server kendalinya.",
+      "kronologi": [
+        { "waktu": "23 Mei 2018", "peristiwa": "Cisco Talos merilis laporan VPNFilter; FBI mengumumkan telah menyita domain kendali malware." },
+        { "waktu": "Saat itu", "peristiwa": "FBI menyarankan semua pemilik router rumahan dan kantor kecil me-reboot perangkat untuk melumpuhkan sebagian malware." },
+        { "waktu": "Pembaruan berikutnya", "peristiwa": "Talos menemukan modul tambahan, termasuk penyadap paket yang mencuri kredensial dari trafik web yang lewat." }
+      ],
+      "akar_masalah": "VPNFilter masuk lewat perangkat yang memakai kata sandi bawaan atau celah lama yang belum ditambal, lalu memasang dirinya bertingkat. Tahap pertama bertahan setelah reboot dan bisa menarik ulang tahap berikutnya. Tahap kedua hanya tinggal di memori sehingga hilang saat reboot, tetapi bisa dipasang lagi. Salah satu modul tahap ketiga mengubah router menjadi penyadap yang memantau trafik yang lewat.",
+      "kaitan": "Modul penyadap VPNFilter adalah sisi gelap dari alat seperti `/tool sniffer` dan Torch di bagian Tools Monitoring: kemampuan melihat trafik yang lewat bisa dipakai untuk mencuri. Bahwa tahap kedua hilang saat reboot sejalan dengan catatan di bagian Logging bahwa memori lokal router terbatas dan hilang saat reboot, sehingga log penting harus dikirim ke syslog terpusat agar jejak insiden tidak lenyap.",
+      "pelajaran": [
+        "Ganti kata sandi bawaan dan perbarui perangkat; malware router sering masuk lewat celah lama dan sandi default.",
+        "Kirim log ke server terpusat; bukti yang hanya ada di memori router hilang saat reboot.",
+        "Reboot bisa melumpuhkan sebagian malware, tetapi tidak membersihkan yang persisten; perlu reset dan konfigurasi ulang."
+      ],
+      "sumber": [
+        { "judul": "New VPNFilter malware targets at least 500K networking devices worldwide", "penerbit": "Cisco Talos Intelligence", "url": "https://blog.talosintelligence.com/vpnfilter/" },
+        { "judul": "VPNFilter malware compromises over 500,000 networking devices", "penerbit": "Help Net Security", "url": "https://www.helpnetsecurity.com/2018/05/24/vpnfilter/" }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Sebuah sekolah memakai router MikroTik lama yang masih memakai kata sandi bawaan dan terbuka dari internet. Guru TIK curiga ada yang aneh: internet kadang lambat dan ada trafik keluar ke alamat asing pada malam hari. Anda diminta memeriksa apakah router disusupi dan apa yang harus dilakukan. Alat monitoring apa yang Anda pakai, dan mengapa reboot saja mungkin tidak cukup?",
+      "petunjuk": [
+        "Mulai dari melihat trafik nyata: siapa bicara ke mana, dan proses apa yang membebani CPU.",
+        "Cari konfigurasi yang tidak dibuat admin: scheduler, script, user, dan aturan NAT asing.",
+        "Ingat sifat malware router: sebagian bertahan setelah reboot, sebagian hanya di memori."
+      ],
+      "jawaban": "1. **Lihat trafik.** Jalankan `/tool torch` pada interface WAN untuk melihat trafik keluar yang mencurigakan, dan `/tool profile` untuk melihat proses yang membebani CPU. Pakai `/tool sniffer` bila perlu memeriksa paketnya.\n2. **Cari jejak konfigurasi.** Periksa `/system scheduler`, `/system script`, `/user`, dan `/ip firewall nat` untuk entri yang tidak Anda buat. Lihat `/log print` untuk kejadian ganjil.\n3. **Periksa jalan masuk.** Cek `/system resource print` (versi RouterOS) dan `/ip service print` (apakah WinBox/API/www terbuka ke internet). Versi lama plus manajemen terbuka adalah jalur paling mungkin.\n4. **Kenapa reboot saja kurang.** Sebagian malware router bersifat persisten: tahap yang di memori hilang saat reboot, tetapi tahap yang tertanam bisa memasangnya kembali. Jadi reboot hanya meredakan sementara.\n5. **Pembersihan tuntas.** Reset konfigurasi (no-defaults), pasang ulang RouterOS dari image bersih versi terbaru, ganti semua password, tutup manajemen dari internet, dan kirim log ke syslog terpusat agar kejadian berikutnya tercatat."
+    }
+  },
+  "19-mikrotik/08-routing-v7": {
+    "intinya": {
+      "satu_kalimat": "RouterOS v7 menulis ulang mesin routing-nya; BGP dan OSPF di sini butuh filter yang benar, karena satu kesalahan bisa menyesatkan rute jaringan lain.",
+      "analogi": "Setiap jaringan di internet seperti perusahaan ekspedisi yang saling berkata, 'kiriman ke daerah ini bisa lewat saya'. BGP mempercayai pengumuman itu begitu saja. Kalau satu ekspedisi kecil keliru mengumumkan 'semua kiriman dunia bisa lewat gudang saya', dan ekspedisi besar meneruskannya tanpa memeriksa, paket sedunia bisa berbelok ke gudang kecil yang langsung macet total.",
+      "kenapa_penting": "Kalau Anda admin ISP kecil yang multihoming ke dua upstream, filter keluar yang salah bisa membuat Anda tanpa sengaja mengiklankan rute yang bukan milik Anda, lalu memutus layanan banyak orang. Filter yang benar melindungi Anda dan internet.",
+      "istilah": [
+        { "kata": "Route leak", "arti": "Mengumumkan rute ke pihak yang seharusnya tidak menerimanya, misalnya meneruskan rute satu upstream ke upstream lain." },
+        { "kata": "Filter keluar", "arti": "Aturan yang menyaring rute mana yang boleh Anda iklankan ke tetangga BGP; tanpa ini RouterOS mengiklankan semua rute aktif." },
+        { "kata": "BGP optimizer", "arti": "Alat yang memecah prefiks menjadi bagian lebih kecil untuk memperbaiki jalur; prefiks kecil ini berbahaya bila bocor." }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Kebocoran rute lewat Verizon memutus sebagian besar internet selama berjam-jam",
+      "kapan": "2019-06-24",
+      "di_mana": "Global (AS, lewat Verizon dan DQE)",
+      "ringkas": "Sebuah ISP kecil di Pennsylvania, DQE Communications, memakai BGP optimizer yang memecah rute internet menjadi prefiks-prefiks kecil. Prefiks itu bocor ke pelanggannya (Allegheny Technologies), lalu diteruskan ke Verizon, upstream besar yang tidak menyaringnya. Karena prefiks kecil selalu lebih disukai, trafik untuk Cloudflare, Amazon, dan banyak layanan lain tiba-tiba berbelok lewat jaringan kecil itu dan macet. Cloudflare kehilangan sekitar 15 persen trafik globalnya.",
+      "kronologi": [
+        { "waktu": "24 Juni 2019", "peristiwa": "DQE Communications mengumumkan lebih dari 20.000 prefiks kecil hasil BGP optimizer ke pelanggannya, Allegheny." },
+        { "waktu": "Beberapa saat kemudian", "peristiwa": "Allegheny meneruskannya ke Verizon (AS701), yang tanpa filter menyebarkannya ke seluruh internet." },
+        { "waktu": "Berjam-jam", "peristiwa": "Trafik banyak layanan besar berbelok lewat DQE dan Allegheny yang kapasitasnya kecil lalu hilang; Cloudflare kehilangan sekitar 15 persen trafik." }
+      ],
+      "akar_masalah": "BGP optimizer membuat prefiks yang lebih spesifik, dan router selalu memilih prefiks paling spesifik. Prefiks itu seharusnya tidak pernah keluar dari jaringan DQE. Kesalahan terbesar ada di Verizon yang tidak memasang filter prefiks maupun batas jumlah prefiks pada sesi BGP pelanggannya, sehingga kebocoran kecil menyebar ke seluruh dunia.",
+      "kaitan": "Ini contoh persis bahaya di bagian Jebakan output dan input: tanpa `output.filter-chain`, BGP mengiklankan semua rute aktif, dan RouterOS tidak menolak secara bawaan seperti anjuran RFC 8212. Batas `input.limit-process-routes` (setara maximum-prefix) dan role RFC 9234 di bagian Role BGP ada justru untuk mencegah kebocoran seperti ini.",
+      "pelajaran": [
+        "Setiap sesi eBGP wajib punya filter keluar yang hanya meloloskan prefiks milik Anda, diakhiri reject.",
+        "Pasang batas jumlah prefiks (maximum-prefix) agar sesi putus otomatis saat tetangga membocorkan terlalu banyak rute.",
+        "Hati-hati dengan BGP optimizer: prefiks kecil yang dihasilkannya tidak boleh keluar ke tetangga."
+      ],
+      "sumber": [
+        { "judul": "How Verizon and a BGP Optimizer Knocked Large Parts of the Internet Offline Today", "penerbit": "Cloudflare Blog", "url": "https://blog.cloudflare.com/how-verizon-and-a-bgp-optimizer-knocked-large-parts-of-the-internet-offline-today/" },
+        { "judul": "Verizon BGP misconfiguration knocked Cloudflare, Amazon offline", "penerbit": "The Register", "url": "https://www.theregister.com/2019/06/24/verizon_bgp_misconfiguration_cloudflare/" }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda admin ISP kecil di Bandung dengan dua upstream. Suatu pagi, pelanggan mengeluh banyak situs luar negeri lambat atau tidak terbuka, padahal kedua sesi BGP berstatus Established. Jumlah prefiks yang Anda terima dari salah satu upstream tiba-tiba melonjak dari sekitar 950 ribu menjadi lebih dari 2 juta. Apa yang terjadi, dan konfigurasi RouterOS v7 apa yang mencegahnya?",
+      "petunjuk": [
+        "Lonjakan jumlah prefiks yang tidak wajar dari satu tetangga adalah tanda kebocoran rute dari arah mereka.",
+        "RouterOS v7 punya batas yang bisa memutus atau menandai sesi saat prefiks melebihi angka tertentu.",
+        "Prefiks yang lebih spesifik selalu menang; itu sebabnya kebocoran prefiks kecil langsung membelokkan trafik."
+      ],
+      "jawaban": "1. **Diagnosis.** Salah satu upstream membocorkan prefiks lebih spesifik, kemungkinan dari BGP optimizer. Prefiks kecil ini mengalahkan rute normal Anda, sehingga trafik berbelok ke jalur yang tidak semestinya dan macet. Cek dengan `/routing bgp session print` (lihat `prefix-count`) dan `/routing route print` untuk melihat prefiks aneh.\n2. **Pertahanan utama.** Pasang `input.limit-process-routes-ipv4` (setara maximum-prefix) pada connection ke upstream, sedikit di atas jumlah wajar. Saat terlampaui, sesi ditandai `limit-exceeded` dan berhenti, sehingga kebocoran tidak menyebar. Bersihkan dengan `/routing bgp session clear`.\n3. **Saring masuk.** Tolak prefiks yang terlalu spesifik dan bogon lewat filter input, misalnya `if (dst-len > 24) { reject }`, dan pakai `input.accept-nlri` untuk membatasi apa yang boleh masuk.\n4. **Koordinasi.** Hubungi NOC upstream agar mereka menyetop kebocoran dari sisi mereka.\n5. **Pelajaran.** Ini kebalikan dari kasus Verizon: di sana korban adalah dunia karena upstream tidak menyaring; di sini Anda melindungi diri dengan batas prefiks dan filter masuk."
+    }
+  },
+  "19-mikrotik/09-mpls-routeros": {
+    "intinya": {
+      "satu_kalimat": "RouterOS v7 bisa membangun backbone MPLS (LDP, L3VPN, VPLS), tetapi label dan otomasinya harus benar, karena satu kesalahan konfigurasi bisa memutus seluruh jalur.",
+      "analogi": "MPLS seperti kantor pos yang menempel stiker kode di tiap kiriman, lalu petugas hanya membaca stiker itu untuk mengoper cepat tanpa membuka alamat lengkap. LDP adalah kesepakatan antar-kantor pos soal kode mana untuk tujuan mana. Kalau mesin penempel stiker (otomasi) salah setel, kiriman dioper ke jalur buntu dan menumpuk di sana.",
+      "kenapa_penting": "ISP yang menjual VPN antar-cabang atau kabel panjang L2 ke pelanggan memakai MPLS. Otomasi mempercepat kerja, tetapi tanpa pengujian, satu baris konfigurasi yang salah bisa menjatuhkan layanan banyak pelanggan sekaligus.",
+      "istilah": [
+        { "kata": "LSP", "arti": "Label Switched Path: jalur yang sudah diberi stiker label dan dilalui paket melintasi jaringan MPLS." },
+        { "kata": "LDP", "arti": "Protokol yang membuat router MPLS saling memberi tahu label mana untuk tujuan mana." },
+        { "kata": "Otomasi", "arti": "Skrip atau program yang membuat konfigurasi perangkat secara otomatis, menggantikan pengetikan manual." }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Otomasi pembangun LSP yang salah menjatuhkan trafik inti MPLS CoreSite",
+      "kapan": "2021-06",
+      "di_mana": "CoreSite Any2, Los Angeles, AS",
+      "ringkas": "Saat pemeliharaan terencana untuk memasang perangkat baru di inti MPLS mereka, operator pusat data CoreSite mengalami penurunan trafik tajam di titik tukar internet Any2 Los Angeles. Jaringan berjalan terganggu sekitar empat jam. Tim rekayasa semula mengira ini masalah perangkat keras dan membuka kasus darurat ke vendor. Ternyata penyebabnya adalah konfigurasi keliru yang dipasang oleh otomasi buatan sendiri yang membangun jalur berlabel (LSP) di jaringan MPLS mereka.",
+      "kronologi": [
+        { "waktu": "Dini hari, Juni 2021", "peristiwa": "Trafik di Any2 Los Angeles anjlok tajam saat pemeliharaan memasang perangkat baru ke inti MPLS." },
+        { "waktu": "Sekitar 4 jam", "peristiwa": "Jaringan berjalan dalam keadaan terganggu; tim membuka kasus darurat ke vendor karena mengira masalah perangkat keras." },
+        { "waktu": "Setelah ditelusuri", "peristiwa": "Penyebabnya ditemukan: konfigurasi keliru dari otomasi yang membangun LSP, bukan bug perangkat keras." }
+      ],
+      "akar_masalah": "Otomasi buatan sendiri untuk membangun LSP memasang konfigurasi yang keliru ke inti MPLS saat perangkat baru diintegrasikan. Karena gejalanya mirip kegagalan perangkat keras, tim butuh waktu untuk menyingkirkan kemungkinan bug vendor sebelum menemukan bahwa sumbernya adalah skrip otomasi mereka sendiri.",
+      "kaitan": "Modul menganjurkan otomasi untuk mengelola backbone MPLS, tetapi kasus ini menunjukkan sisi bahayanya. Alur Troubleshooting MPLS menyarankan memeriksa dari bawah (IGP, LDP, label, forwarding-table) ke atas; di sini tim justru lama tersesat ke dugaan perangkat keras. Memahami LFIB dan LSP di bagian LDP mempercepat menemukan bahwa masalahnya ada di label, bukan di besi.",
+      "pelajaran": [
+        "Uji perubahan otomasi di lab atau jendela kecil sebelum menyentuh inti produksi.",
+        "Saat trafik hilang mendadak, periksa perubahan konfigurasi terakhir dulu, jangan langsung menyalahkan perangkat keras.",
+        "Sediakan rencana mundur (rollback) dan jendela pemeliharaan yang bisa dibatalkan cepat."
+      ],
+      "sumber": [
+        { "judul": "Any2 LAX outage: pemberitahuan insiden CoreSite di arsip milis NANOG", "penerbit": "NANOG mailing list", "url": "https://lists.nanog.org/archives/list/test@lists.nanog.org/message/53MX4TR2NNODJAIHUHRW4H2YHVKMBGBD" },
+        { "judul": "Did Any2 LAX barf last night: utas diskusi NANOG", "penerbit": "NANOG mailing list", "url": "https://lists.nanog.org/archives/list/test@lists.nanog.org/thread/QNJJCPZQWPLLA7DSQHTP2ZTBIPPVMSPN" }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Backbone MPLS ISP lokal Anda (lima POP, RouterOS v7) baru saja Anda tambahi skrip otomasi untuk membuat LSP. Setelah skrip dijalankan semalam, pelanggan L3VPN antar-cabang mengeluh koneksi putus, padahal sesi BGP dan OSPF terlihat normal. Bagaimana Anda menelusuri masalahnya dari bawah ke atas, dan di mana Anda menduga letak kesalahannya?",
+      "petunjuk": [
+        "IGP dan BGP bisa sehat sementara jalur label (transport) ke loopback PE rusak.",
+        "Periksa apakah ada label untuk loopback tiap PE, dan apakah rute VPN punya label transport.",
+        "Perubahan terakhir adalah skrip otomasi LSP; curigai itu lebih dulu."
+      ],
+      "jawaban": "1. **IGP.** `/routing ospf neighbor print`: semua harus Full dan loopback tiap PE terlihat di `/ip route`.\n2. **LDP.** `/mpls ldp neighbor print`: sesi harus operasional (flag O), alamat transport = loopback. `/mpls forwarding-table print`: harus ada label L untuk loopback tiap PE.\n3. **Label transport.** `/mpls ldp remote-mapping print` dan `/routing route print detail`: pastikan next-hop VPN (loopback PE lain) punya label transport. Bila `immediate-gw` kosong atau tanpa label, inilah masalahnya.\n4. **VPN.** `/routing route print where afi=vpnv4` dan `/ip route print where routing-table=VRF`: rute bertanda y harus aktif. Bila rute ada tetapi tidak aktif, biasanya karena next-hop tidak punya label transport.\n5. **Dugaan.** Sesi BGP/OSPF sehat tetapi VPN putus menunjuk ke jalur label yang rusak. Skrip otomasi LSP kemungkinan mengubah filter label LDP, MTU, atau jalur TE. Batalkan (rollback) perubahan skrip itu, reset sesi LDP bila perlu, lalu verifikasi ulang dari langkah 2."
+    }
+  },
+  "19-mikrotik/10-user-manager-radius": {
+    "intinya": {
+      "satu_kalimat": "RADIUS memusatkan autentikasi pelanggan (siapa Anda, boleh apa, sudah pakai apa); karena pesannya lama dan hanya dilindungi MD5, jalurnya harus diamankan.",
+      "analogi": "Saat pelanggan login, router (satpam pintu) menelepon server RADIUS (kantor pusat) untuk bertanya, 'orang ini boleh masuk?'. Server menjawab boleh atau tolak. BlastRADIUS seperti orang yang menyadap sambungan telepon itu lalu memalsukan jawaban tolak menjadi boleh, karena gemboknya (MD5) sudah bisa ditiru.",
+      "kenapa_penting": "ISP dan RT-RW Net memakai RADIUS untuk ribuan pelanggan PPPoE dan hotspot. Kalau jalur RADIUS lewat internet tanpa pengaman, penyerang bisa lolos autentikasi tanpa tahu password.",
+      "istilah": [
+        { "kata": "RADIUS", "arti": "Protokol yang dipakai router untuk menanyakan ke server apakah seorang pengguna boleh masuk dan dengan hak apa." },
+        { "kata": "Message-Authenticator", "arti": "Atribut tanda tangan pada paket RADIUS yang, bila diwajibkan, menutup serangan pemalsuan seperti BlastRADIUS." },
+        { "kata": "MD5", "arti": "Fungsi hash lama yang sudah bisa ditabrakkan (dua masukan berbeda berhash sama), sehingga tidak aman untuk tanda tangan." }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "BlastRADIUS: kelemahan protokol RADIUS berumur puluhan tahun diungkap",
+      "kapan": "2024-07",
+      "di_mana": "Global (protokol RADIUS)",
+      "ringkas": "Tim peneliti dari beberapa universitas dan perusahaan mengungkap BlastRADIUS (CVE-2024-3596), kelemahan pada protokol RADIUS yang dipakai di seluruh dunia untuk autentikasi jaringan. Penyerang yang berada di tengah jalur RADIUS bisa memalsukan jawaban server, mengubah penolakan menjadi penerimaan, tanpa tahu password atau shared secret. Serangan ini memanfaatkan tabrakan MD5 dan berlaku pada RADIUS lewat UDP dengan metode seperti PAP dan CHAP.",
+      "kronologi": [
+        { "waktu": "9 Juli 2024", "peristiwa": "Peneliti mengumumkan BlastRADIUS (CVE-2024-3596) secara publik setelah koordinasi dengan vendor." },
+        { "waktu": "Inti serangan", "peristiwa": "Penyerang di tengah jalur menyuntik atribut agar terjadi tabrakan MD5, lalu mengubah jawaban server dari tolak menjadi terima." },
+        { "waktu": "Mitigasi", "peristiwa": "Vendor diminta mewajibkan atribut Message-Authenticator pada semua paket; RADIUS sebaiknya dibungkus TLS (RadSec)." }
+      ],
+      "akar_masalah": "RADIUS menandatangani jawaban server dengan MD5 atas isi paket dan shared secret. MD5 sudah bisa ditabrakkan, sehingga penyerang yang menyadap jalur bisa menyusun paket yang membuat tanda tangan jawaban yang sah cocok dengan jawaban palsu buatannya. Metode non-EAP lewat UDP tidak mewajibkan Message-Authenticator, sehingga tidak ada pengaman tambahan.",
+      "kaitan": "Modul membahas serangan ini langsung di bagian Protokol RADIUS: RouterOS sejak 7.15 menambah `require-message-auth` dan menyertakan Message-Authenticator di hampir semua pesan. Bagian Keamanan Jalur AAA menyarankan mewajibkan Message-Authenticator dan memakai RadSec atau VPN untuk jalur yang melewati internet, persis mitigasi serangan ini.",
+      "pelajaran": [
+        "Biarkan `require-message-auth` aktif di RouterOS dan wajibkan Message-Authenticator di server RADIUS.",
+        "Jangan mengirim RADIUS mentah lewat internet; pakai RadSec (RADIUS atas TLS) atau bungkus dengan VPN.",
+        "Letakkan trafik RADIUS di segmen atau VRF manajemen terpisah, bukan di segmen pelanggan."
+      ],
+      "sumber": [
+        { "judul": "BlastRADIUS: the RADIUS protocol vulnerability (CVE-2024-3596)", "penerbit": "blastradius.fail", "url": "https://www.blastradius.fail/" },
+        { "judul": "RADIUS Protocol Vulnerability Exposes Networks to MitM Attacks", "penerbit": "The Hacker News", "url": "https://thehackernews.com/2024/07/radius-protocol-vulnerability-exposes.html" }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "RT-RW Net Anda menaruh server RADIUS (User Manager) di kantor, dan sebuah NAS hotspot di kafe mitra yang terhubung ke kantor lewat internet publik. Setelah membaca soal BlastRADIUS, Anda khawatir. Apa risikonya pada jalur kafe-ke-kantor, dan dua langkah konkret di RouterOS untuk menutupnya?",
+      "petunjuk": [
+        "Masalahnya ada pada RADIUS mentah (UDP) yang lewat internet, tempat orang bisa menyadap dan kini memalsukan jawaban.",
+        "Pikirkan cara mengenkripsi seluruh jalur RADIUS, dan cara mewajibkan tanda tangan pada paket."
+      ],
+      "jawaban": "1. **Risiko.** RADIUS lewat UDP di internet bisa disadap, dan dengan BlastRADIUS, penyerang di tengah jalur bisa memalsukan Access-Accept, meloloskan pengguna tanpa tahu password atau secret.\n2. **Langkah pertama: enkripsi jalur.** Bungkus sambungan kafe-ke-kantor dengan VPN (WireGuard atau IPsec), atau pakai `protocol=radsec` (RADIUS di atas TLS) di `/radius`. Dengan begitu paket RADIUS tidak lagi terbuka di internet.\n3. **Langkah kedua: wajibkan tanda tangan.** Pastikan `require-message-auth` tetap aktif di klien `/radius` dan server User Manager mewajibkan Message-Authenticator. Ini menutup jalur pemalsuan BlastRADIUS.\n4. **Pengerasan tambahan.** Pakai shared secret panjang dan acak (minimal 20 karakter) khusus untuk NAS itu, batasi firewall agar UDP 1812, 1813, dan 3799 hanya dari alamat yang dikenal, dan taruh trafik RADIUS di segmen atau VRF manajemen terpisah."
+    }
+  },
+  "19-mikrotik/11-crs-switching": {
+    "intinya": {
+      "satu_kalimat": "Switch CRS memindahkan trafik lewat switch chip dengan kecepatan kabel; tugas Anda menjaga trafik tetap di chip dan mengamankan lapisan 2, termasuk dari server DHCP liar.",
+      "analogi": "Server DHCP seperti loket resmi yang membagikan nomor antre (alamat IP) ke tiap orang yang masuk. Kalau ada orang iseng memasang loket palsu di dekat pintu dan membagi nomor ngawur lebih cepat dari loket resmi, pengunjung memegang nomor yang salah dan tidak bisa dilayani. DHCP snooping adalah satpam yang hanya mengizinkan loket resmi dan menolak nomor dari loket gelap.",
+      "kenapa_penting": "Di RT-RW Net atau kantor, satu router pelanggan yang dicolok terbalik bisa membagikan alamat IP ke semua orang di segmen itu dan memutus mereka dari internet. DHCP snooping di switch menutup kasus klasik ini.",
+      "istilah": [
+        { "kata": "DHCP", "arti": "Layanan yang memberi alamat IP otomatis ke perangkat yang baru tersambung ke jaringan." },
+        { "kata": "Server DHCP liar", "arti": "Server DHCP tak sah (sering tak sengaja, dari router pelanggan) yang ikut membagikan alamat dan mengacaukan jaringan." },
+        { "kata": "DHCP snooping", "arti": "Fitur switch yang hanya mempercayai balasan DHCP dari port tepercaya dan membuang yang datang dari port lain." }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Server DHCP liar di asrama Duke membagikan alamat salah hampir sepekan",
+      "kapan": "2000",
+      "di_mana": "Duke University (jaringan asrama ResNet), AS",
+      "ringkas": "Di jaringan asrama Universitas Duke, mahasiswa mengeluh tidak bisa mengakses jaringan. Alamat IP mereka berubah dari jaringan kampus yang benar (152.16.x.x) menjadi alamat privat ngawur seperti 10.0.1.x. Penyebabnya sebuah server DHCP liar yang dipasang mahasiswa di segmen yang sama. Karena berada lebih dekat ke klien, server liar itu sering menjawab lebih dulu daripada server DHCP resmi kampus. Masalah ini butuh hampir sepekan untuk diselesaikan.",
+      "kronologi": [
+        { "waktu": "Masa ujian", "peristiwa": "Mahasiswa melapor jaringan putus; alamat IP banyak komputer berubah menjadi 10.0.1.x, bukan 152.16.x.x milik kampus." },
+        { "waktu": "Penelusuran", "peristiwa": "Staf menemukan server DHCP liar di segmen yang sama; karena lebih dekat, ia menjawab permintaan lebih cepat dari server resmi." },
+        { "waktu": "Hampir sepekan", "peristiwa": "Insiden butuh hampir satu minggu untuk tuntas ditangani." }
+      ],
+      "akar_masalah": "DHCP bekerja dengan prinsip siapa cepat dia dapat: klien memakai balasan pertama yang datang. Server liar yang berada di segmen L2 yang sama, lebih dekat ke klien, sering mengalahkan server resmi. Tanpa penyaringan di sisi switch, jaringan tidak bisa membedakan balasan DHCP yang sah dari yang liar.",
+      "kaitan": "Ini kasus yang persis ditutup oleh DHCP snooping di bagian Keamanan L2 Lain: tandai hanya port menuju server sah sebagai `trusted`, dan switch membuang balasan DHCP dari port lain. Bagian Konteks RT-RW Net Indonesia menyebut skenario yang sama: router pelanggan dipasang terbalik lalu membagikan DHCP ke seluruh RW.",
+      "pelajaran": [
+        "Aktifkan DHCP snooping dan tandai hanya port menuju server DHCP sah sebagai tepercaya.",
+        "Server DHCP liar sering tidak disengaja (router pelanggan salah colok); rancang jaringan agar tahan terhadapnya.",
+        "Di chip yang mendukung, DHCP snooping berjalan di hardware sehingga tidak membebani CPU."
+      ],
+      "sumber": [
+        { "judul": "Address Unknown (rogue DHCP di ResNet Duke)", "penerbit": "Computerworld", "url": "https://www.computerworld.com/article/1365960/address-unknown.html" },
+        { "judul": "About rogue DHCP servers on the network", "penerbit": "Indiana University Knowledge Base", "url": "https://kb.iu.edu/d/akpy" }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Di sebuah sekolah, komputer di satu lab tiba-tiba tidak bisa internet. Saat diperiksa, sebagian mendapat IP 192.168.1.x (bukan 10.10.x.x milik sekolah), sebagian lain normal. Yang bermasalah hanya komputer yang baru dinyalakan pagi itu. Apa dugaan Anda, bagaimana menemukan sumbernya, dan bagaimana mencegahnya berulang dengan switch MikroTik?",
+      "petunjuk": [
+        "Komputer yang baru booting meminta DHCP; yang sudah menyala sejak kemarin masih memegang alamat lama. Itu petunjuk kuat.",
+        "Dua server menjawab DHCP, dan yang lebih cepat menang. Cari perangkat yang membagikan 192.168.1.x.",
+        "Di switch, ada fitur yang hanya mempercayai balasan DHCP dari port tertentu."
+      ],
+      "jawaban": "1. **Dugaan.** Ada server DHCP liar, kemungkinan sebuah router rumahan atau AP yang dicolok ke lab, yang membagikan 192.168.1.x. Hanya komputer yang baru booting yang terkena, karena merekalah yang baru meminta DHCP dan kebetulan dijawab lebih dulu oleh server liar.\n2. **Temukan sumbernya.** Lihat dari port mana balasan 192.168.1.x datang: periksa tabel host bridge dan MAC (`/interface bridge host print`), aktifkan DHCP snooping agar balasan liar tercatat, atau lepas-pasang port untuk mempersempit. Cari perangkat konsumer yang DHCP-nya menyala.\n3. **Kenapa server liar menang.** Ia berada di segmen L2 yang sama dan lebih dekat, jadi balasannya sampai lebih dulu; klien memakai balasan pertama.\n4. **Cegah berulang.** Aktifkan `/interface bridge set bridge1 dhcp-snooping=yes`, lalu tandai hanya port uplink menuju server sekolah sebagai `trusted` (`/interface bridge port set [find interface=...] trusted=yes`). Balasan DHCP dari port lab mana pun akan dibuang. Pada chip yang mendukung, ini berjalan di hardware."
+    }
+  }
+}

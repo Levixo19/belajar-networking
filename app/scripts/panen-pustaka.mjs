@@ -369,7 +369,8 @@ export function panenMateri(akarMateri = path.join(REPO, 'materi')) {
     const tahap = modul.split('/')[0]
     let diKode = false
     for (const b of baca(berkas).split('\n')) {
-      if (/^\s*(```|~~~)/.test(b)) { diKode = !diKode; continue }
+      // Pagar juga dikenali bila menempel pada penanda daftar ("2. ```").
+      if (/^\s*(?:(?:\d+[.)]|[-*+])\s+)?(```|~~~)/.test(b)) { diKode = !diKode; continue }
       if (diKode) continue
       const m = BUTIR.exec(b)
       if (!m) continue

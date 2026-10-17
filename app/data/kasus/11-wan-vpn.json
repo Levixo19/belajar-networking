@@ -1,0 +1,279 @@
+{
+  "11-wan-vpn/01-teknologi-wan": {
+    "intinya": {
+      "satu_kalimat": "WAN menghubungkan lokasi yang berjauhan lewat media yang Anda sewa dari provider, sehingga bandwidth mahal, perubahan lambat, dan jaminannya diatur lewat SLA.",
+      "analogi": "Kalau LAN ibarat jalan di dalam kompleks yang Anda bangun sendiri, WAN ibarat menyewa jalur ekspedisi antarkota. Anda tidak memiliki jalannya, hanya membayar jatah muatan tertentu (CIR) dengan janji waktu antar (SLA). Dua ekspedisi berbeda pun bisa lewat jembatan yang sama, jadi satu jembatan ambruk memutus keduanya. Itulah kenapa 'dua jalur cadangan' belum tentu benar-benar terpisah.",
+      "kenapa_penting": "Setiap kantor cabang, sekolah, atau klinik yang terhubung ke pusat memakai WAN. Memahami SLA, CIR, dan redundansi membantu Anda memilih layanan yang tepat dan tidak tertipu angka pemasaran, serta menyiapkan jalur cadangan yang benar-benar terpisah secara fisik.",
+      "istilah": [
+        {
+          "kata": "SLA",
+          "arti": "Service Level Agreement: janji provider soal uptime, latency, dan jitter, beserta kompensasinya. 'Uptime 99,9%' berarti sampai 8,76 jam mati per tahun masih dianggap wajar."
+        },
+        {
+          "kata": "CIR",
+          "arti": "Committed Information Rate: bandwidth yang benar-benar dijamin. Sisanya sering best effort yang bisa hilang saat jaringan provider padat."
+        },
+        {
+          "kata": "Last mile",
+          "arti": "Koneksi fisik dari lokasi Anda ke jaringan provider. Sering menjadi titik tunggal yang membuat dua layanan ikut mati bersamaan."
+        },
+        {
+          "kata": "MPLS",
+          "arti": "Teknologi provider yang meneruskan paket berdasarkan label, bukan alamat IP. Andal dan ber-SLA, tetapi mahal dan tidak mengenkripsi."
+        },
+        {
+          "kata": "SD-WAN",
+          "arti": "Overlay di atas transport apa pun (internet, MPLS, seluler) dengan kontrol terpusat, memilih jalur terbaik dan mengeluarkan trafik internet langsung dari cabang."
+        },
+        {
+          "kata": "Diverse path",
+          "arti": "Jaminan tertulis bahwa dua link melewati jalur fisik yang berbeda, agar satu galian atau putus kabel tidak memutus keduanya."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Palapa Ring Barat putus di dua titik, internet Anambas dan Natuna padam",
+      "kapan": "2021-02-02",
+      "di_mana": "Kepulauan Anambas dan Natuna, Kepulauan Riau, Indonesia",
+      "ringkas": "Jaringan serat optik Palapa Ring Barat menghubungkan Batam-Anambas dan Natuna-Singkawang dengan jalur dua arah dan cadangan. Pada 21 Januari 2021 kabel laut dari Batam putus kena jangkar kapal, tetapi layanan tetap jalan karena disuplai dari arah Singkawang. Masalah muncul saat jalur Singkawang juga putus pada 2 Februari akibat proyek galian di darat, sehingga Anambas dan Natuna kehilangan internet beberapa hari.",
+      "kronologi": [
+        {
+          "waktu": "21 Januari 2021",
+          "peristiwa": "Kabel laut Tanjung Bemban (Batam) ke Tarempa putus sekitar 19,4 km dari Tanjung Bemban, kena jangkar kapal asing yang mesinnya rusak lalu buang jangkar sembarangan. Layanan belum terganggu karena bandwidth disuplai dari Singkawang."
+        },
+        {
+          "waktu": "2 Februari 2021 siang",
+          "peristiwa": "Proyek pembangunan kabel optik di Ranai memutus sambungan darat Ranai ke Tarempa, sehingga Tarempa (Anambas) kehilangan bandwidth, alias blackout."
+        },
+        {
+          "waktu": "2 Februari 2021",
+          "peristiwa": "Pada saat bersamaan, perangkat Palapa Ring Barat di jalur Ranai ke Singkawang juga bermasalah."
+        },
+        {
+          "waktu": "3 Februari 2021",
+          "peristiwa": "Gangguan perangkat Ranai ke Singkawang diperbaiki."
+        },
+        {
+          "waktu": "5 Februari 2021",
+          "peristiwa": "Sambungan Ranai ke Tarempa diperbaiki, dan internet di Kepulauan Anambas bisa dipakai kembali."
+        },
+        {
+          "waktu": "10-11 Februari 2021",
+          "peristiwa": "Lewat keterangan tertulis dan konferensi pers, Dirut PT Palapa Ring Barat Syarif Lumintarjo menjelaskan kronologinya. Jaringan punya dua arah dan main backup, tetapi tidak dirancang menghadapi dua titik putus (double FO cut) sekaligus."
+        }
+      ],
+      "akar_masalah": "Palapa Ring Barat punya jalur dua arah: bila satu sisi putus, trafik dialihkan ke sisi lain. Perlindungan itu runtuh karena dua titik putus hampir bersamaan. Sisi Batam sudah putus sejak 21 Januari oleh jangkar kapal, lalu sisi Singkawang putus pada 2 Februari oleh galian di darat. Jaringan tidak dirancang untuk menghadapi dua pemotongan serat sekaligus, sehingga Anambas dan Natuna kehilangan kedua arah jalurnya.",
+      "kaitan": "Bagian 7 (Desain WAN) membahas tingkat redundansi dan menekankan pertanyaan 'apakah kedua jalur melewati jalur fisik yang sama?'. Kasus ini memperlihatkan batas redundansi dua arah: ketika satu sisi sudah putus, jaringan sebenarnya berjalan tanpa cadangan, dan pemotongan kedua langsung memadamkannya. Penyebabnya pun gangguan fisik last mile, bukan konfigurasi.",
+      "pelajaran": [
+        "Redundansi dua arah hanya melindungi satu pemotongan. Begitu satu sisi putus, perbaiki segera, karena jaringan sedang berjalan tanpa cadangan.",
+        "Pantau status tiap jalur dan beri tahu operator lain saat ada penggalian, agar proyek darat tidak memutus serat yang sedang menjadi satu-satunya penopang.",
+        "Untuk daerah yang hanya dilayani satu sistem kabel, siapkan jalur cadangan berbeda media, misalnya radio atau seluler, untuk keadaan darurat."
+      ],
+      "sumber": [
+        {
+          "judul": "Palapa Ring Barat Putus, Natuna-Anambas Sempat Tanpa Internet",
+          "penerbit": "detikINET",
+          "url": "https://inet.detik.com/telecommunication/d-5368785/palapa-ring-barat-putus-natuna-anambas-sempat-tanpa-internet"
+        },
+        {
+          "judul": "Kronologi Blackout Internet di Anambas-Natuna",
+          "penerbit": "detikINET",
+          "url": "https://inet.detik.com/telecommunication/d-5370742/kronologi-blackout-internet-di-anambas-natuna"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Klinik pratama di Kupang wajib memakai aplikasi BPJS daring sepanjang jam layanan, 12 jam sehari setiap hari. Ada dua penawaran: ISP A dengan SLA 99,5% dan MTTR 24 jam, serta ISP B dengan SLA 99,9% dan MTTR 4 jam yang lebih mahal. Kompensasi keduanya berupa potongan tagihan. Pemilik bertanya: mana yang sebaiknya dipilih, dan apakah satu langganan sudah cukup?",
+      "petunjuk": [
+        "Ubah persentase SLA menjadi jam mati per tahun; satu tahun sama dengan 8.760 jam.",
+        "MTTR menunjukkan berapa lama satu gangguan bisa berlangsung. Bandingkan dengan jam layanan klinik.",
+        "Potongan tagihan tidak mengganti pasien yang batal dilayani. Apa yang bisa menutup celah itu?"
+      ],
+      "jawaban": "1. Hitung batas mati. SLA 99,5% berarti 0,5% x 8.760 = 43,8 jam per tahun masih dianggap wajar. SLA 99,9% berarti 8,76 jam per tahun (Bagian 1).\n2. Baca MTTR. Dengan ISP A, satu gangguan bisa berlangsung sehari penuh, artinya satu hari layanan klinik hilang. ISP B menjanjikan perbaikan dalam 4 jam.\n3. Pahami kompensasinya. SLA hanya memberi potongan tagihan, bukan ganti rugi atas kerugian klinik (Bagian 1).\n4. Rekomendasikan. Pilih ISP B sebagai jalur utama bila anggaran memungkinkan, tetapi jangan bergantung pada satu jalur. Tambahkan cadangan dengan media berbeda, misalnya modem 4G/5G (Bagian 7, Redundansi).\n5. Atur failover. Rute default utama lewat ISP B dengan pengecekan jalur, misalnya recursive route dan `check-gateway=ping` di MikroTik, lalu rute cadangan lewat LTE dengan distance lebih besar (Bagian 7, Failover WAN).\n6. Uji dan catat. Matikan link utama saat jam sepi, pastikan aplikasi BPJS tetap bisa dibuka lewat LTE, lalu catat berapa detik peralihannya."
+    }
+  },
+  "11-wan-vpn/02-tunneling-vpn": {
+    "intinya": {
+      "satu_kalimat": "VPN membungkus (tunnel) lalu mengenkripsi lalu lintas Anda agar aman melintasi jaringan publik, menyambungkan kantor ke kantor atau pekerja jarak jauh ke jaringan kantor.",
+      "analogi": "VPN seperti mengirim surat lewat amplop bersegel di dalam amplop biasa: kurir (internet) hanya melihat amplop luar beralamat kantor pos ke kantor pos, sedangkan isi aslinya tersegel sampai tujuan. Gerbang VPN adalah ruang sortir tempat segel dibuka. Kalau ruang sortir itu punya celah, pencuri bisa masuk tanpa kunci dan menyalin semua kartu akses pegawai, sehingga menambal celah saja tak cukup; kartu yang telanjur tersalin harus diganti.",
+      "kenapa_penting": "Pekerja jarak jauh dan antarcabang bergantung pada VPN setiap hari. Memahami tunnel, IPsec, dan WireGuard membantu Anda memilih dan mendiagnosisnya. Sama penting: gerbang VPN adalah pintu ke seluruh jaringan internal, jadi ia wajib ditambal dan kredensialnya dijaga.",
+      "istilah": [
+        {
+          "kata": "Tunnel",
+          "arti": "Membungkus paket satu protokol di dalam protokol lain. Jaringan logis yang terbentuk disebut overlay, jaringan fisik pembawanya disebut underlay."
+        },
+        {
+          "kata": "IPsec",
+          "arti": "Kerangka enkripsi standar di layer 3. Memakai ESP untuk mengenkripsi, dan IKEv2 untuk menyepakati kunci. Lazim untuk VPN antarkantor."
+        },
+        {
+          "kata": "WireGuard",
+          "arti": "VPN modern berukuran kode kecil dengan kripto tetap tanpa negosiasi, sehingga cepat, sederhana, dan mudah diaudit."
+        },
+        {
+          "kata": "Remote access VPN",
+          "arti": "VPN untuk perangkat perorangan masuk ke jaringan kantor, misalnya SSL VPN seperti Pulse Connect Secure atau Cisco AnyConnect, IKEv2/EAP, atau WireGuard."
+        },
+        {
+          "kata": "Split tunnel",
+          "arti": "Hanya trafik ke jaringan kantor yang lewat VPN; trafik internet keluar langsung. Lawannya full tunnel, yang mengirim semua trafik lewat VPN."
+        },
+        {
+          "kata": "MTU / MSS clamping",
+          "arti": "Karena tunnel menambah header, ruang untuk data mengecil. MSS clamping menyesuaikan ukuran agar transfer besar tidak menggantung."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Celah di gateway VPN Pulse Secure dieksploitasi untuk membobol jaringan internal",
+      "kapan": "2019",
+      "di_mana": "Global",
+      "ringkas": "Pulse Connect Secure adalah gerbang VPN akses jarak jauh yang banyak dipakai organisasi. Celah CVE-2019-11510 memungkinkan penyerang dari jauh, tanpa login, membaca berkas sembarang di gerbang itu. Dampaknya, penyerang bisa memperoleh daftar pengguna aktif beserta kredensial teks terbuka. Patch terbit April 2019, tetapi pada Januari 2020 CISA masih mencatat laporan penjahat siber memakai server yang belum ditambal untuk memasang ransomware.",
+      "kronologi": [
+        {
+          "waktu": "April 2019",
+          "peristiwa": "Pulse Secure mengungkap CVE-2019-11510 dan merilis tambalan. Celah ini memungkinkan pembacaan berkas sembarang dari jauh tanpa autentikasi pada Pulse Connect Secure dan Pulse Policy Secure."
+        },
+        {
+          "waktu": "31 Juli 2019",
+          "peristiwa": "Eksploitasi penuh didemonstrasikan secara publik: hash sesi admin dipakai untuk mendapat akses shell penuh di gerbang VPN."
+        },
+        {
+          "waktu": "Dampak celah",
+          "peristiwa": "Pada server yang belum ditambal, penyerang bisa memperoleh daftar pengguna aktif beserta kredensial mereka dalam teks terbuka."
+        },
+        {
+          "waktu": "Januari 2020",
+          "peristiwa": "CISA menerbitkan peringatan AA20-010A tentang eksploitasi yang berlanjut, termasuk laporan media bahwa server Pulse Secure yang belum ditambal dipakai memasang ransomware REvil (Sodinokibi)."
+        },
+        {
+          "waktu": "Rekomendasi CISA",
+          "peristiwa": "Segera pasang tambalan dari vendor, karena menurut CISA tidak ada solusi sementara yang layak selain tambalan itu."
+        }
+      ],
+      "akar_masalah": "Gerbang VPN akses jarak jauh berada di tepi internet dan menjadi pintu ke jaringan internal. CVE-2019-11510 membuat berkas di gerbang itu bisa dibaca tanpa login, termasuk kredensial teks terbuka. Kalau kredensial sempat tercuri sebelum penambalan, patch saja tidak menutup akses: kredensial lama tetap berlaku sampai di-reset.",
+      "kaitan": "Tabel di Bagian 6 (Remote Access VPN) memuat solusi SSL VPN seperti Cisco AnyConnect; Pulse Connect Secure adalah produk sejenis. Kasus ini menegaskan sisi yang jarang dibahas: VPN mengenkripsi data dalam perjalanan, tetapi gerbangnya sendiri adalah sasaran bernilai tinggi yang wajib ditambal cepat. Tabel yang sama menyebut ZTNA sebagai pengganti VPN modern yang membatasi akses per aplikasi.",
+      "pelajaran": [
+        "Perlakukan gerbang VPN sebagai aset paling kritis: pantau dan pasang tambalan keamanannya secepat mungkin.",
+        "Setelah menambal celah yang membocorkan kredensial, reset kata sandi dan sesi, karena yang sudah dicuri tetap berlaku.",
+        "Kurangi permukaan serangan: batasi siapa yang bisa menjangkau gerbang, aktifkan MFA, dan pertimbangkan model ZTNA untuk akses per aplikasi."
+      ],
+      "sumber": [
+        {
+          "judul": "Alert AA20-010A: Continued Exploitation of Pulse Secure VPN Vulnerability",
+          "penerbit": "CISA (US-CERT)",
+          "url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa20-010a"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Distributor di Surabaya mewajibkan 40 pegawai yang bekerja dari rumah memakai WireGuard ke kantor dengan `AllowedIPs = 0.0.0.0/0` (full tunnel). Internet kantor 50 Mbps simetris. Keluhan muncul tiap pagi: rapat video tersendat, dan aplikasi gudang di server kantor (192.168.10.20) ikut lambat. Saat tidak ada rapat, semuanya lancar. Apa penyebabnya, dan perubahan apa yang Anda usulkan?",
+      "petunjuk": [
+        "Dengan full tunnel, lewat mana trafik rapat video pegawai menuju internet?",
+        "Hitung kebutuhan bandwidth 40 pegawai x 2-4 Mbps video, dan ingat trafik itu melewati link kantor dua kali: masuk lalu keluar lagi.",
+        "AllowedIPs di sisi klien menentukan trafik apa yang masuk ke tunnel."
+      ],
+      "jawaban": "1. Amati. Lambat hanya saat banyak rapat video, dan aplikasi gudang ikut lambat karena berbagi link kantor yang sama.\n2. Susun dugaan. Full tunnel memutar semua trafik internet pegawai lewat kantor (Bagian 6, Split Tunnel vs Full Tunnel). Setiap rapat video masuk ke kantor lewat tunnel, lalu keluar lagi ke internet.\n3. Hitung. 40 x 2-4 Mbps = 80-160 Mbps per arah, jauh di atas link kantor 50 Mbps. Link kantor menjadi leher botol.\n4. Usulkan split tunnel. Di setiap klien, isi `AllowedIPs` hanya dengan jaringan kantor, misalnya `10.99.0.0/24, 192.168.10.0/24`. Rapat video langsung keluar lewat internet rumah, sedangkan aplikasi gudang tetap lewat tunnel.\n5. Atur DNS. Pastikan nama server internal tetap ditanyakan ke DNS kantor lewat tunnel.\n6. Tutup risikonya. Dengan split tunnel, trafik internet pegawai tidak lagi lewat firewall kantor, jadi wajibkan pembaruan sistem dan perlindungan endpoint di laptop (Bagian 6 menyebut kecenderungan split tunnel plus keamanan endpoint).\n7. Uji. Minta beberapa pegawai rapat video sambil membuka aplikasi gudang, lalu pantau utilisasi link kantor."
+    }
+  },
+  "11-wan-vpn/03-qos": {
+    "intinya": {
+      "satu_kalimat": "QoS tidak menambah bandwidth; ia memutuskan trafik mana yang mengalah saat link padat, agar yang sensitif waktu seperti suara dan video tetap lancar.",
+      "analogi": "QoS seperti aturan di gerbang tol saat macet: ada lajur khusus ambulans (suara dan video) yang jumlahnya kecil tetapi harus selalu lancar, sementara truk muatan besar (unduhan, backup) boleh menunggu. Masalah bufferbloat muncul saat gardu memasang antrean yang terlampau panjang: tidak ada mobil ditolak, tetapi semua, termasuk ambulans, terjebak lama. Solusinya bukan memperpanjang antrean, melainkan membuatnya tetap pendek.",
+      "kenapa_penting": "Di link WAN yang kadang padat, backup besar bisa membuat panggilan video dan aplikasi kantor tersendat. Dengan QoS Anda memutuskan prioritas, dan dengan AQM Anda menjaga antrean tetap pendek sehingga latensi rendah. Ini yang membuat Wi-Fi, warnet, kantor cabang, dan RT/RW Net terasa responsif.",
+      "istilah": [
+        {
+          "kata": "DiffServ / DSCP",
+          "arti": "Cara menandai paket ke beberapa kelas lewat 6 bit DSCP di header IP, lalu tiap router memperlakukan kelas itu sesuai aturannya. EF untuk suara, AF41 untuk video."
+        },
+        {
+          "kata": "Latensi dan jitter",
+          "arti": "Latensi adalah waktu tempuh satu arah; jitter adalah variasinya. VoIP butuh latensi di bawah 150 ms dan jitter di bawah 30 ms."
+        },
+        {
+          "kata": "Shaping vs policing",
+          "arti": "Shaping menahan kelebihan trafik di buffer lalu mengirimnya belakangan; policing langsung membuang atau menurunkan tandanya. Shaping di sisi pelanggan, policing di sisi provider."
+        },
+        {
+          "kata": "LLQ",
+          "arti": "Low Latency Queuing: antrean prioritas untuk suara, tetapi dibatasi (policing) agar kelas lain tidak kelaparan. Maksimal sekitar sepertiga kapasitas link."
+        },
+        {
+          "kata": "AQM",
+          "arti": "Active Queue Management seperti CoDel dan fq_codel: membuang paket lebih awal sebelum buffer penuh, agar antrean tetap pendek dan latensi rendah."
+        },
+        {
+          "kata": "Bufferbloat",
+          "arti": "Latensi berlebih karena perangkat jaringan menyangga terlalu banyak data, sehingga antrean selalu penuh dan paket menunggu lama."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "Bufferbloat: buffer yang terlalu besar bikin latensi melonjak, lalu lahir AQM CoDel",
+      "kapan": "2011",
+      "di_mana": "Global; proyek Bufferbloat.net",
+      "ringkas": "Sekitar 2011, proyek Bufferbloat.net menamai masalah lama: router dan modem menyangga terlalu banyak data. Buffer raksasa dipasang agar paket tidak terbuang, tetapi akibatnya antrean selalu penuh dan latensi melonjak, walau bandwidth besar. Panggilan suara dan game tersendat begitu ada unduhan besar. Solusinya algoritma AQM, yaitu CoDel dan fq_codel, yang menjaga antrean tetap pendek.",
+      "kronologi": [
+        {
+          "waktu": "Sekitar 2011",
+          "peristiwa": "Proyek Bufferbloat.net mendefinisikan bufferbloat sebagai latensi tak diinginkan karena perangkat jaringan menyangga terlalu banyak data. Istilah ini dikaitkan dengan karya Jim Gettys dan Kathleen Nichols."
+        },
+        {
+          "waktu": "Akar kebiasaan",
+          "peristiwa": "Pembuat perangkat memasang buffer besar di mana-mana untuk menghindari packet loss (optimasi bandwidth), tetapi itu merusak latensi."
+        },
+        {
+          "waktu": "Gejala khas",
+          "peristiwa": "Satu unduhan atau unggahan besar membuat panggilan VoIP dan game tersendat, meski penggunanya merasa 'bandwidth cukup'."
+        },
+        {
+          "waktu": "Januari 2018",
+          "peristiwa": "RFC 8289 (CoDel) dan RFC 8290 (FQ-CoDel) terbit, membakukan AQM untuk melawan bufferbloat dan mengisolasi trafik latensi rendah seperti DNS, web, dan video conference."
+        },
+        {
+          "waktu": "Penerapan di Linux",
+          "peristiwa": "CAKE menggabungkan shaping, AQM (fq_codel), fair queuing, dan DiffServ dalam satu qdisc, sehingga satu baris konfigurasi cukup untuk link rumahan dan kantor kecil (Bagian 8 modul ini)."
+        }
+      ],
+      "akar_masalah": "TCP melambat ketika melihat tanda packet loss. Buffer yang terlampau besar menunda tanda itu: antrean menampung data terus tanpa membuang, sehingga TCP tetap mengirim penuh dan antrean tidak pernah kosong. Akibatnya paket kecil yang sensitif waktu, seperti VoIP, antre lama di belakang data besar. AQM memperbaikinya dengan membuang paket lebih awal sebelum buffer penuh, agar TCP cepat melambat dan antrean tetap pendek.",
+      "kaitan": "Bagian 4 (Congestion Avoidance) membahas tail drop yang memicu TCP global synchronization dan WRED yang membuang lebih awal; AQM CoDel sejalan dengan ide membuang lebih awal. Bagian 8 (QoS di Linux) menyebut CAKE menggabungkan shaping, AQM (fq_codel), fair queuing, dan DiffServ, serta menyebutnya solusi terbaik untuk bufferbloat dan merujuk 05-transport/04.",
+      "pelajaran": [
+        "Kualitas suara dan game ditentukan latensi, dan bandwidth besar tidak menjaminnya. Buffer besar menukar latensi demi bandwidth.",
+        "Di router Linux atau kantor kecil, satu baris CAKE (`tc qdisc replace dev eth0 root cake bandwidth ... diffserv4`) sering mengalahkan buffer bawaan.",
+        "Prioritas QoS saja tidak cukup bila buffer sudah bengkak; pakai AQM agar antrean tetap pendek."
+      ],
+      "sumber": [
+        {
+          "judul": "Introduction to Bufferbloat",
+          "penerbit": "Bufferbloat.net",
+          "url": "https://www.bufferbloat.net/projects/bloat/wiki/Introduction/"
+        },
+        {
+          "judul": "RFC 8289: Controlled Delay Active Queue Management (CoDel)",
+          "penerbit": "IETF (Nichols, Jacobson, McGregor, Iyengar)",
+          "url": "https://www.rfc-editor.org/rfc/rfc8289.html"
+        },
+        {
+          "judul": "RFC 8290: The Flow Queue CoDel Packet Scheduler and AQM Algorithm (FQ-CoDel)",
+          "penerbit": "IETF (Hoeiland-Joergensen, McKenney, Taht, Gettys, Dumazet)",
+          "url": "https://www.rfc-editor.org/rfc/rfc8290.html"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Warnet dan kedai kopi di Malang memakai satu MikroTik dengan langganan fiber 50 Mbps. Keluhan: saat ada yang mengunggah video besar atau backup berjalan, ping dari komputer lain melonjak dari 15 ms ke 300-900 ms, dan panggilan video pelanggan tersendat. Padahal speed test sering menunjukkan angka mendekati 50 Mbps. Pemilik minta 'tambah QoS'. Apa diagnosis Anda, dan langkah perbaikannya?",
+      "petunjuk": [
+        "Speed test mendekati 50 Mbps berarti bandwidth bukan masalahnya. Perhatikan latensi saat link penuh.",
+        "Ke arah mana link penuh saat unggahan besar, dan di perangkat siapa antrean terbentuk?",
+        "Pikirkan kenapa antrean bisa memanjang berlebihan, dan apa yang menjaganya tetap pendek."
+      ],
+      "jawaban": "1. Amati gejalanya. Bandwidth tercapai, tetapi latensi melonjak saat link penuh. Ini pola khas bufferbloat: antrean di perangkat memanjang sehingga paket menunggu lama.\n2. Tentukan arah dan tempat. Saat unggahan besar, arah upload (keluar) penuh, dan antrean terbentuk di MikroTik Anda, sisi yang bisa Anda kendalikan.\n3. Uji dugaan. Jalankan ping berkelanjutan ke gateway sambil memulai unggahan besar. Kalau ping ikut melonjak, bufferbloat terbukti.\n4. Perbaiki dengan menjaga antrean pendek. Terapkan shaping tepat di bawah kapasitas agar antrean terbentuk di router Anda, bukan di perangkat ISP, lalu pakai AQM. Di MikroTik, Queue Tree dengan PCQ membagi rata antarpengguna; di Linux, satu baris CAKE pada arah keluar menggabungkan shaping dan AQM sekaligus.\n5. Tambahkan prioritas bila perlu. Tandai trafik panggilan video agar didahulukan, dan batasi backup ke kelas rendah (scavenger).\n6. Simpulkan ke pemilik. Masalahnya bukan kurang bandwidth, melainkan antrean yang terlalu panjang. Dengan shaping plus AQM, ping tetap rendah walau link penuh, dan panggilan video lancar."
+    }
+  }
+}

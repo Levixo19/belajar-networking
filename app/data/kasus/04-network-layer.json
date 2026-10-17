@@ -1,0 +1,498 @@
+{
+  "04-network-layer/01-ipv4": {
+    "intinya": {
+      "satu_kalimat": "Alamat IPv4 adalah nomor 32 bit yang terbagi menjadi bagian jaringan dan bagian host, sehingga router cukup mengenal jaringan tujuan, bukan setiap perangkat di dunia.",
+      "analogi": "Alamat IPv4 mirip alamat surat: bagian jaringan seperti nama jalan dan kota, bagian host seperti nomor rumah. Kantor pos di Jakarta cukup tahu bahwa surat untuk Jalan Malioboro dikirim ke arah Yogyakarta, tanpa menghafal setiap rumah di sana. Subnet mask menandai sampai mana nama jalan itu berakhir. Bedanya, alamat surat bisa terus ditambah, sedangkan alamat IPv4 hanya sekitar 4,3 miliar dan stok barunya sudah habis dibagikan.",
+      "kenapa_penting": "Setiap kali Anda mengatur router rumah, memasang printer jaringan, atau melihat laptop mendapat alamat `169.254.x.x` karena DHCP gagal, Anda sedang membaca alamat IPv4. ISP yang kekurangan IPv4 publik memberi pelanggan alamat dari blok CGNAT 100.64.0.0/10, sehingga port forwarding di rumah sering tidak bisa dipakai.",
+      "istilah": [
+        {
+          "kata": "Alamat IPv4",
+          "arti": "Nomor 32 bit yang ditulis sebagai empat angka 0-255 dipisah titik, misalnya 192.168.1.10. Jumlahnya 2 pangkat 32, yaitu 4.294.967.296 alamat."
+        },
+        {
+          "kata": "Prefix dan subnet mask",
+          "arti": "Penanda batas bagian jaringan dan bagian host. /24 sama dengan 255.255.255.0: 24 bit pertama adalah bagian jaringan."
+        },
+        {
+          "kata": "Blok /8",
+          "arti": "Blok yang 8 bit pertamanya tetap, berisi 16.777.216 alamat atau 1/256 dari seluruh ruang IPv4. IANA membagikan alamat ke RIR dalam blok sebesar ini."
+        },
+        {
+          "kata": "IANA",
+          "arti": "Internet Assigned Numbers Authority, fungsi di bawah ICANN yang memegang stok alamat IP global dan membagikannya ke lima RIR."
+        },
+        {
+          "kata": "RIR dan NIR",
+          "arti": "RIR adalah pengelola alamat per kawasan; untuk Asia Pasifik namanya APNIC. NIR adalah pengelola tingkat negara di bawahnya; di Indonesia namanya IDNIC, dikelola APJII."
+        },
+        {
+          "kata": "CGNAT",
+          "arti": "Carrier-grade NAT: ISP memberi pelanggan alamat dari blok 100.64.0.0/10, lalu menerjemahkannya lagi ke sedikit alamat publik milik ISP."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "Stok IPv4 dunia habis: IANA membagikan lima blok /8 terakhir, dan pemohon di Indonesia kini paling banyak mendapat /23",
+      "kapan": "2011-02-03",
+      "di_mana": "IANA dan lima RIR, berdampak sampai APNIC dan IDNIC di Indonesia",
+      "ringkas": "Pada 31 Januari 2011, IANA memberi APNIC dua blok /8, sekitar 33 juta alamat. Pemberian itu memicu kebijakan global: lima blok /8 yang tersisa dibagi rata ke lima RIR, dan pembagian itu dilakukan pada 3 Februari 2011. Sejak hari itu IANA tidak punya lagi alamat IPv4 untuk dibagikan. APNIC, pengelola kawasan Asia Pasifik termasuk Indonesia, lalu menjatah blok terakhirnya (103/8) sedikit demi sedikit. Kini pemohon yang disetujui lewat IDNIC paling banyak mendapat /23, yaitu 512 alamat.",
+      "kronologi": [
+        {
+          "waktu": "16 Februari 2009",
+          "peristiwa": "APNIC menerapkan kebijakan blok /8 terakhir (prop-062): setiap anggota hanya boleh menerima paling banyak /22, yaitu 1.024 alamat, dari blok terakhir 103/8."
+        },
+        {
+          "waktu": "31 Januari 2011",
+          "peristiwa": "IANA memberi APNIC dua blok /8 (sekitar 33 juta alamat). Stok IANA tinggal lima blok, dan kebijakan global untuk membagi rata sisanya pun terpicu."
+        },
+        {
+          "waktu": "3 Februari 2011",
+          "peristiwa": "Dalam upacara di Miami, IANA membagikan lima blok terakhir ke AFRINIC, APNIC, ARIN, LACNIC, dan RIPE NCC, masing-masing satu /8. APNIC menerima 103/8."
+        },
+        {
+          "waktu": "18 April 2011",
+          "peristiwa": "APNIC mulai membagikan alamat dari 103/8, dengan jatah paling banyak /22 per anggota."
+        },
+        {
+          "waktu": "28 Februari 2019",
+          "peristiwa": "APNIC memperkecil jatah dari 103/8 menjadi paling banyak /23 (prop-127). Menurut APNIC, perubahan ini memperpanjang umur 103/8 sekitar dua tahun."
+        },
+        {
+          "waktu": "Hingga 2020",
+          "peristiwa": "ARIN (2015), RIPE NCC (2019), dan LACNIC (2020) kehabisan stok IPv4 yang tersedia, sementara APNIC dan AFRINIC terus menjatah sisanya."
+        },
+        {
+          "waktu": "Oktober 2023",
+          "peristiwa": "APNIC memperkirakan pembagian terakhir dari 103/8 terjadi pekan itu; saat tulisannya dibuat, hanya tersisa 121 blok /24 (30.976 alamat). Pembagian berikutnya memakai alamat yang dikembalikan atau didaur ulang."
+        }
+      ],
+      "akar_masalah": "IPv4 hanya punya 32 bit, jadi totalnya sekitar 4,3 miliar alamat, dan seluruh stok bebas IANA akhirnya terbagi. Dulu, di sistem kelas, organisasi yang butuh 300 alamat bisa diberi satu Kelas B berisi 65.534 host, sehingga puluhan ribu alamat terbuang. CIDR (1993) mengurangi pemborosan itu, tetapi pertumbuhan internet tetap menghabiskan stok. Jalan keluar jangka panjangnya IPv6. Sambil menunggu, operator berbagi alamat dengan NAT dan CGNAT, atau mengambil alih alamat yang tidak terpakai lewat transfer.",
+      "kaitan": "Bagian **Struktur Alamat IPv4** menghitung totalnya, 2 pangkat 32 = 4.294.967.296, dan mencatat bahwa stok itu habis pada 2011; kasus ini adalah peristiwanya. Satu blok /8 berarti 8 bit untuk jaringan dan 24 bit untuk host, yaitu 16.777.216 alamat. Bagian **Kenapa sistem kelas gagal** menjelaskan salah satu sebab stok cepat habis. Blok **100.64.0.0/10: CGNAT** di bagian Alamat Khusus ada karena ISP tidak lagi bisa memberi setiap pelanggan alamat publik.",
+      "pelajaran": [
+        "Hemat alamat publik: pakai alamat RFC 1918 di dalam jaringan, dan simpan alamat publik untuk layanan yang memang harus dijangkau dari internet.",
+        "Kalau kantor atau ISP Anda butuh blok sendiri, rencanakan dengan jatah yang realistis. Lewat IDNIC kini paling banyak /23 (512 alamat), dan blok 103.x.x.x baru boleh ditransfer lima tahun setelah delegasi awal.",
+        "Pasang IPv6 berdampingan dengan IPv4 sejak sekarang, karena alamat IPv4 baru makin sulit didapat."
+      ],
+      "sumber": [
+        {
+          "judul": "Free Pool of IPv4 Address Space Depleted",
+          "penerbit": "Number Resource Organization (NRO)",
+          "url": "https://www.nro.net/ipv4-free-pool-depleted/"
+        },
+        {
+          "judul": "Available Pool of Unallocated IPv4 Internet Addresses Now Completely Emptied",
+          "penerbit": "ICANN",
+          "url": "https://itp.cdn.icann.org/en/files/announcements/release-03feb11-en.pdf"
+        },
+        {
+          "judul": "IPv4 exhaustion",
+          "penerbit": "APNIC",
+          "url": "https://www.apnic.net/manage-ip/ipv4-exhaustion/"
+        },
+        {
+          "judul": "Nearing the end of 103/8",
+          "penerbit": "APNIC Blog",
+          "url": "https://blog.apnic.net/2023/10/09/nearing-the-end-of-103-8/"
+        },
+        {
+          "judul": "Cara Mendapatkan IP Address",
+          "penerbit": "IDNIC-APJII",
+          "url": "https://idnic.net/membership/how-to-get-ip"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Sebuah klinik gigi di Denpasar memakai jaringan 192.168.1.0/24 dengan gateway 192.168.1.1. Teknisi vendor memasang printer baru dengan IP 192.168.1.200, mask 255.255.255.128, dan gateway dikosongkan. PC resepsionis 192.168.1.150/24 bisa mencetak. PC dokter 192.168.1.20/24 tidak bisa, dan `ping 192.168.1.200` dari PC dokter hanya menghasilkan Request timed out. Kabel dan switch sudah dicek normal. Kenapa satu PC bisa dan yang lain tidak, dan bagaimana memperbaikinya?",
+      "petunjuk": [
+        "Hitung network address dan rentang host printer dengan mask /25. Apakah .150 dan .20 termasuk di dalamnya?",
+        "Untuk membalas perangkat di luar jaringannya sendiri, sebuah host butuh apa?",
+        "Baca Kesalahan Umum nomor 3 di modul tentang mask yang tidak konsisten."
+      ],
+      "jawaban": "1. **Amati.** PC .150 lancar, PC .20 gagal, padahal keduanya /24 dan satu switch. Bedanya hanya alamat.\n2. **Hitung dari sisi printer.** Mask 255.255.255.128 = /25. Angka 200 dalam biner `11001000`; bit pertama oktet terakhir 1, jadi network address printer 192.168.1.128, rentang host .129 sampai .254, broadcast .255.\n3. **Bandingkan.** PC .150 berada di rentang itu, jadi printer menganggapnya satu jaringan dan membalas langsung. PC .20 di luar rentang itu. Dari sisi PC dokter (/24), printer satu jaringan, jadi permintaan dikirim langsung. Tetapi printer menganggap .20 berada di jaringan lain, dan untuk membalasnya printer butuh gateway, sedangkan gateway-nya kosong. Balasan tidak pernah dikirim: inilah komunikasi satu arah di Kesalahan Umum 3.\n4. **Perbaiki.** Samakan mask printer dengan jaringan klinik: 255.255.255.0 (/24), dan isi gateway 192.168.1.1. Satu jaringan harus memakai satu mask yang sama.\n5. **Verifikasi.** Dari PC dokter, `ping 192.168.1.200` berhasil, lalu cetak satu halaman uji. Catat konfigurasi printer di dokumentasi jaringan klinik."
+    }
+  },
+  "04-network-layer/02-subnetting": {
+    "intinya": {
+      "satu_kalimat": "Subnetting memecah satu blok alamat IP menjadi beberapa jaringan yang lebih kecil dengan meminjam bit dari bagian host, sehingga setiap kelompok perangkat mendapat jaringannya sendiri.",
+      "analogi": "Bayangkan sebidang tanah kavling yang dipecah menjadi petak-petak sama besar. Setiap kali Anda membagi dua, jumlah petak berlipat dua dan luas tiap petak tinggal separuh, sedangkan total luasnya tetap. Patok batasnya selalu jatuh di kelipatan ukuran petak, seperti block size dalam metode magic number. Bedanya dengan kavling, di setiap subnet ada dua alamat, yaitu network dan broadcast, yang tidak boleh dipakai perangkat.",
+      "kenapa_penting": "Saat menata jaringan kantor, sekolah, atau RT/RW-Net, Anda harus memutuskan berapa perangkat per jaringan dan di mana batasnya. Hitungan yang sama muncul setiap kali Anda membaca konfigurasi router, memilih gateway, atau menebak kenapa dua perangkat tidak bisa saling ping.",
+      "istilah": [
+        {
+          "kata": "Subnet",
+          "arti": "Jaringan kecil hasil pemecahan blok yang lebih besar. Semua host di satu subnet memakai network address dan mask yang sama."
+        },
+        {
+          "kata": "Meminjam bit",
+          "arti": "Menggeser batas jaringan-host ke kanan. Setiap bit yang dipinjam menggandakan jumlah subnet dan membagi dua ukuran tiap subnet."
+        },
+        {
+          "kata": "Block size",
+          "arti": "Jarak antar-awal subnet di oktet yang menentukan, yaitu 256 dikurangi nilai mask di oktet itu. Mask /10 (255.192.0.0) punya block size 64 di oktet kedua."
+        },
+        {
+          "kata": "Network address",
+          "arti": "Alamat pertama subnet, semua bit host 0. Menandai subnet itu dan tidak boleh dipakai perangkat."
+        },
+        {
+          "kata": "Broadcast address",
+          "arti": "Alamat terakhir subnet, semua bit host 1. Paket ke alamat ini diterima semua host di subnet itu."
+        },
+        {
+          "kata": "Transfer IPv4",
+          "arti": "Pemindahan pemegang blok alamat dari satu organisasi ke organisasi lain, yang dicatat registri seperti ARIN atau APNIC."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "Seperempat blok radio amatir 44/8 dijual ke Amazon: 44.192.0.0/10 berpindah tangan",
+      "kapan": "2019-07-18",
+      "di_mana": "ARDC (AMPRNet), Amazon, dan registri ARIN, Amerika Serikat",
+      "ringkas": "Blok 44.0.0.0/8, sekitar 16,7 juta alamat, diberikan kepada Hank Magnuski untuk operator radio amatir di seluruh dunia. Kini blok itu dikelola yayasan ARDC sebagai AMPRNet. Pada 2019 ARDC menilai radio amatir tidak akan pernah memakai seluruhnya, lalu memutuskan menjual seperempatnya. Seperempat itu adalah 44.192.0.0/10, sekitar 4,2 juta alamat, yang sejak 18 Juli 2019 tercatat di ARIN atas nama Amazon.com. Sisanya, 44.0.0.0/9 dan 44.128.0.0/10, tetap untuk radio amatir, dan hasil penjualannya membiayai program hibah ARDC.",
+      "kronologi": [
+        {
+          "waktu": "September 1981",
+          "peristiwa": "RFC 790 (Assigned Numbers) karya Jon Postel mencatat jaringan 44 sebagai AMPRNET, jaringan eksperimen radio amatir."
+        },
+        {
+          "waktu": "2019",
+          "peristiwa": "ARDC memutuskan menjual seperempat blok karena radio amatir tidak akan memakai semuanya. ARDC juga berubah dari korporasi nirlaba menjadi yayasan swasta dengan program hibah."
+        },
+        {
+          "waktu": "18 Juli 2019",
+          "peristiwa": "ARIN mencatat 44.192.0.0 sampai 44.255.255.255 (NET-44-192-0-0-1) atas nama Amazon.com, Inc."
+        },
+        {
+          "waktu": "1 Agustus 2019",
+          "peristiwa": "ARIN mencatat dua sub-blok /11 di dalamnya, 44.192.0.0/11 dan 44.224.0.0/11, masing-masing atas nama unit Amazon."
+        },
+        {
+          "waktu": "Oktober 2026, saat diperiksa",
+          "peristiwa": "ARIN masih mencatat 44.0.0.0 sampai 44.191.255.255 atas nama ARDC. ARDC menyebut AMPRNet kini berisi lebih dari 12 juta alamat di 44.0.0.0/9 dan 44.128.0.0/10."
+        }
+      ],
+      "akar_masalah": "Blok Kelas A diberikan pada masa classful, ketika alamat dibagi per kelas tanpa banyak menimbang kebutuhan. ARDC menilai radio amatir tidak akan pernah memakai seluruh 16,7 juta alamat itu. Sementara itu, sejak stok IANA habis pada 2011, alamat IPv4 menjadi barang langka yang bisa ditransfer. Karena alamat dikelola per prefix, ARDC tidak menjual alamat acak. Blok dipotong tepat di batas /10, sehingga bagian yang dijual dan yang tersisa sama-sama berupa blok CIDR yang rapi.",
+      "kaitan": "Ini isi bagian **Cara Kerja: Meminjam Bit Host** dalam skala besar. Dari /8, pinjam 2 bit menjadi /10: ada 2 pangkat 2 = 4 blok, masing-masing 2 pangkat 22 = 4.194.304 alamat. Mask /10 = 255.192.0.0, jadi oktet kedua yang menentukan dan block size-nya 256 dikurangi 192 = 64, seperti **Contoh 4** di modul. Batas bloknya 44.0, 44.64, 44.128, dan 44.192; blok keempat inilah yang dijual, dengan broadcast 44.255.255.255. Pecahan berikutnya, dua /11, punya block size 32: 44.192.0.0 dan 44.224.0.0.",
+      "pelajaran": [
+        "Potong blok alamat hanya di batas prefix. Bagian yang Anda pakai, serahkan, atau jual harus tetap berupa blok CIDR utuh.",
+        "Catat setiap pemecahan blok di dokumentasi, siapa memegang subnet mana, seperti ARIN mencatat 44.192.0.0/10 dan dua /11 di dalamnya.",
+        "Sebelum meminta blok baru, hitung kebutuhan nyata. Blok yang jauh lebih besar dari kebutuhan berarti alamat yang menganggur."
+      ],
+      "sumber": [
+        {
+          "judul": "About | ARDC",
+          "penerbit": "Amateur Radio Digital Communications (ARDC)",
+          "url": "https://www.ardc.net/about/"
+        },
+        {
+          "judul": "Whois NET-44-192-0-0-1 (AMAZO-4)",
+          "penerbit": "ARIN",
+          "url": "https://whois.arin.net/rest/net/NET-44-192-0-0-1"
+        },
+        {
+          "judul": "RDAP 44.0.0.0: NET-44-0-0-0-1 (AMPRNET, ARDC)",
+          "penerbit": "ARIN",
+          "url": "https://rdap.arin.net/registry/ip/44.0.0.0"
+        },
+        {
+          "judul": "RFC 790: Assigned Numbers",
+          "penerbit": "RFC Editor",
+          "url": "https://www.rfc-editor.org/rfc/rfc790"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda mengelola hotspot RT/RW-Net di Purwokerto memakai MikroTik dengan jaringan bawaan 192.168.88.0/24 dan gateway 192.168.88.1. Perangkat pelanggan kini sekitar 300, dan pool DHCP sering habis sehingga perangkat baru mendapat alamat 169.254.x.x. Anda ingin memperbesar jaringan tanpa mengganti alamat gateway. Prefix berapa yang cukup, apakah 192.168.88.0 sah sebagai network address untuk prefix itu, berapa rentang host dan broadcast-nya, dan apa saja yang harus Anda ubah?",
+      "petunjuk": [
+        "Cari prefix terkecil yang menampung 300 host dengan rumus 2 pangkat n dikurangi 2.",
+        "Untuk prefix yang menentukan di oktet ketiga, berapa block size-nya? Apakah 88 kelipatan block size itu?",
+        "Jangan lupa perangkat yang alamatnya diatur manual. Mask mereka juga harus ikut berubah."
+      ],
+      "jawaban": "1. **Hitung kebutuhan.** 2 pangkat 8 dikurangi 2 = 254, tidak cukup untuk 300. 2 pangkat 9 dikurangi 2 = 510, cukup. Jadi butuh 9 bit host: prefix **/23** (255.255.254.0), yang juga menyisakan ruang tumbuh.\n2. **Periksa batas blok.** Pada /23 oktet ketiga yang menentukan, dengan block size 256 dikurangi 254 = 2. Kelipatan 2: ..., 86, 88, 90, ... Angka 88 genap, jadi 192.168.88.0/23 sah. Seandainya jaringan Anda 192.168.89.0/24, memperbesarnya menjadi /23 menghasilkan blok 192.168.88.0/23, karena 89 ganjil.\n3. **Rentang.** Network 192.168.88.0, broadcast 192.168.89.255, host 192.168.88.1 sampai 192.168.89.254, total 510. Di /23, alamat 192.168.88.255 dan 192.168.89.0 adalah host biasa yang boleh dipakai.\n4. **Ubah di router.**\n   - Alamat: `/ip address set [find address=\"192.168.88.1/24\"] address=192.168.88.1/23`\n   - Network DHCP: `/ip dhcp-server network set [find address=\"192.168.88.0/24\"] address=192.168.88.0/23`\n   - Pool DHCP: `/ip pool set [find name=default-dhcp] ranges=192.168.88.10-192.168.89.254` (sesuaikan nama pool di router Anda).\n5. **Ubah perangkat statis.** Printer, kamera, atau access point yang diatur manual masih memakai mask 255.255.255.0. Mereka akan menganggap 192.168.89.x berada di jaringan lain, dan muncul komunikasi asimetris seperti di bagian **Kesalahan mask yang menipu**. Ganti mask mereka ke 255.255.254.0.\n6. **Verifikasi.** Perangkat baru mendapat alamat 192.168.89.x dengan mask 255.255.254.0, bisa ping 192.168.88.1, dan bisa saling ping dengan perangkat di 192.168.88.x."
+    }
+  },
+  "04-network-layer/03-vlsm-cidr": {
+    "intinya": {
+      "satu_kalimat": "VLSM membagi blok alamat menjadi subnet yang ukurannya disesuaikan dengan kebutuhan, sedangkan CIDR menggabungkan banyak jaringan berurutan menjadi satu rute ringkasan.",
+      "analogi": "Bayangkan kantor pos yang membagi kode pos. Dengan VLSM, kecamatan padat diberi rentang nomor besar dan desa kecil diberi rentang kecil, tidak dipaksa sama rata. Dengan CIDR, kantor pos di provinsi lain cukup tahu bahwa semua kode pos berawalan angka 5 menuju Jawa Tengah dan Yogyakarta, tanpa menghafal setiap desa. Bedanya, ringkasan rute hanya benar kalau semua jaringan di dalam blok itu memang ada di arah sana; kalau tidak, paket dibuang atau berputar.",
+      "kenapa_penting": "Saat merancang alamat untuk kantor pusat dan cabang, VLSM mencegah alamat terbuang, dan alokasi yang hierarkis membuat rute antar-kota bisa diringkas. Wildcard mask dari modul yang sama juga Anda pakai setiap kali menulis ACL atau mengaktifkan OSPF di router Cisco.",
+      "istilah": [
+        {
+          "kata": "VLSM",
+          "arti": "Variable Length Subnet Mask: membagi satu blok menjadi subnet berbeda ukuran. Alokasikan dari yang terbesar agar batas blok tetap rapi."
+        },
+        {
+          "kata": "CIDR",
+          "arti": "Classless Inter-Domain Routing: alamat tidak lagi terikat Kelas A, B, atau C, dan prefix boleh berapa saja, misalnya /22."
+        },
+        {
+          "kata": "Summary route",
+          "arti": "Satu rute yang mewakili banyak jaringan berurutan, misalnya 192.168.0.0/22 untuk empat jaringan /24."
+        },
+        {
+          "kata": "Alignment",
+          "arti": "Syarat bahwa sebuah blok /N harus dimulai di kelipatan ukuran bloknya. /22 hanya bisa dimulai di oktet ketiga 0, 4, 8, dan seterusnya."
+        },
+        {
+          "kata": "Over-summarization",
+          "arti": "Ringkasan yang mencakup jaringan yang sebenarnya tidak ada di arah itu. Akibatnya black hole atau paket berputar."
+        },
+        {
+          "kata": "Null route",
+          "arti": "Rute ke interface buangan (null0). Paket yang cocok dibuang dengan sengaja, dipakai untuk mengamankan rute ringkasan."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "Internet meninggalkan sistem kelas: CIDR (RFC 1519) menyelamatkan ruang Kelas B dan menahan ledakan tabel routing",
+      "kapan": "1993-09",
+      "di_mana": "IETF dan penyedia transit internet di seluruh dunia",
+      "ringkas": "Awal 1990-an internet tumbuh cepat, dan sistem kelas tidak punya ukuran yang pas: Kelas C hanya 254 host, Kelas B 65.534. Per Februari 1992, 5.467 dari 16.382 jaringan Kelas B sudah terpakai, dan jumlahnya berlipat dua kira-kira tiap tahun. Tabel routing backbone juga melonjak dari 173 rute (Juli 1988) menjadi 8.561 (Desember 1992). Jawabannya CIDR: alamat dibagikan dalam blok berukuran bebas lewat penyedia layanan, lalu diumumkan sebagai satu rute ringkasan. Setelah penyedia memakai BGP-4 pada 1994, jumlah entri tabel routing sempat turun tajam.",
+      "kronologi": [
+        {
+          "waktu": "November 1991",
+          "peristiwa": "IETF membentuk kelompok ROAD (Routing and Addressing) untuk meneliti masalah pertumbuhan alamat dan routing. Kelompok ini bertemu pada Januari 1992."
+        },
+        {
+          "waktu": "25 Februari 1992",
+          "peristiwa": "Analisis informal mencatat 46 dari 126 jaringan Kelas A dan 5.467 dari 16.382 jaringan Kelas B sudah dialokasikan. Dengan laju saat itu, Kelas B diperkirakan habis dalam sekitar 15 bulan."
+        },
+        {
+          "waktu": "Desember 1992",
+          "peristiwa": "Data MERIT mencatat 8.561 rute yang diiklankan di backbone, naik dari 173 rute pada Juli 1988."
+        },
+        {
+          "waktu": "September 1993",
+          "peristiwa": "RFC 1519 terbit. Alamat dibagikan per blok kepada penyedia transit, organisasi menengah (200-4000 host) diberi gabungan blok Kelas C sesuai kebutuhan, dan rute diringkas."
+        },
+        {
+          "waktu": "Akhir 1993 sampai awal 1994",
+          "peristiwa": "Blok supernet CIDR mulai dibagikan, tetapi masih diumumkan sebagai jaringan Kelas C terpisah, sehingga tabel routing justru tumbuh makin cepat."
+        },
+        {
+          "waktu": "1994",
+          "peristiwa": "Penyedia layanan memakai BGP-4, yang bisa membawa prefix tanpa kelas. Blok supernet akhirnya diringkas dan jumlah entri tabel routing turun tajam."
+        },
+        {
+          "waktu": "Pertengahan 1994 sampai awal 1999",
+          "peristiwa": "Pertumbuhan tabel routing global menjadi kira-kira linear, tidak lagi eksponensial."
+        },
+        {
+          "waktu": "Agustus 2006",
+          "peristiwa": "RFC 4632 menggantikan RFC 1519 dan mencatat masalah baru: banyak penyedia mengumumkan blok alokasinya sekaligus semua potongan /24 di dalamnya."
+        }
+      ],
+      "akar_masalah": "Sistem kelas hanya mengenal tiga ukuran jaringan: /8, /16, dan /24. Organisasi menengah terpaksa mengambil Kelas B (65.534 host) karena Kelas C (254 host) terlalu kecil, sehingga ruang Kelas B cepat habis. Kalau organisasi itu diberi banyak Kelas C, setiap blok menjadi satu rute tersendiri di backbone. Pertumbuhan tabel routing pun melampaui kemampuan perangkat keras, perangkat lunak, dan operator saat itu. Blok seperti /22 juga baru bisa diumumkan setelah protokol routing antar-domain mendukung pasangan network dan mask yang bebas.",
+      "kaitan": "Bagian **CIDR dan Summarization** menyebut CIDR sebagai kebalikan subnetting: banyak jaringan kecil diumumkan sebagai satu rute besar, dan RFC 1519 adalah asal aturan itu. Hitungannya sama dengan **Cara menghitung summary route**: empat jaringan /24 yang berurutan dan aligned, misalnya 192.168.0.0 sampai 192.168.3.0, menjadi satu /22. Ledakan rute sebelum 1994 adalah gambaran nyata TIP di modul bahwa tanpa CIDR tabel routing global akan dipenuhi entri /24. Catatan RFC 4632 tentang penyedia yang mengumumkan semua potongan /24 adalah contoh ringkasan yang tidak dijalankan.",
+      "pelajaran": [
+        "Rancang alamat secara hierarkis sejak awal agar bisa diringkas, seperti skema per kota, gedung, dan lantai di modul.",
+        "Umumkan blok ringkasan ke luar, bukan setiap potongan /24 di dalamnya, kecuali ada alasan teknis yang jelas.",
+        "Beri setiap organisasi atau cabang blok sesuai kebutuhan nyata. Ukuran bebas seperti /23 atau /22 jauh lebih hemat daripada melompat dari /24 ke /16."
+      ],
+      "sumber": [
+        {
+          "judul": "RFC 1519: Classless Inter-Domain Routing (CIDR): an Address Assignment and Aggregation Strategy",
+          "penerbit": "RFC Editor",
+          "url": "https://www.rfc-editor.org/rfc/rfc1519"
+        },
+        {
+          "judul": "RFC 4632: Classless Inter-domain Routing (CIDR): The Internet Address Assignment and Aggregation Plan",
+          "penerbit": "RFC Editor",
+          "url": "https://www.rfc-editor.org/rfc/rfc4632"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Sebuah koperasi di Klaten punya kantor pusat dan satu cabang yang dihubungkan link point-to-point. Router pusat punya rute statis `ip route 192.168.0.0 255.255.252.0 10.0.0.2` ke cabang. Di cabang hanya ada tiga LAN, 192.168.0.0/24, 192.168.1.0/24, dan 192.168.2.0/24, ditambah default route ke pusat (10.0.0.1). Link itu terlihat penuh padahal trafik pengguna sedikit. Ternyata kamera CCTV di pusat masih mengirim rekaman ke 192.168.3.50, alamat NVR lama yang sudah dibongkar. Traceroute dari pusat ke 192.168.3.50 bergantian menampilkan 10.0.0.2 dan 10.0.0.1 sampai 30 hop. Apa yang terjadi, dan bagaimana memperbaikinya?",
+      "petunjuk": [
+        "Hitung rentang 192.168.0.0/22. Apakah 192.168.3.0/24 termasuk di dalamnya, dan apakah jaringan itu ada di cabang?",
+        "Di router cabang, rute mana yang dipakai untuk 192.168.3.50 kalau tidak ada rute yang lebih spesifik?",
+        "Lihat mitigasi over-summarization di bagian CIDR dan Summarization."
+      ],
+      "jawaban": "1. **Amati.** Traceroute memantul di antara dua router, dan link penuh oleh trafik ke alamat yang tidak ada lagi.\n2. **Hitung ringkasannya.** 192.168.0.0/22 mencakup 192.168.0.0 sampai 192.168.3.255, termasuk 192.168.3.0/24 yang tidak ada di cabang. Ini over-summarization.\n3. **Telusuri jalannya paket.** Pusat mengirim paket ke 192.168.3.50 ke cabang karena cocok dengan rute /22. Cabang tidak punya rute spesifik untuk 192.168.3.0/24, jadi memakai default route kembali ke pusat. Pusat mengirimnya lagi ke cabang, dan seterusnya sampai TTL habis. Satu paket bisa melintasi link puluhan kali, sehingga link penuh.\n4. **Perbaiki.** Di router cabang, pasang null route untuk blok ringkasan:\n   `ip route 192.168.0.0 255.255.252.0 null0`\n   Ketiga LAN tetap terjangkau karena rute connected /24 lebih spesifik daripada /22, sedangkan paket ke 192.168.3.x dibuang di cabang. Pilihan lain: di pusat, ganti rute /22 dengan 192.168.0.0/23 dan 192.168.2.0/24 yang hanya mencakup jaringan yang ada.\n5. **Bereskan sumbernya.** Ubah tujuan rekaman CCTV ke NVR yang baru.\n6. **Verifikasi.** Traceroute ke 192.168.3.50 berhenti di cabang dengan pesan unreachable, dan beban link kembali normal."
+    }
+  },
+  "04-network-layer/04-arp-icmp": {
+    "intinya": {
+      "satu_kalimat": "ARP mencari alamat MAC milik sebuah alamat IP di jaringan lokal, sedangkan ICMP membawa pesan error dan diagnosis seperti ping, traceroute, dan Path MTU Discovery.",
+      "analogi": "ARP mirip memanggil lewat pengeras suara di kantor: \"Yang memakai meja nomor 20, tolong angkat tangan,\" lalu hanya orang itu yang menjawab langsung ke Anda. ICMP mirip surat balasan dari kantor pos: \"alamat tidak dikenal\" atau \"paket terlalu besar untuk jalur ini\". Bedanya, ARP tidak pernah memeriksa apakah yang mengangkat tangan benar-benar pemilik meja itu, jadi jawaban palsu atau ganda tetap dipercaya.",
+      "kenapa_penting": "Setiap kali laptop Anda mengirim data ke router rumah, ARP bekerja lebih dulu untuk menemukan MAC router. Saat jaringan bermasalah, `ping`, `traceroute`, dan `arp -a` adalah alat pertama yang Anda pakai, dan cara membaca hasilnya menentukan apakah diagnosis Anda benar.",
+      "istilah": [
+        {
+          "kata": "ARP",
+          "arti": "Address Resolution Protocol: menanyakan siapa pemilik sebuah IP lewat broadcast, lalu menerima jawaban unicast berisi MAC-nya."
+        },
+        {
+          "kata": "ARP cache",
+          "arti": "Tabel pemetaan IP ke MAC yang disimpan host. Isinya diperbarui dari jawaban ARP terbaru dan kedaluwarsa setelah beberapa waktu."
+        },
+        {
+          "kata": "ICMP",
+          "arti": "Internet Control Message Protocol: protokol nomor 1 di dalam IP untuk pesan error dan diagnosis, seperti Echo Request (tipe 8) dan Echo Reply (tipe 0)."
+        },
+        {
+          "kata": "Directed broadcast",
+          "arti": "Paket yang dialamatkan ke alamat broadcast subnet lain, misalnya 10.50.255.255. Kalau router meneruskannya, semua host di subnet itu menerima."
+        },
+        {
+          "kata": "Spoofing alamat sumber",
+          "arti": "Memalsukan alamat IP pengirim di header paket. Balasan lalu terkirim ke alamat palsu itu, bukan ke penyerang."
+        },
+        {
+          "kata": "Ingress filtering",
+          "arti": "Penyaringan di router perbatasan yang hanya meloloskan paket keluar dengan alamat sumber milik jaringan sendiri."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Serangan Smurf: ping palsu ke alamat broadcast dibalas semua host sekaligus dan membanjiri korban",
+      "kapan": "1998-01-05",
+      "di_mana": "Internet global, dilaporkan ke CERT/CC di Amerika Serikat",
+      "ringkas": "Akhir 1990-an, CERT/CC menerima laporan dari penyedia jaringan dan ISP tentang serangan penolakan layanan yang terus berulang. Penyerang mengirim ICMP echo request (ping) ke alamat broadcast sebuah jaringan, dengan alamat sumber dipalsukan menjadi alamat korban. Semua host di jaringan perantara membalas ke korban, sehingga satu paket kecil berubah menjadi banjir balasan. Serangan ini dinamai Smurf, sesuai nama salah satu program yang dipakai penyerang. ISP kecil sampai menengah bisa terganggu berat, dan ISP besar melihat backbone serta link peering penuh.",
+      "kronologi": [
+        {
+          "waktu": "5 Januari 1998",
+          "peristiwa": "CERT/CC menerbitkan advisori CA-1998-01 tentang serangan Smurf. Saran utamanya: matikan directed broadcast di semua router, bukan hanya router perbatasan, dan atur sistem operasi agar tidak membalas ping ke alamat broadcast."
+        },
+        {
+          "waktu": "Januari 1998",
+          "peristiwa": "RFC 2267 terbit dan menyarankan ingress filtering: router perbatasan hanya meloloskan paket keluar yang alamat sumbernya milik jaringan sendiri."
+        },
+        {
+          "waktu": "Agustus 1999",
+          "peristiwa": "RFC 2644 (BCP 34) mengubah aturan router: directed broadcast wajib diblokir secara bawaan. Sebelumnya RFC 1812 (1995) mewajibkan router menerima dan meneruskannya secara bawaan."
+        },
+        {
+          "waktu": "13 Maret 2000",
+          "peristiwa": "CERT/CC memperbarui advisorinya dengan rujukan ke RFC 2644/BCP 34, dan mencatat bahwa panduan ingress filtering RFC 2267 telah diadopsi sebagai praktik terbaik sejak Februari 2000."
+        }
+      ],
+      "akar_masalah": "Serangan ini memanfaatkan dua celah. Pertama, alamat sumber IP bisa dipalsukan, karena router meneruskan paket berdasarkan alamat tujuan tanpa memeriksa pengirimnya. Kedua, router saat itu meneruskan directed broadcast dari luar secara bawaan, dan banyak sistem operasi membalas ping ke alamat broadcast. Akibatnya jaringan perantara menjadi penguat. Satu echo request ke, misalnya, 10.50.255.255 dibalas banyak host di subnet 10.50.0.0/16, dan semua balasan menuju alamat korban yang dipalsukan.",
+      "kaitan": "Bagian **ICMP dan Keamanan** menyebut Smurf sebagai salah satu alasan orang memblokir ICMP. Kasus ini menunjukkan perbaikan yang lebih tepat sasaran: matikan directed broadcast, saring alamat sumber palsu, dan batasi laju ICMP. Memblokir seluruh ICMP justru merusak PMTUD dan traceroute. Mekanismenya memakai Echo Request dan Echo Reply dari bagian **Ping: Cara Kerja Sesungguhnya**, ditambah alamat broadcast subnet dari modul 04.1.",
+      "pelajaran": [
+        "Pastikan router tidak meneruskan directed broadcast dari luar. Di Cisco perintahnya `no ip directed-broadcast` di setiap interface.",
+        "Pasang ingress filtering di perbatasan: hanya izinkan paket keluar dengan alamat sumber milik jaringan Anda, agar jaringan Anda tidak dipakai mengirim paket palsu.",
+        "Batasi laju ICMP alih-alih memblokir semuanya, supaya PMTUD dan traceroute tetap berfungsi."
+      ],
+      "sumber": [
+        {
+          "judul": "1998 CERT Advisories (memuat CA-1998-01: Smurf IP Denial-of-Service Attacks)",
+          "penerbit": "CERT/CC, Software Engineering Institute, Carnegie Mellon University",
+          "url": "https://www.sei.cmu.edu/library/1998-cert-advisories/"
+        },
+        {
+          "judul": "RFC 2644: Changing the Default for Directed Broadcasts in Routers (BCP 34)",
+          "penerbit": "RFC Editor",
+          "url": "https://www.rfc-editor.org/rfc/rfc2644"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Kantor notaris di Medan punya satu printer jaringan dengan IP statis 192.168.1.50; label di belakang printer mencantumkan MAC `00-1b-a9-12-34-56`. Sejak teknisi CCTV memasang perekam (DVR) minggu lalu, printer kadang bisa dipakai dan kadang tidak, berganti dalam hitungan menit. Di PC staf, `arp -a` pagi ini menampilkan 192.168.1.50 dengan MAC printer; satu jam kemudian alamat yang sama tercatat dengan MAC `bc-32-5f-aa-bb-cc`. Kabel printer sudah diganti dan switch tidak mencatat error. Apa dugaan Anda, bagaimana membuktikannya, dan bagaimana memperbaikinya?",
+      "petunjuk": [
+        "ARP cache menyimpan jawaban ARP terbaru. Kalau MAC untuk satu IP berganti-ganti, berapa perangkat yang menjawab?",
+        "Bagian Praktik di modul memuat perintah untuk menguji apakah sebuah IP dipakai lebih dari satu perangkat.",
+        "MAC printer sudah Anda ketahui dari label. Perangkat apa pemilik MAC yang satunya, dan kapan perangkat itu dipasang?"
+      ],
+      "jawaban": "1. **Amati.** Printer timbul-tenggelam, dan ARP cache PC mencatat dua MAC berbeda untuk 192.168.1.50 pada waktu berbeda.\n2. **Dugaan.** Konflik IP: perangkat yang baru dipasang, kemungkinan DVR, diberi IP statis yang sama. Setiap kali perangkat itu menjawab ARP atau mengirim gratuitous ARP, cache PC tertimpa, dan cetakan terkirim ke perangkat yang salah.\n3. **Uji.**\n   - Dari laptop Linux di jaringan yang sama: `arping -I eth0 -c 5 192.168.1.50`. Kalau balasan datang dari dua MAC berbeda, konflik terbukti.\n   - Cari MAC kedua di switch: `show mac address-table address bc32.5faa.bbcc` menunjukkan port tempat perangkat itu tersambung.\n4. **Perbaiki.** Ganti IP DVR ke alamat yang belum dipakai, lebih baik di VLAN atau subnet khusus CCTV. Catat semua alamat statis di daftar IP kantor. Lalu hapus entri lama di PC dengan `arp -d 192.168.1.50` agar cache diisi ulang.\n5. **Verifikasi.** `arping` hanya mendapat balasan dari satu MAC, `arp -a` konsisten menunjukkan `00-1b-a9-12-34-56`, dan printer bisa dipakai terus-menerus.\n6. **Cegah.** Tetapkan rentang khusus untuk perangkat beralamat statis di luar pool DHCP, dan minta setiap teknisi vendor memakai alamat dari daftar itu."
+    }
+  },
+  "04-network-layer/05-routing-dasar": {
+    "intinya": {
+      "satu_kalimat": "Router memilih jalur setiap paket dengan mencocokkan alamat tujuan ke routing table; kalau beberapa rute cocok, rute dengan prefix paling panjang yang menang.",
+      "analogi": "Bayangkan papan petunjuk di persimpangan jalan tol. Papan besar menulis \"Jawa Timur lurus\", papan kecil di bawahnya menulis \"Surabaya belok kiri\". Pengemudi ke Surabaya mengikuti papan yang paling rinci, dan pengemudi ke kota lain mengikuti papan besar. Papan \"semua arah\" (default route) hanya dipakai kalau tidak ada papan lain yang cocok. Bedanya dengan jalan tol, router tidak memeriksa siapa yang memasang papan, jadi papan rinci yang dipasang pihak yang salah tetap diikuti.",
+      "kenapa_penting": "Setiap kali Anda menambah rute di router kantor, mengatur dua ISP, atau membaca `show ip route`, Anda memakai aturan ini. Satu rute yang terlalu spesifik di tempat yang salah bisa membelokkan trafik seluruh kantor, dan pada kasus YouTube, trafik dari banyak jaringan di seluruh dunia.",
+      "istilah": [
+        {
+          "kata": "Routing table",
+          "arti": "Daftar jaringan tujuan yang diketahui router, beserta next hop, interface keluar, administrative distance, dan metric."
+        },
+        {
+          "kata": "Longest prefix match",
+          "arti": "Aturan pemilihan rute: dari semua rute yang cocok dengan alamat tujuan, router memakai yang prefix-nya paling panjang atau paling spesifik."
+        },
+        {
+          "kata": "Default route",
+          "arti": "Rute 0.0.0.0/0 yang cocok dengan semua alamat. Karena prefix-nya paling pendek, rute ini hanya dipakai kalau tidak ada rute lain yang cocok."
+        },
+        {
+          "kata": "Administrative distance",
+          "arti": "Tingkat kepercayaan sumber rute, misalnya connected 0, static 1, OSPF 110. Hanya dibandingkan untuk prefix yang sama persis."
+        },
+        {
+          "kata": "BGP dan AS",
+          "arti": "BGP adalah protokol routing antar-jaringan di internet. Setiap jaringan besar (Autonomous System) punya nomor, misalnya AS36561 milik YouTube saat itu."
+        },
+        {
+          "kata": "Null route",
+          "arti": "Rute yang membuang paket dengan sengaja (null0 di Cisco, blackhole di MikroTik). Sering dipakai untuk memblokir tujuan di dalam jaringan sendiri."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Pakistan Telecom mengumumkan /24 milik YouTube, dan longest prefix match membelokkan trafik YouTube ke Pakistan",
+      "kapan": "2008-02-24",
+      "di_mana": "Pakistan Telecom (AS17557), PCCW Global, dan YouTube, berdampak global",
+      "ringkas": "Pakistan hendak memblokir situs YouTube. Pada 24 Februari 2008, Pakistan Telecom mengumumkan rute 208.65.153.0/24 tanpa izin, dan penyedia upstream-nya, PCCW Global, meneruskan pengumuman itu ke internet. Blok itu memuat ketiga alamat IP youtube.com saat itu, sedangkan YouTube sendiri mengumumkan blok yang lebih besar, 208.65.152.0/22. Karena /24 lebih spesifik, router di banyak jaringan mengirim trafik YouTube ke Pakistan. Pembajakan baru berhenti sekitar dua seperempat jam kemudian, setelah PCCW menarik rute itu.",
+      "kronologi": [
+        {
+          "waktu": "Sebelum kejadian",
+          "peristiwa": "YouTube (AS36561) mengumumkan 208.65.152.0/22. Ketiga alamat youtube.com di DNS, 208.65.153.238, 208.65.153.251, dan 208.65.153.253, berada di dalam blok ini."
+        },
+        {
+          "waktu": "24 Februari 2008, 18.47 UTC",
+          "peristiwa": "Pakistan Telecom (AS17557) mulai mengumumkan 208.65.153.0/24, dan PCCW Global (AS3491) meneruskannya. Dalam dua menit, rute itu menyebar paling luas di data RIS RIPE NCC, dan trafik YouTube terbelokkan ke Pakistan."
+        },
+        {
+          "waktu": "20.07 UTC",
+          "peristiwa": "YouTube ikut mengumumkan 208.65.153.0/24. Karena kini ada dua /24 yang sama persis, pemilihan jatuh ke aturan BGP lain seperti AS path terpendek, dan Pakistan Telecom masih menarik sebagian trafik."
+        },
+        {
+          "waktu": "20.18 UTC",
+          "peristiwa": "YouTube mengumumkan dua blok yang lebih spesifik lagi, 208.65.153.0/25 dan 208.65.153.128/25. Setiap router yang menerimanya mengirim trafik ke YouTube karena aturan longest prefix match."
+        },
+        {
+          "waktu": "20.51 UTC",
+          "peristiwa": "Rute Pakistan Telecom kini terlihat dengan nomor AS 17557 yang diulang (prepend). AS path yang lebih panjang membuat lebih banyak router memilih rute YouTube."
+        },
+        {
+          "waktu": "21.01 UTC",
+          "peristiwa": "PCCW Global menarik semua prefix yang berasal dari Pakistan Telecom, dan pembajakan 208.65.153.0/24 berhenti. Pengumuman tanpa izin terakhir tercatat pukul 21.01.22 UTC."
+        }
+      ],
+      "akar_masalah": "Router di internet memilih rute dengan longest prefix match sebelum menimbang hal lain. Rute /24 dari Pakistan Telecom lebih spesifik daripada /22 milik YouTube, jadi setiap router yang menerimanya memilih /24 itu, siapa pun yang mengumumkannya. BGP sendiri tidak memeriksa apakah sebuah AS berhak atas prefix yang diumumkannya. Pengamannya saat itu bergantung pada filter di penyedia upstream, sedangkan PCCW Global meneruskan pengumuman itu ke internet.",
+      "kaitan": "Kasus ini memperagakan bagian **Longest Prefix Match: Aturan Nomor Satu**: dari semua rute yang cocok, router memakai prefix terpanjang, sebelum administrative distance dan metric. Alamat 208.65.153.238 cocok dengan /22 milik YouTube dan /24 dari Pakistan Telecom, dan /24 menang. Balasan YouTube memakai aturan yang sama, yaitu dua /25. Saat dua prefix sama panjang, barulah aturan lain yang menentukan, persis urutan keputusan di modul.",
+      "pelajaran": [
+        "Rute yang lebih spesifik selalu menang. Sebelum menambah rute /25 atau /32, periksa trafik apa saja yang ikut terbelokkan.",
+        "Kalau Anda memblokir sebuah tujuan dengan rute, misalnya null route, pastikan rute itu tidak ikut diumumkan ke jaringan lain.",
+        "Penyedia upstream perlu menyaring pengumuman pelanggannya, sehingga pelanggan hanya bisa mengumumkan prefix yang memang miliknya.",
+        "Mengumumkan prefix yang lebih spesifik lagi bisa merebut kembali trafik, tetapi jangkauannya terbatas. Di data RIS, /25 YouTube hanya terlihat oleh 21 peer, dibandingkan 112 peer untuk /22."
+      ],
+      "sumber": [
+        {
+          "judul": "YouTube Hijacking: A RIPE NCC RIS case study",
+          "penerbit": "RIPE NCC",
+          "url": "https://www.ripe.net/about-us/news/youtube-hijacking-a-ripe-ncc-ris-case-study/"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Sebuah apotek di Makassar memakai MikroTik dengan dua ISP dan failover rekursif seperti contoh di modul. Konfigurasinya: rute `8.8.8.8/32` lewat gateway ISP-A sebagai probe, default route lewat 8.8.8.8 (distance 1, check-gateway=ping), dan default route cadangan lewat ISP-B (distance 10). Suatu siang upstream ISP-A gangguan, tetapi link ke modem ISP-A tetap menyala. Default route pindah ke ISP-B dengan benar, dan ping ke 1.1.1.1 berhasil. Tetapi semua PC kasir yang memakai DNS 8.8.8.8 tidak bisa membuka situs apa pun. Kenapa, dan bagaimana memperbaikinya?",
+      "petunjuk": [
+        "Ping ke 1.1.1.1 memakai rute apa? Kueri DNS ke 8.8.8.8 memakai rute apa? Bandingkan panjang prefix-nya.",
+        "Rute 8.8.8.8/32 tidak memakai check-gateway. Apakah rute itu ikut nonaktif saat yang mati hanya jaringan di belakang modem ISP-A?",
+        "Pakai `/ip route check 8.8.8.8` atau lihat flag `A` (active) di `/ip route print`."
+      ],
+      "jawaban": "1. **Amati.** Failover default route berhasil (1.1.1.1 bisa di-ping), tetapi semua yang memakai 8.8.8.8 gagal.\n2. **Dugaan: longest prefix match.** Untuk tujuan 8.8.8.8 ada dua rute yang cocok: 8.8.8.8/32 lewat ISP-A dan 0.0.0.0/0 lewat ISP-B. /32 lebih panjang, jadi menang. Distance tidak membantu di sini, karena distance hanya dibandingkan untuk prefix yang sama.\n3. **Kenapa /32 masih aktif.** Rute itu tidak memakai check-gateway, dan gateway ISP-A di link lokal masih menjawab. Yang mati adalah jaringan di belakangnya. Kueri DNS ke 8.8.8.8 tetap dikirim ke ISP-A dan hilang di sana.\n4. **Uji.** `/ip route check 8.8.8.8` menunjukkan jalur keluar lewat gateway ISP-A. Dari PC kasir, `nslookup example.com 8.8.8.8` gagal, sedangkan `nslookup example.com 1.1.1.1` berhasil.\n5. **Perbaiki.** Pilih alamat probe yang tidak dipakai untuk layanan lain, lalu pastikan DNS kantor, baik di PC maupun di router, tidak memakai alamat probe itu. Rute /32 untuk probe hanya boleh menyangkut lalu lintas pemantauan.\n6. **Verifikasi.** Simulasikan gangguan ISP-A lagi, misalnya dengan memblokir alamat probe di sisi ISP-A. Default route harus pindah ke ISP-B, dan situs tetap terbuka dari PC kasir."
+    }
+  }
+}

@@ -1,0 +1,362 @@
+{
+  "05-transport/01-port-socket": {
+    "intinya": {
+      "satu_kalimat": "Alamat IP mengantar paket sampai ke komputer yang benar, lalu nomor port (0 sampai 65535) menentukan aplikasi mana di komputer itu yang menerimanya.",
+      "analogi": "Bayangkan sebuah gedung perkantoran dengan satu alamat jalan, yaitu alamat IP. Di dalamnya ada loket bernomor: loket 80 untuk web, loket 22 untuk SSH, loket 53 untuk DNS. Kurir hanya tahu alamat gedung, sedangkan satpam di lobi (sistem operasi) membaca nomor loket di label lalu mengantar ke loket yang benar. Pengirim juga menulis nomor kotak balasan acak miliknya (port sumber) supaya jawaban tidak nyasar. Satu hal tidak cocok dengan gedung sungguhan: loket TCP 53 dan UDP 53 adalah dua loket berbeda walau nomornya sama.",
+      "kenapa_penting": "Keluhan 'aplikasinya jalan, tapi tidak bisa dibuka dari komputer lain' sering berakhir di port: aplikasi hanya mendengarkan di 127.0.0.1, port diblokir firewall, atau nomornya salah. Sebaliknya, port yang terbuka tanpa perlu menjadi pintu masuk serangan. Membaca `ss -tulnp` atau `netstat -ano` adalah langkah pertama untuk memeriksa keduanya.",
+      "istilah": [
+        {
+          "kata": "Port",
+          "arti": "Nomor 16 bit (0-65535) di header TCP atau UDP yang menunjukkan aplikasi tujuan di satu komputer."
+        },
+        {
+          "kata": "Socket",
+          "arti": "Titik akhir komunikasi: gabungan alamat IP, nomor port, dan protokol (TCP atau UDP)."
+        },
+        {
+          "kata": "Port ephemeral",
+          "arti": "Port sumber sementara yang dipilih acak oleh sistem operasi klien setiap kali membuka koneksi. Di Linux bawaannya 32768-60999."
+        },
+        {
+          "kata": "Listening",
+          "arti": "Keadaan aplikasi yang menunggu koneksi masuk di port tertentu. Alamat 0.0.0.0 berarti menunggu di semua antarmuka, 127.0.0.1 berarti hanya dari komputer itu sendiri."
+        },
+        {
+          "kata": "SMB",
+          "arti": "Protokol berbagi file dan printer di Windows. Memakai TCP 445, dan pada mode lama lewat NetBIOS di TCP 139."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Ransomware WannaCry masuk Indonesia: sistem RS Kanker Dharmais lumpuh, Kominfo minta port 139/445 diblokir",
+      "kapan": "2017-05-13",
+      "di_mana": "RS Kanker Dharmais, Jakarta, Indonesia",
+      "ringkas": "Pada 12 Mei 2017 ransomware WannaCry menyebar ke banyak negara. Program jahat ini mengunci file di komputer Windows lalu meminta tebusan bitcoin senilai sekitar 300 dolar AS. Ia menyebar sendiri lewat celah di layanan berbagi file SMB. Sabtu pagi, 13 Mei, sistem informasi RS Kanker Dharmais di Jakarta diketahui terserang. Rumah sakit mematikan semua sistem, dan pada Senin pasien mendaftar secara manual dengan antrean panjang. Pada 13 Mei Kominfo menerbitkan imbauan, termasuk memblokir port 139, 445, dan 3389.",
+      "kronologi": [
+        {
+          "waktu": "14 Maret 2017",
+          "peristiwa": "Microsoft merilis tambalan MS17-010 untuk celah eksekusi kode jarak jauh di server SMBv1 Windows."
+        },
+        {
+          "waktu": "12 Mei 2017",
+          "peristiwa": "US-CERT (kini CISA) memperingatkan kampanye ransomware WannaCry yang menyebar dengan memanfaatkan celah SMBv1 yang ditambal MS17-010."
+        },
+        {
+          "waktu": "13 Mei 2017, pagi",
+          "peristiwa": "Sistem informasi RS Kanker Dharmais diketahui disusupi. Manajemen mematikan semua sistem agar kerusakan tidak meluas, lalu mencadangkan data."
+        },
+        {
+          "waktu": "13 Mei 2017",
+          "peristiwa": "Kominfo menerbitkan Siaran Pers No. 55/HM/KOMINFO/05/2017. Serangan disebut ditujukan ke RS Harapan Kita dan RS Dharmais. Langkahnya: cabut kabel LAN/Wi-Fi, pasang MS17-010, matikan SMBv1, blokir port 139/445 dan 3389."
+        },
+        {
+          "waktu": "15 Mei 2017",
+          "peristiwa": "Pendaftaran pasien di Dharmais masih manual dan antrean memanjang. Sedikitnya 60 komputer rumah sakit terdampak. Pihak RS Harapan Kita menyatakan operasionalnya tetap normal."
+        }
+      ],
+      "akar_masalah": "WannaCry memanfaatkan celah di SMBv1, layanan berbagi file Windows yang mendengarkan di port TCP 445. Komputer yang belum dipasangi MS17-010 menerima paket SMB buatan penyerang dan menjalankan kodenya. Setelah masuk, program itu mengenkripsi file lalu mencari komputer Windows lain di jaringan yang sama. Tambalannya sudah tersedia sejak Maret 2017, dua bulan sebelum serangan; komputer yang belum ditambal dan port 445-nya bisa dijangkau itulah yang tertular.",
+      "kaitan": "Tabel di bagian Daftar Port yang Wajib Hafal memuat dua port yang diminta Kominfo untuk diblokir: TCP 445 untuk SMB/CIFS dan TCP 3389 untuk RDP. Bagian Membaca `ss` dan `netstat` menunjukkan cara melihat port yang LISTEN, misalnya `netstat -ano | findstr LISTENING` di Windows. Alamat `0.0.0.0:445` berarti layanan itu menunggu di semua antarmuka. Bagian Port Sumber dalam Praktik mengingatkan bahwa aturan firewall disusun berdasarkan port tujuan, seperti aturan 'blokir TCP 445 masuk'.",
+      "pelajaran": [
+        "Audit port yang LISTEN di setiap PC dan server (`netstat -ano` di Windows, `ss -tulnp` di Linux). Matikan layanan yang tidak dipakai, misalnya berbagi file di PC loket.",
+        "Blokir TCP 445 dan 139 serta UDP 137-138 di batas jaringan, seperti saran US-CERT. Ingat efek sampingnya: berbagi file yang melewati batas itu ikut berhenti.",
+        "Pasang tambalan keamanan segera. MS17-010 sudah tersedia dua bulan sebelum WannaCry menyebar.",
+        "Bila ada komputer terinfeksi, cabut dulu dari jaringan supaya penyebaran lewat SMB berhenti, baru pulihkan dari cadangan."
+      ],
+      "sumber": [
+        {
+          "judul": "Siaran Pers No. 55/HM/KOMINFO/05/2017: Himbauan Agar Segera Melakukan Tindakan Pencegahan Terhadap Ancaman Malware Khususnya Ransomware Jenis WannaCRY",
+          "penerbit": "Kominfo (arsip Ditjen Infrastruktur Digital Komdigi)",
+          "url": "https://infradigital.komdigi.go.id/berita-himbauan-agar-segera-melakukan-tindakan-pencegahan-terhadap-ancaman-malware-26-2990"
+        },
+        {
+          "judul": "Imbas Serangan WannaCry, Antrean Panjang Terlihat di RS Dharmais",
+          "penerbit": "detikNews",
+          "url": "https://news.detik.com/berita/d-3500892/imbas-serangan-wanncry-antrean-panjang-terlihat-di-rs-dharmais"
+        },
+        {
+          "judul": "Patient data backed up to counter ransomware attacks, hospital managements claim",
+          "penerbit": "The Jakarta Post",
+          "url": "https://www.thejakartapost.com/news/2017/05/15/patient-data-backed-up-to-counter-ransomware-attacks-hospital-managements-claim.html"
+        },
+        {
+          "judul": "Microsoft Security Bulletin MS17-010 - Critical",
+          "penerbit": "Microsoft",
+          "url": "https://learn.microsoft.com/en-us/security-updates/securitybulletins/2017/ms17-010"
+        },
+        {
+          "judul": "Indicators Associated With WannaCry Ransomware (TA17-132A)",
+          "penerbit": "CISA (US-CERT)",
+          "url": "https://www.cisa.gov/news-events/alerts/2017/05/12/indicators-associated-wannacry-ransomware"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda magang di sebuah klinik di Semarang. Vendor aplikasi rekam medis meminta port forwarding di router: TCP 3389 dari internet diteruskan ke PC resepsionis 192.168.1.20 supaya mereka bisa remote. Di PC itu, `netstat -ano | findstr LISTENING` memuat `0.0.0.0:135`, `0.0.0.0:445`, `0.0.0.0:3389`, dan `127.0.0.1:5432`. Pemilik klinik bertanya: port mana yang bisa dijangkau dari internet, mana yang hanya dari LAN, dan apa yang harus dibenahi tanpa mengganggu kerja resepsionis?",
+      "petunjuk": [
+        "Pisahkan dua pertanyaan: alamat apa yang didengarkan aplikasi (dari `netstat`), dan paket dari mana yang benar-benar bisa sampai ke PC itu (router dan firewall).",
+        "Dari internet, paket hanya masuk lewat aturan port forwarding di router. Port lain yang LISTEN di 0.0.0.0 tetap bisa dijangkau dari LAN.",
+        "Uji dari luar dengan izin pemilik, misalnya `nmap -Pn -p 445,3389 <IP publik>` dari jaringan seluler, lalu bandingkan dengan uji dari laptop di LAN."
+      ],
+      "jawaban": "1. Baca alamat listening. `0.0.0.0` berarti port itu menunggu di semua antarmuka. Jadi 135, 445, dan 3389 terbuka bagi siapa pun di LAN klinik. `127.0.0.1:5432` (database PostgreSQL) hanya bisa dipakai dari PC itu sendiri, dan itu sudah benar.\n2. Ikuti jalur dari internet. Router klinik memakai NAT. Paket dari internet hanya diteruskan ke PC bila ada aturan port forwarding, dan satu-satunya aturan adalah TCP 3389. Dugaan Anda: dari internet hanya RDP yang terbuka, sedangkan 135 dan 445 hanya terbuka ke LAN.\n3. Uji dugaan itu. Dengan izin pemilik, jalankan `nmap -Pn -p 445,3389 <IP publik klinik>` dari jaringan seluler. Hasil yang cocok: 3389 open, 445 tidak open (biasanya filtered, setara timeout). Dari laptop di LAN, `nc -zv 192.168.1.20 445` berhasil.\n4. Simpulkan risikonya. Port 3389 bisa dicoba siapa saja yang memindai internet, termasuk penebak kata sandi. Port 445 terbuka ke seluruh LAN, jalur yang dipakai WannaCry untuk menular dari satu PC ke PC lain.\n5. Benahi tanpa memutus kerja. Hapus port forwarding 3389 dan minta vendor masuk lewat VPN. Di Windows Firewall, izinkan 445 hanya dari IP yang memang berbagi file dengan PC ini, atau matikan berbagi file bila tidak dipakai. Pasang pembaruan keamanan Windows. Aplikasi rekam medis tetap jalan karena databasenya memang hanya mendengarkan di 127.0.0.1."
+    }
+  },
+  "05-transport/02-tcp": {
+    "intinya": {
+      "satu_kalimat": "TCP membuat pengiriman di atas IP yang tidak andal menjadi andal: setiap byte bernomor, penerima mengonfirmasi, yang hilang dikirim ulang, dan urutannya disusun kembali.",
+      "analogi": "Bayangkan Anda mengirim buku tebal ke saudara di Makassar, dipotong per halaman lewat kurir. Setiap halaman bernomor, dan saudara Anda membalas lewat WhatsApp: 'sudah terima sampai halaman 120'. Halaman yang tidak kunjung dikonfirmasi Anda kirim ulang, dan halaman yang datang acak ia susun sendiri. Sebelum mulai, kalian saling menelepon untuk menyepakati nomor awal; langkah ini disebut handshake. Bedanya, TCP menomori byte, bukan halaman, dan semuanya berlangsung dalam hitungan milidetik.",
+      "kenapa_penting": "Situs web, aplikasi bank, SSH, dan database berjalan di atas TCP. Saat koneksi lambat atau putus, gejalanya terlihat di Wireshark dan `ss`: retransmisi, zero window, RST, atau CLOSE_WAIT yang menumpuk. Membaca gejala itu memisahkan masalah jaringan dari masalah aplikasi, sehingga Anda tahu tim mana yang harus memperbaiki.",
+      "istilah": [
+        {
+          "kata": "Three-way handshake",
+          "arti": "Tiga pesan pembuka koneksi TCP: SYN, SYN-ACK, ACK. Kedua pihak menyepakati nomor urut awal dan opsi seperti MSS."
+        },
+        {
+          "kata": "Sequence number",
+          "arti": "Nomor byte pertama di sebuah segmen TCP. Penerima memakainya untuk menyusun ulang data dan mengenali duplikat."
+        },
+        {
+          "kata": "ACK",
+          "arti": "Konfirmasi dari penerima yang berisi nomor byte berikutnya yang ia harapkan."
+        },
+        {
+          "kata": "RST",
+          "arti": "Flag TCP untuk memutus koneksi seketika. Program yang menerimanya langsung menutup koneksi tanpa penutupan sopan lewat FIN."
+        },
+        {
+          "kata": "Retransmisi",
+          "arti": "Pengiriman ulang segmen yang belum dikonfirmasi, karena timer habis atau karena ada tiga ACK duplikat."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Comcast memalsukan paket TCP RST untuk memutus koneksi BitTorrent pelanggannya",
+      "kapan": "2007-10",
+      "di_mana": "Comcast, ISP kabel di Amerika Serikat",
+      "ringkas": "Pada 2007 sejumlah pelanggan Comcast, ISP kabel di Amerika Serikat, mendapati koneksi BitTorrent mereka terus terputus, terutama saat mengunggah. Penyebabnya perangkat di jaringan Comcast sendiri. Perangkat itu menyisipkan paket TCP RST palsu yang seolah dikirim lawan bicara, sehingga tiap ujung mengira pihak lain memutus koneksi. Associated Press dan EFF menguji sendiri, dan EFF menangkap paket di kedua ujung untuk membuktikannya. Pada Agustus 2008 regulator telekomunikasi AS, FCC, memutuskan praktik itu bertentangan dengan kebijakan internet terbuka.",
+      "kronologi": [
+        {
+          "waktu": "sekitar Mei 2007",
+          "peristiwa": "Keluhan koneksi BitTorrent yang bermasalah mulai beredar di forum. Robb Topolski, pelanggan Comcast, lalu menyadap paketnya saat seeding dan menemukan paket TCP RST yang tidak terduga."
+        },
+        {
+          "waktu": "19 Oktober 2007",
+          "peristiwa": "Associated Press menerbitkan hasil ujinya sendiri berjudul 'Comcast Blocks Some Internet Traffic'."
+        },
+        {
+          "waktu": "1 November 2007",
+          "peristiwa": "Free Press dan Public Knowledge mengadukan Comcast ke FCC karena diam-diam menghambat aplikasi peer-to-peer."
+        },
+        {
+          "waktu": "28 November 2007",
+          "peristiwa": "EFF menerbitkan laporan 'Packet Forgery By ISPs'. Penangkapan paket di kedua ujung membuktikan RST dipalsukan dan disuntikkan di antara kedua pihak."
+        },
+        {
+          "waktu": "1 Agustus 2008",
+          "peristiwa": "FCC memutuskan Comcast menghambat pelanggan memakai aplikasi pilihannya. Comcast wajib membuka rincian praktiknya dalam 30 hari dan menghentikannya sebelum akhir tahun."
+        },
+        {
+          "waktu": "6 April 2010",
+          "peristiwa": "Pengadilan banding federal (D.C. Circuit) membatalkan putusan FCC karena menilai FCC tidak berwenang. Saat itu Comcast sudah beralih ke cara pengelolaan lalu lintas yang baru."
+        }
+      ],
+      "akar_masalah": "Header TCP tidak ditandatangani. Perangkat yang berada di jalur bisa melihat port dan sequence number sebuah koneksi, lalu membuat segmen RST yang tampak sah. Perangkat Comcast memantau isi lalu lintas pelanggan, mengenali koneksi peer-to-peer, lalu menyuntikkan RST palsu dengan alamat pengirim lawan bicara. Tumpukan TCP di komputer pelanggan menuruti RST itu dan langsung menutup koneksi, sama seperti bila RST datang dari lawan bicara yang asli.",
+      "kaitan": "Ini wujud nyata subbagian RST (Penutupan Paksa) di bagian Menutup Koneksi. RST memutus koneksi seketika, dan peringatan 'RST di tengah transfer = tanda masalah' menyebut firewall atau IPS sebagai pelaku umum. Di sini pelakunya perangkat ISP. Bagian Analisis TCP di Wireshark memberi filter `tcp.flags.reset == 1` dan aturan menangkap di dua titik, cara yang dipakai EFF. Bagian Header TCP juga menjelaskan mengapa ISN dibuat acak: penyuntik di luar jalur tidak bisa menebak nomor urutnya.",
+      "pelajaran": [
+        "Saat koneksi putus di tengah transfer, tangkap paket di kedua ujung. RST yang tiba di klien tetapi tidak pernah dikirim server berarti ada perangkat di tengah yang menyuntikkannya.",
+        "TLS mengenkripsi isi, bukan header TCP. RST palsu tetap bisa memutus koneksi HTTPS, jadi enkripsi saja tidak mencegah gangguan semacam ini.",
+        "ISP yang perlu mengatasi kepadatan sebaiknya membatasi kecepatan per pelanggan secara terbuka, seperti saran EFF, bukan memalsukan paket untuk aplikasi tertentu."
+      ],
+      "sumber": [
+        {
+          "judul": "Packet Forgery By ISPs: A Report on the Comcast Affair",
+          "penerbit": "Electronic Frontier Foundation (EFF)",
+          "url": "https://www.eff.org/wp/packet-forgery-isps-report-comcast-affair"
+        },
+        {
+          "judul": "Comcast Corp. v. FCC, No. 08-1291 (diputus 6 April 2010)",
+          "penerbit": "U.S. Court of Appeals for the D.C. Circuit",
+          "url": "https://media.cadc.uscourts.gov/opinions/docs/2010/04/08-1291-1238302.pdf"
+        },
+        {
+          "judul": "August 3, 2008 (FCC Network Neutrality Decision)",
+          "penerbit": "Benton Institute for Broadband & Society",
+          "url": "https://www.benton.org/content/august-3-2008-fcc-network-neutrality-decision"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Jaringan minimarket di Bekasi memakai aplikasi kasir yang membuka satu koneksi TCP ke server pusat setiap pagi dan memakainya sepanjang hari. Transaksi pertama sesudah toko sepi lebih dari 30 menit selalu gagal, transaksi berikutnya berhasil. Capture di server pusat tidak memperlihatkan paket apa pun saat kegagalan. Capture di PC kasir memperlihatkan kasir mengirim data, lalu menerima RST ber-TTL 64, padahal paket dari server biasanya tiba dengan TTL 52. Router toko memakai NAT dengan timeout TCP idle 1800 detik. Apa dugaan Anda, dan bagaimana membuktikan serta memperbaikinya?",
+      "petunjuk": [
+        "Server tidak melihat paket apa pun. Jadi siapa yang mengirim RST ke kasir? Bandingkan TTL-nya dengan paket server.",
+        "Apa yang terjadi pada entri tabel NAT milik koneksi yang diam lebih dari 1800 detik?",
+        "Cari cara supaya koneksi tidak pernah diam lebih lama dari timeout router, tanpa mengubah alur transaksi."
+      ],
+      "jawaban": "1. Amati gejalanya. Segmen dari kasir tidak pernah sampai ke server, tetapi kasir menerima RST. RST itu bukan dari server: TTL 64 berarti paket dibuat di dekat kasir, sedangkan paket server yang melewati banyak hop tiba dengan TTL 52. Pengirim RST yang paling mungkin adalah router toko.\n2. Susun dugaan. Koneksi kasir diam lebih dari 30 menit. Router menghapus entri NAT-nya setelah 1800 detik idle, padahal kedua ujung masih menganggap koneksi ESTABLISHED. Segmen berikutnya dari kasir tidak cocok dengan entri mana pun, sehingga router menolaknya dengan RST (bagian RST: 'menerima paket untuk koneksi yang tidak dikenal'). Aplikasi lalu membuka koneksi baru, dan transaksi kedua berhasil.\n3. Uji dugaan itu. Biarkan kasir diam 25 menit lalu bertransaksi: seharusnya berhasil. Ulangi dengan diam 35 menit: seharusnya gagal. Bersamaan, lihat tabel koneksi di router; entri koneksi kasir hilang setelah 1800 detik. Di Wireshark, filter `tcp.flags.reset == 1` menunjukkan RST datang tanpa paket server sebelumnya.\n4. Perbaiki penyebabnya. Pilihan terbaik: aktifkan TCP keepalive dengan interval di bawah timeout router, misalnya 300 detik, di aplikasi atau sistem operasi kasir (di Linux `net.ipv4.tcp_keepalive_time=300`). Paket keepalive yang kecil menjaga entri NAT tetap hidup. Alternatifnya, naikkan timeout TCP idle di router, atau buat aplikasi menyambung ulang otomatis lalu mengulang transaksi dengan nomor transaksi unik supaya tidak tercatat dua kali.\n5. Verifikasi hasilnya. Setelah keepalive aktif, Wireshark menampilkan paket TCP Keep-Alive tiap 5 menit, dan transaksi pertama sesudah jam sepi berhasil."
+    }
+  },
+  "05-transport/03-udp-quic": {
+    "intinya": {
+      "satu_kalimat": "UDP mengirim paket tanpa salam pembuka dan tanpa jaminan sampai; QUIC memakai UDP untuk membangun transport yang andal, terenkripsi, dan cepat tersambung.",
+      "analogi": "UDP seperti melempar brosur dari motor ke teras rumah: cepat dan tidak perlu mengetuk pintu, tetapi Anda tidak tahu brosurnya sampai atau tertiup angin. Untuk siaran langsung atau telepon, brosur yang terlambat memang tidak berguna lagi. QUIC seperti kurir yang tetap memakai motor yang sama, tetapi membawa buku catatan: setiap paket bernomor, yang hilang dikirim ulang, dan isinya disegel. Kalau satu pesanan tertunda, pesanan lain dalam antaran yang sama tetap diserahkan tanpa menunggu.",
+      "kenapa_penting": "DNS, DHCP, panggilan suara, dan game online berjalan di atas UDP, dan browser modern memakai QUIC untuk HTTP/3. Kebijakan firewall kantor soal UDP/443 menentukan apakah pengguna mendapat QUIC atau kembali ke TCP. Layanan UDP yang dibiarkan terbuka ke internet juga bisa disalahgunakan untuk serangan amplifikasi.",
+      "istilah": [
+        {
+          "kata": "Datagram",
+          "arti": "Satu paket UDP yang berdiri sendiri. Satu kali kirim sama dengan satu kali terima, tanpa koneksi."
+        },
+        {
+          "kata": "QUIC",
+          "arti": "Protokol transport di atas UDP (RFC 9000) dengan TLS 1.3 bawaan, banyak stream dalam satu koneksi, dan pemulihan paket hilang per stream."
+        },
+        {
+          "kata": "Head-of-line blocking",
+          "arti": "Keadaan ketika satu paket yang hilang menahan data lain di belakangnya, walau data itu sudah tiba."
+        },
+        {
+          "kata": "Latensi ekor",
+          "arti": "Waktu tunggu permintaan yang paling lambat, biasanya diukur di persentil 95 atau 99. Inilah yang dirasakan pengguna saat aplikasi 'kadang lemot'."
+        },
+        {
+          "kata": "Fallback",
+          "arti": "Kembali ke cara lama bila cara baru gagal, misalnya aplikasi memakai TCP saat QUIC lewat UDP tidak berhasil."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "Uber memindahkan aplikasi rider dan driver ke QUIC untuk memangkas latensi di jaringan seluler",
+      "kapan": "2019-05",
+      "di_mana": "Uber, aplikasi rider dan driver (pengukuran awal dari India)",
+      "ringkas": "Aplikasi Uber dipakai di lebih dari 600 kota dan bergantung pada jaringan nirkabel dari lebih dari 4.500 operator seluler. Tim engineering Uber menemukan kinerja yang buruk di jaringan yang sering kehilangan paket kerap bermuara pada TCP di kernel sistem operasi. Mereka lalu memasang QUIC lewat pustaka Cronet di aplikasi Android dan iOS, plus reverse proxy QUIC buatan sendiri di server. Di produksi, latensi ekor lalu lintas HTTPS turun 10-30 persen.",
+      "kronologi": [
+        {
+          "waktu": "Tahap pengukuran",
+          "peristiwa": "Uber merekam paket dengan tcpdump selama seminggu di server edge untuk koneksi dari India. RTT persentil 99 mencapai 2.300 ms, dan TCP mengirim ulang 3,5 persen paket."
+        },
+        {
+          "waktu": "Tahap pengukuran",
+          "peristiwa": "Di lokasi padat seperti stasiun kereta dan bandara, jaringan membuang sampai 7 persen paket."
+        },
+        {
+          "waktu": "Uji jalan di New Delhi",
+          "peristiwa": "Perangkat Android uji memutar ulang pola panggilan HTTPS aplikasi rider. Pada uji pertama, latensi QUIC turun sekitar 50 persen dari persentil 50 sampai 99 dibanding TCP."
+        },
+        {
+          "waktu": "Uji A/B di produksi",
+          "peristiwa": "Sekitar 80 persen sesi memakai QUIC untuk semua permintaan, sekitar 15 persen mencampur TCP dan QUIC. Uber menduga pustakanya kembali ke TCP saat terjadi timeout."
+        },
+        {
+          "waktu": "14 Mei 2019",
+          "peristiwa": "Uber menerbitkan hasilnya: latensi ekor HTTPS di aplikasi rider dan driver turun 10-30 persen."
+        }
+      ],
+      "akar_masalah": "Di jaringan seluler yang padat, paket sering hilang dan RTT melonjak. TCP menebus kehilangan dengan retransmisi yang menunggu timer; di data Uber, rata-rata waktu sampai kirim ulang sekitar satu detik. HTTP/2 memakai satu koneksi TCP per server, sehingga satu paket hilang menahan semua stream di koneksi itu (head-of-line blocking). Karena TCP tertanam di kernel sistem operasi, Uber tidak bisa mengubah perilakunya di ponsel pengguna.",
+      "kaitan": "Pengalaman Uber cocok dengan bagian Mengapa QUIC dibuat: head-of-line blocking HTTP/2 di atas TCP, dan TCP yang sulit diubah karena tertanam di kernel. Solusi Uber memakai poin 'Diimplementasikan di user space' dari bagian Keunggulan QUIC: QUIC dibawa di dalam aplikasi lewat Cronet tanpa menunggu pembaruan sistem operasi. Sesi yang mencampur TCP dan QUIC adalah fallback yang dibahas di bagian Kelemahan dan tantangan QUIC.",
+      "pelajaran": [
+        "Ukur dulu sebelum mengganti protokol. Rekam paket dari pengguna sungguhan, lalu lihat RTT persentil 95/99 dan laju retransmisi, bukan rata-rata saja.",
+        "Sediakan fallback ke TCP. Pada Uber sekitar 15 persen sesi tetap memakai TCP untuk sebagian permintaan, jadi aplikasi harus berjalan baik di kedua jalur.",
+        "Nilai hasil dari latensi ekor, karena permintaan paling lambat itulah yang dirasakan pengguna di stasiun dan bandara yang padat."
+      ],
+      "sumber": [
+        {
+          "judul": "Employing QUIC Protocol to Optimize Uber's App Performance",
+          "penerbit": "Uber Engineering Blog",
+          "url": "https://www.uber.com/us/en/blog/employing-quic-protocol/"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda bekerja di ISP kecil di Medan. Tim abuse sebuah penyedia di luar negeri mengirim laporan. Menurut mereka, IP pelanggan Anda 203.0.113.25 (server sebuah SMK) membanjiri satu alamat mereka dengan lalu lintas UDP dari port 123. Link unggah sekolah penuh tiap malam, dan admin sekolah yakin servernya tidak dibobol. Di server itu, `tcpdump -ni eth0 udp port 123` menampilkan ribuan permintaan per detik dari 198.51.100.7 port 4444 dengan payload 8 byte. Setiap permintaan dijawab 10 paket berpayload 440 byte ke alamat yang sama. Apa yang terjadi, dan apa perbaikannya?",
+      "petunjuk": [
+        "Port 123 milik layanan apa? Siapa yang memulai percakapan, dan berapa besar jawaban dibanding permintaannya?",
+        "Apakah 198.51.100.7 benar-benar mengirim permintaan itu? Ingat bahwa UDP tidak punya handshake.",
+        "Cocokkan angkanya dengan tabel faktor amplifikasi di modul, lalu periksa layanan yang mendengarkan dengan `ss -ulnp`."
+      ],
+      "jawaban": "1. Kenali layanannya. UDP 123 adalah NTP. Server sekolah tidak memulai apa pun; ia hanya menjawab permintaan yang datang.\n2. Hitung amplifikasinya. Setiap permintaan 8 byte dijawab 10 x 440 = 4.400 byte, sekitar 550 kali lipat. Angka itu cocok dengan baris NTP `monlist` (hingga 556x) di tabel amplification attack.\n3. Susun dugaan. UDP tidak punya handshake, jadi alamat sumber 198.51.100.7 mudah dipalsukan. Penyerang di tempat lain mengirim permintaan `monlist` kecil dengan alamat sumber korban. Server sekolah menjadi pemantul dan mengirim jawaban besar ke korban. Admin benar bahwa servernya tidak dibobol, tetapi layanannya disalahgunakan.\n4. Uji dugaan itu. `ss -ulnp` menunjukkan `ntpd` mendengarkan di `0.0.0.0:123`, artinya terbuka ke internet. Dari luar jaringan sekolah, uji apakah server menjawab perintah `monlist`. Bila menjawab dengan daftar panjang, dugaan terbukti.\n5. Perbaiki penyebabnya. Matikan fitur monlist (`disable monitor` di `ntp.conf`) atau ganti ke chrony. Batasi NTP hanya untuk LAN sekolah lewat firewall atau `restrict`, karena server ini tidak perlu melayani internet. Tambahkan rate limiting pada UDP 123.\n6. Benahi juga sisi ISP. Terapkan filter alamat sumber palsu (BCP 38/uRPF) di tepi jaringan Anda, supaya pelanggan Anda tidak bisa dipakai memulai serangan serupa. Balas laporan abuse dengan langkah yang sudah diambil."
+    }
+  },
+  "05-transport/04-congestion-control": {
+    "intinya": {
+      "satu_kalimat": "Congestion control adalah cara TCP menebak kapasitas jaringan: naik pelan sampai ada tanda macet, lalu turun cepat, supaya jaringan tidak runtuh oleh kiriman ulang.",
+      "analogi": "Bayangkan jalan tol tanpa papan informasi kepadatan. Setiap sopir menambah kecepatan sedikit demi sedikit, dan begitu lampu rem di depan menyala, ia langsung mengurangi kecepatan banyak. Kalau semua sopir justru ngebut saat macet, gerbang tol tersumbat total. Di jaringan, keadaan itu disebut congestion collapse. Bufferbloat mirip antrean panjang di gerbang tol; tidak ada mobil yang ditolak, tetapi semua menunggu lama. Bedanya, pengirim di jaringan tidak bisa melihat jalan di depan dan hanya menebak dari paket yang hilang, ACK yang terlambat, atau tanda ECN.",
+      "kenapa_penting": "Keluhan 'internet lambat kalau ada yang download' di rumah, warnet, atau kantor sering berupa bufferbloat, bukan kurang bandwidth. Pilihan algoritma (CUBIC atau BBR), AQM seperti CAKE, dan setelan MTU menentukan apakah video call dan game tetap lancar saat jaringan dipakai bersama.",
+      "istilah": [
+        {
+          "kata": "cwnd (congestion window)",
+          "arti": "Batas data yang boleh dikirim sebelum menunggu ACK, menurut perkiraan pengirim sendiri tentang kapasitas jaringan."
+        },
+        {
+          "kata": "Slow start",
+          "arti": "Fase awal TCP ketika cwnd berlipat dua tiap RTT sampai mencapai ambang ssthresh atau sampai ada paket hilang."
+        },
+        {
+          "kata": "Bufferbloat",
+          "arti": "Latensi melonjak karena buffer besar di router atau modem terisi penuh saat ada transfer besar, padahal paket hilang 0%."
+        },
+        {
+          "kata": "BBR",
+          "arti": "Algoritma congestion control dari Google yang mengukur bandwidth bottleneck dan RTT minimum, alih-alih menunggu paket hilang."
+        },
+        {
+          "kata": "AQM",
+          "arti": "Active Queue Management: router membuang atau menandai paket lebih awal supaya antrean tetap pendek. Contohnya FQ-CoDel dan CAKE."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "Google mengganti CUBIC dengan BBR untuk backbone-nya, lalu untuk google.com dan YouTube",
+      "kapan": "2016-09",
+      "di_mana": "Google (backbone WAN, google.com, YouTube), global",
+      "ringkas": "Pada September 2016 tim Google mengirim kode algoritma BBR ke kernel Linux. Pesan commit-nya menyebut BBR sudah dipasang penuh di backbone WAN Google dan sedang diuji untuk google.com dan YouTube secara global. BBR cukup diubah di sisi pengirim, jadi ponsel dan router pengguna tidak perlu diubah. Pada Juli 2017 Google melaporkan hasilnya di YouTube. Throughput naik 4 persen rata-rata global dan lebih dari 14 persen di sebagian negara, sedangkan RTT turun 33 persen.",
+      "kronologi": [
+        {
+          "waktu": "19 September 2016",
+          "peristiwa": "Neal Cardwell dari Google mengirim commit `tcp_bbr: add BBR congestion control` ke kernel Linux. BBR saat itu sudah dipakai penuh di backbone WAN Google."
+        },
+        {
+          "waktu": "September-Oktober 2016",
+          "peristiwa": "Rancangan BBR terbit di ACM Queue Vol. 14 No. 5 dengan judul 'BBR: Congestion-Based Congestion Control'."
+        },
+        {
+          "waktu": "21 Juli 2017",
+          "peristiwa": "Google mengumumkan BBR tersedia di Google Cloud Platform. Angka YouTube: throughput naik 4 persen, RTT turun 33 persen, jeda antar-buffering 11 persen lebih panjang."
+        }
+      ],
+      "akar_masalah": "Algoritma lama seperti CUBIC memakai paket hilang sebagai tanda untuk mengerem. Di ujung internet, buffer modem dan router dalam, sehingga CUBIC terus mengisinya sampai penuh sebelum ada paket hilang. Antrean itu menambah delay sampai hitungan detik. Di link jarak jauh yang buffernya dangkal, paket bisa hilang karena lonjakan sesaat, lalu CUBIC memotong laju setengah tanpa perlu. Uji di commit Google: link 10 Gbps, RTT 100 ms, loss 1 persen, CUBIC mendapat 3,27 Mbps, BBR 9.150 Mbps.",
+      "kaitan": "Commit Google itu menyentuh bagian BBR (Bottleneck Bandwidth and RTT) dan bagian Bufferbloat sekaligus. Subbagian Kenapa terjadi di bagian Bufferbloat menjelaskan bahwa algoritma berbasis loss butuh loss untuk berhenti naik, sama dengan keluhan Google di commit-nya. RTT YouTube yang turun 33 persen adalah antrean yang lebih pendek. Perintah `sysctl -w net.ipv4.tcp_congestion_control=bbr` di modul mengaktifkan modul kernel `tcp_bbr` yang masuk lewat commit 2016 itu.",
+      "pelajaran": [
+        "BBR cukup dipasang di sisi pengirim. Untuk server yang melayani banyak pengguna seluler, uji `bbr` bersama qdisc `fq` di satu server dulu, lalu bandingkan dengan CUBIC.",
+        "Ukur latensi di bawah beban, bukan hanya throughput. Perbaikan terbesar YouTube ada di RTT, yang tidak terlihat di speedtest biasa.",
+        "Ulangi uji Google di lab kecil: `tc qdisc add dev eth0 root netem loss 1% delay 100ms`, lalu jalankan `iperf3` dengan CUBIC dan dengan BBR."
+      ],
+      "sumber": [
+        {
+          "judul": "tcp_bbr: add BBR congestion control (commit 0f8782ea1497)",
+          "penerbit": "Kernel Linux, mirror GitHub torvalds/linux",
+          "url": "https://github.com/torvalds/linux/commit/0f8782ea14974ce992618b55f0c041ef43ed0b78"
+        },
+        {
+          "judul": "TCP BBR congestion control comes to GCP: your Internet just got faster",
+          "penerbit": "Google Cloud Blog",
+          "url": "https://cloud.google.com/blog/products/networking/tcp-bbr-congestion-control-comes-to-gcp-your-internet-just-got-faster"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Sebuah warnet di Purwokerto berlangganan internet 50 Mbps unduh dan 10 Mbps unggah. Pemiliknya sudah memasang OpenWrt dengan SQM CAKE setelah membaca soal bufferbloat, dengan setelan `bandwidth 100Mbit` untuk kedua arah. Keluhan tidak berubah: ping game naik dari 25 ms ke 900 ms setiap ada pelanggan mengunggah video, sementara speedtest tetap menunjukkan angka bagus. Kenapa CAKE belum menolong, dan apa yang harus diubah?",
+      "petunjuk": [
+        "Di perangkat mana antrean sebenarnya terbentuk bila router Anda mengirim lebih cepat daripada kapasitas link?",
+        "Bandingkan angka `bandwidth` di CAKE dengan kapasitas unggah dan unduh yang sebenarnya.",
+        "Ingat tip di bagian Bufferbloat: bottleneck harus ada di perangkat yang Anda kendalikan."
+      ],
+      "jawaban": "1. Kenali gejalanya. Latensi melonjak saat ada unggahan, paket hilang hampir nol, speedtest bagus. Ini pola bufferbloat dari bagian 6.\n2. Susun dugaan. CAKE disetel 100 Mbit, padahal link unggah hanya 10 Mbps. Router warnet tidak pernah menjadi titik tersempit, karena ia boleh meneruskan paket sampai 100 Mbit. Antrean lalu menumpuk di modem ISP yang buffernya besar dan tanpa AQM. AQM di router tidak pernah bekerja karena antreannya sendiri selalu kosong.\n3. Uji dugaan itu. Saat unggahan berjalan, lihat `tc -s qdisc show dev <wan>`. Bila backlog dan drop CAKE hampir nol, dugaan terbukti. Ukur juga kapasitas nyata tanpa SQM beberapa kali di jam sepi.\n4. Perbaiki penyebabnya. Setel CAKE ke sekitar 90-95 persen kapasitas nyata, misalnya unggah 9 Mbit dan unduh sekitar 45 Mbit. Arah unduh dibentuk lewat antarmuka ifb yang disiapkan paket SQM. Kini antrean terbentuk di router warnet, tempat CAKE bisa membuang atau menunda paket secara adil per aliran.\n5. Verifikasi hasilnya. Ulangi ping saat ada unggahan besar. Latensi seharusnya tetap dekat dengan angka idle. Waveform Bufferbloat Test bisa dipakai untuk membandingkan nilai sebelum dan sesudah."
+    }
+  }
+}

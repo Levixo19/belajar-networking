@@ -1,0 +1,1773 @@
+[
+  {
+    "id": "port-akses-masih-vlan-1",
+    "judul": "PC baru di ruang guru tidak dapat alamat IP dan tidak bisa internet",
+    "tingkat": "pemula",
+    "modul": [
+      "03-data-link/03-vlan",
+      "03-data-link/02-switching",
+      "06-aplikasi/02-dhcp"
+    ],
+    "gejala": "PC baru di ruang guru mendapat alamat 169.254.x.x dan tidak bisa membuka internet. Laptop di meja sebelahnya normal.",
+    "briefing": "**Tiket #0412** dari Pak Bambang Sutrisno, staf Tata Usaha sebuah SMA negeri di Yogyakarta. Senin, pukul 07.40.\n\n> Komputer baru di meja saya di ruang guru dipasang teknisi vendor hari Sabtu. Pagi ini tidak bisa internet sama sekali. Di pojok layar ada ikon bola dunia bertuliskan \"No Internet access\". Laptop Bu Sari di meja sebelah lancar. Kabelnya sudah saya ganti dengan kabel printer, hasilnya sama. Komputer juga sudah saya restart dua kali.\n\nCatatan jaringan sekolah:\n\n- Ruang guru memakai VLAN 20, subnet 192.168.20.0/24. VLAN adalah cara membagi satu switch menjadi beberapa jaringan yang terpisah.\n- Router sekolah (192.168.20.1) menjadi gateway dan server DHCP untuk VLAN 20. DHCP adalah layanan yang membagikan alamat IP secara otomatis.\n- Jack di meja baru Pak Bambang tersambung ke port Fa0/14 di switch ruang guru.\n\nAnda bisa menjalankan perintah di PC Pak Bambang, laptop Bu Sari, switch, dan router.",
+    "lokasi": {
+      "kota": "Yogyakarta",
+      "lat": -7.8,
+      "lon": 110.391
+    },
+    "topologi": {
+      "simpul": [
+        {
+          "id": "PC1",
+          "label": "PC Pak Bambang",
+          "jenis": "pc",
+          "x": 10,
+          "y": 28,
+          "info": "Fa0/14, alamat 169.254.x.x"
+        },
+        {
+          "id": "PC2",
+          "label": "Laptop Bu Sari",
+          "jenis": "laptop",
+          "x": 10,
+          "y": 72,
+          "info": "Fa0/9, 192.168.20.37/24"
+        },
+        {
+          "id": "SW1",
+          "label": "Switch ruang guru",
+          "jenis": "switch",
+          "x": 38,
+          "y": 50,
+          "info": "Catalyst 2960-Plus, uplink Gi0/1"
+        },
+        {
+          "id": "R1",
+          "label": "Router sekolah",
+          "jenis": "router",
+          "x": 64,
+          "y": 50,
+          "info": "Gi0/0/1.20 = 192.168.20.1, server DHCP"
+        },
+        {
+          "id": "ISP",
+          "label": "ISP",
+          "jenis": "isp",
+          "x": 90,
+          "y": 50,
+          "info": "gateway 198.51.100.1"
+        }
+      ],
+      "sisi": [
+        {
+          "dari": "PC1",
+          "ke": "SW1",
+          "label": "Fa0/14"
+        },
+        {
+          "dari": "PC2",
+          "ke": "SW1",
+          "label": "Fa0/9"
+        },
+        {
+          "dari": "SW1",
+          "ke": "R1",
+          "label": "trunk Gi0/1"
+        },
+        {
+          "dari": "R1",
+          "ke": "ISP",
+          "label": "Gi0/0/0"
+        }
+      ]
+    },
+    "langkah": [
+      {
+        "id": "ipconfig-pc-bambang",
+        "label": "Lihat konfigurasi IP lengkap di PC Pak Bambang",
+        "perangkat": "PC1",
+        "perintah": "ipconfig /all",
+        "keluaran": "Windows IP Configuration\n\n   Host Name . . . . . . . . . . . . : TU-PC07\n   Primary Dns Suffix  . . . . . . . :\n   Node Type . . . . . . . . . . . . : Hybrid\n   IP Routing Enabled. . . . . . . . : No\n   WINS Proxy Enabled. . . . . . . . : No\n\nEthernet adapter Ethernet:\n\n   Connection-specific DNS Suffix  . :\n   Description . . . . . . . . . . . : Realtek PCIe GbE Family Controller\n   Physical Address. . . . . . . . . : 00-E0-4C-68-2A-51\n   DHCP Enabled. . . . . . . . . . . : Yes\n   Autoconfiguration Enabled . . . . : Yes\n   Link-local IPv6 Address . . . . . : fe80::8d2c:41f7:3a9e:6b05%6(Preferred)\n   Autoconfiguration IPv4 Address. . : 169.254.112.47(Preferred)\n   Subnet Mask . . . . . . . . . . . : 255.255.0.0\n   Default Gateway . . . . . . . . . :\n   DHCPv6 IAID . . . . . . . . . . . : 100720716\n   DHCPv6 Client DUID. . . . . . . . : 00-01-00-01-30-7A-1C-55-00-E0-4C-68-2A-51\n   DNS Servers . . . . . . . . . . . : fec0:0:0:ffff::1%1\n                                       fec0:0:0:ffff::2%1\n                                       fec0:0:0:ffff::3%1\n   NetBIOS over Tcpip. . . . . . . . : Enabled",
+        "makna": "PC tidak mendapat alamat dari server DHCP. Alamat 169.254.x.x disebut APIPA: alamat darurat yang dibuat Windows sendiri ketika tidak ada server DHCP yang menjawab. Default Gateway kosong, jadi PC tidak tahu jalan keluar dari jaringannya. Masalahnya ada di antara PC dan server DHCP, belum sampai ke urusan internet.",
+        "berguna": true
+      },
+      {
+        "id": "ipconfig-laptop-sari",
+        "label": "Lihat konfigurasi IP di laptop Bu Sari",
+        "perangkat": "PC2",
+        "perintah": "ipconfig",
+        "keluaran": "Windows IP Configuration\n\n\nEthernet adapter Ethernet:\n\n   Connection-specific DNS Suffix  . :\n   Link-local IPv6 Address . . . . . : fe80::1c4f:9a2e:7b10:4d21%7\n   IPv4 Address. . . . . . . . . . . : 192.168.20.37\n   Subnet Mask . . . . . . . . . . . : 255.255.255.0\n   Default Gateway . . . . . . . . . : 192.168.20.1",
+        "makna": "Laptop Bu Sari mendapat 192.168.20.37 dengan gateway 192.168.20.1, persis seperti seharusnya. Hasil ini normal dan hanya memastikan server DHCP untuk VLAN 20 hidup. Ia tidak menjelaskan kenapa PC Pak Bambang gagal.",
+        "berguna": false
+      },
+      {
+        "id": "ping-isp-dari-router",
+        "label": "Ping gateway ISP dari router sekolah",
+        "perangkat": "R1",
+        "perintah": "ping 198.51.100.1",
+        "keluaran": "Type escape sequence to abort.\nSending 5, 100-byte ICMP Echos to 198.51.100.1, timeout is 2 seconds:\n!!!!!\nSuccess rate is 100 percent (5/5), round-trip min/avg/max = 3/4/6 ms",
+        "makna": "Setiap tanda seru adalah satu balasan. Router sampai ke gateway ISP tanpa satu paket pun hilang, jadi internet sekolah hidup. Karena hanya satu PC yang bermasalah, penyebabnya ada di dekat PC itu, bukan di ISP.",
+        "berguna": false
+      },
+      {
+        "id": "interface-fa014",
+        "label": "Periksa kondisi fisik port Fa0/14",
+        "perangkat": "SW1",
+        "perintah": "show interfaces FastEthernet0/14",
+        "keluaran": "FastEthernet0/14 is up, line protocol is up (connected)\n  Hardware is Fast Ethernet, address is 0c75.bd3a.c10e (bia 0c75.bd3a.c10e)\n  MTU 1500 bytes, BW 100000 Kbit/sec, DLY 100 usec,\n     reliability 255/255, txload 1/255, rxload 1/255\n  Encapsulation ARPA, loopback not set\n  Keepalive set (10 sec)\n  Full-duplex, 100Mb/s, media type is 10/100BaseTX\n  input flow-control is off, output flow-control is unsupported\n  ARP type: ARPA, ARP Timeout 04:00:00\n  Last input never, output 00:00:00, output hang never\n  Last clearing of \"show interface\" counters never\n  Input queue: 0/75/0/0 (size/max/drops/flushes); Total output drops: 0\n  Queueing strategy: fifo\n  Output queue: 0/40 (size/max)\n  5 minute input rate 1000 bits/sec, 1 packets/sec\n  5 minute output rate 2000 bits/sec, 3 packets/sec\n     2143 packets input, 312847 bytes, 0 no buffer\n     Received 1987 broadcasts (412 multicasts)\n     0 runts, 0 giants, 0 throttles\n     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored\n     0 watchdog, 412 multicast, 0 pause input\n     0 input packets with dribble condition detected\n     18422 packets output, 1702331 bytes, 0 underruns\n     0 output errors, 0 collisions, 1 interface resets\n     0 unknown protocol drops\n     0 babbles, 0 late collision, 0 deferred\n     0 lost carrier, 0 no carrier, 0 pause output\n     0 output buffer failures, 0 output buffers swapped out",
+        "makna": "Port berstatus up/up, berjalan 100 Mb/s full-duplex, dengan nol CRC dan nol input error. Kabel dan port sehat. Lapisan fisik bukan masalahnya, jadi wajar kalau mengganti kabel tadi tidak mengubah apa pun.",
+        "berguna": false
+      },
+      {
+        "id": "interfaces-status",
+        "label": "Lihat status dan VLAN semua port di switch",
+        "perangkat": "SW1",
+        "perintah": "show interfaces status",
+        "keluaran": "Port      Name               Status       Vlan       Duplex  Speed Type\nFa0/1     Meja-01            connected    20         a-full  a-100 10/100BaseTX\nFa0/2     Meja-02            connected    20         a-full  a-100 10/100BaseTX\nFa0/3     Meja-03            notconnect   20           auto   auto 10/100BaseTX\nFa0/4     Meja-04            connected    20         a-full  a-100 10/100BaseTX\nFa0/5     Meja-05            connected    20         a-full  a-100 10/100BaseTX\nFa0/6     Meja-06            notconnect   20           auto   auto 10/100BaseTX\nFa0/7     Meja-07            connected    20         a-full  a-100 10/100BaseTX\nFa0/8     Meja-08            notconnect   20           auto   auto 10/100BaseTX\nFa0/9     Meja-09            connected    20         a-full  a-100 10/100BaseTX\nFa0/10    Meja-10            connected    20         a-full  a-100 10/100BaseTX\nFa0/11    Meja-11            notconnect   20           auto   auto 10/100BaseTX\nFa0/12    Meja-12            connected    20         a-full  a-100 10/100BaseTX\nFa0/13    Meja-13            connected    20         a-full  a-100 10/100BaseTX\nFa0/14                       connected    1          a-full  a-100 10/100BaseTX\nFa0/15                       notconnect   1            auto   auto 10/100BaseTX\nFa0/16                       notconnect   1            auto   auto 10/100BaseTX\nFa0/17                       notconnect   1            auto   auto 10/100BaseTX\nFa0/18                       notconnect   1            auto   auto 10/100BaseTX\nFa0/19                       notconnect   1            auto   auto 10/100BaseTX\nFa0/20                       notconnect   1            auto   auto 10/100BaseTX\nFa0/21                       notconnect   1            auto   auto 10/100BaseTX\nFa0/22                       notconnect   1            auto   auto 10/100BaseTX\nFa0/23                       notconnect   1            auto   auto 10/100BaseTX\nFa0/24                       notconnect   1            auto   auto 10/100BaseTX\nGi0/1     Uplink-R-SEKOLAH   connected    trunk      a-full a-1000 10/100/1000BaseTX\nGi0/2                        notconnect   1            auto   auto 10/100/1000BaseTX",
+        "makna": "Kolom Vlan memperlihatkan semua port meja guru (Fa0/1 sampai Fa0/13) di VLAN 20. Fa0/14 berstatus connected, tetapi berada di VLAN 1 seperti port cadangan yang belum dipakai. PC Pak Bambang tersambung ke jaringan yang salah.",
+        "berguna": true
+      },
+      {
+        "id": "mac-fa014",
+        "label": "Cari MAC yang dipelajari switch di port Fa0/14",
+        "perangkat": "SW1",
+        "perintah": "show mac address-table interface FastEthernet0/14",
+        "keluaran": "          Mac Address Table\n-------------------------------------------\n\nVlan    Mac Address       Type        Ports\n----    -----------       --------    -----\n   1    00e0.4c68.2a51    DYNAMIC     Fa0/14\nTotal Mac Addresses for this criterion: 1",
+        "makna": "Switch mengenali MAC PC Pak Bambang (00e0.4c68.2a51, sama dengan Physical Address di ipconfig) di VLAN 1. Frame dari PC memang sampai ke switch, tetapi masuk ke VLAN 1. Permintaan DHCP-nya hanya beredar di VLAN 1.",
+        "berguna": true
+      },
+      {
+        "id": "vlan-brief",
+        "label": "Lihat daftar VLAN dan anggota portnya",
+        "perangkat": "SW1",
+        "perintah": "show vlan brief",
+        "keluaran": "VLAN Name                             Status    Ports\n---- -------------------------------- --------- -------------------------------\n1    default                          active    Fa0/14, Fa0/15, Fa0/16, Fa0/17\n                                                Fa0/18, Fa0/19, Fa0/20, Fa0/21\n                                                Fa0/22, Fa0/23, Fa0/24, Gi0/2\n20   GURU                             active    Fa0/1, Fa0/2, Fa0/3, Fa0/4\n                                                Fa0/5, Fa0/6, Fa0/7, Fa0/8\n                                                Fa0/9, Fa0/10, Fa0/11, Fa0/12\n                                                Fa0/13\n99   MANAJEMEN                        active\n1002 fddi-default                     act/unsup\n1003 token-ring-default               act/unsup\n1004 fddinet-default                  act/unsup\n1005 trnet-default                    act/unsup",
+        "makna": "Fa0/14 tercantum di VLAN 1 (default) bersama port yang belum dikonfigurasi. VLAN 20 GURU berisi Fa0/1 sampai Fa0/13. Uplink Gi0/1 tidak muncul karena port trunk memang tidak ditampilkan di daftar ini.",
+        "berguna": true
+      },
+      {
+        "id": "switchport-fa014",
+        "label": "Lihat mode dan VLAN akses port Fa0/14",
+        "perangkat": "SW1",
+        "perintah": "show interfaces FastEthernet0/14 switchport",
+        "keluaran": "Name: Fa0/14\nSwitchport: Enabled\nAdministrative Mode: dynamic auto\nOperational Mode: static access\nAdministrative Trunking Encapsulation: dot1q\nOperational Trunking Encapsulation: native\nNegotiation of Trunking: On\nAccess Mode VLAN: 1 (default)\nTrunking Native Mode VLAN: 1 (default)\nAdministrative Native VLAN tagging: enabled\nVoice VLAN: none\nAdministrative private-vlan host-association: none\nAdministrative private-vlan mapping: none\nAdministrative private-vlan trunk native VLAN: none\nAdministrative private-vlan trunk Native VLAN tagging: enabled\nAdministrative private-vlan trunk encapsulation: dot1q\nAdministrative private-vlan trunk normal VLANs: none\nAdministrative private-vlan trunk associations: none\nAdministrative private-vlan trunk mappings: none\nOperational private-vlan: none\nTrunking VLANs Enabled: ALL\nPruning VLANs Enabled: 2-1001\nCapture Mode Disabled\nCapture VLANs Allowed: ALL\n\nProtected: false\nUnknown unicast blocked: disabled\nUnknown multicast blocked: disabled\nAppliance trust: none",
+        "makna": "`Access Mode VLAN: 1 (default)` memastikan port ini belum pernah diberi VLAN. `Administrative Mode: dynamic auto` adalah mode bawaan Catalyst 2960 untuk port yang belum disentuh. Port seperti ini bahkan bisa berubah menjadi trunk kalau perangkat di ujungnya memintanya lewat DTP.",
+        "berguna": true
+      },
+      {
+        "id": "config-fa013-fa014",
+        "label": "Bandingkan konfigurasi port Fa0/13 dan Fa0/14",
+        "perangkat": "SW1",
+        "perintah": "show running-config | section FastEthernet0/1[34]",
+        "keluaran": "interface FastEthernet0/13\n description Meja-13\n switchport access vlan 20\n switchport mode access\n spanning-tree portfast\ninterface FastEthernet0/14",
+        "makna": "Fa0/13 punya deskripsi, `switchport mode access`, dan `switchport access vlan 20`. Fa0/14 kosong sama sekali. Teknisi vendor menyambungkan jack meja baru ke port cadangan yang belum pernah dikonfigurasi.",
+        "berguna": true
+      }
+    ],
+    "dugaan": [
+      {
+        "id": "port-vlan-1",
+        "teks": "Port Fa0/14 belum dikonfigurasi, jadi masih di VLAN 1 bawaan. PC Pak Bambang tidak berada di VLAN 20 ruang guru.",
+        "benar": true,
+        "umpan": "Tepat. `show vlan brief` dan tabel MAC sama-sama menempatkan Fa0/14 di VLAN 1. Permintaan DHCP dikirim sebagai broadcast, dan broadcast hanya beredar di dalam satu VLAN. Di VLAN 1 tidak ada server DHCP, jadi tidak ada yang menjawab dan Windows memakai alamat APIPA."
+      },
+      {
+        "id": "pool-dhcp-habis",
+        "teks": "Pool DHCP di router sudah habis, jadi komputer baru tidak kebagian alamat.",
+        "benar": false,
+        "umpan": "Kalau pool habis, permintaan PC tetap sampai ke router dan hanya tidak dijawab. Di sini permintaannya bahkan tidak sampai ke VLAN 20: tabel MAC mencatat PC itu di VLAN 1. Laptop Bu Sari di VLAN 20 juga mendapat alamat seperti biasa."
+      },
+      {
+        "id": "kabel-rusak",
+        "teks": "Kabel atau port switch rusak.",
+        "benar": false,
+        "umpan": "Port Fa0/14 berstatus up/up, 100 Mb/s full-duplex, tanpa satu pun CRC atau input error, dan switch sudah mempelajari MAC PC itu. Lapisan fisik bekerja."
+      },
+      {
+        "id": "isp-putus",
+        "teks": "Koneksi ISP sekolah sedang putus.",
+        "benar": false,
+        "umpan": "Router sekolah bisa ping gateway ISP dengan 100 persen berhasil, dan komputer lain di ruangan yang sama lancar. Gangguan ISP akan mengenai semua komputer, bukan satu PC."
+      },
+      {
+        "id": "dns-salah",
+        "teks": "Pengaturan DNS di Windows PC baru salah.",
+        "benar": false,
+        "umpan": "DNS baru dipakai setelah PC punya alamat IP yang sah. PC ini belum punya alamat dari DHCP (masih 169.254.x.x) dan tidak punya gateway. Alamat fec0:... di daftar DNS hanya isian bawaan Windows ketika tidak ada DNS yang diberikan DHCP."
+      }
+    ],
+    "pembahasan": "Mulai dari lapisan bawah dan naik satu per satu.\n\n**Lapisan 1, fisik.** `show interfaces FastEthernet0/14` menunjukkan port up/up, 100 Mb/s full-duplex, nol CRC. Kabel dan port sehat, jadi mengganti kabel tidak akan menolong.\n\n**Lapisan 2, VLAN.** Di sinilah masalahnya. `show interfaces status` memperlihatkan semua port meja guru di VLAN 20 kecuali Fa0/14, yang masih di VLAN 1. Tabel MAC mencatat MAC PC Pak Bambang (`00e0.4c68.2a51`) di VLAN 1. Port Catalyst yang belum pernah dikonfigurasi otomatis masuk VLAN 1.\n\n**Lapisan 3, alamat IP.** PC meminta alamat dengan mengirim DHCP Discover, sebuah broadcast. Broadcast tidak pernah keluar dari VLAN-nya. Router hanya melayani DHCP di VLAN 20 (subinterface Gi0/0/1.20), jadi permintaan dari VLAN 1 tidak pernah sampai. Windows lalu memberi dirinya alamat APIPA 169.254.x.x tanpa gateway.\n\nPetunjuk yang menentukan adalah kolom Vlan di `show interfaces status` atau `show vlan brief`. Pengecohnya masuk akal: laptop Bu Sari yang normal hanya membuktikan DHCP VLAN 20 hidup, dan ping router ke ISP hanya membuktikan internet sekolah hidup. Keduanya benar, tetapi tidak menjelaskan kenapa satu PC gagal.\n\nSatu catatan untuk kebiasaan kerja: port pengguna sebaiknya dikunci dengan `switchport mode access`. Mode bawaan `dynamic auto` masih mau berunding menjadi trunk lewat DTP, dan itu celah keamanan.\n\nMateri terkait: `03-data-link/03-vlan` (jenis port, VLAN bawaan), `03-data-link/02-switching` (tabel MAC), dan `06-aplikasi/02-dhcp` (cara DHCP bekerja).",
+    "perbaikan": {
+      "penjelasan": "Jadikan Fa0/14 port access di VLAN 20, beri deskripsi, dan aktifkan PortFast seperti port meja guru lainnya. Setelah itu minta PC memperbarui alamatnya. Perubahan ini hanya menyentuh satu port. Kalau perlu dibatalkan, `no switchport access vlan 20` mengembalikan port ke VLAN 1.",
+      "perintah": "SW-GURU# configure terminal\nSW-GURU(config)# interface FastEthernet0/14\nSW-GURU(config-if)# description Meja-14\nSW-GURU(config-if)# switchport mode access\nSW-GURU(config-if)# switchport access vlan 20\nSW-GURU(config-if)# spanning-tree portfast\nSW-GURU(config-if)# end\nSW-GURU# show interfaces FastEthernet0/14 switchport | include Administrative Mode|Access Mode VLAN\nAdministrative Mode: static access\nAccess Mode VLAN: 20 (GURU)\nSW-GURU# copy running-config startup-config\n\nC:\\> ipconfig /renew\nC:\\> ipconfig | findstr IPv4\n   IPv4 Address. . . . . . . . . . . : 192.168.20.58"
+    },
+    "sumber": [
+      {
+        "judul": "Cisco: Configuring VLANs, Catalyst 2960 dan 2960-Plus, IOS 15.0(2)SE",
+        "url": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst2960/software/release/15-0_2_se/configuration/guide/scg2960/swvlan.html"
+      },
+      {
+        "judul": "Microsoft Learn: perintah ipconfig",
+        "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ipconfig"
+      },
+      {
+        "judul": "RFC 3927: Dynamic Configuration of IPv4 Link-Local Addresses",
+        "url": "https://www.rfc-editor.org/rfc/rfc3927"
+      }
+    ]
+  },
+  {
+    "id": "trunk-belum-izinkan-vlan-baru",
+    "judul": "Kamera CCTV lantai 2 offline, kamera lantai 1 normal",
+    "tingkat": "menengah",
+    "modul": [
+      "03-data-link/03-vlan",
+      "03-data-link/04-stp",
+      "14-monitoring-troubleshooting/04-studi-kasus"
+    ],
+    "gejala": "Enam kamera CCTV baru dipasang di VLAN 40. Tiga kamera lantai 1 tampil di NVR, tiga kamera lantai 2 berstatus offline walau lampunya menyala.",
+    "briefing": "**Tiket #2291** dari Ibu Ratna Siregar, kepala gudang di kantor cabang sebuah distributor di Pekanbaru. Selasa, pukul 10.15.\n\n> Kamera CCTV baru dipasang kemarin oleh Bang Yudi. Tiga kamera di lantai 1 sudah muncul di layar NVR. Tiga kamera di lantai 2 hanya bertuliskan \"Offline\", padahal lampu kameranya menyala. Bang Yudi sudah mencabut dan memasang lagi kabel kameranya.\n\nCatatan Anda:\n\n- Kemarin sore admin jaringan, Pak Darwin, membuat VLAN 40 (CCTV, 10.40.0.0/24) di core switch dan kedua switch lantai, memasukkan port kamera ke VLAN 40, dan mengatur trunk untuk VLAN baru itu.\n- Gateway VLAN 40 adalah SVI di core switch, 10.40.0.1. SVI adalah interface virtual sebuah VLAN di switch layer 3.\n- Kamera memakai alamat statis. Lantai 1: 10.40.0.21 sampai .23. Lantai 2: 10.40.0.24 sampai .26. Server NVR (perekam video) ada di ruang server dengan alamat 10.40.0.10.\n- Bang Yudi masih di lantai 2. Laptopnya tersambung ke Gi1/0/12 di switch lantai 2 (VLAN 40) dengan alamat statis 10.40.0.99/24.",
+    "lokasi": {
+      "kota": "Pekanbaru",
+      "lat": 0.533,
+      "lon": 101.45
+    },
+    "topologi": {
+      "simpul": [
+        {
+          "id": "LAPTOP",
+          "label": "Laptop Bang Yudi",
+          "jenis": "laptop",
+          "x": 10,
+          "y": 74,
+          "info": "Gi1/0/12, 10.40.0.99/24"
+        },
+        {
+          "id": "LT2",
+          "label": "Switch lantai 2",
+          "jenis": "switch",
+          "x": 36,
+          "y": 74,
+          "info": "Catalyst 2960-X, kamera .24 sampai .26"
+        },
+        {
+          "id": "LT1",
+          "label": "Switch lantai 1",
+          "jenis": "switch",
+          "x": 36,
+          "y": 26,
+          "info": "Catalyst 2960-X, kamera .21 sampai .23"
+        },
+        {
+          "id": "CORE",
+          "label": "Core switch",
+          "jenis": "switch",
+          "x": 63,
+          "y": 50,
+          "info": "Catalyst 9300, SVI Vlan40 10.40.0.1"
+        },
+        {
+          "id": "NVR",
+          "label": "Server NVR",
+          "jenis": "server",
+          "x": 89,
+          "y": 50,
+          "info": "10.40.0.10/24 di Gi1/0/20"
+        }
+      ],
+      "sisi": [
+        {
+          "dari": "LAPTOP",
+          "ke": "LT2",
+          "label": "Gi1/0/12, VLAN 40"
+        },
+        {
+          "dari": "LT2",
+          "ke": "CORE",
+          "label": "Gi1/0/24 ke Gi1/0/2"
+        },
+        {
+          "dari": "LT1",
+          "ke": "CORE",
+          "label": "Gi1/0/24 ke Gi1/0/1"
+        },
+        {
+          "dari": "CORE",
+          "ke": "NVR",
+          "label": "Gi1/0/20"
+        }
+      ]
+    },
+    "langkah": [
+      {
+        "id": "nvr-ping-kamera-lt2",
+        "label": "Ping kamera lantai 2 (10.40.0.24) dari server NVR",
+        "perangkat": "NVR",
+        "perintah": "ping -c 4 10.40.0.24",
+        "keluaran": "PING 10.40.0.24 (10.40.0.24) 56(84) bytes of data.\nFrom 10.40.0.10 icmp_seq=1 Destination Host Unreachable\nFrom 10.40.0.10 icmp_seq=2 Destination Host Unreachable\nFrom 10.40.0.10 icmp_seq=3 Destination Host Unreachable\nFrom 10.40.0.10 icmp_seq=4 Destination Host Unreachable\n\n--- 10.40.0.24 ping statistics ---\n4 packets transmitted, 0 received, +4 errors, 100% packet loss, time 3061ms\npipe 4",
+        "makna": "`Destination Host Unreachable` yang datang dari alamat NVR sendiri (10.40.0.10) berarti NVR bertanya lewat ARP siapa pemilik 10.40.0.24 dan tidak ada yang menjawab. ARP adalah cara mencari alamat MAC dari sebuah IP di jaringan lokal. NVR dan kamera satu subnet, jadi paketnya tidak melewati router. Putusnya ada di lapisan 2, di jalur antar-switch.",
+        "berguna": true
+      },
+      {
+        "id": "laptop-ping-kamera",
+        "label": "Ping kamera lantai 2 dari laptop teknisi di switch yang sama",
+        "perangkat": "LAPTOP",
+        "perintah": "ping 10.40.0.24",
+        "keluaran": "Pinging 10.40.0.24 with 32 bytes of data:\nReply from 10.40.0.24: bytes=32 time<1ms TTL=64\nReply from 10.40.0.24: bytes=32 time<1ms TTL=64\nReply from 10.40.0.24: bytes=32 time<1ms TTL=64\nReply from 10.40.0.24: bytes=32 time<1ms TTL=64\n\nPing statistics for 10.40.0.24:\n    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),\nApproximate round trip times in milli-seconds:\n    Minimum = 0ms, Maximum = 0ms, Average = 0ms",
+        "makna": "Kamera menjawab dengan TTL 64. Kamera hidup, alamatnya benar, dan VLAN 40 bekerja di dalam switch lantai 2. Masalahnya ada di luar switch ini.",
+        "berguna": true
+      },
+      {
+        "id": "laptop-ping-gateway",
+        "label": "Ping gateway VLAN 40 (10.40.0.1) dari laptop teknisi",
+        "perangkat": "LAPTOP",
+        "perintah": "ping 10.40.0.1",
+        "keluaran": "Pinging 10.40.0.1 with 32 bytes of data:\nReply from 10.40.0.99: Destination host unreachable.\nReply from 10.40.0.99: Destination host unreachable.\nReply from 10.40.0.99: Destination host unreachable.\nReply from 10.40.0.99: Destination host unreachable.\n\nPing statistics for 10.40.0.1:\n    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),",
+        "makna": "Balasan ini dibuat laptop itu sendiri (10.40.0.99), bukan oleh gateway. Laptop gagal mendapatkan MAC gateway lewat ARP. Windows tetap menghitungnya sebagai Received = 4, jadi jangan tertipu angka 0% loss. Dari lantai 2, tidak ada yang bisa mencapai core switch di VLAN 40.",
+        "berguna": true
+      },
+      {
+        "id": "lt2-vlan-brief",
+        "label": "Lihat daftar VLAN di switch lantai 2",
+        "perangkat": "LT2",
+        "perintah": "show vlan brief",
+        "keluaran": "VLAN Name                             Status    Ports\n---- -------------------------------- --------- -------------------------------\n1    default                          active    Gi1/0/13, Gi1/0/14, Gi1/0/15\n                                                Gi1/0/16, Gi1/0/17, Gi1/0/18\n                                                Gi1/0/19, Gi1/0/20, Gi1/0/21\n                                                Gi1/0/22, Gi1/0/23, Gi1/0/25\n                                                Gi1/0/26, Gi1/0/27, Gi1/0/28\n10   STAFF                            active    Gi1/0/1, Gi1/0/2, Gi1/0/3\n                                                Gi1/0/4, Gi1/0/5, Gi1/0/6\n20   PRINTER                          active    Gi1/0/7, Gi1/0/8\n40   CCTV                             active    Gi1/0/9, Gi1/0/10, Gi1/0/11\n                                                Gi1/0/12\n99   MANAJEMEN                        active\n1002 fddi-default                     act/unsup\n1003 token-ring-default               act/unsup\n1004 fddinet-default                  act/unsup\n1005 trnet-default                    act/unsup",
+        "makna": "VLAN 40 CCTV ada di switch lantai 2, dan port kamera (Gi1/0/9 sampai Gi1/0/11) serta laptop (Gi1/0/12) sudah menjadi anggotanya. Dugaan bahwa VLAN 40 belum dibuat gugur di sini. Port trunk Gi1/0/24 memang tidak tampil di daftar ini.",
+        "berguna": false
+      },
+      {
+        "id": "lt2-trunk",
+        "label": "Periksa trunk dari sisi switch lantai 2",
+        "perangkat": "LT2",
+        "perintah": "show interfaces trunk",
+        "keluaran": "Port        Mode             Encapsulation  Status        Native vlan\nGi1/0/24    on               802.1q         trunking      1\n\nPort        Vlans allowed on trunk\nGi1/0/24    10,20,40,99\n\nPort        Vlans allowed and active in management domain\nGi1/0/24    10,20,40,99\n\nPort        Vlans in spanning tree forwarding state and not pruned\nGi1/0/24    10,20,40,99",
+        "makna": "Dari sisi lantai 2, trunk Gi1/0/24 sudah mengizinkan dan meneruskan VLAN 40. Keluaran ini normal, dan banyak orang berhenti di sini. Padahal trunk punya dua ujung, dan daftar VLAN yang diizinkan diatur terpisah di setiap ujung.",
+        "berguna": false
+      },
+      {
+        "id": "lt2-stp-vlan40",
+        "label": "Lihat spanning tree VLAN 40 di switch lantai 2",
+        "perangkat": "LT2",
+        "perintah": "show spanning-tree vlan 40",
+        "keluaran": "\nVLAN0040\n  Spanning tree enabled protocol rstp\n  Root ID    Priority    32808\n             Address     70ea.1a5c.8f00\n             This bridge is the root\n             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec\n\n  Bridge ID  Priority    32808  (priority 32768 sys-id-ext 40)\n             Address     70ea.1a5c.8f00\n             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec\n             Aging Time  300 sec\n\nInterface           Role Sts Cost      Prio.Nbr Type\n------------------- ---- --- --------- -------- --------------------------------\nGi1/0/9             Desg FWD 4         128.9    P2p Edge\nGi1/0/10            Desg FWD 4         128.10   P2p Edge\nGi1/0/11            Desg FWD 4         128.11   P2p Edge\nGi1/0/12            Desg FWD 4         128.12   P2p Edge\nGi1/0/24            Desg FWD 4         128.24   P2p",
+        "makna": "Untuk VLAN 40, switch lantai 2 menganggap dirinya root bridge (`This bridge is the root`), padahal untuk VLAN lain root-nya core switch. Artinya switch ini tidak pernah menerima BPDU VLAN 40 dari core. BPDU adalah pesan STP yang dikirim antar-switch. Ada yang membuang frame VLAN 40 di ujung core.",
+        "berguna": true
+      },
+      {
+        "id": "core-trunk",
+        "label": "Periksa trunk di core switch",
+        "perangkat": "CORE",
+        "perintah": "show interfaces trunk",
+        "keluaran": "Port        Mode             Encapsulation  Status        Native vlan\nGi1/0/1     on               802.1q         trunking      1\nGi1/0/2     on               802.1q         trunking      1\n\nPort        Vlans allowed on trunk\nGi1/0/1     10,20,40,99\nGi1/0/2     10,20,99\n\nPort        Vlans allowed and active in management domain\nGi1/0/1     10,20,40,99\nGi1/0/2     10,20,99\n\nPort        Vlans in spanning tree forwarding state and not pruned\nGi1/0/1     10,20,40,99\nGi1/0/2     10,20,99",
+        "makna": "Gi1/0/1 ke lantai 1 membawa 10,20,40,99, sedangkan Gi1/0/2 ke lantai 2 hanya membawa 10,20,99. Core membuang setiap frame VLAN 40 yang datang dari lantai 2 dan tidak pernah mengirim frame VLAN 40 ke sana.",
+        "berguna": true
+      },
+      {
+        "id": "core-mac-vlan40",
+        "label": "Lihat tabel MAC VLAN 40 di core switch",
+        "perangkat": "CORE",
+        "perintah": "show mac address-table vlan 40",
+        "keluaran": "          Mac Address Table\n-------------------------------------------\n\nVlan    Mac Address       Type        Ports\n----    -----------       --------    -----\n  40    00a3.d1e9.7f48    STATIC      Vl40\n  40    4c11.bf3e.0a21    DYNAMIC     Gi1/0/1\n  40    4c11.bf3e.0a22    DYNAMIC     Gi1/0/1\n  40    4c11.bf3e.0a23    DYNAMIC     Gi1/0/1\n  40    b083.fe6d.71c4    DYNAMIC     Gi1/0/20\nTotal Mac Addresses for this criterion: 5",
+        "makna": "Core mengenal tiga kamera lantai 1 lewat Gi1/0/1, NVR di Gi1/0/20, dan MAC SVI-nya sendiri (Vl40). Tidak ada satu pun alamat dari Gi1/0/2. Frame kamera lantai 2 tidak pernah diterima di VLAN 40 core.",
+        "berguna": true
+      },
+      {
+        "id": "core-svi",
+        "label": "Periksa status SVI di core switch",
+        "perangkat": "CORE",
+        "perintah": "show ip interface brief | include Vlan",
+        "keluaran": "Vlan1                  unassigned      YES NVRAM  administratively down down    \nVlan10                 10.10.0.1       YES NVRAM  up                    up      \nVlan20                 10.20.0.1       YES NVRAM  up                    up      \nVlan40                 10.40.0.1       YES manual up                    up      \nVlan99                 10.99.0.1       YES NVRAM  up                    up      ",
+        "makna": "SVI Vlan40 (10.40.0.1) berstatus up/up, jadi gateway VLAN 40 hidup. Lagi pula NVR dan kamera satu subnet, sehingga lalu lintas di antara mereka tidak melewati gateway sama sekali. Pemeriksaan ini tidak mendekatkan Anda ke penyebabnya.",
+        "berguna": false
+      }
+    ],
+    "dugaan": [
+      {
+        "id": "trunk-core-tanpa-40",
+        "teks": "Trunk di core switch ke lantai 2 (Gi1/0/2) belum mengizinkan VLAN 40.",
+        "benar": true,
+        "umpan": "Tepat. `show interfaces trunk` di core memperlihatkan Gi1/0/2 hanya membawa 10,20,99, sedangkan Gi1/0/1 ke lantai 1 sudah membawa 40. Frame VLAN 40 dari lantai 2 dibuang di ujung core, sehingga tabel MAC VLAN 40 di core tidak memuat satu pun alamat dari Gi1/0/2."
+      },
+      {
+        "id": "vlan-40-belum-dibuat",
+        "teks": "VLAN 40 belum dibuat di switch lantai 2.",
+        "benar": false,
+        "umpan": "`show vlan brief` di switch lantai 2 menampilkan VLAN 40 CCTV aktif, dengan port kamera dan laptop teknisi sebagai anggotanya. Laptop teknisi juga bisa ping kamera di switch itu."
+      },
+      {
+        "id": "kamera-rusak",
+        "teks": "Kamera lantai 2 rusak atau belum mendapat daya PoE.",
+        "benar": false,
+        "umpan": "Laptop teknisi di switch yang sama mendapat balasan dari 10.40.0.24 dengan TTL 64. Kamera hidup dan alamatnya benar."
+      },
+      {
+        "id": "svi-mati",
+        "teks": "SVI VLAN 40 di core switch mati, jadi kamera tidak punya gateway.",
+        "benar": false,
+        "umpan": "Vlan40 di core berstatus up/up, dan kamera lantai 1 tampil di NVR lewat core yang sama. NVR dan kamera juga satu subnet, jadi lalu lintas mereka tidak memerlukan gateway."
+      },
+      {
+        "id": "stp-blokir",
+        "teks": "STP memblokir uplink lantai 2 untuk VLAN 40.",
+        "benar": false,
+        "umpan": "`show spanning-tree vlan 40` di switch lantai 2 menunjukkan Gi1/0/24 berperan Desg dengan status FWD. Tidak ada port yang diblokir. Yang janggal justru switch itu menganggap dirinya root VLAN 40, tanda ia tidak menerima BPDU VLAN 40 dari core."
+      }
+    ],
+    "pembahasan": "Lalu lintas kamera ke NVR berada di satu subnet (10.40.0.0/24). Ia hanya melewati switch dan tidak menyentuh router, jadi fokusnya lapisan 2.\n\nPecah jalurnya menjadi potongan. Laptop teknisi bisa ping kamera di switch lantai 2, jadi port akses dan VLAN 40 di dalam switch itu sehat. Laptop yang sama gagal mencapai gateway 10.40.0.1 di core, dan NVR gagal ping kamera lantai 2. Potongan yang rusak adalah trunk antara switch lantai 2 dan core.\n\nTrunk punya dua ujung, dan daftar VLAN yang diizinkan (`switchport trunk allowed vlan`) diatur di setiap ujung secara terpisah. Ujung lantai 2 sudah benar. Ujung core, Gi1/0/2, masih 10,20,99. Pak Darwin menambahkan VLAN 40 ke Gi1/0/1 untuk lantai 1, tetapi terlewat di Gi1/0/2.\n\nPetunjuk pendukung yang bagus ada di `show spanning-tree vlan 40` lantai 2: switch itu mengaku root bridge VLAN 40. Ia tidak pernah mendengar BPDU VLAN 40 dari core, karena core membuang semua frame VLAN 40 di Gi1/0/2.\n\nPengecoh yang paling menjebak adalah `show interfaces trunk` di switch lantai 2. Keluarannya normal, dan banyak orang berhenti di situ. Biasakan memeriksa kedua ujung trunk.\n\nHati-hati saat memperbaiki. `switchport trunk allowed vlan 40` tanpa kata `add` MENGGANTI seluruh daftar menjadi VLAN 40 saja. VLAN 10, 20, dan 99 ke lantai 2 akan putus seketika, termasuk akses manajemen Anda ke switch itu.\n\nMateri terkait: `03-data-link/03-vlan` (trunk dan cara membaca `show interfaces trunk`), `03-data-link/04-stp` (root bridge dan BPDU), dan `14-monitoring-troubleshooting/04-studi-kasus` (Kasus 13, VLAN hilang di trunk).",
+    "perbaikan": {
+      "penjelasan": "Tambahkan VLAN 40 ke daftar trunk Gi1/0/2 di core dengan kata kunci `add`, supaya VLAN lain tetap ada. Perubahan ini hanya menambah satu VLAN di satu trunk. Untuk membatalkan, jalankan `switchport trunk allowed vlan remove 40` di interface yang sama.",
+      "perintah": "SW-CORE# configure terminal\nSW-CORE(config)# interface GigabitEthernet1/0/2\nSW-CORE(config-if)# switchport trunk allowed vlan add 40\nSW-CORE(config-if)# end\nSW-CORE# show interfaces GigabitEthernet1/0/2 trunk | include 10,20\nGi1/0/2     10,20,40,99\nGi1/0/2     10,20,40,99\nGi1/0/2     10,20,40,99\nSW-CORE# copy running-config startup-config\n\nnvr:~$ ping -c 2 10.40.0.24\n64 bytes from 10.40.0.24: icmp_seq=1 ttl=64 time=0.61 ms\n64 bytes from 10.40.0.24: icmp_seq=2 ttl=64 time=0.48 ms"
+    },
+    "sumber": [
+      {
+        "judul": "Cisco: Configuring VLANs dan VLAN trunk, Catalyst 2960, IOS 15.0(2)SE",
+        "url": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst2960/software/release/15-0_2_se/configuration/guide/scg2960/swvlan.html"
+      },
+      {
+        "judul": "man7.org: ping(8), iputils",
+        "url": "https://man7.org/linux/man-pages/man8/ping.8.html"
+      },
+      {
+        "judul": "Microsoft Learn: perintah ping",
+        "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ping"
+      }
+    ]
+  },
+  {
+    "id": "native-vlan-mismatch-switch-pengganti",
+    "judul": "Switch lobi pengganti tidak bisa dipantau, log core penuh pesan CDP",
+    "tingkat": "menengah",
+    "modul": [
+      "03-data-link/03-vlan",
+      "03-data-link/06-discovery-dan-l2-lain",
+      "03-data-link/04-stp"
+    ],
+    "gejala": "Setelah switch lobi diganti, pendaftaran pasien dan Wi-Fi tamu normal, tetapi switch baru tidak bisa di-ping atau di-SSH dan log core switch penuh pesan native VLAN.",
+    "briefing": "**Tiket #0738** dari Nurhayati, staf IT sebuah klinik pratama di Makassar. Rabu, pukul 09.05.\n\n> Switch di lobi mati tadi malam. Pagi ini Pak Hendra dari vendor memasang switch cadangan dari gudang, selesai sekitar pukul 08.50. Pendaftaran pasien dan Wi-Fi tamu sudah jalan lagi. Tapi Zabbix terus melaporkan SW-LOBI down, dan saya tidak bisa SSH ke 10.99.0.12. Log core switch juga penuh pesan soal native VLAN.\n\nCatatan jaringan klinik:\n\n- VLAN 10 PENDAFTARAN, VLAN 20 POLI, VLAN 30 TAMU (Wi-Fi pasien), VLAN 99 MANAJEMEN (alamat switch dan server Zabbix, 10.99.0.0/24).\n- Standar klinik untuk semua trunk: native VLAN 99. Native VLAN adalah VLAN yang frame-nya dikirim tanpa tag di trunk.\n- SW-LOBI tersambung ke core switch (SW-INTI) lewat trunk Gi1/0/24 di kedua sisi. Server Zabbix (10.99.0.5) tersambung langsung ke SW-INTI.\n- Pak Hendra masih di lobi dan sudah menyambungkan kabel console ke SW-LOBI, jadi Anda tetap bisa menjalankan perintah di switch itu.",
+    "lokasi": {
+      "kota": "Makassar",
+      "lat": -5.133,
+      "lon": 119.414
+    },
+    "topologi": {
+      "simpul": [
+        {
+          "id": "PCDAFTAR",
+          "label": "PC pendaftaran",
+          "jenis": "pc",
+          "x": 10,
+          "y": 72,
+          "info": "VLAN 10, 10.10.0.21/24"
+        },
+        {
+          "id": "LOBI",
+          "label": "SW-LOBI (pengganti)",
+          "jenis": "switch",
+          "x": 36,
+          "y": 72,
+          "info": "Catalyst 2960-X, manajemen 10.99.0.12"
+        },
+        {
+          "id": "POLI",
+          "label": "SW-POLI",
+          "jenis": "switch",
+          "x": 36,
+          "y": 28,
+          "info": "Catalyst 2960-X, manajemen 10.99.0.11"
+        },
+        {
+          "id": "INTI",
+          "label": "SW-INTI (core)",
+          "jenis": "switch",
+          "x": 63,
+          "y": 50,
+          "info": "Catalyst 9200L, manajemen 10.99.0.2"
+        },
+        {
+          "id": "ZBX",
+          "label": "Server Zabbix",
+          "jenis": "server",
+          "x": 89,
+          "y": 50,
+          "info": "10.99.0.5/24, VLAN 99"
+        }
+      ],
+      "sisi": [
+        {
+          "dari": "PCDAFTAR",
+          "ke": "LOBI",
+          "label": "Gi1/0/3, VLAN 10"
+        },
+        {
+          "dari": "LOBI",
+          "ke": "INTI",
+          "label": "trunk Gi1/0/24"
+        },
+        {
+          "dari": "POLI",
+          "ke": "INTI",
+          "label": "trunk Gi1/0/23"
+        },
+        {
+          "dari": "INTI",
+          "ke": "ZBX",
+          "label": "Gi1/0/10, VLAN 99"
+        }
+      ]
+    },
+    "langkah": [
+      {
+        "id": "inti-log",
+        "label": "Baca log SW-INTI yang berisi pesan CDP dan spanning tree",
+        "perangkat": "INTI",
+        "perintah": "show logging | include CDP|SPANTREE",
+        "keluaran": "Oct 14 08:51:43.208 WITA: %SPANTREE-2-RECV_PVID_ERR: Received BPDU with inconsistent peer vlan id 1 on GigabitEthernet1/0/24 VLAN99.\nOct 14 08:51:43.208 WITA: %SPANTREE-2-BLOCK_PVID_PEER: Blocking GigabitEthernet1/0/24 on VLAN0001. Inconsistent peer vlan.\nOct 14 08:51:43.208 WITA: %SPANTREE-2-BLOCK_PVID_LOCAL: Blocking GigabitEthernet1/0/24 on VLAN0099. Inconsistent local vlan.\nOct 14 08:52:05.117 WITA: %CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch discovered on GigabitEthernet1/0/24 (99), with SW-LOBI GigabitEthernet1/0/24 (1).\nOct 14 08:53:05.154 WITA: %CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch discovered on GigabitEthernet1/0/24 (99), with SW-LOBI GigabitEthernet1/0/24 (1).\nOct 14 08:54:05.191 WITA: %CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch discovered on GigabitEthernet1/0/24 (99), with SW-LOBI GigabitEthernet1/0/24 (1).\nOct 14 08:55:05.138 WITA: %CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch discovered on GigabitEthernet1/0/24 (99), with SW-LOBI GigabitEthernet1/0/24 (1).\nOct 14 08:56:05.175 WITA: %CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch discovered on GigabitEthernet1/0/24 (99), with SW-LOBI GigabitEthernet1/0/24 (1).\nOct 14 08:57:05.122 WITA: %CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch discovered on GigabitEthernet1/0/24 (99), with SW-LOBI GigabitEthernet1/0/24 (1).\nOct 14 08:58:05.159 WITA: %CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch discovered on GigabitEthernet1/0/24 (99), with SW-LOBI GigabitEthernet1/0/24 (1).\nOct 14 08:59:05.196 WITA: %CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch discovered on GigabitEthernet1/0/24 (99), with SW-LOBI GigabitEthernet1/0/24 (1).\nOct 14 09:00:05.143 WITA: %CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch discovered on GigabitEthernet1/0/24 (99), with SW-LOBI GigabitEthernet1/0/24 (1).\nOct 14 09:01:05.180 WITA: %CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch discovered on GigabitEthernet1/0/24 (99), with SW-LOBI GigabitEthernet1/0/24 (1).\nOct 14 09:02:05.127 WITA: %CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch discovered on GigabitEthernet1/0/24 (99), with SW-LOBI GigabitEthernet1/0/24 (1).\nOct 14 09:03:05.164 WITA: %CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch discovered on GigabitEthernet1/0/24 (99), with SW-LOBI GigabitEthernet1/0/24 (1).\nOct 14 09:04:05.201 WITA: %CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch discovered on GigabitEthernet1/0/24 (99), with SW-LOBI GigabitEthernet1/0/24 (1).",
+        "makna": "Baca pesan CDP dari kiri ke kanan: di port lokal Gi1/0/24 native VLAN-nya 99, sedangkan tetangga SW-LOBI di port Gi1/0/24-nya memakai native VLAN 1. Pesan SPANTREE menunjukkan akibatnya: STP memblokir VLAN 1 dan VLAN 99 di trunk itu supaya frame tidak bocor dari satu VLAN ke VLAN lain.",
+        "berguna": true
+      },
+      {
+        "id": "zabbix-ping-poli",
+        "label": "Ping SW-POLI (10.99.0.11) dari server Zabbix",
+        "perangkat": "ZBX",
+        "perintah": "ping -c 4 10.99.0.11",
+        "keluaran": "PING 10.99.0.11 (10.99.0.11) 56(84) bytes of data.\n64 bytes from 10.99.0.11: icmp_seq=1 ttl=255 time=1.84 ms\n64 bytes from 10.99.0.11: icmp_seq=2 ttl=255 time=1.12 ms\n64 bytes from 10.99.0.11: icmp_seq=3 ttl=255 time=1.09 ms\n64 bytes from 10.99.0.11: icmp_seq=4 ttl=255 time=1.21 ms\n\n--- 10.99.0.11 ping statistics ---\n4 packets transmitted, 4 received, 0% packet loss, time 3005ms\nrtt min/avg/max/mdev = 1.090/1.315/1.840/0.306 ms",
+        "makna": "Switch poliklinik menjawab normal, jadi VLAN 99 dan server Zabbix sendiri sehat. Hasil ini hanya menunjukkan bahwa masalahnya tidak menyeluruh. Ia belum menunjukkan apa yang berbeda di trunk lobi.",
+        "berguna": false
+      },
+      {
+        "id": "inti-trunk",
+        "label": "Periksa semua trunk di SW-INTI",
+        "perangkat": "INTI",
+        "perintah": "show interfaces trunk",
+        "keluaran": "Port        Mode             Encapsulation  Status        Native vlan\nGi1/0/1     on               802.1q         trunking      99\nGi1/0/23    on               802.1q         trunking      99\nGi1/0/24    on               802.1q         trunking      99\n\nPort        Vlans allowed on trunk\nGi1/0/1     1-4094\nGi1/0/23    1-4094\nGi1/0/24    1-4094\n\nPort        Vlans allowed and active in management domain\nGi1/0/1     1,10,20,30,99\nGi1/0/23    1,10,20,30,99\nGi1/0/24    1,10,20,30,99\n\nPort        Vlans in spanning tree forwarding state and not pruned\nGi1/0/1     1,10,20,30,99\nGi1/0/23    1,10,20,30,99\nGi1/0/24    10,20,30",
+        "makna": "Native VLAN di sisi SW-INTI sudah 99, sesuai standar. Perhatikan blok terakhir: di Gi1/0/24 hanya VLAN 10, 20, dan 30 yang diteruskan. VLAN 1 dan 99 hilang dari daftar karena STP memblokirnya. Itu sebabnya pendaftaran (VLAN 10) dan Wi-Fi tamu (VLAN 30) jalan, sedangkan manajemen (VLAN 99) putus.",
+        "berguna": true
+      },
+      {
+        "id": "inti-cdp-lobi",
+        "label": "Lihat detail tetangga CDP di Gi1/0/24",
+        "perangkat": "INTI",
+        "perintah": "show cdp neighbors GigabitEthernet1/0/24 detail",
+        "keluaran": "-------------------------\nDevice ID: SW-LOBI\nEntry address(es): \n  IP address: 10.99.0.12\nPlatform: cisco WS-C2960X-24PS-L,  Capabilities: Switch IGMP \nInterface: GigabitEthernet1/0/24,  Port ID (outgoing port): GigabitEthernet1/0/24\nHoldtime : 143 sec\n\nVersion :\nCisco IOS Software, C2960X Software (C2960X-UNIVERSALK9-M), Version 15.2(7)E8, RELEASE SOFTWARE (fc3)\nTechnical Support: http://www.cisco.com/techsupport\nCopyright (c) 1986-2023 by Cisco Systems, Inc.\nCompiled Fri 21-Apr-23 11:37 by mcpre\n\nadvertisement version: 2\nProtocol Hello:  OUI=0x00000C, Protocol ID=0x0112; payload len=27, value=00000000FFFFFFFF010221FF000000000000F87B204C3E80FF0000\nVTP Management Domain: ''\nNative VLAN: 1\nDuplex: full\nManagement address(es): \n  IP address: 10.99.0.12\n\n\nTotal cdp entries displayed : 1",
+        "makna": "CDP adalah protokol Cisco yang membuat perangkat memperkenalkan diri ke tetangganya. Baris `Native VLAN: 1` mengonfirmasi bahwa switch pengganti masih memakai native VLAN bawaan. Alamat manajemen 10.99.0.12 juga sudah terpasang di sana, jadi switch itu bukan lupa diberi IP.",
+        "berguna": true
+      },
+      {
+        "id": "inti-inconsistent",
+        "label": "Cari port yang diblokir karena tidak konsisten",
+        "perangkat": "INTI",
+        "perintah": "show spanning-tree inconsistentports",
+        "keluaran": "\nName                 Interface                Inconsistency\n-------------------- ------------------------ ------------------\nVLAN0001             GigabitEthernet1/0/24    Port VLAN ID Mismatch\nVLAN0099             GigabitEthernet1/0/24    Port VLAN ID Mismatch\n\nNumber of inconsistent ports (segments) in the system : 2",
+        "makna": "`Port VLAN ID Mismatch` berarti STP menerima BPDU yang mengaku berasal dari VLAN lain daripada VLAN tempat ia diterima. Ini tanda khas native VLAN yang berbeda di dua ujung trunk. Hanya VLAN 1 dan 99 yang diblokir. Ini bukan blokir karena loop.",
+        "berguna": true
+      },
+      {
+        "id": "inti-int-24",
+        "label": "Periksa kondisi fisik uplink Gi1/0/24",
+        "perangkat": "INTI",
+        "perintah": "show interfaces GigabitEthernet1/0/24 | include line protocol|duplex|errors|resets",
+        "keluaran": "GigabitEthernet1/0/24 is up, line protocol is up (connected) \n  Full-duplex, 1000Mb/s, media type is 10/100/1000BaseTX\n     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored\n     0 output errors, 0 collisions, 1 interface resets",
+        "makna": "Link up/up pada 1000 Mb/s full-duplex tanpa error. Satu kali interface reset terjadi saat kabel dicolokkan ke switch pengganti. Kabel sehat, dan VLAN 10 serta 30 memang lewat kabel yang sama.",
+        "berguna": false
+      },
+      {
+        "id": "inti-vtp",
+        "label": "Periksa status VTP di SW-INTI",
+        "perangkat": "INTI",
+        "perintah": "show vtp status",
+        "keluaran": "VTP Version capable             : 1 to 3\nVTP version running             : 1\nVTP Domain Name                 : \nVTP Pruning Mode                : Disabled\nVTP Traps Generation            : Disabled\nDevice ID                       : 70b3.171e.4a00\nConfiguration last modified by 10.99.0.2 at 9-22-26 14:05:11\n\nFeature VLAN:\n--------------\nVTP Operating Mode                : Transparent\nMaximum VLANs supported locally   : 1005\nNumber of existing VLANs          : 9\nConfiguration Revision            : 0\nMD5 digest                        : 0x2C 0x14 0x9A 0x77 0x5E 0x10 0x3B 0xC8 \n                                    0x91 0x0F 0x6D 0x2E 0xA4 0x5B 0x70 0x13 ",
+        "makna": "VTP berjalan dalam mode Transparent dengan revision 0, jadi switch ini tidak menerima perubahan database VLAN dari switch lain. Kekhawatiran bahwa switch bekas dari gudang menghapus VLAN lewat VTP tidak berlaku di sini. Sembilan VLAN masih ada.",
+        "berguna": false
+      },
+      {
+        "id": "pc-ping-gateway",
+        "label": "Ping gateway VLAN 10 dari PC pendaftaran",
+        "perangkat": "PCDAFTAR",
+        "perintah": "ping 10.10.0.1",
+        "keluaran": "Pinging 10.10.0.1 with 32 bytes of data:\nReply from 10.10.0.1: bytes=32 time=1ms TTL=255\nReply from 10.10.0.1: bytes=32 time<1ms TTL=255\nReply from 10.10.0.1: bytes=32 time<1ms TTL=255\nReply from 10.10.0.1: bytes=32 time<1ms TTL=255\n\nPing statistics for 10.10.0.1:\n    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),\nApproximate round trip times in milli-seconds:\n    Minimum = 0ms, Maximum = 1ms, Average = 0ms",
+        "makna": "PC pendaftaran mencapai gateway-nya di SW-INTI melewati trunk lobi. Keluaran ini normal dan sesuai dengan laporan bahwa pendaftaran sudah jalan. Ia tidak menjelaskan kenapa VLAN 99 tidak sampai ke SW-LOBI.",
+        "berguna": false
+      },
+      {
+        "id": "lobi-trunk",
+        "label": "Periksa trunk di SW-LOBI lewat kabel console",
+        "perangkat": "LOBI",
+        "perintah": "show interfaces trunk",
+        "keluaran": "Port        Mode             Encapsulation  Status        Native vlan\nGi1/0/24    on               802.1q         trunking      1\n\nPort        Vlans allowed on trunk\nGi1/0/24    1-4094\n\nPort        Vlans allowed and active in management domain\nGi1/0/24    1,10,30,99\n\nPort        Vlans in spanning tree forwarding state and not pruned\nGi1/0/24    10,30",
+        "makna": "Dari ujung lobi, native VLAN trunk-nya 1, sedangkan standar klinik dan ujung SW-INTI memakai 99. Pak Hendra mengatur trunk dan VLAN-nya, tetapi tidak mengubah native VLAN. Di sisi ini pun hanya VLAN 10 dan 30 yang diteruskan.",
+        "berguna": true
+      }
+    ],
+    "dugaan": [
+      {
+        "id": "native-beda",
+        "teks": "Native VLAN di kedua ujung trunk lobi berbeda: SW-INTI memakai 99, switch pengganti masih memakai bawaan VLAN 1.",
+        "benar": true,
+        "umpan": "Tepat. Pesan CDP, baris `Native VLAN: 1` di detail CDP, dan `show interfaces trunk` di kedua switch menunjukkan hal yang sama. STP mendeteksi ketidakcocokan itu dan memblokir VLAN 1 dan 99 di trunk lobi, sehingga lalu lintas manajemen ke SW-LOBI putus sementara VLAN bertag tetap jalan."
+      },
+      {
+        "id": "kabel-uplink",
+        "teks": "Kabel uplink ke switch lobi rusak.",
+        "benar": false,
+        "umpan": "Gi1/0/24 berstatus up/up pada 1000 Mb/s full-duplex tanpa error. PC pendaftaran (VLAN 10) dan Wi-Fi tamu (VLAN 30) memakai kabel yang sama dan berjalan normal."
+      },
+      {
+        "id": "vtp-hapus",
+        "teks": "VTP dari switch cadangan menghapus VLAN 99 di jaringan klinik.",
+        "benar": false,
+        "umpan": "SW-INTI berjalan dalam mode VTP Transparent dengan revision 0, jadi ia tidak menerima database VLAN dari luar. VLAN 99 masih aktif, dan Zabbix masih bisa ping SW-POLI di VLAN 99."
+      },
+      {
+        "id": "lupa-ip",
+        "teks": "Switch pengganti belum diberi alamat IP manajemen.",
+        "benar": false,
+        "umpan": "Detail CDP dari SW-LOBI melaporkan alamat manajemen 10.99.0.12. Alamatnya ada. Yang terputus adalah jalur VLAN 99 menuju switch itu, karena STP memblokirnya di trunk."
+      },
+      {
+        "id": "loop-stp",
+        "teks": "STP memblokir trunk lobi karena ada loop.",
+        "benar": false,
+        "umpan": "Jenis ketidakcocokannya `Port VLAN ID Mismatch`, bukan tanda loop, dan hanya VLAN 1 dan 99 yang diblokir. Tidak ada pesan MAC flapping di log, dan VLAN 10 serta 30 diteruskan normal."
+      }
+    ],
+    "pembahasan": "Di trunk 802.1Q, setiap frame membawa tag berisi nomor VLAN, kecuali frame native VLAN yang dikirim tanpa tag. Penerima memasukkan frame tanpa tag ke native VLAN miliknya sendiri. Kalau dua ujung berbeda pendapat, frame VLAN 99 dari SW-INTI akan mendarat di VLAN 1 SW-LOBI, dan sebaliknya.\n\nCisco punya dua penjaga untuk kesalahan ini. CDP membandingkan native VLAN kedua ujung dan mencatat `%CDP-4-NATIVE_VLAN_MISMATCH` setiap menit. PVST+ (versi STP per-VLAN milik Cisco) menyisipkan nomor VLAN asal di dalam BPDU. Ketika nomor itu tidak cocok, STP memblokir kedua VLAN yang terlibat di port tersebut.\n\nItulah yang terjadi. VLAN 1 dan 99 diblokir di trunk lobi, sedangkan VLAN 10, 20, dan 30 bertag dan tidak terpengaruh. Pendaftaran dan Wi-Fi tamu jalan, tetapi semua lalu lintas manajemen ke SW-LOBI (ping Zabbix, SSH) berhenti di Gi1/0/24.\n\nPetunjuk yang menentukan ada dua: pesan CDP itu sendiri, yang langsung menyebut angka di kedua ujung, dan blok terakhir `show interfaces trunk` yang tidak lagi memuat 99. Pengecohnya menggoda karena cocok dengan cerita \"switch bekas dari gudang\": VTP dan kabel rusak adalah tersangka yang wajar, tetapi keduanya terbantah oleh bukti.\n\nCatatan desain: memakai VLAN manajemen sebagai native VLAN membuat kesalahan seperti ini langsung memutus akses manajemen. Banyak tim memakai VLAN kosong (misalnya 999) sebagai native di semua trunk. Itu usulan untuk ditinjau, bukan bagian dari perbaikan darurat.\n\nMateri terkait: `03-data-link/03-vlan` (native VLAN dan bahayanya), `03-data-link/06-discovery-dan-l2-lain` (CDP), dan `03-data-link/04-stp` (BPDU dan port yang diblokir).",
+    "perbaikan": {
+      "penjelasan": "Samakan native VLAN di switch pengganti dengan standar klinik, yaitu 99. Lakukan lewat kabel console, karena alamat manajemen switch itu yang sedang terputus. Begitu kedua ujung sama, STP membuka blokir VLAN 1 dan 99 dengan sendirinya. Untuk membatalkan, `no switchport trunk native vlan` mengembalikan native ke VLAN 1.",
+      "perintah": "SW-LOBI# configure terminal\nSW-LOBI(config)# interface GigabitEthernet1/0/24\nSW-LOBI(config-if)# switchport trunk native vlan 99\nSW-LOBI(config-if)# end\nSW-LOBI# copy running-config startup-config\n\nSW-INTI# show logging | include UNBLOCK\nOct 14 09:12:20.431 WITA: %SPANTREE-2-UNBLOCK_CONSIST_PORT: Unblocking GigabitEthernet1/0/24 on VLAN0099. Port consistency restored.\nOct 14 09:12:20.431 WITA: %SPANTREE-2-UNBLOCK_CONSIST_PORT: Unblocking GigabitEthernet1/0/24 on VLAN0001. Port consistency restored.\nSW-INTI# show interfaces trunk | include Gi1/0/24\nGi1/0/24    on               802.1q         trunking      99\nGi1/0/24    1-4094\nGi1/0/24    1,10,20,30,99\nGi1/0/24    1,10,20,30,99\n\nzabbix:~$ ping -c 2 10.99.0.12"
+    },
+    "sumber": [
+      {
+        "judul": "Cisco: Configuring VLANs dan native VLAN pada trunk, Catalyst 2960, IOS 15.0(2)SE",
+        "url": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst2960/software/release/15-0_2_se/configuration/guide/scg2960/swvlan.html"
+      },
+      {
+        "judul": "Cisco: Spanning Tree Protocol PVID- dan Type-Inconsistencies",
+        "url": "https://www.cisco.com/c/en/us/support/docs/lan-switching/spanning-tree-protocol/24063-pvid-inconsistency-24063.html"
+      }
+    ]
+  },
+  {
+    "id": "loop-switch-kecil-bawah-meja",
+    "judul": "Seluruh lantai 3 lumpuh setelah istirahat siang, lampu switch berkedip serempak",
+    "tingkat": "menengah",
+    "modul": [
+      "03-data-link/04-stp",
+      "03-data-link/02-switching",
+      "14-monitoring-troubleshooting/04-studi-kasus"
+    ],
+    "gejala": "Internet dan aplikasi di satu lantai kantor mati total sejak selesai istirahat siang. Lampu semua port switch berkedip cepat bersamaan, dan SSH ke switch tidak merespons.",
+    "briefing": "**Telepon** dari Teh Rina, office manager sebuah kantor konsultan pajak di Bandung. Kamis, pukul 13.25.\n\n> Dari habis istirahat siang, internet dan aplikasi pajak di lantai 3 mati total. Kadang kebuka sebentar, terus macet lagi. Lampu di switch kedip-kedip cepat semua, barengan. Printer juga tidak bisa dipakai. Hari ini ada dua anak magang baru yang mulai kerja di lantai 3, mejanya di dekat jendela.\n\nYang Anda ketahui:\n\n- Lantai 3 memakai satu switch, SW-LT3 (Catalyst 2960-X 24 port). Semua port pengguna ada di VLAN 10 (192.168.10.0/24), dan alamat manajemen switch juga di VLAN itu (192.168.10.3).\n- Gateway-nya router kantor (192.168.10.1), tersambung ke SW-LT3 lewat fiber di Gi1/0/25.\n- Jack di meja magang berlabel 3-07 dan 3-08, terhubung ke Gi1/0/7 dan Gi1/0/8. Menurut catatan, di meja itu hanya ada satu PC, di jack 3-07.\n- SSH ke SW-LT3 tidak merespons. Anda sudah tersambung lewat kabel console.",
+    "lokasi": {
+      "kota": "Bandung",
+      "lat": -6.922,
+      "lon": 107.607
+    },
+    "topologi": {
+      "simpul": [
+        {
+          "id": "PCRINA",
+          "label": "PC Teh Rina",
+          "jenis": "pc",
+          "x": 10,
+          "y": 24,
+          "info": "Gi1/0/3, 192.168.10.23/24"
+        },
+        {
+          "id": "PCMAGANG",
+          "label": "PC meja magang",
+          "jenis": "pc",
+          "x": 10,
+          "y": 76,
+          "info": "jack 3-07, menurut catatan"
+        },
+        {
+          "id": "SW",
+          "label": "SW-LT3",
+          "jenis": "switch",
+          "x": 40,
+          "y": 50,
+          "info": "Catalyst 2960-X, 192.168.10.3"
+        },
+        {
+          "id": "R",
+          "label": "Router kantor",
+          "jenis": "router",
+          "x": 66,
+          "y": 50,
+          "info": "ISR 4321, 192.168.10.1"
+        },
+        {
+          "id": "ISP",
+          "label": "ISP",
+          "jenis": "isp",
+          "x": 90,
+          "y": 50,
+          "info": "internet kantor"
+        }
+      ],
+      "sisi": [
+        {
+          "dari": "PCRINA",
+          "ke": "SW",
+          "label": "Gi1/0/3"
+        },
+        {
+          "dari": "PCMAGANG",
+          "ke": "SW",
+          "label": "jack 3-07, Gi1/0/7"
+        },
+        {
+          "dari": "SW",
+          "ke": "R",
+          "label": "Gi1/0/25, fiber"
+        },
+        {
+          "dari": "R",
+          "ke": "ISP",
+          "label": "Gi0/0/0"
+        }
+      ]
+    },
+    "langkah": [
+      {
+        "id": "pc-rina-ipconfig",
+        "label": "Lihat konfigurasi IP di PC Teh Rina",
+        "perangkat": "PCRINA",
+        "perintah": "ipconfig",
+        "keluaran": "Windows IP Configuration\n\n\nEthernet adapter Ethernet:\n\n   Connection-specific DNS Suffix  . :\n   Link-local IPv6 Address . . . . . : fe80::4a1d:93c2:7e6b:1f08%5\n   IPv4 Address. . . . . . . . . . . : 192.168.10.23\n   Subnet Mask . . . . . . . . . . . : 255.255.255.0\n   Default Gateway . . . . . . . . . : 192.168.10.1",
+        "makna": "Alamat, subnet mask, dan gateway PC ini benar. Konfigurasi PC tidak bermasalah. Gangguannya menimpa seluruh lantai, jadi penyebabnya ada di jaringan yang dipakai bersama, bukan di satu PC.",
+        "berguna": false
+      },
+      {
+        "id": "sw-cpu",
+        "label": "Lihat beban CPU switch",
+        "perangkat": "SW",
+        "perintah": "show processes cpu sorted | exclude 0.00%  0.00%  0.00%",
+        "keluaran": "CPU utilization for five seconds: 99%/91%; one minute: 98%; five minutes: 96%\n PID Runtime(ms)     Invoked      uSecs   5Sec   1Min   5Min TTY Process \n 136     8612044     9810342        877  3.51%  3.47%  3.38%   0 Hulc LED Process \n  74     3922671    21834115        179  1.91%  1.88%  1.85%   0 ARP Input        \n 125     1883410     4012236        469  1.20%  1.17%  1.12%   0 HLFM address lea \n 192      822105     4476012        183  0.47%  0.52%  0.49%   0 IP Input         \n  10      601882      190211       3164  0.31%  0.29%  0.22%   0 Check heaps      \n 215      141920      722108        196  0.15%  0.16%  0.15%   0 Spanning Tree    \n 260       72881      418012        174  0.08%  0.07%  0.07%   0 PI MATM Aging Pr ",
+        "makna": "CPU 99%, dan angka setelah garis miring (91%) adalah bagian yang habis di level interrupt, yaitu untuk memproses paket yang masuk ke CPU. Tidak ada satu program pun yang rakus. Pola ini khas banjir broadcast: switch punya alamat di VLAN 10, jadi setiap broadcast di VLAN itu ikut diterima CPU-nya. CPU yang penuh juga menjelaskan kenapa SSH tidak merespons.",
+        "berguna": true
+      },
+      {
+        "id": "sw-uptime",
+        "label": "Cek apakah switch baru saja restart",
+        "perangkat": "SW",
+        "perintah": "show version | include uptime",
+        "keluaran": "SW-LT3 uptime is 1 year, 14 weeks, 2 days, 3 hours, 41 minutes",
+        "makna": "Switch sudah menyala lebih dari setahun tanpa restart. Ia tidak crash dan tidak hang, karena masih melayani console. Pemeriksaan ini menyingkirkan dugaan perangkat rusak, tetapi tidak menunjukkan dari mana gangguannya datang.",
+        "berguna": false
+      },
+      {
+        "id": "sw-macflap",
+        "label": "Cari pesan MAC flapping di log switch",
+        "perangkat": "SW",
+        "perintah": "show logging | include MACFLAP",
+        "keluaran": "Oct 15 13:24:02.418 WIB: %SW_MATM-4-MACFLAP_NOTIF: Host 00a3.8e44.1f20 in vlan 10 is flapping between port Gi1/0/25 and port Gi1/0/8\nOct 15 13:24:02.733 WIB: %SW_MATM-4-MACFLAP_NOTIF: Host 3c52.82a1.07f4 in vlan 10 is flapping between port Gi1/0/3 and port Gi1/0/7\nOct 15 13:24:03.105 WIB: %SW_MATM-4-MACFLAP_NOTIF: Host f4e9.d4b2.6c18 in vlan 10 is flapping between port Gi1/0/7 and port Gi1/0/8\nOct 15 13:24:17.552 WIB: %SW_MATM-4-MACFLAP_NOTIF: Host 0026.73c1.5e0a in vlan 10 is flapping between port Gi1/0/12 and port Gi1/0/8\nOct 15 13:24:18.020 WIB: %SW_MATM-4-MACFLAP_NOTIF: Host a4bb.6d3c.91e2 in vlan 10 is flapping between port Gi1/0/1 and port Gi1/0/7\nOct 15 13:24:32.871 WIB: %SW_MATM-4-MACFLAP_NOTIF: Host 00a3.8e44.1f20 in vlan 10 is flapping between port Gi1/0/25 and port Gi1/0/7\nOct 15 13:24:33.240 WIB: %SW_MATM-4-MACFLAP_NOTIF: Host d8bb.c1f0.4a33 in vlan 10 is flapping between port Gi1/0/5 and port Gi1/0/8\nOct 15 13:24:47.613 WIB: %SW_MATM-4-MACFLAP_NOTIF: Host f4e9.d4b2.6c18 in vlan 10 is flapping between port Gi1/0/8 and port Gi1/0/7\nOct 15 13:24:48.006 WIB: %SW_MATM-4-MACFLAP_NOTIF: Host 6c4b.909e.21d7 in vlan 10 is flapping between port Gi1/0/11 and port Gi1/0/7\nOct 15 13:25:03.394 WIB: %SW_MATM-4-MACFLAP_NOTIF: Host 3c52.82a1.07f4 in vlan 10 is flapping between port Gi1/0/3 and port Gi1/0/8\nOct 15 13:25:18.759 WIB: %SW_MATM-4-MACFLAP_NOTIF: Host 00a3.8e44.1f20 in vlan 10 is flapping between port Gi1/0/25 and port Gi1/0/8\nOct 15 13:25:19.122 WIB: %SW_MATM-4-MACFLAP_NOTIF: Host 0026.73c1.5e0a in vlan 10 is flapping between port Gi1/0/12 and port Gi1/0/7\nOct 15 13:25:34.480 WIB: %SW_MATM-4-MACFLAP_NOTIF: Host a4bb.6d3c.91e2 in vlan 10 is flapping between port Gi1/0/1 and port Gi1/0/8\nOct 15 13:25:49.861 WIB: %SW_MATM-4-MACFLAP_NOTIF: Host f4e9.d4b2.6c18 in vlan 10 is flapping between port Gi1/0/7 and port Gi1/0/8\nOct 15 13:26:05.237 WIB: %SW_MATM-4-MACFLAP_NOTIF: Host d8bb.c1f0.4a33 in vlan 10 is flapping between port Gi1/0/5 and port Gi1/0/7\nOct 15 13:26:20.604 WIB: %SW_MATM-4-MACFLAP_NOTIF: Host 00a3.8e44.1f20 in vlan 10 is flapping between port Gi1/0/25 and port Gi1/0/7\nOct 15 13:26:35.972 WIB: %SW_MATM-4-MACFLAP_NOTIF: Host 6c4b.909e.21d7 in vlan 10 is flapping between port Gi1/0/11 and port Gi1/0/8\nOct 15 13:26:51.338 WIB: %SW_MATM-4-MACFLAP_NOTIF: Host 3c52.82a1.07f4 in vlan 10 is flapping between port Gi1/0/3 and port Gi1/0/7",
+        "makna": "MAC flapping berarti switch melihat MAC yang sama datang dari dua port bergantian. Satu perangkat seharusnya hanya ada di satu port. Semua pesan di sini melibatkan Gi1/0/7 atau Gi1/0/8, termasuk MAC router (00a3.8e44.1f20) yang seharusnya hanya ada di uplink Gi1/0/25. Frame sedang berputar lewat dua port itu.",
+        "berguna": true
+      },
+      {
+        "id": "sw-input-rate",
+        "label": "Bandingkan laju input semua port yang menyala",
+        "perangkat": "SW",
+        "perintah": "show interfaces | include is up|input rate",
+        "keluaran": "  5 minute input rate 0 bits/sec, 0 packets/sec\nVlan10 is up, line protocol is up \n  5 minute input rate 7240000 bits/sec, 10630 packets/sec\n  5 minute input rate 0 bits/sec, 0 packets/sec\nGigabitEthernet1/0/1 is up, line protocol is up (connected) \n  5 minute input rate 38000 bits/sec, 27 packets/sec\nGigabitEthernet1/0/2 is up, line protocol is up (connected) \n  5 minute input rate 12000 bits/sec, 9 packets/sec\nGigabitEthernet1/0/3 is up, line protocol is up (connected) \n  5 minute input rate 51000 bits/sec, 33 packets/sec\nGigabitEthernet1/0/4 is up, line protocol is up (connected) \n  5 minute input rate 9000 bits/sec, 7 packets/sec\nGigabitEthernet1/0/5 is up, line protocol is up (connected) \n  5 minute input rate 22000 bits/sec, 15 packets/sec\nGigabitEthernet1/0/6 is up, line protocol is up (connected) \n  5 minute input rate 17000 bits/sec, 12 packets/sec\nGigabitEthernet1/0/7 is up, line protocol is up (connected) \n  5 minute input rate 95870000 bits/sec, 140851 packets/sec\nGigabitEthernet1/0/8 is up, line protocol is up (connected) \n  5 minute input rate 95912000 bits/sec, 140903 packets/sec\nGigabitEthernet1/0/9 is up, line protocol is up (connected) \n  5 minute input rate 14000 bits/sec, 10 packets/sec\n  5 minute input rate 0 bits/sec, 0 packets/sec\nGigabitEthernet1/0/11 is up, line protocol is up (connected) \n  5 minute input rate 26000 bits/sec, 19 packets/sec\nGigabitEthernet1/0/12 is up, line protocol is up (connected) \n  5 minute input rate 3000 bits/sec, 2 packets/sec\n  5 minute input rate 0 bits/sec, 0 packets/sec\nGigabitEthernet1/0/14 is up, line protocol is up (connected) \n  5 minute input rate 19000 bits/sec, 14 packets/sec\n  5 minute input rate 0 bits/sec, 0 packets/sec\n  5 minute input rate 0 bits/sec, 0 packets/sec\n  5 minute input rate 0 bits/sec, 0 packets/sec\n  5 minute input rate 0 bits/sec, 0 packets/sec\n  5 minute input rate 0 bits/sec, 0 packets/sec\n  5 minute input rate 0 bits/sec, 0 packets/sec\n  5 minute input rate 0 bits/sec, 0 packets/sec\n  5 minute input rate 0 bits/sec, 0 packets/sec\n  5 minute input rate 0 bits/sec, 0 packets/sec\n  5 minute input rate 0 bits/sec, 0 packets/sec\nGigabitEthernet1/0/25 is up, line protocol is up (connected) \n  5 minute input rate 1214000 bits/sec, 1488 packets/sec\n  5 minute input rate 0 bits/sec, 0 packets/sec\n  5 minute input rate 0 bits/sec, 0 packets/sec\n  5 minute input rate 0 bits/sec, 0 packets/sec",
+        "makna": "Hampir semua port menerima puluhan kilobit per detik. Gi1/0/7 dan Gi1/0/8 masing-masing menerima sekitar 96 Mb/s dan 140 ribu paket per detik, nyaris penuh untuk link 100 Mb/s. Banjirnya masuk lewat dua port meja magang, bukan dari uplink router (sekitar 1,2 Mb/s). Baris input rate tanpa judul adalah milik interface yang sedang mati.",
+        "berguna": true
+      },
+      {
+        "id": "sw-cdp",
+        "label": "Cari perangkat jaringan tetangga lewat CDP",
+        "perangkat": "SW",
+        "perintah": "show cdp neighbors",
+        "keluaran": "Capability Codes: R - Router, T - Trans Bridge, B - Source Route Bridge\n                  S - Switch, H - Host, I - IGMP, r - Repeater, P - Phone, \n                  D - Remote, C - CVTA, M - Two-port Mac Relay \n\nDevice ID        Local Intrfce     Holdtme    Capability  Platform  Port ID\nR-KANTOR         Gig 1/0/25        147             R B S I ISR4321/K Gig 0/0/1\n\nTotal cdp entries displayed : 1",
+        "makna": "CDP hanya menemukan router di uplink. Hasil ini tampak normal, tetapi tidak membuktikan bahwa tidak ada switch lain. Switch murah tanpa manajemen tidak mengirim CDP maupun LLDP, jadi ia tidak pernah muncul di daftar ini.",
+        "berguna": false
+      },
+      {
+        "id": "sw-mac-gi108",
+        "label": "Lihat MAC yang tercatat di port Gi1/0/8",
+        "perangkat": "SW",
+        "perintah": "show mac address-table interface GigabitEthernet1/0/8",
+        "keluaran": "          Mac Address Table\n-------------------------------------------\n\nVlan    Mac Address       Type        Ports\n----    -----------       --------    -----\n  10    0026.73c1.5e0a    DYNAMIC     Gi1/0/8\n  10    00a3.8e44.1f20    DYNAMIC     Gi1/0/8\n  10    3c52.82a1.07f4    DYNAMIC     Gi1/0/8\n  10    6c4b.909e.21d7    DYNAMIC     Gi1/0/8\n  10    a4bb.6d3c.91e2    DYNAMIC     Gi1/0/8\n  10    d8bb.c1f0.4a33    DYNAMIC     Gi1/0/8\n  10    f4e9.d4b2.6c18    DYNAMIC     Gi1/0/8\nTotal Mac Addresses for this criterion: 7",
+        "makna": "Menurut catatan, jack 3-08 tidak dipakai. Nyatanya port Gi1/0/8 menyimpan tujuh MAC sekaligus, termasuk MAC router, printer, dan PC Teh Rina yang tersambung di port lain. Ada perangkat yang meneruskan frame dari seluruh lantai kembali ke port ini.",
+        "berguna": true
+      },
+      {
+        "id": "sw-stp-gi107",
+        "label": "Lihat detail spanning tree di port Gi1/0/7",
+        "perangkat": "SW",
+        "perintah": "show spanning-tree interface GigabitEthernet1/0/7 detail",
+        "keluaran": " Port 7 (GigabitEthernet1/0/7) of VLAN0010 is designated forwarding \n   Port path cost 19, Port priority 128, Port Identifier 128.7.\n   Designated root has priority 32778, address 7069.5a3c.e080\n   Designated bridge has priority 32778, address 7069.5a3c.e080\n   Designated port id is 128.7, designated path cost 0\n   Timers: message age 0, forward delay 0, hold 0\n   Number of transitions to forwarding state: 1\n   The port is in the portfast edge mode\n   Link type is point-to-point by default\n   BPDU: sent 871, received 0",
+        "makna": "Port ini meneruskan trafik dalam mode PortFast, yaitu langsung aktif tanpa menunggu STP. Baris terakhir menunjukkan switch sudah mengirim 871 BPDU tetapi tidak menerima satu pun kembali. Perangkat di balik jack ini tidak meneruskan BPDU, sehingga STP tidak tahu ada loop. BPDU Guard pun tidak akan terpicu karena alasan yang sama.",
+        "berguna": true
+      }
+    ],
+    "dugaan": [
+      {
+        "id": "loop-switch-kecil",
+        "teks": "Ada switch kecil tanpa STP di meja magang yang tersambung ke jack 3-07 dan 3-08 sekaligus, sehingga membentuk loop layer 2.",
+        "benar": true,
+        "umpan": "Tepat. Semua pesan MAC flapping melibatkan Gi1/0/7 atau Gi1/0/8, hanya dua port itu yang menerima hampir 100 Mb/s, dan MAC router tercatat di Gi1/0/8. Switch kecil di meja magang tidak menjalankan STP dan tidak meneruskan BPDU (`received 0`), jadi SW-LT3 tidak pernah melihat loop itu."
+      },
+      {
+        "id": "ddos",
+        "teks": "Serangan DDoS dari internet membanjiri jaringan kantor.",
+        "benar": false,
+        "umpan": "Banjirnya datang dari dalam. Uplink ke router (Gi1/0/25) hanya menerima sekitar 1,2 Mb/s, sedangkan Gi1/0/7 dan Gi1/0/8 menerima hampir 100 Mb/s. Serangan dari internet akan masuk lewat router."
+      },
+      {
+        "id": "switch-rusak",
+        "teks": "SW-LT3 rusak atau hang.",
+        "benar": false,
+        "umpan": "Switch sudah menyala lebih dari setahun tanpa restart dan masih melayani console. CPU-nya penuh karena memproses banjir broadcast, dengan 91% di level interrupt, bukan karena perangkatnya rusak."
+      },
+      {
+        "id": "malware",
+        "teks": "Ada PC terinfeksi malware yang terus-menerus mengirim broadcast.",
+        "benar": false,
+        "umpan": "Satu PC yang rakus broadcast tidak membuat MAC router dan printer berpindah-pindah antara Gi1/0/7 dan Gi1/0/8. Pola flapping di dua port sekaligus adalah tanda frame yang berputar."
+      },
+      {
+        "id": "uplink-flap",
+        "teks": "Kabel fiber uplink ke router putus-sambung.",
+        "benar": false,
+        "umpan": "Gi1/0/25 berstatus up dan CDP masih melihat router di sana. Laju input uplink juga wajar. Kalau uplink yang bermasalah, PC tetap bisa saling menjangkau di dalam lantai dan CPU switch tidak akan penuh."
+      }
+    ],
+    "pembahasan": "Gejala \"semua lambat, lampu berkedip serempak, SSH tidak merespons\" hampir selalu berarti banjir broadcast. Pertanyaannya tinggal dari mana banjir itu masuk.\n\nBuktinya saling menguatkan. CPU switch 99% dengan 91% di level interrupt, jadi switch sibuk memproses paket, bukan menjalankan program. Log MAC flapping selalu menyebut Gi1/0/7 atau Gi1/0/8, termasuk untuk MAC router yang seharusnya hanya ada di Gi1/0/25. Laju input memperlihatkan hanya dua port itu yang menerima hampir 100 Mb/s.\n\nGi1/0/7 dan Gi1/0/8 adalah jack 3-07 dan 3-08 di meja magang. Catatan hanya menyebut satu PC di sana, padahal Gi1/0/8 menyimpan tujuh MAC. Ada switch kecil yang disambungkan ke kedua jack. Header Ethernet tidak punya TTL (penghitung umur paket seperti di IP), jadi setiap broadcast yang keluar lewat Gi1/0/7 kembali lewat Gi1/0/8, lalu dikirim ulang, berputar tanpa akhir sambil terus berlipat.\n\nKenapa STP tidak mencegahnya? `BPDU: sent 871, received 0`. SW-LT3 mengirim BPDU, tetapi switch kecil itu, seperti sebagian switch murah tanpa manajemen, tidak meneruskannya. Tanpa BPDU yang kembali, STP tidak melihat loop. BPDU Guard juga tidak akan terpicu, karena ia baru bereaksi saat ada BPDU yang masuk.\n\nPengecoh yang paling umum adalah mencari switch itu dengan `show cdp neighbors`. Switch tanpa manajemen tidak berbicara CDP atau LLDP, jadi daftar yang kosong tidak membuktikan apa-apa.\n\nUrutannya: hentikan banjirnya dulu dengan mematikan salah satu port, baru telusuri kabelnya. Sesudah itu pasang storm control, yang membatasi broadcast per port dan tetap bekerja walau BPDU tidak pernah datang.\n\nMateri terkait: `03-data-link/04-stp` (loop layer 2, PortFast, BPDU Guard, storm control), `03-data-link/02-switching` (MAC flapping), dan `14-monitoring-troubleshooting/04-studi-kasus` (Kasus 6).",
+    "perbaikan": {
+      "penjelasan": "Hentikan banjir dulu dengan mematikan Gi1/0/8 dari console, lalu minta anak magang mencabut kabel kedua dari switch kecilnya. Setelah itu pasang storm control dan BPDU Guard di port pengguna Gi1/0/1 sampai Gi1/0/24, jangan di uplink Gi1/0/25, supaya banjir berikutnya hanya mematikan port pelakunya. Kalau storm control ternyata memutus perangkat yang sah, cabut dengan `no storm-control broadcast level` di port itu.",
+      "perintah": "SW-LT3# configure terminal\nSW-LT3(config)# interface GigabitEthernet1/0/8\nSW-LT3(config-if)# shutdown\nSW-LT3(config-if)# end\nSW-LT3# show processes cpu | include five\nCPU utilization for five seconds: 9%/2%; one minute: 63%; five minutes: 89%\n\n! Setelah kabel kedua dicabut dari switch kecil di meja magang:\nSW-LT3# configure terminal\nSW-LT3(config)# interface range GigabitEthernet1/0/1 - 24\nSW-LT3(config-if-range)# storm-control broadcast level 5.00\nSW-LT3(config-if-range)# storm-control action shutdown\nSW-LT3(config-if-range)# spanning-tree bpduguard enable\nSW-LT3(config-if-range)# exit\nSW-LT3(config)# errdisable recovery cause storm-control\nSW-LT3(config)# errdisable recovery cause bpduguard\nSW-LT3(config)# errdisable recovery interval 300\nSW-LT3(config)# interface GigabitEthernet1/0/8\nSW-LT3(config-if)# no shutdown\nSW-LT3(config-if)# end\nSW-LT3# show storm-control broadcast\nSW-LT3# copy running-config startup-config"
+    },
+    "sumber": [
+      {
+        "judul": "Cisco: Understand MAC Flapping Notifications on Catalyst 9000 Switches",
+        "url": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/223094-understand-mac-flapping-notifications.html"
+      },
+      {
+        "judul": "Cisco: Troubleshoot MAC Address Flap Notification",
+        "url": "https://www.cisco.com/c/en/us/support/docs/ip/syslog/221140-troubleshoot-mac-address-flap-notificati.html"
+      },
+      {
+        "judul": "Cisco: Configuring Port-Based Traffic Control (storm control), Catalyst 2960",
+        "url": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst2960/software/release/15-0_2_se/configuration/guide/scg2960/swtrafc.html"
+      },
+      {
+        "judul": "Cisco: Configuring Optional Spanning-Tree Features (PortFast, BPDU Guard), Catalyst 2960",
+        "url": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst2960/software/release/15-0_2_se/configuration/guide/scg2960/swstpopt.html"
+      }
+    ]
+  },
+  {
+    "id": "ospf-exstart-mtu-berbeda",
+    "judul": "Router POP baru bertetangga OSPF tetapi tidak pernah FULL",
+    "tingkat": "lanjut",
+    "modul": [
+      "07-routing-lanjutan/04-ospf",
+      "05-transport/04-congestion-control",
+      "14-monitoring-troubleshooting/01-metodologi"
+    ],
+    "gejala": "Router POP baru terlihat sebagai tetangga OSPF, tetapi macet di EXSTART dan EXCHANGE. Tidak ada rute OSPF yang dipelajari, padahal ping antar-router lancar.",
+    "briefing": "**Laporan di grup WhatsApp NOC** sebuah ISP lokal di Malang. Jumat, pukul 21.18, di tengah jendela perawatan.\n\n> Mas Fajar (teknisi lapangan): Router POP Batu sudah terpasang dan link fiber ke Malang sudah nyala. Ping antar-router lancar. Tapi pelanggan uji di Batu belum bisa internet, dan di router Batu belum ada rute OSPF sama sekali. Konfigurasi interfacenya saya salin dari template router pelanggan PPPoE, lalu saya sesuaikan alamatnya.\n\nTopologi singkat:\n\n- R-MLG (core di Malang, Cisco 2911) tersambung ke R-KPJ (POP Kepanjen) lewat Gi0/1 dan ke R-BATU (POP baru, Cisco 1841 bekas dengan IOS 12.4) lewat Gi0/2.\n- Semua link antar-router memakai OSPF area 0. Router ID: R-MLG 10.255.0.1, R-KPJ 10.255.0.3, R-BATU 10.255.0.7.\n- Link Malang-Batu memakai 10.0.17.0/30: R-MLG .1, R-BATU .2.\n\nJendela perawatan berakhir pukul 23.00. Pelanggan Kepanjen sedang online, jadi hindari perintah yang memutus layanan mereka.",
+    "lokasi": {
+      "kota": "Batu",
+      "lat": -7.867,
+      "lon": 112.524
+    },
+    "topologi": {
+      "simpul": [
+        {
+          "id": "UJI",
+          "label": "Pelanggan uji Batu",
+          "jenis": "laptop",
+          "x": 10,
+          "y": 34,
+          "info": "di belakang R-BATU"
+        },
+        {
+          "id": "BATU",
+          "label": "R-BATU (POP baru)",
+          "jenis": "router",
+          "x": 34,
+          "y": 34,
+          "info": "Cisco 1841 bekas, RID 10.255.0.7"
+        },
+        {
+          "id": "KPJ",
+          "label": "R-KPJ",
+          "jenis": "router",
+          "x": 34,
+          "y": 72,
+          "info": "POP Kepanjen, RID 10.255.0.3"
+        },
+        {
+          "id": "MLG",
+          "label": "R-MLG (core)",
+          "jenis": "router",
+          "x": 62,
+          "y": 50,
+          "info": "Cisco 2911, RID 10.255.0.1"
+        },
+        {
+          "id": "UP",
+          "label": "Upstream",
+          "jenis": "isp",
+          "x": 89,
+          "y": 50,
+          "info": "transit internet"
+        }
+      ],
+      "sisi": [
+        {
+          "dari": "UJI",
+          "ke": "BATU",
+          "label": "Fa0/1"
+        },
+        {
+          "dari": "BATU",
+          "ke": "MLG",
+          "label": "10.0.17.0/30"
+        },
+        {
+          "dari": "KPJ",
+          "ke": "MLG",
+          "label": "10.0.13.0/30"
+        },
+        {
+          "dari": "MLG",
+          "ke": "UP",
+          "label": "Gi0/0"
+        }
+      ]
+    },
+    "langkah": [
+      {
+        "id": "mlg-ospf-neighbor",
+        "label": "Lihat tetangga OSPF di R-MLG",
+        "perangkat": "MLG",
+        "perintah": "show ip ospf neighbor",
+        "keluaran": "\nNeighbor ID     Pri   State           Dead Time   Address         Interface\n10.255.0.3        1   FULL/BDR        00:00:35    10.0.13.2       GigabitEthernet0/1\n10.255.0.7        1   EXCHANGE/BDR    00:00:38    10.0.17.2       GigabitEthernet0/2",
+        "makna": "R-BATU muncul sebagai tetangga, jadi hello diterima dan semua parameter hello cocok: area, subnet, timer, dan autentikasi. Tetapi state-nya EXCHANGE, bukan FULL. EXCHANGE adalah tahap bertukar ringkasan database lewat paket DBD (Database Description). Kepanjen FULL seperti biasa.",
+        "berguna": true
+      },
+      {
+        "id": "batu-ospf-neighbor",
+        "label": "Lihat tetangga OSPF di R-BATU",
+        "perangkat": "BATU",
+        "perintah": "show ip ospf neighbor",
+        "keluaran": "\nNeighbor ID     Pri   State           Dead Time   Address         Interface\n10.255.0.1        1   EXSTART/DR      00:00:33    10.0.17.1       FastEthernet0/0",
+        "makna": "Dari sisi Batu, tetangga yang sama macet di EXSTART, tahap menentukan siapa master untuk pertukaran database. Satu sisi EXSTART dan sisi lain EXCHANGE adalah pola khas MTU yang berbeda: satu router menolak paket DBD dari tetangganya.",
+        "berguna": true
+      },
+      {
+        "id": "mlg-ping-batu",
+        "label": "Ping R-BATU dari R-MLG",
+        "perangkat": "MLG",
+        "perintah": "ping 10.0.17.2",
+        "keluaran": "Type escape sequence to abort.\nSending 5, 100-byte ICMP Echos to 10.0.17.2, timeout is 2 seconds:\n!!!!!\nSuccess rate is 100 percent (5/5), round-trip min/avg/max = 1/1/2 ms",
+        "makna": "Link Malang-Batu bekerja di lapisan 3. Tetapi ping bawaan Cisco hanya 100 byte, jadi ia lolos walau MTU kedua ujung berbeda. Ping ini tidak menguji hal yang sedang bermasalah.",
+        "berguna": false
+      },
+      {
+        "id": "mlg-ospf-interface",
+        "label": "Periksa parameter OSPF di interface Gi0/2 R-MLG",
+        "perangkat": "MLG",
+        "perintah": "show ip ospf interface GigabitEthernet0/2",
+        "keluaran": "GigabitEthernet0/2 is up, line protocol is up \n  Internet Address 10.0.17.1/30, Area 0, Attached via Network Statement\n  Process ID 1, Router ID 10.255.0.1, Network Type BROADCAST, Cost: 1\n  Topology-MTID    Cost    Disabled    Shutdown      Topology Name\n        0           1         no          no            Base\n  Transmit Delay is 1 sec, State DR, Priority 1\n  Designated Router (ID) 10.255.0.1, Interface address 10.0.17.1\n  Backup Designated router (ID) 10.255.0.7, Interface address 10.0.17.2\n  Timer intervals configured, Hello 10, Dead 40, Wait 40, Retransmit 5\n    oob-resync timeout 40\n    Hello due in 00:00:06\n  Supports Link-local Signaling (LLS)\n  Cisco NSF helper support enabled\n  IETF NSF helper support enabled\n  Index 2/2, flood queue length 0\n  Next 0x0(0)/0x0(0)\n  Last flood scan length is 0, maximum is 0\n  Last flood scan time is 0 msec, maximum is 0 msec\n  Neighbor Count is 1, Adjacent neighbor count is 0 \n  Suppress hello for 0 neighbor(s)",
+        "makna": "Area 0, Hello 10, Dead 40, dan network type BROADCAST, semuanya standar. Kalau salah satu parameter hello ini berbeda, tetangga tidak akan muncul sama sekali. `Adjacent neighbor count is 0` hanya mengulang gejala: tetangganya ada, adjacency-nya belum jadi.",
+        "berguna": false
+      },
+      {
+        "id": "batu-interfaces-mtu",
+        "label": "Lihat MTU interface Fa0/0 R-BATU",
+        "perangkat": "BATU",
+        "perintah": "show interfaces FastEthernet0/0 | include MTU",
+        "keluaran": "  MTU 1500 bytes, BW 100000 Kbit/sec, DLY 100 usec, ",
+        "makna": "Angka ini MTU layer 2, yaitu ukuran frame Ethernet, dan nilainya 1500 seperti di R-MLG. Sekilas MTU tampak sama. OSPF tidak memakai angka ini. Ia membandingkan MTU IP, yang bisa diatur terpisah dengan `ip mtu`.",
+        "berguna": false
+      },
+      {
+        "id": "batu-ip-mtu",
+        "label": "Lihat MTU IP interface Fa0/0 R-BATU",
+        "perangkat": "BATU",
+        "perintah": "show ip interface FastEthernet0/0 | include MTU",
+        "keluaran": "  MTU is 1492 bytes",
+        "makna": "MTU IP di R-BATU 1492 byte. Angka ini khas PPPoE, karena header PPPoE memakan 8 byte dari 1500. Template pelanggan PPPoE ikut tersalin ke link antar-router.",
+        "berguna": true
+      },
+      {
+        "id": "mlg-ip-mtu",
+        "label": "Lihat MTU IP interface Gi0/2 R-MLG",
+        "perangkat": "MLG",
+        "perintah": "show ip interface GigabitEthernet0/2 | include MTU",
+        "keluaran": "  MTU is 1500 bytes",
+        "makna": "MTU IP di R-MLG 1500 byte. Kedua ujung link berbeda 8 byte. Setiap paket DBD membawa MTU IP pengirimnya, dan router menolak DBD dari tetangga yang MTU-nya lebih besar.",
+        "berguna": true
+      },
+      {
+        "id": "batu-config-gi00",
+        "label": "Lihat konfigurasi interface Fa0/0 R-BATU",
+        "perangkat": "BATU",
+        "perintah": "show running-config interface FastEthernet0/0",
+        "keluaran": "Building configuration...\n\nCurrent configuration : 159 bytes\n!\ninterface FastEthernet0/0\n description LINK-KE-R-MLG\n ip address 10.0.17.2 255.255.255.252\n ip mtu 1492\n ip tcp adjust-mss 1452\n duplex auto\n speed auto\nend\n",
+        "makna": "Dua baris `ip mtu 1492` dan `ip tcp adjust-mss 1452` berasal dari template PPPoE. Keduanya berguna di sisi pelanggan PPPoE, tetapi tidak punya tempat di link Ethernet antar-router yang MTU-nya 1500.",
+        "berguna": true
+      },
+      {
+        "id": "batu-debug-adj",
+        "label": "Nyalakan debug adjacency OSPF di R-BATU sebentar",
+        "perangkat": "BATU",
+        "perintah": "debug ip ospf adj",
+        "keluaran": "OSPF adjacency events debugging is on\nOct 16 21:24:05.331 WIB: OSPF: Rcv DBD from 10.255.0.1 on FastEthernet0/0 seq 0x1F4C opt 0x52 flag 0x2 Len 532  mtu 1500 state EXSTART\nOct 16 21:24:05.331 WIB: OSPF: Nbr 10.255.0.1 has larger interface MTU\nOct 16 21:24:09.807 WIB: OSPF: Retransmitting DBD to 10.255.0.1 on FastEthernet0/0 [12]\nOct 16 21:24:09.807 WIB: OSPF: Send DBD to 10.255.0.1 on FastEthernet0/0 seq 0x0B71 opt 0x52 flag 0x7 Len 32\nOct 16 21:24:10.334 WIB: OSPF: Rcv DBD from 10.255.0.1 on FastEthernet0/0 seq 0x1F4C opt 0x52 flag 0x2 Len 532  mtu 1500 state EXSTART\nOct 16 21:24:10.334 WIB: OSPF: Nbr 10.255.0.1 has larger interface MTU",
+        "makna": "R-BATU menerima DBD dari R-MLG yang menyebut `mtu 1500`, lalu menolaknya dengan alasan `has larger interface MTU`. R-BATU terus mengirim ulang DBD awalnya, dan siklus ini tidak pernah selesai. Debug membebani CPU, jadi matikan lagi dengan `undebug all` setelah membaca beberapa baris.",
+        "berguna": true
+      },
+      {
+        "id": "mlg-clear-ospf",
+        "label": "Reset proses OSPF di R-MLG",
+        "perangkat": "MLG",
+        "perintah": "clear ip ospf process",
+        "keluaran": "Reset ALL OSPF processes? [no]: yes\nOct 16 21:26:41.117 WIB: %OSPF-5-ADJCHG: Process 1, Nbr 10.255.0.3 on GigabitEthernet0/1 from FULL to DOWN, Neighbor Down: Interface down or detached\nOct 16 21:26:41.117 WIB: %OSPF-5-ADJCHG: Process 1, Nbr 10.255.0.7 on GigabitEthernet0/2 from EXCHANGE to DOWN, Neighbor Down: Interface down or detached\nOct 16 21:26:49.502 WIB: %OSPF-5-ADJCHG: Process 1, Nbr 10.255.0.3 on GigabitEthernet0/1 from LOADING to FULL, Loading Done",
+        "makna": "Perintah ini memutus semua tetangga OSPF di R-MLG. Kepanjen yang sehat ikut turun selama delapan detik, dan pelanggannya merasakan gangguan. Batu tidak ikut naik ke FULL karena MTU-nya tetap berbeda. Mereset proses tidak pernah memperbaiki parameter yang salah.",
+        "berguna": false
+      }
+    ],
+    "dugaan": [
+      {
+        "id": "mtu-ip-beda",
+        "teks": "MTU IP di kedua ujung link Malang-Batu berbeda: R-BATU memakai `ip mtu 1492` dari template PPPoE, R-MLG memakai 1500.",
+        "benar": true,
+        "umpan": "Tepat. `show ip interface` memperlihatkan 1492 di R-BATU dan 1500 di R-MLG, dan debug adjacency menulis `Nbr 10.255.0.1 has larger interface MTU`. R-BATU menolak setiap DBD dari R-MLG, sehingga adjacency tidak pernah melewati EXSTART."
+      },
+      {
+        "id": "timer-beda",
+        "teks": "Hello atau dead timer di kedua router berbeda.",
+        "benar": false,
+        "umpan": "Kalau timer berbeda, router menolak hello dan tetangga tidak muncul di tabel sama sekali. Di sini tetangga muncul dan sudah melewati 2-WAY. `show ip ospf interface` juga menunjukkan Hello 10 dan Dead 40."
+      },
+      {
+        "id": "area-beda",
+        "teks": "Area OSPF di link Malang-Batu tidak sama.",
+        "benar": false,
+        "umpan": "Area dibawa di setiap hello. Area yang berbeda membuat hello ditolak, sehingga tetangga tidak akan pernah terlihat. Tetangga di sini terlihat, dan interface R-MLG berada di Area 0."
+      },
+      {
+        "id": "rid-kembar",
+        "teks": "Router ID R-BATU kembar dengan router lain.",
+        "benar": false,
+        "umpan": "Tabel tetangga memperlihatkan tiga Router ID yang berbeda: 10.255.0.1, 10.255.0.3, dan 10.255.0.7. Tidak ada yang kembar."
+      },
+      {
+        "id": "link-flap",
+        "teks": "Link fiber Malang-Batu putus-sambung.",
+        "benar": false,
+        "umpan": "Ping dari R-MLG ke R-BATU berhasil 100 persen, dan tetangga tetap terlihat dengan dead time yang terus diperbarui. Link stabil. Masalahnya ada pada isi paket OSPF, bukan pada kabelnya."
+      }
+    ],
+    "pembahasan": "Mulailah dari state tetangga. Tetangga OSPF muncul di tabel, artinya hello diterima di kedua arah dan semua parameter hello cocok. Masalahnya ada di tahap sesudahnya.\n\nSetelah 2-WAY, dua router menentukan siapa master lalu bertukar ringkasan database lewat paket DBD. Setiap DBD membawa MTU IP interface pengirimnya. RFC 2328 mewajibkan router menolak DBD dari tetangga yang MTU-nya lebih besar daripada MTU dirinya, supaya paket OSPF besar tidak terkirim lalu hilang di tengah jalan.\n\nR-BATU memakai `ip mtu 1492`, sisa template PPPoE. R-MLG memakai 1500. R-BATU menolak setiap DBD dari R-MLG dan tertahan di EXSTART, sementara R-MLG sudah masuk EXCHANGE dan terus mengirim ulang. Satu sisi EXSTART dan sisi lain EXCHANGE adalah pola khas MTU yang berbeda.\n\nAda dua jebakan dalam misi ini. Pertama, `show interfaces` menampilkan MTU layer 2, yaitu 1500 di kedua sisi. OSPF memakai MTU IP dari `show ip interface`, yang bisa diubah sendiri dengan `ip mtu`. Kedua, ping bawaan hanya 100 byte, jadi lolos walau MTU berbeda.\n\nPengecoh paling berbahaya adalah `clear ip ospf process`. Ia memutus semua tetangga, termasuk Kepanjen yang sehat, dan tidak mengubah MTU sama sekali. Di jaringan produksi, perintah yang mengganggu layanan butuh alasan yang kuat.\n\n`ip ospf mtu-ignore` memang membuat adjacency naik, tetapi itu hanya menyembunyikan gejala. Perbaikan yang benar adalah menyamakan MTU di kedua ujung.\n\nMateri terkait: `07-routing-lanjutan/04-ospf` (state adjacency dan syarat yang harus cocok), `05-transport/04-congestion-control` (MTU), dan `14-monitoring-troubleshooting/01-metodologi` (bekerja dari bukti).",
+    "perbaikan": {
+      "penjelasan": "Hapus `ip mtu 1492` dan `ip tcp adjust-mss 1452` di interface R-BATU yang menghadap Malang. Keduanya hanya cocok untuk sesi PPPoE pelanggan. MTU IP kembali ke 1500, sama dengan R-MLG. Perubahan ini hanya menyentuh link Malang-Batu yang belum membawa trafik pelanggan, jadi aman dilakukan di jendela perawatan ini. Untuk membatalkan, pasang kembali `ip mtu 1492`.",
+      "perintah": "R-BATU# configure terminal\nR-BATU(config)# interface FastEthernet0/0\nR-BATU(config-if)# no ip mtu\nR-BATU(config-if)# no ip tcp adjust-mss\nR-BATU(config-if)# end\nR-BATU# undebug all\nR-BATU# show ip interface FastEthernet0/0 | include MTU\n  MTU is 1500 bytes\nOct 16 21:31:07.415 WIB: %OSPF-5-ADJCHG: Process 1, Nbr 10.255.0.1 on FastEthernet0/0 from LOADING to FULL, Loading Done\nR-BATU# show ip ospf neighbor\n\nNeighbor ID     Pri   State           Dead Time   Address         Interface\n10.255.0.1        1   FULL/DR         00:00:36    10.0.17.1       FastEthernet0/0\nR-BATU# copy running-config startup-config"
+    },
+    "sumber": [
+      {
+        "judul": "Cisco: Why Are OSPF Neighbors Stuck in Exstart/Exchange State?",
+        "url": "https://www.cisco.com/c/en/us/support/docs/ip/open-shortest-path-first-ospf/13684-12.html"
+      },
+      {
+        "judul": "RFC 2328: OSPF Version 2, bagian 10.6 (penerimaan paket Database Description)",
+        "url": "https://www.rfc-editor.org/rfc/rfc2328#section-10.6"
+      }
+    ]
+  },
+  {
+    "id": "ospf-timer-hello-berbeda",
+    "judul": "Gedung C baru tidak bisa membuka SIAKAD maupun internet",
+    "tingkat": "menengah",
+    "modul": [
+      "07-routing-lanjutan/04-ospf",
+      "07-routing-lanjutan/02-konsep-routing-dinamis",
+      "04-network-layer/05-routing-dasar"
+    ],
+    "gejala": "Komputer di gedung baru bisa saling terhubung di dalam gedung, tetapi tidak bisa membuka server kampus maupun internet. Switch gedung itu tidak punya satu pun rute OSPF.",
+    "briefing": "**Tiket #1156** dari Pak Teguh Santoso, kepala UPT TIK sebuah universitas swasta di Semarang. Selasa, pukul 10.30.\n\n> Gedung C mau diresmikan minggu depan. Kemarin kontraktor sudah memasang switch distribusi dan menyambungkannya ke core lewat fiber. Komputer lab di Gedung C bisa saling ping dan dapat alamat IP, tapi SIAKAD dan internet tidak bisa dibuka. Mas Arif dari kontraktor bilang konfigurasinya diambil dari \"template konvergensi cepat\" yang biasa mereka pakai.\n\nCatatan jaringan kampus:\n\n- CORE-KAMPUS (Catalyst 3750-X) menjadi pusat OSPF area 0 dan mengiklankan rute default ke semua gedung. SIAKAD (sistem informasi akademik) ada di VLAN server 10.100.0.0/24.\n- Gedung A (DIST-GDA) sudah lama berjalan normal lewat Gi1/1/1.\n- Gedung C (DIST-GDC, Catalyst 3560-CX) tersambung ke Gi1/1/3 di core. Link-nya 10.1.30.0/30: core .1, Gedung C .2.\n- Gateway lab Gedung C adalah SVI Vlan310 di DIST-GDC, 10.31.0.1.",
+    "lokasi": {
+      "kota": "Semarang",
+      "lat": -6.99,
+      "lon": 110.423
+    },
+    "topologi": {
+      "simpul": [
+        {
+          "id": "LAB",
+          "label": "PC lab Gedung C",
+          "jenis": "pc",
+          "x": 10,
+          "y": 34,
+          "info": "VLAN 310, 10.31.0.25/24"
+        },
+        {
+          "id": "GDC",
+          "label": "DIST-GDC",
+          "jenis": "switch",
+          "x": 36,
+          "y": 34,
+          "info": "Catalyst 3560-CX, RID 10.255.1.3"
+        },
+        {
+          "id": "GDA",
+          "label": "DIST-GDA",
+          "jenis": "switch",
+          "x": 36,
+          "y": 74,
+          "info": "Gedung A, RID 10.255.1.2"
+        },
+        {
+          "id": "CORE",
+          "label": "CORE-KAMPUS",
+          "jenis": "switch",
+          "x": 62,
+          "y": 54,
+          "info": "Catalyst 3750-X, RID 10.255.1.1"
+        },
+        {
+          "id": "SIAKAD",
+          "label": "Server SIAKAD",
+          "jenis": "server",
+          "x": 89,
+          "y": 32,
+          "info": "10.100.0.20, VLAN server"
+        },
+        {
+          "id": "ISP",
+          "label": "ISP kampus",
+          "jenis": "isp",
+          "x": 89,
+          "y": 74,
+          "info": "internet kampus"
+        }
+      ],
+      "sisi": [
+        {
+          "dari": "LAB",
+          "ke": "GDC",
+          "label": "Gi0/3, VLAN 310"
+        },
+        {
+          "dari": "GDC",
+          "ke": "CORE",
+          "label": "fiber 10.1.30.0/30"
+        },
+        {
+          "dari": "GDA",
+          "ke": "CORE",
+          "label": "fiber 10.1.10.0/30"
+        },
+        {
+          "dari": "CORE",
+          "ke": "SIAKAD",
+          "label": "VLAN 100"
+        },
+        {
+          "dari": "CORE",
+          "ke": "ISP",
+          "label": "Gi1/0/1"
+        }
+      ]
+    },
+    "langkah": [
+      {
+        "id": "lab-ping-gateway",
+        "label": "Ping gateway Vlan310 dari PC lab Gedung C",
+        "perangkat": "LAB",
+        "perintah": "ping 10.31.0.1",
+        "keluaran": "Pinging 10.31.0.1 with 32 bytes of data:\nReply from 10.31.0.1: bytes=32 time=1ms TTL=255\nReply from 10.31.0.1: bytes=32 time<1ms TTL=255\nReply from 10.31.0.1: bytes=32 time<1ms TTL=255\nReply from 10.31.0.1: bytes=32 time<1ms TTL=255\n\nPing statistics for 10.31.0.1:\n    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),\nApproximate round trip times in milli-seconds:\n    Minimum = 0ms, Maximum = 1ms, Average = 0ms",
+        "makna": "PC lab mencapai gateway-nya di DIST-GDC. Kabel, VLAN, dan alamat IP di dalam Gedung C berjalan normal. Hasil ini sesuai laporan, tetapi tidak menjelaskan kenapa paket tidak bisa keluar gedung.",
+        "berguna": false
+      },
+      {
+        "id": "lab-tracert-siakad",
+        "label": "Telusuri jalur dari PC lab ke server SIAKAD",
+        "perangkat": "LAB",
+        "perintah": "tracert -d 10.100.0.20",
+        "keluaran": "Tracing route to 10.100.0.20 over a maximum of 30 hops\n\n  1    <1 ms    <1 ms    <1 ms  10.31.0.1\n  2  10.31.0.1  reports: Destination net unreachable.\n\nTrace complete.",
+        "makna": "Gateway Gedung C sendiri yang menjawab \"Destination net unreachable\": DIST-GDC tidak tahu jalan ke jaringan 10.100.0.0/24. Paket bahkan tidak dikirim ke core. Masalahnya ada di tabel routing DIST-GDC.",
+        "berguna": true
+      },
+      {
+        "id": "gdc-route",
+        "label": "Lihat tabel routing DIST-GDC",
+        "perangkat": "GDC",
+        "perintah": "show ip route",
+        "keluaran": "Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP\n       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area \n       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2\n       E1 - OSPF external type 1, E2 - OSPF external type 2\n       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2\n       ia - IS-IS inter area, * - candidate default, U - per-user static route\n       o - ODR, P - periodic downloaded static route, H - NHRP, l - LISP\n       a - application route\n       + - replicated route, % - next hop override, p - overrides from PfR\n\nGateway of last resort is not set\n\n      10.0.0.0/8 is variably subnetted, 7 subnets, 3 masks\nC        10.1.30.0/30 is directly connected, GigabitEthernet0/16\nL        10.1.30.2/32 is directly connected, GigabitEthernet0/16\nC        10.31.0.0/24 is directly connected, Vlan310\nL        10.31.0.1/32 is directly connected, Vlan310\nC        10.32.0.0/24 is directly connected, Vlan320\nL        10.32.0.1/32 is directly connected, Vlan320\nC        10.255.1.3/32 is directly connected, Loopback0",
+        "makna": "Hanya ada rute C (connected) dan L (alamat lokal). Tidak ada satu pun rute berkode O dari OSPF, dan \"Gateway of last resort is not set\" berarti rute default dari core belum diterima. DIST-GDC tidak bertukar rute dengan siapa pun.",
+        "berguna": true
+      },
+      {
+        "id": "core-ospf-neighbor",
+        "label": "Lihat tetangga OSPF di CORE-KAMPUS",
+        "perangkat": "CORE",
+        "perintah": "show ip ospf neighbor",
+        "keluaran": "\nNeighbor ID     Pri   State           Dead Time   Address         Interface\n10.255.1.2        1   FULL/BDR        00:00:37    10.1.10.2       GigabitEthernet1/1/1",
+        "makna": "Core hanya bertetangga dengan Gedung A. Gedung C (10.255.1.3) tidak ada sama sekali, bahkan tidak dalam state INIT atau EXSTART. Tetangga yang tidak pernah muncul berarti paket hello dari Gedung C ditolak atau tidak sampai.",
+        "berguna": true
+      },
+      {
+        "id": "core-ping-gdc",
+        "label": "Ping ujung link Gedung C dari core",
+        "perangkat": "CORE",
+        "perintah": "ping 10.1.30.2",
+        "keluaran": "Type escape sequence to abort.\nSending 5, 100-byte ICMP Echos to 10.1.30.2, timeout is 2 seconds:\n!!!!!\nSuccess rate is 100 percent (5/5), round-trip min/avg/max = 1/1/1 ms",
+        "makna": "Fiber ke Gedung C bekerja dan kedua ujung satu subnet. Paket hello pasti sampai secara fisik. Kalau tetangga tetap tidak terbentuk, isi hello-nya yang ditolak.",
+        "berguna": false
+      },
+      {
+        "id": "core-ospf-brief",
+        "label": "Ringkasan interface OSPF di core",
+        "perangkat": "CORE",
+        "perintah": "show ip ospf interface brief",
+        "keluaran": "Interface    PID   Area            IP Address/Mask    Cost  State Nbrs F/C\nLo0          1     0               10.255.1.1/32      1     LOOP  0/0\nVl100        1     0               10.100.0.1/24      1     DR    0/0\nGi1/1/1      1     0               10.1.10.1/30       1     DR    1/1\nGi1/1/3      1     0               10.1.30.1/30       1     DR    0/0",
+        "makna": "Gi1/1/3 ikut OSPF di area 0, tetapi kolom Nbrs F/C (Full/Count) menunjukkan 0/0: nol tetangga. Bandingkan dengan Gi1/1/1 ke Gedung A, 1/1. Core tidak lupa mengaktifkan OSPF di link Gedung C.",
+        "berguna": true
+      },
+      {
+        "id": "core-ospf-interface",
+        "label": "Lihat parameter OSPF di Gi1/1/3 core",
+        "perangkat": "CORE",
+        "perintah": "show ip ospf interface GigabitEthernet1/1/3",
+        "keluaran": "GigabitEthernet1/1/3 is up, line protocol is up \n  Internet Address 10.1.30.1/30, Area 0, Attached via Network Statement\n  Process ID 1, Router ID 10.255.1.1, Network Type BROADCAST, Cost: 1\n  Topology-MTID    Cost    Disabled    Shutdown      Topology Name\n        0           1         no          no            Base\n  Transmit Delay is 1 sec, State DR, Priority 1\n  Designated Router (ID) 10.255.1.1, Interface address 10.1.30.1\n  No backup designated router on this network\n  Timer intervals configured, Hello 10, Dead 40, Wait 40, Retransmit 5\n    oob-resync timeout 40\n    Hello due in 00:00:07\n  Supports Link-local Signaling (LLS)\n  Cisco NSF helper support enabled\n  IETF NSF helper support enabled\n  Index 3/3, flood queue length 0\n  Next 0x0(0)/0x0(0)\n  Last flood scan length is 0, maximum is 0\n  Last flood scan time is 0 msec, maximum is 0 msec\n  Neighbor Count is 0, Adjacent neighbor count is 0 \n  Suppress hello for 0 neighbor(s)",
+        "makna": "Sisi core memakai Area 0, Hello 10, dan Dead 40 detik, nilai bawaan Cisco untuk Ethernet. Hello adalah pesan \"aku masih di sini\" yang dikirim berkala. Dead adalah batas waktu sebelum tetangga dianggap mati. Catat angkanya untuk dibandingkan dengan ujung seberang.",
+        "berguna": true
+      },
+      {
+        "id": "gdc-ospf-interface",
+        "label": "Lihat parameter OSPF di Gi0/16 DIST-GDC",
+        "perangkat": "GDC",
+        "perintah": "show ip ospf interface GigabitEthernet0/16",
+        "keluaran": "GigabitEthernet0/16 is up, line protocol is up \n  Internet Address 10.1.30.2/30, Area 0, Attached via Network Statement\n  Process ID 1, Router ID 10.255.1.3, Network Type BROADCAST, Cost: 1\n  Topology-MTID    Cost    Disabled    Shutdown      Topology Name\n        0           1         no          no            Base\n  Transmit Delay is 1 sec, State DR, Priority 1\n  Designated Router (ID) 10.255.1.3, Interface address 10.1.30.2\n  No backup designated router on this network\n  Timer intervals configured, Hello 5, Dead 20, Wait 20, Retransmit 5\n    oob-resync timeout 20\n    Hello due in 00:00:02\n  Supports Link-local Signaling (LLS)\n  Cisco NSF helper support enabled\n  IETF NSF helper support enabled\n  Index 3/3, flood queue length 0\n  Next 0x0(0)/0x0(0)\n  Last flood scan length is 0, maximum is 0\n  Last flood scan time is 0 msec, maximum is 0 msec\n  Neighbor Count is 0, Adjacent neighbor count is 0 \n  Suppress hello for 0 neighbor(s)",
+        "makna": "Area sama (0), tetapi timernya Hello 5 dan Dead 20. Kedua nilai ini dibawa di setiap paket hello dan harus sama persis di kedua ujung. Karena berbeda, core dan DIST-GDC saling membuang hello dan masing-masing merasa sendirian di link itu.",
+        "berguna": true
+      },
+      {
+        "id": "gdc-config-gi016",
+        "label": "Lihat konfigurasi interface Gi0/16 DIST-GDC",
+        "perangkat": "GDC",
+        "perintah": "show running-config interface GigabitEthernet0/16",
+        "keluaran": "Building configuration...\n\nCurrent configuration : 136 bytes\n!\ninterface GigabitEthernet0/16\n description UPLINK-CORE-KAMPUS\n no switchport\n ip address 10.1.30.2 255.255.255.252\n ip ospf hello-interval 5\nend\n",
+        "makna": "Baris `ip ospf hello-interval 5` berasal dari template kontraktor. Di Cisco, mengubah hello tanpa menyebut dead otomatis membuat dead menjadi empat kali hello, yaitu 20 detik. Itu sebabnya kedua timer ikut berbeda.",
+        "berguna": true
+      },
+      {
+        "id": "gdc-ip-mtu",
+        "label": "Lihat MTU IP di uplink DIST-GDC",
+        "perangkat": "GDC",
+        "perintah": "show ip interface GigabitEthernet0/16 | include MTU",
+        "keluaran": "  MTU is 1500 bytes",
+        "makna": "MTU IP 1500, sama dengan nilai bawaan di core. MTU memang bisa menggagalkan OSPF, tetapi gejalanya lain: tetangga terlihat lalu macet di EXSTART atau EXCHANGE. Di sini tetangganya tidak muncul sama sekali.",
+        "berguna": false
+      }
+    ],
+    "dugaan": [
+      {
+        "id": "timer-beda",
+        "teks": "Hello dan dead interval di dua ujung berbeda: DIST-GDC memakai 5 dan 20 detik, core memakai 10 dan 40 detik.",
+        "benar": true,
+        "umpan": "Tepat. `show ip ospf interface` di kedua ujung memperlihatkan Hello 10/Dead 40 di core dan Hello 5/Dead 20 di DIST-GDC, dan konfigurasinya memuat `ip ospf hello-interval 5`. Hello dengan timer berbeda ditolak, jadi tetangga tidak pernah terbentuk dan rute default tidak sampai ke Gedung C."
+      },
+      {
+        "id": "area-beda",
+        "teks": "Area OSPF Gedung C berbeda dengan core.",
+        "benar": false,
+        "umpan": "Area yang berbeda memang membuat tetangga tidak muncul, tetapi kedua `show ip ospf interface` sama-sama menulis Area 0, begitu juga `show ip ospf interface brief` di core."
+      },
+      {
+        "id": "mtu-beda",
+        "teks": "MTU di link fiber Gedung C berbeda.",
+        "benar": false,
+        "umpan": "MTU IP di DIST-GDC 1500, sama dengan core. MTU yang berbeda juga punya gejala lain: tetangga terlihat lalu macet di EXSTART atau EXCHANGE. Di sini tetangganya tidak terlihat sama sekali."
+      },
+      {
+        "id": "ospf-core-mati",
+        "teks": "Proses OSPF di core mati atau tidak berjalan di Gi1/1/3.",
+        "benar": false,
+        "umpan": "Core FULL dengan Gedung A, dan Gi1/1/3 tercantum di `show ip ospf interface brief` dalam area 0. OSPF berjalan di link itu. Hanya tetangganya yang tidak terbentuk."
+      },
+      {
+        "id": "fiber-putus",
+        "teks": "Fiber antara core dan Gedung C putus.",
+        "benar": false,
+        "umpan": "Core bisa ping 10.1.30.2 dengan 100 persen berhasil, dan kedua interface berstatus up. Lapisan fisik dan alamat IP di link itu sehat."
+      }
+    ],
+    "pembahasan": "Mulai dari gejala yang paling dekat dengan pengguna. Tracert dari PC lab berhenti di gateway Gedung C dengan pesan \"Destination net unreachable\", dan tabel routing DIST-GDC hanya berisi rute connected. Gedung C tidak menerima rute OSPF apa pun, termasuk rute default.\n\nBerikutnya, lihat state tetangga. Di core, Gedung A FULL, sedangkan Gedung C tidak muncul sama sekali. Ini membedakan dua kelompok masalah OSPF:\n\n- **Tetangga tidak muncul**: hello ditolak atau tidak sampai. Penyebabnya parameter di dalam hello yang tidak cocok (area, subnet mask, hello dan dead interval, autentikasi, tipe area), interface passive, atau ACL yang memblokir protokol 89.\n- **Tetangga muncul lalu macet** di EXSTART atau EXCHANGE: biasanya MTU yang berbeda.\n\nPing antar-ujung berhasil, jadi hello pasti sampai secara fisik. Tinggal membandingkan isinya. `show ip ospf interface` di kedua ujung menunjukkan area sama, tetapi Hello 10/Dead 40 di core dan Hello 5/Dead 20 di Gedung C. Template \"konvergensi cepat\" kontraktor hanya mengubah satu sisi.\n\nPengecohnya masuk akal. Ping ke gateway dan ping antar-ujung sama-sama berhasil karena masalahnya di lapisan routing, bukan di kabel. MTU adalah tersangka OSPF yang terkenal, tetapi gejalanya tidak cocok.\n\nKalau kampus memang butuh deteksi kegagalan yang lebih cepat, ubah timer di kedua ujung sekaligus, atau lebih baik lagi pakai BFD (Bidirectional Forwarding Detection) yang mendeteksi putus dalam hitungan milidetik tanpa mengubah timer OSPF.\n\nMateri terkait: `07-routing-lanjutan/04-ospf` (syarat adjacency dan troubleshooting), `07-routing-lanjutan/02-konsep-routing-dinamis`, dan `04-network-layer/05-routing-dasar` (membaca tabel routing).",
+    "perbaikan": {
+      "penjelasan": "Kembalikan timer DIST-GDC ke nilai bawaan (hello 10, dead 40) agar sama dengan semua link kampus lain. `no ip ospf hello-interval` sekaligus mengembalikan dead interval. Perubahan ini hanya menyentuh uplink Gedung C yang belum membawa trafik. Kalau perlu kembali ke keadaan sebelumnya, `ip ospf hello-interval 5` memasang lagi nilai lama, dengan akibat adjacency putus lagi.",
+      "perintah": "DIST-GDC# configure terminal\nDIST-GDC(config)# interface GigabitEthernet0/16\nDIST-GDC(config-if)# no ip ospf hello-interval\nDIST-GDC(config-if)# end\nDIST-GDC# show ip ospf interface GigabitEthernet0/16 | include Timer\n  Timer intervals configured, Hello 10, Dead 40, Wait 40, Retransmit 5\nOct 13 10:47:52.118 WIB: %OSPF-5-ADJCHG: Process 1, Nbr 10.255.1.1 on GigabitEthernet0/16 from LOADING to FULL, Loading Done\nDIST-GDC# show ip route ospf | include 0.0.0.0/0\nO*E2  0.0.0.0/0 [110/1] via 10.1.30.1, 00:00:09, GigabitEthernet0/16\nDIST-GDC# copy running-config startup-config\n\nC:\\> tracert -d 10.100.0.20"
+    },
+    "sumber": [
+      {
+        "judul": "Cisco: Troubleshoot OSPF, bagian hello/dead interval mismatch",
+        "url": "https://www.cisco.com/c/en/us/support/docs/ip/open-shortest-path-first-ospf/12151-trouble-main.html"
+      },
+      {
+        "judul": "RFC 2328: OSPF Version 2, bagian 10.5 (penerimaan paket Hello)",
+        "url": "https://www.rfc-editor.org/rfc/rfc2328#section-10.5"
+      },
+      {
+        "judul": "Microsoft Learn: perintah tracert",
+        "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/tracert"
+      }
+    ]
+  },
+  {
+    "id": "bgp-network-tanpa-rute-cocok",
+    "judul": "Prefix baru tidak terlihat di internet walau sesi BGP sudah Established",
+    "tingkat": "lanjut",
+    "modul": [
+      "07-routing-lanjutan/06-bgp",
+      "07-routing-lanjutan/11-interkoneksi-internet",
+      "04-network-layer/03-vlsm-cidr"
+    ],
+    "gejala": "Sesi BGP ke upstream Established dan rute default sudah diterima, tetapi blok alamat milik sendiri tidak bisa dijangkau dari internet. Upstream tidak menerima satu prefix pun.",
+    "briefing": "**Tiket #3307** dari Komang Wirawan, CTO sebuah penyedia hosting kecil di Denpasar. Jumat, pukul 13.40.\n\n> Kami baru mendapat ASN sendiri (AS64500) dan blok 203.0.113.0/24. Sesi BGP ke upstream sudah Established sejak pagi, dan rute default dari mereka sudah masuk. Server yang sudah pindah ke alamat baru bisa diakses dari kantor, tapi dari luar tidak bisa sama sekali. NOC upstream bilang mereka tidak menerima prefix apa pun dari kami.\n\nCatatan:\n\n- R-EDGE (Cisco ISR 4331) adalah router BGP kantor. Peer upstream: 198.51.100.9 di AS64510. R-EDGE memakai 198.51.100.10.\n- Blok 203.0.113.0/24 dipecah di dalam: 203.0.113.0/26 untuk VLAN server dan 203.0.113.64/27 untuk VLAN NOC.\n- Upstream menyediakan looking glass: router publik yang boleh Anda tanyai untuk melihat tabel BGP dari sisi mereka.",
+    "lokasi": {
+      "kota": "Denpasar",
+      "lat": -8.672,
+      "lon": 115.234
+    },
+    "topologi": {
+      "simpul": [
+        {
+          "id": "NOC",
+          "label": "Laptop NOC",
+          "jenis": "laptop",
+          "x": 10,
+          "y": 28,
+          "info": "VLAN NOC, 203.0.113.70"
+        },
+        {
+          "id": "WEB",
+          "label": "Server web",
+          "jenis": "server",
+          "x": 10,
+          "y": 72,
+          "info": "VLAN server, 203.0.113.10"
+        },
+        {
+          "id": "EDGE",
+          "label": "R-EDGE",
+          "jenis": "router",
+          "x": 40,
+          "y": 50,
+          "info": "ISR 4331, AS64500"
+        },
+        {
+          "id": "UP",
+          "label": "Router upstream",
+          "jenis": "isp",
+          "x": 66,
+          "y": 50,
+          "info": "198.51.100.9, AS64510, looking glass"
+        },
+        {
+          "id": "NET",
+          "label": "Internet",
+          "jenis": "cloud",
+          "x": 90,
+          "y": 50,
+          "info": "pengguna di luar"
+        }
+      ],
+      "sisi": [
+        {
+          "dari": "NOC",
+          "ke": "EDGE",
+          "label": "Gi0/0/1.40"
+        },
+        {
+          "dari": "WEB",
+          "ke": "EDGE",
+          "label": "Gi0/0/1.30"
+        },
+        {
+          "dari": "EDGE",
+          "ke": "UP",
+          "label": "eBGP 198.51.100.8/30"
+        },
+        {
+          "dari": "UP",
+          "ke": "NET",
+          "label": "transit"
+        }
+      ]
+    },
+    "langkah": [
+      {
+        "id": "edge-bgp-summary",
+        "label": "Lihat ringkasan sesi BGP di R-EDGE",
+        "perangkat": "EDGE",
+        "perintah": "show ip bgp summary",
+        "keluaran": "BGP router identifier 203.0.113.1, local AS number 64500\nBGP table version is 2, main routing table version 2\n1 network entries using 248 bytes of memory\n1 path entries using 136 bytes of memory\n1/1 BGP path/bestpath attribute entries using 280 bytes of memory\n1 BGP AS-PATH entries using 24 bytes of memory\n0 BGP route-map cache entries using 0 bytes of memory\n0 BGP filter-list cache entries using 0 bytes of memory\nBGP using 688 total bytes of memory\nBGP activity 1/0 prefixes, 1/0 paths, scan interval 60 secs\n1 networks peaked at 08:28:51 Oct 16 2026 (05:12:21.640 ago)\n\nNeighbor        V           AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State/PfxRcd\n198.51.100.9    4        64510     372     369        2    0    0 05:12:40        1",
+        "makna": "Kolom terakhir berisi angka, bukan nama state seperti Active atau Idle. Artinya sesi Established dan sudah menerima satu prefix, yaitu rute default. Sesi sehat, jadi masalahnya bukan di pembentukan sesi.",
+        "berguna": false
+      },
+      {
+        "id": "noc-curl-web",
+        "label": "Buka server web dari laptop NOC",
+        "perangkat": "NOC",
+        "perintah": "curl -sI http://203.0.113.10",
+        "keluaran": "HTTP/1.1 200 OK\nServer: nginx/1.24.0 (Ubuntu)\nDate: Fri, 16 Oct 2026 05:41:12 GMT\nContent-Type: text/html\nContent-Length: 5120\nLast-Modified: Mon, 12 Oct 2026 03:10:07 GMT\nConnection: keep-alive\nETag: \"6acc4f8f-1400\"\nAccept-Ranges: bytes",
+        "makna": "Server web menjawab 200 OK dari dalam jaringan. Server hidup dan alamatnya benar. Masalahnya ada di cara dunia luar menemukan jalan ke blok 203.0.113.0/24, bukan di server.",
+        "berguna": false
+      },
+      {
+        "id": "edge-bgp-table",
+        "label": "Lihat isi tabel BGP R-EDGE",
+        "perangkat": "EDGE",
+        "perintah": "show ip bgp",
+        "keluaran": "BGP table version is 2, local router ID is 203.0.113.1\nStatus codes: s suppressed, d damped, h history, * valid, > best, i - internal, \n              r RIB-failure, S Stale, m multipath, b backup-path, f RT-Filter, \n              x best-external, a additional-path, c RIB-compressed, \n              t secondary path, L long-lived-stale,\nOrigin codes: i - IGP, e - EGP, ? - incomplete\nRPKI validation codes: V valid, I invalid, N Not found\n\n     Network          Next Hop            Metric LocPrf Weight Path\n *>   0.0.0.0          198.51.100.9                           0 64510 i",
+        "makna": "Hanya ada rute default dari upstream. Prefix milik sendiri, 203.0.113.0/24, tidak ada. Kalau perintah `network` berhasil, prefix itu muncul di sini dengan Next Hop 0.0.0.0 dan Weight 32768, tanda rute yang lahir di router ini.",
+        "berguna": true
+      },
+      {
+        "id": "edge-advertised",
+        "label": "Lihat prefix yang dikirim R-EDGE ke upstream",
+        "perangkat": "EDGE",
+        "perintah": "show ip bgp neighbors 198.51.100.9 advertised-routes",
+        "keluaran": "\nTotal number of prefixes 0 ",
+        "makna": "R-EDGE tidak mengirim satu prefix pun ke upstream. Ini cocok dengan laporan NOC upstream, dan sekaligus menunjukkan bahwa masalah pertama ada di sisi kita, sebelum filter mereka sempat berperan.",
+        "berguna": true
+      },
+      {
+        "id": "lg-prefix",
+        "label": "Tanya looking glass upstream tentang 203.0.113.0/24",
+        "perangkat": "UP",
+        "perintah": "show ip bgp 203.0.113.0/24",
+        "keluaran": "% Network not in table",
+        "makna": "Upstream tidak punya rute ke 203.0.113.0/24. Karena itu tidak ada jaringan lain di internet yang tahu harus mengirim paket ke mana. Ini mengonfirmasi gejala dari sisi luar, tetapi belum menjelaskan kenapa R-EDGE diam.",
+        "berguna": true
+      },
+      {
+        "id": "edge-prefix-list",
+        "label": "Periksa prefix-list keluar ke upstream",
+        "perangkat": "EDGE",
+        "perintah": "show ip prefix-list KE-UPSTREAM",
+        "keluaran": "ip prefix-list KE-UPSTREAM: 1 entries\n   seq 5 permit 203.0.113.0/24",
+        "makna": "Filter keluar mengizinkan 203.0.113.0/24 dan tidak ada yang lain, sesuai praktik baik. Filter ini benar. Lagi pula prefix itu belum pernah masuk tabel BGP, jadi filter keluar tidak pernah sempat memeriksanya.",
+        "berguna": false
+      },
+      {
+        "id": "edge-config-bgp",
+        "label": "Lihat konfigurasi BGP di R-EDGE",
+        "perangkat": "EDGE",
+        "perintah": "show running-config | section router bgp",
+        "keluaran": "router bgp 64500\n bgp router-id 203.0.113.1\n bgp log-neighbor-changes\n no bgp default ipv4-unicast\n neighbor 198.51.100.9 remote-as 64510\n neighbor 198.51.100.9 description UPSTREAM-DPS\n !\n address-family ipv4\n  network 203.0.113.0\n  neighbor 198.51.100.9 activate\n  neighbor 198.51.100.9 prefix-list DARI-UPSTREAM in\n  neighbor 198.51.100.9 prefix-list KE-UPSTREAM out\n exit-address-family",
+        "makna": "Perintah `network 203.0.113.0` ada. IOS tidak menampilkan mask karena /24 adalah mask bawaan kelas C untuk alamat 203.x. Konfigurasinya terlihat lengkap, jadi pertanyaannya: kenapa `network` ini tidak menghasilkan apa-apa?",
+        "berguna": true
+      },
+      {
+        "id": "edge-route-203",
+        "label": "Cari rute 203.0.113.x di tabel routing R-EDGE",
+        "perangkat": "EDGE",
+        "perintah": "show ip route | include 203.0.113",
+        "keluaran": "      203.0.113.0/24 is variably subnetted, 4 subnets, 3 masks\nC        203.0.113.0/26 is directly connected, GigabitEthernet0/0/1.30\nL        203.0.113.1/32 is directly connected, GigabitEthernet0/0/1.30\nC        203.0.113.64/27 is directly connected, GigabitEthernet0/0/1.40\nL        203.0.113.65/32 is directly connected, GigabitEthernet0/0/1.40",
+        "makna": "Tabel routing hanya punya /26 dan /27. Baris pertama hanya judul kelompok, bukan rute. Perintah `network` di BGP hanya mengiklankan prefix yang panjangnya PERSIS sama dengan rute di tabel routing. Tidak ada rute 203.0.113.0/24, jadi BGP diam tanpa pesan galat.",
+        "berguna": true
+      }
+    ],
+    "dugaan": [
+      {
+        "id": "network-tanpa-rute",
+        "teks": "Perintah `network 203.0.113.0` tidak punya rute /24 yang persis sama di tabel routing, jadi prefix itu tidak pernah masuk tabel BGP.",
+        "benar": true,
+        "umpan": "Tepat. Tabel routing hanya punya 203.0.113.0/26 dan 203.0.113.64/27. BGP menuntut kecocokan persis, sehingga /24 tidak muncul di `show ip bgp` dan R-EDGE mengirim nol prefix ke upstream."
+      },
+      {
+        "id": "sesi-belum-up",
+        "teks": "Sesi BGP ke upstream sebenarnya belum Established.",
+        "benar": false,
+        "umpan": "`show ip bgp summary` menunjukkan Up/Down 05:12:40 dan angka 1 di kolom State/PfxRcd. Angka di kolom itu berarti sesi Established dan sudah menerima rute default."
+      },
+      {
+        "id": "prefix-list-blokir",
+        "teks": "Prefix-list KE-UPSTREAM memblokir 203.0.113.0/24.",
+        "benar": false,
+        "umpan": "Prefix-list itu justru mengizinkan 203.0.113.0/24. Lagi pula prefix itu tidak ada di tabel BGP lokal, jadi filter keluar tidak pernah sempat memeriksanya."
+      },
+      {
+        "id": "filter-upstream",
+        "teks": "Upstream belum memasang filter untuk menerima prefix baru kita.",
+        "benar": false,
+        "umpan": "Di dunia nyata ini sering terjadi, tetapi bukan penyebab di sini. `advertised-routes` di R-EDGE menunjukkan nol prefix dikirim. Selama R-EDGE diam, filter upstream tidak pernah diuji. Periksa sisi mereka setelah R-EDGE mulai mengirim prefix."
+      },
+      {
+        "id": "server-mati",
+        "teks": "Server web mati atau memakai alamat yang salah.",
+        "benar": false,
+        "umpan": "Laptop NOC mendapat `HTTP/1.1 200 OK` dari 203.0.113.10. Server hidup di alamat yang benar. Yang hilang adalah rute dari internet ke blok itu."
+      }
+    ],
+    "pembahasan": "Di IGP seperti OSPF, perintah `network` menyalakan protokol di interface. Di BGP artinya lain: `network` adalah permintaan untuk mengiklankan sebuah prefix, dan BGP baru mau mengiklankannya kalau prefix dengan panjang yang PERSIS sama ada di tabel routing.\n\nUrutan berpikirnya:\n\n1. Sesi BGP Established dan menerima rute default. Masalahnya bukan di sesi.\n2. `show ip bgp` hanya berisi 0.0.0.0. Prefix milik sendiri tidak ada.\n3. `advertised-routes` kosong. Router tidak mengirim apa pun, jadi masalahnya di sisi kita, sebelum filter keluar dan sebelum upstream.\n4. Tabel routing hanya punya 203.0.113.0/26 dan 203.0.113.64/27. Tidak ada 203.0.113.0/24, jadi `network` tidak menemukan pasangan dan diam saja.\n\nPerbaikannya adalah rute jangkar: `ip route 203.0.113.0 255.255.255.0 Null0`. Null0 adalah interface virtual yang membuang paket. Rute ini membuat /24 hadir di tabel routing tanpa mengganggu penerusan, karena paket ke server tetap mengikuti /26 dan /27 yang lebih spesifik. Paket ke alamat yang belum dipakai di dalam /24 dibuang di Null0, bukan dipantulkan ke upstream lewat rute default, sehingga tidak terjadi loop.\n\nPengecohnya: sesi yang Established memberi rasa aman palsu, dan prefix-list yang benar tidak berarti apa-apa kalau prefix-nya tidak pernah masuk tabel BGP.\n\nCatatan operasional: mengumumkan prefix ke internet berdampak ke luar organisasi. Pastikan blok itu memang milik Anda, dan buat ROA RPKI-nya, yaitu catatan bertanda tangan yang menyatakan ASN mana yang boleh mengumumkan prefix tersebut. Tanpa ROA yang benar, sebagian jaringan di internet bisa menolak pengumuman Anda.\n\nMateri terkait: `07-routing-lanjutan/06-bgp` (konfigurasi dasar dan perintah `network`), `07-routing-lanjutan/11-interkoneksi-internet`, dan `04-network-layer/03-vlsm-cidr` (prefix dan panjang mask).",
+    "perbaikan": {
+      "penjelasan": "Tambahkan rute statis /24 ke Null0 sebagai jangkar. BGP akan menemukannya pada pemeriksaan tabel routing berikutnya, biasanya dalam hitungan detik dan paling lama sekitar satu menit. Perubahan ini mulai mengumumkan 203.0.113.0/24 ke internet, jadi lakukan setelah memastikan blok itu milik Anda. Untuk menarik kembali pengumuman, hapus rutenya dengan `no ip route 203.0.113.0 255.255.255.0 Null0`.",
+      "perintah": "R-EDGE# configure terminal\nR-EDGE(config)# ip route 203.0.113.0 255.255.255.0 Null0 name JANGKAR-BGP\nR-EDGE(config)# end\nR-EDGE# show ip route 203.0.113.0 255.255.255.0 | include Known via\n  Known via \"static\", distance 1, metric 0 (connected)\nR-EDGE# show ip bgp | include 203.0.113.0\n *>   203.0.113.0/24   0.0.0.0                  0         32768 i\nR-EDGE# show ip bgp neighbors 198.51.100.9 advertised-routes | include Total\nTotal number of prefixes 1 \nR-EDGE# copy running-config startup-config\n\n! Lalu periksa lagi dari looking glass upstream:\nshow ip bgp 203.0.113.0/24"
+    },
+    "sumber": [
+      {
+        "judul": "Cisco: BGP Case Studies (perintah network dan syarat rute di tabel routing)",
+        "url": "https://www.cisco.com/c/en/us/support/docs/ip/border-gateway-protocol-bgp/26634-bgp-toc.html"
+      },
+      {
+        "judul": "RFC 4271: A Border Gateway Protocol 4 (BGP-4)",
+        "url": "https://www.rfc-editor.org/rfc/rfc4271"
+      },
+      {
+        "judul": "RFC 5398: Autonomous System Number Reservation for Documentation Use",
+        "url": "https://www.rfc-editor.org/rfc/rfc5398"
+      }
+    ]
+  },
+  {
+    "id": "routing-asimetris-firewall-stateful",
+    "judul": "Aplikasi gudang cabang menggantung setelah link MPLS baru dipasang, padahal ping lancar",
+    "tingkat": "lanjut",
+    "modul": [
+      "09-nat-acl-firewall/03-firewall",
+      "13-linux-networking/03-nftables-firewall",
+      "14-monitoring-troubleshooting/04-studi-kasus"
+    ],
+    "gejala": "Sejak link MPLS ke cabang dipasang, aplikasi gudang cabang tidak bisa dibuka dari kantor pusat. Ping ke server lancar dan uji port berhasil, tetapi halaman tidak pernah termuat.",
+    "briefing": "**Tiket #5120** dari Bu Lestari, kepala operasional kantor pusat sebuah perusahaan ekspedisi di Surabaya. Kamis, pukul 14.05.\n\n> Sejak pagi aplikasi gudang (WMS) cabang Banjarmasin tidak bisa dibuka dari kantor pusat. Browser berputar lama, lalu muncul pesan server terlalu lama merespons. Dari cabang sendiri aplikasinya lancar. Mas Rizky sudah ping servernya dan berhasil.\n\nYang Anda ketahui:\n\n- Kemarin sore provider memasang link IP-VPN (MPLS) ke cabang, menggantikan VPN IPsec lewat internet. Router MPLS milik provider dipasang di VLAN transit pusat (10.0.0.0/29) dengan alamat 10.0.0.3. Teknisi provider memberinya rute 10.20.0.0/16 lewat core switch.\n- Core switch pusat (10.0.0.1) mengirim semua lalu lintas yang bukan lokal ke firewall Linux (10.0.0.2). Mas Rizky menambahkan rute di firewall: 10.30.0.0/24 lewat 10.0.0.3.\n- Server WMS cabang: 10.30.0.10, port 8080. PC operasional pusat: 10.20.0.57.\n- Anda bisa masuk ke PC pusat, firewall, dan server WMS cabang (lewat SSH yang dibuka admin cabang).",
+    "lokasi": {
+      "kota": "Surabaya",
+      "lat": -7.246,
+      "lon": 112.738
+    },
+    "topologi": {
+      "simpul": [
+        {
+          "id": "PC",
+          "label": "PC operasional pusat",
+          "jenis": "pc",
+          "x": 8,
+          "y": 50,
+          "info": "10.20.0.57, VLAN 20"
+        },
+        {
+          "id": "CORE",
+          "label": "Core switch pusat",
+          "jenis": "switch",
+          "x": 28,
+          "y": 50,
+          "info": "Catalyst 9300, gateway 10.20.0.1"
+        },
+        {
+          "id": "FW",
+          "label": "Firewall Linux",
+          "jenis": "firewall",
+          "x": 50,
+          "y": 24,
+          "info": "Debian 12 + nftables, 10.0.0.2"
+        },
+        {
+          "id": "RMPLS",
+          "label": "Router MPLS pusat",
+          "jenis": "router",
+          "x": 50,
+          "y": 76,
+          "info": "milik provider, 10.0.0.3"
+        },
+        {
+          "id": "ISP",
+          "label": "ISP internet",
+          "jenis": "isp",
+          "x": 90,
+          "y": 24,
+          "info": "gateway 198.51.100.1"
+        },
+        {
+          "id": "MPLS",
+          "label": "Jaringan IP-VPN",
+          "jenis": "cloud",
+          "x": 70,
+          "y": 76,
+          "info": "MPLS provider"
+        },
+        {
+          "id": "WMS",
+          "label": "Server WMS cabang",
+          "jenis": "server",
+          "x": 90,
+          "y": 76,
+          "info": "Banjarmasin, 10.30.0.10:8080"
+        }
+      ],
+      "sisi": [
+        {
+          "dari": "PC",
+          "ke": "CORE",
+          "label": "VLAN 20"
+        },
+        {
+          "dari": "CORE",
+          "ke": "FW",
+          "label": "transit 10.0.0.0/29"
+        },
+        {
+          "dari": "CORE",
+          "ke": "RMPLS",
+          "label": "transit 10.0.0.0/29"
+        },
+        {
+          "dari": "FW",
+          "ke": "ISP",
+          "label": "ens19"
+        },
+        {
+          "dari": "RMPLS",
+          "ke": "MPLS",
+          "label": "IP-VPN"
+        },
+        {
+          "dari": "MPLS",
+          "ke": "WMS",
+          "label": "cabang Banjarmasin"
+        }
+      ]
+    },
+    "langkah": [
+      {
+        "id": "pc-ping-wms",
+        "label": "Ping server WMS dari PC pusat",
+        "perangkat": "PC",
+        "perintah": "ping 10.30.0.10",
+        "keluaran": "Pinging 10.30.0.10 with 32 bytes of data:\nReply from 10.30.0.10: bytes=32 time=21ms TTL=59\nReply from 10.30.0.10: bytes=32 time=20ms TTL=59\nReply from 10.30.0.10: bytes=32 time=21ms TTL=59\nReply from 10.30.0.10: bytes=32 time=21ms TTL=59\n\nPing statistics for 10.30.0.10:\n    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),\nApproximate round trip times in milli-seconds:\n    Minimum = 20ms, Maximum = 21ms, Average = 20ms",
+        "makna": "Server cabang menjawab dengan normal, sesuai laporan Mas Rizky. Ping hanya membuktikan bahwa ada jalan pergi dan jalan pulang. Ia tidak menunjukkan apakah kedua jalan itu sama, dan tidak menguji koneksi TCP.",
+        "berguna": false
+      },
+      {
+        "id": "pc-test-port",
+        "label": "Uji port 8080 server WMS dengan PowerShell",
+        "perangkat": "PC",
+        "perintah": "Test-NetConnection 10.30.0.10 -Port 8080",
+        "keluaran": "\nComputerName     : 10.30.0.10\nRemoteAddress    : 10.30.0.10\nRemotePort       : 8080\nInterfaceAlias   : Ethernet\nSourceAddress    : 10.20.0.57\nTcpTestSucceeded : True\n",
+        "makna": "Uji port berhasil, dan ini menjebak. Dari sudut pandang PC, jabat tangan TCP selesai karena balasan SYN-ACK dari server memang sampai. Uji ini berhenti di situ dan tidak pernah mengirim data. Server hidup dan mendengarkan port 8080, tetapi hasil ini tidak menjelaskan kenapa halaman tidak termuat.",
+        "berguna": false
+      },
+      {
+        "id": "pc-ping-mtu",
+        "label": "Uji MTU jalur dengan ping besar tanpa fragmentasi",
+        "perangkat": "PC",
+        "perintah": "ping -f -l 1472 10.30.0.10",
+        "keluaran": "Pinging 10.30.0.10 with 1472 bytes of data:\nReply from 10.30.0.10: bytes=1472 time=22ms TTL=59\nReply from 10.30.0.10: bytes=1472 time=21ms TTL=59\nReply from 10.30.0.10: bytes=1472 time=21ms TTL=59\nReply from 10.30.0.10: bytes=1472 time=22ms TTL=59\n\nPing statistics for 10.30.0.10:\n    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),\nApproximate round trip times in milli-seconds:\n    Minimum = 21ms, Maximum = 22ms, Average = 21ms",
+        "makna": "Paket 1472 byte data ditambah 28 byte header sama dengan 1500 byte, dan `-f` melarang fragmentasi. Paket itu lolos, jadi jalur MPLS sanggup membawa paket 1500 byte. Dugaan MTU kecil, yang wajar untuk koneksi yang menggantung, gugur.",
+        "berguna": false
+      },
+      {
+        "id": "pc-tracert",
+        "label": "Telusuri jalur pergi dari PC pusat ke server WMS",
+        "perangkat": "PC",
+        "perintah": "tracert -d 10.30.0.10",
+        "keluaran": "Tracing route to 10.30.0.10 over a maximum of 30 hops\n\n  1    <1 ms    <1 ms    <1 ms  10.20.0.1\n  2    <1 ms    <1 ms    <1 ms  10.0.0.2\n  3     1 ms    <1 ms    <1 ms  10.0.0.3\n  4    17 ms    17 ms    18 ms  172.31.255.1\n  5    20 ms    19 ms    20 ms  172.31.255.5\n  6    20 ms    20 ms    21 ms  172.31.255.6\n  7    21 ms    20 ms    21 ms  10.30.0.10\n\nTrace complete.",
+        "makna": "Jalur pergi: core (10.20.0.1), firewall (10.0.0.2), router MPLS (10.0.0.3), lalu jaringan provider sampai cabang. Lalu lintas ke cabang melewati firewall, karena core mengirim semua yang bukan lokal ke sana. Firewall lalu mengirimnya ke 10.0.0.3, keluar lewat interface yang sama tempat paket itu masuk.",
+        "berguna": true
+      },
+      {
+        "id": "wms-traceroute",
+        "label": "Telusuri jalur pulang dari server WMS ke PC pusat",
+        "perangkat": "WMS",
+        "perintah": "sudo traceroute -I -n 10.20.0.57",
+        "keluaran": "traceroute to 10.20.0.57 (10.20.0.57), 30 hops max, 60 byte packets\n 1  10.30.0.1  0.412 ms  0.388 ms  0.371 ms\n 2  172.31.255.5  17.902 ms  17.871 ms  17.866 ms\n 3  172.31.255.1  19.644 ms  19.630 ms  19.618 ms\n 4  172.31.255.2  20.114 ms  20.098 ms  20.082 ms\n 5  10.0.0.1  20.771 ms  20.752 ms  20.733 ms\n 6  10.20.0.57  21.208 ms  21.187 ms  21.169 ms",
+        "makna": "Jalur pulang tidak pernah melewati 10.0.0.2. Router MPLS pusat (hop 4) langsung menyerahkan paket ke core (10.0.0.1), sesuai rute 10.20.0.0/16 yang dipasang teknisi provider. Jalur pergi dan pulang yang berbeda seperti ini disebut routing asimetris. Firewall hanya melihat separuh percakapan.",
+        "berguna": true
+      },
+      {
+        "id": "fw-conntrack",
+        "label": "Lihat tabel connection tracking firewall untuk server WMS",
+        "perangkat": "FW",
+        "perintah": "conntrack -L -d 10.30.0.10",
+        "keluaran": "tcp      6 113 SYN_SENT src=10.20.0.57 dst=10.30.0.10 sport=52814 dport=8080 [UNREPLIED] src=10.30.0.10 dst=10.20.0.57 sport=8080 dport=52814 mark=0 use=1\ntcp      6 104 SYN_SENT src=10.20.0.57 dst=10.30.0.10 sport=52811 dport=8080 [UNREPLIED] src=10.30.0.10 dst=10.20.0.57 sport=8080 dport=52811 mark=0 use=1\ntcp      6 31 SYN_SENT src=10.20.0.61 dst=10.30.0.10 sport=60233 dport=8080 [UNREPLIED] src=10.30.0.10 dst=10.20.0.61 sport=8080 dport=60233 mark=0 use=1\nicmp     1 24 src=10.20.0.57 dst=10.30.0.10 type=8 code=0 id=1 [UNREPLIED] src=10.30.0.10 dst=10.20.0.57 type=0 code=0 id=1 mark=0 use=1\nconntrack v1.4.7 (conntrack-tools): 4 flow entries have been shown.",
+        "makna": "Setiap koneksi ke server WMS tertahan di SYN_SENT dengan tanda [UNREPLIED]: firewall melihat SYN dari PC, tetapi tidak pernah melihat satu pun balasan dari server. Entri ping juga [UNREPLIED], namun ping tetap jalan karena setiap echo request dinilai sebagai paket baru dan diizinkan.",
+        "berguna": true
+      },
+      {
+        "id": "fw-nft-forward",
+        "label": "Lihat aturan dan penghitung chain forward di firewall",
+        "perangkat": "FW",
+        "perintah": "nft list chain inet filter forward",
+        "keluaran": "table inet filter {\n\tchain forward {\n\t\ttype filter hook forward priority filter; policy drop;\n\t\tct state established,related counter packets 91844120 bytes 104377125530 accept\n\t\tct state invalid counter packets 48211 bytes 2892660 drop\n\t\tiifname \"ens18\" oifname \"ens19\" counter packets 2318840 bytes 168304412 accept\n\t\tiifname \"ens18\" oifname \"ens18\" ip daddr 10.30.0.0/24 counter packets 3912 bytes 241086 accept\n\t\tcounter packets 1187 bytes 71220 drop\n\t}\n}",
+        "makna": "Aturan menuju 10.30.0.0/24 ada dan sudah meloloskan 3912 paket, yaitu paket pembuka koneksi seperti SYN dan echo request. Paket sesudahnya dari PC (ACK dan permintaan HTTP) tidak cocok dengan koneksi yang belum pernah dibalas, jadi conntrack menandainya invalid dan aturan `ct state invalid drop` membuangnya. Penghitung 48211 paket itu terus naik setiap kali ada yang mencoba membuka aplikasi.",
+        "berguna": true
+      },
+      {
+        "id": "fw-ip-route",
+        "label": "Lihat tabel routing firewall",
+        "perangkat": "FW",
+        "perintah": "ip route",
+        "keluaran": "default via 198.51.100.1 dev ens19 \n10.0.0.0/29 dev ens18 proto kernel scope link src 10.0.0.2 \n10.20.0.0/16 via 10.0.0.1 dev ens18 \n10.30.0.0/24 via 10.0.0.3 dev ens18 \n198.51.100.0/30 dev ens19 proto kernel scope link src 198.51.100.2 ",
+        "makna": "Firewall mengirim 10.30.0.0/24 ke 10.0.0.3 lewat ens18, interface yang sama tempat paket dari core masuk. Router MPLS dan core berada di subnet transit yang sama, jadi balasan dari cabang punya jalan pintas ke core tanpa melewati firewall. Rute inilah yang membuat jalur pergi berbelok lewat firewall.",
+        "berguna": true
+      },
+      {
+        "id": "fw-uptime",
+        "label": "Cek beban firewall",
+        "perangkat": "FW",
+        "perintah": "uptime",
+        "keluaran": " 14:12:31 up 87 days,  3:41,  1 user,  load average: 0.08, 0.11, 0.09",
+        "makna": "Load average 0,08 berarti firewall nyaris menganggur, dan ia sudah menyala 87 hari tanpa restart. Firewall tidak kewalahan. Ia membuang paket tertentu dengan sengaja, sesuai aturannya.",
+        "berguna": false
+      }
+    ],
+    "dugaan": [
+      {
+        "id": "asimetris",
+        "teks": "Routing asimetris: permintaan ke cabang lewat firewall, balasannya kembali lewat router MPLS langsung ke core, sehingga firewall stateful membuang paket lanjutan sebagai invalid.",
+        "benar": true,
+        "umpan": "Tepat. Tracert pergi melewati 10.0.0.2, traceroute pulang tidak. Conntrack memperlihatkan semua koneksi tertahan di SYN_SENT [UNREPLIED], dan penghitung `ct state invalid drop` terus naik. Firewall hanya melihat separuh percakapan."
+      },
+      {
+        "id": "server-mati",
+        "teks": "Server WMS di cabang mati atau aplikasinya macet.",
+        "benar": false,
+        "umpan": "Test-NetConnection ke port 8080 berhasil, artinya server membalas SYN dengan SYN-ACK dan aplikasinya mendengarkan. Pengguna di cabang juga lancar. Yang gagal adalah paket sesudah jabat tangan, dan paket itu dibuang di firewall pusat."
+      },
+      {
+        "id": "mtu-kecil",
+        "teks": "MTU di jalur MPLS terlalu kecil, sehingga paket besar hilang.",
+        "benar": false,
+        "umpan": "Ping 1472 byte dengan bit DF lolos ke server cabang, jadi jalur sanggup membawa paket 1500 byte. Lagi pula koneksi sudah gagal sebelum ada data besar yang dikirim: entri conntrack tidak pernah keluar dari SYN_SENT."
+      },
+      {
+        "id": "fw-kewalahan",
+        "teks": "Firewall kelebihan beban sejak lalu lintas cabang lewat sana.",
+        "benar": false,
+        "umpan": "Load average firewall 0,08 dan internet kantor lancar. Firewall tidak kewalahan. Ia membuang paket tertentu dengan sengaja lewat aturan `ct state invalid drop`."
+      },
+      {
+        "id": "aturan-belum-ada",
+        "teks": "Firewall belum punya aturan yang mengizinkan lalu lintas ke 10.30.0.0/24.",
+        "benar": false,
+        "umpan": "Aturannya ada dan penghitungnya menunjukkan 3912 paket sudah diloloskan. Conntrack juga mencatat koneksinya, tanda SYN pertama diizinkan. Paket yang dibuang adalah paket lanjutan yang dinilai invalid."
+      }
+    ],
+    "pembahasan": "Firewall stateful mencatat setiap koneksi di tabel conntrack (connection tracking). Paket pertama koneksi TCP, yaitu SYN, membuat entri baru. Firewall menunggu balasan SYN-ACK dari arah sebaliknya, lalu memeriksa paket berikutnya terhadap entri itu.\n\nIkuti jalurnya:\n\n- **Pergi**: PC, core, firewall, router MPLS, cabang. Firewall mengirim paket keluar lewat ens18, interface yang sama tempat paket itu masuk.\n- **Pulang**: cabang, router MPLS, langsung ke core, PC. Router MPLS punya rute 10.20.0.0/16 ke core, jadi ia tidak pernah menyerahkan balasan ke firewall.\n\nFirewall melihat SYN tetapi tidak pernah melihat SYN-ACK, sehingga entri conntrack tertahan di SYN_SENT [UNREPLIED]. Ketika PC mengirim ACK dan permintaan HTTP, conntrack menilai paket itu tidak masuk akal untuk koneksi yang belum dibalas, menandainya invalid, dan aturan `ct state invalid drop` membuangnya. Server tidak pernah menerima permintaan, jadi browser menunggu sampai menyerah.\n\nKetiga pengecoh menyesatkan dengan cara berbeda. Ping lolos karena setiap echo request dinilai sebagai paket baru. Test-NetConnection melaporkan True karena dari sisi PC jabat tangan TCP memang selesai. Ping besar lolos karena MTU memang tidak bermasalah. Pola \"ping jalan, port terbuka, aplikasi menggantung\" setelah perubahan routing adalah tanda khas routing asimetris melewati firewall stateful.\n\nBukti yang menentukan adalah dua traceroute dari arah berlawanan dan tanda [UNREPLIED] di conntrack. Biasakan menelusuri jalur dari kedua ujung, karena satu traceroute hanya menunjukkan separuh cerita.\n\nMateri terkait: `09-nat-acl-firewall/03-firewall` (stateful inspection dan asymmetric routing), `13-linux-networking/03-nftables-firewall` (ct state), dan `14-monitoring-troubleshooting/04-studi-kasus` (Kasus 7).",
+    "perbaikan": {
+      "penjelasan": "Samakan jalur pergi dan pulang. Cara tercepat yang sepenuhnya di tangan Anda: di core, arahkan 10.30.0.0/24 langsung ke router MPLS, sehingga kedua arah lewat jalur yang sama tanpa firewall. Kalau kebijakan perusahaan mewajibkan lalu lintas antarkantor diperiksa firewall, pilih kebalikannya: minta provider mengubah rute 10.20.0.0/16 di router MPLS ke 10.0.0.2. Perubahan di core hanya memengaruhi lalu lintas ke cabang. Untuk membatalkan, `no ip route 10.30.0.0 255.255.255.0 10.0.0.3`.",
+      "perintah": "CORE-PUSAT# configure terminal\nCORE-PUSAT(config)# ip route 10.30.0.0 255.255.255.0 10.0.0.3 name CABANG-BJM-VIA-MPLS\nCORE-PUSAT(config)# end\nCORE-PUSAT# show ip route 10.30.0.0\nRouting entry for 10.30.0.0/24\n  Known via \"static\", distance 1, metric 0\n  Routing Descriptor Blocks:\n  * 10.0.0.3\n      Route metric is 0, traffic share count is 1\nCORE-PUSAT# copy running-config startup-config\n\nC:\\> tracert -d 10.30.0.10\n  1    <1 ms    <1 ms    <1 ms  10.20.0.1\n  2     1 ms    <1 ms    <1 ms  10.0.0.3\n\nfw:~# conntrack -L -d 10.30.0.10\nconntrack v1.4.7 (conntrack-tools): 0 flow entries have been shown."
+    },
+    "sumber": [
+      {
+        "judul": "netfilter: conntrack-tools user manual",
+        "url": "https://conntrack-tools.netfilter.org/manual.html"
+      },
+      {
+        "judul": "nftables wiki: Matching connection tracking stateful metainformation",
+        "url": "https://wiki.nftables.org/wiki-nftables/index.php/Matching_connection_tracking_stateful_metainformation"
+      },
+      {
+        "judul": "Microsoft Learn: Test-NetConnection",
+        "url": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/test-netconnection"
+      }
+    ]
+  }
+]

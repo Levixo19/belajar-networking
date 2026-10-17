@@ -1,0 +1,997 @@
+{
+  "07-routing-lanjutan/01-static-routing": {
+    "intinya": {
+      "satu_kalimat": "Static route adalah petunjuk jalan yang Anda tulis sendiri di router: paket ke jaringan tertentu dikirim ke next hop yang Anda tentukan, tanpa protokol routing.",
+      "analogi": "Bayangkan gudang ekspedisi yang menempel catatan di dinding: paket ke Bandung serahkan ke agen Cikampek. Itulah static route. Catatan kedua, pakai agen Purwakarta kalau agen Cikampek tutup, adalah floating static. IP SLA ibarat petugas yang tiap lima detik menelepon penerima di ujung jalan untuk memastikan kiriman memang bisa sampai. Bedanya dengan gudang sungguhan: router tidak pernah ragu, jadi catatan yang salah tetap dijalankan sampai Anda memperbaikinya.",
+      "kenapa_penting": "Di kantor kecil, jalan keluar ke internet biasanya cukup satu default route statis. Kalau kantor punya dua ISP, floating static dan IP SLA yang memindahkan trafik ke ISP cadangan saat ISP utama bermasalah. Tanpa keduanya, internet mati sampai ada yang datang memeriksa.",
+      "istilah": [
+        {
+          "kata": "Next hop",
+          "arti": "Alamat router berikutnya yang menerima paket. Router harus tahu cara mencapai alamat ini; kalau tidak, static route-nya tidak dipasang."
+        },
+        {
+          "kata": "Default route (0.0.0.0/0)",
+          "arti": "Rute untuk semua tujuan yang tidak punya rute lebih spesifik. Disebut juga gateway of last resort."
+        },
+        {
+          "kata": "Administrative Distance (AD)",
+          "arti": "Angka kepercayaan sumber rute. Untuk prefix yang sama, rute dengan AD terkecil yang dipasang. Static bernilai 1, OSPF 110."
+        },
+        {
+          "kata": "Floating static route",
+          "arti": "Static route yang AD-nya sengaja dibuat lebih besar, sehingga baru dipasang ketika rute utama hilang."
+        },
+        {
+          "kata": "IP SLA dan track",
+          "arti": "Fitur router yang menguji jalur secara aktif, misalnya ping tiap 5 detik, lalu mencabut rute yang terikat padanya kalau uji itu gagal."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Resolver 1.1.1.1 hilang dari internet selama 62 menit",
+      "kapan": "2025-07-14",
+      "di_mana": "Cloudflare, global",
+      "ringkas": "Cloudflare tanpa sengaja menarik pengumuman rute untuk alamat resolver DNS 1.1.1.1 dan 1.0.0.1 dari semua pusat datanya. Selama 62 menit, dari 21.52 sampai 22.54 UTC (04.52 sampai 05.54 WIB, 15 Juli), resolver itu tidak bisa dihubungi di seluruh dunia. Modul ini memakai alamat yang sama, 1.1.1.1, sebagai contoh target IP SLA.",
+      "kronologi": [
+        {
+          "waktu": "6 Juni 2025, 17.38 UTC",
+          "peristiwa": "Perubahan konfigurasi untuk layanan baru yang belum aktif ikut menyeret prefix resolver 1.1.1.1. Rute belum berubah, jadi tidak ada dampak dan tidak ada alarm."
+        },
+        {
+          "waktu": "14 Juli 2025, 21.48 UTC",
+          "peristiwa": "Perubahan kedua pada layanan yang sama memicu penyegaran konfigurasi jaringan secara global. Prefix 1.1.1.1 mulai ditarik dari semua pusat data."
+        },
+        {
+          "waktu": "21.52 UTC",
+          "peristiwa": "Trafik DNS ke 1.1.1.1 mulai anjlok di seluruh dunia."
+        },
+        {
+          "waktu": "21.54 UTC",
+          "peristiwa": "Tata Communications India (AS4755) terlihat mengumumkan 1.1.1.0/24. Menurut Cloudflare, ini bukan penyebab gangguan; pengumuman itu baru terlihat karena rute aslinya hilang."
+        },
+        {
+          "waktu": "22.01 UTC",
+          "peristiwa": "Alarm internal menyala dan insiden dinyatakan."
+        },
+        {
+          "waktu": "22.20 UTC",
+          "peristiwa": "Konfigurasi dikembalikan dan prefix diumumkan lagi. Trafik pulih ke sekitar 77%, karena sekitar 23% server edge sempat kehilangan ikatan alamat IP dan harus dikonfigurasi ulang."
+        },
+        {
+          "waktu": "22.54 UTC",
+          "peristiwa": "Routing pulih di semua lokasi dan trafik kembali normal."
+        }
+      ],
+      "akar_masalah": "Cloudflare masih memakai sistem lama yang mengikat setiap prefix ke daftar lokasi yang boleh mengumumkannya. Kesalahan pada 6 Juni membuat prefix 1.1.1.1 terikat ke layanan uji. Ketika layanan uji itu diberi satu lokasi yang sedang offline, daftar lokasi untuk prefix 1.1.1.1 menyusut dari semua lokasi menjadi satu lokasi offline itu. BGP pun menarik rutenya dari seluruh internet. Perubahan di sistem lama ini tidak melewati penggelaran bertahap, walaupun sudah ditinjau beberapa engineer.",
+      "kaitan": "Bagian 7 modul ini (IP SLA + Object Tracking) memakai 8.8.8.8 dan 1.1.1.1 sebagai contoh target, lalu menyarankan dua target berbeda yang digabung dengan `track list boolean or`. Kasus ini memperlihatkan alasannya. Router yang hanya memantau 1.1.1.1 akan menganggap ISP utamanya putus selama 62 menit itu. Ia mencabut default route utama dan memakai floating static ke ISP cadangan, padahal ISP utamanya sehat. Dengan target kedua dari operator lain, track tetap Up karena satu target masih menjawab.",
+      "pelajaran": [
+        "Pakai minimal dua target IP SLA dari operator berbeda, misalnya 8.8.8.8 dan 1.1.1.1, dan gabungkan dengan `track list boolean or`.",
+        "Catat setiap perubahan status track di log atau sistem pemantauan, supaya Anda bisa membedakan ISP yang putus dari target uji yang hilang.",
+        "Uji skenario target mati di lab: blokir satu target dengan ACL, lalu pastikan rute utama tidak ikut dicabut.",
+        "Perubahan yang memengaruhi pengumuman rute sebaiknya digelar bertahap ke sebagian lokasi dulu. Cloudflare menjadikannya salah satu tindak lanjut insiden ini."
+      ],
+      "sumber": [
+        {
+          "judul": "Cloudflare 1.1.1.1 incident on July 14, 2025",
+          "penerbit": "Cloudflare Blog",
+          "url": "https://blog.cloudflare.com/cloudflare-1-1-1-1-incident-on-july-14-2025/"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda admin jaringan sebuah koperasi simpan pinjam di Malang. Kantor cabang tersambung ke kantor pusat lewat link MPLS, dan rute ke LAN pusat 192.168.10.0/24 dipelajari lewat OSPF. Sebagai cadangan, rekan Anda memasang modem 4G dan menulis `ip route 192.168.10.0 255.255.255.0 10.0.0.9 100`, dengan alasan AD 100 sudah lebih besar dari 1. Sebulan kemudian tagihan kuota 4G membengkak, padahal link MPLS tidak pernah putus. Di router cabang, `show ip route 192.168.10.0` menampilkan `S 192.168.10.0/24 [100/0] via 10.0.0.9`. Apa yang salah, dan bagaimana memperbaikinya tanpa kehilangan fungsi cadangan?",
+      "petunjuk": [
+        "Untuk prefix yang sama, router memasang rute dari sumber dengan administrative distance terkecil. Berapa AD bawaan OSPF?",
+        "Bandingkan 100 dengan AD rute OSPF ke 192.168.10.0/24. Rute mana yang menang?",
+        "Floating static hanya menunggu di belakang kalau AD-nya lebih besar daripada AD rute utama yang ingin ia gantikan."
+      ],
+      "jawaban": "1. Perhatikan kode rutenya. `S` dengan `[100/0]` berarti yang terpasang adalah static route. Semua trafik ke pusat lewat 4G, walaupun MPLS sehat.\n2. Dugaan terkuat: AD bawaan OSPF adalah 110. Static route dengan AD 100 lebih kecil dari 110, sehingga mengalahkan rute OSPF untuk prefix yang sama. Rute yang dimaksudkan sebagai cadangan justru menjadi rute utama.\n3. Buktikan. `show ip ospf neighbor` menunjukkan tetangga MPLS dalam state FULL, tetapi `show ip route ospf` tidak memuat 192.168.10.0/24 karena rute OSPF kalah AD. `traceroute` ke server pusat akan melewati 10.0.0.9.\n4. Perbaiki dengan AD di atas 110:\n   - `no ip route 192.168.10.0 255.255.255.0 10.0.0.9 100`\n   - `ip route 192.168.10.0 255.255.255.0 10.0.0.9 130`\n\n   Sesudahnya `show ip route 192.168.10.0` harus menampilkan rute `O` dengan `[110/...]`.\n5. Uji cadangannya di jam sepi: matikan sesaat interface MPLS. Rute `S` dengan `[130/0]` harus muncul, lalu hilang lagi begitu OSPF pulih.\n6. Pegangan untuk ke depan: AD floating static harus lebih besar daripada AD rute utama yang ia cadangkan. Untuk OSPF berarti di atas 110, untuk EIGRP internal di atas 90."
+    }
+  },
+  "07-routing-lanjutan/02-konsep-routing-dinamis": {
+    "intinya": {
+      "satu_kalimat": "Protokol routing dinamis membuat router saling bertukar kabar tentang jaringan, lalu menghitung sendiri jalur terbaik dan menghitung ulang begitu ada link yang putus.",
+      "analogi": "Distance vector mirip bertanya arah di jalan: tukang ojek di perempatan bilang lurus dua kilometer lalu belok kiri, dan Anda percaya tanpa pernah melihat peta. Link state mirip grup WhatsApp warga. Setiap warga mengirim kabar tentang jalan di depan rumahnya sendiri, semua anggota menyimpan semua kabar, lalu masing-masing menggambar peta dan memilih rute sendiri. Ada satu hal yang tidak dimiliki grup WhatsApp: setiap kabar router diberi nomor urut, supaya semua router sepakat kabar mana yang paling baru.",
+      "kenapa_penting": "Jaringan dengan belasan router tidak mungkin diurus dengan rute manual. Konsep di modul ini menjelaskan kenapa jaringan butuh hitungan detik sampai menit untuk pulih setelah kabel putus. Selama masa transisi itu, paket bahkan bisa berputar-putar di antara dua router.",
+      "istilah": [
+        {
+          "kata": "Distance vector",
+          "arti": "Cara routing di mana router hanya menerima jarak dan arah dari tetangganya, tanpa peta jaringan. Contohnya RIP."
+        },
+        {
+          "kata": "Link state",
+          "arti": "Cara routing di mana setiap router menyebarkan informasi link miliknya ke seluruh area, sehingga semua router memegang peta yang sama. Contohnya OSPF dan IS-IS."
+        },
+        {
+          "kata": "Flooding",
+          "arti": "Penyebaran update link state ke semua router di area. Setiap router meneruskan update yang baru ia terima ke tetangganya, sampai seluruh area menerimanya."
+        },
+        {
+          "kata": "Konvergensi",
+          "arti": "Waktu sampai semua router kembali punya pandangan jaringan yang sama setelah ada perubahan, misalnya link putus."
+        },
+        {
+          "kata": "Count to infinity",
+          "arti": "Masalah distance vector: dua router saling percaya kabar basi, metrik naik terus, dan paket berputar di antara mereka."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "ARPANET lumpuh berjam-jam karena tiga salinan update routing berputar tanpa henti",
+      "kapan": "1980-10-27",
+      "di_mana": "ARPANET, Amerika Serikat",
+      "ringkas": "Pada 27 Oktober 1980, hampir tidak ada IMP (simpul routing ARPANET) yang bisa berkomunikasi dengan IMP lain selama beberapa jam. Penyebabnya satu update routing dari IMP 50 yang nomor urutnya rusak dua kali, kemungkinan besar karena bit yang hilang di perangkat keras. Tiga versi update itu terus dibanjirkan ke seluruh jaringan dan menghabiskan CPU serta buffer semua IMP.",
+      "kronologi": [
+        {
+          "waktu": "Sebelum gangguan",
+          "peristiwa": "IMP 50 mengalami malfungsi lalu keluar dari jaringan. Tetangganya, IMP 29, juga bermasalah dan menjatuhkan bit, tetapi tetap menyala."
+        },
+        {
+          "waktu": "27 Oktober 1980",
+          "peristiwa": "Hampir semua IMP gagal saling berkomunikasi. Koneksi yang sudah ada terputus, dan telepon dari seluruh negeri membanjiri Network Control Center."
+        },
+        {
+          "waktu": "Awal gangguan",
+          "peristiwa": "Tim me-restart beberapa IMP di gedung mereka sendiri. IMP itu normal sampai tersambung lagi ke jaringan, lalu ikut sakit karena menerima update rusak dari tetangganya."
+        },
+        {
+          "waktu": "Saat diagnosis",
+          "peristiwa": "Dump memori menunjukkan hampir semua buffer berisi update dari IMP 50 dengan nomor urut 8, 40, dan 44, berulang dalam urutan itu."
+        },
+        {
+          "waktu": "Kurang dari satu jam",
+          "peristiwa": "Tim menemukan cara pulih: menambal semua IMP agar mengabaikan update dari IMP 50, yang memang sedang mati."
+        },
+        {
+          "waktu": "Beberapa jam berikutnya",
+          "peristiwa": "Menyebarkan tambalan butuh sampai 3 atau 4 jam, karena IMP hanya bisa dikendalikan lewat jaringan yang sedang lumpuh itu sendiri. Setelah tambalan terpasang, jaringan pulih."
+        }
+      ],
+      "akar_masalah": "Setiap update membawa nomor urut 6 bit (0 sampai 63) yang dibandingkan secara melingkar. Update n dianggap lebih baru dari m kalau n lebih besar dan selisihnya paling banyak 32, atau n lebih kecil dan selisihnya lebih dari 32. Dengan aturan itu, 44 lebih baru dari 40, 40 lebih baru dari 8, dan 8 lebih baru dari 44. Setiap IMP menganggap salinan yang baru tiba sebagai kabar terbaru, lalu meneruskannya ke semua tetangga, dan siklus itu tidak pernah berhenti. CPU dan buffer habis, pesan HELLO antartetangga tidak terproses, dan link dinyatakan mati.",
+      "kaitan": "Bagian 4 modul ini menjelaskan link state: setiap router mem-flood informasi link-nya ke seluruh area, dan semua router menyimpan database yang identik. Algoritma routing ARPANET saat itu bekerja seperti itu. Setiap IMP membuat update berisi tetangga dan delay setiap link, lalu update itu dibanjirkan ke semua IMP. Nomor urut menjaga agar semua IMP sepakat versi mana yang terbaru. Kasus ini memperlihatkan biaya flooding dari tabel bagian 4 dalam bentuk paling ekstrem. Bagian 7 (Konvergensi) menjelaskan kenapa hello yang hilang membuat link dinyatakan mati.",
+      "pelajaran": [
+        "Saat memecahkan masalah link state, periksa nomor urut LSA atau LSP. Nomor yang terus melompat tanpa perubahan topologi adalah tanda ada yang salah, misalnya ID router ganda.",
+        "Siapkan jalur manajemen yang tidak bergantung pada jaringan yang sedang diperbaiki. Tim ARPANET butuh berjam-jam hanya untuk menjangkau IMP mereka sendiri.",
+        "Pasang alarm untuk proses yang melahap CPU atau memori router. RFC 789 menyimpulkan alarm seperti itu akan mempercepat pemulihan.",
+        "Kalau kabar rusak masih beredar di tetangga, me-restart satu router saja tidak menolong. Menurut RFC 789, me-restart semua IMP serentak akan langsung membersihkan masalahnya."
+      ],
+      "sumber": [
+        {
+          "judul": "RFC 789: Vulnerabilities of Network Control Protocols: An Example (Eric C. Rosen, BBN)",
+          "penerbit": "RFC Editor",
+          "url": "https://www.rfc-editor.org/rfc/rfc789"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Sebuah ISP kecil di Medan menghubungkan dua POP lewat fiber sewaan dan link radio 5 GHz. Saat hujan deras, sinyal radio sesekali hilang 2 sampai 5 detik. Agar failover cepat, teknisi menurunkan timer OSPF di link radio menjadi hello 1 detik dan dead 3 detik. Radio juga diberi cost lebih kecil supaya menjadi jalur utama. Sejak itu, setiap hujan pelanggan mengeluh koneksi putus-sambung beberapa kali per jam. Log router penuh pesan adjacency OSPF di link radio yang turun lalu naik lagi. Apa yang terjadi, dan apa yang Anda ubah?",
+      "petunjuk": [
+        "Dengan dead 3 detik, berapa lama sinyal boleh hilang sebelum adjacency diputus? Bandingkan dengan lamanya gangguan radio.",
+        "Setiap kali adjacency turun atau naik, apa yang harus dikerjakan semua router di area? Ingat rumus waktu konvergensi di bagian 7.",
+        "Baca peringatan tentang timer agresif dan daftar mekanisme peredam di bagian 7. Apakah link yang tidak stabil pantas menjadi jalur utama?"
+      ],
+      "jawaban": "1. Perhatikan polanya. Putus-sambung hanya terjadi saat hujan, dan log menunjukkan adjacency di link radio turun-naik. Fiber sendiri stabil.\n2. Dugaan terkuat: dengan dead 3 detik, hilang sinyal 3 detik saja sudah memutus adjacency, padahal gangguan radio bisa sampai 5 detik. Link ini flapping. Setiap kali turun, trafik pindah ke fiber. Setiap kali naik, trafik kembali ke radio karena cost-nya lebih kecil.\n3. Setiap perpindahan memicu LSA baru, flooding ke seluruh area, SPF di semua router, dan pemasangan ulang FIB. Selama jeda itu paket bisa hilang atau memantul dalam microloop (bagian 8.6). Pelanggan merasakan setiap perpindahan.\n4. Buktikan dengan mencocokkan jam di log adjacency dengan catatan sinyal radio. `show ip ospf statistics` akan memperlihatkan SPF yang berjalan berkali-kali saat hujan.\n5. Perbaiki:\n   - Jadikan fiber jalur utama dengan cost lebih kecil, dan radio sebagai cadangan.\n   - Kembalikan timer radio ke nilai yang lebih longgar, misalnya hello 10 dan dead 40, sehingga gangguan beberapa detik tidak memutus adjacency.\n   - Aktifkan SPF dan LSA throttling agar perubahan beruntun tidak memicu SPF berkali-kali.\n   - Kalau butuh deteksi cepat, pasang BFD di link fiber yang stabil.\n6. Pegangan dari bagian 7: timer yang terlalu agresif pada link yang tidak stabil menghasilkan flapping, dan flapping lebih merusak daripada konvergensi yang sedikit lambat."
+    }
+  },
+  "07-routing-lanjutan/03-rip": {
+    "intinya": {
+      "satu_kalimat": "RIP adalah protokol distance vector paling sederhana: setiap 30 detik router mengirim seluruh tabel routing-nya ke tetangga, dan jalur dipilih dari jumlah hop terkecil.",
+      "analogi": "RIP mirip kabar berantai di antara ketua RT. Setiap 30 detik, tiap ketua membacakan seluruh daftarnya ke ketua RT sebelah: saya tahu rumah Pak Budi, jaraknya dua gang. Penerima menambah satu gang, lalu meneruskannya. Yang dihitung hanya jumlah gang, jadi gang sempit yang macet dianggap sama bagusnya dengan jalan raya. Satu aturan tidak ada di kampung: RIP menganggap jarak 16 sebagai tidak terjangkau, sehingga kabar yang terus bertambah jauh akhirnya berhenti.",
+      "kenapa_penting": "Anda tidak akan membangun jaringan baru dengan RIP. Anda tetap perlu memahaminya karena RIP masih muncul di ujian CCNA dan di jaringan warisan. Router lama yang membiarkan RIP terbuka ke internet juga bisa dipakai orang lain untuk menyerang.",
+      "istilah": [
+        {
+          "kata": "Hop count",
+          "arti": "Jumlah router yang dilewati paket. Metrik RIP maksimum 15; nilai 16 berarti tidak terjangkau."
+        },
+        {
+          "kata": "UDP 520",
+          "arti": "Port tempat RIP mengirim dan menerima pesan. RIPng untuk IPv6 memakai port 521."
+        },
+        {
+          "kata": "Classful",
+          "arti": "Cara lama yang menebak ukuran jaringan dari kelas alamatnya (A, B, C) dan tidak mengirim subnet mask. RIPv1 bekerja seperti ini."
+        },
+        {
+          "kata": "Request dan Response",
+          "arti": "Dua jenis pesan RIP. Request meminta isi tabel routing; Response membawa daftar rute, paling banyak 25 rute per pesan."
+        },
+        {
+          "kata": "Serangan refleksi DDoS",
+          "arti": "Penyerang mengirim permintaan kecil ke banyak perangkat dengan alamat pengirim dipalsukan menjadi alamat korban, sehingga jawaban yang lebih besar membanjiri korban."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Router lama yang masih menjalankan RIPv1 dipakai untuk serangan DDoS refleksi",
+      "kapan": "2015-05-16",
+      "di_mana": "Pelanggan Akamai, global",
+      "ringkas": "Tim PLXsert milik Akamai melihat serangan DDoS terhadap beberapa pelanggannya yang memanfaatkan RIPv1, versi RIP dari tahun 1988. Penyerang mengirim permintaan rute ke router yang menjalankan RIPv1 dan bisa dijangkau dari internet, dengan alamat pengirim dipalsukan menjadi alamat korban. Router-router itu membalas dengan isi tabel routing-nya, dan semua balasan itu jatuh ke korban. Puncak serangan hampir 13 Gbps.",
+      "kronologi": [
+        {
+          "waktu": "16 Mei 2015",
+          "peristiwa": "Akamai mengamati serangan refleksi RIPv1 terhadap pelanggannya, setelah teknik ini hampir setahun tidak dipakai untuk DDoS."
+        },
+        {
+          "waktu": "Saat serangan",
+          "peristiwa": "Sekitar 500 perangkat menjadi pemantul. Kebanyakan mengirim paket berukuran 504 byte, dan lalu lintas serangan memuncak hampir 13 Gbps."
+        },
+        {
+          "waktu": "Pemindaian Akamai",
+          "peristiwa": "Sebanyak 53.693 perangkat di internet menjawab permintaan RIPv1. Hampir 19.000 di antaranya router Netopia seri 2000 dan 3000, yang sebagian besar dibagikan AT&T kepada pelanggannya."
+        },
+        {
+          "waktu": "1 Juli 2015",
+          "peristiwa": "Advisory Akamai diberitakan SecurityWeek dan Threatpost, lengkap dengan saran mitigasinya."
+        }
+      ],
+      "akar_masalah": "RIP menjawab pesan Request dengan Response yang berisi daftar rute dari tabel routing-nya, paling banyak 25 rute per paket. RIPv1 tidak punya autentikasi dan berjalan di atas UDP 520, jadi router tidak bisa memastikan siapa yang bertanya. Menurut RFC 1058, proses RIP yang diam (silent) pun tetap wajib menjawab permintaan yang datang dari port selain 520. Penyerang memalsukan alamat sumber menjadi alamat korban, sehingga satu permintaan kecil dibalas beberapa paket 504 byte ke korban. Perangkat yang dipakai kebanyakan router rumahan dan kantor kecil yang membiarkan RIP aktif di sisi internet.",
+      "kaitan": "Bagian 1 modul ini mencatat RIP memakai UDP port 520, dan bagian 2 menyebut RIPv1 tanpa autentikasi dan tidak boleh dipakai sama sekali. Kasus ini memperlihatkan akibatnya. Bagian 3 (Konfigurasi) juga memperingatkan bahwa perintah `network` yang classful bisa menyalakan RIP di interface yang tidak Anda maksud. Router pemantul dalam kasus ini menjawab permintaan dari sembarang alamat di internet.",
+      "pelajaran": [
+        "Jangan jalankan RIP di interface yang menghadap internet. Periksa perintah `network` yang classful, karena satu baris bisa mengaktifkan RIP di lebih banyak interface daripada yang Anda kira.",
+        "Kalau RIP masih dibutuhkan, pakai RIPv2 dengan autentikasi, dan izinkan UDP 520 hanya dari router tetangga yang Anda kenal lewat ACL, seperti saran Akamai.",
+        "Saat mengaudit jaringan warisan atau router pelanggan, cari perangkat yang menjawab di UDP 520 dari sisi WAN. Perangkat seperti itu bisa dipakai menyerang orang lain."
+      ],
+      "sumber": [
+        {
+          "judul": "Attackers Abuse RIPv1 Protocol for DDoS Reflection: Akamai",
+          "penerbit": "SecurityWeek",
+          "url": "https://www.securityweek.com/attackers-abuse-ripv1-protocol-ddos-reflection-akamai/"
+        },
+        {
+          "judul": "Attackers Revive Deprecated RIPv1 Routing Protocol in DDoS Attacks",
+          "penerbit": "Threatpost",
+          "url": "https://threatpost.com/attackers-revive-deprecated-ripv1-routing-protocol-in-ddos-attacks/113582"
+        },
+        {
+          "judul": "RFC 1058: Routing Information Protocol",
+          "penerbit": "RFC Editor",
+          "url": "https://www.rfc-editor.org/rfc/rfc1058"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Sebuah proyek desa digital di Kalimantan Barat menyambungkan 17 balai desa yang berderet di sepanjang sungai. Setiap balai punya satu router yang tersambung berantai lewat link radio point-to-point. R1 di kantor kecamatan (tempat server) tersambung ke R2, R2 ke R3, dan seterusnya sampai R17. Semua menjalankan RIPv2. Balai ke-2 sampai ke-16 bisa membuka aplikasi di server R1. Hanya balai ke-17, yang paling jauh, tidak bisa, padahal semua link radio sehat dan ping antar-router tetangga lancar. Apa penyebabnya, dan apa pilihan perbaikannya?",
+      "petunjuk": [
+        "Hitung metrik RIP dari R17 ke jaringan server di belakang R1. Berapa router yang harus dilewati?",
+        "Berapa nilai hop count yang oleh RIP dianggap tidak terjangkau?",
+        "Untuk tambalan sementara, pikirkan router mana saja yang benar-benar perlu static route. Jangan lupa rute balik."
+      ],
+      "jawaban": "1. Perhatikan polanya. Yang gagal hanya balai paling jauh, dan link radio sehat. Jadi masalahnya bukan fisik, melainkan routing.\n2. Dugaan terkuat: RIP memakai hop count dan menganggap 16 sebagai tidak terjangkau. Dari R17 ke jaringan server di belakang R1, paket harus melewati R16 sampai R1, yaitu 16 router. Metriknya 16, jadi rute itu dianggap tidak ada. Dari R16 hanya 15 router, masih sah.\n3. Buktikan. Di R17, `show ip route rip` tidak memuat jaringan server. Di R16 rute itu ada dengan `[120/15]`. Masalahnya dua arah: R1 juga tidak punya rute ke LAN R17.\n4. Pilihan perbaikan:\n   - Migrasi ke OSPF, yang tidak punya batas 15 hop dan memakai cost berbasis bandwidth.\n   - Kalau migrasi belum mungkin, pasang link tambahan yang memotong rantai, misalnya radio dari R1 ke R9, sehingga jalur terpanjang kurang dari 16 hop.\n   - Sebagai tambalan sementara, cukup dua static route: di R17 ke jaringan server lewat R16, dan di R1 ke LAN R17 lewat R2. R16 dan R2 masih punya rute RIP ke tujuan itu, jadi router lain tidak perlu diubah.\n5. Batas 15 hop di bagian 1 langsung terasa di jaringan berantai seperti ini, begitu rantainya bertambah satu router lagi."
+    }
+  },
+  "07-routing-lanjutan/04-ospf": {
+    "intinya": {
+      "satu_kalimat": "OSPF adalah protokol routing link state: setiap router menyebarkan daftar link dan cost-nya ke seluruh area, lalu menghitung sendiri jalur terpendek dengan algoritma Dijkstra.",
+      "analogi": "Bayangkan satu kecamatan yang ingin punya peta jalan bersama. Setiap desa mengirim selembar laporan tentang jalan yang keluar dari desanya beserta panjangnya. Laporan itu difotokopi ke semua desa (flooding), sehingga setiap kantor desa memegang map yang sama dan menghitung rute terpendek sendiri. Kecamatan tetangga hanya menerima ringkasan dari petugas di perbatasan (ABR). Satu hal tidak ada di kecamatan: router tidak menilai kejujuran laporan. Ia hanya memeriksa kunci autentikasi, jadi tanpa autentikasi laporan palsu ikut masuk map.",
+      "kenapa_penting": "Modul ini menyebut OSPF sebagai IGP yang paling banyak dipakai di enterprise dan topik routing terpenting di CCNA. Karena OSPF standar terbuka, router Cisco dan MikroTik di kantor yang sama bisa saling bertukar rute, asalkan MTU, timer, area, dan autentikasinya cocok.",
+      "istilah": [
+        {
+          "kata": "LSA",
+          "arti": "Link State Advertisement, laporan yang dibuat router tentang link miliknya. LSA tipe 1 (Router LSA) dibuat oleh setiap router."
+        },
+        {
+          "kata": "LSDB",
+          "arti": "Kumpulan semua LSA di satu area. Semua router di area itu harus memegang LSDB yang identik."
+        },
+        {
+          "kata": "Router ID",
+          "arti": "Pengenal 32 bit setiap router OSPF, ditulis seperti alamat IP. Sebaiknya diset manual, misalnya sama dengan alamat loopback."
+        },
+        {
+          "kata": "Link ID dan ADV Router",
+          "arti": "Dua kolom di `show ip ospf database`. Pada Router LSA yang normal, keduanya sama dengan Router ID pembuat LSA itu."
+        },
+        {
+          "kata": "Fight-back",
+          "arti": "Reaksi router yang menerima LSA atas namanya yang lebih baru daripada yang terakhir ia terbitkan: ia segera menerbitkan LSA baru dengan nomor urut lebih tinggi."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Celah OSPF: Router LSA palsu yang tidak dibantah router korban (CVE-2013-0149)",
+      "kapan": "2013-08-01",
+      "di_mana": "Perangkat OSPF berbagai vendor, global",
+      "ringkas": "Dr. Gabi Nakibly dari Rafael Advanced Defense Systems, bersama peneliti Universitas Ben Gurion, menemukan cara menyisipkan Router LSA palsu atas nama router lain. Normalnya router yang dicatut langsung membantah lewat fight-back. Trik mereka membuat bantahan itu tidak terpicu, dan router lain bisa memakai LSA palsu itu saat menghitung rute. Cisco menerbitkan advisory pada 1 Agustus 2013, dan CERT/CC mencatatnya sebagai VU#229804 sehari kemudian.",
+      "kronologi": [
+        {
+          "waktu": "22 Mei 2013",
+          "peristiwa": "CERT/CC mulai menghubungi vendor. Cisco tercatat diberi tahu pada tanggal ini, dan vendor lain menyusul pada akhir Mei dan Juni."
+        },
+        {
+          "waktu": "1 Agustus 2013, 16.00 GMT",
+          "peristiwa": "Cisco menerbitkan advisory cisco-sa-20130801-lsaospf. OSPF di IOS dan IOS XE rentan, sedangkan OSPFv3 dan IOS XR tidak."
+        },
+        {
+          "waktu": "2 Agustus 2013",
+          "peristiwa": "CERT/CC menerbitkan VU#229804 (CVE-2013-0149) beserta daftar vendor yang terdampak."
+        },
+        {
+          "waktu": "Sesudahnya",
+          "peristiwa": "Vendor merilis perbaikan software. Sambil menunggu, vendor menyarankan autentikasi OSPF dan OSPF pasif di interface yang menghadap pengguna."
+        }
+      ],
+      "akar_masalah": "OSPF mengenali sebuah LSA dari tiga kolom: LS Type, Advertising Router, dan Link State ID. Namun saat menghitung tabel routing, spesifikasinya mencari LSA hanya berdasarkan Link State ID. Penyerang membuat Router LSA dengan Link State ID sama dengan Router ID korban, tetapi Advertising Router berbeda. Fight-back hanya terpicu kalau Advertising Router cocok, jadi korban diam saja. Router lain bisa memilih LSA palsu itu, lalu membelokkan atau membuang trafik. Menurut Cisco, penyerang harus tahu alamat router target, nomor urut LSDB, dan Router ID DR.",
+      "kaitan": "Bagian 9 modul ini (LSA Types) menulis bahwa LSA tipe 1 dibuat setiap router dan beredar di dalam area. Celah ini memalsukan tepat tipe itu. Advisory Cisco menyebut tandanya bisa dilihat dengan perintah dari bagian 14: di `show ip ospf database`, Link ID sebuah Router LSA tidak sama dengan ADV Router. Mitigasi yang disarankan vendor juga ada di modul ini, yaitu autentikasi di bagian 7 dan `passive-interface default` di contoh konfigurasinya.",
+      "pelajaran": [
+        "Aktifkan autentikasi OSPF (MD5, atau HMAC-SHA kalau perangkat mendukung) di semua interface yang membentuk adjacency. Cisco menganjurkannya sebagai praktik keamanan bawaan, ada celah atau tidak.",
+        "Pasang `passive-interface default`, lalu aktifkan hello hanya di interface yang menghadap router lain.",
+        "Sesekali periksa `show ip ospf database router`. Pada Router LSA yang normal, Link ID sama dengan ADV Router.",
+        "Perbarui software router. Menurut Cisco, router yang sudah terkena tidak pulih dengan `clear ip ospf process`; konfigurasi OSPF harus dihapus lalu dipasang lagi, atau router di-reload."
+      ],
+      "sumber": [
+        {
+          "judul": "OSPF LSA Manipulation Vulnerability in Multiple Cisco Products (cisco-sa-20130801-lsaospf)",
+          "penerbit": "Cisco Security Advisory",
+          "url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-20130801-lsaospf"
+        },
+        {
+          "judul": "VU#229804: OSPF Protocol does not specify unique LSA lookup identifiers",
+          "penerbit": "CERT/CC",
+          "url": "https://www.kb.cert.org/vuls/id/229804"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda admin jaringan sebuah kantor dinas di Semarang. Pagi ini aplikasi kepegawaian di server 10.50.0.20 tidak bisa dibuka dari semua lantai. Di router core, `show ip ospf neighbor` menampilkan tetangga baru di interface `Vlan20` (VLAN staf) dengan Router ID 10.10.10.10 dan alamat 192.168.20.77. `show ip route 10.50.0.20` menampilkan `O 10.50.0.0/25 [110/2] via 192.168.20.77`, padahal server ada di 10.50.0.0/24 di belakang router lain. Ternyata seorang peserta PKL sedang mencoba lab FRR di laptop yang tersambung ke VLAN staf. Kenapa ini bisa terjadi, apa yang Anda lakukan sekarang, dan apa yang Anda ubah agar tidak terulang?",
+      "petunjuk": [
+        "Kenapa laptop bisa menjadi tetangga OSPF router core? Periksa syarat adjacency di bagian 3 dan peran passive-interface.",
+        "Ada rute 10.50.0.0/25 dan 10.50.0.0/24. Mana yang dipakai untuk paket ke 10.50.0.20, dan kenapa AD atau cost tidak menolong?",
+        "Apa yang membuat perangkat tanpa kunci yang benar tidak bisa membentuk adjacency sama sekali?"
+      ],
+      "jawaban": "1. Perhatikan gejalanya. Ada tetangga OSPF di VLAN staf, dan rute ke server mengarah ke alamat laptop. Laptop berhasil membentuk adjacency lalu mengiklankan prefix.\n2. Penyebabnya: OSPF aktif di `Vlan20`, tidak passive, dan tanpa autentikasi. Lab FRR di laptop memakai area yang sama dengan hello dan dead yang cocok, jadi semua syarat adjacency terpenuhi.\n3. Server tidak terjangkau karena router memilih prefix terpanjang lebih dulu. /25 lebih spesifik daripada /24, jadi paket ke 10.50.0.20 dikirim ke laptop. AD dan cost hanya membandingkan rute untuk prefix yang sama.\n4. Tindakan sekarang: matikan port switch laptop itu. Setelah dead interval (40 detik) lewat, adjacency putus, SPF berjalan ulang, dan rute /25 hilang. Pastikan dengan `show ip ospf neighbor` dan `show ip route 10.50.0.20`.\n5. Cegah terulang:\n   - `passive-interface default`, lalu `no passive-interface` hanya di interface yang menghadap router lain. Subnet VLAN staf tetap diiklankan, tetapi tidak ada hello di sana.\n   - Aktifkan autentikasi OSPF (key chain HMAC-SHA atau MD5) di interface antar-router.\n   - Sediakan VLAN lab terpisah untuk peserta PKL yang ingin mencoba protokol routing.\n6. Dua langkah pertama sama dengan mitigasi yang disarankan vendor untuk celah OSPF tahun 2013 di kasus nyata modul ini."
+    }
+  },
+  "07-routing-lanjutan/05-eigrp": {
+    "intinya": {
+      "satu_kalimat": "EIGRP adalah protokol routing buatan Cisco yang menyimpan jalur cadangan bebas loop sebelum dibutuhkan, sehingga router bisa langsung pindah jalur saat jalur utama putus.",
+      "analogi": "Bayangkan kurir yang mencatat dua rute ke setiap alamat: rute utama, dan satu rute cadangan yang sudah ia pastikan tidak memutar balik lewat gudangnya sendiri. Syaratnya, jarak yang dilaporkan rekan di rute cadangan harus lebih pendek daripada jarak total rute utamanya. Kalau jalan utama ditutup, ia langsung memakai cadangan tanpa menelepon siapa pun. Kalau tidak punya cadangan seperti itu, ia harus menelepon semua rekan dan menunggu semuanya menjawab. Bedanya dengan kurir sungguhan, EIGRP menolak semua jalur yang tidak lolos syarat itu, walaupun sebenarnya aman.",
+      "kenapa_penting": "Modul ini menyarankan EIGRP untuk jaringan yang semua routernya Cisco, misalnya kantor pusat dengan puluhan cabang. Begitu ada perangkat vendor lain, Anda harus memeriksa apakah perangkat itu bisa berbicara EIGRP, dan status EIGRP sebagai RFC Informational menjelaskan kenapa dukungannya terbatas.",
+      "istilah": [
+        {
+          "kata": "DUAL",
+          "arti": "Diffusing Update Algorithm, algoritma EIGRP yang menjaga jalur yang dipakai tetap bebas loop, juga saat jaringan sedang berubah."
+        },
+        {
+          "kata": "Feasible Distance (FD)",
+          "arti": "Metrik total dari router ini ke tujuan lewat jalur terbaiknya."
+        },
+        {
+          "kata": "Reported Distance (RD)",
+          "arti": "Metrik yang dilaporkan tetangga dari dirinya ke tujuan. Modul ini juga menyebutnya AD."
+        },
+        {
+          "kata": "Feasible successor",
+          "arti": "Jalur cadangan yang lolos syarat RD tetangga lebih kecil dari FD. Dipakai seketika saat jalur utama hilang."
+        },
+        {
+          "kata": "Stuck In Active (SIA)",
+          "arti": "Keadaan saat router menunggu balasan query terlalu lama, lalu memutus tetangga yang tidak membalas."
+        },
+        {
+          "kata": "RFC Informational",
+          "arti": "Dokumen RFC yang menerbitkan informasi, bukan standar internet. RFC 7868 tentang EIGRP termasuk jenis ini."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "Cisco menerbitkan spesifikasi EIGRP lewat IETF sebagai RFC 7868",
+      "kapan": "2016-05",
+      "di_mana": "IETF dan Cisco, global",
+      "ringkas": "EIGRP dirancang dan dikembangkan Cisco. Pada Februari 2013, draft spesifikasinya (draft-savage-eigrp) diajukan ke IETF, dan pada Mei 2016 draft itu terbit sebagai RFC 7868. Statusnya Informational lewat jalur Independent Submission, dan RFC Editor menegaskan dokumen itu bukan standar internet. Sejak itu vendor lain punya rujukan tertulis, misalnya FRRouting yang menyatakan daemon eigrpd-nya mengikuti RFC 7868.",
+      "kronologi": [
+        {
+          "waktu": "28 Februari 2013",
+          "peristiwa": "Draft pertama, draft-savage-eigrp-00, masuk ke IETF."
+        },
+        {
+          "waktu": "Oktober 2013 sampai Februari 2016",
+          "peristiwa": "Draft direvisi lima kali, dari versi 01 sampai versi 05."
+        },
+        {
+          "waktu": "17 Agustus 2015",
+          "peristiwa": "Editor Independent Submission memulai conflict review di IETF. IANA lalu meminta kejelasan rujukan untuk alamat multicast 224.0.0.10 dan FF02::A serta protokol IP 88."
+        },
+        {
+          "waktu": "29 Februari 2016",
+          "peristiwa": "Draft dikirim ke RFC Editor untuk diterbitkan."
+        },
+        {
+          "waktu": "Mei 2016",
+          "peristiwa": "RFC 7868 terbit dengan kategori Informational. Penulisnya berasal dari Cisco, Cumulus Networks, University of Zilina, dan LinkedIn."
+        },
+        {
+          "waktu": "Dokumentasi FRR (diperiksa 2026)",
+          "peristiwa": "FRRouting menyediakan eigrpd dan menyatakan daemon itu mendukung EIGRP sesuai RFC 7868."
+        }
+      ],
+      "akar_masalah": "Modul ini menyebut EIGRP sebelumnya protokol proprietary Cisco, sehingga vendor lain tidak punya rujukan publik untuk membuat implementasi yang cocok. RFC 7868 mengisi kekosongan itu. Isinya mencakup DUAL, feasibility condition, format paket UPDATE, QUERY, dan REPLY, metrik klasik dan wide metric, serta penanganan SIA. Karena terbit sebagai Informational lewat jalur independen, RFC ini tidak melalui proses standar IETF. RFC Editor juga tidak memberi pernyataan apa pun tentang nilainya untuk diimplementasikan atau dipakai.",
+      "kaitan": "Tabel bagian 1 modul ini menulis standar EIGRP sebagai RFC 7868 (Informational; sebelumnya proprietary Cisco), dan daftar kekurangannya menyebut dukungan vendor lain terbatas. Kasus ini menjelaskan asal dua baris itu. Isi RFC 7868 juga memetakan langsung ke bagian 3: successor, feasible distance, reported distance, dan Stuck In Active ditulis di sana. RFC itu juga menjelaskan SIA-QUERY dan SIA-REPLY, yang membedakan tetangga yang masih sibuk menghitung dari tetangga yang benar-benar bermasalah.",
+      "pelajaran": [
+        "Sebelum memilih protokol untuk jaringan campuran vendor, periksa status dokumennya. RFC Informational bukan standar internet, jadi dukungan di luar Cisco harus diuji, tidak diasumsikan.",
+        "Kalau ada router bukan Cisco di jalur, ikuti saran bagian 1 modul ini: OSPF lebih aman untuk lingkungan multi-vendor.",
+        "Uji interoperabilitas di lab sebelum produksi, misalnya router Cisco dengan FRR eigrpd, lalu bandingkan tabel topology di kedua sisi."
+      ],
+      "sumber": [
+        {
+          "judul": "RFC 7868: Cisco's Enhanced Interior Gateway Routing Protocol (EIGRP)",
+          "penerbit": "RFC Editor",
+          "url": "https://www.rfc-editor.org/rfc/rfc7868"
+        },
+        {
+          "judul": "History for draft-savage-eigrp",
+          "penerbit": "IETF Datatracker",
+          "url": "https://datatracker.ietf.org/doc/draft-savage-eigrp/history/"
+        },
+        {
+          "judul": "EIGRP (eigrpd)",
+          "penerbit": "FRRouting Documentation",
+          "url": "https://docs.frrouting.org/en/latest/eigrpd.html"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Sebuah bank daerah di Sumatra Utara memakai EIGRP. Router kantor wilayah Medan tersambung ke kantor pusat, dan di belakangnya ada dua cabang kecil, Binjai dan Tebing Tinggi. Agar seragam, semua router selain pusat dikonfigurasi dengan templat yang sama, termasuk `eigrp stub connected summary`. Setelah templat dipasang, kantor pusat masih bisa membuka server di LAN Medan, tetapi tidak bisa menjangkau LAN Binjai dan Tebing Tinggi. Di router Medan, `show ip route eigrp` masih menampilkan rute `D` ke kedua LAN cabang itu. Apa penyebabnya, dan bagaimana memperbaikinya tanpa kehilangan manfaat stub?",
+      "petunjuk": [
+        "Rute apa saja yang diiklankan router stub dengan opsi `connected summary`? Apakah rute yang ia pelajari dari Binjai termasuk?",
+        "Baca peringatan di bagian 7 tentang router stub dan trafik transit. Apakah Medan sebuah router ujung?",
+        "Opsi stub mana yang bisa mengecualikan rute tertentu dari pembatasan stub?"
+      ],
+      "jawaban": "1. Perhatikan gejalanya. Pusat bisa ke LAN Medan, tetapi tidak ke LAN di belakang Medan, sementara Medan sendiri masih tahu rutenya. Rutenya ada, hanya tidak diteruskan ke pusat.\n2. Dugaan terkuat: `eigrp stub connected summary` membuat Medan hanya mengiklankan rute connected dan summary miliknya. Rute LAN Binjai dan Tebing Tinggi adalah rute EIGRP yang dipelajari Medan dari tetangganya, jadi tidak ikut diiklankan.\n3. Buktikan. Di pusat, `show ip eigrp topology` tidak memuat prefix LAN Binjai dan Tebing Tinggi, sementara di Medan prefix itu ada. Itu cocok dengan perilaku stub.\n4. Perbaiki. Medan adalah router transit bagi dua cabang, jadi ia tidak pantas menjadi stub biasa. Pilihannya:\n   - Hapus `eigrp stub` dari Medan, lalu jadikan Binjai dan Tebing Tinggi sebagai stub karena merekalah router ujung.\n   - Atau pertahankan stub di Medan dengan `leak-map` yang mengizinkan prefix kedua cabang diiklankan ke pusat.\n\n   Summary di Medan ke arah pusat tetap berguna untuk membatasi query scope.\n5. Verifikasi dengan `show ip route eigrp` di pusat, yang harus kembali memuat LAN kedua cabang, lalu uji ping dari server pusat.\n6. Templat yang seragam hanya aman kalau peran routernya juga seragam. Router yang punya router lain di belakangnya bukan router ujung."
+    }
+  },
+  "07-routing-lanjutan/06-bgp": {
+    "intinya": {
+      "satu_kalimat": "BGP adalah cara puluhan ribu jaringan di internet saling memberi tahu alamat mana yang bisa dicapai lewat mereka, sehingga paket tahu harus lewat jaringan siapa.",
+      "analogi": "Bayangkan setiap ISP sebagai perusahaan ekspedisi yang hanya melayani wilayahnya sendiri. BGP adalah kebiasaan mereka saling mengumumkan: kiriman ke kota X bisa lewat kami, melewati tiga gudang. Kalau sebuah perusahaan berhenti mengumumkan kotanya, perusahaan lain langsung menghapus kota itu dari daftar tujuan. Bedanya dengan ekspedisi sungguhan, pengumuman di internet sering diterima tanpa diperiksa, sehingga satu pengumuman yang salah bisa menyesatkan kiriman orang lain.",
+      "kenapa_penting": "Setiap kali Anda membuka situs luar negeri, paket Anda melewati beberapa jaringan yang memilih rute lewat BGP. Satu prefix yang berhenti diumumkan, atau diumumkan pihak yang salah, bisa membuat layanan sebesar Facebook hilang dari internet.",
+      "istilah": [
+        {
+          "kata": "Autonomous System (AS)",
+          "arti": "Satu jaringan dengan satu pengelola dan satu kebijakan rute, misalnya jaringan sebuah ISP. Setiap AS punya nomor unik; jaringan Facebook memakai AS32934."
+        },
+        {
+          "kata": "Prefix",
+          "arti": "Blok alamat IP yang diumumkan bersama, misalnya 203.0.113.0/24."
+        },
+        {
+          "kata": "Withdraw",
+          "arti": "Bagian pesan UPDATE BGP yang menarik kembali pengumuman: alamat ini tidak bisa lagi dicapai lewat saya."
+        },
+        {
+          "kata": "Resolver DNS",
+          "arti": "Server yang mencarikan alamat IP sebuah nama domain atas nama Anda, misalnya 1.1.1.1 atau 8.8.8.8."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Facebook, Instagram, dan WhatsApp lenyap dari internet hampir enam jam",
+      "kapan": "2021-10-04",
+      "di_mana": "Meta (Facebook), global",
+      "ringkas": "Sebuah perintah pemeliharaan rutin tanpa sengaja memutus seluruh backbone Facebook. Server DNS Facebook lalu menarik pengumuman BGP untuk prefix-nya sendiri. Resolver di seluruh dunia tidak bisa lagi menemukan alamat Facebook, Instagram, dan WhatsApp. Di Indonesia, gangguan berlangsung dari sekitar pukul 22.40 WIB sampai dini hari.",
+      "kronologi": [
+        {
+          "waktu": "sekitar 15.40 UTC",
+          "peristiwa": "Cloudflare melihat lonjakan perubahan rute dari jaringan Facebook. Menurut Meta, pemicunya perintah untuk menilai kapasitas backbone yang justru memutus semua sambungan backbone. Alat audit yang seharusnya menghentikan perintah itu punya bug."
+        },
+        {
+          "waktu": "15.51 UTC",
+          "peristiwa": "Cloudflare membuka insiden internal karena resolver 1.1.1.1 mendapat SERVFAIL untuk facebook.com."
+        },
+        {
+          "waktu": "15.58 UTC",
+          "peristiwa": "Cloudflare mencatat Facebook berhenti mengumumkan rute ke prefix DNS-nya. Server DNS Facebook menarik pengumuman itu karena tidak bisa menghubungi pusat data."
+        },
+        {
+          "waktu": "Selama gangguan",
+          "peristiwa": "Aplikasi dan pengguna terus mencoba ulang. Cloudflare mencatat resolver di seluruh dunia menangani kueri sekitar 30 kali lipat dari biasa."
+        },
+        {
+          "waktu": "Jam-jam berikutnya",
+          "peristiwa": "Akses jarak jauh, termasuk jalur out-of-band, ikut mati. Meta mengirim teknisi ke pusat data, dan pengamanan fisik gedung membuat prosesnya lebih lama."
+        },
+        {
+          "waktu": "sekitar 21.00 UTC",
+          "peristiwa": "Aktivitas BGP dari jaringan Facebook muncul lagi dan memuncak pukul 21.17 UTC."
+        },
+        {
+          "waktu": "21.20 UTC",
+          "peristiwa": "facebook.com kembali bisa di-resolve lewat 1.1.1.1. Meta menyalakan layanan bertahap agar lonjakan beban tidak memicu gangguan baru."
+        }
+      ],
+      "akar_masalah": "Perintah pemeliharaan memutus semua sambungan backbone, dan alat audit yang seharusnya mencegahnya punya bug. Server DNS Facebook dirancang menarik pengumuman BGP-nya kalau tidak bisa menghubungi pusat data, karena itu tanda jaringan tidak sehat. Karena seluruh backbone mati, semua lokasi DNS menganggap dirinya tidak sehat dan menarik pengumumannya. Server DNS masih menyala, tetapi tidak ada lagi rute ke sana.",
+      "kaitan": "Bagian 3 modul ini menyebut UPDATE sebagai pesan untuk mengiklankan atau menarik rute. Inilah contoh nyata penarikan (withdraw): begitu prefix DNS ditarik, router di seluruh internet menghapus rutenya, dan data Cloudflare memperlihatkan lonjakan UPDATE dari Facebook. Bagian 6 juga relevan: perintah `network` di BGP hanya mengiklankan prefix yang ada di tabel routing. Server DNS Facebook memakai logika serupa, yaitu hanya mengumumkan prefix selama dirinya sehat.",
+      "pelajaran": [
+        "Siapkan jalur manajemen out-of-band yang benar-benar terpisah dari jaringan produksi. Di Facebook, jalur out-of-band ikut mati.",
+        "Uji perilaku otomatis menarik rute juga dalam skenario gagal total. Meta mengakui latihan storm-nya belum pernah mensimulasikan backbone global yang mati.",
+        "Pantau prefix Anda dari luar, misalnya lewat looking glass atau pemantau BGP pihak lain, karena dari dalam jaringan yang lumpuh Anda mungkin tidak melihat apa-apa."
+      ],
+      "sumber": [
+        {
+          "judul": "More details about the October 4 outage",
+          "penerbit": "Engineering at Meta",
+          "url": "https://engineering.fb.com/2021/10/05/networking-traffic/outage-details/"
+        },
+        {
+          "judul": "Understanding How Facebook Disappeared from the Internet",
+          "penerbit": "Cloudflare Blog",
+          "url": "https://blog.cloudflare.com/october-2021-facebook-outage/"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda admin jaringan sebuah ISP kecil di Makassar dengan dua upstream. Setelah rekan Anda mengubah konfigurasi BGP semalam, pelanggan bisa membuka situs lokal tetapi tidak bisa membuka sebagian besar situs luar negeri. Router edge menunjukkan sesi BGP ke kedua upstream berstatus Established. Apa yang Anda periksa, dan apa dugaan terkuat Anda?",
+      "petunjuk": [
+        "Sesi yang Established belum tentu bertukar rute. Lihat berapa prefix yang diterima dan dikirim.",
+        "Bandingkan prefix yang Anda umumkan sebelum dan sesudah perubahan. Apakah ada filter keluar yang baru?"
+      ],
+      "jawaban": "1. Periksa jumlah prefix yang diterima dari upstream dengan `show ip bgp summary`. Kalau normal, masalahnya bukan rute masuk.\n2. Periksa rute yang Anda umumkan dengan `show ip bgp neighbors <ip> advertised-routes`. Dugaan kuat: filter keluar yang baru tidak lagi mengizinkan blok alamat pelanggan, sehingga internet tidak tahu jalan pulang ke pelanggan Anda. Paket dari pelanggan tetap keluar, tetapi balasannya tidak pernah kembali.\n3. Situs lokal tetap terbuka karena trafiknya lewat jalur lain, misalnya IX lokal, yang konfigurasinya tidak ikut berubah.\n4. Perbaiki filternya, terapkan dengan `clear ip bgp <ip> soft out`, lalu verifikasi dari luar lewat looking glass milik pihak lain. Blok pelanggan harus terlihat dengan AS_PATH yang benar."
+    }
+  },
+  "07-routing-lanjutan/07-redistribusi-policy": {
+    "intinya": {
+      "satu_kalimat": "Redistribusi memindahkan rute dari satu sumber ke protokol lain, dan route-map adalah daftar aturan berurutan yang menentukan rute mana yang lolos dan diubah.",
+      "analogi": "Bayangkan dua grup WhatsApp alumni yang ingin saling berbagi info lowongan. Redistribusi adalah admin yang meneruskan pesan dari grup A ke grup B. Kalau admin grup B juga meneruskan balik ke grup A, pesan yang sama bisa berputar terus, dan itulah loop pada mutual redistribution. Route-map adalah daftar aturan admin yang dibaca dari atas: aturan pertama yang cocok langsung dijalankan, dan pesan yang tidak cocok dengan aturan mana pun dibuang. Bedanya, admin manusia akan curiga kalau tiba-tiba tidak ada pesan yang lolos, sedangkan router menjalankan urutan aturan apa adanya.",
+      "kenapa_penting": "Redistribusi muncul di banyak titik pertemuan, misalnya static route ke ISP yang dimasukkan ke OSPF, atau rute internal yang diumumkan ke internet lewat BGP. Satu aturan yang salah tempat bisa menarik rute yang sah dari seluruh jaringan.",
+      "istilah": [
+        {
+          "kata": "Redistribusi",
+          "arti": "Memasukkan rute dari satu sumber routing (static, connected, OSPF, EIGRP, BGP) ke protokol lain."
+        },
+        {
+          "kata": "Seed metric",
+          "arti": "Metrik awal yang diberikan pada rute hasil redistribusi, karena metrik antarprotokol tidak bisa dibandingkan."
+        },
+        {
+          "kata": "Route-map",
+          "arti": "Daftar aturan bernomor urut (sequence). Dibaca dari nomor terkecil; aturan pertama yang cocok menentukan permit atau deny."
+        },
+        {
+          "kata": "Implicit deny",
+          "arti": "Aturan tak tertulis di akhir route-map: rute yang tidak cocok dengan aturan mana pun dibuang."
+        },
+        {
+          "kata": "Term (Junos)",
+          "arti": "Padanan sequence route-map di router Juniper. Term di dalam satu policy juga dievaluasi berurutan dari atas."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Urutan aturan kebijakan BGP tertukar, 19 data center Cloudflare lumpuh",
+      "kapan": "2022-06-21",
+      "di_mana": "Cloudflare, 19 data center tersibuk (termasuk Singapura)",
+      "ringkas": "Cloudflare sedang merapikan konfigurasi: menambahkan community informasi ke prefix site-local di 19 data center tersibuknya. Perubahan itu ikut menggeser urutan term di kebijakan ekspor BGP pada router spine. Prefix site-local jatuh ke belakang term `REJECT-THE-REST`, sehingga berhenti diumumkan. Ke-19 lokasi itu hanya 4% jaringan Cloudflare, tetapi gangguannya mengenai 50% dari total permintaan.",
+      "kronologi": [
+        {
+          "waktu": "03.56 UTC",
+          "peristiwa": "Perubahan dipasang di lokasi pertama. Lokasi ini masih memakai arsitektur lama, jadi tidak terdampak."
+        },
+        {
+          "waktu": "06.17 UTC",
+          "peristiwa": "Perubahan sampai ke lokasi-lokasi tersibuk yang belum memakai arsitektur baru bernama MCP."
+        },
+        {
+          "waktu": "06.27 UTC",
+          "peristiwa": "Perubahan sampai ke 19 lokasi MCP dan dipasang di router spine. Ke-19 lokasi langsung offline."
+        },
+        {
+          "waktu": "06.32 UTC",
+          "peristiwa": "Insiden internal dinyatakan."
+        },
+        {
+          "waktu": "06.58 UTC",
+          "peristiwa": "Akar masalah ditemukan, dan pengembalian konfigurasi (revert) dimulai."
+        },
+        {
+          "waktu": "07.42 UTC",
+          "peristiwa": "Revert terakhir selesai. Prosesnya molor karena beberapa engineer saling menimpa perubahan, sehingga masalah sempat muncul lagi."
+        },
+        {
+          "waktu": "08.00 UTC",
+          "peristiwa": "Insiden ditutup."
+        }
+      ],
+      "akar_masalah": "Kebijakan ekspor `AGGREGATES-OUT` di router spine berisi term yang dievaluasi berurutan. Setelah perubahan, term `4-ADV-SITE-LOCALS` dan `6-ADV-SITE-LOCALS` pindah ke bawah term `REJECT-THE-REST`, yang isinya hanya `then reject`. Karena term tolak itu kini dievaluasi lebih dulu, prefix site-local tidak pernah sampai ke term yang mengizinkannya, dan prefix itu ditarik dari internet. Engineer kehilangan akses langsung ke lokasi itu, server tidak bisa menghubungi origin pelanggan, dan load balancer internal Multimog berhenti bekerja.",
+      "kaitan": "Bagian 7 modul ini (Route-Map: Bahasa Kebijakan Routing) menjelaskan cara kerja yang sama. Aturan dievaluasi dari nomor urut terkecil, dan rute yang cocok dengan aturan deny langsung ditolak tanpa melihat aturan sesudahnya. Term di Junos bekerja serupa. Kesalahan Cloudflare adalah sisi lain dari peringatan implicit deny di bagian yang sama. Diff konfigurasinya tampak cuma menambah community, padahal juga memindahkan dua term ke bawah aturan tolak.",
+      "pelajaran": [
+        "Saat meninjau perubahan kebijakan, periksa juga urutan aturannya. Cloudflare mencatat diff-nya sekilas tampak identik, padahal tanda seru di depan term berarti term itu berpindah posisi.",
+        "Letakkan aturan tolak umum sebagai aturan terakhir dengan nomor urut besar. Beri jarak nomor urut (10, 20, 30) agar aturan baru bisa disisipkan tanpa menggeser yang lama.",
+        "Gelar perubahan routing bertahap, dan masukkan contoh lokasi terpenting di tahap awal yang kecil. Cloudflare juga merencanakan rollback otomatis bergaya commit-confirm.",
+        "Siapkan akses manajemen yang tidak bergantung pada prefix yang sedang Anda ubah."
+      ],
+      "sumber": [
+        {
+          "judul": "Cloudflare outage on June 21, 2022",
+          "penerbit": "Cloudflare Blog",
+          "url": "https://blog.cloudflare.com/cloudflare-outage-on-june-21-2022/"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Sebuah ISP kecil di Denpasar punya dua router border yang menerima full table BGP dari dua upstream. Di dalamnya ada enam router akses yang menjalankan OSPF. Seorang engineer baru ingin router akses tahu jalan ke internet. Ia menambahkan `redistribute bgp 64500 subnets` di bawah `router ospf 1` pada salah satu router border. Lima menit kemudian router akses mulai reboot sendiri berulang kali, adjacency OSPF naik-turun, dan pelanggan di seluruh Denpasar putus. Apa yang terjadi, apa yang Anda lakukan pertama kali, dan bagaimana memberi router akses jalan ke internet dengan benar?",
+      "petunjuk": [
+        "Berapa banyak rute yang dibawa full table BGP, dan ke mana rute itu masuk setelah diredistribusi ke OSPF? Lihat bagian 4, Bahaya 3.",
+        "Apa yang terjadi pada router dengan RAM kecil kalau LSDB-nya tiba-tiba berisi lebih dari sejuta LSA eksternal?",
+        "Router akses hanya butuh satu rute untuk keluar ke internet. Bagian 6 dan modul static routing menyebutnya."
+      ],
+      "jawaban": "1. Perhatikan waktunya. Masalah mulai tepat setelah satu baris redistribusi dan menimpa semua router OSPF sekaligus. Itu tanda masalahnya menyebar lewat OSPF.\n2. Dugaan terkuat: `redistribute bgp` memasukkan seluruh tabel BGP, lebih dari satu juta rute IPv4, ke OSPF sebagai LSA tipe 5. LSA tipe 5 di-flood ke seluruh domain. Router akses harus menyimpan dan memproses semuanya, kehabisan memori dan CPU, lalu reboot. Begitu menyala lagi, mereka menerima flood yang sama.\n3. Buktikan sambil bertindak: `show ip ospf database database-summary` di router border akan memperlihatkan jumlah LSA eksternal yang melonjak.\n4. Tindakan pertama: hapus baris itu dengan `no redistribute bgp 64500 subnets`. Router border menarik LSA eksternalnya, dan router akses berhenti kebanjiran begitu LSA itu hilang dari LSDB.\n5. Cara yang benar: router akses cukup diberi default route. Pastikan router border punya default route, dari upstream atau static ke next hop upstream, lalu pasang `default-information originate` di OSPF. Router akses mendapat satu rute `O*E2 0.0.0.0/0`, bukan sejuta. Hindari `always` (modul static routing, bagian 5).\n6. Cegah terulang: wajibkan route-map dengan prefix-list di setiap perintah redistribusi, dan batasi jumlah LSA dengan `max-lsa` (bagian 12 modul OSPF). Tabel internet penuh cukup ada di router border yang memang memilih jalur antar-upstream."
+    }
+  },
+  "07-routing-lanjutan/08-fhrp": {
+    "intinya": {
+      "satu_kalimat": "FHRP membuat dua router atau lebih berbagi satu alamat gateway virtual, sehingga komputer tetap bisa keluar jaringan walaupun router gateway utamanya mati.",
+      "analogi": "Bayangkan nomor WhatsApp layanan pelanggan sebuah toko. Pelanggan hanya menyimpan satu nomor, dan dua admin bergantian memegang HP itu. Kalau admin yang bertugas sakit, admin cadangan mengambil HP yang sama, dan pelanggan tidak perlu menyimpan nomor baru. Itulah IP dan MAC virtual pada HSRP atau VRRP. Bedanya, di jaringan HP itu bisa seolah tergandakan. Kalau kedua admin tidak bisa saling melihat, keduanya merasa sedang bertugas dan menjawab bersamaan. Kondisi ini disebut split-brain.",
+      "kenapa_penting": "Di jaringan kantor atau kampus dengan dua router inti, FHRP yang menentukan akibat rusaknya satu router. Akibatnya bisa hanya jeda beberapa detik, atau satu lantai tidak bisa keluar sama sekali. Salah konfigurasi tracking atau preempt membuat cadangan itu gagal persis saat dibutuhkan.",
+      "istilah": [
+        {
+          "kata": "Virtual IP",
+          "arti": "Alamat gateway yang dipakai semua komputer. Alamat ini tidak menempel pada satu router, tetapi dipegang router yang sedang aktif."
+        },
+        {
+          "kata": "Active/Standby, Master/Backup",
+          "arti": "Peran router dalam grup FHRP (HSRP dan VRRP): satu meneruskan paket, yang lain menunggu dan mengambil alih kalau yang aktif hilang."
+        },
+        {
+          "kata": "Preempt",
+          "arti": "Izin bagi router berprioritas lebih tinggi untuk merebut kembali peran aktif. Bawaan HSRP mati, bawaan VRRP menyala."
+        },
+        {
+          "kata": "Tracking",
+          "arti": "Pemantauan uplink atau jalur ke internet. Kalau gagal, priority router diturunkan agar router lain mengambil alih."
+        },
+        {
+          "kata": "Split-brain",
+          "arti": "Dua router sama-sama merasa aktif untuk IP virtual yang sama, karena pesan hello atau advertisement di antara mereka tidak sampai."
+        },
+        {
+          "kata": "Error disabled",
+          "arti": "Status port switch yang dimatikan otomatis oleh fitur proteksi, misalnya spanning tree, sampai dipulihkan."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Loop spanning tree memisahkan dua router VRRP di SDSC, keduanya menjadi Master",
+      "kapan": "2012-09-20",
+      "di_mana": "San Diego Supercomputer Center (SDSC), Amerika Serikat",
+      "ringkas": "Pada malam 20 September 2012, sebagian perangkat di jaringan San Diego Supercomputer Center tiba-tiba tidak bisa dijangkau. Sebuah kejadian di jaringan memicu loop spanning tree di switch distribusi dan switch lantai. Akibatnya dua router gateway, Lightning dan Thor, tidak bisa saling melihat dan sama-sama menjadi Master VRRP. Sebagian subnet terputus secara acak sampai lewat tengah malam.",
+      "kronologi": [
+        {
+          "waktu": "20 September 2012, sekitar 21.15",
+          "peristiwa": "Gangguan dimulai: konektivitas ke sebagian perangkat SDSC hilang."
+        },
+        {
+          "waktu": "Awal gangguan",
+          "peristiwa": "Sebuah kejadian di jaringan, yang saat itu belum diketahui, memicu loop spanning tree besar di switch distribusi dan switch lantai."
+        },
+        {
+          "waktu": "Sesudahnya",
+          "peristiwa": "Spanning tree mematikan link antara switch distribusi dan router Lightning (error disabled). SDSC menyebut ini perilaku normal untuk mengisolasi masalah."
+        },
+        {
+          "waktu": "Selama gangguan",
+          "peristiwa": "Lightning dan Thor tidak lagi saling melihat. Keduanya menganggap dirinya Master VRRP, dan klien memakai salah satu dari keduanya secara acak."
+        },
+        {
+          "waktu": "Pemulihan",
+          "peristiwa": "Tim jaringan SDSC me-reboot Lightning dan memulihkan sambungan Thor ke Lightning. VRRP konvergen lagi dan jaringan kembali bisa dirutekan."
+        },
+        {
+          "waktu": "21 September 2012, 00.18",
+          "peristiwa": "Gangguan berakhir. Tim terus memeriksa log untuk mencari pemicu awalnya dan melaporkannya ke vendor."
+        }
+      ],
+      "akar_masalah": "VRRP menentukan Master lewat advertisement yang dikirim di segmen yang sama dengan pengguna, ke alamat multicast 224.0.0.18. Router Backup diam selama ia terus mendengar Master. Ketika spanning tree mematikan link antara switch distribusi dan Lightning, Lightning dan Thor tidak lagi saling mendengar. Masing-masing lalu menganggap dirinya Master untuk alamat gateway yang sama. Klien memakai salah satu router secara acak, dan dalam kondisi terbelah itu sebagian subnet menjadi black hole secara acak.",
+      "kaitan": "Tabel Masalah umum di bagian 9 modul ini mencantumkan gejala kedua router Active (split-brain) dengan penyebab hello yang tidak sampai. Peringatan di bawahnya menyebutnya kondisi paling berbahaya. SDSC mengalaminya dengan VRRP. Bagian 7 juga relevan. Peringatan agar FHRP diselaraskan dengan root bridge STP mengingatkan bahwa FHRP berjalan di atas topologi layer 2. Begitu spanning tree memutus jalur di antara kedua router, mereka kehilangan jalan untuk saling mendengar.",
+      "pelajaran": [
+        "Pantau kondisi dua Master atau dua Active. Bandingkan `show vrrp brief` atau `show standby brief` di kedua router secara berkala, dan buat alarm kalau keduanya melapor Master.",
+        "Rancang jalur layer 2 di antara kedua gateway untuk setiap VLAN agar tidak bergantung pada satu link yang bisa dimatikan spanning tree. Selaraskan juga root bridge dengan router aktif.",
+        "Setelah layanan pulih, telusuri pemicu loop dari log seperti yang dilakukan SDSC, lalu laporkan ke vendor bila perlu."
+      ],
+      "sumber": [
+        {
+          "judul": "SDSC Event Resolved: Networking Outage Sept 20",
+          "penerbit": "SDSC External Status Site",
+          "url": "https://status.sdsc.edu/?p=743"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Sebuah klinik di Solo punya dua router untuk dua ISP. Router-A memakai alamat LAN 192.168.10.1, dan teknisi sebelumnya membuat `vrrp 10 ip 192.168.10.1` di Router-A supaya gateway komputer tidak perlu diubah. Router-B (192.168.10.3) menjadi cadangan dengan priority 100 dan preempt aktif. Router-A juga punya `vrrp 10 track 1 decrement 30` yang memantau ping ke 8.8.8.8 lewat ISP-A. Kemarin ISP-A putus selama dua jam. `show track` di Router-A menunjukkan track 1 Down, tetapi `show vrrp brief` tetap menampilkan Router-A sebagai Master. Selama itu semua komputer klinik tidak bisa membuka sistem rekam medis daring. Kenapa tracking tidak bekerja, dan bagaimana memperbaikinya?",
+      "petunjuk": [
+        "Bandingkan alamat fisik Router-A dengan virtual IP grup VRRP 10. Apa sebutan untuk router seperti itu?",
+        "Berapa priority router IP address owner, dan apakah decrement bisa menurunkannya?",
+        "Agar tracking bisa bekerja, virtual IP sebaiknya tidak sama dengan alamat fisik router mana pun."
+      ],
+      "jawaban": "1. Perhatikan gejalanya. Track sudah Down, tetapi Router-A tetap Master. Tracking-nya mendeteksi masalah, hanya tidak berpengaruh pada pemilihan Master.\n2. Dugaan terkuat: virtual IP 192.168.10.1 sama dengan alamat fisik Router-A, jadi Router-A adalah IP address owner. Priority owner otomatis 255, tidak bisa diubah, dan tidak bisa dikalahkan. Decrement 30 tidak berpengaruh, dan Router-B tidak pernah mengambil alih.\n3. Buktikan dengan `show vrrp` di Router-A: priority tetap 255 walaupun track Down. Router-B melaporkan dirinya Backup dengan priority 100.\n4. Perbaiki dengan memisahkan alamat fisik dan virtual:\n   - Router-A: alamat fisik 192.168.10.2, `vrrp 10 ip 192.168.10.1`, priority 110, track dengan decrement 30.\n   - Router-B: alamat fisik 192.168.10.3, `vrrp 10 ip 192.168.10.1`, priority 100.\n\n   Komputer tetap memakai gateway 192.168.10.1, jadi tidak ada yang perlu diubah di sisi klien. Kerjakan di jam sepi karena alamat Router-A berubah.\n5. Uji failover: blokir ping ke 8.8.8.8 lewat ISP-A. Priority Router-A turun menjadi 80, Router-B menjadi Master, dan komputer tetap bisa keluar lewat ISP-B.\n6. Menghemat satu alamat IP dengan IP address owner berarti mengorbankan tracking. Untuk gateway yang harus pindah saat uplink mati, pakai virtual IP terpisah."
+    }
+  },
+  "07-routing-lanjutan/09-multicast": {
+    "intinya": {
+      "satu_kalimat": "Multicast mengirim satu aliran data ke banyak penerima sekaligus: pengirim cukup mengirim sekali, dan jaringan menggandakannya hanya di titik percabangan menuju penerima yang berlangganan.",
+      "analogi": "Bayangkan siaran pengumuman lewat pengeras suara di sebuah gedung kantor. Penyiar bicara sekali, dan hanya ruangan yang menyalakan pengeras suara untuk saluran itu yang mendengarnya. Mendaftarkan ruangan ke saluran mirip IGMP join. Teknisi yang hanya menarik kabel ke ruangan pendaftar mirip IGMP snooping di switch. Analogi ini berhenti di satu titik: di gedung, setiap ruangan mendengar siaran yang sama tanpa ada yang terlewat. Di jaringan, paket multicast bisa hilang di satu cabang saja, dan IP multicast tidak mengirimnya ulang.",
+      "kenapa_penting": "Siaran IPTV, data harga di bursa saham, instalasi sistem operasi ke ratusan PC lab sekaligus, dan protokol routing seperti OSPF memakai multicast. Tanpa IGMP snooping, satu aliran video bisa membanjiri semua port switch seperti broadcast.",
+      "istilah": [
+        {
+          "kata": "Grup multicast",
+          "arti": "Alamat tujuan bersama di rentang 224.0.0.0/4. Semua penerima yang berlangganan grup itu menerima paket yang sama."
+        },
+        {
+          "kata": "IGMP",
+          "arti": "Protokol yang dipakai host untuk memberi tahu router bahwa ia ingin menerima (join) atau berhenti menerima (leave) sebuah grup."
+        },
+        {
+          "kata": "IGMP snooping",
+          "arti": "Fitur switch yang mengintip pesan IGMP agar aliran multicast hanya dikirim ke port yang berlangganan."
+        },
+        {
+          "kata": "PIM dan RPF",
+          "arti": "PIM membangun pohon distribusi multicast antar-router. RPF check memastikan paket datang dari arah sumber, untuk mencegah loop."
+        },
+        {
+          "kata": "Nomor urut (sequence number)",
+          "arti": "Nomor pada setiap pesan yang membuat penerima bisa mendeteksi pesan yang hilang lalu memintanya ulang."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "Nasdaq menyiarkan data pasar saham lewat UDP multicast dengan protokol MoldUDP64",
+      "kapan": "2008-12-04",
+      "di_mana": "Nasdaq, Amerika Serikat",
+      "ringkas": "Nasdaq menyediakan TotalView-ITCH, aliran data yang memuat seluruh kedalaman order saham di sistem perdagangannya. Salah satu cara pengirimannya adalah MoldUDP64: setiap paket dikirim satu kali lewat UDP multicast, berapa pun jumlah penerimanya. Karena UDP tidak mengirim ulang paket yang hilang, setiap pesan diberi nomor urut. Penerima yang melihat celah nomor meminta ulang lewat unicast ke server re-request.",
+      "kronologi": [
+        {
+          "waktu": "2 November 2004",
+          "peristiwa": "Versi awal dokumen spesifikasi protokol ini ditulis, menurut riwayat versi spesifikasi MoldUDP64."
+        },
+        {
+          "waktu": "4 Desember 2008",
+          "peristiwa": "Spesifikasi diperbarui untuk dukungan 64 bit. Nomor urut di header kini berukuran 8 byte."
+        },
+        {
+          "waktu": "10 Juli 2013",
+          "peristiwa": "Dokumentasi TotalView-ITCH versi 5.0 dirilis. Revisinya berlanjut sampai 28 April 2023."
+        },
+        {
+          "waktu": "Versi FPGA (spesifikasi ITCH 5.0)",
+          "peristiwa": "Versi FPGA TotalView-ITCH disiarkan dari pusat data utama Nasdaq di Carteret, New Jersey, hanya lewat MoldUDP64. Pelanggan wajib punya sambungan 10 Gb atau 40 Gb ke sana."
+        },
+        {
+          "waktu": "2 Agustus 2024",
+          "peristiwa": "Format dokumen spesifikasi MoldUDP64 diperbarui."
+        }
+      ],
+      "akar_masalah": "MoldUDP64 dirancang untuk skenario satu pengirim ke banyak pendengar. Dengan unicast, server harus membuat satu salinan untuk setiap pelanggan; dengan multicast, server mengirim sekali dan jaringan yang menggandakan. Harganya: multicast berjalan di atas UDP, yang tidak mengirim ulang paket hilang. MoldUDP64 menambal kekurangan itu di lapisan aplikasi. Header 20 byte-nya berisi sesi, nomor urut, dan jumlah pesan. Saat sepi, server mengirim heartbeat, biasanya sekali per detik, supaya penerima tetap bisa mendeteksi kehilangan. Pesan yang diminta ulang dikirim balik lewat unicast.",
+      "kaitan": "Bagian 1 modul ini menyebut market data bursa sebagai salah satu pemakai multicast. Contoh penghematannya juga ada di sana: unicast ke 100 penerima berarti 100 salinan, multicast cukup satu. Spesifikasi MoldUDP64 menulis hal yang sama, yaitu setiap paket dikirim satu kali berapa pun jumlah pendengarnya. Langkah pertama penerima menurut spesifikasi Nasdaq adalah membuka socket UDP lalu join grup multicast. Di jaringan, join itu terlihat sebagai IGMP membership report (bagian 3), dan IGMP snooping (bagian 4) memastikan aliran itu hanya keluar ke port pelanggan.",
+      "pelajaran": [
+        "Kalau aplikasi Anda memakai multicast dan tidak boleh kehilangan data, siapkan nomor urut dan jalur pemulihan seperti MoldUDP64. Jaringan tidak akan mengirim ulang paket multicast yang hilang.",
+        "Uji jalur multicast dengan beban sungguhan sebelum produksi. Periksa IGMP snooping, querier, dan RPF di setiap segmen yang dilewati, seperti alur troubleshooting di bagian 6.",
+        "Pantau celah nomor urut di sisi penerima. Lonjakan permintaan ulang adalah tanda dini ada paket multicast yang hilang di salah satu cabang."
+      ],
+      "sumber": [
+        {
+          "judul": "MoldUDP64 Protocol Specification V1.00",
+          "penerbit": "Nasdaq",
+          "url": "https://www.nasdaqtrader.com/content/technicalsupport/specifications/dataproducts/moldudp64.pdf"
+        },
+        {
+          "judul": "Nasdaq TotalView-ITCH 5.0 (spesifikasi)",
+          "penerbit": "Nasdaq",
+          "url": "https://www.nasdaqtrader.com/content/technicalsupport/specifications/dataproducts/NQTVITCHspecification.pdf"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Lab komputer sebuah SMK di Surabaya memakai software imaging yang mengirim citra sistem operasi ke 40 PC lewat grup multicast 239.1.1.1. Sejak minggu lalu, sekolah juga menyiarkan video pengumuman ke ruang guru lewat grup 239.129.1.1, dan jaringan sekolah masih satu VLAN. IGMP snooping dan querier di switch lab sudah aktif. Kini setiap kali video pengumuman berjalan, proses imaging melambat dan CPU PC lab naik, padahal tidak ada PC lab yang membuka video itu. `show ip igmp snooping groups` di switch lab hanya mencantumkan grup 239.1.1.1. Apa yang terjadi, dan bagaimana memperbaikinya?",
+      "petunjuk": [
+        "Ubah kedua alamat grup menjadi alamat MAC multicast. Ingat aturan 23 bit terendah di bagian 2.",
+        "Banyak switch meneruskan multicast berdasarkan alamat MAC tujuan. Apa akibatnya kalau dua grup memakai MAC yang sama?",
+        "Kalau PC menerima frame untuk MAC yang ia ikuti, siapa yang akhirnya membuang paket grup yang tidak ia minta?"
+      ],
+      "jawaban": "1. Perhatikan gejalanya. Gangguan hanya muncul saat video berjalan, dan PC lab ikut sibuk padahal tidak membuka video. Jadi frame video sampai ke PC lab.\n2. Hitung pemetaan MAC-nya. Hanya 23 bit terendah alamat IP yang disalin ke MAC berawalan `01:00:5E`. 239.1.1.1 menjadi `01:00:5E:01:01:01`. Untuk 239.129.1.1, oktet kedua 129 (biner `10000001`) kehilangan bit tertingginya, jadi hasilnya juga `01:00:5E:01:01:01`. Dua grup berbeda memakai MAC yang sama.\n3. Dugaan terkuat: switch yang meneruskan multicast berdasarkan MAC mengirim frame video ke semua port yang berlangganan `01:00:5E:01:01:01`, yaitu semua PC lab. Kartu jaringan PC menerimanya, lalu stack IP membuangnya karena PC tidak join 239.129.1.1. Pembuangan itulah yang memakan CPU, dan link ke lab ikut terbebani.\n4. Buktikan dengan menangkap trafik di satu PC lab saat video berjalan, misalnya dengan Wireshark atau `tcpdump -ni eth0 'net 224.0.0.0/4'`. Kalau paket ke 239.129.1.1 muncul, dugaan terbukti.\n5. Perbaiki dengan mengganti grup video ke alamat yang MAC-nya berbeda, misalnya 239.10.1.1 (`01:00:5E:0A:01:01`). Untuk jangka panjang, pisahkan lab dan ruang guru ke VLAN berbeda, dan buat daftar alokasi grup multicast sekolah.\n6. Dua alamat grup yang berbeda di layer 3 belum tentu berbeda di layer 2. Periksa pemetaan MAC setiap kali memilih alamat grup baru, seperti peringatan overlap 32:1 di bagian 2."
+    }
+  },
+  "07-routing-lanjutan/10-isis": {
+    "intinya": {
+      "satu_kalimat": "IS-IS adalah protokol link state seperti OSPF yang berjalan langsung di atas data link, dan menjadi IGP pilihan banyak backbone operator.",
+      "analogi": "Bayangkan jalan tol antarpulau yang dikelola satu operator. Setiap gerbang menerbitkan satu kartu laporan berisi gerbang tetangganya dan biaya ke sana. Kartu itu bernomor urut dan berumur, jadi kartu lama dibuang begitu kartu baru datang atau umurnya habis. Gerbang di dalam satu wilayah cukup tahu wilayahnya sendiri (Level 1), sedangkan gerbang utama memegang peta antarwilayah (Level 2). Bedanya dengan kartu laporan sungguhan: kartu IS-IS tidak dikirim lewat jalan umum (IP). Ia diserahkan langsung dari satu gerbang ke gerbang tetangganya, sehingga orang luar tidak bisa mengirimnya dari jauh.",
+      "kenapa_penting": "Kalau Anda ingin bekerja di NOC atau tim core ISP, Anda perlu fasih IS-IS selain OSPF. MPLS dan Segment Routing di backbone operator banyak dibangun di atasnya. MikroTik pun menambahkan IS-IS sejak RouterOS 7.13.",
+      "istilah": [
+        {
+          "kata": "NET dan System ID",
+          "arti": "Alamat IS-IS sebuah router. System ID (6 byte) di dalamnya wajib unik di seluruh domain; NET dibaca dari belakang."
+        },
+        {
+          "kata": "Level 1 dan Level 2",
+          "arti": "Level 1 untuk routing di dalam satu area, Level 2 untuk backbone antar-area."
+        },
+        {
+          "kata": "LSP",
+          "arti": "Link State PDU, paket berisi tetangga dan prefix milik sebuah router. Padanan LSA di OSPF."
+        },
+        {
+          "kata": "Nomor urut dan lifetime",
+          "arti": "Nomor yang naik setiap kali LSP diterbitkan ulang, dan umur LSP yang menghitung mundur dari 1200 detik secara bawaan."
+        },
+        {
+          "kata": "SPF",
+          "arti": "Shortest Path First, nama lain algoritma Dijkstra yang dijalankan setiap router link state di atas database-nya."
+        },
+        {
+          "kata": "EGP (protokol)",
+          "arti": "Protokol antar-AS yang dipakai NSFNET untuk bertukar rute dengan jaringan regional. Di sini EGP adalah nama satu protokol, bukan golongan protokol seperti di modul 07.2."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "Backbone NSFNET memakai IGP berbasis SPF yang diadaptasi dari IS-IS",
+      "kapan": "1989-02",
+      "di_mana": "NSFNET, Amerika Serikat",
+      "ringkas": "RFC 1093, terbit Februari 1989, mendokumentasikan arsitektur routing backbone baru NSFNET, yang menyambungkan jaringan regional dan jaringan lain seperti ARPANET. Di dalam inti, router NSS menjalankan protokol berbasis SPF yang diadaptasi dari IS-IS usulan ANSI ke ISO, yang berakar pada karya Digital Equipment Corporation. Ke jaringan regional, backbone memakai EGP dengan penyaringan rute per AS. Hampir dua tahun kemudian, RFC 1195 dari DEC menjelaskan cara memakai IS-IS OSI untuk TCP/IP.",
+      "kronologi": [
+        {
+          "waktu": "Maret 1988",
+          "peristiwa": "Arsitektur routing dibahas di pertemuan IETF di San Diego Supercomputing Center dan di mailing list kelompok kerja backbone dan jaringan regional."
+        },
+        {
+          "waktu": "21 Maret 1988",
+          "peristiwa": "Pertemuan final di IBM T.J. Watson Research Center, Yorktown, dihadiri wakil Merit, Cornell University, NYSERNet, dan IBM."
+        },
+        {
+          "waktu": "Sebelum RFC terbit",
+          "peristiwa": "Jacob Rekhter dari IBM Research mengadaptasi IS-IS untuk lingkungan internet. Arsitektur routing RCP/PSP-nya sebagian besar diimplementasikan Rick Boivie dan rekan-rekannya di IBM TCS, Milford."
+        },
+        {
+          "waktu": "Februari 1989",
+          "peristiwa": "RFC 1093 karya H.W. Braun (Merit) terbit: IGP turunan IS-IS di dalam inti, EGP di batas dengan jaringan regional."
+        },
+        {
+          "waktu": "Desember 1990",
+          "peristiwa": "RFC 1195 karya R. Callon (Digital Equipment Corporation) terbit, menjelaskan pemakaian IS-IS OSI untuk routing TCP/IP dan lingkungan ganda."
+        }
+      ],
+      "akar_masalah": "RFC 1093 memisahkan dua kebutuhan. Di dalam inti, informasi alamat di-flood ke seluruh node, dan setiap NSS menghitung tabel routing-nya sendiri dengan algoritma SPF. Di batas dengan jaringan regional, EGP dipilih karena sudah banyak diimplementasikan, bisa memakai nomor AS, dan bisa menjadi pembatas yang efektif antarsistem. Adaptasi IS-IS ke internet butuh definisi tambahan, terutama soal struktur alamat. Konsistensi antara IGP dan EGP dijaga dengan filter sesuai basis data kebijakan routing setiap node.",
+      "kaitan": "Bagian 2 modul ini (Sejarah Singkat) menceritakan IS-IS lahir dari pekerjaan DEC untuk DECnet Phase V dan distandarkan ISO. RFC 1195 lalu menambahkan prefix IP pada 1990. RFC 1093 memperlihatkan langkah di antaranya: varian IS-IS usulan ANSI sudah diadaptasi untuk IP di backbone NSFNET sebelum RFC 1195 terbit. Bagian 1 poin 5 (Basis keahlian) menyebut sebagian operator memilih IS-IS saat backbone besar dibangun. Pembagian kerja di NSFNET, IGP di dalam dan protokol antar-AS di batas, sama dengan pola IS-IS di inti ISP dan BGP ke luar hari ini.",
+      "pelajaran": [
+        "Pisahkan IGP di dalam jaringan dan kebijakan di batas. NSFNET sudah menyaring rute per AS di titik pertemuan dengan jaringan regional; hari ini peran itu dipegang BGP dengan prefix-list dan RPKI.",
+        "Saat bertemu istilah IS-IS yang terasa asing, seperti NET, CLNS, atau DIS, ingat asalnya di OSI dan DECnet. Perintah Cisco seperti `show clns neighbors` adalah sisa sejarah itu.",
+        "Dokumentasikan rancangan routing seperti RFC 1093: apa yang berjalan di dalam, apa yang berjalan di batas, dan siapa memfilter apa."
+      ],
+      "sumber": [
+        {
+          "judul": "RFC 1093: The NSFNET Routing Architecture",
+          "penerbit": "RFC Editor",
+          "url": "https://www.rfc-editor.org/rfc/rfc1093"
+        },
+        {
+          "judul": "RFC 1195: Use of OSI IS-IS for Routing in TCP/IP and Dual Environments",
+          "penerbit": "RFC Editor",
+          "url": "https://www.rfc-editor.org/rfc/rfc1195"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda engineer NOC sebuah ISP regional di Sulawesi Selatan yang memakai IS-IS Level 2 datar. Semalam router POP Gowa diganti unit baru. Agar cepat, teknisi menyalin konfigurasi dari router POP Maros, lalu hanya mengganti alamat IP interface. Sejak pagi pelanggan di Gowa dan Maros mengeluh koneksi putus-sambung. Log kedua router dipenuhi pesan tentang LSP milik sendiri yang diterima dengan nomor urut lebih tinggi. `show isis spf-log` menunjukkan SPF berjalan berkali-kali per menit di seluruh domain. Apa dugaan Anda, bagaimana membuktikannya, dan bagaimana memperbaikinya?",
+      "petunjuk": [
+        "Apa saja yang ikut tersalin kalau seluruh konfigurasi disalin? Perhatikan perintah `net`.",
+        "Bagian 3 menyebut satu gangguan yang membuat LSDB terus berubah dan SPF terus berjalan. Apa penyebabnya?",
+        "Bandingkan System ID di NET kedua router, lalu amati nomor urut LSP-nya di `show isis database` beberapa kali."
+      ],
+      "jawaban": "1. Perhatikan gejalanya. Gangguan muncul sesudah penggantian router, menimpa dua POP sekaligus, dan log menyebut LSP milik sendiri dengan nomor urut lebih tinggi. SPF berjalan terus di seluruh domain.\n2. Dugaan terkuat: konfigurasi yang disalin ikut membawa perintah `net`, jadi router Gowa dan Maros punya System ID yang sama. Masing-masing menerima LSP dengan ID miliknya, tetapi isinya berbeda dan nomor urutnya lebih tinggi. Ia lalu menerbitkan ulang LSP-nya dengan nomor lebih tinggi lagi. Kedua router terus saling menimpa, dan setiap LSP baru memicu SPF di semua router.\n3. Buktikan. Bandingkan `show running-config | include net` di kedua router. Jalankan `show isis database` beberapa kali: nomor urut LSP untuk System ID itu terus naik, sementara isinya berganti-ganti antara tetangga Gowa dan tetangga Maros.\n4. Perbaiki di jendela pemeliharaan. Hapus NET lama di router Gowa, lalu pasang NET dengan System ID unik, misalnya diturunkan dari loopback-nya (cara 1 di bagian 3). Satu router hanya boleh punya satu System ID, jadi adjacency Gowa akan turun sebentar. Sesudahnya, LSP dengan System ID lama hanya diterbitkan router Maros, nomor urutnya berhenti melompat, dan SPF kembali tenang.\n5. Cegah terulang dengan menyimpan pemetaan System ID di sumber kebenaran seperti NetBox, dan tambahkan pemeriksaan System ID ganda ke prosedur penggantian perangkat.\n6. Di IS-IS, identitas router ada di NET. Menyalin konfigurasi utuh berarti ikut menyalin identitas itu."
+    }
+  },
+  "07-routing-lanjutan/11-interkoneksi-internet": {
+    "intinya": {
+      "satu_kalimat": "Internet tersambung lewat kontrak antarjaringan, yaitu transit yang dibayar dan peering yang saling menguntungkan, dan kontrak itu menentukan rute mana yang boleh diumumkan ke siapa.",
+      "analogi": "Bayangkan jaringan jalan antarperumahan. Transit seperti membayar pengelola jalan tol: Anda bisa ke kota mana saja lewat jalannya. Peering seperti dua perumahan yang sepakat membuka gerbang di antara mereka tanpa saling membayar, dan gerbang itu hanya untuk warga kedua perumahan. IXP adalah lapangan bersama tempat banyak perumahan membuka gerbang sekaligus. Bedanya dengan jalan sungguhan: di internet, setiap perumahan sendiri yang mengumumkan jalan lewat sini. Pengumuman yang salah bisa membuat seluruh kota mengantre di gerbang yang keliru.",
+      "kenapa_penting": "Bagi ISP dan penyedia konten di Indonesia, keputusan peering di IXP seperti IIX, JKT-IX, atau OpenIXP menentukan jalannya trafik. Trafik ke server di Jakarta bisa tetap di Jakarta, atau memutar lewat Singapura. Filter yang lupa dipasang di satu sesi bisa membocorkan rute dan mengganggu jaringan lain.",
+      "istilah": [
+        {
+          "kata": "Transit",
+          "arti": "Layanan berbayar: penyedia membawa trafik pelanggan ke seluruh internet dan mengumumkan rute pelanggan ke semua pihak."
+        },
+        {
+          "kata": "Peering",
+          "arti": "Pertukaran rute antara dua jaringan, biasanya tanpa bayar, hanya untuk rute milik sendiri dan pelanggannya."
+        },
+        {
+          "kata": "IXP",
+          "arti": "Titik pertukaran internet: switch bersama tempat banyak jaringan saling peering, misalnya IIX yang dikelola APJII."
+        },
+        {
+          "kata": "Route leak",
+          "arti": "Rute yang diteruskan atau diumumkan melewati batas yang dimaksud, misalnya prefix milik jaringan lain diumumkan seolah milik sendiri."
+        },
+        {
+          "kata": "Max-prefix",
+          "arti": "Batas jumlah prefix yang diterima dari satu tetangga BGP. Kalau terlampaui, sesi diputus agar kebocoran tidak menyebar."
+        },
+        {
+          "kata": "AS_PATH prepending",
+          "arti": "Menambahkan nomor AS sendiri berulang kali agar jalur tampak lebih panjang dan kurang disukai jaringan lain."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Indosat membocorkan ratusan ribu rute milik jaringan lain ke internet",
+      "kapan": "2014-04-02",
+      "di_mana": "Indosat (AS4761), Indonesia",
+      "ringkas": "Pada 2 April 2014 mulai sekitar pukul 18.25 UTC (3 April, 01.25 WIB), Indosat (AS4761) mengumumkan ratusan ribu prefix milik jaringan lain seolah-olah miliknya. Biasanya Indosat hanya mengumumkan sekitar 300 prefix. Sebagian besar pengumuman itu tidak menyebar jauh, tetapi beberapa ratus diterima luas, dan banyak di antaranya milik Akamai. Indosat sendiri ikut lumpuh. BGPmon mencatat ada laporan bahwa penyebabnya pemeliharaan yang gagal.",
+      "kronologi": [
+        {
+          "waktu": "2 April 2014, 18.25 UTC",
+          "peristiwa": "Menurut Dyn Research, Indosat mulai membocorkan lebih dari 320.000 rute, saat tabel global berisi hampir 500.000 rute. BGPmon mencatat awalnya pukul 18.26 UTC."
+        },
+        {
+          "waktu": "Dua jam berikutnya",
+          "peristiwa": "Kebocoran terjadi berulang kali. Sebagian besar rute bocor tidak menyebar jauh dari Indonesia, tetapi Dyn mencatat 354 prefix terlihat secara global, 104 di antaranya milik Akamai."
+        },
+        {
+          "waktu": "Selama kebocoran",
+          "peristiwa": "Rute palsu juga diterima beberapa penyedia di Thailand. Untuk sebagian prefix Akamai, hampir seluruh dunia memilih jalur ke Indonesia."
+        },
+        {
+          "waktu": "Selama kebocoran",
+          "peristiwa": "Chevron di London ikut terdampak. Sekitar separuh sumber routing Dyn memilih Indonesia, karena rute sah Chevron lewat British Telecom diberi prepending berat."
+        },
+        {
+          "waktu": "sekitar 21.15 UTC",
+          "peristiwa": "Menurut BGPmon, gangguan yang berpindah-pindah prefix itu berakhir. BGPmon mencatat 417.038 prefix, dan 8.182 di antaranya terlihat oleh lebih dari 10 probe."
+        },
+        {
+          "waktu": "Sesudahnya",
+          "peristiwa": "Pengukuran latensi Dyn ke Indosat lewat semua upstream-nya hampir berhenti selama gangguan, dan tetap terganggu setelah pengumuman palsu ditarik."
+        }
+      ],
+      "akar_masalah": "Indosat mengumumkan prefix milik ratusan ribu jaringan lain dengan AS4761 sebagai asal. BGPmon menduga ini masalah operasional, bukan serangan, dan menyebut laporan bahwa penyebabnya pemeliharaan yang gagal. Kebocoran sebesar itu hanya bisa keluar kalau filter keluar Indosat tidak membatasi pengumumannya pada prefix milik sendiri dan pelanggan. Tetangga yang meneruskannya juga tidak memfilter. Dyn menulis bahwa routing internet saat itu berjalan dengan sistem kepercayaan, tanpa autentikasi atau validasi.",
+      "kaitan": "Bagian 12.3 modul ini membahas kebocoran ini dengan angka Dyn. BGPmon menghitung dari sesi BGP dengan mitra peering-nya sendiri, jadi angkanya berbeda. Bagian yang sama mendaftar pertahanannya. Pembocor butuh filter keluar dan max-prefix, penerima butuh ROV dan filter IRR, dan korban butuh ROA serta AS_PATH yang ringkas. Kasus Chevron menjelaskan peringatan di bagian 12.2: prepending berlebihan membuat rute sah kalah dari rute bocor yang AS_PATH-nya lebih pendek.",
+      "pelajaran": [
+        "Pasang filter keluar di setiap sesi eBGP, sehingga hanya prefix milik sendiri dan pelanggan yang boleh keluar. Tambahkan max-prefix di setiap sesi masuk.",
+        "Jaga AS_PATH Anda tetap ringkas. Dyn menyarankan menghindari prepending yang tidak perlu, dan bersiap mengumumkan prefix lebih spesifik untuk merebut kembali trafik masuk.",
+        "Pantau pengumuman prefix Anda dari luar, misalnya dengan BGPalerter atau layanan pemantau BGP, supaya Anda tahu cepat kalau AS lain mengaku memiliki prefix Anda.",
+        "Buat ROA untuk setiap prefix yang Anda umumkan lewat MyIDNIC. Jaringan yang menerapkan ROV akan menolak pengumuman seperti milik Indosat karena ASN asalnya salah."
+      ],
+      "sumber": [
+        {
+          "judul": "Indonesia Hijacks the World (Earl Zmijewski), arsip",
+          "penerbit": "Dyn Research (Renesys)",
+          "url": "https://web.archive.org/web/20141016015930/http://research.dyn.com/2014/04/indonesia-hijacks-world/"
+        },
+        {
+          "judul": "Hijack event today by Indosat",
+          "penerbit": "BGPmon",
+          "url": "https://www.bgpmon.net/hijack-event-today-by-indosat/"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda engineer di ISP lokal Yogyakarta yang punya peering bilateral dengan sebuah penyedia konten di IIX-Jakarta. Hampir setiap malam sekitar pukul 20.00, sesi BGP ke penyedia konten itu putus lalu naik lagi 15 menit kemudian. Selama sesi turun, trafik video pindah ke transit dan angka p95 tagihan Anda naik. Tepat sebelum sesi turun, log router mencatat batas maximum-prefix terlampaui: 1.205 prefix diterima, batasnya 1.100. Konfigurasinya `neighbor 203.0.113.50 maximum-prefix 1100 90 restart 15`, dengan angka dari PeeringDB setahun lalu. Apa yang terjadi, dan apa yang Anda lakukan?",
+      "petunjuk": [
+        "Apa arti angka 90 dan `restart 15` pada perintah itu? Cocokkan dengan lamanya sesi turun.",
+        "Dari mana angka 1.100 berasal, dan kapan terakhir Anda memeriksanya?",
+        "Sebelum menaikkan batas, bagaimana memastikan prefix tambahan itu sah dan bukan kebocoran?"
+      ],
+      "jawaban": "1. Perhatikan polanya. Sesi turun saat jumlah prefix melewati 1.100, lalu naik lagi 15 menit kemudian. Itu persis perilaku `maximum-prefix 1100 90 restart 15`: peringatan di 90%, sesi diputus saat batas terlampaui, lalu dicoba lagi setelah 15 menit.\n2. Dugaan terkuat: penyedia konten kini mengumumkan lebih banyak prefix daripada angka PeeringDB setahun lalu, mungkin hanya pada jam sibuk. Batas Anda sudah usang.\n3. Uji dulu sebelum menaikkan batas. Lihat record PeeringDB terbaru (`info_prefixes4`) dan bandingkan dengan jumlah prefix yang diterima saat sesi naik di `show ip bgp summary`. Periksa sampel prefix tambahan: apakah origin-nya ASN penyedia konten itu, terdaftar di IRR-nya, dan RPKI valid. Kalau origin-nya aneh, berarti ada kebocoran, dan batas Anda justru sedang bekerja.\n4. Kalau prefix itu sah, naikkan batas sesuai angka PeeringDB terbaru ditambah cadangan 10-20%. Pulihkan sesi dengan `clear ip bgp 203.0.113.50` tanpa menunggu 15 menit. Kalau angka di PeeringDB mereka lebih kecil dari yang mereka umumkan, hubungi NOC penyedia konten itu.\n5. Cegah terulang dengan memperbarui batas max-prefix dan filter IRR secara terjadwal dari PeeringDB dan bgpq4, dan pantau peringatan 90% sebelum sesi benar-benar putus.\n6. Max-prefix melindungi Anda dari kebocoran seperti kasus Indosat, tetapi angkanya harus dirawat. Batas yang usang mengubah perlindungan itu menjadi gangguan."
+    }
+  }
+}

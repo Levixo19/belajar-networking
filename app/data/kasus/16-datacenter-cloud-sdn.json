@@ -1,0 +1,561 @@
+{
+  "16-datacenter-cloud-sdn/01-desain-dc": {
+    "intinya": {
+      "satu_kalimat": "Data center modern menyambungkan setiap switch rak (leaf) ke setiap switch inti (spine), sehingga jarak antarserver selalu sama dan semua jalur terpakai sekaligus.",
+      "analogi": "Bayangkan kompleks pergudangan: banyak gudang kecil (rak server), beberapa jalan tol layang (spine), dan setiap gudang punya gerbang ke setiap tol. Kiriman dari gudang mana pun selalu menempuh pola yang sama: naik ke salah satu tol, lalu turun di gudang tujuan. Kalau satu ruas tol ditutup, kiriman pindah ke ruas lain dan kapasitas hanya berkurang sebagian. Bedanya dengan tol sungguhan, pembagian kiriman ke semua ruas terjadi otomatis per aliran data (ECMP), dan tidak ada ruas yang dibiarkan menganggur sebagai cadangan.",
+      "kenapa_penting": "Satu klik Anda di aplikasi belanja atau video memicu banyak pertukaran data antarserver di dalam data center. Kalau jalur antarrak tidak seimbang, sebagian permintaan tertahan dan aplikasi terasa lambat. Pola spine-leaf ini yang akan Anda jumpai di data center perusahaan, bank, dan penyedia cloud.",
+      "istilah": [
+        {
+          "kata": "Spine dan leaf",
+          "arti": "Leaf adalah switch di puncak rak (ToR) tempat server tersambung. Spine adalah switch inti yang hanya menyambungkan leaf dan tidak pernah tersambung langsung ke server."
+        },
+        {
+          "kata": "East-west",
+          "arti": "Lalu lintas antarserver di dalam data center. Lawannya north-south, yaitu lalu lintas antara pengguna di internet dan server."
+        },
+        {
+          "kata": "ECMP",
+          "arti": "Equal-Cost Multi-Path. Router membagi aliran data ke beberapa jalur yang sama bagusnya, sehingga semua jalur aktif bersamaan."
+        },
+        {
+          "kata": "Oversubscription",
+          "arti": "Perbandingan kapasitas ke server dengan kapasitas ke spine. Rasio 3:1 berarti kalau semua server mengirim keluar rak bersamaan, hanya sepertiganya yang tertampung."
+        },
+        {
+          "kata": "Bisection bandwidth",
+          "arti": "Kapasitas total yang tersedia bila separuh server mengirim data ke separuh lainnya secara bersamaan. Angka ini dipakai untuk mengukur besar sebuah fabric."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "Google Jupiter: sepuluh tahun membangun sendiri fabric Clos untuk data center",
+      "kapan": "2015-08",
+      "di_mana": "Google, puluhan data center di seluruh dunia",
+      "ringkas": "Pada 2004 Google masih memakai desain lama: switch rak tersambung ke empat router cluster buatan vendor, dan bandwidth per server rata-rata hanya 100 Mbps. Google lalu membangun sendiri jaringan bertopologi Clos, keluarga desain tempat spine-leaf berasal, dari chip switch komoditas. Dalam sepuluh tahun lahir lima generasi. Generasi kelima, Jupiter, mencapai 1,3 Pbps bisection bandwidth. Menurut Google, itu cukup agar 100.000 server saling berkirim data masing-masing 10 Gbps.",
+      "kronologi": [
+        {
+          "waktu": "2004",
+          "peristiwa": "Desain four-post: setiap switch rak tersambung ke empat router cluster dengan 512 port 1 Gbps. Satu cluster memuat 20.000 server, tetapi uplink rak terlalu sempit untuk lalu lintas antarrak."
+        },
+        {
+          "waktu": "2005",
+          "peristiwa": "Firehose 1.0, percobaan pertama dengan chip switch komoditas. Ia tidak pernah membawa lalu lintas produksi, tetapi menjadi bahan belajar untuk generasi berikutnya."
+        },
+        {
+          "waktu": "2006",
+          "peristiwa": "Firehose 1.1 menjadi fabric Clos pertama di produksi. Ia dipasang berdampingan dengan jaringan lama, lengkap dengan 'tombol merah' untuk menghindari fabric baru bila terjadi kegagalan besar."
+        },
+        {
+          "waktu": "2008-2009",
+          "peristiwa": "Watchtower (82 Tbps) lalu Saturn (207 Tbps). Pada Saturn, server untuk pertama kalinya bisa mengirim 10 Gbps melintasi fabric."
+        },
+        {
+          "waktu": "2012",
+          "peristiwa": "Jupiter mulai dipasang. Ukurannya harus lebih dari enam kali fabric terbesar sebelumnya, dan teknologi baru wajib bisa dipasang bertahap tanpa membongkar cluster yang sedang berjalan."
+        },
+        {
+          "waktu": "Agustus 2015",
+          "peristiwa": "Google memaparkan kelima generasi itu dalam makalah 'Jupiter Rising' di konferensi ACM SIGCOMM 2015 di London."
+        }
+      ],
+      "akar_masalah": "Masalahnya ada di pola lalu lintas. Data dan pekerjaan Google sengaja disebar ke seluruh cluster. Pada contoh cluster 12 blok, blok median mengirim kira-kira 11/12 (sekitar 92%) lalu lintasnya ke blok lain. Desain lama dengan uplink rak yang sempit tidak sanggup melayani pola east-west seperti itu. Switch vendor kelas atas juga mahal dan membawa banyak fitur WAN yang tidak terpakai di data center.",
+      "kaitan": "Jupiter adalah versi raksasa dari bagian 3 modul ini, Arsitektur Spine-Leaf. Setiap switch rak tersambung ke beberapa blok switch di lapis atasnya, dan semua jalur dipakai lewat ECMP. Masalah desain four-post sama dengan bagian 1: desain berjenjang dengan uplink oversubscribed tidak cocok untuk lalu lintas east-west. Susunan Jupiter (switch rak, aggregation block, spine block) mirip desain multi-pod di bagian 5: aggregation block berperan seperti pod, dan spine block seperti superspine.",
+      "pelajaran": [
+        "Ukur dulu pola lalu lintas Anda. Kalau sebagian besar lalu lintas terjadi antarserver, desain berjenjang dengan uplink sempit akan menjadi hambatan.",
+        "Rancang agar bisa tumbuh bertahap: tambah leaf untuk port, tambah spine untuk kapasitas, tanpa membongkar bagian yang sudah berjalan.",
+        "Saat memasang jaringan baru, jalankan berdampingan dengan yang lama dan siapkan cara cepat untuk kembali, seperti 'tombol merah' Firehose 1.1."
+      ],
+      "sumber": [
+        {
+          "judul": "Jupiter Rising: A Decade of Clos Topologies and Centralized Control in Google's Datacenter Network",
+          "penerbit": "ACM SIGCOMM 2015 (Singh dkk., Google)",
+          "url": "https://conferences.sigcomm.org/sigcomm/2015/pdf/papers/p183.pdf"
+        },
+        {
+          "judul": "Pulling Back the Curtain on Google's Network Infrastructure",
+          "penerbit": "Google Research Blog",
+          "url": "https://research.google/blog/pulling-back-the-curtain-on-googles-network-infrastructure/"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda bergabung dengan tim jaringan sebuah perusahaan e-commerce di Surabaya. Data center-nya memakai 4 spine dan 6 leaf dengan underlay eBGP. Setiap leaf punya 48 port 10 Gbps ke server dan 4 uplink 40 Gbps, satu ke tiap spine. Minggu lalu tim menambah Leaf-6 untuk rak baru. Sejak itu, server di rak 6 lambat setiap kali menyalin data ke rak lain, padahal di dalam rak 6 sendiri cepat. Grafik Leaf-6 menunjukkan satu uplink penuh dan tiga lainnya hampir kosong. Hitung dampaknya dan cari penyebabnya.",
+      "petunjuk": [
+        "Hitung oversubscription Leaf-6 di atas kertas, lalu hitung lagi bila hanya satu uplink yang benar-benar dipakai.",
+        "Tiga uplink yang menganggur jarang berarti kabel rusak. Lihat tabel routing Leaf-6: berapa next hop untuk prefix rak lain?",
+        "Bandingkan konfigurasi BGP Leaf-6 dengan leaf lama. Secara bawaan, BGP hanya memasang satu jalur terbaik ke tabel routing."
+      ],
+      "jawaban": "1. **Hitung dulu.** Downlink 48 x 10 = 480 Gbps, uplink 4 x 40 = 160 Gbps, jadi rasio rancangan 3:1. Bila hanya satu uplink terpakai, kapasitas keluar rak tinggal 40 Gbps dan rasionya menjadi 12:1. Itu cukup untuk menjelaskan lambatnya salinan antarrak.\n2. **Amati.** Lalu lintas di dalam rak tidak melewati spine, jadi tetap cepat. Masalahnya hanya di jalur keluar rak, dan hanya di leaf yang baru.\n3. **Susun dugaan.** Kabel dan sesi BGP ke keempat spine bisa saja sehat, tetapi ECMP tidak aktif. Di BGP, multipath harus dinyalakan dengan `maximum-paths`. Tanpa itu, hanya satu jalur terbaik yang dipasang.\n4. **Uji.** Jalankan `show ip route <prefix rak lain>` di Leaf-6. Leaf lama menampilkan empat next hop, Leaf-6 hanya satu. Bandingkan konfigurasinya: template yang disalin untuk Leaf-6 ternyata tidak memuat `maximum-paths 4`.\n5. **Perbaiki dan verifikasi.** Tambahkan baris itu pada jendela pemeliharaan. Pastikan tabel routing kini menampilkan empat next hop dan grafik keempat uplink terisi kira-kira rata.\n\nKebiasaan yang mencegahnya: periksa setiap leaf baru dengan daftar yang sama, termasuk status link dan jumlah jalur ECMP."
+    }
+  },
+  "16-datacenter-cloud-sdn/02-overlay-vxlan-evpn": {
+    "intinya": {
+      "satu_kalimat": "VXLAN membungkus frame Ethernet dalam paket UDP/IP agar mesin di rak berbeda terasa satu LAN, dan EVPN memakai BGP untuk mengabarkan lokasi setiap alamat MAC.",
+      "analogi": "Bayangkan dua cabang perusahaan di kota berbeda yang ingin terasa satu kantor. Setiap surat internal (frame Ethernet) dimasukkan ke amplop kurir antarkota (VXLAN), lalu dibuka lagi di cabang tujuan. EVPN adalah buku alamat bersama: setiap cabang mengumumkan siapa pegawainya, jadi kurir tidak perlu mengantar salinan surat ke semua cabang untuk mencari penerima. Amplop itu menambah sekitar 50 byte, jadi tas kurir (MTU jaringan di bawahnya) harus lebih besar daripada surat aslinya.",
+      "kenapa_penting": "VLAN hanya punya 4.094 nomor, padahal penyedia cloud melayani puluhan ribu pelanggan yang masing-masing butuh jaringan terpisah. VXLAN menyediakan sekitar 16 juta nomor segmen dan membuat VM bisa pindah rak tanpa ganti alamat IP. Kalau Anda bekerja di data center atau cloud, pasangan EVPN-VXLAN akan sering Anda temui.",
+      "istilah": [
+        {
+          "kata": "VTEP",
+          "arti": "VXLAN Tunnel Endpoint, titik yang membungkus dan membuka paket VXLAN. Biasanya switch leaf, dan punya alamat IP di underlay."
+        },
+        {
+          "kata": "VNI",
+          "arti": "Nomor segmen VXLAN sepanjang 24 bit, sekitar 16 juta kemungkinan. Fungsinya seperti nomor VLAN, tetapi jauh lebih banyak."
+        },
+        {
+          "kata": "BUM",
+          "arti": "Broadcast, unknown unicast, multicast: frame yang harus disebar ke banyak tujuan karena penerimanya belum diketahui atau memang untuk semua."
+        },
+        {
+          "kata": "Flood-and-learn",
+          "arti": "Cara lama mempelajari lokasi MAC: frame disebar ke semua titik, lalu switch mencatat dari arah mana balasan datang."
+        },
+        {
+          "kata": "ARP suppression",
+          "arti": "Fitur EVPN: switch menjawab sendiri permintaan ARP karena sudah tahu pasangan IP dan MAC dari BGP, sehingga broadcast berkurang."
+        },
+        {
+          "kata": "Internet exchange (IX)",
+          "arti": "Tempat banyak ISP dan penyedia konten menyambung ke satu jaringan bersama untuk bertukar lalu lintas secara langsung."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "NZIX memindahkan fabric internet exchange-nya dari VPLS ke EVPN VXLAN",
+      "kapan": "2025-09-02",
+      "di_mana": "NZIX (WLG-IX), Wellington, Selandia Baru",
+      "ringkas": "NZIX adalah lembaga nirlaba yang mengelola titik pertukaran internet (IX) di Auckland, Wellington, dan Christchurch. Bagi anggotanya, sebuah IX adalah satu VLAN yang dibentangkan ke semua switch di beberapa lokasi. Selama ini VLAN itu dibangun dengan VPLS di atas inti MPLS. Pada 2 September 2025 dini hari, fabric WLG-IX dipindah ke EVPN VXLAN, dan migrasinya sempat tersendat karena tabel MAC harus diprogram ulang secara manual. Pada Desember 2025 NZIX melaporkan WLG-IX dan CHC-IX kini berjalan di EVPN VXLAN.",
+      "kronologi": [
+        {
+          "waktu": "19 Agustus 2025",
+          "peristiwa": "NZIX mengumumkan pemeliharaan WLG-IX: upgrade firmware dan migrasi fabric dari VPLS ke EVPN VXLAN, dengan perkiraan gangguan sekitar 30 menit dalam jendela empat jam."
+        },
+        {
+          "waktu": "2 Sep 2025, 00.00 NZST",
+          "peristiwa": "Pemeliharaan dimulai."
+        },
+        {
+          "waktu": "01.12 NZST",
+          "peristiwa": "Upgrade firmware selesai, tetapi migrasi fabric ke EVPN VXLAN bermasalah di sebagian port."
+        },
+        {
+          "waktu": "01.22 NZST",
+          "peristiwa": "Masalahnya ditemukan di FDB (tabel alamat MAC switch), dan alamat MAC harus diprogram ulang secara manual."
+        },
+        {
+          "waktu": "01.36 NZST",
+          "peristiwa": "Semua lalu lintas pulih. WLG-IX kini berjalan di atas instance VXLAN."
+        },
+        {
+          "waktu": "3 Desember 2025",
+          "peristiwa": "NZIX menerbitkan penjelasan migrasi WLG-IX dan CHC-IX, termasuk fitur ARP/ND suppression yang terpaksa dimatikan karena perilaku tak terduga."
+        }
+      ],
+      "akar_masalah": "VPLS meniru switch biasa: MAC yang belum dikenal disebar ke semua pseudowire. Broadcast seperti ARP juga tidak bisa dihindari, karena VPLS tidak bisa mencatat pasangan MAC dan IP. Pembagian beban di inti tidak rata, sehingga NZIX harus mengatur jalur antarlokasi dengan RSVP-TE. Makin besar exchange, makin rumit jaringan pseudowire-nya, dan menurut NZIX teknologi VPLS mulai ditinggalkan vendor.",
+      "kaitan": "Kasus ini memperlihatkan bagian 3 dan 4 modul. VPLS bekerja dengan pola flood-and-learn: lokasi MAC dipelajari dengan menyebar frame. EVPN menggantinya dengan control plane BGP (route type 2) yang mengumumkan pasangan MAC dan IP, jadi switch tidak perlu menebak. ARP suppression dari bagian 4 juga muncul di sini, lengkap dengan catatan bahwa fitur itu bisa berperilaku tak terduga. Underlay layer 3 dengan ECMP (bagian 5) menggantikan pseudowire dan RSVP-TE.",
+      "pelajaran": [
+        "Saat migrasi fabric, siapkan langkah untuk memeriksa dan mengisi ulang tabel MAC (FDB) per port, karena di situlah migrasi WLG-IX tersendat.",
+        "Nyalakan fitur pengurang broadcast seperti ARP suppression secara bertahap sambil dipantau, jangan langsung untuk semua anggota.",
+        "Umumkan jendela pemeliharaan dan perkiraan gangguan jauh hari, lalu laporkan perkembangan per tahap seperti NZIX di halaman statusnya."
+      ],
+      "sumber": [
+        {
+          "judul": "WLG-IX and CHC-IX migration to EVPN VXLAN",
+          "penerbit": "NZIX",
+          "url": "https://ix.nz/2025/12/03/wlg-ix-and-chc-ix-migration-to-evpn-vxlan/"
+        },
+        {
+          "judul": "[MAINTENANCE] WLG-IX | Ethernet Fabric Migration",
+          "penerbit": "NZIX Status",
+          "url": "https://status.ix.nz/incidents/1y8dmm9nfsj6"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Sebuah kampus di Yogyakarta membentangkan satu segmen VXLAN (VNI 10050) antara ruang server gedung A dan gedung B. Jalur antargedung disewa dari ISP lokal dengan MTU 1500 byte, dan VM di kedua gedung juga memakai MTU 1500. Ping biasa antar-VM berhasil dan login SSH lancar. Namun menyalin berkas besar atau membuka halaman web internal macet di tengah jalan. Apa dugaan Anda, bagaimana mengujinya, dan apa dua cara memperbaikinya?",
+      "petunjuk": [
+        "Gejala 'yang kecil lancar, yang besar macet' hampir selalu soal ukuran paket, bukan soal routing.",
+        "Hitung ukuran paket VM 1500 byte setelah dibungkus VXLAN. Berapa yang bisa lewat jalur ISP?",
+        "Uji dengan ping yang melarang fragmentasi, misalnya `ping -M do -s <ukuran>` di Linux, lalu cari ukuran terbesar yang masih lolos."
+      ],
+      "jawaban": "1. **Amati.** Ping biasa dan login SSH memakai paket kecil, jadi lolos. Salinan berkas dan halaman web memakai paket penuh 1500 byte, dan justru itu yang macet. Polanya menunjuk ke MTU.\n2. **Hitung.** VXLAN menambah sekitar 50 byte: header Ethernet asli 14, VXLAN 8, UDP 8, dan IP luar 20. Paket IP 1500 byte dari VM menjadi paket IP luar 1550 byte, padahal jalur ISP hanya menerima 1500. VTEP umumnya tidak memecah paket, jadi paket itu dibuang tanpa kabar ke VM.\n3. **Uji.** Dari satu VM, jalankan `ping -M do -s 1422 <IP VM seberang>`. Ukuran ini menghasilkan paket IP 1450 byte (1422 ditambah 28 byte header ICMP dan IP), yang setelah dibungkus pas 1500, jadi seharusnya lolos. Lalu coba `-s 1423`. Bila yang ini gagal, dugaan terbukti: ruang untuk VM hanya 1450 byte.\n4. **Perbaiki.** Cara terbaik: minta ISP menaikkan MTU jalur ke minimal 1550, lebih baik jumbo (misalnya 9000), sesuai saran bagian 2 modul. Bila ISP tidak sanggup, turunkan MTU semua VM di segmen itu menjadi 1450, atau batasi MSS TCP di gateway. Cara kedua ini berhasil, tetapi setiap VM baru harus ikut diatur.\n5. **Verifikasi.** Ulangi uji ping dengan ukuran batas yang baru, lalu salin berkas besar sampai selesai."
+    }
+  },
+  "16-datacenter-cloud-sdn/03-storage-virtualisasi": {
+    "intinya": {
+      "satu_kalimat": "Virtualisasi membagi satu perangkat fisik menjadi banyak mesin, switch, atau tabel routing virtual, sedangkan jaringan storage membuat server memakai disk yang berada di mesin lain.",
+      "analogi": "Bayangkan gedung perkantoran yang disewakan per lantai: satu gedung (server fisik) dibagi untuk banyak penyewa (VM), masing-masing dengan kunci sendiri. Container lebih mirip ruang coworking: mejanya terpisah, tetapi dapur dan listriknya (kernel) dipakai bersama. Arsipnya disimpan di gedung lain: NAS seperti petugas arsip yang mengambilkan map tertentu, SAN seperti lemari pribadi yang lacinya Anda tata sendiri. Kalau jalan antargedung macet, semua penyewa ikut menunggu arsipnya.",
+      "kenapa_penting": "Banyak aplikasi yang Anda pakai setiap hari, dari m-banking sampai sistem kasir toko, berjalan di VM atau container. Disknya sering berada di storage terpisah yang diakses lewat jaringan. Gangguan kecil di jaringan storage terasa di aplikasi sebagai disk yang membeku.",
+      "istilah": [
+        {
+          "kata": "Hypervisor",
+          "arti": "Perangkat lunak yang membagi CPU, RAM, dan kartu jaringan satu server fisik ke banyak VM."
+        },
+        {
+          "kata": "VRF",
+          "arti": "Virtual Routing and Forwarding: satu router fisik menyimpan beberapa tabel routing terpisah, sehingga dua pelanggan bisa memakai alamat IP yang sama tanpa bentrok."
+        },
+        {
+          "kata": "SAN dan NAS",
+          "arti": "NAS memberi akses tingkat berkas (NFS, SMB). SAN memberi akses tingkat blok, sehingga server melihat storage seperti disk lokal."
+        },
+        {
+          "kata": "Replika (mirror)",
+          "arti": "Salinan data yang terus diperbarui di mesin lain, agar data tetap ada bila satu mesin rusak."
+        },
+        {
+          "kata": "Availability Zone",
+          "arti": "Kelompok data center terpisah di satu region cloud, dengan listrik dan jaringan sendiri. Gangguan di satu zona seharusnya tidak menjalar ke zona lain."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Salah alih lalu lintas jaringan memicu badai re-mirroring Amazon EBS",
+      "kapan": "2011-04-21",
+      "di_mana": "Amazon Web Services, region US East",
+      "ringkas": "Amazon EBS adalah layanan disk jaringan untuk server virtual (EC2) di AWS. Data setiap volume disalin ke node lain dalam satu cluster. Pada dini hari 21 April 2011, perubahan jaringan rutin salah mengalihkan lalu lintas ke jaringan cadangan berkapasitas kecil. Banyak node EBS terputus dari replikanya, lalu serentak mencari tempat untuk salinan baru. Sekitar 13% volume di satu Availability Zone macet, dan pemulihannya memakan beberapa hari.",
+      "kronologi": [
+        {
+          "waktu": "21 Apr, 00.47 PDT",
+          "peristiwa": "Perubahan konfigurasi untuk menambah kapasitas jaringan utama dijalankan. Lalu lintas yang seharusnya pindah ke router lain di jaringan utama malah diarahkan ke jaringan replikasi yang lebih kecil."
+        },
+        {
+          "waktu": "segera sesudahnya",
+          "peristiwa": "Jaringan cadangan tidak sanggup menampung lalu lintas itu. Banyak node EBS di zona tersebut terputus dari node lain di cluster-nya, baik lewat jaringan utama maupun cadangan."
+        },
+        {
+          "waktu": "setelah jaringan dikembalikan",
+          "peristiwa": "Node yang kehilangan replika serentak mencari ruang kosong untuk salinan baru (re-mirroring). Ruang kosong cluster cepat habis, dan sekitar 13% volume di zona itu macet."
+        },
+        {
+          "waktu": "21 Apr, 02.40 PDT",
+          "peristiwa": "Antrean permintaan membuat control plane EBS ikut kewalahan dan menolak permintaan API di zona lain. Tim mematikan pembuatan volume baru di zona terdampak, dan pukul 02.50 API zona lain pulih."
+        },
+        {
+          "waktu": "21 Apr, 12.04 PDT",
+          "peristiwa": "Gangguan berhasil dikurung di satu zona, dan cluster EBS yang rusak distabilkan."
+        },
+        {
+          "waktu": "22 Apr, 12.30 PDT",
+          "peristiwa": "Setelah kapasitas baru ditambahkan sejak sekitar pukul 02.00, semua volume di zona itu pulih kecuali sekitar 2,2%."
+        },
+        {
+          "waktu": "24 Apr, 12.30 PDT",
+          "peristiwa": "Pemulihan lewat snapshot selesai, dan tinggal 1,04% volume terdampak yang belum pulih. Hasil akhirnya, 0,07% volume di zona itu tidak bisa dikembalikan dalam keadaan konsisten."
+        }
+      ],
+      "akar_masalah": "Kesalahan saat mengalihkan lalu lintas memutus node storage dari replikanya. Node EBS dirancang menganggap replika yang tak terjangkau sudah rusak, lalu segera membuat salinan baru. Karena banyak node melakukannya bersamaan, kapasitas kosong habis dan permintaan menumpuk sampai ke control plane yang dipakai bersama semua zona. AWS juga menemukan race condition yang membuat sebagian node EBS gagal di tengah badai itu.",
+      "kaitan": "Bagian 4 dan 5 modul menyebut storage blok lewat jaringan (SAN, iSCSI) peka terhadap latensi dan packet loss, dan menyarankan jaringan storage terpisah. EBS memang punya dua jaringan, utama dan replikasi. Masalahnya, jaringan cadangan yang lebih kecil tidak sanggup menampung seluruh lalu lintas. Bagi server virtual, volume EBS terlihat seperti disk lokal; saat replikasinya terganggu, disk itu 'macet' dan aplikasi di VM ikut berhenti.",
+      "pelajaran": [
+        "Uji jaringan cadangan storage dengan beban penuh, jangan hanya memastikan ia menyala. Tulis di runbook apa yang terjadi bila lalu lintas berpindah ke sana.",
+        "Sisakan kapasitas kosong untuk pemulihan besar. AWS menyimpulkan cluster perlu cadangan ruang untuk kegagalan skala besar.",
+        "Buat logika coba ulang (retry) yang mundur saat gangguan besar. AWS mengubah node EBS agar lebih dulu menyambung lagi ke replika lama daripada mencari node baru.",
+        "Sebarkan aplikasi penting ke lebih dari satu Availability Zone. Menurut AWS, banyak pelanggan yang melakukannya tidak terdampak berarti."
+      ],
+      "sumber": [
+        {
+          "judul": "Summary of the Amazon EC2 and Amazon RDS Service Disruption in the US East Region",
+          "penerbit": "Amazon Web Services",
+          "url": "https://aws.amazon.com/message/65648/"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Sebuah kantor notaris di Medan punya satu storage kecil yang mendukung iSCSI. Teknisi membuat satu LUN 2 TB, memformatnya NTFS, lalu menyambungkannya ke dua PC staf sekaligus agar keduanya memakai folder arsip yang sama. Hari pertama lancar. Seminggu kemudian, berkas yang disimpan di PC 1 tidak muncul di PC 2, beberapa berkas Word rusak, dan Windows menyarankan `chkdsk`. Jaringan tidak pernah putus. Apa penyebabnya, dan bagaimana rancangan yang benar?",
+      "petunjuk": [
+        "Ingat beda SAN dan NAS dari sisi klien: apa yang sebenarnya diberikan iSCSI kepada setiap PC?",
+        "Bila dua komputer sama-sama menganggap satu disk sebagai disk lokalnya, siapa yang mengatur sistem berkasnya?",
+        "NTFS biasa tidak dirancang untuk dipakai dua sistem operasi sekaligus. Pikirkan layanan yang membagi berkas, bukan blok."
+      ],
+      "jawaban": "1. **Amati.** Jaringan sehat, tetapi isi folder berbeda di dua PC dan sebagian berkas rusak. Ini masalah di tingkat sistem berkas, bukan di kabel atau IP.\n2. **Pahami yang terjadi.** iSCSI adalah SAN: ia memberi setiap PC akses blok mentah, seolah disk lokal. Masing-masing Windows memasang NTFS sendiri, menyimpan cache sendiri, dan menulis blok tanpa tahu PC lain juga menulis. Akibatnya struktur NTFS saling timpa: berkas hilang dari pandangan PC lain dan sebagian rusak.\n3. **Uji dugaan.** Di halaman storage, lihat daftar sesi LUN itu. Biasanya tampak dua initiator (dua nama IQN) tersambung ke LUN yang sama. Lepas LUN dari salah satu PC, lalu jalankan `chkdsk` dari satu PC saja.\n4. **Rancangan yang benar.** Untuk folder bersama, pakai NAS: buat share SMB di storage (banyak storage kecil menyediakannya) atau di server berkas, lalu kedua PC memetakan folder jaringan itu. Layanan berkas mengatur penguncian, jadi dua orang tidak menimpa data yang sama. Pakai iSCSI hanya untuk satu mesin per LUN, atau untuk cluster yang memakai sistem berkas khusus cluster.\n5. **Pulihkan data.** Ambil berkas dari backup terakhir yang sehat. Ini juga kesempatan menguji apakah backup itu memang bisa dipulihkan."
+    }
+  },
+  "16-datacenter-cloud-sdn/04-cloud-networking": {
+    "intinya": {
+      "satu_kalimat": "Di cloud, router, firewall, dan NAT berwujud layanan virtual yang Anda atur lewat konsol, dan keamanannya menjadi tanggung jawab bersama Anda dan penyedia.",
+      "analogi": "Menyewa VPC mirip menyewa satu lantai kosong di gedung perkantoran. Pengelola gedung mengurus listrik, lift, dan satpam lobi (infrastruktur fisik). Anda yang menyekat ruangan (subnet), menentukan pintu mana yang terkunci (security group dan NACL), dan siapa boleh masuk. Bedanya, lorong penghubung antarlantai (misalnya Transit Gateway) juga milik pengelola: kalau penuh, Anda tidak bisa melihat atau memperbaikinya sendiri.",
+      "kenapa_penting": "Kalau perusahaan tempat Anda bekerja memakai cloud, pekerjaan sehari-hari Anda bisa berupa membuat VPC, mengatur security group, atau menyambungkan kantor ke cloud lewat VPN. Untuk data yang diatur regulasi, Anda juga harus memilih region di Indonesia. Banyak insiden cloud berawal dari salah konfigurasi di sisi pelanggan.",
+      "istilah": [
+        {
+          "kata": "VPC",
+          "arti": "Virtual Private Cloud: jaringan virtual pribadi Anda di cloud, lengkap dengan rentang IP, subnet, dan route table."
+        },
+        {
+          "kata": "Security group",
+          "arti": "Firewall stateful yang melekat pada tiap instance. Balasan otomatis diizinkan, dan aturannya hanya berisi izin."
+        },
+        {
+          "kata": "NACL",
+          "arti": "Network ACL: filter stateless per subnet. Lalu lintas masuk dan balasannya harus diizinkan secara terpisah."
+        },
+        {
+          "kata": "Transit Gateway",
+          "arti": "Layanan AWS yang menjadi hub untuk menyambungkan banyak VPC dan jaringan kantor, tanpa membuat sambungan satu per satu."
+        },
+        {
+          "kata": "Autoscaling",
+          "arti": "Fitur yang menambah atau mengurangi jumlah server secara otomatis berdasarkan ukuran beban, misalnya pemakaian CPU."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Slack tumbang di hari kerja pertama 2021 karena AWS Transit Gateway kewalahan",
+      "kapan": "2021-01-04",
+      "di_mana": "Slack, di atas Amazon Web Services, global",
+      "ringkas": "Slack menyambungkan banyak VPC miliknya lewat AWS Transit Gateway (TGW). Pada 4 Januari 2021, hari kerja pertama tahun itu bagi banyak orang, lalu lintas melonjak dan TGW tidak menambah kapasitasnya cukup cepat. Paket hilang di jalur antarlayanan, server web lama menunggu, dan autoscaling sempat mengurangi server. Sekitar pukul 07.00 PST, lapisan web Slack jenuh dan layanan tidak bisa dipakai. Jaringan baru normal setelah AWS menaikkan kapasitas TGW secara manual.",
+      "kronologi": [
+        {
+          "waktu": "4 Jan 2021, pagi waktu Amerika",
+          "peristiwa": "Lalu lintas melonjak sesudah libur panjang. Cache aplikasi di perangkat pengguna masih kosong, jadi aplikasi menarik lebih banyak data dari biasanya."
+        },
+        {
+          "waktu": "sebelum 07.00 PST",
+          "peristiwa": "Paket mulai hilang di TGW. Thread server web lebih lama menunggu, pemakaian CPU turun, dan autoscaling sempat mengurangi jumlah server."
+        },
+        {
+          "waktu": "06.57 PST",
+          "peristiwa": "Slack masih hidup, tetapi hanya 99% pesan yang terkirim. Pada hari biasa angkanya di atas 99,999%."
+        },
+        {
+          "waktu": "07.00 PST",
+          "peristiwa": "Lonjakan kecil lalu lintas pada jam itu, ditambah gangguan jaringan, membuat lapisan web jenuh dan Slack tidak bisa dipakai."
+        },
+        {
+          "waktu": "07.01-07.15 PST",
+          "peristiwa": "Tim mencoba menambah 1.200 server web. Sebagian besar tidak selesai disiapkan, karena layanan penyedia server terbentur batas berkas terbuka Linux dan kuota AWS."
+        },
+        {
+          "waktu": "sekitar 08.15 PST",
+          "peristiwa": "Layanan penyedia server berjalan lagi, dan kondisi mulai membaik."
+        },
+        {
+          "waktu": "sekitar 09.15 PST",
+          "peristiwa": "Slack kembali melayani, walau lebih lambat dan tingkat galatnya masih tinggi."
+        },
+        {
+          "waktu": "10.40 PST",
+          "peristiwa": "Kenaikan kapasitas TGW yang dilakukan AWS secara manual selesai di semua Availability Zone, dan jaringan kembali normal."
+        }
+      ],
+      "akar_masalah": "Lalu lintas antar-VPC Slack melewati TGW, layanan yang dikelola AWS dan seharusnya menambah kapasitas sendiri tanpa terlihat oleh pelanggan. Lonjakan paket per detik pagi itu lebih cepat daripada kemampuan TGW menyesuaikan diri, sehingga paket hilang. Efeknya berantai: latensi naik, CPU server web turun dan memicu pengurangan server, lalu penambahan server darurat terhambat batas berkas terbuka dan kuota akun. Dasbor dan alarm Slack ikut mati karena berada di VPC lain dari databasenya, jadi juga bergantung pada TGW.",
+      "kaitan": "Bagian 2 modul memetakan Transit Gateway sebagai padanan 'peering antarsitus' untuk menghubungkan VPC. Kasus ini menunjukkan bahwa komponen jaringan cloud tetap punya batas kapasitas, hanya saja batas itu dikelola penyedia. Ini sisi lain Shared Responsibility Model di bagian 5: AWS bertanggung jawab atas kapasitas TGW, tetapi Slack menanggung akibat arsitekturnya sendiri. Contohnya, alat pemantau Slack melewati jalur yang sama dengan sistem yang dipantaunya.",
+      "pelajaran": [
+        "Petakan semua ketergantungan pada komponen jaringan terkelola seperti TGW, termasuk ketergantungan alat pemantau Anda sendiri.",
+        "Jangan menskalakan server hanya dari CPU. Saat jaringan bermasalah, CPU bisa turun karena thread menunggu, lalu autoscaling malah mengurangi server.",
+        "Uji beban sistem penyedia server dan periksa kuota akun cloud sebelum Anda membutuhkannya dalam keadaan darurat.",
+        "Perkirakan lonjakan sesudah libur panjang (misalnya sesudah Lebaran), dan bicarakan dengan penyedia cloud bila kapasitas perlu disiapkan lebih dulu."
+      ],
+      "sumber": [
+        {
+          "judul": "Slack's Outage on January 4th 2021",
+          "penerbit": "Slack Engineering",
+          "url": "https://slack.engineering/slacks-outage-on-january-4th-2021/"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Sebuah usaha katering di Bandung memindahkan website pemesanannya ke AWS region Jakarta. Server web ada di subnet publik dengan Internet Gateway, dan security group mengizinkan TCP 443 masuk dari mana saja. Karena atasan meminta 'kunci semuanya', rekan Anda menambah NACL di subnet itu: inbound izinkan TCP 443, outbound izinkan TCP 443, sisanya ditolak. Sejak itu website tidak bisa dibuka dari luar, padahal server dan security group tidak diubah. Apa yang salah, dan bagaimana memperbaikinya tanpa membuka semuanya?",
+      "petunjuk": [
+        "Security group bersifat stateful, NACL stateless. Bagi NACL, balasan server adalah lalu lintas keluar yang harus diizinkan sendiri.",
+        "Saat browser pelanggan menyambung ke port 443, dari port berapa koneksi itu berasal, dan ke port mana balasan server dikirim?",
+        "Periksa juga apakah server perlu memulai koneksi keluar sendiri, misalnya untuk update atau memanggil API pembayaran."
+      ],
+      "jawaban": "1. **Amati.** Yang berubah hanya NACL, jadi mulai dari sana. Paket dari pelanggan ke port 443 lolos aturan inbound.\n2. **Pahami balasannya.** Browser pelanggan memakai port sumber acak (port ephemeral, biasanya 1024-65535). Balasan server dikirim dari port 443 menuju port acak itu. Aturan outbound NACL hanya mengizinkan tujuan TCP 443, jadi semua balasan dibuang. Security group tidak terkena masalah ini karena stateful: balasan otomatis diizinkan.\n3. **Uji.** Lihat VPC Flow Logs untuk interface server: paket masuk ke port 443 tercatat ACCEPT, sedangkan paket keluar ke port tinggi tercatat REJECT.\n4. **Perbaiki.** Tambah aturan outbound NACL yang mengizinkan TCP ke port 1024-65535 dengan tujuan 0.0.0.0/0. Bila server juga memulai koneksi keluar, pertahankan outbound TCP 443 dan tambah inbound TCP 1024-65535 untuk balasannya.\n5. **Periksa urutan.** NACL dievaluasi dari nomor aturan terkecil, jadi pastikan aturan izin itu bernomor lebih kecil daripada aturan tolak.\n\nUntuk kebanyakan kebutuhan, security group yang ketat sudah cukup. NACL berguna sebagai lapis tambahan, asalkan aturannya selalu memikirkan dua arah."
+    }
+  },
+  "16-datacenter-cloud-sdn/05-container-kubernetes": {
+    "intinya": {
+      "satu_kalimat": "Kubernetes memberi tiap Pod IP sendiri tanpa NAT, lalu Service, DNS internal, Ingress, dan NetworkPolicy mengatur cara Pod ditemukan, diakses, dan dibatasi.",
+      "analogi": "Bayangkan Pod sebagai pedagang pasar malam yang lapaknya bisa berpindah setiap malam. Service adalah papan nama tetap di pintu masuk ('Martabak, belok kiri'), jadi pembeli tidak perlu tahu lapak mana yang buka hari ini. CNI adalah panitia yang membagi nomor lapak dan memasang jalan setapak antarlapak, sedangkan NetworkPolicy adalah aturan siapa boleh masuk ke area dapur. Bedanya, di Kubernetes pedagang bisa berganti dalam hitungan detik, dan tanpa NetworkPolicy semua lapak bebas saling mendatangi.",
+      "kenapa_penting": "Banyak aplikasi web dan seluler modern berjalan sebagai container di Kubernetes. Saat aplikasi seperti itu bermasalah, penyebabnya sering ada di jaringan cluster: DNS internal, CNI, atau NetworkPolicy. Pengetahuan namespace, NAT, DNS, dan BGP dari modul sebelumnya langsung terpakai di sini.",
+      "istilah": [
+        {
+          "kata": "Pod",
+          "arti": "Unit terkecil di Kubernetes, berisi satu atau beberapa container yang berbagi alamat IP. Pod bisa mati dan diganti kapan saja dengan IP baru."
+        },
+        {
+          "kata": "CNI",
+          "arti": "Container Network Interface: standar plugin yang memberi Pod alamat IP dan menyambungkan jaringannya, misalnya Calico, Cilium, atau Flannel."
+        },
+        {
+          "kata": "Service",
+          "arti": "Alamat IP virtual dan nama DNS tetap di depan sekumpulan Pod, yang membagi permintaan ke Pod yang sehat."
+        },
+        {
+          "kata": "Label dan selector",
+          "arti": "Label adalah tanda berupa pasangan kunci dan nilai pada objek Kubernetes. Selector memilih objek berdasarkan label, misalnya di NetworkPolicy atau konfigurasi CNI."
+        },
+        {
+          "kata": "Route reflector",
+          "arti": "Router BGP yang meneruskan rute ke semua tetangganya, sehingga tiap node cukup bertetangga dengan beberapa reflector, tidak dengan semua node."
+        },
+        {
+          "kata": "Control plane (cluster)",
+          "arti": "Mesin pengatur cluster Kubernetes, seperti API server dan etcd. Node lain menjalankan Pod sesuai perintahnya."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Reddit lumpuh 314 menit di Hari Pi karena label node lama dihapus di Kubernetes 1.24",
+      "kapan": "2023-03-14",
+      "di_mana": "Reddit, global (cluster Kubernetes di AWS)",
+      "ringkas": "Pada 14 Maret 2023, tim Reddit meng-upgrade cluster Kubernetes terbesarnya, yang menjalankan bagian lama situs, dari versi 1.23 ke 1.24. Sekitar dua menit setelah upgrade dimulai, situs berhenti total. Sebagian besar fitur Reddit lumpuh selama 314 menit, tepat di Hari Pi (14/3). Penyebabnya baru ketahuan setelah situs pulih: route reflector Calico dipilih dengan label node lama yang dihapus di Kubernetes 1.24.",
+      "kronologi": [
+        {
+          "waktu": "14 Mar, lewat 19.00 UTC",
+          "peristiwa": "Upgrade dimulai di cluster terbesar Reddit. Selama sekitar dua menit semuanya tampak normal."
+        },
+        {
+          "waktu": "sekitar 19.04 UTC",
+          "peristiwa": "Calico di semua node mulai membuang rute ke semua node, bukan hanya ke node control plane yang sedang di-upgrade. Pukul 19.04.49 log API server melonjak lima kali lipat."
+        },
+        {
+          "waktu": "T+3 menit",
+          "peristiwa": "Tim berkumpul di panggilan insiden. Metrik cluster hilang semua, dan DNS di dalam cluster tidak menjawab, padahal DNS publik normal."
+        },
+        {
+          "waktu": "sekitar 1 jam",
+          "peristiwa": "Belum ada petunjuk pasti. Sebagian tim mulai menyiapkan pemulihan dari backup, karena Kubernetes tidak punya prosedur downgrade resmi."
+        },
+        {
+          "waktu": "lebih dari 2 jam",
+          "peristiwa": "Tim memutuskan memulihkan control plane dari backup. Prosedurnya ditulis untuk versi lama dan untuk Docker, jadi harus ditulis ulang saat itu juga."
+        },
+        {
+          "waktu": "akhir pemulihan",
+          "peristiwa": "Lalu lintas dinyalakan bertahap: 1%, 5%, 10%, 20%, 35%, 55%, 80%, lalu 100%. Situs hidup lagi setelah total 314 menit."
+        },
+        {
+          "waktu": "setelah pemulihan",
+          "peristiwa": "Saat menyusun postmortem, penelusuran log dan ingatan seorang engineer menemukan penyebabnya: route reflector dipilih dengan label `node-role.kubernetes.io/master` yang sudah hilang."
+        }
+      ],
+      "akar_masalah": "Calico, CNI di cluster itu, memakai BGP untuk menyebarkan rute Pod antarnode. Di cluster besar, node tidak bertetangga dengan semua node, tetapi dengan beberapa route reflector. Reddit menunjuk node control plane sebagai reflector lewat selector berlabel `node-role.kubernetes.io/master`. Kubernetes mengganti istilah 'master' menjadi 'control-plane' sejak seri 1.20, lalu versi 1.24 menghapus label lama itu, juga dari cluster yang sedang berjalan. Akibatnya semua rute Pod lenyap. Konfigurasi itu tidak tersimpan di kode mana pun, dan orang yang memasangnya sudah pindah.",
+      "kaitan": "Kasus ini menyentuh bagian 3 modul (CNI): Kubernetes tidak menyediakan jaringan Pod sendiri, dan Calico mewujudkannya dengan routing BGP. Begitu rute antarnode hilang, aturan dasar di bagian 2 (semua Pod saling menjangkau tanpa NAT) langsung gagal. Gejala pertama yang terlihat justru DNS di dalam cluster, pengingat bahwa DNS internal (bagian 4) juga bergantung pada jaringan Pod. Selector berbasis label yang menjatuhkan Reddit bekerja seperti `podSelector` pada NetworkPolicy (bagian 6).",
+      "pelajaran": [
+        "Sebelum upgrade, cari semua konfigurasi yang memakai label atau API yang akan dihapus, termasuk konfigurasi CNI di luar manifest biasa.",
+        "Simpan konfigurasi jaringan cluster (misalnya BGP Calico) di Git, agar ada jejak yang bisa dibaca orang berikutnya.",
+        "Uji pemulihan dari backup secara rutin di lingkungan yang mirip produksi. Prosedur yang usang akan gagal tepat saat paling dibutuhkan.",
+        "Kembalikan lalu lintas bertahap setelah gangguan besar, seperti Reddit dari 1% sampai 100%, agar cache dan layanan di belakangnya tidak kebanjiran."
+      ],
+      "sumber": [
+        {
+          "judul": "You Broke Reddit: The Pi-Day Outage",
+          "penerbit": "Reddit Engineering (r/RedditEng)",
+          "url": "https://www.reddit.com/r/RedditEng/comments/11xx5o0/you_broke_reddit_the_piday_outage/"
+        },
+        {
+          "judul": "You Broke Reddit: The Pi-Day Outage (salinan arsip)",
+          "penerbit": "Internet Archive",
+          "url": "https://web.archive.org/web/20231116020453/https://old.reddit.com/r/RedditEng/comments/11xx5o0/you_broke_reddit_the_piday_outage/"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Tim developer sebuah aplikasi kasir daring di Semarang menambah dua NetworkPolicy di namespace `toko`. Yang pertama default-deny untuk egress. Yang kedua mengizinkan Pod `web` keluar ke Pod berlabel `app=api` di TCP 8080. Setelah itu, `curl http://api:8080/health` dari Pod web gagal dengan pesan 'Could not resolve host'. Anehnya, `curl http://10.96.12.34:8080/health` ke ClusterIP Service api berhasil. Apa penyebabnya, dan bagaimana memperbaikinya dengan izin seminimal mungkin?",
+      "petunjuk": [
+        "Pesan 'Could not resolve host' muncul sebelum satu paket pun dikirim ke api. Langkah apa yang dilakukan curl sebelum menyambung?",
+        "Di mana server DNS cluster berjalan, dan lewat port serta protokol apa ia dihubungi?",
+        "Default-deny egress menolak semua yang tidak diizinkan, termasuk lalu lintas yang sering terlupa."
+      ],
+      "jawaban": "1. **Amati.** Akses lewat IP berhasil, jadi jalur web ke api dan aturan TCP 8080 sudah benar. Yang gagal hanya akses lewat nama.\n2. **Susun dugaan.** Untuk mengubah `api` menjadi IP, Pod web bertanya ke DNS cluster (CoreDNS) di namespace `kube-system`, lewat UDP 53, dan TCP 53 untuk jawaban besar. Default-deny egress ikut menolak lalu lintas ini karena belum ada aturan yang mengizinkannya.\n3. **Uji.** Dari Pod web, jalankan `nslookup api`. Hasilnya timeout, tanda server DNS tidak terjangkau, bukan nama yang salah. Bila CNI-nya Cilium, `hubble observe --pod web --verdict DROPPED` akan menampilkan paket ke port 53 yang ditolak.\n4. **Perbaiki.** Tambah aturan egress dari Pod di namespace `toko` ke Pod berlabel `k8s-app: kube-dns` di namespace `kube-system`, pada UDP 53 dan TCP 53. Jangan membuka egress ke semua tujuan hanya demi DNS.\n5. **Verifikasi.** `curl http://api:8080/health` berhasil, sedangkan uji ke tujuan lain, misalnya internet, tetap ditolak sesuai niat default-deny."
+    }
+  },
+  "16-datacenter-cloud-sdn/06-sdn": {
+    "intinya": {
+      "satu_kalimat": "SDN memindahkan 'otak' jaringan (control plane) dari tiap perangkat ke controller terpusat, sehingga ratusan switch diatur sebagai satu sistem, sementara perangkatnya tinggal meneruskan paket.",
+      "analogi": "Bandingkan ojek pangkalan dengan ojek daring. Tukang ojek pangkalan memilih rute sendiri berdasarkan kabar dari sesama tukang ojek, seperti router tradisional. Pada ojek daring, aplikasi pusat (controller) melihat semua pesanan dan memberi tahu tiap pengemudi ke mana harus pergi, sedangkan pengemudi cukup mengantar (data plane). Saat aplikasi error, pengemudi masih bisa menuntaskan antaran; switch di B4 milik Google pun tetap meneruskan paket dengan instruksi terakhir, tetapi tidak menerima rute baru.",
+      "kenapa_penting": "Controller seperti Cisco Catalyst Center, Meraki Dashboard, dan SD-WAN Manager dipakai di kampus, kantor cabang, dan data center. Dengan controller, satu kebijakan disebar ke ratusan perangkat sekaligus, begitu pula satu kesalahan. CCNA menguji konsep ini di topik 6.2 sampai 6.4.",
+      "istilah": [
+        {
+          "kata": "Control plane",
+          "arti": "Bagian yang memutuskan ke mana paket harus pergi: menjalankan protokol routing dan membangun tabel."
+        },
+        {
+          "kata": "Data plane",
+          "arti": "Bagian yang benar-benar meneruskan paket dengan cepat berdasarkan tabel dari control plane."
+        },
+        {
+          "kata": "OpenFlow",
+          "arti": "Protokol southbound yang dipakai controller untuk mengisi tabel forwarding switch secara langsung."
+        },
+        {
+          "kata": "Traffic engineering (TE)",
+          "arti": "Mengatur jalur lalu lintas secara sengaja, misalnya membagi aliran ke beberapa jalur, alih-alih selalu mengikuti jalur terpendek."
+        },
+        {
+          "kata": "Northbound dan southbound API",
+          "arti": "Northbound menghadap aplikasi dan skrip, biasanya REST. Southbound menghadap perangkat, misalnya NETCONF, OpenFlow, atau gNMI."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "Google B4: WAN antar-data center berbasis SDN yang mengisi link hampir 100%",
+      "kapan": "2013-08",
+      "di_mana": "Google, jaringan antar-data center di seluruh dunia",
+      "ringkas": "Google punya dua WAN: satu menghadap pengguna internet, dan B4 yang khusus menghubungkan data center-nya. Lebih dari 90% lalu lintas aplikasi internal Google lewat B4. WAN biasa dirancang hanya terisi 30-40% agar tahan kegagalan. B4 memakai SDN dan OpenFlow: switch sederhana dari chip komoditas, dengan traffic engineering terpusat. Hasilnya, banyak link B4 berjalan mendekati 100%, dan rata-rata semua link sekitar 70% dalam jangka panjang.",
+      "kronologi": [
+        {
+          "waktu": "sekitar 2010",
+          "peristiwa": "B4 mulai dipakai di produksi, tiga tahun sebelum makalahnya terbit. Sebelum SDN, B4 sudah berjalan sebagai satu AS yang menyambungkan cluster lewat BGP dan IS-IS biasa, sehingga peralihan bisa bertahap."
+        },
+        {
+          "waktu": "2012",
+          "peristiwa": "Lalu lintas B4 kira-kira berlipat dua dalam setahun."
+        },
+        {
+          "waktu": "Sep-Nov 2012",
+          "peristiwa": "B4 menghubungkan 16 situs. Rata-rata ada 286 perubahan topologi per hari, dan algoritma TE berjalan rata-rata 0,3 detik per hitungan."
+        },
+        {
+          "waktu": "gangguan besar, sebelum 2013",
+          "peristiwa": "Saat separuh switch di situs terbesar dipindahkan, satu switch baru tak sengaja diberi ID yang sama dengan switch lama. Banjir pesan IS-IS menumpuk di antrean controller sampai lebih dari 400 MB."
+        },
+        {
+          "waktu": "selama gangguan",
+          "peristiwa": "Pesan Hello terlambat, interface dianggap mati, dan adjacency BGP putus. Lalu lintas TE yang ada tetap jalan dengan state terakhir, tetapi tunnel baru tidak bisa dibuat. Sistem pulih setelah situs dikosongkan, TE dimatikan, dan controller dinyalakan ulang."
+        },
+        {
+          "waktu": "Agustus 2013",
+          "peristiwa": "Google memaparkan B4 di ACM SIGCOMM 2013 di Hong Kong."
+        }
+      ],
+      "akar_masalah": "WAN tradisional mahal: link jarak jauh disewa mahal, router kelas atas mahal, dan link sengaja dibiarkan terisi 30-40% sebagai cadangan. Proyeksi pertumbuhan B4 membuat cara itu terlalu mahal. Google memanfaatkan dua hal: ia mengendalikan aplikasi di kedua ujung, dan lalu lintas terbesarnya adalah salinan data yang bisa menyesuaikan kecepatan. Controller terpusat yang melihat seluruh jaringan mendahulukan lalu lintas penting, lalu mengisi sisa kapasitas dengan lalu lintas prioritas rendah.",
+      "kaitan": "B4 adalah contoh nyata bagian 2 modul. Control plane-nya (Quagga untuk BGP dan IS-IS, controller OpenFlow, server TE) berjalan di server terpisah, sedangkan switch hanya meneruskan paket. OpenFlow menjadi southbound API dari bagian 4. Desainnya hibrida, seperti peringatan di bagian 2: routing biasa tetap berjalan di bawah TE, dan 'tombol merah' bisa mematikan TE. Bila itu dilakukan, jaringan kembali ke jalur terpendek. Gangguannya juga menunjukkan risiko kendali terpusat: controller yang macet membuat jaringan tidak bisa beradaptasi.",
+      "pelajaran": [
+        "Lapiskan fitur pintar di atas routing dasar yang tetap jalan, dan sediakan 'tombol merah' untuk mematikannya dengan cepat.",
+        "Pantau jalur komunikasi antara controller dan switch. Di B4, antrean di jalur inilah yang membuat pesan Hello terlambat dan adjacency putus.",
+        "Ukur sistem sampai titik patahnya dan catat batasnya. Google mencatat gangguan terjadi di situs terbesar, yang paling dekat dengan batas skalanya.",
+        "Kurangi langkah manual berurutan dalam operasi. Gangguan B4 berawal dari ID switch yang dikonfigurasi manual."
+      ],
+      "sumber": [
+        {
+          "judul": "B4: Experience with a Globally-Deployed Software Defined WAN",
+          "penerbit": "ACM SIGCOMM 2013 (Jain dkk., Google)",
+          "url": "https://conferences.sigcomm.org/sigcomm/2013/papers/sigcomm/p3.pdf"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Sebuah SMA di Malang memakai 30 access point yang dikelola dari dashboard cloud milik vendor (cloud-managed). Pagi ini internet sekolah putus dua jam karena kabel fiber ISP terpotong. Guru melapor: Wi-Fi tetap menyala dan laptop masih bisa membuka server rapor di LAN. Namun admin tidak bisa mengganti password SSID dari dashboard, dan siswa baru tidak bisa login lewat portal tamu. Jelaskan dengan istilah control plane dan data plane kenapa sebagian fungsi tetap jalan, lalu sebutkan persiapan untuk kejadian berikutnya.",
+      "petunjuk": [
+        "Pisahkan fungsi yang hanya meneruskan lalu lintas dari fungsi yang butuh keputusan atau perubahan konfigurasi.",
+        "Pada jaringan cloud-managed, di mana 'otak'-nya berada, dan lewat jalur apa access point menghubunginya?",
+        "Portal login tamu harus menanyakan sesuatu ke server. Server itu ada di mana?"
+      ],
+      "jawaban": "1. **Amati.** Yang tetap jalan: Wi-Fi yang sudah tersambung dan akses ke server di LAN. Yang gagal: perubahan dari dashboard dan login tamu baru.\n2. **Petakan ke plane.** Access point umumnya menyimpan konfigurasi terakhir dan meneruskan frame sendiri, jadi data plane tetap hidup. Dashboard adalah management plane dan control plane-nya, dan letaknya di cloud vendor. Access point menghubunginya lewat internet, jadi saat internet putus tidak ada perintah baru yang sampai.\n3. **Jelaskan yang gagal.** Portal tamu, dan autentikasi lain yang di-host di cloud, butuh jawaban dari server di internet. Tanpa jawaban itu, perangkat tidak bisa memutuskan siapa boleh masuk, sehingga siswa baru tertahan.\n4. **Siapkan untuk lain kali.**\n   - Jalur internet kedua, misalnya modem 4G cadangan, agar perangkat tetap bisa menghubungi dashboard.\n   - Catatan perilaku saat cloud tak terjangkau, misalnya apakah portal tamu memblokir atau membuka akses, lalu pilih yang sesuai kebijakan sekolah.\n   - SSID staf dengan autentikasi yang tidak bergantung pada internet, bila perangkatnya mendukung.\n5. **Kesimpulan.** Cloud-managed adalah bentuk jaringan berbasis controller. Memisahkan otak dari otot memudahkan pengelolaan, tetapi menambah ketergantungan pada jalur menuju controller."
+    }
+  }
+}

@@ -1,0 +1,597 @@
+{
+  "03-data-link/01-ethernet-frame-mac": {
+    "intinya": {
+      "satu_kalimat": "Di jaringan lokal, data dikirim dalam frame Ethernet: bungkusan berisi alamat MAC tujuan dan pengirim, jenis isi, dan angka pemeriksa kerusakan.",
+      "analogi": "Bayangkan frame sebagai paket kurir di dalam satu kompleks perumahan. Labelnya memuat nomor rumah penerima dan pengirim (alamat MAC), keterangan isi (EtherType), dan angka pemeriksa (FCS) yang dihitung dari seluruh isi paket. Penerima menghitung ulang angka itu; kalau hasilnya beda, paket dianggap rusak dan dibuang tanpa minta kirim ulang. Analogi ini berhenti di satu titik: nomor rumah tidak bisa diganti sesuka hati, sedangkan alamat MAC bisa diubah dengan satu perintah. Ponsel modern malah membuat alamat baru untuk setiap Wi-Fi.",
+      "kenapa_penting": "Setiap kali laptop Anda tersambung ke kabel LAN atau Wi-Fi kantor, kartu jaringannya membaca dan menulis frame seperti ini. Saat jaringan lambat, counter di switch seperti CRC, late collision, dan giants memberi petunjuk pertama: kabel rusak, duplex tidak cocok, atau MTU tidak sama.",
+      "istilah": [
+        {
+          "kata": "Frame",
+          "arti": "Bungkusan data di Layer 2. Isinya alamat MAC tujuan, alamat MAC pengirim, EtherType, data 46-1500 byte, dan FCS."
+        },
+        {
+          "kata": "Alamat MAC",
+          "arti": "Alamat 48 bit milik kartu jaringan, ditulis 12 digit heksadesimal seperti 00:1A:2B:3C:4D:5E. Tiga byte pertamanya (OUI) menunjukkan pabrik pembuatnya."
+        },
+        {
+          "kata": "Bit U/L",
+          "arti": "Bit kedua dari kanan pada byte pertama alamat MAC. Nilai 0 berarti alamat dari pabrik; nilai 1 berarti alamat buatan perangkat lunak atau admin, misalnya MAC acak di ponsel."
+        },
+        {
+          "kata": "FCS",
+          "arti": "Empat byte terakhir frame, hasil hitungan CRC-32. Kalau hitungan ulang di penerima tidak cocok, frame dibuang dan counter CRC bertambah."
+        },
+        {
+          "kata": "MTU",
+          "arti": "Ukuran isi terbesar yang muat dalam satu frame. Standarnya 1500 byte; jumbo frame biasanya 9000 byte dan harus didukung semua perangkat di jalur."
+        },
+        {
+          "kata": "Duplex mismatch",
+          "arti": "Satu ujung kabel berjalan full duplex, ujung lain half duplex. Gejalanya CRC error di satu sisi dan late collision di sisi lain."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "iOS 14 menyusul Android 10: ponsel memakai alamat MAC acak untuk setiap jaringan Wi-Fi",
+      "kapan": "2020-09-16",
+      "di_mana": "Apple dan Google, berlaku di ponsel seluruh dunia",
+      "ringkas": "Sejak Android 10 (September 2019) dan iOS 14 (September 2020), ponsel tidak lagi memakai alamat MAC pabrik saat bergabung ke Wi-Fi secara bawaan. Ponsel membuat alamat sendiri untuk setiap jaringan, sehingga pemilik jaringan dan pengamat lain lebih sulit menghubungkan aktivitas satu perangkat dari tempat ke tempat. Akibatnya, jaringan yang mengenali perangkat dari alamat MAC, misalnya daftar izin MAC atau reservasi DHCP, melihat ponsel itu sebagai perangkat yang belum dikenal.",
+      "kronologi": [
+        {
+          "waktu": "3 September 2019",
+          "peristiwa": "Google merilis Android 10. Sejak versi ini Android memakai MAC acak secara bawaan. Setiap profil jaringan (SSID dan jenis keamanannya) mendapat satu alamat tetap yang bertahan sampai ponsel di-reset pabrik."
+        },
+        {
+          "waktu": "16 September 2020",
+          "peristiwa": "Apple merilis iOS 14 dan iPadOS 14. iPhone dan iPad kini memakai alamat Wi-Fi privat yang berbeda untuk setiap jaringan, dan pengguna bisa mematikannya per jaringan di pengaturan Wi-Fi."
+        },
+        {
+          "waktu": "Sejak Android 12",
+          "peristiwa": "Untuk sebagian jaringan, Android memakai MAC non-persisten. Alamat diacak ulang bila sewa DHCP sudah habis dan sudah lewat 4 jam sejak terputus, atau bila alamat itu berumur lebih dari 24 jam."
+        },
+        {
+          "waktu": "Sejak iOS 18",
+          "peristiwa": "Pilihannya menjadi Off, Fixed, dan Rotating. Fixed dipakai bawaan untuk jaringan WPA2 atau lebih kuat; Rotating, yang berganti alamat tiap 2 minggu, dipakai bawaan untuk jaringan tanpa keamanan atau keamanan lemah."
+        }
+      ],
+      "akar_masalah": "Alamat MAC pabrik bersifat tetap dan terkirim setiap kali ponsel berbicara dengan Wi-Fi. Siapa pun yang mengamati banyak jaringan bisa mengenali perangkat yang sama di mana-mana. Jalan keluarnya alamat buatan perangkat lunak. Android menjelaskan caranya: bit locally administered (U/L) diset 1, bit unicast (I/G) diset 0, dan 46 bit sisanya diacak. Alamat seperti ini sah dipakai, tetapi tiga byte pertamanya tidak lagi menunjuk pabrik dan nilainya berbeda di setiap jaringan.",
+      "kaitan": "Kasus ini menerapkan bagian **Dua bit khusus di byte pertama**: bit I/G = 0 (unicast) dan bit U/L = 1 (local). Karena dua bit terendah byte pertama selalu `10`, digit heksadesimal kedua alamat acak selalu 2, 6, A, atau E, misalnya `DA:` atau `3E:`. Kotak TIP di bagian **MAC address dalam praktik** sudah menyebut dampaknya pada reservasi DHCP berbasis MAC, MAC filtering, dan pelacakan perangkat. Modul menyarankan 802.1X sebagai gantinya.",
+      "pelajaran": [
+        "Jangan menjadikan alamat MAC satu-satunya identitas perangkat. Untuk jaringan kantor, pakai autentikasi pengguna seperti 802.1X atau WPA2/WPA3-Enterprise.",
+        "Alamat di daftar klien yang digit heksadesimal keduanya 2, 6, A, atau E kemungkinan besar alamat acak, bukan perangkat dari vendor tak dikenal.",
+        "Kalau sebuah jaringan memang butuh MAC tetap, misalnya untuk reservasi DHCP, matikan alamat privat khusus untuk SSID itu. Organisasi bisa memakai profil MDM, seperti saran Apple."
+      ],
+      "sumber": [
+        {
+          "judul": "Use private Wi-Fi addresses on Apple devices",
+          "penerbit": "Apple Support",
+          "url": "https://support.apple.com/en-us/102509"
+        },
+        {
+          "judul": "MAC randomization behavior",
+          "penerbit": "Android Open Source Project",
+          "url": "https://source.android.com/docs/core/connect/wifi-mac-randomization-behavior"
+        },
+        {
+          "judul": "Welcoming Android 10!",
+          "penerbit": "Android Developers Blog",
+          "url": "https://android-developers.googleblog.com/2019/09/welcoming-android-10.html"
+        },
+        {
+          "judul": "About the security content of iOS 14.0 and iPadOS 14.0",
+          "penerbit": "Apple Support",
+          "url": "https://support.apple.com/en-us/103198"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda membantu pemilik warung kopi di Malang. Ia membatasi Wi-Fi dengan MAC filtering: hanya alamat MAC terdaftar yang boleh tersambung. Daftar itu disusun dua tahun lalu dari alamat pabrik ponsel pelanggan tetap. Bulan ini beberapa pelanggan lama tidak bisa tersambung lagi setelah ganti ponsel atau memperbarui sistem operasi. Daftar klien router mencatat tiga alamat yang mencoba masuk: `3C:22:FB:10:4A:01`, `DA:91:6C:2E:77:0B`, dan `5E:03:A8:19:C4:F2`. Alamat mana yang kemungkinan besar MAC acak, kenapa pelanggan tertolak, dan apa saran Anda?",
+      "petunjuk": [
+        "Lihat byte pertama setiap alamat dan ubah ke biner. Bit mana yang menandai alamat buatan perangkat lunak?",
+        "Cara cepat dari modul: kalau digit heksadesimal kedua alamat itu 2, 6, A, atau E, bit U/L-nya 1.",
+        "Daftar izin dibuat dari alamat pabrik. Apa yang terjadi kalau ponsel tidak lagi memakai alamat pabrik di Wi-Fi?"
+      ],
+      "jawaban": "1. **Amati gejala.** Pelanggan lama tertolak padahal terdaftar, dan daftar izin berisi alamat pabrik dari dua tahun lalu.\n2. **Periksa byte pertama setiap alamat.**\n   - `3C` = `0011 1100`: bit U/L (bit kedua dari kanan) = 0, berarti alamat pabrik.\n   - `DA` = `1101 1010`: bit U/L = 1, berarti alamat buatan perangkat lunak.\n   - `5E` = `0101 1110`: bit U/L = 1, juga buatan perangkat lunak.\n   Ketiganya unicast karena bit I/G (paling kanan) = 0.\n3. **Susun dugaan.** Dua ponsel memakai alamat Wi-Fi privat, yaitu MAC acak per jaringan yang aktif bawaan sejak Android 10 dan iOS 14. Alamat itu tidak ada di daftar izin, jadi router menolaknya.\n4. **Uji.** Minta seorang pelanggan membuka detail jaringan Wi-Fi warung di ponselnya. Kalau alamat yang tampil sama dengan `DA:91:...` dan opsi alamat privat aktif, dugaan terbukti.\n5. **Saran.** MAC filtering mudah dikelabui karena MAC bisa diganti dengan satu perintah, seperti peringatan di modul. Lebih aman memakai kata sandi Wi-Fi yang kuat dan diganti berkala, atau login hotspot. Kalau pemilik tetap ingin daftar MAC, pelanggan perlu mematikan alamat privat khusus untuk SSID warung, lalu alamat barunya dicatat ulang."
+    }
+  },
+  "03-data-link/02-switching": {
+    "intinya": {
+      "satu_kalimat": "Switch mempelajari letak perangkat dari alamat MAC pengirim dan meneruskan frame hanya ke port tujuan; frame untuk tujuan yang belum dikenal dikirim ke semua port (flooding).",
+      "analogi": "Bayangkan satpam kompleks yang mencatat buku tamu: setiap kali kurir datang dari gerbang tertentu, ia mencatat bahwa rumah si pengirim ada di arah gerbang itu. Kalau ada paket untuk rumah yang belum tercatat, satpam mengumumkannya lewat pengeras suara ke semua gang, dan hanya pemilik rumah yang mengambilnya. Catatan yang lima menit tidak dipakai dihapus. Bedanya dengan satpam sungguhan, switch tidak pernah bertanya; ia hanya belajar dari frame yang lewat.",
+      "kenapa_penting": "Hampir setiap colokan LAN di kantor, sekolah, dan warnet berujung di switch. Saat jaringan tiba-tiba lambat, log MAC flapping, tabel MAC yang penuh, atau port yang naik-turun sering menjadi jejak pertama sebuah loop atau kerusakan.",
+      "istilah": [
+        {
+          "kata": "MAC address table (CAM table)",
+          "arti": "Tabel di switch yang memetakan alamat MAC ke port dan VLAN. Entri dinamis dipelajari dari frame masuk dan dihapus bila tidak terlihat selama aging time (bawaan Cisco 300 detik)."
+        },
+        {
+          "kata": "Flooding",
+          "arti": "Switch mengirim frame ke semua port di VLAN yang sama, kecuali port asal, karena tujuannya belum ada di tabel atau tujuannya alamat broadcast."
+        },
+        {
+          "kata": "Unknown unicast",
+          "arti": "Frame untuk satu alamat MAC yang belum ada di tabel switch. Switch membanjirkannya sampai ia mempelajari letak tujuan dari frame balasan."
+        },
+        {
+          "kata": "MAC flapping",
+          "arti": "Satu alamat MAC terlihat berpindah-pindah di antara dua port berulang kali dalam waktu singkat. Hampir selalu tanda loop."
+        },
+        {
+          "kata": "Port flapping",
+          "arti": "Port yang naik-turun (up/down) berulang kali, biasanya karena kabel, transceiver, atau perangkat di seberang bermasalah."
+        },
+        {
+          "kata": "IXP",
+          "arti": "Internet Exchange Point: tempat banyak jaringan (ISP, penyedia konten) bertukar trafik secara langsung lewat satu jaringan Layer 2 bersama."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "France-IX Paris: unknown unicast membanjiri port anggota, lalu sebuah loop memperbesarnya sampai 2 Gbps",
+      "kapan": "2014-08-18",
+      "di_mana": "France-IX, titik pertukaran internet di Paris, Prancis",
+      "ringkas": "France-IX adalah titik pertukaran internet (IXP) di Paris. Anggotanya, yaitu ISP dan penyedia konten, bertukar trafik lewat satu jaringan Layer 2 bersama. Pada Senin, 18 Agustus, trafik yang seharusnya menuju satu anggota tiba-tiba dikirim ke banyak port sekaligus, sampai 300 Mbps per anggota. Sebuah loop lalu memperbesarnya sampai 2 Gbps, dan sesi anggota dengan route server ikut putus-sambung. Penyelidikan bersama Juniper menemukan bahwa banjir itu berkaitan dengan port yang naik-turun.",
+      "kronologi": [
+        {
+          "waktu": "Senin, sekitar 12.00",
+          "peristiwa": "Trafik mulai dibanjirkan ke banyak port, sampai 300 Mbps per anggota. Awalnya terlihat seperti broadcast karena trafik yang sama direplikasi ke beberapa port."
+        },
+        {
+          "waktu": "Senin, 15.02",
+          "peristiwa": "Sebuah loop muncul dan memperbesar banjir itu sampai 2 Gbps. Jaringan France-IX ikut terdampak dan sesi dengan route server putus-sambung."
+        },
+        {
+          "waktu": "Senin, 17.00 sampai 19.00",
+          "peristiwa": "Loop dihentikan sekitar pukul 17.00, tetapi banjir 300 Mbps masih ada. Sekitar pukul 18.00 banjir berhenti setelah filter diubah. Pukul 19.00 tiga kasus dibuka ke Juniper."
+        },
+        {
+          "waktu": "19 sampai 25 Agustus",
+          "peristiwa": "Banjir unicast 10-100 Mbps muncul lagi di beberapa port di PoP Telehouse2 dan Interxion2. Solusi sementaranya mengosongkan entri tabel MAC di instance VPLS, yang tidak mengganggu trafik anggota."
+        },
+        {
+          "waktu": "21 sampai 23 Agustus",
+          "peristiwa": "Dua sniffer dipasang. Rekaman menunjukkan trafiknya unicast, bukan broadcast: perangkat Juniper memperlakukannya sebagai unknown unicast walaupun MAC tujuannya sudah ada di tabel."
+        },
+        {
+          "waktu": "1 September",
+          "peristiwa": "Laporan lanjutan: banjir berkaitan dengan port yang flapping, dan hilang begitu port itu dipindah ke interface baru. Konfigurasi Juniper diubah sesuai saran Juniper dan filter Layer 2 diperketat, terutama ke IXP mitra."
+        }
+      ],
+      "akar_masalah": "Jaringan bersama France-IX dibangun dengan VPLS di perangkat Juniper. Platform itu memperlakukan sebagian frame sebagai unknown unicast padahal MAC tujuannya sudah tercatat, sehingga frame dibanjirkan ke banyak port. France-IX mengaitkan gejala ini dengan port yang flapping. Loop pada siang yang sama memperbesar banjir dari 300 Mbps menjadi 2 Gbps. France-IX juga menemukan trafik yang tidak semestinya dari sebagian anggota, seperti proxy ARP, Router Advertisement IPv6, STP, dan CDP. Mengapa platform berperilaku begitu masih diselidiki bersama Juniper saat laporan terakhir ditulis.",
+      "kaitan": "Ini contoh nyata bagian **Proses Forwarding Langkah demi Langkah**: frame untuk tujuan yang tidak dikenal dibanjirkan ke semua port. Di IXP, itu berarti trafik satu anggota bocor ke port anggota lain. Bagian **MAC Move dan MAC Flapping** menjelaskan kenapa loop dan port yang naik-turun membuat tabel MAC tidak stabil. Solusi sementara France-IX, mengosongkan tabel MAC, setara dengan `clear mac address-table dynamic` di bagian **Praktik Lengkap**.",
+      "pelajaran": [
+        "Pantau trafik unknown unicast dan broadcast per port. Lonjakan mendadak adalah gejala yang harus ditelusuri, bukan lalu lintas biasa.",
+        "Tangani port yang flapping dengan cepat: periksa kabel dan transceiver, atau pindahkan ke port lain, karena port yang naik-turun memaksa switch terus belajar ulang.",
+        "Di jaringan bersama, matikan STP, CDP, dan proxy ARP di port yang menghadap pihak lain, lalu saring juga di sisi switch.",
+        "Rekam trafik dengan sniffer saat gejala muncul. Dari rekaman itulah France-IX tahu trafiknya unicast, bukan broadcast."
+      ],
+      "sumber": [
+        {
+          "judul": "FranceIX outage notification (arsip Wayback Machine)",
+          "penerbit": "France-IX",
+          "url": "https://web.archive.org/web/20191022085223/https://www.franceix.net/en/events-and-news/news/franceix-outage-notification/"
+        },
+        {
+          "judul": "Rapport d'incident sur France-IX (versi bahasa Prancis, arsip Wayback Machine)",
+          "penerbit": "France-IX",
+          "url": "https://web.archive.org/web/20160812122757/https://www.franceix.net/fr/events-and-news/news/franceix-outage-notification/"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda teknisi jaringan di sebuah politeknik di Yogyakarta dengan sekitar 5.000 mahasiswa. Agar praktis, Wi-Fi mahasiswa dan lab komputer dipasang di VLAN yang sama. Sejak semester baru, PC lab terasa lambat. Port sebuah PC lab yang sedang diam menunjukkan trafik keluar dari switch ke PC itu 40-60 Mbps. Perintah `show mac address-table count` di switch lab menampilkan Total Mac Addresses 8192 dan Total Mac Address Space Available 0. Apa yang terjadi, bagaimana membuktikannya, dan apa perbaikannya?",
+      "petunjuk": [
+        "PC yang diam seharusnya hampir tidak menerima trafik unicast. Trafik siapa yang dikirim ke port itu?",
+        "Apa yang dilakukan switch kalau tabel MAC penuh dan datang frame untuk alamat yang tidak tercatat?",
+        "Ponsel modern memakai MAC acak per jaringan, dan Wi-Fi mahasiswa di VLAN yang sama menambah ribuan alamat ke tabel switch lab."
+      ],
+      "jawaban": "1. **Amati.** PC diam menerima 40-60 Mbps, dan tabel MAC switch lab tidak punya ruang lagi (`Space Available 0`).\n2. **Dugaan.** Tabel MAC penuh, jadi switch tidak bisa mempelajari alamat baru. Frame untuk alamat yang tidak tercatat diperlakukan sebagai unknown unicast dan dibanjirkan ke semua port di VLAN itu, termasuk port PC lab. Ini persis peringatan di bagian **Ukuran MAC address table**: tabel penuh membuat kinerja jatuh dan trafik terekspos ke semua port.\n3. **Uji.**\n   - `show mac address-table interface gi0/48` (uplink ke arah access point) menampilkan ribuan entri, jauh lebih banyak daripada jumlah PC lab.\n   - Tangkap paket di PC yang diam dengan Wireshark. Anda akan melihat frame unicast yang MAC tujuannya bukan milik PC itu.\n4. **Perbaiki akar masalahnya.** Pindahkan Wi-Fi mahasiswa ke VLAN dan subnet sendiri, dan jangan bawa VLAN itu ke switch lab. Dengan begitu switch lab tidak pernah mempelajari alamat ponsel mahasiswa. Modul berikutnya (VLAN) membahas cara membatasi VLAN di trunk dengan `switchport trunk allowed vlan`.\n5. **Verifikasi.** `show mac address-table count` turun mendekati jumlah perangkat lab, dan grafik trafik ke PC yang diam kembali mendekati nol."
+    }
+  },
+  "03-data-link/03-vlan": {
+    "intinya": {
+      "satu_kalimat": "VLAN memecah satu switch fisik menjadi beberapa jaringan logis, sehingga broadcast dan gangguan di satu kelompok perangkat tidak ikut membebani kelompok lain.",
+      "analogi": "Bayangkan satu gedung kantor dengan satu sistem pengeras suara. Tanpa VLAN, setiap pengumuman terdengar di semua lantai. Dengan VLAN, setiap lantai punya saluran pengeras suara sendiri, jadi pengumuman lantai 2 tidak mengganggu lantai 5. Pesan ke lantai lain harus lewat resepsionis, yaitu router. Bedanya dengan gedung sungguhan, kabel dan switch-nya tetap sama; pemisahan dilakukan dengan nomor VLAN, yang di jalur antar-switch ditempel sebagai tag 802.1Q pada frame.",
+      "kenapa_penting": "Kantor, sekolah, dan rumah sakit memisahkan staf, tamu, CCTV, dan telepon ke VLAN berbeda. Kalau satu PC rusak dan membanjiri jaringan, yang terganggu cukup satu VLAN, bukan seluruh gedung. VLAN juga dasar untuk membatasi siapa boleh menjangkau siapa, karena trafik antar-VLAN harus lewat router yang bisa memfilternya.",
+      "istilah": [
+        {
+          "kata": "VLAN",
+          "arti": "Virtual LAN: satu broadcast domain logis di dalam switch. Perangkat di VLAN berbeda tidak bisa saling bicara tanpa router."
+        },
+        {
+          "kata": "Broadcast domain",
+          "arti": "Kelompok perangkat yang semuanya menerima frame broadcast dari salah satu anggotanya."
+        },
+        {
+          "kata": "Access port",
+          "arti": "Port switch untuk perangkat akhir seperti PC, printer, atau kamera. Port ini anggota satu VLAN dan frame-nya tanpa tag."
+        },
+        {
+          "kata": "Trunk port",
+          "arti": "Port yang membawa banyak VLAN sekaligus, biasanya antar-switch atau ke router. Frame diberi tag 802.1Q berisi nomor VLAN, kecuali native VLAN."
+        },
+        {
+          "kata": "Subnet",
+          "arti": "Blok alamat IP untuk satu jaringan, misalnya 192.168.10.0/24. Praktik yang dianjurkan modul: satu VLAN = satu subnet."
+        },
+        {
+          "kata": "Failure domain",
+          "arti": "Wilayah yang ikut terdampak bila satu komponen rusak. Makin besar sebuah VLAN, makin luas wilayah yang lumpuh saat terjadi storm."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Satu kartu jaringan rusak melumpuhkan LAN Bea Cukai AS di Bandara Los Angeles, sekitar 17.000 penumpang tertahan",
+      "kapan": "2007-08-11",
+      "di_mana": "Bandara Internasional Los Angeles (LAX), Amerika Serikat",
+      "ringkas": "Sabtu siang, sistem pemeriksaan penumpang Bea Cukai dan Perlindungan Perbatasan AS (CBP) di LAX melambat lalu berhenti. Petugas tidak bisa memproses penumpang internasional dengan normal selama sekitar 10 jam. Menurut perkiraan CBP, sampai 17.000 penumpang terdampak; sebagian tertahan berjam-jam di sekitar 60 pesawat di landasan. Penyebabnya ada di LAN milik CBP sendiri: kartu jaringan pada satu workstation rusak sebagian. Layanan pulih setelah teknisi memutus bagian jaringan satu per satu sampai sumbernya terisolasi.",
+      "kronologi": [
+        {
+          "waktu": "12.50 PDT",
+          "peristiwa": "Petugas CBP melaporkan kueri ke TECS, basis data pemeriksaan penumpang, lambat. Pusat operasi jaringan (NOC) CBP juga tidak bisa mengakses router di LAX."
+        },
+        {
+          "waktu": "13.16 sampai 15.57 PDT",
+          "peristiwa": "NOC melapor ke Sprint, penyedia sirkuitnya. Teknisi di lokasi berulang kali mematikan dan menyalakan perangkat komunikasi. Waktu respons naik dari di bawah 5 detik menjadi rata-rata 2-3 menit."
+        },
+        {
+          "waktu": "16.16 PDT",
+          "peristiwa": "Kueri terakhir dari LAX ke basis data CBP. Sejak itu penumpang tidak bisa diproses dengan sistem jarak jauh, dan sistem cadangan baru terpasang penuh sekitar satu jam kemudian."
+        },
+        {
+          "waktu": "18.00 sampai 19.00 PDT",
+          "peristiwa": "Teknisi Sprint tiba. Router Sprint menyala dalam keadaan sibuk, tetapi bisa dikelola lagi setelah LAN CBP dicabut. Terbukti masalahnya ada di LAN CBP, bukan di sirkuit Sprint."
+        },
+        {
+          "waktu": "19.50 sampai 20.13 PDT",
+          "peristiwa": "Tim mulai mengisolasi masalah dan memutus subnet Terminal Bradley dari sirkuit. Pukul 20.13 kueri pertama sejak 16.16 masuk lagi; semua terminal pulih kecuali Terminal Bradley."
+        },
+        {
+          "waktu": "21.00 sampai 23.00 PDT",
+          "peristiwa": "Di Terminal Bradley teknisi mencabut jaringan nirkabel dan sebuah media converter, tetapi gangguan tetap ada. Sebuah switch terbakar karena komponennya dilepas tanpa mematikan daya; tim memakai switch bekas dari bagian lain bandara."
+        },
+        {
+          "waktu": "23.40 PDT",
+          "peristiwa": "Teknisi memutus satu sirkuit di Terminal Bradley yang berisi 12 perangkat. Pemrosesan penuh kembali normal, dan ke-12 perangkat itu dibiarkan terputus dari LAN."
+        }
+      ],
+      "akar_masalah": "Kartu jaringan pada satu komputer meja di Terminal Bradley rusak sebagian dan membebani LAN dengan data. Kartu jaringan perangkat lain ikut kewalahan seperti efek domino, sampai seluruh sistem berhenti. Karena LAN-nya lumpuh, NOC CBP tidak bisa menjangkau jaringan dari jauh, dan diagnosis berjalan lambat: berjam-jam habis untuk menyalakan ulang perangkat dan memeriksa sirkuit Sprint. Laporan OIG mencatat bahwa analisis terhadap tiga perangkat yang dicurigai tidak membuahkan kesimpulan.",
+      "kaitan": "Bagian **Masalah yang Dipecahkan VLAN** menulis bahwa tanpa VLAN, satu broadcast storm melumpuhkan semua PC dalam satu broadcast domain. LAX memperlihatkan sisi sebaliknya: begitu subnet Terminal Bradley diputus, terminal lain pulih 23 menit kemudian karena gangguannya tidak bisa menyebar lagi. Prinsip di bagian **Desain VLAN yang Baik** (satu VLAN = satu subnet, VLAN jangan terlalu besar) bertujuan memperkecil failure domain seperti ini. Laporan tidak merinci desain VLAN di LAX; yang tercatat hanya bahwa CBP lalu memperbarui topologi jaringannya.",
+      "pelajaran": [
+        "Pecah jaringan besar menjadi beberapa VLAN dan subnet yang lebih kecil, supaya perangkat yang rusak hanya melumpuhkan satu bagian.",
+        "Saat LAN lumpuh, isolasi secara sistematis: putus satu segmen, amati, lalu lanjutkan. Langkah inilah yang memulihkan LAX, bukan menyalakan ulang perangkat berkali-kali.",
+        "Siapkan alat diagnosis di lokasi dan akses manajemen yang tetap bisa dipakai saat LAN produksi lumpuh, sesuai rekomendasi OIG.",
+        "Catat perangkat mana yang tidak boleh dilepas dalam keadaan menyala. Di LAX satu switch terbakar karena hal ini."
+      ],
+      "sumber": [
+        {
+          "judul": "Lessons Learned from the August 11, 2007, Network Outage at Los Angeles International Airport (OIG-08-58)",
+          "penerbit": "DHS Office of Inspector General, lewat GovInfo",
+          "url": "https://www.govinfo.gov/content/pkg/GOVPUB-HS-PURL-gpo13797/pdf/GOVPUB-HS-PURL-gpo13797.pdf"
+        },
+        {
+          "judul": "Planning and Funding Issues Hindered the Implementation of CBP's System Availability Project (OIG-11-42)",
+          "penerbit": "DHS Office of Inspector General",
+          "url": "https://oig.dhs.gov/sites/default/files/assets/Mgmt/OIG_11-42_Feb11.pdf"
+        },
+        {
+          "judul": "LAX outage is blamed on a single computer (Tami Abdollah, 15 Agustus 2007; salinan di milis Infowarrior)",
+          "penerbit": "Los Angeles Times",
+          "url": "https://attrition.org/pipermail/infowarrior/2007-August/001863.html"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Sebuah minimarket di Sidoarjo memakai satu router MikroTik dengan bridge VLAN filtering. VLAN 10 untuk kasir dan printer struk (192.168.10.0/24, interface `vlan10`), VLAN 30 untuk Wi-Fi tamu (192.168.30.0/24, interface `vlan30`). Kedua VLAN punya alamat IP di router, dan tamu bisa berselancar ke internet. Suatu hari pemilik kaget: dari laptop yang tersambung ke Wi-Fi tamu, ia bisa ping PC kasir dan membuka halaman admin printer di 192.168.10.5. Ia mengira VLAN sudah memisahkan keduanya. Apa yang terjadi, dan bagaimana memperbaikinya tanpa memutus internet tamu?",
+      "petunjuk": [
+        "VLAN memisahkan broadcast domain di Layer 2. Perangkat apa yang menghubungkan dua VLAN di Layer 3?",
+        "Periksa tabel routing router: apakah kedua subnet muncul sebagai rute connected?",
+        "Baca Kesalahan Umum nomor 8 di modul: di mana trafik antar-VLAN seharusnya difilter?"
+      ],
+      "jawaban": "1. **Amati.** Laptop tamu (192.168.30.x) bisa mencapai 192.168.10.x. Keduanya beda subnet, jadi paket itu pasti lewat router.\n2. **Penyebab.** VLAN memang memisahkan broadcast domain: broadcast VLAN 30 tidak sampai ke VLAN 10. Tetapi router punya alamat di kedua VLAN, sehingga kedua subnet menjadi rute connected dan router merutekan antar-VLAN secara bawaan. Inilah inter-VLAN routing yang di modul justru dipakai agar VLAN bisa saling bicara.\n3. **Uji.** `/ip route print` di router menampilkan 192.168.10.0/24 dan 192.168.30.0/24 sebagai connected. Dari laptop tamu, `tracert 192.168.10.5` menunjukkan hop pertama 192.168.30.1, yaitu router.\n4. **Perbaiki dengan filter di router**, sesuai Kesalahan Umum 8: VLAN adalah pemisahan logis, dan trafik antar-VLAN harus difilter di router atau firewall.\n   `/ip firewall filter add chain=forward in-interface=vlan30 out-interface=vlan10 action=drop comment=tamu-ke-kasir`\n   Letakkan aturan ini di atas aturan yang mengizinkan trafik forward umum. Trafik tamu ke internet tidak terkena karena keluar lewat interface WAN, bukan `vlan10`. Pertimbangkan juga aturan di chain `input` agar tamu tidak bisa membuka Winbox router.\n5. **Verifikasi.** Dari laptop tamu, ping ke 192.168.10.5 gagal, tetapi situs web tetap terbuka. Dari PC kasir, internet tetap normal."
+    }
+  },
+  "03-data-link/04-stp": {
+    "intinya": {
+      "satu_kalimat": "STP mencegah frame berputar tanpa henti di jaringan switch yang punya jalur cadangan, dengan memblokir sebagian port dan membukanya lagi saat jalur utama putus.",
+      "analogi": "Bayangkan beberapa grup WhatsApp yang saling meneruskan pesan: setiap grup meneruskan pesan ke semua grup lain, kecuali grup asal pesan itu. Kalau grup-grup itu tersambung melingkar, pesan yang sama datang lagi dari arah lain, diteruskan lagi, dan berlipat sampai ponsel semua orang penuh. STP seperti admin yang menutup izin meneruskan di beberapa grup, sehingga setiap pesan hanya punya satu jalur, lalu membukanya lagi kalau jalur utama terputus. Bedanya, orang bisa berhenti meneruskan pesan, sedangkan frame Ethernet tidak punya batas umur (TTL), jadi switch terus meneruskannya.",
+      "kenapa_penting": "Kabel cadangan antar-switch dipasang di kantor, sekolah, dan rumah sakit supaya jaringan tetap hidup saat satu kabel putus. Tanpa STP, kabel cadangan itu justru membentuk loop yang bisa melumpuhkan seluruh jaringan dalam hitungan detik, termasuk akses Anda untuk memperbaikinya.",
+      "istilah": [
+        {
+          "kata": "Loop Layer 2",
+          "arti": "Jalur melingkar antar-switch. Frame broadcast di jalur ini berputar dan berlipat ganda karena header Ethernet tidak punya TTL."
+        },
+        {
+          "kata": "Broadcast storm",
+          "arti": "Banjir frame broadcast akibat loop. Link dan CPU switch penuh sampai jaringan berhenti melayani."
+        },
+        {
+          "kata": "Root bridge",
+          "arti": "Switch yang menjadi pusat pohon STP. Switch dengan Bridge ID terkecil (priority, lalu MAC) terpilih menjadi root."
+        },
+        {
+          "kata": "BPDU",
+          "arti": "Pesan antar-switch untuk membangun topologi STP. Isinya antara lain Root Bridge ID, cost ke root, dan Message Age, umur pesan yang bertambah di setiap switch."
+        },
+        {
+          "kata": "Diameter jaringan",
+          "arti": "Jumlah switch terbanyak di antara dua titik jaringan. Timer bawaan STP 802.1D mengasumsikan diameter paling banyak tujuh."
+        },
+        {
+          "kata": "Batas Layer 3",
+          "arti": "Router atau switch Layer 3 yang memisahkan dua domain Layer 2. Broadcast dan BPDU berhenti di batas ini."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Jaringan Beth Israel Deaconess Medical Center tumbang empat hari karena masalah spanning tree, rumah sakit kembali ke kertas",
+      "kapan": "2002-11-13",
+      "di_mana": "Beth Israel Deaconess Medical Center, Boston, Amerika Serikat",
+      "ringkas": "Rumah sakit pendidikan di Boston ini memakai jaringan yang seluruhnya switch Layer 2, tanpa routing di intinya. Pada 13 November 2002 jaringan mulai tersendat, lalu selama empat hari berkali-kali mati dan hidup. Hasil lab yang biasanya keluar dalam 45 menit butuh sampai lima jam, dan IGD ditutup selama empat jam. Pada hari Jumat rumah sakit kembali memakai resep dan formulir kertas. Penyebabnya masalah spanning tree di jaringan yang tumbuh terlalu besar dan terlalu panjang.",
+      "kronologi": [
+        {
+          "waktu": "Rabu 13 November, 13.45",
+          "peristiwa": "Jaringan lambat dan CPU switch inti RCA melonjak. Tim mematikan VLAN dan switch satu per satu untuk mencari sumbernya. Switch lain jadi sibuk menghitung ulang jalur dan trafik berhenti total; pukul 14.00 semua switch dinyalakan lagi."
+        },
+        {
+          "waktu": "Rabu, 21.00",
+          "peristiwa": "Tim menemukan loop spanning tree lalu memutus link redundan. Jaringan tenang, tetapi ternyata hanya karena malam itu hampir tidak ada yang memakainya."
+        },
+        {
+          "waktu": "Kamis, 08.00 sampai 16.00",
+          "peristiwa": "Jaringan tersendat lagi begitu jam kerja mulai. Pukul 15.50 IGD ditutup sampai 19.50. Sesudah pukul 16.00 Cisco mengaktifkan Customer Assurance Program, tim krisis darurat vendor."
+        },
+        {
+          "waktu": "Kamis malam",
+          "peristiwa": "Jaringan terlalu lambat untuk diperiksa lewat jaringan itu sendiri, jadi tim Cisco masuk ke switch inti lewat modem lama 28,8 kbps. Pukul 21.00 sumbernya ketemu: jaringan PACS (citra medis) berjarak 10 lompatan dari switch inti terdekat."
+        },
+        {
+          "waktu": "Kamis malam sampai Jumat pagi",
+          "peristiwa": "Diputuskan memasang router Cisco 6509 di antara inti dan PACS. Router itu diterbangkan dari San Jose ke Boston malam itu juga, dan tim membangun ulang jaringan PACS semalaman."
+        },
+        {
+          "waktu": "Jumat, 10.00",
+          "peristiwa": "Jaringan tersendat lagi sejak pukul 08.00. Manajemen memutuskan mematikan jaringan dan menjalankan rumah sakit dengan kertas."
+        },
+        {
+          "waktu": "Sabtu",
+          "peristiwa": "Dua titik lain ditemukan berjarak delapan lompatan. Tim membangun inti jaringan cadangan dengan routing, dan Sabtu malam jaringan dinyalakan lagi."
+        },
+        {
+          "waktu": "Senin 18 November, 12.00",
+          "peristiwa": "Grafik CPU jaringan tetap tenang sepanjang pagi. CIO John Halamka menyatakan rumah sakit kembali beroperasi normal."
+        }
+      ],
+      "akar_masalah": "Jaringan tumbuh dengan cara menyambung terus. Jaringan Deaconess (setelah merger 1996), PACS (1998), dan data center baru (1999) dicolokkan ke switch inti lama bernama Libby030, tanpa batas Layer 3. Menurut penjelasan teknis Halamka, VLAN manajemen (VLAN 1) di beberapa tempat berjarak 10 lompatan Layer 2 dari root. Padahal timer bawaan STP mengasumsikan diameter paling banyak tujuh. Umur BPDU bertambah di setiap switch dan pesan dibuang bila melewati Max Age, sehingga STP tidak konvergen dengan benar. Pemicunya, seorang peneliti mengirim data beberapa gigabyte lewat aplikasi berbagi berkas medis.",
+      "kaitan": "Bagian **Kenapa Loop Layer 2 Sangat Fatal** terlihat utuh di sini: CPU switch penuh dan akses manajemen ikut mati, sampai tim harus memakai modem. Bagian **BPDU** menyebut field Message Age dan Max Age; di BIDMC, jarak yang terlalu jauh dari root membuat BPDU kedaluwarsa. Bagian **Menangani broadcast storm yang sedang terjadi** menyarankan masuk lewat console lalu mematikan port yang trafiknya ekstrem; di BIDMC, modem menjadi jalur cadangan itu. Perbaikannya mengikuti bagian **Alternatif Modern untuk STP**: perkecil domain Layer 2 dengan routing di inti.",
+      "pelajaran": [
+        "Pasang batas Layer 3 (router atau switch Layer 3) di inti dan di depan sistem besar seperti PACS, supaya domain spanning tree tetap kecil.",
+        "Siapkan jalur manajemen cadangan di luar jaringan produksi, misalnya console server atau modem, karena SSH ke switch ikut mati saat storm.",
+        "Simpan diagram jaringan fisik dan logis yang mutakhir, dan uji setiap perubahan sebelum diterapkan, seperti langkah yang kemudian diambil BIDMC.",
+        "Kelola siklus hidup switch seperti mengelola PC. Perangkat lama yang terus disambung-sambung menjadi titik rapuh."
+      ],
+      "sumber": [
+        {
+          "judul": "All systems down",
+          "penerbit": "CIO, dimuat ulang Computerworld (25 Februari 2003)",
+          "url": "https://www.computerworld.com/article/1346623/all-systems-down.html"
+        },
+        {
+          "judul": "Re: Spanning tree melt down ? (berisi penjelasan teknis John Halamka)",
+          "penerbit": "Arsip milis NANOG, cermin MIT",
+          "url": "https://diswww.mit.edu/charon/nanog/53823"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda dipanggil ke kantor kelurahan di Bekasi. Router-nya MikroTik hEX; port ether2 sampai ether5 dijadikan satu bridge bernama `bridge-LAN`, lalu tersambung ke beberapa switch kecil tanpa manajemen di tiap ruangan. Pagi ini semua PC tidak bisa membuka aplikasi, lampu port switch berkedip cepat tanpa henti, dan Winbox nyaris tidak merespons karena CPU router 100%. Kemarin ada penataan ulang meja dan kabel di ruang rapat. Di `/interface bridge print` terlihat `protocol-mode=none`, dan `/interface bridge host print` menunjukkan MAC yang sama berpindah-pindah antara ether3 dan ether5. Apa dugaan Anda, bagaimana menghentikannya sekarang, dan bagaimana mencegahnya?",
+      "petunjuk": [
+        "Gejala serentak di semua ruangan, lampu berkedip cepat, dan CPU penuh cocok dengan salah satu bencana di bagian 1 modul.",
+        "MAC yang sama terlihat di ether3 dan ether5. Apa artinya kalau frame dari satu perangkat datang dari dua arah?",
+        "`protocol-mode=none` berarti tidak ada yang memblokir jalur ganda. Baca peringatan di bagian MikroTik."
+      ],
+      "jawaban": "1. **Amati.** Semua ruangan terdampak sekaligus, lampu berkedip cepat, CPU router 100%, dan ada MAC flapping antara ether3 dan ether5. Ini pola broadcast storm.\n2. **Dugaan.** Penataan kabel kemarin membuat loop: switch di ruang rapat kini tersambung ke ether3 dan ether5 sekaligus. Karena `protocol-mode=none`, STP mati, tidak ada port yang diblokir, dan frame broadcast berputar tanpa henti karena Ethernet tidak punya TTL.\n3. **Hentikan dulu.** Matikan salah satu port yang terlibat: `/interface ethernet disable ether5`. Kalau Winbox terlalu lambat, cabut kabel ether5 secara fisik. Lampu harus berhenti berkedip cepat dan CPU turun.\n4. **Pastikan penyebabnya.** Telusuri kabel ether5. Kalau ujungnya switch yang sama dengan ether3, loop terbukti. Cabut kabel yang tidak perlu, lalu nyalakan lagi ether5 bila memang dibutuhkan.\n5. **Cegah.**\n   - Aktifkan STP: `/interface bridge set bridge-LAN protocol-mode=rstp`.\n   - Di port yang menghadap switch kecil: `/interface bridge port set [find interface=ether3] edge=yes-discover bpdu-guard=yes`, lalu ulangi untuk ether2, ether4, dan ether5. Switch tanpa manajemen tidak membuat BPDU sendiri. Jadi BPDU yang masuk ke port itu adalah BPDU milik bridge sendiri yang kembali lewat loop, dan port langsung dimatikan.\n   - Beri label kedua ujung setiap kabel dan catat port mana menuju ruangan mana."
+    }
+  },
+  "03-data-link/05-etherchannel": {
+    "intinya": {
+      "satu_kalimat": "EtherChannel menggabungkan beberapa kabel antar-perangkat menjadi satu link logis, sehingga kapasitasnya bertambah dan satu kabel putus tidak memutus koneksi.",
+      "analogi": "Bayangkan gerbang tol dengan empat gardu yang dikelola sebagai satu gerbang. Setiap mobil diarahkan ke gardu tertentu berdasarkan pelatnya, dan mobil dari rombongan yang sama selalu ke gardu yang sama supaya urutannya tidak kacau. Kalau satu gardu ditutup, mobil dialihkan ke gardu lain tanpa menutup gerbang. Analogi ini berhenti di satu hal: satu rombongan besar tidak bisa dipecah ke empat gardu, sama seperti satu aliran data tetap memakai satu kabel.",
+      "kenapa_penting": "Uplink antar-switch, server, dan NAS di kantor sering dipasang dua kabel atau lebih. Konfigurasi yang tepat membuat semua kabel terpakai dan tahan putus satu kabel; konfigurasi yang salah membuat satu kabel menganggur, atau malah memicu loop.",
+      "istilah": [
+        {
+          "kata": "EtherChannel / LAG",
+          "arti": "Beberapa link fisik yang digabung menjadi satu link logis (Port-channel). STP melihatnya sebagai satu link, jadi tidak ada kabel yang diblokir."
+        },
+        {
+          "kata": "LACP",
+          "arti": "Protokol standar IEEE untuk menegosiasikan EtherChannel. Mode active mengajak, mode passive hanya menunggu diajak."
+        },
+        {
+          "kata": "Hash",
+          "arti": "Rumus yang memilih kabel anggota untuk setiap aliran berdasarkan alamat MAC, IP, atau port. Satu aliran selalu jatuh ke kabel yang sama."
+        },
+        {
+          "kata": "MLAG / vPC",
+          "arti": "Teknik yang membuat dua switch terpisah tampil sebagai satu switch bagi perangkat di bawahnya, sehingga satu EtherChannel bisa berujung di dua switch."
+        },
+        {
+          "kata": "Peer-link dan heartbeat",
+          "arti": "Peer-link adalah link antara pasangan switch MLAG. Heartbeat adalah pesan berkala bahwa pasangan masih hidup; tanpa heartbeat, switch harus menebak keadaan pasangannya."
+        },
+        {
+          "kata": "Split-brain",
+          "arti": "Keadaan ketika dua perangkat dalam satu pasangan sama-sama mengira pasangannya mati dan sama-sama mengambil peran aktif."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Upgrade switch MLAG di GitHub gagal beralih dengan mulus, jaringan membeku dan GitHub.com tutup sampai malam",
+      "kapan": "2012-12-22",
+      "di_mana": "GitHub, jaringan data center GitHub.com",
+      "ringkas": "GitHub menjadwalkan upgrade perangkat lunak pada pasangan switch agregasi yang memakai MLAG, satu per satu, agar layanan tetap jalan. Saat vendor mengambil data diagnosis dengan menghentikan sebuah proses di salah satu switch, pasangannya tidak bisa memastikan apakah switch itu mati atau rusak sebagian. Ia memilih cara ambil alih yang paling mengganggu: semua link agregasi dibentuk ulang dan spanning tree konvergen ulang. Trafik antar-switch akses terhenti sekitar satu setengah menit, cukup untuk membuat banyak pasangan server berkas GitHub saling mematikan. Situs baru kembali pukul 20.23 PST.",
+      "kronologi": [
+        {
+          "waktu": "Sabtu pagi",
+          "peristiwa": "Jendela pemeliharaan dimulai untuk meng-upgrade switch agregasi, sesuai rekomendasi vendor untuk mengatasi masalah dari gangguan sebelumnya. Staf vendor ikut mendampingi lewat telepon."
+        },
+        {
+          "waktu": "Sesudah upgrade",
+          "peristiwa": "Muncul ketidakstabilan selama 20-30 menit. GitHub memutus link antara separuh switch agregasi dan switch akses, sehingga jaringan berjalan dengan separuh kapasitas uplink."
+        },
+        {
+          "waktu": "11.00 PST",
+          "peristiwa": "GitHub memutuskan kembali ke versi lama dan ke keadaan redundan pukul 13.00 PST bila belum ada rencana perbaikan."
+        },
+        {
+          "waktu": "12.15 PST",
+          "peristiwa": "Vendor mulai mengumpulkan data forensik. Langkah terakhirnya menghentikan sebuah agent (proses) di switch yang link aksesnya sudah diputus, agar keadaannya bisa dianalisis."
+        },
+        {
+          "waktu": "Sesaat kemudian",
+          "peristiwa": "Switch pasangan tidak menerima heartbeat selama 5 detik, tetapi link antarpeer tetap menyala. Ia kembali bekerja sendiri: semua link agregasi dibentuk ulang dan spanning tree konvergen ulang. Trafik antar-switch akses terhenti sekitar 90 detik."
+        },
+        {
+          "waktu": "Setelah jaringan kembali",
+          "peristiwa": "Banyak pasangan server berkas (Pacemaker, Heartbeat, DRBD) melewati batas heartbeat dan saling mengirim perintah STONITH; sebagian pasangan berakhir dengan kedua server mati. GitHub masuk mode pemeliharaan dan kedua switch agregasi diturunkan ke versi lama."
+        },
+        {
+          "waktu": "20.23 PST",
+          "peristiwa": "Setelah lebih dari lima jam memulihkan pasangan server berkas satu per satu, GitHub.com kembali melayani pengguna."
+        }
+      ],
+      "akar_masalah": "Pasangan MLAG punya dua cara menilai rekannya. Kalau link antarpeer padam dan tidak kembali dalam 2 detik, switch menganggap rekannya mati dan mengambil alih dengan mulus tanpa perubahan Layer 2. Kalau heartbeat hilang 5 detik tetapi link masih menyala, switch menganggap rekannya hidup dalam keadaan tidak konsisten. Ia lalu kembali bekerja sendiri untuk link agregasi dan spanning tree. Saat agent dihentikan, link tidak ikut padam, karena agent itulah yang memerintahkan hardware me-reset link. Ditambah waktu ekstra untuk merekam keadaan agent, switch pasangan memilih jalur yang paling mengganggu. Menurut vendor, perangkat berperilaku sesuai desain.",
+      "kaitan": "Bagian **MLAG / vPC / VSS / Stacking** menjelaskan dua switch yang tampil sebagai satu, upgrade yang bisa dilakukan bergantian, dan bahaya split-brain. GitHub jatuh ke celah di antaranya: heartbeat hilang sementara peer-link tetap menyala, sehingga switch tidak bisa memastikan keadaan pasangannya. Dampaknya terasa di dua tempat: semua EtherChannel harus dinegosiasi ulang, dan STP harus konvergen ulang seperti dibahas di modul 03.4. Split-brain juga muncul di lapisan server, ketika pasangan DRBD sama-sama ingin aktif.",
+      "pelajaran": [
+        "Uji upgrade dan prosedur pemeliharaan MLAG di lingkungan staging yang meniru produksi, termasuk skenario proses kendali mati tetapi link tetap menyala.",
+        "Bekukan failover otomatis aplikasi (mode pemeliharaan cluster) sebelum mengubah jaringan, sekecil apa pun perubahannya, seperti yang kemudian diterapkan GitHub.",
+        "Jangan biarkan heartbeat cluster hanya bergantung pada jaringan yang sama dengan trafik data. Peer-keepalive dan heartbeat butuh jalur terpisah.",
+        "Kenali timer failover perangkat Anda, di kasus ini 2 detik untuk link dan 5 detik untuk heartbeat. Pahami juga apa yang dilakukan switch saat kedua sinyal itu bertentangan."
+      ],
+      "sumber": [
+        {
+          "judul": "Downtime last Saturday",
+          "penerbit": "The GitHub Blog (Mark Imbriaco, 26 Desember 2012)",
+          "url": "https://github.blog/news-insights/the-library/downtime-last-saturday/"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda membantu ISP kecil di Garut yang ingin uplink 2 Gbps antara switch Cisco Catalyst dan router MikroTik CCR. Di Cisco, Gi0/1-2 diberi `channel-group 1 mode active` dan Port-channel1 dijadikan trunk. Di MikroTik: `/interface bonding add name=bond1 slaves=ether1,ether2 mode=balance-xor`. Setelah dicolok, `show etherchannel summary` di Cisco menampilkan `Po1(SD)`, `Gi0/1(I)`, dan `Gi0/2(I)`, dan uji kecepatan tidak pernah lewat 1 Gbps. Kenapa bundle tidak terbentuk, sisi mana yang Anda ubah, dan bagaimana memastikan hasilnya?",
+      "petunjuk": [
+        "Lihat tabel Padanan istilah di bagian MikroTik: mode Cisco apa yang setara dengan balance-xor?",
+        "Flag (I) berarti port berdiri sendiri karena tidak menemukan pasangan negosiasi. Apakah balance-xor mengirim LACPDU?",
+        "Setelah channel terbentuk, uji dengan beberapa aliran sekaligus, bukan satu unduhan."
+      ],
+      "jawaban": "1. **Amati.** `Po1(SD)` berarti Port-channel tidak punya anggota aktif, dan `(I)` berarti kedua port berdiri sendiri. Karena itu kapasitas tidak pernah melewati satu link.\n2. **Dugaan.** Cisco memakai LACP `active` dan menunggu LACPDU balasan. MikroTik `balance-xor` adalah LAG statis, setara `mode on` di Cisco menurut tabel Padanan istilah, dan tidak berbicara LACP. Di matriks kompatibilitas, `active` dengan `on` tidak membentuk channel.\n3. **Uji.** Di Cisco, `show lacp neighbor` tidak menampilkan pasangan untuk Po1. Di MikroTik, `/interface bonding print detail` menunjukkan `mode=balance-xor`.\n4. **Perbaiki di sisi MikroTik**, karena modul menyarankan LACP dan mode statis berisiko loop:\n   `/interface bonding set bond1 mode=802.3ad lacp-rate=1sec transmit-hash-policy=layer-2-and-3`\n   Jangan mengubah Cisco ke `mode on`.\n5. **Verifikasi.** `show etherchannel summary` menjadi `Po1(SU)` dengan `Gi0/1(P)` dan `Gi0/2(P)`. Di MikroTik, `/interface bonding monitor bond1` menampilkan kedua port aktif dan `lacp-partner-system-id` milik Cisco.\n6. **Uji kapasitas dengan benar.** Satu unduhan tetap paling cepat 1 Gbps karena satu aliran = satu link. Jalankan beberapa aliran paralel dari klien berbeda untuk melihat total mendekati 2 Gbps."
+    }
+  },
+  "03-data-link/06-discovery-dan-l2-lain": {
+    "intinya": {
+      "satu_kalimat": "CDP dan LLDP membuat perangkat mengumumkan identitasnya ke tetangga langsung, sehingga Anda bisa memetakan jaringan tanpa menelusuri kabel.",
+      "analogi": "Bayangkan setiap rumah di gang memasang papan di pagar: nama pemilik, pekerjaan, dan nomor rumah tetangga kiri-kanan. Petugas sensus cukup berjalan dari pagar ke pagar untuk menggambar peta gang. Masalahnya, pencuri juga bisa membaca papan yang sama. Pada kasus CDPwn, papan itu bahkan bisa ditempeli tulisan palsu yang membuat penghuni menjalankan perintah orang asing. Analogi ini berhenti di satu hal: papan CDP hanya terjangkau oleh pihak di jaringan Layer 2 yang sama, bukan oleh siapa saja dari internet.",
+      "kenapa_penting": "Saat baru masuk ke tempat kerja yang tidak punya dokumentasi jaringan, `show cdp neighbors` atau `show lldp neighbors` di setiap switch adalah cara tercepat menggambar topologi. Telepon IP juga memakai CDP atau LLDP-MED untuk mengetahui VLAN suara dan menegosiasikan daya PoE.",
+      "istilah": [
+        {
+          "kata": "CDP",
+          "arti": "Cisco Discovery Protocol: protokol Cisco yang mengirim identitas perangkat ke tetangga setiap 60 detik. Aktif bawaan di perangkat Cisco."
+        },
+        {
+          "kata": "LLDP",
+          "arti": "Link Layer Discovery Protocol (IEEE 802.1AB): versi standar terbuka yang bekerja antar-vendor. Di perangkat Cisco harus diaktifkan manual."
+        },
+        {
+          "kata": "LLDP-MED",
+          "arti": "Tambahan LLDP untuk telepon IP, kamera, dan access point. Isinya antara lain VLAN suara, prioritas QoS, dan kebutuhan daya PoE."
+        },
+        {
+          "kata": "Remote code execution",
+          "arti": "Celah yang memungkinkan penyerang menjalankan perintahnya sendiri di perangkat korban dari jarak jauh."
+        },
+        {
+          "kata": "Layer 2 adjacent",
+          "arti": "Berada di broadcast domain yang sama dengan perangkat sasaran. Serangan lewat CDP mensyaratkan posisi ini."
+        },
+        {
+          "kata": "PPPoE",
+          "arti": "PPP di atas Ethernet yang dipakai ISP untuk login pelanggan. Menambah 8 byte overhead sehingga MTU efektif turun menjadi 1492."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "CDPwn: lima celah di pengurai CDP membuka switch, router, telepon IP, dan kamera Cisco bagi penyerang di LAN yang sama",
+      "kapan": "2020-02-05",
+      "di_mana": "Cisco dan peneliti Armis, berdampak pada perangkat Cisco di seluruh dunia",
+      "ringkas": "Peneliti Armis menemukan lima celah dalam cara perangkat Cisco membaca pesan CDP. Satu frame CDP yang dirakit khusus bisa membuat perangkat korban menjalankan kode penyerang atau me-reboot sendiri. Celah ini ada di switch Nexus (NX-OS), router IOS XR, telepon IP, kamera pengawas seri 8000, dan perangkat yang menjalankan FXOS. Syaratnya, penyerang harus berada di broadcast domain yang sama dengan korban. Cisco merilis pembaruan pada hari pengumuman dan menyatakan tidak ada workaround; pelanggan yang tidak memakai CDP boleh mematikannya.",
+      "kronologi": [
+        {
+          "waktu": "5 Februari 2020, 16.00 GMT",
+          "peristiwa": "Cisco menerbitkan lima advisori sekaligus: CVE-2020-3110 (kamera IP), CVE-2020-3111 (telepon IP), CVE-2020-3118 (IOS XR), CVE-2020-3119 (NX-OS), dan CVE-2020-3120 (FXOS, IOS XR, NX-OS). Semuanya dilaporkan peneliti Armis."
+        },
+        {
+          "waktu": "5 Februari 2020",
+          "peristiwa": "Armis mengumumkan temuan itu dengan nama CDPwn. Menurut Armis, celah-celah ini memengaruhi puluhan juta perangkat. Cisco mencatat CDP aktif bawaan di sebagian besar model telepon IP-nya."
+        },
+        {
+          "waktu": "Oktober 2020",
+          "peristiwa": "Cisco PSIRT menerima laporan percobaan eksploitasi CVE-2020-3118 pada router IOS XR di dunia nyata, dan meminta pelanggan memperbarui ke versi yang sudah diperbaiki."
+        }
+      ],
+      "akar_masalah": "Pengurai (parser) CDP di perangkat-perangkat itu tidak memeriksa isi pesan dengan benar. Di NX-OS, field tertentu yang tidak divalidasi bisa memicu stack overflow, sehingga penyerang menjalankan kode dengan hak administrator. Di telepon IP, pemeriksaan yang hilang memungkinkan kode berjalan dengan hak root atau membuat telepon reboot. CDP bekerja di Layer 2 tanpa autentikasi, jadi perangkat memproses pesan dari tetangga mana pun. Penyerang cukup tersambung ke broadcast domain yang sama, misalnya lewat colokan LAN di ruang rapat atau perangkat lain yang sudah dibobol.",
+      "kaitan": "Bagian **Risiko keamanan** pada CDP memperingatkan bahwa CDP membocorkan model, versi IOS, IP manajemen, dan native VLAN. CDPwn menambah risiko kedua: pengurai CDP itu sendiri bisa diserang. Peringatan lain di bagian yang sama juga berlaku: telepon IP butuh CDP untuk VLAN suara dan PoE. Jadi CDP tidak bisa dimatikan sembarangan di port telepon. Jalan keluarnya mengikuti saran modul: matikan CDP di port yang tidak membutuhkannya, pertimbangkan LLDP-MED untuk telepon, dan perbarui perangkat.",
+      "pelajaran": [
+        "Perbarui firmware semua perangkat yang menjalankan CDP, termasuk telepon IP dan kamera yang sering terlupa karena tidak dianggap perangkat jaringan.",
+        "Matikan CDP di port yang menghadap pengguna, tamu, dan pihak luar dengan `no cdp enable`; biarkan aktif hanya di uplink antar-perangkat jaringan dan port telepon yang membutuhkannya.",
+        "Perkecil broadcast domain dan pisahkan telepon, kamera, dan PC ke VLAN berbeda, karena penyerang lewat CDP harus berada di broadcast domain yang sama dengan korbannya."
+      ],
+      "sumber": [
+        {
+          "judul": "Cisco NX-OS Software Cisco Discovery Protocol Remote Code Execution Vulnerability (CVE-2020-3119)",
+          "penerbit": "Cisco Security Advisory",
+          "url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-20200205-nxos-cdp-rce"
+        },
+        {
+          "judul": "Cisco IP Phone Remote Code Execution and Denial of Service Vulnerability (CVE-2020-3111)",
+          "penerbit": "Cisco Security Advisory",
+          "url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-20200205-voip-phones-rce-dos"
+        },
+        {
+          "judul": "Cisco IOS XR Software Cisco Discovery Protocol Format String Vulnerability (CVE-2020-3118)",
+          "penerbit": "Cisco Security Advisory",
+          "url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-20200205-iosxr-cdp-rce"
+        },
+        {
+          "judul": "Cisco Video Surveillance 8000 Series IP Cameras Cisco Discovery Protocol Remote Code Execution and Denial of Service Vulnerability (CVE-2020-3110)",
+          "penerbit": "Cisco Security Advisory",
+          "url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-20200205-ipcameras-rce-dos"
+        },
+        {
+          "judul": "CDPwn: Cisco Discovery Protocol Vulnerabilities Disclosed by Researchers",
+          "penerbit": "Tenable Blog",
+          "url": "https://www.tenable.com/blog/cdpwn-cisco-discovery-protocol-vulnerabilities-disclosed-by-researchers"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda mengelola RT/RW-Net di Sleman dengan router inti MikroTik dan sekitar 80 pelanggan di satu jaringan Layer 2. Seorang pelanggan mengirim tangkapan layar Winbox, tab Neighbors, yang menampilkan identity router inti Anda, versi RouterOS 6.40.x, alamat IP, dan MAC-nya. Ia juga bisa melihat router milik pelanggan lain. Apa yang membuat informasi itu terlihat, apa risikonya, dan bagaimana Anda menutupnya tanpa kehilangan kemampuan memantau perangkat dari sisi Anda?",
+      "petunjuk": [
+        "Winbox membaca tetangga lewat protokol penemuan. Protokol apa saja yang dipakai RouterOS?",
+        "Lihat pengaturan `/ip neighbor discovery-settings`. Di interface mana penemuan diaktifkan?",
+        "Pikirkan isi pengumuman itu dari sudut penyerang: versi perangkat lunak membantu mencari celah yang sudah diketahui."
+      ],
+      "jawaban": "1. **Amati.** Pelanggan bisa melihat identity, versi, IP, dan MAC router inti. Itu data dari protokol penemuan, bukan hasil peretasan.\n2. **Penyebab.** RouterOS mengirim MNDP, dan juga CDP serta LLDP bila diaktifkan, di interface yang termasuk `discover-interface-list`. Karena pelanggan berada di jaringan Layer 2 yang sama dengan router inti, pengumuman itu sampai ke mereka. Router pelanggan lain terlihat karena alasan yang sama.\n3. **Risiko.** Versi RouterOS lama memberi petunjuk celah yang bisa dicari penyerang. Identity dan IP memudahkan serangan ke Winbox atau SSH. Semua pelanggan juga saling melihat perangkat satu sama lain.\n4. **Perbaikan.** Batasi penemuan hanya ke interface manajemen:\n   `/interface list add name=MGMT`\n   `/interface list member add list=MGMT interface=ether5` (contoh port manajemen)\n   `/ip neighbor discovery-settings set discover-interface-list=MGMT`\n   Pemantauan Anda tetap berjalan lewat port manajemen itu.\n5. **Tambahan.** Perbarui RouterOS ke versi yang masih didukung. Pertimbangkan juga memisahkan pelanggan, misalnya dengan PPPoE atau VLAN per kelompok, supaya mereka tidak satu broadcast domain dengan router inti.\n6. **Verifikasi.** Minta pelanggan membuka tab Neighbors lagi: router inti tidak boleh muncul. Dari port manajemen, `/ip neighbor print` tetap menampilkan perangkat Anda."
+    }
+  }
+}

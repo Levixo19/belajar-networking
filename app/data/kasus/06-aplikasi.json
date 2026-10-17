@@ -1,0 +1,480 @@
+{
+  "06-aplikasi/01-dns": {
+    "intinya": {
+      "satu_kalimat": "DNS mengubah nama seperti tokopedia.com menjadi alamat IP lewat rantai server bertingkat (root, TLD, otoritatif), lalu jawabannya disimpan di cache selama waktu yang ditentukan TTL.",
+      "analogi": "Bayangkan Anda mencari nomor telepon sebuah toko di kota lain lewat resepsionis kantor (recursive resolver). Resepsionis bertanya ke kantor pusat (root), yang hanya menunjuk kantor wilayah (TLD), yang lalu menunjuk pemilik toko sendiri (server otoritatif). Nomor yang didapat ditulis di buku catatan dan dipakai lagi sampai batas waktunya (TTL) habis. DNSSEC menambahkan cap resmi pada setiap jawaban. Bedanya dengan resepsionis sungguhan: Anda tidak bisa menyuruh semua resolver di dunia melupakan catatannya, dan sebagian besar baru bertanya ulang setelah TTL habis.",
+      "kenapa_penting": "Hampir setiap akses internet diawali pertanyaan DNS, sehingga gangguan DNS terasa seperti 'internet mati' padahal jaringannya sehat. Di tempat kerja Anda akan mengubah record saat pindah hosting dan menyiapkan resolver kantor. Status `NXDOMAIN` atau `SERVFAIL` di `dig` menunjukkan titik yang rusak.",
+      "istilah": [
+        {
+          "kata": "Recursive resolver",
+          "arti": "Server DNS yang mencarikan jawaban atas nama klien, misalnya 8.8.8.8, 1.1.1.1, atau DNS milik ISP. Ia menyimpan jawaban di cache."
+        },
+        {
+          "kata": "Server otoritatif",
+          "arti": "Server yang menyimpan data asli sebuah zona, misalnya slack.com. Jawabannya dianggap kebenaran."
+        },
+        {
+          "kata": "TTL",
+          "arti": "Time to live: berapa detik sebuah jawaban boleh disimpan di cache sebelum harus ditanyakan ulang."
+        },
+        {
+          "kata": "DNSSEC",
+          "arti": "Tanda tangan digital pada data DNS supaya resolver bisa memeriksa bahwa jawaban itu asli. DNSSEC tidak mengenkripsi."
+        },
+        {
+          "kata": "DS record",
+          "arti": "Record di zona induk (misalnya .com) berisi sidik kunci zona anak. Record inilah yang menyambung rantai kepercayaan DNSSEC."
+        },
+        {
+          "kata": "SERVFAIL",
+          "arti": "Status jawaban DNS yang berarti server gagal menjawab, sering karena validasi DNSSEC gagal."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Peluncuran DNSSEC di slack.com gagal: sebagian pengguna tidak bisa membuka Slack selama sekitar 24 jam",
+      "kapan": "2021-09-30",
+      "di_mana": "Slack, global (pengguna di belakang resolver yang memvalidasi DNSSEC)",
+      "ringkas": "Slack mencoba mengaktifkan DNSSEC untuk domain slack.com. Pada percobaan ketiga, 30 September 2021, record DS diterbitkan di zona .com, lalu sebagian pengguna melihat galat ERR_NAME_NOT_RESOLVED. Tim Slack menarik DS dan mematikan tanda tangan untuk kembali ke keadaan lama. Justru sesudah itu keadaan memburuk: resolver yang masih menyimpan DS di cache menolak jawaban tanpa tanda tangan dan membalas SERVFAIL. Gangguan mengenai kurang dari 1 persen pengguna yang sedang online dan berlangsung sekitar 24 jam.",
+      "kronologi": [
+        {
+          "waktu": "7 September 2021",
+          "peristiwa": "Percobaan pertama. Sebelum DS diterbitkan, sebuah ISP besar di AS mengalami gangguan, dan Slack membatalkan perubahan zona sebagai langkah hati-hati."
+        },
+        {
+          "waktu": "8 September 2021",
+          "peristiwa": "Percobaan kedua. Begitu penandatanganan aktif, sebagian resolver menjadi lebih ketat dan menolak CNAME di apex zona (RFC 2181). Pengguna VPN paling terdampak. Penandatanganan dimatikan, dan zona turunan diganti ke record ALIAS."
+        },
+        {
+          "waktu": "30 September 2021",
+          "peristiwa": "Percobaan ketiga. Setelah tiga jam masa uji dan validasi yang berhasil, DS slack.com diterbitkan lewat registrar."
+        },
+        {
+          "waktu": "Tak lama kemudian",
+          "peristiwa": "Pengguna melapor galat ERR_NAME_NOT_RESOLVED: slack.com bisa di-resolve, tetapi app.slack.com gagal di resolver tertentu."
+        },
+        {
+          "waktu": "Hampir satu jam kemudian",
+          "peristiwa": "Tidak ada perbaikan. Slack menarik DS dari registrar, lalu mematikan penandatanganan DNSSEC di zona slack.com."
+        },
+        {
+          "waktu": "Sesudah rollback",
+          "peristiwa": "Resolver validasi yang masih menyimpan DS membalas SERVFAIL untuk semua nama slack.com. Slack meminta ISP dan operator resolver membuang cache, termasuk lewat situs flush Google 8.8.8.8 dan Cloudflare 1.1.1.1."
+        },
+        {
+          "waktu": "Sampai sekitar 24 jam",
+          "peristiwa": "Keadaan pulih bertahap seiring cache kedaluwarsa. Zona .com meminta DS di-cache 24 jam, dan Google Public DNS membatasinya 6 jam."
+        }
+      ],
+      "akar_masalah": "Ada dua lapis. Pertama, Route 53, layanan DNS AWS yang dipakai Slack, salah menjawab pertanyaan AAAA untuk nama wildcard di bawah slack.com. Record NSEC dalam jawabannya tidak mencantumkan tipe A, padahal record A-nya ada. Google Public DNS memakai aggressive NSEC (RFC 8198), sehingga menyimpulkan nama itu sama sekali tidak punya alamat. Kedua, saat rollback, DNSKEY dihapus padahal DS lama masih tersimpan di cache resolver. Resolver itu masih menuntut tanda tangan, tidak menemukannya, lalu membalas SERVFAIL.",
+      "kaitan": "Gangguan Slack memperagakan dua peringatan di bagian DNSSEC. Pertama, DS disimpan di zona induk dan membentuk rantai. Kedua, 'DS yang tidak sinkron akan membuat domain hilang total'. SERVFAIL di tabel status `dig` dan di tabel Masalah umum muncul karena validasi gagal. Subbagian Caching ikut terlihat: TTL DS 24 jam ditentukan zona .com dan tidak bisa diubah pemilik domain. Percobaan 8 September menyentuh Aturan CNAME yang sering dilanggar: CNAME di apex ditolak, lalu diganti ALIAS.",
+      "pelajaran": [
+        "Sebelum menerbitkan DS, catat TTL DS di zona induk (untuk .com 24 jam). Rencanakan rollback berdasarkan angka itu, bukan berdasarkan TTL record milik Anda.",
+        "Jangan menghapus DNSKEY selama DS lama mungkin masih tersimpan di cache. Tarik DS dulu, tunggu TTL-nya habis, baru matikan penandatanganan.",
+        "Saat nama tidak ter-resolve, bandingkan `dig` dan `dig +cd` ke resolver yang memvalidasi. Bila hanya `+cd` yang berhasil, masalahnya di DNSSEC.",
+        "Selama masa uji, periksa resolver publik besar dan nama wildcard dengan beberapa tipe record, termasuk AAAA, bukan hanya nama utama."
+      ],
+      "sumber": [
+        {
+          "judul": "What happened during Slack's DNSSEC rollout",
+          "penerbit": "Slack Engineering",
+          "url": "https://slack.engineering/what-happened-during-slacks-dnssec-rollout/"
+        },
+        {
+          "judul": "RFC 8198: Aggressive Use of DNSSEC-Validated Cache",
+          "penerbit": "IETF (RFC Editor)",
+          "url": "https://www.rfc-editor.org/rfc/rfc8198"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Admin SMK di Malang menyiapkan ujian daring di `ujian.smkn9.sch.id` yang dimulai pukul 07.00. Pukul 06.30 ia mencoba membuka alamat itu dan gagal karena record-nya belum dibuat. Pukul 06.40 ia menambahkan record A dan menaikkan serial SOA. Pukul 07.00 siswa di Wi-Fi sekolah mendapat 'situs tidak ditemukan', sedangkan siswa dengan data seluler bisa masuk. `dig @ns1.smkn9.sch.id ujian.smkn9.sch.id` menjawab alamat yang benar. Pukul 07.02, `dig @192.168.10.1 ujian.smkn9.sch.id` (resolver sekolah) menjawab `NXDOMAIN`, dengan record SOA ber-TTL 1650 di AUTHORITY SECTION. Field minimum SOA zona itu 3600. Jelaskan dan perbaiki.",
+      "petunjuk": [
+        "Siapa yang menjawab benar dan siapa yang salah? Masalahnya di zona atau di resolver?",
+        "Apa yang disimpan resolver sekolah ketika pukul 06.30 ia mendapat jawaban NXDOMAIN?",
+        "Hubungkan angka 1650 dengan field minimum SOA dan jam percobaan pertama."
+      ],
+      "jawaban": "1. Cari dulu letak masalahnya. Server otoritatif menjawab benar, resolver seluler juga benar, hanya resolver sekolah yang salah. Menurut langkah 4 alur diagnosis, masalahnya di resolver, bukan di zona.\n2. Susun dugaan. Penyebab paling mungkin adalah negative caching. Pukul 06.30 resolver sekolah bertanya dan mendapat NXDOMAIN. Ia lalu menyimpan jawaban 'nama ini tidak ada' selama 3600 detik, sesuai field minimum SOA (RFC 2308). Selama itu ia tidak bertanya lagi ke ns1, jadi record yang ditambahkan pukul 06.40 belum terlihat.\n3. Uji dengan angka. Dari 06.30.00 sampai 07.02.30 berlalu 1950 detik. 3600 dikurangi 1950 sama dengan 1650, persis TTL SOA di AUTHORITY SECTION. Itu sisa umur jawaban negatif di cache, yang baru habis pukul 07.30.\n4. Perbaiki sekarang. Buang cache nama itu di resolver sekolah: `unbound-control flush ujian.smkn9.sch.id` untuk Unbound, restart dnsmasq, atau `/ip dns cache flush` di MikroTik. Bersihkan pula cache laptop guru yang sempat mencoba, dengan `ipconfig /flushdns` atau `resolvectl flush-caches`.\n5. Cegah lain kali. Buat record sebelum alamatnya diumumkan atau dicoba. Untuk zona yang sering menambah nama baru, turunkan minimum SOA ke 300 detik."
+    }
+  },
+  "06-aplikasi/02-dhcp": {
+    "intinya": {
+      "satu_kalimat": "DHCP memberi setiap perangkat alamat IP, gateway, DNS, dan pengaturan jaringan lain secara otomatis lewat empat pesan: Discover, Offer, Request, Acknowledge.",
+      "analogi": "Bayangkan Anda pindah ke kos baru dan menanyakan nomor kamar ke penjaga. Penjaga memberi nomor kamar, letak pintu keluar kompleks (gateway), dan nomor telepon pengurus (DNS), dengan masa sewa yang harus diperpanjang. DHCP bekerja seperti itu untuk setiap perangkat yang baru tersambung. Masalahnya, perangkat percaya pada siapa saja yang menjawab lebih dulu, termasuk penjaga gadungan. Analogi ini berhenti di satu titik: perangkat tidak bisa menanyakan KTP penjaga, karena DHCP tidak punya autentikasi.",
+      "kenapa_penting": "Setiap kali HP Anda tersambung ke Wi-Fi kafe, kantor, atau rumah, DHCP yang memberinya alamat. Di tempat kerja Anda akan sering mendengar keluhan 'dapat IP 169.254.x.x', 'dapat IP dari subnet lain', atau 'tersambung tapi tidak ada internet'. Penyebabnya sering ada di relay, pool, opsi, atau server DHCP gadungan.",
+      "istilah": [
+        {
+          "kata": "DORA",
+          "arti": "Empat pesan DHCP: Discover (klien mencari), Offer (server menawarkan), Request (klien memilih), Acknowledge (server mengesahkan)."
+        },
+        {
+          "kata": "Lease",
+          "arti": "Masa pinjam alamat IP. Klien memperpanjangnya pada 50 persen masa (T1) dan 87,5 persen (T2)."
+        },
+        {
+          "kata": "Opsi 121",
+          "arti": "Classless Static Route: opsi DHCP yang menambahkan rute statis ke tabel routing klien (RFC 3442)."
+        },
+        {
+          "kata": "Rogue DHCP server",
+          "arti": "Server DHCP tidak sah di jaringan, sengaja atau tidak, yang menjawab klien dan memberi gateway, DNS, atau rute miliknya."
+        },
+        {
+          "kata": "DHCP snooping",
+          "arti": "Fitur switch yang hanya meloloskan OFFER dan ACK dari port tepercaya, sehingga server gadungan di port pengguna tidak didengar."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "TunnelVision (CVE-2024-3661): opsi DHCP 121 dari server gadungan membelokkan trafik keluar dari VPN",
+      "kapan": "2024-05-06",
+      "di_mana": "Riset Leviathan Security Group; VPN berbasis rute di Windows, Linux, macOS, dan iOS",
+      "ringkas": "Pada 6 Mei 2024 peneliti Leviathan Security Group mengumumkan teknik yang mereka sebut TunnelVision. Penyerang di jaringan lokal yang sama, misalnya Wi-Fi publik, menjalankan server DHCP sendiri. Server itu mengirim opsi 121 berisi rute yang lebih spesifik daripada rute VPN, sehingga sebagian trafik keluar lewat kartu jaringan biasa tanpa enkripsi. Aplikasi VPN tetap tampak tersambung, dan fitur kill switch tidak terpicu. Android tidak terdampak karena tidak mendukung opsi 121.",
+      "kronologi": [
+        {
+          "waktu": "Desember 2002",
+          "peristiwa": "RFC 3442 memperkenalkan opsi 121 (classless static route). Menurut Leviathan, teknik ini mungkin sudah bisa dilakukan sejak itu."
+        },
+        {
+          "waktu": "2015",
+          "peristiwa": "Leviathan mencatat riset 'Hardening OpenVPN for Def Con' sebagai dokumentasi lebih awal tentang risiko yang berkaitan."
+        },
+        {
+          "waktu": "6 Mei 2024",
+          "peristiwa": "Leviathan menerbitkan riset TunnelVision. Peneliti menduga teknik ini bisa saja sudah ditemukan dan dipakai orang lain sebelumnya."
+        },
+        {
+          "waktu": "6 Mei 2024",
+          "peristiwa": "CVE-2024-3661 diterbitkan dengan CISA sebagai CNA dan skor CVSS 3.1 sebesar 7,6 (High). Vektornya jaringan bersebelahan: penyerang harus berada di jaringan lokal yang sama."
+        }
+      ],
+      "akar_masalah": "DHCP tidak punya autentikasi, sehingga klien menerima opsi dari server mana pun yang menjawab. Opsi 121 menambahkan rute statis langsung ke tabel routing klien. Banyak VPN mengarahkan trafik ke terowongan lewat rute, misalnya dua rute /1 yang menimpa default route. Routing selalu memilih rute yang paling spesifik, jadi rute /25 atau /32 dari opsi 121 menang atas rute VPN. Paket ke tujuan itu keluar lewat antarmuka fisik tanpa enkripsi.",
+      "kaitan": "TunnelVision menyatukan dua bagian modul. Bagian Opsi DHCP memuji opsi 121 karena 'memungkinkan mendorong rute statis ke klien tanpa mengubah gateway'; TunnelVision memakai kemampuan yang sama untuk tujuan jahat. Bagian Keamanan DHCP menjelaskan ancaman Rogue DHCP Server dan mitigasinya, yaitu DHCP snooping dengan port tepercaya hanya ke arah server sah. Leviathan merekomendasikan langkah yang sama di sisi jaringan.",
+      "pelajaran": [
+        "Aktifkan DHCP snooping di switch akses dan tandai trusted hanya port menuju server DHCP sah. Server gadungan di port pengguna tidak akan didengar.",
+        "Di jaringan yang tidak Anda kendalikan, 'VPN tersambung' bukan bukti trafik aman. Periksa tabel routing (`ip route` di Linux, `route print` di Windows) dan cari rute asing yang lebih spesifik daripada rute VPN.",
+        "Untuk pekerjaan sensitif di Wi-Fi publik, pakai hotspot dari ponsel sendiri, salah satu saran Leviathan."
+      ],
+      "sumber": [
+        {
+          "judul": "CVE-2024-3661: TunnelVision - How Attackers Can Decloak Routing-Based VPNs For a Total VPN Leak",
+          "penerbit": "Leviathan Security Group",
+          "url": "https://www.leviathansecurity.com/blog/tunnelvision"
+        },
+        {
+          "judul": "CVE-2024-3661: DHCP routing options can manipulate interface-based VPN traffic",
+          "penerbit": "CVE Program (CNA: CISA)",
+          "url": "https://www.cve.org/CVERecord?id=CVE-2024-3661"
+        },
+        {
+          "judul": "RFC 3442: The Classless Static Route Option for Dynamic Host Configuration Protocol (DHCP) version 4",
+          "penerbit": "IETF (RFC Editor)",
+          "url": "https://www.rfc-editor.org/rfc/rfc3442"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Sebuah kafe di Yogyakarta memakai MikroTik untuk Wi-Fi tamu dengan pool 192.168.88.10-192.168.88.254 dan `lease-time=3d`. Menjelang sore, pelanggan baru tidak mendapat IP: HP-nya berhenti di 'Mendapatkan alamat IP'. Pelanggan yang datang pagi tetap lancar. `/ip dhcp-server lease print count-only` menghasilkan 245. Kafe hanya punya 40 kursi, tetapi daftar lease memuat ratusan MAC berbeda, banyak yang tidak terlihat lagi sejak kemarin. Apa penyebabnya dan bagaimana memperbaikinya?",
+      "petunjuk": [
+        "Hitung jumlah alamat di pool, lalu bandingkan dengan jumlah lease.",
+        "Berapa lama satu lease menahan alamat setelah pelanggan pulang?",
+        "Banyak HP modern memakai alamat MAC acak. Apa artinya bagi server DHCP bila alamat itu berganti?"
+      ],
+      "jawaban": "1. Amati gejalanya. Pool .10 sampai .254 berisi 245 alamat, dan jumlah lease juga 245: pool penuh. Pelanggan pagi aman karena sudah memegang lease, pelanggan baru tidak kebagian. Pola 'hanya sebagian klien gagal' cocok dengan baris pool habis di tabel gejala.\n2. Susun dugaan. Lease 3 hari terlalu panjang untuk tamu kafe. Pelanggan yang duduk satu jam tetap menahan alamatnya 3 hari. HP modern memakai MAC acak; bila MAC-nya berganti, server menganggapnya perangkat baru dan memberi alamat lain, sementara lease lama tetap memakan pool.\n3. Uji dugaan itu. Lihat kolom kapan lease terakhir terlihat dan kapan kedaluwarsa (`/ip dhcp-server lease print detail`). Sebagian besar milik perangkat yang sudah lama pergi. Log DHCP mencatat pool kosong saat pelanggan baru gagal.\n4. Perbaiki penyebabnya. Turunkan lease Wi-Fi tamu menjadi 1 jam (`/ip dhcp-server set [find name=dhcp-tamu] lease-time=1h`). Bila tamu memang banyak, perbesar subnet tamu, misalnya ke /23 (sekitar 500 alamat), lalu sesuaikan pool dan network-nya. Pindahkan perangkat staf dan printer ke pool atau VLAN lain dengan reservasi. Hapus sekali saja lease lama yang sudah tidak aktif.\n5. Verifikasi hasilnya. Sore berikutnya, `count-only` jauh di bawah ukuran pool, dan pelanggan baru langsung mendapat IP."
+    }
+  },
+  "06-aplikasi/03-http": {
+    "intinya": {
+      "satu_kalimat": "HTTP adalah bahasa tanya-jawab antara klien dan server web: klien mengirim request (method, path, header), lalu server membalas status code, header, dan isi.",
+      "analogi": "Bayangkan memesan di warung lewat kertas pesanan. Anda menulis 'GET nasi goreng satu' (method dan path) dan menambah catatan 'tidak pedas' (header). Pelayan membalas dengan kode: 200 berarti pesanan datang, 404 menu tidak ada, 503 dapur kewalahan. Di HTTP/2, satu pelayan membawa banyak pesanan sekaligus di satu nampan (banyak stream dalam satu koneksi). Analogi ini kurang pas di satu hal: pelayan HTTP tidak mengingat Anda, jadi setiap pesanan harus membawa identitasnya sendiri, misalnya cookie atau token.",
+      "kenapa_penting": "Hampir semua aplikasi dan API yang Anda pakai, termasuk REST API perangkat jaringan, berbicara HTTP. Status code seperti 502 atau 504 langsung menunjukkan di mana masalahnya, dan header seperti `Cache-Control` atau `X-Forwarded-For` menentukan perilaku proxy, CDN, dan load balancer.",
+      "istilah": [
+        {
+          "kata": "Status code",
+          "arti": "Angka tiga digit di awal jawaban server. 2xx sukses, 4xx salah klien, 5xx salah server. 502 berarti proxy gagal mendapat jawaban sah dari backend."
+        },
+        {
+          "kata": "Stream HTTP/2",
+          "arti": "Satu pasang request dan jawaban di dalam koneksi HTTP/2. Banyak stream berjalan bersamaan di satu koneksi TCP."
+        },
+        {
+          "kata": "RST_STREAM",
+          "arti": "Frame HTTP/2 untuk membatalkan satu stream tanpa menutup koneksinya."
+        },
+        {
+          "kata": "Reverse proxy",
+          "arti": "Server di depan aplikasi yang menerima request dari internet lalu meneruskannya ke backend, misalnya nginx atau CDN."
+        },
+        {
+          "kata": "DDoS lapisan 7",
+          "arti": "Serangan yang membanjiri server dengan request aplikasi seperti HTTP. Yang habis adalah CPU dan memori server, walau bandwidth-nya masih cukup."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Serangan HTTP/2 Rapid Reset: ratusan juta request per detik lewat pembatalan stream (CVE-2023-44487)",
+      "kapan": "2023-08",
+      "di_mana": "Google, Cloudflare, dan layanan web lain yang memakai HTTP/2, global",
+      "ringkas": "Mulai Agustus 2023, Google dan Cloudflare menghadapi serangan DDoS dengan cara baru. Penyerang membuka stream HTTP/2 lalu langsung membatalkannya dengan frame RST_STREAM, berulang-ulang di satu koneksi. Server tetap mengerjakan setiap request yang dibatalkan, sedangkan penyerang hampir tidak mengeluarkan biaya. Google mencatat puncak lebih dari 398 juta request per detik, dan Cloudflare sedikit di atas 201 juta dari botnet sekitar 20.000 mesin. Pada 10 Oktober 2023 celah ini diumumkan sebagai CVE-2023-44487.",
+      "kronologi": [
+        {
+          "waktu": "25 Agustus 2023",
+          "peristiwa": "Cloudflare mulai menerima gelombang serangan. Puncaknya sedikit di atas 201 juta request per detik, hampir tiga kali rekor sebelumnya."
+        },
+        {
+          "waktu": "Agustus 2023",
+          "peristiwa": "Serangan terbesar ke Google memuncak di lebih dari 398 juta request per detik."
+        },
+        {
+          "waktu": "29 Agustus 2023",
+          "peristiwa": "Pada gelombang paling berat, sekitar 12 persen request pelanggan Cloudflare mendapat galat 502 selama beberapa detik. Pada gelombang awal angkanya sekitar 1 persen."
+        },
+        {
+          "waktu": "10 Oktober 2023",
+          "peristiwa": "Google, Cloudflare, dan AWS menerbitkan penjelasan dan buletin untuk CVE-2023-44487, sesudah pengungkapan terkoordinasi yang ikut dipimpin Google bersama pembuat server HTTP/2."
+        }
+      ],
+      "akar_masalah": "HTTP/2 memultipleks banyak stream di satu koneksi dan mengizinkan klien membatalkan stream kapan saja lewat RST_STREAM. Begitu satu stream dibatalkan, klien langsung boleh membuka stream baru, jadi batas jumlah stream serentak tidak pernah menahan penyerang. Server tetap mengalokasikan struktur data, membongkar header yang dikompresi, dan memetakan URL untuk setiap request yang sudah dibatalkan. Biaya penyerang nyaris nol, sedangkan biaya server besar.",
+      "kaitan": "Rapid Reset memanfaatkan fitur Multiplexing di bagian HTTP/2 (2015, RFC 9113). Banyak stream dalam satu koneksi TCP berarti satu koneksi bisa membawa banyak request dalam waktu singkat. Pelanggan Cloudflare melihat galat 502, kode yang di bagian Status Code berarti proxy gagal mendapat jawaban sah dari backend. Cloudflare sendiri adalah CDN dan reverse proxy seperti di bagian Proxy, Reverse Proxy, Load Balancer, CDN, sehingga serangan ke lapisan itu terasa oleh situs-situs pelanggannya.",
+      "pelajaran": [
+        "Perbarui server web, reverse proxy, dan pustaka HTTP/2 yang Anda pakai. Pembuat perangkat lunak merilis tambalan untuk CVE-2023-44487.",
+        "Batasi pembatalan stream per koneksi. Google menyarankan menganggap koneksi dengan lebih dari 100 request dan lebih dari 50 persen di antaranya dibatalkan sebagai kandidat mitigasi, lalu menutupnya dengan GOAWAY.",
+        "Pantau rasio galat 502 dan jumlah request per koneksi di reverse proxy. Lonjakan request yang dibatalkan adalah tanda serangan ini."
+      ],
+      "sumber": [
+        {
+          "judul": "How it works: The novel HTTP/2 'Rapid Reset' DDoS attack",
+          "penerbit": "Google Cloud Blog",
+          "url": "https://cloud.google.com/blog/products/identity-security/how-it-works-the-novel-http2-rapid-reset-ddos-attack"
+        },
+        {
+          "judul": "HTTP/2 Rapid Reset: deconstructing the record-breaking attack",
+          "penerbit": "Cloudflare Blog",
+          "url": "https://blog.cloudflare.com/technical-breakdown-http2-rapid-reset-ddos-attack/"
+        },
+        {
+          "judul": "CVE-2023-44487 - HTTP/2 Rapid Reset Attack",
+          "penerbit": "AWS Security Bulletins",
+          "url": "https://aws.amazon.com/security/security-bulletins/AWS-2023-011/"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Koperasi di Banjarmasin punya aplikasi web internal di belakang reverse proxy nginx, dengan konfigurasi mirip contoh di modul termasuk `proxy_read_timeout 30s`. Halaman biasa terbuka cepat. Tombol 'Unduh laporan tahunan (PDF)' selalu gagal dengan `504 Gateway Timeout`, kira-kira 30 detik setelah diklik. Staf IT sudah menambah bandwidth internet kantor, tetapi hasilnya sama. Apa dugaan Anda, bagaimana mengujinya, dan apa perbaikannya?",
+      "petunjuk": [
+        "Kode 504 berarti siapa yang menunggu siapa? Lihat tabel status code untuk network engineer.",
+        "Angka 30 detik itu muncul di mana dalam konfigurasi nginx?",
+        "Ukur waktu jawaban backend tanpa lewat proxy dengan `curl -w`."
+      ],
+      "jawaban": "1. Amati gejalanya. 504 berarti proxy menyerah menunggu backend yang terlalu lambat menjawab. Kegagalan selalu sekitar 30 detik dan hanya terjadi pada laporan besar. Bandwidth tidak berpengaruh, karena belum ada data yang mulai dikirim ke browser.\n2. Susun dugaan. Backend butuh lebih dari 30 detik untuk menyusun PDF, sedangkan nginx berhenti menunggu header jawaban setelah `proxy_read_timeout 30s`.\n3. Uji dugaan itu. Dari server nginx, panggil backend langsung: `curl -o /dev/null -s -w 'ttfb: %{time_starttransfer}s\\n' http://10.0.1.10:8080/laporan/tahunan.pdf`. Bila ttfb sekitar 45-50 detik, dugaan terbukti. Log error nginx juga mencatat `upstream timed out (110: Connection timed out) while reading response header from upstream`.\n4. Perbaiki penyebabnya. Solusi cepat: buat blok `location /laporan/` dengan `proxy_read_timeout 120s;` dan `proxy_pass` yang sama, hanya untuk jalur itu. Jangan menaikkan timeout global, karena backend yang macet akan menahan koneksi lebih lama di semua halaman. Solusi yang lebih baik: aplikasi menyusun laporan di latar belakang dan memberi tautan unduh saat siap, atau menyimpan laporan yang sudah jadi.\n5. Verifikasi hasilnya. Klik ulang tombolnya dan pastikan tidak ada 504 lagi. Pantau log error nginx selama beberapa hari."
+    }
+  },
+  "06-aplikasi/04-tls-pki": {
+    "intinya": {
+      "satu_kalimat": "TLS mengenkripsi koneksi dan membuktikan identitas server lewat sertifikat bertanda tangan CA, sehingga browser tahu ia berbicara dengan bank Anda, bukan penyadap.",
+      "analogi": "Sertifikat seperti KTP elektronik sebuah situs: berisi nama (domain) dan 'foto' (kunci publik), dan diterbitkan instansi yang Anda percaya (CA). Browser memeriksa apakah KTP itu dicap instansi yang ada di daftar resminya (trust store), masih berlaku, dan namanya cocok. Kalau satu instansi penerbit dibobol dan mencetak KTP palsu, semua orang yang percaya instansi itu bisa tertipu. Bedanya dengan KTP: browser memeriksa semuanya secara matematis dalam milidetik, tetapi ia hanya sekuat CA paling lemah di daftarnya.",
+      "kenapa_penting": "Gembok di browser, aplikasi m-banking, VPN, dan API semuanya bergantung pada TLS. Di tempat kerja Anda akan memasang sertifikat Let's Encrypt dan menelusuri galat seperti 'certificate has expired' atau 'unable to get local issuer certificate'. Anda juga akan ikut menimbang kapan TLS inspection pantas dipakai.",
+      "istilah": [
+        {
+          "kata": "CA (Certificate Authority)",
+          "arti": "Lembaga yang menandatangani sertifikat dan menjamin kunci publik di dalamnya milik domain yang disebut."
+        },
+        {
+          "kata": "Trust store",
+          "arti": "Daftar sertifikat root CA yang dipercaya bawaan oleh sistem operasi atau browser."
+        },
+        {
+          "kata": "Chain of trust",
+          "arti": "Rantai tanda tangan dari sertifikat server, lewat intermediate, sampai root CA di trust store."
+        },
+        {
+          "kata": "OCSP",
+          "arti": "Protokol untuk bertanya ke CA apakah sebuah sertifikat sudah dicabut."
+        },
+        {
+          "kata": "Certificate pinning",
+          "arti": "Aplikasi hanya menerima kunci atau sertifikat tertentu untuk sebuah domain, walau ada sertifikat lain yang ditandatangani CA sah."
+        },
+        {
+          "kata": "Man-in-the-middle",
+          "arti": "Pihak di tengah jalur yang menyamar sebagai server tujuan untuk membaca atau mengubah komunikasi."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "CA DigiNotar dibobol: sertifikat palsu *.google.com dipakai menyadap pengguna di Iran",
+      "kapan": "2011-08",
+      "di_mana": "DigiNotar (CA di Belanda); korban terutama pengguna di Iran",
+      "ringkas": "DigiNotar adalah CA asal Belanda yang root-nya dipercaya browser. Sejak pertengahan Juni 2011 penyerang masuk ke sistemnya dan menerbitkan sertifikat palsu untuk ratusan situs, termasuk Google dan Skype. Selama hampir dua bulan sertifikat itu dipakai menyadap email dan penjelajahan web di Iran. Pada 29 Agustus 2011 Google melaporkan upaya penyadapan itu; Chrome berhasil mendeteksi sertifikat palsunya. Browser lalu berhenti memercayai DigiNotar, dan perusahaan itu bangkrut.",
+      "kronologi": [
+        {
+          "waktu": "Pertengahan Juni 2011",
+          "peristiwa": "Menurut investigasi Fox-IT yang dikutip ENISA, penyerang mulai masuk ke sistem DigiNotar."
+        },
+        {
+          "waktu": "19 Juli 2011",
+          "peristiwa": "DigiNotar mendeteksi penyusupan, tetapi auditnya tidak menemukan semua sertifikat palsu, termasuk yang untuk *.google.com."
+        },
+        {
+          "waktu": "29 Agustus 2011",
+          "peristiwa": "Google melaporkan upaya man-in-the-middle terhadap penggunanya, terutama di Iran, dengan sertifikat palsu dari DigiNotar. Google berencana menonaktifkan CA DigiNotar di Chrome."
+        },
+        {
+          "waktu": "30 Agustus 2011",
+          "peristiwa": "Mozilla mulai merilis pembaruan Firefox dan Thunderbird yang mencabut kepercayaan pada root DigiNotar."
+        },
+        {
+          "waktu": "3 September 2011",
+          "peristiwa": "Berdasarkan temuan dan keputusan pemerintah Belanda, Google memutuskan menolak semua CA yang dioperasikan DigiNotar."
+        },
+        {
+          "waktu": "Hasil investigasi",
+          "peristiwa": "Log OCSP DigiNotar mencatat sekitar 300.000 permintaan dari alamat IP di Iran, petunjuk kasar jumlah korban. DigiNotar kemudian bangkrut."
+        }
+      ],
+      "akar_masalah": "Browser menerima sertifikat untuk situs mana pun selama ditandatangani salah satu dari ratusan CA di trust store-nya. Akibatnya, satu CA yang lemah menjadi titik gagal bagi semua situs. Fox-IT menemukan DigiNotar tidak memakai antivirus, kata sandi administratornya lemah, dan pencatatannya tidak memadai. Penyerang bisa menerbitkan sertifikat yang sah secara kriptografis. DigiNotar juga tidak punya catatan lengkap sertifikat palsu, sehingga pencabutan satu per satu tidak cukup.",
+      "kaitan": "DigiNotar memperlihatkan isi bagian Chain of Trust: root di trust store menjamin semua sertifikat di bawahnya, jadi CA yang dibobol meruntuhkan seluruh rantainya. Bagian Revocation menyebut pencabutan 'pada dasarnya rapuh'; di sini browser terpaksa membuang root DigiNotar karena tidak ada daftar lengkap yang bisa dicabut. Bagian Certificate Pinning menjelaskan perlindungan yang dipakai Chrome: sejak Chrome 13, sertifikat situs Google wajib memuat kunci publik dari daftar yang disematkan. Penyadapan di Iran sendiri adalah man-in-the-middle seperti di bagian TLS Inspection, tetapi tanpa izin pengguna.",
+      "pelajaran": [
+        "Jangan menekan 'lanjutkan' saat browser memperingatkan sertifikat situs besar seperti Gmail. Peringatan semacam itulah yang membuka kasus DigiNotar.",
+        "Untuk domain Anda sendiri, batasi CA yang boleh menerbitkan sertifikat lewat record CAA di DNS, dan pertimbangkan pinning untuk aplikasi buatan sendiri yang sensitif.",
+        "Bila sistem yang Anda kelola dibobol, laporkan segera ke pelanggan dan otoritas (di Indonesia, BSSN). ENISA mencatat keterlambatan lapor DigiNotar membuat penyadapan berlangsung hampir dua bulan."
+      ],
+      "sumber": [
+        {
+          "judul": "An update on attempted man-in-the-middle attacks",
+          "penerbit": "Google Online Security Blog",
+          "url": "https://security.googleblog.com/2011/08/update-on-attempted-man-in-middle.html"
+        },
+        {
+          "judul": "Fraudulent *.google.com Certificate",
+          "penerbit": "Mozilla Security Blog",
+          "url": "https://blog.mozilla.org/security/2011/08/29/fraudulent-google-com-certificate/"
+        },
+        {
+          "judul": "Operation Black Tulip: Certificate authorities lose authority",
+          "penerbit": "ENISA (Badan Keamanan Siber Uni Eropa)",
+          "url": "https://www.enisa.europa.eu/media/news-items/operation-black-tulip"
+        },
+        {
+          "judul": "Public key pinning",
+          "penerbit": "ImperialViolet (Adam Langley, tim keamanan Chrome)",
+          "url": "https://www.imperialviolet.org/2011/05/04/pinning.html"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Senin pagi, situs pendaftaran siswa baru sebuah sekolah di Bandung menampilkan `NET::ERR_CERT_DATE_INVALID` di semua browser. Server memakai certbot dengan challenge HTTP-01, dan timer pembaruan otomatis aktif. Log certbot sejak tiga minggu lalu berulang kali memuat `Timeout during connect (likely firewall problem)`. Dua bulan lalu teknisi menutup port 80 di firewall 'karena situsnya sudah HTTPS semua'. Apa yang terjadi, bagaimana memulihkannya hari ini, dan bagaimana mencegahnya terulang?",
+      "petunjuk": [
+        "Bagaimana Let's Encrypt membuktikan Anda menguasai domain pada challenge HTTP-01, dan lewat port berapa?",
+        "Sertifikat Let's Encrypt berlaku 90 hari, dan certbot biasanya mencoba memperbarui saat sisa masa berlaku 30 hari. Hubungkan dengan log tiga minggu itu.",
+        "Ada challenge lain yang tidak membutuhkan port 80."
+      ],
+      "jawaban": "1. Kenali galatnya. `ERR_CERT_DATE_INVALID` di semua browser berarti sertifikat sudah kedaluwarsa, bukan masalah satu perangkat. Pembaruan otomatis jelas gagal.\n2. Susun dugaan. Pada HTTP-01, CA mengambil berkas di `http://domain/.well-known/acme-challenge/` lewat port 80. Port 80 ditutup, sehingga validasi selalu timeout. Certbot mulai mencoba sekitar 30 hari sebelum habis, gagal tiap hari, lalu sertifikat lewat masa berlakunya.\n3. Uji dugaan itu. Dari luar jaringan sekolah, `curl -I http://<domain>/.well-known/acme-challenge/tes` tidak mendapat jawaban. `echo | openssl s_client -connect <domain>:443 2>/dev/null | openssl x509 -noout -dates` menunjukkan `notAfter` sudah lewat. `sudo certbot renew --dry-run` gagal dengan pesan yang sama.\n4. Pulihkan layanan hari ini. Buka lagi port 80 di firewall. Biarkan permintaan ke `/.well-known/acme-challenge/` dilayani, dan arahkan permintaan HTTP lain ke HTTPS. Jalankan `sudo certbot renew`, lalu reload web server.\n5. Cegah agar tidak terulang. Catat di dokumentasi bahwa port 80 dipakai ACME, atau pindah ke DNS-01 bila penyedia DNS punya API. Pasang pemantau kedaluwarsa seperti skrip di bagian 5 modul agar ada peringatan 30 hari sebelumnya, dan kirim hasil certbot ke email admin."
+    }
+  },
+  "06-aplikasi/05-layanan-lain": {
+    "intinya": {
+      "satu_kalimat": "Jaringan butuh layanan pendukung: email, SSH untuk mengelola perangkat, NTP untuk menyamakan jam, SNMP dan syslog untuk memantau, serta FTP dan TFTP untuk memindahkan berkas.",
+      "analogi": "Bayangkan sebuah kantor kelurahan. Email adalah kotak surat beserta kurirnya, dan SSH adalah kunci ruang server yang hanya dipegang petugas. NTP adalah jam dinding yang dicocokkan semua orang setiap pagi, sedangkan syslog adalah buku agenda tempat setiap kejadian dicatat. SNMP seperti petugas yang berkeliling menanyakan kondisi setiap ruangan. Kalau jam dinding kelurahan salah, isi buku agendanya tidak bisa dicocokkan dengan kantor lain; begitu pula log perangkat tanpa NTP.",
+      "kenapa_penting": "Email kantor yang masuk spam, login domain Windows yang gagal karena jam selisih lebih dari 5 menit, dan grafik bandwidth yang aneh berakar di sini. Mengonfigurasinya dengan benar adalah pekerjaan harian di NOC dan tim IT kantor.",
+      "istilah": [
+        {
+          "kata": "SPF",
+          "arti": "Record TXT di DNS yang mendaftar server mana saja yang boleh mengirim email atas nama sebuah domain."
+        },
+        {
+          "kata": "DKIM",
+          "arti": "Tanda tangan digital pada email. Penerima memeriksanya dengan kunci publik yang dipasang pengirim di DNS."
+        },
+        {
+          "kata": "DMARC",
+          "arti": "Kebijakan di DNS yang memberi tahu penerima apa yang harus dilakukan bila SPF dan DKIM gagal (`p=none`, `quarantine`, atau `reject`), plus alamat laporan."
+        },
+        {
+          "kata": "PTR",
+          "arti": "Record reverse DNS yang memetakan alamat IP kembali ke nama. Server email penerima memeriksanya untuk menilai pengirim."
+        },
+        {
+          "kata": "Stratum",
+          "arti": "Jarak sebuah jam NTP dari sumber waktu acuan. Stratum 1 terhubung langsung ke jam atom atau GPS, stratum 16 berarti tidak sinkron."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "Gmail dan Yahoo mewajibkan SPF, DKIM, dan DMARC bagi pengirim email massal mulai Februari 2024",
+      "kapan": "2024-02",
+      "di_mana": "Gmail (Google) dan Yahoo Mail, global",
+      "ringkas": "Pada 3 Oktober 2023 Google mengumumkan aturan baru untuk pengirim yang mengirim lebih dari 5.000 pesan sehari ke alamat Gmail. Mulai Februari 2024 mereka wajib mengautentikasi email dengan SPF, DKIM, dan DMARC, menyediakan berhenti berlangganan satu klik, dan menjaga laporan spam di bawah 0,3 persen. Yahoo menegakkan standar serupa mulai bulan yang sama. Pengirim kecil pun wajib punya SPF atau DKIM, serta record DNS maju dan balik (PTR) yang valid untuk IP pengirimnya.",
+      "kronologi": [
+        {
+          "waktu": "3 Oktober 2023",
+          "peristiwa": "Google mengumumkan aturan bagi pengirim massal, yaitu yang mengirim lebih dari 5.000 pesan sehari ke Gmail. Marcel Becker dari Yahoo ikut menyatakan dukungan."
+        },
+        {
+          "waktu": "1 Februari 2024",
+          "peristiwa": "Aturan mulai berlaku di Gmail. Semua pengirim wajib SPF atau DKIM, DNS maju dan balik yang valid, TLS, dan laporan spam di bawah 0,3 persen. Pengirim massal wajib SPF dan DKIM sekaligus, serta DMARC."
+        },
+        {
+          "waktu": "Februari 2024",
+          "peristiwa": "Yahoo mulai menegakkan standar serupa: DMARC minimal `p=none` yang harus lolos, berhenti berlangganan satu klik, dan laporan spam di bawah 0,3 persen."
+        },
+        {
+          "waktu": "1 Juni 2024",
+          "peristiwa": "Batas akhir bagi pengirim massal yang sudah punya tautan berhenti berlangganan untuk menerapkan berhenti berlangganan satu klik di Gmail."
+        },
+        {
+          "waktu": "November 2025",
+          "peristiwa": "Gmail meningkatkan penegakan terhadap lalu lintas yang tidak patuh. Pesan yang gagal memenuhi syarat bisa ditolak sementara atau permanen."
+        }
+      ],
+      "akar_masalah": "SMTP aslinya tidak punya autentikasi: siapa pun bisa menulis alamat pengirim apa pun di header From. Celah itu dipakai untuk menyamar sebagai bank, toko, atau kantor. SPF, DKIM, dan DMARC menambalnya lewat DNS, tetapi selama bertahun-tahun penerapannya sukarela. Google menyebut aturan ini untuk mengurangi miliaran pesan berbahaya, dengan cara menjadikan autentikasi syarat agar email sampai ke kotak masuk.",
+      "kaitan": "Aturan ini adalah bagian Anti-Spoofing: SPF, DKIM, DMARC yang diterapkan di dunia nyata. Nasihat modul untuk memulai DMARC dengan `p=none` sejalan dengan aturan Google, yang menyatakan kebijakan DMARC boleh disetel `none`. Syarat DNS balik yang valid membenarkan peringatan di bagian Diagnostik email bahwa PTR yang tidak cocok menjadi penyebab utama email masuk spam. Gmail bahkan membatasi sementara pesan dari IP tanpa PTR, dengan kode 4.7.23.",
+      "pelajaran": [
+        "Sebelum mengirim email massal dari domain kantor, periksa `dig domain TXT` untuk SPF, `dig selector._domainkey.domain TXT` untuk DKIM, dan `dig _dmarc.domain TXT` untuk DMARC.",
+        "Mulai DMARC dengan `p=none` dan alamat `rua`, baca laporannya beberapa minggu, baru naikkan ke `quarantine` atau `reject`.",
+        "Pastikan IP server email punya PTR yang cocok dengan namanya, lalu nama itu kembali ke IP yang sama. PTR diminta ke ISP atau penyedia VPS pemilik blok IP."
+      ],
+      "sumber": [
+        {
+          "judul": "New Gmail protections for a safer, less spammy inbox",
+          "penerbit": "Google, The Keyword",
+          "url": "https://blog.google/products/gmail/gmail-security-authentication-spam-protection/"
+        },
+        {
+          "judul": "Email sender guidelines",
+          "penerbit": "Gmail Help (Google)",
+          "url": "https://support.google.com/a/answer/81126"
+        },
+        {
+          "judul": "Email sender guidelines FAQ",
+          "penerbit": "Gmail Help (Google)",
+          "url": "https://support.google.com/a/answer/14229414"
+        },
+        {
+          "judul": "Sender Best Practices",
+          "penerbit": "Yahoo Sender Hub",
+          "url": "https://senders.yahooinc.com/best-practices/"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Usaha katering di Solo memindahkan server email ke VPS baru dengan IP 203.0.113.50. Sejak itu, invoice ke pelanggan Gmail sering tertahan dengan pesan `4.7.23 The sending IP address for this message doesn't have a PTR record`, dan sebagian lagi masuk spam. Data yang Anda kumpulkan: `dig katering-solo.id TXT +short` hanya berisi `v=spf1 ip4:198.51.100.20 -all` (IP server lama). `dig -x 203.0.113.50 +short` kosong. `dig _dmarc.katering-solo.id TXT +short` juga kosong. Apa saja yang salah, dan dalam urutan apa Anda memperbaikinya?",
+      "petunjuk": [
+        "Baca kode 4.7.23 dan cocokkan dengan hasil `dig -x`.",
+        "Server mana yang diizinkan record SPF itu, dan apa arti `-all` bagi server baru?",
+        "Usaha ini mengirim jauh di bawah 5.000 pesan sehari. Syarat Gmail mana yang tetap berlaku untuk semua pengirim?"
+      ],
+      "jawaban": "1. PTR tidak ada. Kode 4.7.23 dan `dig -x` yang kosong cocok: IP baru belum punya reverse DNS, jadi Gmail menahan pesannya. Syarat ini berlaku untuk semua pengirim, bukan hanya pengirim massal.\n2. SPF masih menunjuk server lama. Record SPF hanya mengizinkan 198.51.100.20, dan `-all` memerintahkan penerima menolak server lain. Server baru dianggap tidak sah, sehingga pesan masuk spam atau ditolak.\n3. DKIM dan DMARC belum siap. Tidak ada `_dmarc`, dan DKIM perlu diperiksa dengan `dig <selector>._domainkey.katering-solo.id TXT`.\n4. Perbaiki dengan urutan ini. (a) Minta penyedia VPS memasang PTR `203.0.113.50` ke `mail.katering-solo.id`, dan pastikan A record `mail.katering-solo.id` menunjuk 203.0.113.50 (forward-confirmed). (b) Perbarui SPF menjadi `v=spf1 ip4:203.0.113.50 -all`; sisakan IP lama hanya bila server lama masih mengirim. (c) Aktifkan DKIM di server email dan terbitkan kunci publiknya di DNS. (d) Tambahkan `_dmarc` dengan `v=DMARC1; p=none; rua=mailto:dmarc@katering-solo.id`.\n5. Verifikasi hasilnya. Kirim ke akun Gmail uji, buka header aslinya (menu Show original), dan pastikan SPF, DKIM, dan DMARC berstatus PASS. Setelah laporan DMARC beberapa minggu bersih, naikkan kebijakan ke `quarantine`."
+    }
+  }
+}

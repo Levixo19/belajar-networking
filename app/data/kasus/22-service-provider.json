@@ -1,0 +1,482 @@
+{
+  "22-service-provider/01-mpls-ldp": {
+    "intinya": {
+      "satu_kalimat": "MPLS membuat router di tengah jaringan operator cukup membaca label pendek yang ditempel di depan paket, dan LDP adalah protokol yang membagikan label itu antar-router yang bersebelahan.",
+      "analogi": "Bayangkan gudang ekspedisi di Jakarta yang membaca alamat setiap paket satu kali, lalu memasukkannya ke karung bertanda \"MKS-07\". Gudang transit di Surabaya tidak membuka karung: petugasnya hanya mengganti tanda dengan nomor yang sudah disepakati dengan gudang berikutnya, lalu meneruskannya. Tanda karung itu label, dan kesepakatan nomor antar-gudang itulah LDP. Bedanya, rute karung tidak dipilih LDP, melainkan mengikuti peta jalan bersama, yaitu IGP seperti OSPF atau IS-IS.",
+      "kenapa_penting": "Di operator besar, layanan VPN kantor cabang, internet korporat, dan backhaul menara seluler umumnya berjalan di atas backbone MPLS. Kalau kelak Anda bertugas di NOC, gejala seperti \"BGP sehat tetapi VPN pelanggan mati\" atau \"ping jalan, unggah file macet\" sering berakar pada label, LDP, atau MTU.",
+      "istilah": [
+        {
+          "kata": "Label",
+          "arti": "Angka 20 bit yang ditempel di depan paket. Router di tengah meneruskan paket berdasarkan angka ini, bukan berdasarkan alamat IP tujuan."
+        },
+        {
+          "kata": "PE dan P",
+          "arti": "PE (Provider Edge) adalah router operator di tepi yang tersambung ke pelanggan dan memasang atau melepas label. P (Provider) adalah router inti yang hanya menukar label."
+        },
+        {
+          "kata": "LSP",
+          "arti": "Label Switched Path. Jalur satu arah yang dilalui paket berlabel dari router masuk (ingress) ke router keluar (egress)."
+        },
+        {
+          "kata": "LDP",
+          "arti": "Label Distribution Protocol. Protokol yang membuat router bertetangga saling memberi tahu label untuk setiap tujuan, lewat UDP dan TCP port 646."
+        },
+        {
+          "kata": "BGP-free core",
+          "arti": "Desain backbone yang membuat router P tidak menjalankan BGP dan tidak menyimpan tabel internet. Router P cukup tahu jalan ke loopback setiap PE."
+        },
+        {
+          "kata": "MTU",
+          "arti": "Ukuran paket terbesar yang boleh lewat sebuah link. Setiap label menambah 4 byte, jadi MTU link core harus lebih besar daripada paket pelanggan."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Jaringan Rogers di Kanada lumpuh setelah filter rute dihapus dan router core kebanjiran rute",
+      "kapan": "2022-07-08",
+      "di_mana": "Rogers Communications, Kanada",
+      "ringkas": "Saat merapikan konfigurasi router distribusi, staf Rogers menghapus sebuah filter kebijakan rute. Dengan filter itu, router core hanya menerima sekitar 10.000 rute dari router distribusi. Tanpa filter, satu router distribusi saja melepas lebih dari 900.000 rute ke core, dan router core crash dalam hitungan menit. Lebih dari 12 juta pelanggan kehilangan layanan seluler, internet rumah, telepon, dan panggilan darurat 9-1-1.",
+      "kronologi": [
+        {
+          "waktu": "Beberapa minggu sebelumnya",
+          "peristiwa": "Rogers menjalankan peningkatan IP core dalam tujuh fase. Karena fase-fase awal lancar, algoritme penilai risiko menurunkan risiko fase keenam dari \"High\" menjadi \"Low\", sehingga uji lab dan persetujuan tambahan tidak diwajibkan."
+        },
+        {
+          "waktu": "8 Juli 2022, sekitar 04.58 EDT",
+          "peristiwa": "Gangguan dimulai setelah staf menghapus filter kebijakan (ACL) di router distribusi dalam fase keenam. Router core crash dalam hitungan menit, dan layanan seluler, internet, telepon, serta 9-1-1 berhenti."
+        },
+        {
+          "waktu": "Jam-jam pertama",
+          "peristiwa": "Jaringan manajemen Rogers menumpang IP core yang sama, jadi staf tidak bisa masuk ke router dari jauh. Teknisi dikirim ke lokasi, dan Rogers mengirim kartu SIM operator lain agar staf bisa saling berkomunikasi."
+        },
+        {
+          "waktu": "Sekitar 14 jam setelah awal gangguan",
+          "peristiwa": "Akar masalah baru bisa dipastikan. Log galat router yang crash sempat tidak bisa diakses, dan beberapa perubahan lain dikerjakan di jendela pemeliharaan yang sama, sehingga sulit memilih perubahan mana yang harus dibatalkan."
+        },
+        {
+          "waktu": "9 Juli 2022, 07.00 EDT",
+          "peristiwa": "Gangguan berakhir setelah layanan dipulihkan bertahap sejak hari sebelumnya."
+        },
+        {
+          "waktu": "Juli 2024",
+          "peristiwa": "CRTC menerbitkan laporan independen Xona Partners. Rogers sudah memasang pengaman di router core terhadap banjir rute, membangun jaringan manajemen terpisah, dan memutuskan memisahkan IP core seluler dari IP core layanan kabel."
+        }
+      ],
+      "akar_masalah": "Filter kebijakan (ACL) di router distribusi membatasi rute yang diteruskan ke core menjadi sekitar 10.000. Begitu filter dihapus, banjir rute melampaui kapasitas router core untuk memprosesnya. Router core juga tidak dipasangi batas jumlah rute (overload protection), padahal menurut laporan Xona batas itu bisa mencegah gangguan. Karena layanan seluler dan kabel berbagi satu IP core, semua layanan padam sekaligus.",
+      "kaitan": "Bagian 1 ('Tiga peran router') dan bagian 2 ('Alasan yang sebenarnya') menjelaskan mengapa router core (P) dirancang hanya mengenal rute backbone, yaitu loopback dan link antar-router, bukan tabel internet penuh. Kasus Rogers memperlihatkan apa yang terjadi bila router core tiba-tiba dipaksa memproses sekitar 90 kali jumlah rute normalnya. Router inti yang ramping hanya aman bila rute luar dijaga berlapis: filter di tepi dan batas jumlah rute di router inti. Rogers hanya punya lapis pertama.",
+      "pelajaran": [
+        "Pasang batas jumlah rute di router inti, bukan hanya filter di router tepi. Bila filter terhapus, batas itu menjadi lapis pengaman kedua.",
+        "Golongkan setiap perubahan filter atau kebijakan routing sebagai risiko tinggi dan uji di lab dulu, walaupun fase-fase sebelumnya lancar.",
+        "Bangun jaringan manajemen terpisah (out-of-band) yang tidak bergantung pada backbone produksi, dan sediakan koneksi cadangan dari operator lain untuk NOC.",
+        "Batasi jumlah perubahan dalam satu jendela pemeliharaan, supaya saat gangguan Anda tahu perubahan mana yang harus dibatalkan."
+      ],
+      "sumber": [
+        {
+          "judul": "Assessment of Rogers Networks for Resiliency and Reliability Following the 8 July 2022 Outage: Executive Summary",
+          "penerbit": "CRTC (laporan Xona Partners, Juli 2024)",
+          "url": "https://crtc.gc.ca/eng/publications/reports/xona2024.htm"
+        },
+        {
+          "judul": "Human error caused 2022 Rogers outage, system 'deficiencies' made it worse: report",
+          "penerbit": "CBC News, dimuat Radio-Canada International",
+          "url": "https://ici.radio-canada.ca/rci/en/news/2086093/human-error-caused-2022-rogers-outage-system-deficiencies-made-it-worse-report"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda engineer ISP regional di Makassar. Dua router PE di tepi menerima tabel internet penuh dari dua upstream. Di antara keduanya ada dua router P lama bermemori kecil yang selama ini ikut menjalankan iBGP dengan tabel penuh. Sejak tabel internet melewati satu juta prefix, router P sering restart karena memori habis. Atasan meminta solusi tanpa membeli router baru. Semua router memakai Cisco IOS XE, backbone memakai OSPF, dan semuanya mendukung MPLS. Apa rencana Anda, dan bagaimana Anda membuktikan router P benar-benar tidak lagi butuh tabel internet?",
+      "petunjuk": [
+        "Tanyakan dulu: untuk meneruskan paket pelanggan ke internet, informasi apa yang benar-benar dibutuhkan router P?",
+        "Bagian 2 modul ini menyebut BGP-free core. Apa syaratnya agar paket tetap sampai walau router P tidak tahu alamat tujuannya?",
+        "Pikirkan juga apa yang terjadi bila LDP di satu link core mati, sementara OSPF tetap memilih link itu."
+      ],
+      "jawaban": "1. Gejalanya menunjuk ke memori control plane router P, bukan ke kapasitas link. Padahal router P hanya perlu tahu jalan ke loopback kedua PE.\n2. Rencananya BGP-free core:\n   - Pastikan loopback setiap PE diiklankan OSPF sebagai /32.\n   - Aktifkan LDP di semua link core dengan `mpls ip`, dan pakai loopback sebagai LDP router-id (`mpls ldp router-id Loopback0 force`).\n   - Jalankan iBGP hanya di antara PE, antar-loopback. Pastikan next hop rute dari upstream adalah loopback PE, misalnya dengan `next-hop-self`, karena loopback itulah yang punya label LDP.\n   - Naikkan MTU link core minimal 4 byte untuk satu label, lebih baik jumbo.\n   - Setelah semua terbukti jalan, matikan BGP di router P.\n3. Buktikan dengan beberapa pemeriksaan. Di router P, `show ip route` hanya berisi loopback dan link backbone. Di PE1, `show mpls ldp bindings <loopback-PE2> 32` menampilkan label dari next hop, dan `ping mpls ipv4 <loopback-PE2>/32` sukses. Dari sisi pelanggan, traceroute ke situs luar tetap jalan. Pantau memori router P beberapa hari.\n4. Tutup satu risiko baru. Bila LDP di satu link mati sementara OSPF tetap memakai link itu, paket keluar tanpa label. Router P tidak punya rute internet, jadi paket itu dibuang. Aktifkan `mpls ldp sync` di OSPF pada kedua sisi setiap link (bagian 9), dan biasakan menguji dengan LSP ping, bukan hanya ping IP.\n5. Kesimpulannya, router P lama tetap bisa dipakai karena tabel internet cukup disimpan di PE. Kasus Rogers memperlihatkan kebalikannya: router inti yang dibanjiri rute melebihi kapasitasnya akan tumbang."
+    }
+  },
+  "22-service-provider/02-mpls-l3vpn": {
+    "intinya": {
+      "satu_kalimat": "MPLS L3VPN memungkinkan satu backbone operator melayani ribuan perusahaan sekaligus, masing-masing di tabel routing terpisah (VRF), walaupun alamat IP mereka sama persis.",
+      "analogi": "Bayangkan gedung perkantoran sewaan dengan satu buku tamu bersama. Banyak perusahaan punya \"Ruang 101\", jadi resepsionis menulis nama perusahaan di depan nomor ruang (RD) dan menempel stiker berisi siapa saja yang boleh melihat entri itu (RT). Kurir di lorong, yaitu router P, cukup membaca lantai tujuan (label transport) tanpa peduli nama perusahaan. Bedanya dengan gedung sungguhan: di L3VPN, nama perusahaan (RD) tidak pernah menentukan siapa boleh melihat entri; itu tugas stiker (RT) semata.",
+      "kenapa_penting": "Layanan \"IP VPN\" yang menyambungkan kantor pusat bank, ratusan cabang ritel, dan data center di Indonesia umumnya berbentuk L3VPN di backbone operator. Di NOC atau tim provisioning, pekerjaan harian Anda berkisar pada VRF, RD, RT, sesi PE-CE, dan menelusuri tiket \"VPN putus\".",
+      "istilah": [
+        {
+          "kata": "VRF",
+          "arti": "Virtual Routing and Forwarding. Tabel routing terpisah per pelanggan di router PE, sehingga dua pelanggan boleh memakai alamat yang sama tanpa bentrok."
+        },
+        {
+          "kata": "RD (Route Distinguisher)",
+          "arti": "Angka 8 byte yang ditempel di depan prefix pelanggan supaya prefix yang sama dari pelanggan berbeda tetap unik di BGP. RD tidak menentukan siapa boleh menerima rute."
+        },
+        {
+          "kata": "RT (Route Target)",
+          "arti": "Penanda pada rute (extended community BGP) yang menentukan VRF mana yang boleh mengimpor rute itu."
+        },
+        {
+          "kata": "MP-BGP VPNv4",
+          "arti": "BGP yang diperluas untuk membawa rute semua VRF beserta label VPN-nya antar-router PE dalam satu sesi."
+        },
+        {
+          "kata": "Route reflector (RR)",
+          "arti": "Router yang memantulkan rute BGP ke banyak PE, supaya setiap PE tidak perlu bertetangga langsung dengan semua PE lain."
+        },
+        {
+          "kata": "maximum-prefix",
+          "arti": "Batas jumlah prefix yang boleh diterima dari satu tetangga BGP. Bila terlampaui, router memberi peringatan atau memutus sesi, sesuai konfigurasinya."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Optus padam sekitar 12 jam setelah sekitar 90 router PE memutus diri karena kebanjiran informasi routing",
+      "kapan": "2023-11-08",
+      "di_mana": "Optus, Australia",
+      "ringkas": "Pada 8 November 2023, layanan seluler, internet, dan telepon rumah Optus padam di seluruh Australia selama sekitar 12 jam. Menurut laporan Senat Australia, sepertiga warga Australia terdampak. Pemicunya perubahan informasi routing dari router peering Singtel di Amerika Utara. Perubahan itu menyebar di IP core Optus sampai sekitar 90 router PE melampaui batas pengaman bawaan Cisco, lalu memutus diri dari jaringan.",
+      "kronologi": [
+        {
+          "waktu": "8 November 2023, sekitar 04.05 AEDT",
+          "peristiwa": "NOC Optus melihat konektivitas IP konsumen hilang. Layanan seluler dan internet rumah padam, sedangkan broadband korporat tetap jalan karena berada di domain IP terpisah."
+        },
+        {
+          "waktu": "Sampai 10.05",
+          "peristiwa": "Teknisi menguji banyak dugaan: membatalkan perubahan jaringan dini hari itu, memeriksa server DNS yang mati, kemungkinan serangan DDoS, dan autentikasi. Log perangkat menampilkan banyak peringatan prefix BGP IPv6 yang melewati ambang."
+        },
+        {
+          "waktu": "10.21",
+          "peristiwa": "Optus mendapati bahwa mereset konektivitas routing memulihkan layanan. Router yang memutus diri lalu direset satu per satu, sebagian harus di-reboot langsung di lokasi."
+        },
+        {
+          "waktu": "10.38",
+          "peristiwa": "Internet konsumen dan DNS mulai pulih."
+        },
+        {
+          "waktu": "11.00 sampai 15.30",
+          "peristiwa": "Situs radio seluler pulih bertahap: 29% pada 11.00, 98% pada 14.00, dan 99,72% pada 15.30."
+        },
+        {
+          "waktu": "16.00",
+          "peristiwa": "Optus menyatakan gangguan selesai. Pemulihan melibatkan lebih dari 100 perangkat di 14 lokasi di seluruh Australia."
+        }
+      ],
+      "akar_masalah": "Rute dari internet masuk ke Optus lewat Internet Gateway Router, lalu dipantulkan route reflector ke router PE. Saat sebuah exchange Singtel (STiX) di Amerika Utara di-upgrade, Optus menerima perubahan informasi routing dari router peering Singtel yang lain, dan perubahan itu menyebar ke banyak lapis IP core. Sekitar 90 dari sekitar 200 router PE melampaui batas pengaman jumlah informasi routing yang masih bernilai bawaan Cisco, lalu mengisolasi diri. Optus menegaskan upgrade itu bukan penyebabnya.",
+      "kaitan": "Bagian 8 ('Route Reflector untuk VPNv4') menjelaskan satu RR melayani banyak PE sekaligus. Kasus Optus memperlihatkan sisi lainnya: perubahan rute yang masuk di satu titik dipantulkan RR ke puluhan PE pada saat yang sama. Bagian 7 ('Routing PE-CE') meminta Anda selalu memasang filter dan `maximum-prefix`. Optus menunjukkan bahwa batas pengaman jumlah rute harus dirancang: berapa nilainya per peran router, dan apa tindakannya bila terlampaui.",
+      "pelajaran": [
+        "Tentukan sendiri batas jumlah prefix per peran router dan per address family, termasuk IPv6. Jangan menyerahkan nilainya pada bawaan pabrikan.",
+        "Pilih tindakan saat batas terlampaui dengan sadar: cukup peringatan, atau memutus sesi lalu menyambung lagi setelah jeda. Sesi PE ke route reflector membawa semua layanan, jadi memutusnya sama dengan mengisolasi PE.",
+        "Saring dan batasi rute di titik masuknya, yaitu router gateway internet, termasuk rute IPv6, supaya lonjakan dari satu peer tidak ikut dipantulkan ke semua PE.",
+        "Siapkan prosedur pemulihan massal yang bisa dijalankan dari jauh. Optus harus mereset lebih dari 100 perangkat di 14 lokasi, sebagian langsung di tempat."
+      ],
+      "sumber": [
+        {
+          "judul": "Optus Network Outage, Submission 1 (Optus)",
+          "penerbit": "Parliament of Australia, Senate Environment and Communications References Committee",
+          "url": "https://www.aph.gov.au/DocumentStore.ashx?id=2ed95079-023d-49d5-87fd-d9029740629b&subId=750333"
+        },
+        {
+          "judul": "Optus Network Outage, Report: Chapter 1, Introduction",
+          "penerbit": "Parliament of Australia",
+          "url": "https://www.aph.gov.au/Parliamentary_Business/Committees/Senate/Environment_and_Communications/OptusNetworkOutage/Report/Chapter_1_-_Introduction"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda engineer NOC sebuah operator di Jakarta. Pelanggan IP VPN, sebuah perusahaan manufaktur, melapor bahwa sejak pukul 09.00 VPN pabrik Cikarang ke kantor pusat putus lalu pulih lagi kira-kira setiap 15 menit. Sesi PE-CE memakai eBGP. Konfigurasi PE kantor pusat untuk CE pelanggan berisi `neighbor 172.16.9.2 maximum-prefix 500 80 restart 15`, dan `show bgp vpnv4 unicast vrf PABRIK summary` sempat menampilkan `Idle (PfxCt)` untuk tetangga itu. Pelanggan bercerita tim IT-nya baru memasang koneksi internet kedua di kantor pusat pagi tadi. Apa yang terjadi, dan apa yang Anda lakukan?",
+      "petunjuk": [
+        "Pola putus lalu pulih tiap 15 menit cocok dengan satu angka di konfigurasi PE. Angka yang mana, dan apa artinya?",
+        "`Idle (PfxCt)` berarti sesi diputus karena batas jumlah prefix terlampaui. Apa yang bisa membuat jumlah prefix dari CE kantor pusat melonjak setelah ada koneksi internet kedua?",
+        "Menaikkan batas memang menghentikan gejala. Tanyakan dulu apakah prefix yang masuk itu memang seharusnya ada di VRF."
+      ],
+      "jawaban": "1. Mulai dari gejala. Siklus 15 menit cocok dengan `restart 15`: setelah batas 500 prefix terlampaui, PE memutus sesi, menunggu 15 menit, lalu menyambung lagi. `Idle (PfxCt)` membenarkannya. Setiap kali sesi naik, CE kantor pusat mengirim terlalu banyak prefix, sesi diputus lagi, dan rute kantor pusat hilang dari VRF di semua PE. Karena itu cabang Cikarang ikut putus.\n2. Dugaan terkuat: setelah memasang ISP kedua, tim IT pelanggan meredistribusikan rute dari ISP itu ke routing internal, dan rute itu ikut terkirim ke PE.\n3. Uji dugaan itu. Lihat kolom PfxRcd di `show bgp vpnv4 unicast vrf PABRIK summary` sesaat setelah sesi naik, dan periksa log PE tentang batas yang terlampaui. Minta pelanggan menunjukkan konfigurasi redistribusi dan filter keluar di CE.\n4. Perbaiki di dua sisi. Pelanggan memasang filter keluar di CE agar hanya blok alamat LAN-nya yang diiklankan. Di PE, pastikan ada prefix-list masuk yang hanya mengizinkan blok alamat pelanggan (bagian 7). Biarkan `maximum-prefix` tetap terpasang sebagai lapis kedua.\n5. Jangan sekadar menaikkan batas. Prefix internet dalam jumlah besar di VRF memakan memori PE yang juga melayani pelanggan lain, persis peringatan di bagian 7. Kasus Optus memperlihatkan sisi sebaliknya: batas yang dibiarkan bernilai bawaan pun bisa memutus layanan massal. Yang Anda butuhkan adalah filter yang benar ditambah batas yang dipilih dengan sadar.\n6. Setelah filter terpasang, reset sesi itu, lalu pastikan PfxRcd kembali normal dan cabang Cikarang bisa menjangkau kantor pusat."
+    }
+  },
+  "22-service-provider/03-te-segment-routing": {
+    "intinya": {
+      "satu_kalimat": "Traffic engineering adalah cara operator mengarahkan trafik lewat jalur selain jalur terpendek, dan Segment Routing melakukannya dengan menuliskan daftar instruksi jalur langsung di dalam paket.",
+      "analogi": "RSVP-TE mirip memesan rombongan bus pariwisata: setiap terminal di sepanjang rute harus mencatat pesanan Anda dan menyiapkan tempat. Segment Routing mirip penumpang yang membawa tiket sambung sendiri, misalnya \"naik ke Semarang, lalu ganti bus ke Surabaya\", sehingga terminal Semarang tidak perlu tahu Anda akan datang. Petugasnya cukup membaca tiket teratas lalu meneruskan Anda. Bedanya, di jaringan setiap \"tiket\" menambah byte pada paket, jadi daftar yang terlalu panjang memakan MTU dan bisa melampaui batas jumlah label yang sanggup didorong router (MSD).",
+      "kenapa_penting": "Saat fiber utama putus, TI-LFA memindahkan trafik VPN dan backhaul seluler ke jalur cadangan yang sudah dihitung sebelumnya, dalam orde puluhan milidetik. Operator juga memakai SR untuk memisahkan trafik suara yang butuh latensi rendah dari trafik backup yang butuh bandwidth besar, dan untuk memberi pelanggan dua jalur yang tidak berbagi kabel.",
+      "istilah": [
+        {
+          "kata": "Segment Routing (SR)",
+          "arti": "Source routing: router asal menulis daftar segmen (instruksi jalur) di paket, dan router lain cukup menjalankan instruksi teratas. State jalur ada di paket, bukan di setiap router."
+        },
+        {
+          "kata": "SID",
+          "arti": "Segment Identifier, pengenal satu instruksi. Di SR-MPLS berupa label 20 bit, di SRv6 berupa alamat IPv6 128 bit."
+        },
+        {
+          "kata": "TI-LFA",
+          "arti": "Topology Independent Loop-Free Alternate. Jalur cadangan yang dihitung dan dipasang sebelum gangguan, sehingga trafik bisa pindah seketika saat satu link atau node mati."
+        },
+        {
+          "kata": "SRLG",
+          "arti": "Shared Risk Link Group. Penanda bahwa beberapa link berbagi risiko yang sama, misalnya satu kabel laut atau satu galian, sehingga bisa putus bersamaan."
+        },
+        {
+          "kata": "SRv6",
+          "arti": "Segment Routing di atas IPv6. Router transit cukup meneruskan IPv6 biasa; hanya router di ujung segmen yang perlu memahami SRv6."
+        },
+        {
+          "kata": "Flex-Algo",
+          "arti": "Topologi tambahan di IGP dengan aturan sendiri, misalnya metrik latensi atau larangan lewat kabel laut, sehingga jalur khusus cukup ditulis dengan satu SID."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "Indosat Ooredoo menerapkan SRv6 komersial pertama di Asia Tenggara untuk jaringan transport 5G",
+      "kapan": "2021-06-28",
+      "di_mana": "Indosat Ooredoo, Indonesia",
+      "ringkas": "Indosat Ooredoo dan Cisco mengumumkan penerapan komersial Segment Routing over IPv6 (SRv6) pertama di Asia Tenggara. Jaringan transport Indosat diubah menjadi jaringan yang bisa diprogram dan siap 5G, dilengkapi network slicing, yaitu membagi satu jaringan fisik menjadi beberapa jaringan logis dengan jaminan layanan berbeda. Menurut siaran persnya, jaringan yang sudah ada juga akan dimigrasikan ke jaringan berbasis software-defined generasi berikutnya.",
+      "kronologi": [
+        {
+          "waktu": "Kuartal I 2021",
+          "peristiwa": "Indosat Ooredoo melaporkan 60 juta pelanggan seluler dan 66.313 BTS 4G yang menjangkau hampir 90% populasi."
+        },
+        {
+          "waktu": "22 Juni 2021",
+          "peristiwa": "Indosat meluncurkan layanan 5G komersial pertamanya di Solo."
+        },
+        {
+          "waktu": "28 Juni 2021",
+          "peristiwa": "Indosat dan Cisco mengumumkan penerapan komersial SRv6 pertama di Asia Tenggara untuk jaringan transport yang siap 5G, beserta network slicing dan operasi otomatis berbasis SDN."
+        }
+      ],
+      "akar_masalah": "Kebutuhan yang ingin dijawab: layanan 5G, cloud, dan IoT menuntut koneksi berlatensi rendah yang bisa disediakan sesuai permintaan untuk pelanggan ritel dan korporat. Menurut siaran pers, fungsi routing SRv6 memberi jalur yang deterministik, yaitu jalur yang bisa ditentukan dan diprediksi, ditambah otomatisasi penuh. Network slicing memungkinkan layanan berbeda untuk setiap pelanggan di atas jaringan fisik yang sama.",
+      "kaitan": "Bagian 13 ('SR-MPLS atau SRv6? Konteks Operator Indonesia') menyebut SRv6 cocok untuk domain baru seperti transport 5G bila perangkatnya mendukung, dan Indosat memilih pola itu. Dalam istilah modul ini, \"jalur deterministik\" adalah hasil SR-TE Policy (bagian 9) atau Flex-Algo (bagian 10); siaran pers tidak menyebut mekanisme mana yang dipakai. Struktur SID SRv6 yang membuat jaringan bisa \"diprogram\" dibahas di bagian 12.",
+      "pelajaran": [
+        "Saat membaca siaran pers teknologi, terjemahkan klaimnya ke mekanisme konkret. \"Jalur deterministik\" bisa berarti SR-TE Policy atau Flex-Algo, dan itu menentukan apa yang harus Anda konfigurasi dan pantau.",
+        "Bila operator tempat Anda bekerja memakai SRv6, pastikan blok SID difilter di batas domain (bagian 12.6), karena SID SRv6 adalah alamat IPv6 yang bisa dirutekan.",
+        "Hitung MTU sejak awal. Enkapsulasi SRv6 menambah minimal 40 byte header IPv6 luar, dan lebih besar lagi bila ada SRH."
+      ],
+      "sumber": [
+        {
+          "judul": "Indosat Ooredoo Announces Southeast Asia's First Commercial Deployment of SRv6-Based 5G-Ready Transport Network",
+          "penerbit": "Cisco Newsroom APJC",
+          "url": "https://news-blogs.cisco.com/apjc/2021/06/29/indosat-ooredoo-announces-the-southeast-asias-first-commercial-deployment-of-srv6-based-5g-ready-transport-network/"
+        },
+        {
+          "judul": "Agar Optimal Layanan 5G Indosat Pakai SRv6, Apa Itu?",
+          "penerbit": "detikInet",
+          "url": "https://inet.detik.com/telecommunication/d-5623242/agar-optimal-layanan-5g-indosat-pakai-srv6-apa-itu"
+        },
+        {
+          "judul": "Giliran Indosat Luncurkan 5G Bareng Gibran di Solo",
+          "penerbit": "detikInet",
+          "url": "https://inet.detik.com/telecommunication/d-5615633/giliran-indosat-luncurkan-5g-bareng-gibran-di-solo"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda engineer backbone sebuah operator. Antara POP Makassar dan POP Balikpapan ada dua link: link A memakai kabel laut milik sendiri, link B disewa dari operator lain. Ada juga jalur ketiga yang jauh lebih panjang lewat Surabaya. TI-LFA di router Makassar melaporkan cakupan proteksi 100%. Minggu lalu jangkar kapal memutus kabel laut, link A dan link B mati bersamaan, dan trafik ke Balikpapan hilang beberapa detik sampai IGP konvergen ke jalur Surabaya. Belakangan Anda tahu link sewaan itu memakai pasangan serat lain di kabel laut yang sama. Mengapa TI-LFA tidak menolong, dan apa yang Anda ubah?",
+      "petunjuk": [
+        "TI-LFA menjamin proteksi untuk kegagalan tunggal. Dari sudut pandang IGP, putusnya kabel laut ini satu kegagalan atau dua?",
+        "Lihat jalur cadangan yang dipasang TI-LFA untuk link A sebelum gangguan. Lewat link mana?",
+        "Bagian 8.4 menyebut satu mode proteksi yang menghindari semua link yang berbagi risiko. Informasi apa yang harus Anda masukkan ke IGP agar mode itu bekerja?"
+      ],
+      "jawaban": "1. Cakupan 100% hanya berarti setiap tujuan punya jalur cadangan untuk kegagalan satu link. IGP menganggap link A dan link B independen, jadi cadangan untuk link A dihitung lewat link B, dan sebaliknya.\n2. Dugaan: kedua link berbagi risiko fisik yang tidak diketahui IGP. Saat kabel laut putus, jalur utama dan jalur cadangan hilang bersamaan. Router Makassar sebagai PLR tidak punya jalur siap pakai, sehingga trafik menunggu konvergensi IGP ke jalur Surabaya.\n3. Buktikan dengan melihat jalur cadangan yang terpasang, misalnya `show isis fast-reroute <prefix-Balikpapan> detail` di IOS XR atau `show isis route backup` di FRR. Hasilnya akan menunjuk link B. Cocokkan dengan dokumen rute fisik dari penyedia link sewa.\n4. Perbaiki:\n   - Beri link A dan link B nilai SRLG yang sama di IGP.\n   - Aktifkan proteksi SRLG pada TI-LFA, misalnya tiebreaker `srlg-disjoint` di IOS XR.\n   - Periksa ulang: cadangan untuk link A kini harus lewat jalur Surabaya.\n   - Pastikan jalur Surabaya sanggup menampung trafik saat gangguan, karena TI-LFA memakai jalur pasca-konvergensi.\n5. Cegah terulang: wajibkan data rute fisik (duct, kabel laut) dari setiap penyedia link sewa, dan perbarui SRLG setiap ada link baru. TI-LFA hanya sebaik informasi risiko yang Anda masukkan ke IGP."
+    }
+  },
+  "22-service-provider/04-l2vpn-carrier-ethernet": {
+    "intinya": {
+      "satu_kalimat": "L2VPN membuat jaringan operator terasa seperti kabel Ethernet panjang atau switch raksasa yang menyambungkan kantor-kantor pelanggan antarkota, tanpa operator ikut mengurus routing pelanggan.",
+      "analogi": "VPWS mirip pipa air sewaan dari Jakarta ke Surabaya: apa pun yang Anda tuang di satu ujung keluar di ujung lain, dan penyedia pipa tidak peduli isinya. VPLS mirip grup WhatsApp antar-kantor: pesan untuk semua orang (broadcast) diteruskan ke setiap anggota. Bedanya, VPLS juga mencatat siapa berada di kantor mana (alamat MAC), sehingga pesan untuk satu orang cukup dikirim ke satu kantor. Seperti grup yang dibanjiri pesan berantai, satu loop di satu titik bisa membanjiri seluruh layanan VPLS.",
+      "kenapa_penting": "Bank, operator seluler, dan ISP lokal membeli layanan \"Metro-E\" dan backhaul berbentuk E-Line atau E-LAN. Kalau Anda bekerja di ISP yang menyambung POP-POP-nya dengan VPLS di MikroTik, masalah harian Anda adalah PW yang tidak naik, MTU yang kurang, dan loop di sisi pelanggan.",
+      "istilah": [
+        {
+          "kata": "Pseudowire (PW)",
+          "arti": "Sambungan logis antara dua router PE di atas MPLS yang membawa frame Ethernet pelanggan secara utuh, ditandai label PW."
+        },
+        {
+          "kata": "VPWS (E-Line)",
+          "arti": "Layanan titik-ke-titik: dua lokasi pelanggan seperti disambung satu kabel. PE tidak mempelajari alamat MAC."
+        },
+        {
+          "kata": "VPLS (E-LAN)",
+          "arti": "Layanan banyak-ke-banyak: semua lokasi pelanggan seperti tersambung ke satu switch raksasa yang mempelajari alamat MAC."
+        },
+        {
+          "kata": "Split horizon",
+          "arti": "Aturan VPLS: frame yang datang dari satu PW core tidak boleh diteruskan ke PW core lain. Aturan ini mencegah loop di core, tetapi tidak di sisi pelanggan."
+        },
+        {
+          "kata": "BUM",
+          "arti": "Broadcast, unknown unicast, dan multicast: trafik yang dikirim ke semua port karena tujuannya belum diketahui atau memang untuk banyak penerima."
+        },
+        {
+          "kata": "Storm control",
+          "arti": "Batas laju trafik broadcast atau multicast di sebuah port. Kelebihannya dibuang supaya badai broadcast tidak menyebar ke seluruh layanan."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Loop empat port 100GE di Peering LAN VPLS AMS-IX memutus sekitar 500 dari 600 sesi BGP route server",
+      "kapan": "2015-05-13",
+      "di_mana": "AMS-IX (Amsterdam Internet Exchange), Belanda",
+      "ringkas": "AMS-IX adalah titik pertukaran internet (IXP) di Amsterdam tempat banyak jaringan saling bertukar trafik di satu LAN bersama, yang dibangun sebagai instance VPLS. Saat menguji modul 100GE baru, teknisi memasang loop fisik pada port yang ternyata masih tergabung di Peering LAN. Broadcast berputar di loop, CPU line card di semua switch melonjak, dan sekitar 500 dari 600 sesi BGP ke route server terputus. Gangguan berlangsung sekitar 10 menit.",
+      "kronologi": [
+        {
+          "waktu": "13 Mei, 00.00 sampai 01.00 (UTC+2)",
+          "peristiwa": "Semua pelanggan dipindahkan dari PE stub-eq3-233 di Equinix AM3 untuk persiapan port baru. Link backbone di PE yang sudah kosong itu tidak dimatikan."
+        },
+        {
+          "waktu": "10.39 sampai 11.00",
+          "peristiwa": "Modul 100GE di PE tersebut diganti."
+        },
+        {
+          "waktu": "11.11 sampai 11.14",
+          "peristiwa": "Teknisi mulai memasang loop fisik untuk menguji modul dan port baru. Karena salah komunikasi dengan NOC, port yang diuji masih tergabung di instance VPLS Peering LAN."
+        },
+        {
+          "waktu": "12.22",
+          "peristiwa": "Port diaktifkan dengan skrip yang dibuat untuk menguji port baru, lalu trafik uji dibangkitkan."
+        },
+        {
+          "waktu": "12.25",
+          "peristiwa": "Empat port 100GE dalam keadaan loop tanpa ACL Layer 2. Broadcast berputar, alamat MAC router anggota tampak berada di balik port yang di-loop dan menarik trafik ke sana. CPU line card di semua switch melonjak, dan sekitar 500 dari 600 sesi BGP di route server putus."
+        },
+        {
+          "waktu": "12.29",
+          "peristiwa": "NOC mematikan port yang di-loop dan link backbone PE tersebut."
+        },
+        {
+          "waktu": "12.40",
+          "peristiwa": "Sekitar 500 sesi BGP di route server kembali naik."
+        }
+      ],
+      "akar_masalah": "Port yang dipakai untuk uji loop masih menjadi anggota instance VPLS Peering LAN, dan tidak ada ACL Layer 2 di port itu. Split horizon VPLS hanya mencegah loop di antara PW core, tidak mencegah loop yang dibuat di port akses. Broadcast yang berputar membuat switch mempelajari MAC router anggota di port yang salah, sehingga trafik tertarik ke loop. Menurut AMS-IX, ada dua celah prosedur: terlalu percaya pada skrip konfigurasi, dan salah komunikasi antara teknisi di lokasi dan NOC.",
+      "kaitan": "Bagian 5 ('Split horizon: pengganti STP di core') memperingatkan bahwa split horizon hanya melindungi core: loop di sisi pelanggan atau di port akses tetap bisa membanjiri seluruh VPLS. AMS-IX persis mengalaminya, dan peringatan yang sama menyarankan storm control serta batas MAC per AC. Gejala tabel MAC yang berpindah-pindah dan broadcast storm juga tercantum di tabel gejala bagian 13 ('Troubleshooting L2VPN').",
+      "pelajaran": [
+        "Sebelum menguji port dengan loop fisik, keluarkan port itu dari instance layanan dan verifikasi statusnya sendiri, bukan hanya percaya pada skrip.",
+        "Pasang storm control dan batas MAC per AC di VPLS, supaya loop di satu port tidak sampai menghabiskan CPU semua switch.",
+        "Tetapkan satu orang di NOC yang memegang status platform selama pemeliharaan. Teknisi lapangan wajib konfirmasi kepadanya sebelum menyalakan port.",
+        "Beri tahu semua pihak terdampak begitu insiden terjadi. AMS-IX mengakui notifikasinya ke anggota terlambat karena tim sibuk memulihkan platform."
+      ],
+      "sumber": [
+        {
+          "judul": "Outage post-mortem: 13 May 2015, 100GE loop on AMS-IX ISP Peering LAN",
+          "penerbit": "AMS-IX NOC, diteruskan di arsip milis atnog",
+          "url": "https://atnog.at/pipermail/atnog/2015-May/000039.html"
+        },
+        {
+          "judul": "The AMS-IX Outage as Seen with RIPE Atlas",
+          "penerbit": "RIPE Labs (RIPE NCC)",
+          "url": "https://labs.ripe.net/author/kistel/the-ams-ix-outage-as-seen-with-ripe-atlas/"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda admin ISP lokal di Garut. Server PPPoE pusat melayani pelanggan di tiga kecamatan lewat VPLS MikroTik antar-POP. Pukul 19.10 semua sesi PPPoE di ketiga kecamatan putus bersamaan. CPU ketiga PE mendekati 100%, penghitung paket broadcast di interface VPLS melonjak, dan di `/interface bridge host print` alamat MAC server PPPoE muncul bergantian di port pelanggan POP Tarogong dan di interface VPLS. Teknisi lapangan di Tarogong baru saja menambah kabel kedua antara dua switch akses sebagai \"cadangan\". Apa yang terjadi, dan apa urutan tindakan Anda?",
+      "petunjuk": [
+        "Split horizon di VPLS mencegah loop di antara PW core. Apakah ia juga melindungi port yang menghadap pelanggan?",
+        "Alamat MAC yang muncul bergantian di dua port adalah tanda klasik. Di mana loop paling mungkin berada?",
+        "Pikirkan tindakan darurat lebih dulu untuk memulihkan layanan, baru pencegahan."
+      ],
+      "jawaban": "1. Baca gejalanya bersama-sama: semua kecamatan putus pada saat yang sama, CPU tinggi, broadcast melonjak, dan MAC server berpindah antara port Tarogong dan interface VPLS. Polanya badai broadcast akibat loop.\n2. Dugaan terkuat: kabel kedua antara dua switch akses di Tarogong membentuk loop di sisi akses. Split horizon hanya berlaku antar-PW, jadi broadcast yang berputar di Tarogong masuk ke VPLS dan dibanjirkan ke semua POP. PE juga mempelajari MAC server di port yang salah, sehingga trafik ke server ikut tersedot ke loop.\n3. Tindakan darurat: minta teknisi mencabut kabel kedua, atau matikan sementara port AC Tarogong di PE. Lalu pastikan CPU turun, penghitung broadcast kembali normal, MAC server kembali tercatat di interface yang benar, dan sesi PPPoE naik lagi.\n4. Pencegahan:\n   - Kalau memang butuh link cadangan di akses, aktifkan RSTP di switch akses atau gabungkan kedua kabel dengan LACP. Jangan memasang dua kabel polos.\n   - Pasang storm control dan batas MAC di port akses.\n   - Wajibkan setiap perubahan fisik di POP dikonfirmasi ke NOC lebih dulu.\n5. Kasus AMS-IX memperlihatkan skala yang sama di tingkat IXP: loop empat port di satu PE cukup untuk memutus sebagian besar sesi BGP sebuah titik pertukaran internet."
+    }
+  },
+  "22-service-provider/05-sp-ketersediaan-keamanan": {
+    "intinya": {
+      "satu_kalimat": "Modul ini membahas cara jaringan operator pulih dalam hitungan milidetik sampai detik saat ada kerusakan, sekaligus melindungi router dari serangan dan dari perubahan konfigurasi yang salah.",
+      "analogi": "Bayangkan pengelola jalan tol. BFD seperti petugas yang memeriksa setiap ruas beberapa kali per detik, sedangkan BGP PIC dan Add-Path seperti rute pengalihan yang sudah terpasang di papan petunjuk sebelum ada kecelakaan. Proteksi control plane seperti gerbang khusus yang hanya dilewati kendaraan berizin, supaya kantor pengelola tidak dibanjiri tamu. Bedanya dengan jalan tol, di jaringan satu aturan yang salah bisa tersebar ke ratusan router dalam hitungan detik.",
+      "kenapa_penting": "Pelanggan korporat dan regulator menanyakan dua hal: berapa lama layanan hilang saat ada kerusakan, dan bisakah jaringan dirusak orang lain. Di operator, Anda akan menulis MOP, menjadwalkan jendela pemeliharaan, dan menjawab permintaan blackhole saat pelanggan diserang DDoS.",
+      "istilah": [
+        {
+          "kata": "BFD",
+          "arti": "Bidirectional Forwarding Detection. Paket kecil yang dikirim bolak-balik antar-router untuk mendeteksi link mati dalam hitungan ratusan milidetik."
+        },
+        {
+          "kata": "BGP PIC",
+          "arti": "Prefix Independent Convergence. Susunan tabel forwarding yang membuat jutaan prefix bisa pindah ke jalur cadangan cukup dengan mengubah satu objek next hop."
+        },
+        {
+          "kata": "CoPP",
+          "arti": "Control Plane Policing. Aturan yang membatasi paket yang ditujukan ke CPU router, supaya CPU tidak tenggelam oleh banjir paket."
+        },
+        {
+          "kata": "Flowspec",
+          "arti": "Perluasan BGP untuk menyebarkan aturan filter, misalnya 'buang UDP port 123 ke alamat X', ke banyak router sekaligus."
+        },
+        {
+          "kata": "RTBH",
+          "arti": "Remotely Triggered Black Hole. Cara membuang semua trafik ke satu alamat korban DDoS dengan mengiklankan rute khusus yang diberi community BLACKHOLE."
+        },
+        {
+          "kata": "MOP",
+          "arti": "Method of Procedure. Naskah langkah demi langkah sebuah perubahan, lengkap dengan pengecekan awal, kriteria batal, dan rollback."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Satu aturan BGP Flowspec yang salah mengacaukan backbone CenturyLink/Level 3 sekitar lima jam",
+      "kapan": "2020-08-30",
+      "di_mana": "CenturyLink (Level 3), Amerika Serikat dan internet global",
+      "ringkas": "CenturyLink, salah satu operator backbone tier-1, memakai BGP Flowspec untuk memblokir sumber trafik serangan atas permintaan pelanggan. Ketika tim operasinya hendak memblokir satu alamat IP, perintah itu tiba di router dengan wildcard sehingga mencakup banyak alamat, lalu menyebar ke banyak router tepi. Aturan tersebut membuat BGP tidak bisa terbentuk dengan benar. Selama sekitar lima jam banyak layanan di internet sulit dijangkau, dan Cloudflare mencatat trafik globalnya turun 3,5%.",
+      "kronologi": [
+        {
+          "waktu": "30 Agustus 2020, 10.04 GMT",
+          "peristiwa": "CenturyLink mendeteksi gangguan di banyak wilayah. Karena jumlah alarm sangat besar, NOC IP langsung menambah tim dukungan teknis dan engineering."
+        },
+        {
+          "waktu": "10.03 sampai 10.11 UTC",
+          "peristiwa": "Sistem Cloudflare otomatis berhenti memakai CenturyLink/Level 3 di 48 kota dan mengalihkan trafik ke penyedia lain."
+        },
+        {
+          "waktu": "Selama gangguan",
+          "peristiwa": "Update BGP di internet melonjak dari sekitar 1,5-2 MB menjadi lebih dari 26 MB per 15 menit. Jaringan CenturyLink tetap mengiklankan rute yang sudah ditarik, dan beberapa operator tier-1 lain memutus peering dengannya, tampaknya atas permintaan CenturyLink."
+        },
+        {
+          "waktu": "Sekitar 14.00 GMT",
+          "peristiwa": "Tim Operations Engineering menemukan bahwa sebuah aturan Flowspec mencegah BGP terbentuk dengan benar."
+        },
+        {
+          "waktu": "14.14 GMT",
+          "peristiwa": "NOC menyebarkan perubahan konfigurasi global yang memblokir aturan Flowspec itu. BGP kembali terbentuk seiring perintah menyebar ke perangkat."
+        },
+        {
+          "waktu": "15.10 GMT",
+          "peristiwa": "Semua alarm yang memengaruhi layanan hilang dan jaringan CenturyLink dinyatakan stabil."
+        },
+        {
+          "waktu": "Sesudah insiden",
+          "peristiwa": "Platform Flowspec dinonaktifkan seluruhnya sampai diuji ulang, dan filter kedua diubah agar menolak wildcard."
+        }
+      ],
+      "akar_masalah": "Saat memblokir satu alamat IP untuk pelanggan, gangguan antara antarmuka pengguna dan perangkat jaringan membuat perintah diterima dengan wildcard, sehingga aturan mencakup banyak alamat. Antarmuka itu dirancang menolak wildcard, dan ada filter kedua untuk mencegah blokir banyak alamat. Namun filter kedua hanya memeriksa prefix tujuan dan membaca perintah ber-wildcard sebagai satu alamat, sehingga aturan lolos dan menyebar ke banyak router tepi lewat BGP.",
+      "kaitan": "Bagian 13 ('Anti-DDoS di Tepi Operator', subbagian BGP Flowspec) menyebut risiko persis ini: aturan yang salah menyebar ke seluruh jaringan dalam hitungan detik. Praktik aman di bagian yang sama, yaitu menerima Flowspec hanya dari sumber internal yang dikontrol, memvalidasi tujuan aturan, membatasi jumlah aturan, dan menguji di lab, adalah lapis-lapis yang di CenturyLink tembus karena satu filter salah membaca wildcard. Bagian 8 memperlihatkan hal serupa pada filter lo0: satu aturan yang salah bisa memutus protokol kontrol di seluruh router.",
+      "pelajaran": [
+        "Periksa aturan Flowspec di sisi penerima juga, misalnya hanya menerima aturan yang tujuannya prefix milik pelanggan bersangkutan. Jangan bergantung pada validasi di antarmuka pengguna saja.",
+        "Uji alat otomatis dengan masukan aneh, seperti isian kosong, wildcard, dan karakter tak terduga, sebelum dipakai di produksi.",
+        "Siapkan dan uji prosedur darurat untuk mematikan seluruh fitur berisiko sekaligus, misalnya menolak semua aturan Flowspec.",
+        "Pastikan pelanggan bisa membuka tiket lewat jalur yang tidak bergantung pada jaringan yang sedang rusak. Banyak pelanggan CenturyLink tidak bisa melapor karena portalnya ikut terdampak."
+      ],
+      "sumber": [
+        {
+          "judul": "August 30th 2020: Analysis of CenturyLink/Level(3) outage",
+          "penerbit": "Cloudflare Blog",
+          "url": "https://blog.cloudflare.com/analysis-of-todays-centurylink-level-3-outage/"
+        },
+        {
+          "judul": "Network Event Formal RFO, Multiple Markets, 30 August 2020",
+          "penerbit": "CenturyLink, salinan di Wayback Machine",
+          "url": "https://web.archive.org/web/20200902064011/http://seele.lamehost.it/~marco/blind/Network_Event_Formal_RFO_Multiple_Markets_19543671_19544042_30_August.pdf"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda engineer ISP regional di Pekanbaru dengan router MikroTik CCR di core. Atas saran presentasi vendor, rekan Anda mengubah BFD di semua link core dari 300 ms × 3 menjadi 50 ms × 3. Sejak itu, setiap kali sesi BGP ke upstream reset dan router menerima ulang tabel internet penuh, OSPF di dua sampai tiga link core ikut putus beberapa detik, padahal tidak ada link yang benar-benar mati. Log memperlihatkan sesi BFD turun lalu naik lagi. Apa penyebab paling mungkin, dan bagaimana Anda membuktikan serta memperbaikinya?",
+      "petunjuk": [
+        "Waktu deteksi 50 ms × 3 hanya 150 ms. Apa yang terjadi pada paket BFD bila CPU router sibuk lebih lama dari itu?",
+        "Cocokkan waktu BFD turun dengan beban CPU dan waktu sesi BGP upstream reset.",
+        "Bagian 4 modul ini punya panduan praktis untuk platform yang memproses BFD di CPU."
+      ],
+      "jawaban": "1. Gejala hanya muncul bersamaan dengan pemuatan ulang tabel BGP penuh, dan tidak ada link yang mati sungguhan. Ini pola flap palsu, bukan kerusakan fisik.\n2. Dugaan: di RouterOS, BFD diproses CPU. Saat CPU sibuk memproses lebih dari satu juta prefix, paket BFD terlambat dikirim atau diproses. Dengan 50 ms × 3, keterlambatan 150 ms sudah cukup untuk menganggap tetangga mati. BFD yang turun menjatuhkan OSPF, dan konvergensi OSPF menambah beban CPU lagi.\n3. Buktikan. Jalankan `/routing bfd session print detail` untuk melihat interval yang benar-benar disepakati dan riwayat state. Bandingkan waktu flap dengan beban CPU dari `/system resource monitor` atau grafik monitoring. Bila perlu, ulangi reset sesi BGP di jendela pemeliharaan sambil memantau keduanya.\n4. Perbaiki. Kembalikan BFD ke 300 ms × 3, sesuai panduan bagian 4 untuk platform berbasis CPU. Aktifkan dampening bila platform mendukung, lalu pantau stabilitas beberapa minggu sebelum mempertimbangkan timer yang lebih ketat.\n5. Kesimpulannya, timer BFD agresif hanya cocok untuk platform yang memproses BFD di hardware. BFD yang sering flap lebih merugikan daripada BFD yang sedikit lebih lambat, karena setiap flap meruntuhkan sesi IGP dan BGP."
+    }
+  }
+}

@@ -36,32 +36,32 @@ const DOMAIN_DILARANG = /(^|\.)(bit\.ly|tinyurl\.com|t\.co|goo\.gl|s\.id|ow\.ly|
 
 // --- Peta judul & ikon per tahap -------------------------------------------
 const STAGE_META = {
-  '00-fondasi': { title: 'Fondasi', icon: '🌱', band: 'dasar' },
-  '01-model-referensi': { title: 'Model Referensi', icon: '🧭', band: 'dasar' },
-  '02-layer-fisik': { title: 'Layer Fisik', icon: '🔌', band: 'dasar' },
-  '03-data-link': { title: 'Data Link', icon: '🔗', band: 'dasar' },
-  '04-network-layer': { title: 'Network Layer', icon: '📦', band: 'dasar' },
-  '05-transport': { title: 'Transport', icon: '🚚', band: 'dasar' },
-  '06-aplikasi': { title: 'Aplikasi & Layanan', icon: '🌐', band: 'dasar' },
-  '07-routing-lanjutan': { title: 'Routing Lanjutan', icon: '🗺️', band: 'menengah' },
-  '08-ipv6': { title: 'IPv6', icon: '🆕', band: 'menengah' },
-  '09-nat-acl-firewall': { title: 'NAT, ACL & Firewall', icon: '🛂', band: 'menengah' },
-  '10-wireless': { title: 'Wireless', icon: '📶', band: 'menengah' },
-  '11-wan-vpn': { title: 'WAN & VPN', icon: '🛰️', band: 'menengah' },
-  '12-keamanan': { title: 'Keamanan', icon: '🛡️', band: 'lanjut' },
-  '13-linux-networking': { title: 'Linux Networking', icon: '🐧', band: 'lanjut' },
-  '14-monitoring-troubleshooting': { title: 'Monitoring & Troubleshooting', icon: '🔍', band: 'lanjut' },
-  '15-otomasi': { title: 'Otomasi', icon: '🤖', band: 'lanjut' },
-  '16-datacenter-cloud-sdn': { title: 'Data Center, Cloud & SDN', icon: '☁️', band: 'profesional' },
-  '17-desain-arsitektur': { title: 'Desain & Arsitektur', icon: '📐', band: 'profesional' },
-  '18-karier-sertifikasi': { title: 'Karier & Sertifikasi', icon: '🎓', band: 'profesional' },
-  '19-mikrotik': { title: 'MikroTik RouterOS', icon: '🧿', band: 'khusus' },
-  '22-service-provider': { title: 'Jaringan Service Provider', icon: '🏗️', band: 'khusus' },
-  '23-jalur-vendor': { title: 'Jalur Vendor Lanjutan', icon: '🧩', band: 'khusus' },
-  '21-ekosistem-profesi': { title: 'Ekosistem Profesi', icon: '🧑‍💼', band: 'karier' },
-  'lab': { title: 'Lab Praktik', icon: '🧪', band: 'penunjang' },
-  'referensi': { title: 'Referensi', icon: '📚', band: 'penunjang' },
-  '20-proyek-akhir': { title: 'Proyek Akhir', icon: '🏁', band: 'proyek' },
+  '00-fondasi': { title: 'Fondasi', band: 'dasar' },
+  '01-model-referensi': { title: 'Model Referensi', band: 'dasar' },
+  '02-layer-fisik': { title: 'Layer Fisik', band: 'dasar' },
+  '03-data-link': { title: 'Data Link', band: 'dasar' },
+  '04-network-layer': { title: 'Network Layer', band: 'dasar' },
+  '05-transport': { title: 'Transport', band: 'dasar' },
+  '06-aplikasi': { title: 'Aplikasi & Layanan', band: 'dasar' },
+  '07-routing-lanjutan': { title: 'Routing Lanjutan', band: 'menengah' },
+  '08-ipv6': { title: 'IPv6', band: 'menengah' },
+  '09-nat-acl-firewall': { title: 'NAT, ACL & Firewall', band: 'menengah' },
+  '10-wireless': { title: 'Wireless', band: 'menengah' },
+  '11-wan-vpn': { title: 'WAN & VPN', band: 'menengah' },
+  '12-keamanan': { title: 'Keamanan', band: 'lanjut' },
+  '13-linux-networking': { title: 'Linux Networking', band: 'lanjut' },
+  '14-monitoring-troubleshooting': { title: 'Monitoring & Troubleshooting', band: 'lanjut' },
+  '15-otomasi': { title: 'Otomasi', band: 'lanjut' },
+  '16-datacenter-cloud-sdn': { title: 'Data Center, Cloud & SDN', band: 'profesional' },
+  '17-desain-arsitektur': { title: 'Desain & Arsitektur', band: 'profesional' },
+  '18-karier-sertifikasi': { title: 'Karier & Sertifikasi', band: 'profesional' },
+  '19-mikrotik': { title: 'MikroTik RouterOS', band: 'khusus' },
+  '22-service-provider': { title: 'Jaringan Service Provider', band: 'khusus' },
+  '23-jalur-vendor': { title: 'Jalur Vendor Lanjutan', band: 'khusus' },
+  '21-ekosistem-profesi': { title: 'Ekosistem Profesi', band: 'karier' },
+  'lab': { title: 'Lab Praktik', band: 'penunjang' },
+  'referensi': { title: 'Referensi', band: 'penunjang' },
+  '20-proyek-akhir': { title: 'Proyek Akhir', band: 'proyek' },
 }
 const STAGE_ORDER = Object.keys(STAGE_META)
 
@@ -347,7 +347,7 @@ for (const stageId of STAGE_ORDER) {
   const modules = files.map((f, i) => parseFile(path.join(dir, f), stageId, i))
   const meta = STAGE_META[stageId]
   stages.push({
-    id: stageId, title: meta.title, icon: meta.icon, band: meta.band,
+    id: stageId, title: meta.title, band: meta.band,
     num: STAGE_ORDER.indexOf(stageId),
     modules,
   })
@@ -357,7 +357,7 @@ for (const stageId of STAGE_ORDER) {
 const rootDocs = ['README.md', 'SILABUS.md'].filter(f => fs.existsSync(path.join(REPO_ROOT, f)))
 if (rootDocs.length) {
   const modules = rootDocs.map((f, i) => parseFile(path.join(REPO_ROOT, f), 'panduan', i, REPO_ROOT))
-  stages.unshift({ id: 'panduan', title: 'Panduan', icon: '📖', band: 'panduan', num: -1, modules })
+  stages.unshift({ id: 'panduan', title: 'Panduan', band: 'panduan', num: -1, modules })
 }
 
 // --- Wawasan per modul (data/kasus/*.json) -----------------------------------
@@ -370,11 +370,11 @@ if (rootDocs.length) {
 const hariIniLokal = (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}` })()
 const httpsSah = u => typeof u === 'string' && /^https:\/\/[^\s]+$/.test(u)
 const domainDilarang = u => { try { return DOMAIN_DILARANG.test(new URL(u).hostname) } catch { return true } }
-const TEKS_TERLARANG = /—|\p{Extended_Pictographic}/u
+const TEKS_TERLARANG = /[\u2014\u2013]|\p{Emoji_Presentation}|\uFE0F/u
 const teksSah = (v, min, maks) => typeof v === 'string' && v.trim().length >= min && v.length <= maks
 function periksaTeksBersih(obj, at, galat, kecuali = new Set()) {
   const jalan = (v, k) => {
-    if (typeof v === 'string') { if (!kecuali.has(k) && TEKS_TERLARANG.test(v)) galat.push(`${at} "${k}" memuat em-dash atau emoji`) }
+    if (typeof v === 'string') { if (!kecuali.has(k) && TEKS_TERLARANG.test(v)) galat.push(`${at} "${k}" memuat em-dash, en-dash, atau emoji`) }
     else if (Array.isArray(v)) v.forEach(x => jalan(x, k))
     else if (v && typeof v === 'object') for (const [kk, vv] of Object.entries(v)) jalan(vv, kk)
   }
@@ -468,7 +468,7 @@ for (const s of stages) for (const m of s.modules) {
 
 const bundle = {
   stages: stages.map(s => ({
-    id: s.id, title: s.title, icon: s.icon, band: s.band, num: s.num,
+    id: s.id, title: s.title, band: s.band, num: s.num,
     modules: s.modules.map(m => {
       const { searchText, ...rest } = m
       return rest
@@ -659,6 +659,12 @@ console.log(`OK  wawasan: ${totalIntinya} intinya, ${totalKasus} kasus nyata, ${
       if (!teksSah(x.perbaikan?.penjelasan, 20, 900)) g.push(`${at} perbaikan.penjelasan 20-900 huruf`)
       if (x.perbaikan?.perintah !== undefined && !teksSah(x.perbaikan.perintah, 1, 1600)) g.push(`${at} perbaikan.perintah 1-1600 huruf`)
       for (const s of x.sumber || []) if (!teksSah(s?.judul, 4, 200) || !httpsSah(s?.url) || domainDilarang(s.url)) g.push(`${at} sumber harus {judul, url https}: ${s?.url}`)
+      // Kota tempat gejala dilaporkan: titik di peta Indonesia malam (layar Misi). Kotak
+      // batasnya Indonesia (Sabang sampai Merauke, Miangas sampai Rote) supaya lintang dan
+      // bujur yang tertukar langsung ketahuan.
+      const lok = x.lokasi
+      if (lok !== undefined && (!teksSah(lok?.kota, 2, 40) || typeof lok?.lat !== 'number' || typeof lok?.lon !== 'number'
+        || lok.lat < -11.5 || lok.lat > 6.5 || lok.lon < 94.5 || lok.lon > 141.5)) g.push(`${at} lokasi harus {kota, lat -11,5..6,5, lon 94,5..141,5}`)
       misi.push({
         id: x.id, judul: x.judul, tingkat: x.tingkat, modul: x.modul, gejala: x.gejala,
         briefingHtml: md.render(x.briefing || ''), topologi: x.topologi,
@@ -667,6 +673,7 @@ console.log(`OK  wawasan: ${totalIntinya} intinya, ${totalKasus} kasus nyata, ${
         pembahasanHtml: md.render(x.pembahasan || ''),
         perbaikan: { penjelasan: md.renderInline(x.perbaikan?.penjelasan || ''), perintah: x.perbaikan?.perintah || '' },
         sumber: x.sumber || [],
+        ...(x.lokasi ? { lokasi: { kota: x.lokasi.kota, lat: x.lokasi.lat, lon: x.lokasi.lon } } : {}),
       })
     }
   }
@@ -693,7 +700,9 @@ console.log(`OK  wawasan: ${totalIntinya} intinya, ${totalKasus} kasus nyata, ${
   // pemegang hak cipta, jadi "CC BY-SA 3.0 (hak cipta 2014 Bonaventure)" itu sah.
   const BISA_DISALIN = /\b(CC BY(?:-SA)?(?: \d\.\d)?|CC0|Creative Commons (?:Attribution|Zero)|MIT|BSD|Apache|domain publik|public domain)\b/i
   const TIDAK_BEBAS = /\b(NC|ND)\b|NonCommercial|Non-Commercial|NoDerivatives|NoDerivs|tanpa lisensi|tautan saja|tidak disebutkan|proprietary/i
-  const tanggalSah = t => /^\d{4}-\d{2}-\d{2}$/.test(t) && !Number.isNaN(Date.parse(t)) && t <= new Date().toISOString().slice(0, 10) + 'Z'
+  // Tanggal LOKAL: dengan toISOString() (UTC) butir yang diperiksa hari ini ditolak
+  // sebagai "masa depan" antara pukul 00.00 dan 08.00 WITA.
+  const tanggalSah = t => /^\d{4}-\d{2}-\d{2}$/.test(t) && !Number.isNaN(Date.parse(t)) && t <= hariIniLokal
 
   const kunciUrl = u => { const p = new URL(u); return `${p.protocol}//${p.host.toLowerCase()}${p.pathname === '/' ? '' : p.pathname.replace(/\/$/, '')}${p.search}` }
   const fnv = s => { let h = 0x811c9dc5; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0 } return h.toString(16).padStart(8, '0') }

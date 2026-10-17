@@ -1,0 +1,398 @@
+{
+  "02-layer-fisik/01-media-transmisi": {
+    "intinya": {
+      "satu_kalimat": "Data bisa dibawa lewat kabel tembaga, serat optik, atau udara (radio), dan setiap media punya musuh sinyalnya sendiri, seperti pelemahan, derau listrik, dan crosstalk.",
+      "analogi": "Bayangkan dua orang mengobrol di warung yang ramai. Makin jauh jarak mereka, suara makin pelan (atenuasi), dan makin keras suara blender serta TV, makin sulit mendengar (noise). Yang menentukan obrolan bisa dipahami adalah selisih antara suara orang itu dan kebisingan di sekitarnya, dan itulah SNR. Serat optik ibarat bicara lewat isyarat lampu: tidak terganggu bising listrik, tetapi lampunya bisa redup kalau kabelnya kotor atau tertekuk.",
+      "kenapa_penting": "Banyak gangguan 'aneh' berasal dari layer 1, misalnya internet yang putus di jam yang sama setiap hari atau link yang lambat tanpa sebab. Penyebabnya bisa kabel terlalu panjang, kabel yang sejajar kabel listrik, atau peralatan yang memancarkan derau. Memilih media yang tepat sejak awal mencegah biaya bongkar-pasang.",
+      "istilah": [
+        {
+          "kata": "Atenuasi",
+          "arti": "Pelemahan sinyal seiring jarak. Di kabel tembaga, sinyal berfrekuensi tinggi melemah lebih cepat."
+        },
+        {
+          "kata": "Noise (derau) dan EMI",
+          "arti": "Sinyal liar yang bercampur dengan sinyal data. EMI datang dari motor listrik, lampu, kabel daya, sampai peralatan rumah tangga."
+        },
+        {
+          "kata": "SHINE",
+          "arti": "Single High-level Impulse Noise: lonjakan derau listrik yang kuat dari sebuah peralatan, cukup untuk mengganggu sambungan broadband di sekitarnya."
+        },
+        {
+          "kata": "SNR",
+          "arti": "Rasio sinyal terhadap derau, dalam dB. Makin tinggi, makin cepat dan stabil sambungannya."
+        },
+        {
+          "kata": "Spectrum analyzer",
+          "arti": "Alat ukur yang menampilkan kekuatan sinyal di berbagai frekuensi, sehingga sumber derau bisa terlihat dan dilacak."
+        },
+        {
+          "kata": "ADSL",
+          "arti": "Layanan internet lewat kabel telepon tembaga. Kecepatannya bergantung pada jarak ke sentral dan derau di sepanjang kabel."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Televisi bekas mematikan broadband satu desa di Wales setiap pukul 07.00 selama 18 bulan",
+      "kapan": "2020-09",
+      "di_mana": "Aberhosan, dekat Machynlleth, Wales, Inggris",
+      "ringkas": "Warga desa Aberhosan dan beberapa desa sekitarnya mengalami koneksi lambat dan putus setiap pagi pukul 07.00 selama 18 bulan. Uji jaringan berulang kali menyatakan normal, dan teknisi Openreach bahkan mengganti banyak bagian kabel yang melayani desa itu, tetapi gangguan tetap ada. Tim ahli lalu berjalan menyusuri desa membawa spectrum analyzer sejak pukul 06.00. Tepat pukul 07.00, alat itu menangkap ledakan derau listrik dari sebuah rumah: penghuninya menyalakan televisi bekas setiap pagi.",
+      "kronologi": [
+        {
+          "waktu": "Selama 18 bulan",
+          "peristiwa": "Setiap pukul 07.00, broadband di Aberhosan dan beberapa desa sekitarnya melambat atau putus. Uji jaringan berulang kali menyatakan normal."
+        },
+        {
+          "waktu": "Sebelum penyelidikan akhir",
+          "peristiwa": "Teknisi lokal mengganti banyak bagian kabel yang melayani desa. Gangguan tetap muncul."
+        },
+        {
+          "waktu": "2020, masa lockdown",
+          "peristiwa": "Teknisi Michael Jones meminta bantuan tim Chief Engineer Openreach. Tim berkemah di dekat Llandrindod Wells, lalu menempuh 55 mil ke Aberhosan pagi-pagi."
+        },
+        {
+          "waktu": "Hari penyelidikan, 06.00",
+          "peristiwa": "Tim berjalan naik-turun desa dalam hujan deras dengan spectrum analyzer, mencari 'derau listrik' yang mendukung dugaan SHINE."
+        },
+        {
+          "waktu": "Hari penyelidikan, 07.00",
+          "peristiwa": "Alat menangkap ledakan interferensi listrik yang besar. Sumbernya dilacak ke satu rumah yang menyalakan TV bekas setiap pagi."
+        },
+        {
+          "waktu": "Sesudahnya",
+          "peristiwa": "Pemilik TV setuju mematikannya dan tidak memakainya lagi. Sejak itu tidak ada laporan gangguan baru."
+        },
+        {
+          "waktu": "22 September 2020",
+          "peristiwa": "Openreach mengumumkan kasus ini dan menyebut desa itu akan tersambung jaringan fiber akhir tahun itu."
+        }
+      ],
+      "akar_masalah": "Televisi tua itu memancarkan SHINE, lonjakan derau listrik yang bisa mengganggu perangkat lain. Menurut The Register, derau jenis ini jatuh di frekuensi yang dipakai layanan broadband ADSL, yang berjalan di kabel telepon tembaga. Sinyal data kalah oleh derau, padahal kabelnya sendiri tidak rusak. Karena itu mengganti kabel tidak menolong.",
+      "kaitan": "Bagian 2.2 (Noise) menyebut impulse noise, yaitu lonjakan mendadak dari peralatan listrik, sebagai salah satu musuh sinyal. Bagian 3 (SNR) menjelaskan kenapa kabel yang sehat tetap gagal: derau naik sehingga selisih sinyal terhadap derau mengecil. Serat optik yang direncanakan untuk desa itu kebal terhadap derau semacam ini, sesuai tabel perbandingan media di bagian 1.",
+      "pelajaran": [
+        "Catat pola waktu gangguan. Masalah yang muncul di jam yang sama setiap hari sering terkait peralatan yang dinyalakan pada jam itu.",
+        "Kalau kabel sudah diganti tetapi gejala tetap, ukur lingkungan elektromagnetiknya, misalnya dengan spectrum analyzer, alih-alih terus mengganti perangkat.",
+        "Pakai peralatan listrik yang tersertifikasi, seperti saran Openreach. Menurut mereka, lampu luar ruang, microwave, sampai kamera CCTV pun bisa mengganggu broadband."
+      ],
+      "sumber": [
+        {
+          "judul": "Second-hand TV wipes out broadband for entire village",
+          "penerbit": "Openreach (arsip Internet Archive)",
+          "url": "https://web.archive.org/web/20201231051806/https://www.openreach.com/news/second-hand-tv-wipes-out-broadband-for-entire-village/"
+        },
+        {
+          "judul": "Ancient telly borked broadband for entire Welsh village",
+          "penerbit": "The Register",
+          "url": "https://www.theregister.com/2020/09/22/old_tv_broke_broadband/"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Anda dipanggil ke pabrik tekstil di Bandung. Switch di ruang produksi tersambung ke ruang server lewat kabel UTP Cat5e sepanjang 85 m. Kabel itu ditarik di tray yang sama dengan kabel daya mesin tenun dan melewati panel inverter. Penghitung CRC error di port uplink nyaris nol pada malam hari, tetapi naik belasan ribu per jam saat mesin beroperasi pukul 07.00-15.00. Link kadang turun ke 100 Mbps. Apa dugaan Anda, bagaimana membuktikannya, dan media apa yang Anda usulkan?",
+      "petunjuk": [
+        "Hubungkan pola waktu error dengan jadwal sesuatu di pabrik itu.",
+        "CRC error yang terus bertambah adalah gejala layer 1 (bagian 8). Musuh sinyal mana yang paling cocok dengan motor dan inverter?",
+        "Lihat aturan pemilihan media di bagian 1 untuk lingkungan dengan gangguan listrik berat."
+      ],
+      "jawaban": "1. **Amati.** Error mengikuti jadwal produksi, bukan jam sibuk jaringan. Penyebabnya kemungkinan berasal dari mesin, bukan dari trafik.\n2. **Dugaan.** EMI dari motor dan inverter di sepanjang jalur kabel (bagian 2.2). Kabel data yang sejajar dengan kabel daya menangkap derau itu, sehingga frame rusak dan CRC naik. Link yang sesekali turun ke 100 Mbps juga tanda kualitas sinyal memburuk.\n3. **Uji.** Catat penghitung CRC per jam (`show interfaces` atau `ethtool -S`) dan bandingkan dengan jadwal mesin. Lalu tarik kabel uji sementara lewat jalur lain yang jauh dari kabel daya, dan lihat apakah error hilang saat mesin menyala.\n4. **Simpulkan.** Kalau kabel uji tetap bersih saat mesin menyala, masalahnya ada di jalur kabel, bukan di switch.\n5. **Usulan.** Ganti uplink dengan serat optik. Aturan di bagian 1 menyebut serat wajib di dekat motor, mesin las, atau kabel tegangan tinggi, karena serat kebal EMI. Pasang modul SFP di kedua switch atau media converter. Kalau terpaksa tetap memakai tembaga, pisahkan dari kabel daya minimal 30 cm, silangkan tegak lurus, dan pakai kabel berpelindung yang di-grounding dengan benar."
+    }
+  },
+  "02-layer-fisik/02-kabel-copper": {
+    "intinya": {
+      "satu_kalimat": "Kabel LAN tembaga (UTP) berisi empat pasang kawat yang dipilin; kategorinya (Cat5e, Cat6, Cat6A) menentukan kecepatan dan jarak, dan kabel yang sama bisa sekaligus membawa listrik lewat PoE.",
+      "analogi": "Sepasang kawat yang dipilin ibarat dua orang yang berjalan berdempetan di pasar ramai: desakan kerumunan mengenai keduanya hampir sama besar. Penerima hanya membaca selisih antara kedua kawat, jadi gangguan yang mengenai keduanya saling hilang. Kategori kabel mirip kelas jalan: jalan desa cukup untuk motor, tetapi truk besar butuh jalan kelas lebih tinggi. Di kabel, 'truk besar' itu adalah sinyal berfrekuensi tinggi yang membawa kecepatan lebih besar.",
+      "kenapa_penting": "Hampir setiap PC kantor, kamera CCTV, dan access point tersambung dengan kabel UTP. Salah memilih kategori, memakai kabel CCA, atau salah urutan warna saat crimping membuat link lambat, PoE mati-hidup, atau gigabit turun ke 100 Mbps.",
+      "istilah": [
+        {
+          "kata": "UTP (Unshielded Twisted Pair)",
+          "arti": "Kabel tembaga berisi empat pasang kawat yang dipilin tanpa lapisan pelindung. Jenis kabel LAN yang paling umum."
+        },
+        {
+          "kata": "Kategori kabel",
+          "arti": "Kelas kemampuan kabel. Cat5e cukup untuk 1 Gbps sejauh 100 m, sedangkan Cat6A untuk 10 Gbps sejauh 100 m."
+        },
+        {
+          "kata": "BASE-T",
+          "arti": "Keluarga standar Ethernet untuk kabel twisted pair, misalnya 1000BASE-T (1 Gbps) dan 10GBASE-T (10 Gbps)."
+        },
+        {
+          "kata": "2.5GBASE-T dan 5GBASE-T",
+          "arti": "Kecepatan 2,5 dan 5 Gbps dari standar IEEE 802.3bz, dirancang untuk kabel Cat5e dan Cat6 yang sudah terpasang."
+        },
+        {
+          "kata": "PoE (Power over Ethernet)",
+          "arti": "Teknik mengirim listrik lewat kabel data, sehingga access point dan kamera tidak butuh colokan listrik sendiri."
+        },
+        {
+          "kata": "Access point (AP)",
+          "arti": "Perangkat yang menghubungkan klien Wi-Fi ke jaringan kabel. Biasanya dipasang di plafon dan diberi daya lewat PoE."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "IEEE 802.3bz: 2,5 dan 5 Gbps lewat kabel Cat5e dan Cat6 yang sudah terpasang",
+      "kapan": "2016-09-22",
+      "di_mana": "IEEE 802.3 Ethernet Working Group (berlaku global)",
+      "ringkas": "Sekitar 2014-2015, access point Wi-Fi 802.11ac mulai butuh uplink lebih dari 1 Gbps. Saat itu 1000BASE-T adalah port BASE-T paling populer, dan belum ada standar Ethernet 2,5 atau 5 Gbps untuk kabel Cat5e dan Cat6. Pilihannya hanya bertahan di 1 Gbps atau beralih ke 10GBASE-T, yang butuh Cat6A untuk 100 m. IEEE membuka proyek 802.3bz agar 2,5 dan 5 Gbps berjalan sampai 100 m di kabel yang sudah ada, lengkap dengan dukungan PoE. Standarnya disahkan 22 September 2016.",
+      "kronologi": [
+        {
+          "waktu": "Sebelum Januari 2015",
+          "peristiwa": "Call for Interest 'Next Generation Enterprise Access BASE-T' dihadiri 131 peserta; 41 orang dari sedikitnya 24 perusahaan menyatakan mendukung standardisasi."
+        },
+        {
+          "waktu": "15 Januari 2015",
+          "peristiwa": "Study group mengadopsi draf PAR, kriteria proyek (CSD), dan tujuan proyek."
+        },
+        {
+          "waktu": "12 Maret 2015",
+          "peristiwa": "IEEE 802.3 menyetujui tujuan proyek di Berlin. Isinya: 2,5 Gbps sampai sedikitnya 100 m di Cat5e, 5 Gbps sampai sedikitnya 100 m di Cat6, serta dukungan PoE dan auto-negotiation."
+        },
+        {
+          "waktu": "16 Maret 2015",
+          "peristiwa": "PAR P802.3bz disetujui, dan study group berubah menjadi task force 2.5/5GBASE-T."
+        },
+        {
+          "waktu": "22 September 2016",
+          "peristiwa": "IEEE-SA Standards Board menyetujui IEEE Std 802.3bz-2016."
+        }
+      ],
+      "akar_masalah": "Kecepatan di kabel tembaga dibatasi lebar frekuensi yang sanggup dibawa kabel serta derau di dalamnya. Cat5e (100 MHz) dan Cat6 (250 MHz) tidak dirancang untuk 10 Gbps sejauh 100 m. Kecepatan di antara 1 dan 10 Gbps masih sesuai dengan kemampuan kabel lama. Dengan begitu, yang perlu diganti hanya chip di switch dan access point, sedangkan kabel di dalam dinding tetap.",
+      "kaitan": "Bagian 3 (Kategori Kabel) menyebut Cat5e cukup untuk 1 Gbps dan Cat6 hanya mendukung 10 Gbps sampai 55 m; 802.3bz mengisi celah di antaranya. Tujuan proyeknya juga mewajibkan dukungan PoE (bagian 6), karena access point biasanya diberi daya lewat kabel. Catatan di bagian 3 bahwa biaya terbesar instalasi adalah tenaga kerja, bukan kabel, adalah alasan ekonomi di balik standar ini.",
+      "pelajaran": [
+        "Sebelum membongkar kabel untuk access point baru, cek apakah AP dan switch mendukung 2.5GBASE-T atau 5GBASE-T. Kabel Cat5e atau Cat6 yang lulus uji mungkin sudah cukup.",
+        "Standar ini menolong gedung lama. Untuk instalasi baru, tetap ikuti saran modul: pasang Cat6A agar siap 10 Gbps sejauh 100 m.",
+        "Pastikan kabel lama benar-benar tembaga murni dan lulus uji sertifikasi. Kabel CCA atau kabel yang gagal uji tetap akan bermasalah di kecepatan ini."
+      ],
+      "sumber": [
+        {
+          "judul": "IEEE P802.3bz 2.5/5GBASE-T Task Force",
+          "penerbit": "IEEE 802.3 Ethernet Working Group",
+          "url": "https://www.ieee802.org/3/bz/index.html"
+        },
+        {
+          "judul": "IEEE 802.3 NGEABT Objectives (disetujui 12 Maret 2015)",
+          "penerbit": "IEEE 802.3 Ethernet Working Group",
+          "url": "https://www.ieee802.org/3/bz/ngeabt_objectives_802.3WG_approved_0315.pdf"
+        },
+        {
+          "judul": "IEEE 802.3 Criteria for Standards Development (CSD) untuk P802.3bz",
+          "penerbit": "IEEE 802.3 Ethernet Working Group",
+          "url": "https://www.ieee802.org/3/bz/802d3_NGEABT_CSD_802.3_WG_approved_12-march-15.pdf"
+        },
+        {
+          "judul": "IEEE 802.3 Next Generation Enterprise Access BASE-T PHY Study Group",
+          "penerbit": "IEEE 802.3 Ethernet Working Group",
+          "url": "https://www.ieee802.org/3/NGEBASET/index.html"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Gudang distributor di Surabaya memasang 16 kamera CCTV PoE pada switch PoE+ dengan anggaran daya 150 W. Spesifikasi kamera: 4 W di siang hari dan 7,5 W di malam hari saat lampu inframerahnya menyala. Setiap malam, empat kamera terjauh (kabelnya 75-85 m) mati-hidup berulang, sedangkan 12 kamera lain normal. Keempat kabel jauh itu kabel 'Cat6' murah tanpa tulisan solid copper; kabel lainnya bermerek dan bertuliskan tembaga murni. Siang hari semua kamera normal. Cari penyebabnya dan usulkan perbaikan.",
+      "petunjuk": [
+        "Hitung dulu kebutuhan daya malam hari untuk semua kamera, lalu bandingkan dengan anggaran switch.",
+        "Kalau anggaran cukup, cari apa yang membedakan empat kamera bermasalah dari dua belas lainnya.",
+        "Baca lagi bagian 3 tentang kabel CCA dan bagian 6 tentang selisih daya di PSE dan PD."
+      ],
+      "jawaban": "1. **Cek anggaran daya.** Malam hari: 16 x 7,5 W = 120 W. Anggarannya 150 W, jadi masih ada sisa 30 W (20%). Anggaran bukan penyebabnya.\n2. **Cari pembeda.** Yang bermasalah hanya kamera dengan kabel terpanjang dan kabel murah tanpa tulisan solid copper. Polanya muncul saat kebutuhan daya naik, yaitu ketika lampu inframerah menyala.\n3. **Dugaan.** Kabel itu kemungkinan CCA (aluminium berlapis tembaga). Resistansinya lebih tinggi, sehingga rugi daya di kabel besar, apalagi pada 75-85 m (bagian 3 dan 6). Saat arus naik di malam hari, tegangan yang sampai ke kamera turun di bawah batas, lalu kamera reboot.\n4. **Uji.** Kupas sedikit ujung kabel: inti CCA berwarna keperakan di bawah lapisan tembaga. Lihat status PoE per port di switch pada malam hari. Lalu ganti satu kabel jauh dengan kabel tembaga murni dan amati selama satu malam.\n5. **Perbaikan.** Ganti keempat kabel dengan Cat6 tembaga murni yang lulus uji, jaga panjang permanent link di bawah 90 m, dan pakai PoE standar 802.3af/at, bukan injector passive PoE.\n6. **Pelajaran.** Hitungan anggaran daya yang aman belum menjamin daya sampai ke perangkat. Mutu dan panjang kabel ikut menentukan."
+    }
+  },
+  "02-layer-fisik/03-fiber": {
+    "intinya": {
+      "satu_kalimat": "Serat optik membawa data berupa cahaya di dalam kaca tipis, sehingga bisa menjangkau puluhan kilometer dan kebal derau listrik, asal cahayanya tidak hilang di jalan.",
+      "analogi": "Bayangkan selang air yang dindingnya berlapis cermin. Cahaya yang masuk di satu ujung terus memantul di dinding dan keluar di ujung lain, walau selangnya berbelok pelan. Kalau selang ditekuk terlalu tajam, sebagian cahaya bocor, dan kalau ujungnya kotor, cahaya terhalang sebelum masuk. Kalau selangnya putus, pantulan cahaya dari titik putus itu bisa diukur alat OTDR untuk menghitung jaraknya.",
+      "kenapa_penting": "Jaringan antarkota, kabel laut antarnegara, dan internet fiber rumah (FTTH) memakai serat optik. Teknisi yang paham power budget, kebersihan konektor, dan cara mencari titik putus bisa memulihkan link jauh lebih cepat.",
+      "istilah": [
+        {
+          "kata": "SMF (single-mode fiber)",
+          "arti": "Serat berinti kecil, sekitar 9 µm, untuk jarak jauh. Dipakai untuk antar-gedung, jaringan operator, dan kabel laut."
+        },
+        {
+          "kata": "Splice",
+          "arti": "Penyambungan permanen dua ujung serat. Fusion splice melelehkan kedua ujung kaca menjadi satu, dengan rugi sekitar 0,1 dB."
+        },
+        {
+          "kata": "OTDR",
+          "arti": "Alat yang menembakkan pulsa cahaya ke serat dan mengukur pantulannya untuk memetakan jarak ke setiap sambungan, konektor, dan titik putus."
+        },
+        {
+          "kata": "Power budget",
+          "arti": "Selisih daya kirim dan kepekaan penerima. Total rugi di jalur harus lebih kecil, dengan sisa (margin) minimal 3 dB."
+        },
+        {
+          "kata": "Kapal kabel",
+          "arti": "Kapal khusus yang mengangkat kabel laut dari dasar laut, mengganti bagian yang rusak, lalu menurunkannya lagi."
+        },
+        {
+          "kata": "Kabel domestik",
+          "arti": "Kabel yang menghubungkan pulau-pulau di dalam satu negara, berbeda dengan kabel internasional ke negara lain."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "insiden",
+      "judul": "Letusan Hunga Tonga memutus kabel serat Tonga-Fiji; 92 km kabel diganti, internet pulih setelah 38 hari",
+      "kapan": "2022-01-15",
+      "di_mana": "Tonga, Samudra Pasifik",
+      "ringkas": "Letusan gunung api Hunga Tonga-Hunga Ha'apai merusak kabel laut serat optik sepanjang 827 km yang menghubungkan Tonga ke Fiji. Kabel itu mengalami beberapa kerusakan dan putus, sehingga trafik internet Tonga nyaris hilang dan yang tersisa hanya lewat satelit. Kapal perbaikan Reliance butuh 20 hari untuk mengganti bagian kabel sepanjang 92 km. Pada 22 Februari 2022, sekitar 38 hari setelah gangguan, trafik internet di pulau utama kembali ke tingkat sebelum letusan.",
+      "kronologi": [
+        {
+          "waktu": "Agustus 2013",
+          "peristiwa": "Kabel Tonga-Fiji (Nuku'alofa ke Suva, 827 km) mulai beroperasi, dimiliki Digicel Tonga, Pemerintah Tonga, dan Tonga Communications Corporation."
+        },
+        {
+          "waktu": "14 Januari 2022",
+          "peristiwa": "Gunung api Hunga Tonga-Hunga Ha'apai meletus."
+        },
+        {
+          "waktu": "15 Januari 2022",
+          "peristiwa": "Kabel Tonga-Fiji rusak di beberapa titik dan putus. Trafik internet Tonga nyaris hilang."
+        },
+        {
+          "waktu": "Beberapa hari kemudian",
+          "peristiwa": "Sisa trafik kecil yang terlihat dari Tonga berasal dari layanan satelit, yang dipakai sebagian usaha dengan susah payah."
+        },
+        {
+          "waktu": "Februari 2022",
+          "peristiwa": "Kapal perbaikan Reliance bekerja 20 hari untuk mengganti bagian kabel sepanjang 92 km."
+        },
+        {
+          "waktu": "22 Februari 2022, lewat tengah malam UTC",
+          "peristiwa": "Trafik internet Tonga naik lagi ke tingkat sebelum letusan. Digicel mengumumkan layanan data pulih di pulau utama Tongatapu dan di Eua."
+        },
+        {
+          "waktu": "Sesudah Februari 2022",
+          "peristiwa": "Perbaikan kabel domestik yang menghubungkan pulau-pulau terluar diperkirakan butuh enam sampai sembilan bulan lagi."
+        }
+      ],
+      "akar_masalah": "Letusan merusak kabel di beberapa titik. Serat optik adalah helai kaca, jadi bagian yang rusak tidak bisa ditambal di tempat: bagian itu dipotong dan diganti kabel baru yang disambung ke kedua ujung lama. Untuk kabel laut, pekerjaan itu butuh kapal khusus yang berlayar ke lokasi, mengangkat kabel dari dasar laut, lalu menurunkannya lagi. Selama perbaikan, Tonga hanya bergantung pada jalur satelit yang jauh lebih kecil kapasitasnya.",
+      "kaitan": "Bagian 2 (Single-Mode vs Multimode) menyebut SMF untuk jarak 10 km sampai 100 km lebih; kabel laut seperti ini memakai serat jenis itu. Bagian 7 (Splicing dan Terminasi) menjelaskan fusion splice, cara menyambung serat secara permanen yang juga dibutuhkan saat mengganti satu bagian kabel. Bagian 10 (Troubleshooting Link Fiber) menyebut OTDR sebagai alat utama untuk memetakan lokasi putus di jalur panjang.",
+      "pelajaran": [
+        "Catat panjang dan peta jalur setiap kabel serat yang Anda kelola. Saat putus, angka jarak dari OTDR baru berguna kalau bisa dicocokkan dengan peta itu.",
+        "Siapkan jalur cadangan dengan media atau rute berbeda, misalnya satelit atau radio, dan uji kapasitasnya. Perbaikan kabel bisa butuh berminggu-minggu.",
+        "Untuk jalur penting, siapkan stok kabel, closure, dan akses ke alat fusion splice, supaya perbaikan tidak tertunda menunggu material."
+      ],
+      "sumber": [
+        {
+          "judul": "Internet is back in Tonga after 38 days of outage",
+          "penerbit": "Cloudflare Blog (João Tomé)",
+          "url": "https://blog.cloudflare.com/internet-is-back-in-tonga-after-38-days-of-outage/"
+        },
+        {
+          "judul": "Internet disruptions overview for Q1 2022",
+          "penerbit": "Cloudflare Blog",
+          "url": "https://blog.cloudflare.com/q1-2022-internet-disruption-summary/"
+        },
+        {
+          "judul": "Tonga Cable (Submarine Cable Map)",
+          "penerbit": "TeleGeography",
+          "url": "https://www.submarinecablemap.com/submarine-cable/tonga-cable"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Link serat antar-gedung sebuah kampus di Yogyakarta (SMF, 1,2 km, transceiver 1000BASE-LX dengan sensitivitas penerima -20 dBm) mulai sering putus-sambung sesudah renovasi gedung B. Sebelum renovasi, Rx power di gedung A terbaca -13 dBm; sekarang -19 dBm, dan CRC error naik. Hasil OTDR dari gedung A menunjukkan kejadian baru di jarak 350 m dengan rugi sekitar 6 dB, padahal kabelnya tidak putus. Apa diagnosis Anda, bagaimana memastikannya, dan apa yang harus diperbaiki?",
+      "petunjuk": [
+        "Hitung selisih Rx power sebelum dan sesudah renovasi, lalu bandingkan dengan rugi di kejadian OTDR.",
+        "Seberapa dekat -19 dBm dengan sensitivitas penerima? Apa yang terjadi kalau margin hampir habis?",
+        "Apa yang ada di jarak 350 m dari gedung A? Ingat penyebab rugi cahaya tanpa kabel putus di bagian 6."
+      ],
+      "jawaban": "1. **Hitung perubahan.** Rx turun dari -13 dBm ke -19 dBm, jadi ada tambahan rugi 6 dB. Angka itu sama dengan rugi kejadian baru di OTDR, jadi hampir pasti itulah penyebabnya.\n2. **Hitung margin.** Sensitivitas penerima -20 dBm, sedangkan Rx sekarang -19 dBm. Sisa margin tinggal 1 dB, jauh di bawah 3 dB yang disarankan (bagian 5). Sedikit perubahan suhu atau getaran cukup membuat sinyal jatuh di bawah sensitivitas, sehingga link putus-sambung dan CRC naik (bagian 10).\n3. **Dugaan.** Kabel tidak putus, tetapi ada rugi besar di satu titik. Penyebab paling mungkin adalah tekukan tajam (macrobend) atau kabel terjepit di area renovasi, misalnya di tray atau lubang dinding baru (bagian 6, Radius tekuk).\n4. **Pastikan.** Cari titik sekitar 350 m dari gedung A di peta jalur kabel, lalu periksa fisiknya. Kalau tersedia, pakai VFL: cahaya merah akan tampak bocor di tekukan.\n5. **Perbaiki.** Rapikan jalur agar radius tekuk minimal 10 kali diameter kabel setelah terpasang. Kalau seratnya retak, potong bagian itu dan sambung ulang dengan fusion splice (sekitar 0,1 dB).\n6. **Verifikasi.** Ukur ulang Rx power, targetkan kembali mendekati -13 dBm, dan simpan hasil OTDR baru sebagai acuan."
+    }
+  },
+  "02-layer-fisik/04-encoding-modulasi": {
+    "intinya": {
+      "satu_kalimat": "Encoding dan modulasi adalah cara mengubah bit menjadi sinyal; dengan membawa lebih banyak bit per simbol dan memakai semua pasang kabel, kecepatan bisa naik tanpa mengganti kabel.",
+      "analogi": "Bayangkan mengirim pesan dengan lampu senter. Cara paling sederhana: nyala berarti 1, padam berarti 0, satu bit per kedipan. Kalau Anda memakai lima tingkat terang, satu kedipan bisa membawa lebih dari satu bit, sehingga pesan lebih cepat tanpa mengedip lebih sering. Batasnya ada di mata penerima: makin banyak tingkat terang, makin mudah tertukar kalau ada silau, sama seperti modulasi padat yang butuh SNR tinggi.",
+      "kenapa_penting": "Inilah alasan kabel Cat5e di kantor bisa membawa 1 Gbps, dan Wi-Fi lebih cepat di dekat access point daripada di ujung ruangan. Pemahaman ini juga membantu Anda membaca gejala seperti duplex mismatch dan link yang turun kecepatan.",
+      "istilah": [
+        {
+          "kata": "Simbol dan baud",
+          "arti": "Simbol adalah satu keadaan sinyal yang dikirim. Baud adalah jumlah simbol per detik; bit rate bisa lebih besar kalau satu simbol membawa beberapa bit."
+        },
+        {
+          "kata": "PAM5",
+          "arti": "Pulse Amplitude Modulation dengan lima tingkat tegangan, dipakai 1000BASE-T supaya setiap simbol membawa lebih dari satu bit."
+        },
+        {
+          "kata": "Echo cancellation",
+          "arti": "Teknik di chip yang 'mengurangi' sinyal kirim sendiri dari sinyal terima, sehingga satu pasang kawat bisa dipakai dua arah sekaligus."
+        },
+        {
+          "kata": "DSP (Digital Signal Processor)",
+          "arti": "Chip pengolah sinyal di port Ethernet atau Wi-Fi yang menangani encoding, echo cancellation, dan koreksi error."
+        },
+        {
+          "kata": "Auto-negotiation",
+          "arti": "Proses dua perangkat menyepakati kecepatan dan duplex. Pada 1000BASE-T, proses ini juga menentukan siapa master dan siapa slave."
+        }
+      ]
+    },
+    "kasus": {
+      "jenis": "praktik",
+      "judul": "IEEE 802.3ab (1000BASE-T): gigabit lewat kabel Cat5 yang sudah terpasang, kerumitannya dipindah ke chip",
+      "kapan": "1999-06",
+      "di_mana": "IEEE 802.3 Ethernet Working Group (berlaku global)",
+      "ringkas": "Akhir 1990-an, banyak backbone jaringan kantor sudah butuh lebih dari 100 Mbps, sementara kabel horizontal yang terpasang di gedung umumnya Cat5. IEEE merancang 1000BASE-T supaya 1 Gbps berjalan di kabel Cat5 empat pasang yang sudah ada. Dokumen proyeknya mencatat bahwa semua kandidat encoding hanya butuh lebar pita sinyal yang tidak lebih besar dari 100BASE-TX. Standar IEEE 802.3ab disahkan pada Juni 1999.",
+      "kronologi": [
+        {
+          "waktu": "November 1996",
+          "peristiwa": "Lebih dari 50 perwakilan vendor dan pengguna menghadiri pertemuan teknis 1000BASE-T di sidang pleno IEEE 802."
+        },
+        {
+          "waktu": "Saat proyek disusun",
+          "peristiwa": "Dokumen 5 Criteria mengutip survei: 65% dari 117 perusahaan menjadikan Cat5 standar perusahaan (1992), dan 70,5% perusahaan berkaryawan lebih dari 1.000 orang memakai Cat5 untuk kabel horizontal (1995)."
+        },
+        {
+          "waktu": "Saat proyek disusun",
+          "peristiwa": "Lebih dari 29 perusahaan vendor menyatakan akan ikut menyusun standar. Basis terpasang Ethernet saat itu lebih dari 60 juta node."
+        },
+        {
+          "waktu": "September 1997 sampai Maret 1999",
+          "peristiwa": "Task force P802.3ab bersidang rutin untuk menyusun dan menguji spesifikasi."
+        },
+        {
+          "waktu": "Juni 1999",
+          "peristiwa": "IEEE Standards Board menyetujui IEEE 802.3ab-1999, dan pekerjaan task force selesai."
+        }
+      ],
+      "akar_masalah": "Kabel Cat5 dirancang untuk sinyal sampai sekitar 100 MHz. Mengirim 1 Gbps dengan satu bit per simbol di satu pasang kawat butuh frekuensi jauh di atas itu. Jalan keluarnya ada di encoding: data dibagi ke empat pasang, setiap simbol PAM5 membawa lebih dari satu bit, dan keempat pasang dipakai dua arah sekaligus dengan echo cancellation. Dokumen proyek menyebut seluruh biaya upgrade berada di silikon dan komponen magnetik, bukan di kabel.",
+      "kaitan": "Bagian 4 (Multi-Level Signaling) memakai 1000BASE-T sebagai contoh: 1 Gbps dibagi empat pasang menjadi 250 Mbps per pasang, lalu PAM5 membuatnya 125 Mbaud, masih dalam batas Cat5e. Bagian 8 (Rangkuman Encoding per Standar) merangkum polanya: kompleksitas berpindah dari kabel ke silikon. Kasus ini menunjukkan keputusan itu diambil dengan sengaja sejak proyek dirancang.",
+      "pelajaran": [
+        "Kalau kabel tidak bisa diganti, kecepatan masih bisa naik lewat encoding yang lebih cerdas, dengan harga chip yang lebih rumit dan konsumsi daya lebih besar.",
+        "Karena 1000BASE-T memakai keempat pasang, satu pasang yang rusak membuat link turun ke 100 Mbps. Saat link gigabit turun kelas, periksa kabel dan konektor dulu.",
+        "Jangan mematikan auto-negotiation di link gigabit tembaga. Standar memakainya untuk menentukan master dan slave."
+      ],
+      "sumber": [
+        {
+          "judul": "IEEE P802.3ab 1000BASE-T Task Force",
+          "penerbit": "IEEE 802.3 Ethernet Working Group",
+          "url": "https://www.ieee802.org/3/ab/"
+        },
+        {
+          "judul": "1000BASE-T 5 Criteria",
+          "penerbit": "IEEE 802.3 Ethernet Working Group",
+          "url": "https://www.ieee802.org/3/ab/public/criteria.pdf"
+        },
+        {
+          "judul": "IEEE P802.3ab 1000BASE-T Task Force Public Archive",
+          "penerbit": "IEEE 802.3 Ethernet Working Group",
+          "url": "https://www.ieee802.org/3/ab/public/index.html"
+        }
+      ],
+      "diperiksa": "2026-10-17"
+    },
+    "tantangan": {
+      "soal": "Gudang sebuah distributor di Cikarang memakai satu access point Wi-Fi 6 di kantor depan. Pemindai barang di ujung gudang, sekitar 40 m dan di balik rak besi, sering lambat. Dasbor AP menunjukkan klien dekat memakai 1024-QAM, sedangkan pemindai di gudang memakai QPSK. Di ujung gudang, RSSI terbaca -78 dBm dan noise floor -92 dBm. Manajer ingin membeli AP Wi-Fi 7 karena 'sudah 4096-QAM, pasti lebih cepat'. Apakah itu menyelesaikan masalah? Jelaskan dengan angka, lalu beri usulan yang lebih tepat.",
+      "petunjuk": [
+        "Hitung SNR di ujung gudang dari RSSI dan noise floor.",
+        "Cocokkan SNR itu dengan tabel modulasi di bagian 5. Modulasi apa yang realistis, dan berapa SNR yang dibutuhkan 4096-QAM?",
+        "Apa yang harus berubah supaya SNR di ujung gudang naik?"
+      ],
+      "jawaban": "1. **Hitung SNR.** -78 - (-92) = 14 dB.\n2. **Cocokkan dengan tabel.** QPSK butuh sekitar 10 dB, 16-QAM sekitar 16 dB. Dengan 14 dB, QPSK memang modulasi yang realistis. Rate adaptation di AP sudah bekerja dengan benar.\n3. **Uji klaim manajer.** 4096-QAM butuh sekitar 40 dB atau lebih. Di 14 dB, AP Wi-Fi 7 juga akan turun ke QPSK untuk pemindai itu. Kecepatan puncaknya hanya dinikmati klien yang dekat.\n4. **Cari akar masalah.** Penyebabnya jarak dan rak besi yang melemahkan sinyal, bukan jenis modulasi yang didukung AP.\n5. **Usulan.** Pasang AP tambahan di dalam gudang, dekat area pemindai. Kalau RSSI naik menjadi sekitar -55 dBm dengan noise floor yang sama, SNR menjadi 37 dB, cukup untuk 256-QAM, bahkan 1024-QAM yang butuh sekitar 34 dB.\n6. **Kesimpulan.** Anggaran lebih baik dipakai untuk menambah titik AP daripada mengganti AP di lokasi yang sama."
+    }
+  }
+}
