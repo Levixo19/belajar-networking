@@ -38,9 +38,9 @@ Untuk LAN kedua yang DHCP server-nya "jauh" (beda subnet): pada interface LAN ke
 **Topologi:** server DNS + web server + PC (di PT gunakan Server device).
 
 **TUGAS:**
-1. Konfigurasi server DNS dengan record A (`www.lab.local` → IP web server).
+1. Konfigurasi server DNS dengan record A (`www.lab.test` → IP web server).
 2. Set PC memakai server DNS itu.
-3. Uji: dari PC, `ping www.lab.local` dan akses web via nama.
+3. Uji: dari PC, `ping www.lab.test` dan akses web via nama.
 
 **VERIFIKASI:** ping/akses via **nama** (bukan IP) berhasil; resolusi nama bekerja.
 
@@ -48,7 +48,7 @@ Untuk LAN kedua yang DHCP server-nya "jauh" (beda subnet): pada interface LAN ke
 
 <details><summary>Solusi & penjelasan</summary>
 
-Di Server (PT): Services → DNS → On, tambah record A `www.lab.local` = IP web server. Set PC → DNS Server = IP server DNS. Dari PC, `ping www.lab.local` memicu **query DNS** (A record) → dapat IP → ping ke IP itu. Ini mendemonstrasikan peran DNS (`06-aplikasi/01`): menerjemahkan nama ke IP. ⚠️ Jika gagal: cek PC menunjuk DNS server yang benar, record ada, dan konektivitas IP ke server DNS OK (DNS tak berguna kalau IP tak nyambung). Eksperimen: tambah CNAME, amati query.
+Di Server (PT): Services → DNS → On, tambah record A `www.lab.test` = IP web server. Set PC → DNS Server = IP server DNS. Dari PC, `ping www.lab.test` memicu **query DNS** (A record) → dapat IP → ping ke IP itu. Ini mendemonstrasikan peran DNS (`06-aplikasi/01`): menerjemahkan nama ke IP. ⚠️ Jika gagal: cek PC menunjuk DNS server yang benar, record ada, dan konektivitas IP ke server DNS OK (DNS tak berguna kalau IP tak nyambung). Eksperimen: tambah CNAME, amati query.
 </details>
 
 ---
@@ -134,7 +134,7 @@ R1(config-if)# ip access-group SRV in
 ```
 R1(config)# ntp server 10.0.0.5
 R1(config)# hostname R1
-R1(config)# ip domain-name lab.local
+R1(config)# ip domain-name lab.test
 R1(config)# crypto key generate rsa modulus 2048
 R1(config)# username admin secret KuatSekali123
 R1(config)# line vty 0 4

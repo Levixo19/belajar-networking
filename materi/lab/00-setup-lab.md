@@ -21,14 +21,14 @@ Membaca teori jaringan tanpa praktik seperti membaca buku renang tanpa masuk air
 + Ringan, mudah, cukup untuk 90% lab CCNA
 + Simulasi visual (drag-drop perangkat)
 - Bukan IOS asli (beberapa perintah tak didukung)
-Unduh: netacad.com → Resources → Packet Tracer (butuh akun gratis)
+Unduh: Resource Hub NetAcad, halaman Lab Downloads (https://www.netacad.com/resources/lab-downloads), butuh akun gratis. Panduan lengkapnya ada di `lab/00b-panduan-packet-tracer`.
 ```
 
 ### B. GNS3 / EVE-NG / Cisco CML (lab realistis)
 ```
 + Menjalankan image OS jaringan NYATA (IOS, IOS-XE, dll)
 + Realistis untuk lab lanjutan
-- Butuh image (CML berbayar; GNS3 bisa pakai image legal yang Anda miliki)
+- Butuh image. Cisco menyediakan CML-Free tanpa biaya untuk satu pengguna dengan paling banyak 5 node berjalan sekaligus (perlu daftar dan akun Cisco); lab yang lebih besar butuh CML berlisensi. GNS3 bisa memakai image legal yang Anda miliki.
 - Lebih berat (butuh RAM cukup)
 ```
 
@@ -157,4 +157,4 @@ Jika ketiganya berhasil, Anda siap mengerjakan semua lab kurikulum.
 
 ---
 
-**Berikutnya:** `lab/01-lab-fondasi-switching.md`. Lab pertama: fondasi & switching.
+**Berikutnya:** `lab/00b-panduan-packet-tracer`. Panduan lengkap Cisco Packet Tracer sebelum lab pertama.

@@ -1,6 +1,6 @@
 # Lab 01: Fondasi & Switching
 
-> **Prasyarat:** Tahap 0-3, `lab/00-setup-lab.md`
+> **Prasyarat:** Tahap 0-3, `lab/00-setup-lab.md`, `lab/00b-panduan-packet-tracer`
 > **Platform:** Packet Tracer / GNS3 (Cisco). Tugas MikroTik & Linux ada di lab tersendiri.
 > **Format:** setiap lab punya TUGAS → VERIFIKASI → KRITERIA SUKSES → solusi (dalam `<details>`).
 
